@@ -1,0 +1,12 @@
+<div class="span4">
+    <h3>${title}</h3>
+    <p>
+        On the <a href="/processes">Processes</a> page you can find a list of
+        all available processes.
+    </p>
+    <p>
+        On this page you can view the details of a particular process and
+        select the process you wish to run. To run a process you must be
+        logged in.
+    </p>
+</div>

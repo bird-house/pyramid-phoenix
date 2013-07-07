@@ -1,0 +1,40 @@
+<metal:block use-macro="main_template">
+
+  <div metal:fill-slot="content">
+      <div class="well">
+          <legend>Login</legend>
+          <form class="form-horizontal" action="${url}" method="post">
+                <fieldset>
+
+                    <input type="hidden" name="came_from" value="${came_from}"/>
+
+                    <div class="control-group">
+                        <div class="controls">
+                            <div class="input-prepend">
+                                <span class="add-on"><i class="icon-user"></i></span>
+                                <input type="text" class="input-xlarge" placeholder="Username" id="login" name="login" value="${login}"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="controls">
+                            <div class="input-prepend">
+                                <span class="add-on"><i class="icon-lock"></i></span>
+                                <input type="password" class="input-xlarge" placeholder="Password" id="password" name="password" value="${password}"/>
+                            </div>
+                        </div>
+                    </div>
+                  
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="submit" class="btn" name="form.submitted" value="Login &raquo;"/>
+                        </div>
+                    </div>
+
+                </fieldset>
+          </form>
+      </div>
+  </div>
+
+</metal:block>

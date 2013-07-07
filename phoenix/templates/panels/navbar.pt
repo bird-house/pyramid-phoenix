@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/">${title}</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li tal:repeat="item nav" class="${'active' if item['active'] else ''}">
+                <a href="${item['url']}"><i class="${item['icon']}"></i> ${item['name']}</a>
+              </li>
+            </ul>            
+            <div class="pull-right">
+              <ul class="nav pull-right">
+                <li>${request.persona_button}</li>
+              </ul>
+            </div>            
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+</div>

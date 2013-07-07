@@ -1,0 +1,523 @@
+<metal:block use-macro="main_template">
+
+    <div metal:fill-slot="content">
+          
+        <div class="well">
+        
+            <!-- TABS -->
+            <ul class="nav nav-tabs" id="profile_tabs">
+                <li class="active"><a href="#tab_profile" data-toggle="tab">Profile</a></li>
+                <li><a href="#tab_password" data-toggle="tab">Password</a></li>
+                <li><a href="#tab_groups" data-toggle="tab" tal:condition="admin">Groups</a></li>
+                <li><a href="#tab_users" data-toggle="tab" tal:condition="admin">Users</a></li>
+                <li><a href="#tab_requests" data-toggle="tab" tal:condition="admin">Requests <span class="badge badge-info" tal:condition="new_user_requests">${len(new_user_requests)}</span></a></li>
+            </ul>
+
+
+            <div id="myTabContent" class="tab-content">
+
+                <!-- PROFILE -->
+                <div class="tab-pane active in" id="tab_profile">
+                    <div class="row">
+                        <div class="span7">
+                            <form class="form-horizontal" id="user_details" method="post" action="${url}">
+                            <fieldset>
+                                
+                                <div class="control-group">
+                                    <label class="control-label">Username</label>
+                                    <div class="controls">
+                                        <input type="text" class="input-xlarge" id="username" name="username" value="${username}">
+                                    </div>
+                                </div>
+                        
+                                <div class="control-group">
+                                    <label class="control-label">First Name</label>
+                                    <div class="controls">
+                                        <input type="text" class="input-xlarge" id="firstname" name="firstname" value="${firstname}">
+                                    </div>
+                                </div>
+                    
+                                <div class="control-group">
+                                    <label class="control-label">Last Name</label>
+                                    <div class="controls">
+                                        <input type="text" class="input-xlarge" id="lastname" name="lastname" value="${lastname}">
+                                    </div>
+                                </div>
+                                
+                                <div class="control-group">
+                                    <label class="control-label">Email</label>
+                                    <div class="controls">
+                                        <input type="text" class="input-xlarge" id="email" name="email" value="${email}"/>
+                                    </div>
+                                </div>
+                                
+                                <div class="control-group">
+                                    <label class="control-label">Groups</label>
+                                    <div class="controls">
+                                        <textarea rows="3" disabled class="input-xlarge">${profile_groups}</textarea>
+                                    </div>
+                                </div>
+                                
+                                <div class="control-group">
+                                    <label class="control-label"></label>
+                                    <div class="controls">
+                                        <button class="btn btn-primary" data-loading-text="Updating..." type="submit" name="update.profile">
+                                            <i class="icon-refresh icon-white"></i> Update
+                                        </button>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            </form>
+                        </div>
+                        
+                        <div class="span4">
+                            ${panel('user_statistic')}
+                        </div>
+                    </div>
+                </div>
+
+
+              <!-- PASSWORD -->
+              <div class="tab-pane fade" id="tab_password">
+                    <div class="row">
+                        <div class="span7">
+                            <form id="user_password" method="post" action="${url}">
+                                <fieldset>
+                                
+                                    <div class="control-group">
+                                        <label class="control-label"></label>
+                                        <div class="controls">
+                                            <div class="input-prepend">
+                                                <span class="add-on"><i class="icon-lock"></i></span>
+                                                <input type="password" class="input-xlarge" placeholder="New Password" id="new_password" name="new_password"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="control-group">
+                                        <label class="control-label"></label>
+                                        <div class="controls">
+                                            <div class="input-prepend">
+                                                <span class="add-on"><i class="icon-lock"></i></span>
+                                                <input type="password" class="input-xlarge" placeholder="Confirm New Password" id="confirm_password" name="confirm_password"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="control-group">
+                                        <label class="control-label"></label>
+                                        <div class="controls">
+                                            <button class="btn btn-primary" type="submit" name="update.password">
+                                                <i class="icon-refresh icon-white"></i> Update
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+              </div>
+              
+              
+              <!-- GROUPS -->
+              <div class="tab-pane fade" id="tab_groups" tal:condition="admin">                  
+                  <form class="form-horizontal" method="post" action="${url}">
+                      <fieldset>
+                          <input type="hidden" id="group_id" name="group_id" value="0"/>
+                          <div class="row">
+                              <div class="span6">
+                              
+                                  <div class="control-group">
+                                      <label class="control-label">Select a group</label>
+                                      <div class="controls">
+                                          <select id="group_select" name="group_select">
+                                              <!-- value="group_id;group_name;max_storage;del_out_after;ext_out_del" -->
+                                              <option value="0;;10000;30;30">Add new group</option>
+                                              <option tal:repeat="(n, v) sorted(groups.items())" value="${v}">${n}</option>
+                                          </select>
+                                      </div>
+                                  </div>
+                                  
+                                  <div class="control-group">
+                                      <label class="control-label">Group name</label>
+                                      <div class="controls">
+                                          <input type="text" id="group_name" name="group_name" value=""/>
+                                      </div>
+                                  </div>
+                                  
+                                  <div class="control-group">
+                                      <div class="controls">
+                                          <button class="btn btn-primary span2" data-loading-text="Adding..." type="submit" id="button_gadd" name="add.group">
+                                              <i class="icon-plus icon-white"></i> Add
+                                          </button>
+                                      </div>
+                                  </div>
+                                  
+                                  <div class="control-group">
+                                      <div class="controls">
+                                          <button class="btn btn-primary span2" disabled data-loading-text="Updating..." type="submit" id="button_gupdate"  name="update.group">
+                                              <i class="icon-refresh icon-white"></i> Update
+                                          </button>
+                                      </div>
+                                  </div>
+                                  
+                                  <div class="control-group">
+                                      <div class="controls">
+                                          <!-- data-toggle="modal" data-target="#deleteModal" -->
+                                          <button class="btn btn-primary span2" disabled type="submit" id="button_gdelete"  name="delete.group">
+                                              <i class="icon-trash icon-white"></i> Delete
+                                          </button>
+                                      </div>
+                                  </div>
+                              </div>
+                          
+                              <div class="span5">
+                                  
+                                  <div class="control-group">
+                                      <label class="control-label">Max output storage:</label>
+                                      <div class="controls">
+                                          <input type="text" class="input-mini" id="max_storage" name="max_storage" style="border: none; background: transparent;"/> GB
+                                      </div>
+                                      <div id="slider-max_storage"></div>
+                                  </div>
+                                  
+                                  <div class="control-group">
+                                      <label class="control-label">Delete outputs after:</label>
+                                      <div class="controls">
+                                          <input type="text" class="input-mini" id="del_out_after" name="del_out_after" style="border: none; background: transparent;"/> Days
+                                      </div>
+                                      <div id="slider-del_out_after"></div>
+                                  </div>
+                                  
+                                  <div class="control-group">
+                                      <label class="control-label">Extend outputs delete:</label>
+                                      <div class="controls">
+                                          <input type="text" class="input-mini" id="ext_out_del" name="ext_out_del" style="border: none; background: transparent;"/> Days
+                                      </div>
+                                      <div id="slider-ext_out_del"></div>
+                                  </div>
+                                  
+                              </div>
+                          </div>
+                      </fieldset>
+                  </form>
+                  
+              </div>
+              
+              <!-- USERS -->
+              <div class="tab-pane fade" id="tab_users" tal:condition="admin">                  
+                  <form class="form-horizontal" method="post" action="${url}">
+                      <fieldset>
+                          <input type="hidden" id="user_id" name="user_id" value="0"/>
+                          <div class="row">
+                              <div class="span4">
+                              
+                                  <div class="control-group">
+                                      <label class="control-label">Select a user</label>
+                                      <div class="controls">
+                                          <select id="user_select" name="user_select">
+                                              <!-- value="user_id" -->
+                                              <option value="0"></option>
+                                              <option tal:repeat="(n, v) sorted(users.items())" value="${v[0]}" tal:attributes="selected v[1]">${n}</option>
+                                          </select>
+                                      </div>
+                                  </div>
+                                  
+                                  <div class="control-group">
+                                      <label class="control-label">Groups</label>
+                                      <div class="controls">
+                                          <select id="user_groups" name="user_groups" multiple="multiple">
+                                              <!-- value="group_id" -->
+                                              <option tal:repeat="(n, v) user_groups.items()" value="${v[0]}" tal:attributes="selected v[1]">${n}</option>
+                                          </select>
+                                      </div>
+                                  </div>
+                                 
+                                 <div class="control-group">
+                                      <div class="controls">
+                                          <div class="switch" data-on="success" data-off="danger" data-on-label="ENABLED" data-off-label="DISABLED" style="width: 220px;">
+                                              <input type="checkbox" name="user_enabled" value="1" tal:attributes="checked user_enabled">
+                                          </div>
+                                      </div>
+                                  </div>
+                                  
+                              </div>
+                          
+                              <div class="span5">
+                                  
+                                   <div class="control-group">
+                                      <div class="controls">
+                                          <button class="btn btn-primary span2" type="submit" id="button_uupdate"  name="update.user">
+                                              <i class="icon-refresh icon-white"></i> Update
+                                          </button>
+                                      </div>
+                                  </div>
+                                  
+                                  <div class="control-group">
+                                      <div class="controls">
+                                          <!-- data-toggle="modal" data-target="#deleteModal" -->
+                                          <button class="btn btn-primary span2" type="submit" id="button_udelete"  name="delete.user">
+                                              <i class="icon-trash icon-white"></i> Delete
+                                          </button>
+                                      </div>
+                                  </div>
+                                  
+                                  <div class="control-group">
+                                      <div class="controls">        
+                                          <button class="btn btn-primary span2" type="submit" id="button_uloginas"  name="loginas.user">
+                                              <i class="icon-arrow-right icon-white"></i> Login as user
+                                          </button>
+                                      </div>
+                                  </div>
+                                  
+                              </div>
+                          </div>
+                      </fieldset>
+                  </form>
+                  
+              </div>
+              
+              <!-- DELETE MODAL -->
+              <div class="modal small hide fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true" tal:condition="admin">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="deleteModalLabel">Delete Confirmation</h3>
+                </div>
+                <div class="modal-body">
+                    <p class="error-text">Are you sure you want to delete?</p>
+                </div>
+                <div class="modal-footer">
+                     <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                     <button class="btn btn-danger">Delete</button>
+                </div>
+              </div>
+              
+              <!-- REQUESTS -->
+              <div class="tab-pane fade" id="tab_requests" tal:condition="admin">                  
+                  <form class="form-horizontal">
+                      <fieldset>
+                          
+                          <table class="table table-striped" tal:condition="new_user_requests">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>E-Mail</th>
+                                        <th><span class="label label-info">New Users</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr tal:repeat="u new_user_requests">
+                                        <td>${u.username}</td>
+                                        <td>${u.firstname}</td>
+                                        <td>${u.lastname}</td>
+                                        <td>${u.email}</td>
+                                        <td>
+                                            <div class="switch switch-mini" data-on="success" data-off="danger" data-on-label="ENABLED" data-off-label="DISABLED" style="width: 120px;">
+                                                <input type="checkbox" name="new_user_enabled" value="${u.id}" tal:attributes="checked not:u.disabled">
+                                            </div>
+                                            <div class="switch switch-mini" data-on-label="DELETE" data-off-label="" style="width: 100px;">
+                                                <input type="checkbox" name="new_user_delete" value="${u.id}">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <button class="btn btn-primary btn-large" type="submit" name="submit.requests" tal:condition="new_user_requests">Submit &raquo;</button>
+
+                      </fieldset>
+                  </form>
+                  
+              </div>
+              
+            </div> <!-- close myTabContent -->
+
+        </div>
+        
+        <script type="text/javascript" src="${request.application_url}/static/js/jquery.validate.min.js"></script>
+        <script type="text/javascript">
+            $('form').each(function()
+            {
+                // Validation
+                 $(this).validate(
+                 {
+                    rules:{
+                        username:  "required",
+                        firstname: "required",
+                        lastname:  "required",
+                        email: {required: true, email: true},
+                        new_password: {required: true, minlength: 8},
+                        confirm_password: {required: true, equalTo: "#new_password"},
+                        
+                        group_name:    "required",
+                        max_storage:   {required: true, digits: true},
+                        del_out_after: {required: true, digits: true},
+                        ext_out_del:   {required: true, digits: true}
+                     },
+                    
+                    messages:{
+                        username:  "Enter you user name",
+                        firstname: "Enter your first name",
+                        lastname:  "Enter your last name",
+                        email:{
+                            required: "Enter your email address",
+                            email: "Enter a valid email address"},
+                        new_password:{
+                            required:  "Enter your new password",
+                            minlength: "Minimum password length is 8"},
+                        confirm_password:{
+                            required: "Confirm your password",
+                            equalTo:  "Passwords do not match"},
+                        
+                        group_name: "value required",
+                        max_storage:{
+                            required: "value required",
+                            digits: "digits only"},
+                        del_out_after:{
+                            required: "value required",
+                            digits: "digits only"},
+                        ext_out_del:{
+                            required: "value required",
+                            digits: "digits only"}
+                     },
+                    
+                    errorClass: "help-inline",
+                    highlight: function(element, errorClass)
+                    {
+                        $(element).parents('.control-group').addClass('error');
+                    },
+                    unhighlight: function(element, errorClass)
+                    {
+                        $(element).parents('.control-group').removeClass('error');
+                    }
+                });
+            });
+        </script>
+        <link href="${request.application_url}/static/css/jquery-ui/jquery-ui.css" rel="stylesheet" tal:condition="admin">
+        <script type="text/javascript" src="${request.application_url}/static/js/jquery-ui.min.js" tal:condition="admin"></script>
+        <script type="text/javascript" tal:condition="admin">
+            $(function(){
+                $("#slider-max_storage").slider({
+                    range: "min",
+                    value: 10000,
+                    min: 1,
+                    max: 10000,
+                    step: 1,
+                    slide: function(event, ui){
+                        $("#max_storage").val(ui.value);
+                    }
+                });
+                $("#max_storage").val($("#slider-max_storage").slider("value"));
+                
+                $("#slider-del_out_after").slider({
+                    range: "min",
+                    value: 30,
+                    min: 1,
+                    max: 90,
+                    step: 1,
+                    slide: function(event, ui){
+                        $("#del_out_after").val(ui.value);
+                    }
+                });
+                $("#del_out_after").val($("#slider-del_out_after").slider("value"));
+                
+                $("#slider-ext_out_del").slider({
+                    range: "min",
+                    value: 30,
+                    min: 1,
+                    max: 90,
+                    step: 1,
+                    slide: function(event, ui){
+                        $("#ext_out_del").val(ui.value);
+                    }
+                });
+                $("#ext_out_del").val($("#slider-ext_out_del").slider("value"));
+                
+                $("#max_storage").change(function(){
+                    $("#slider-max_storage").slider("value", $(this).val());
+                });
+                
+                $("#del_out_after").change(function(){
+                    $("#slider-del_out_after").slider("value", $(this).val());
+                });
+                
+                $("#ext_out_del").change(function(){
+                    $("#slider-ext_out_del").slider("value", $(this).val());
+                });
+            });
+        </script>
+        <script type="text/javascript" tal:condition="admin">
+            $("#user_id").val($('#user_select').find(':selected').val());
+            if($("#user_id").val() == 0)
+            {
+                $("#button_uupdate").attr('disabled', 'disabled').addClass('disabled');
+                $("#button_udelete").attr('disabled', 'disabled').addClass('disabled');
+                $("#button_uloginas").attr('disabled', 'disabled').addClass('disabled');
+            }
+            
+            $(function(){
+                $("#group_select").change(function(){
+                    var values = $(this).find(":selected").val().split(";");
+                    
+                    if(values[0] == 0)
+                    {
+                        $("#button_gupdate").attr('disabled', 'disabled').addClass('disabled');
+                        $("#button_gdelete").attr('disabled', 'disabled').addClass('disabled');
+                        $("#button_gadd").removeClass('disabled').removeAttr('disabled');
+                    }
+                    else
+                    {
+                        $("#button_gupdate").removeClass('disabled').removeAttr('disabled');
+                        $("#button_gdelete").removeClass('disabled').removeAttr('disabled');
+                        $("#button_gadd").attr('disabled', 'disabled').addClass('disabled');
+                    }
+                    
+                    $("#group_id").val(values[0]);
+                    $("#group_id").change();
+                    
+                    $("#group_name").val(values[1]);
+                    $("#group_name").change();
+                    
+                    $("#max_storage").val(values[2]);
+                    $("#max_storage").change();
+                    
+                    $("#del_out_after").val(values[3]);
+                    $("#del_out_after").change();
+                    
+                    $("#ext_out_del").val(values[4]);
+                    $("#ext_out_del").change();
+                });
+                
+                $("#user_select").change(function(){
+                    var value = $(this).find(":selected").val();
+                    
+                    $("#user_id").val(value);
+                    $("#user_id").change();
+                    
+                    this.form.submit();
+                });
+             });
+         </script>
+        <link href="${request.application_url}/static/css/bootstrap-switch.css" rel="stylesheet" tal:condition="admin">
+        <script type="text/javascript" src="${request.application_url}/static/js/jquery.switch.js" tal:condition="admin"></script>
+        <script type="text/javascript" tal:condition="admin">            
+            $(function(){ 
+                $('a[data-toggle="tab"]').on('show', function(e){
+                    // save the latest tab
+                    localStorage.setItem('lastTab', $(e.target).attr('href'));
+                });
+
+                // go to the latest tab
+                var lastTab = localStorage.getItem('lastTab');
+                if (lastTab) {
+                    $('#profile_tabs a[href="' + lastTab + '"]').tab('show');
+                }
+            });
+        </script>
+
+    </div>
+
+</metal:block>

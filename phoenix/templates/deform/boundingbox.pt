@@ -1,0 +1,43 @@
+<span tal:define="oid oid|field.oid;
+name name|field.name;
+size size|field.widget.size;
+mask mask|field.widget.mask;
+mask_placeholder mask_placeholder|field.widget.mask_placeholder;
+css_class css_class|field.widget.css_class;
+style style|field.widget.style|None;"
+i18n:domain="deform" tal:omit-tag="">
+    ${field.start_mapping()}
+
+    <ul class="inline">
+        <li>
+            <label>Lower Corner</label>
+            <input type="text" name="LowerCorner1" value="${LowerCorner1}" tal:attributes="size size; class css_class; style style" id="${oid}-LowerCorner1"/>
+            <input type="text" name="LowerCorner2" value="${LowerCorner2}" tal:attributes="size size; class css_class; style style" id="${oid}-LowerCorner2"/>
+            <label>Upper Corner</label>
+            <input type="text" name="UpperCorner1" value="${UpperCorner1}" tal:attributes="size size; class css_class; style style" id="${oid}-UpperCorner1"/>
+            <input type="text" name="UpperCorner2" value="${UpperCorner2}" tal:attributes="size size; class css_class; style style" id="${oid}-UpperCorner2"/>
+        </li>
+    </ul>
+
+    ${field.end_mapping()}
+
+    <script tal:condition="mask" type="text/javascript">
+        $.mask.definitions['d'] = "[\-\.0-9]";
+        deform.addCallback('${oid}-LowerCorner1', function (oid)
+        {
+            $('#' + oid).mask("${mask}", {placeholder: "${mask_placeholder}"});
+        });
+        deform.addCallback('${oid}-LowerCorner2', function (oid)
+        {
+            $('#' + oid).mask("${mask}", {placeholder: "${mask_placeholder}"});
+        });
+        deform.addCallback('${oid}-UpperCorner1', function (oid)
+        {
+            $('#' + oid).mask("${mask}", {placeholder: "${mask_placeholder}"});
+        });
+        deform.addCallback('${oid}-UpperCorner2', function (oid)
+        {
+            $('#' + oid).mask("${mask}", {placeholder: "${mask_placeholder}"});
+        });
+    </script>
+</span>

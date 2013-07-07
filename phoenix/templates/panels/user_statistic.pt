@@ -1,0 +1,16 @@
+<p>Last login: <i class="icon-calendar"></i> ${lastlogin}</p>
+
+<p>Processes</p>
+<table class="table table-condensed">
+    <tbody>
+        <tr tal:repeat="process processes">
+            <td>${process[0]}</td>
+            <td>${process[1]}</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Using 0GB of 7GB</p>
+<div class="progress progress-striped">
+    <div class="bar" style="width: 60%;">60%</div>
+</div>

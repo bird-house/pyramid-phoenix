@@ -1,0 +1,19 @@
+<div class="hero-unit">
+    <h2>Welcome to ${title} !</h2>
+    <p>
+        ${title} is a <a href="http://www.pylonsproject.org/">Pyramid</a> Web Application. It gives you an easy access to Web Processing Services (
+        <a href="http://www.opengeospatial.org/standards/wps">WPS</a>). 
+    </p>
+    <p>
+        ${title} allows you to run and to monitor your WPS processes and to manage the process outputs.
+    </p>
+    <p>
+        ${title} uses the <a href="http://geopython.github.io/OWSLib/">Python WPS Client</a> from the <a href="https://github.com/geopython">Geopython Project</a> to communicate with Web Processing Services.
+    </p>
+    <p>
+        ${title} is part of the <a href="http://www.dkrz.de">ClimDaPs</a> Project for Climate Data Processing.
+    </p>
+    <p>
+        <a class="btn btn-primary btn-large" href="${wps_service_url}?Request=GetCapabilities&Service=WPS">Capabilities (XML) &raquo;</a>
+    </p>
+</div>

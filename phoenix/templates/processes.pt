@@ -1,0 +1,146 @@
+<metal:block use-macro="main_template">
+
+    <div metal:fill-slot="content">
+        <table id="process_table" class="table table-striped accordion-group">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Identifier</th>
+                    <th>Title</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <div tal:repeat="process wps.processes">
+                    <tr>
+                        <td>
+                            <a data-toggle="collapse" data-parent="#process_table" href="#${process.identifier}">
+                                <i class="icon-plus"></i>
+                            </a>
+                        </td>
+                        <td>${process.identifier}</td>
+                        <td>${process.title}</td>
+                        <td><a class="btn" href="/form?identifier=${process.identifier}" tal:condition="logged_in">Submit</a></td>
+                    </tr>
+                    <!--? 
+                    <tr>
+                        <td colspan="4">
+                            <div id="${process.identifier}" class="collapse">
+                                <div class="hero-unit">
+                                    <h2>Init</h2>
+                                    <div class="row" tal:repeat="(k, v) p['init'].items()">
+                                        <div class="span2">
+                                            <strong>${k}:</strong>
+                                        </div>
+                                        <div class="span8">${str(v)}</div>
+                                    </div>
+                                </div>
+                                <div class="hero-unit">
+                                    <h2>Inputs</h2>
+                                    <div tal:condition="len(p['inputs']['literal']) > 0">
+                                        <hr>
+                                        <h3><i class="icon-tag"></i> Literal</h3>
+                                        <div class="row" tal:repeat="(k, v) p['inputs']['literal'].items()">
+                                            <hr>
+                                            <div tal:repeat="(kk, vv) v.items()">
+                                                <div class="span2">
+                                                    <strong>${kk}:</strong>
+                                                </div>
+                                                <div class="span8">${str(vv)}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div tal:condition="len(p['inputs']['complex']) > 0">
+                                        <hr>
+                                        <h3><i class="icon-tag"></i> Complex</h3>
+                                        <div class="row" tal:repeat="(k, v) p['inputs']['complex'].items()">
+                                            <hr>
+                                            <div tal:repeat="(kk, vv) v.items()">
+                                                <div class="span2">
+                                                    <strong>${kk}:</strong>
+                                                </div>
+                                                <div class="span8">${str(vv)}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div tal:condition="len(p['inputs']['boundingbox']) > 0">
+                                        <hr>
+                                        <h3><i class="icon-tag"></i> BoundingBox</h3>
+                                        <div class="row" tal:repeat="(k, v) p['inputs']['boundingbox'].items()">
+                                            <hr>
+                                            <div tal:repeat="(kk, vv) v.items()">
+                                                <div class="span2">
+                                                    <strong>${kk}:</strong>
+                                                </div>
+                                                <div class="span8">${str(vv)}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="hero-unit">
+                                    <h2>Outputs</h2>
+                                    <div tal:condition="len(p['outputs']['literal']) > 0">
+                                        <hr>
+                                        <h3><i class="icon-tag"></i> Literal</h3>
+                                        <div class="row" tal:repeat="(k, v) p['outputs']['literal'].items()">
+                                            <hr>
+                                            <div tal:repeat="(kk, vv) v.items()">
+                                                <div class="span2">
+                                                    <strong>${kk}:</strong>
+                                                </div>
+                                                <div class="span8">${str(vv)}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div tal:condition="len(p['outputs']['complex']) > 0">
+                                        <hr>
+                                        <h3><i class="icon-tag"></i> Complex</h3>
+                                        <div class="row" tal:repeat="(k, v) p['outputs']['complex'].items()">
+                                            <hr>
+                                            <div tal:repeat="(kk, vv) v.items()">
+                                                <div class="span2">
+                                                    <strong>${kk}:</strong>
+                                                </div>
+                                                <div class="span8">${str(vv)}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div tal:condition="len(p['outputs']['boundingbox']) > 0">
+                                        <hr>
+                                        <h3><i class="icon-tag"></i> BoundingBox</h3>
+                                        <div class="row" tal:repeat="(k, v) p['outputs']['boundingbox'].items()">
+                                            <hr>
+                                            <div tal:repeat="(kk, vv) v.items()">
+                                                <div class="span2">
+                                                    <strong>${kk}:</strong>
+                                                </div>
+                                                <div class="span8">${str(vv)}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p tal:condition="loggedin">
+                                    <a class="btn btn-primary btn-large" href="/wps?Request=DescribeProcess&Service=WPS&Version=1.0.0&Identifier=${process.identifier}">Describe Process (XML) &raquo;</a>
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                    -->
+                </div>
+            </tbody>
+        </table>
+        <script type="text/javascript">$(function(){
+            $('a[data-toggle="collapse"]').on('click', function(e){
+            if ($(e.target).attr('class') == 'icon-plus')
+            {
+            $(e.target).removeClass('icon-plus').addClass('icon-minus');
+            }
+            else
+            {
+            $(e.target).removeClass('icon-minus').addClass('icon-plus');
+            }
+            });
+            });</script>
+    </div>
+
+</metal:block>
