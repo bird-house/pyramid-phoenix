@@ -62,6 +62,15 @@ class DataInputsSchema(colander.MappingSchema):
         else:
             cls._add_string(schema, data_input)
 
+    @classmethod
+    def _literal_widget(cls, data_input):
+        if len(data_input.allowedValues) > 1:
+            if not 'AnyValue' in data_input.allowedValues:
+                choices = []
+                for value in data_input.allowedValues:
+                    choices.append([value, value])
+                return widget.SelectWidget(values=choices)
+        return widget.TextInputWidget()
 
     @classmethod
     def _add_string(cls, schema, data_input):
@@ -70,7 +79,7 @@ class DataInputsSchema(colander.MappingSchema):
                 title=data_input.title,
                 default=data_input.defaultValue,
                 #description=data_input.abstract,
-                widget=widget.TextInputWidget()))
+                widget=cls._literal_widget(data_input) ))
 
     @classmethod
     def _add_integer(cls, schema, data_input):
@@ -79,8 +88,8 @@ class DataInputsSchema(colander.MappingSchema):
                 title=data_input.title,
                 default=data_input.defaultValue,
                 #description=data_input.abstract,
-                widget=widget.TextInputWidget()))
-
+                widget=cls._literal_widget(data_input) ))
+                
     @classmethod
     def _add_float(cls, schema, data_input):
         schema.add(colander.SchemaNode(colander.Float(), 
@@ -88,7 +97,7 @@ class DataInputsSchema(colander.MappingSchema):
                 title=data_input.title,
                 default=data_input.defaultValue,
                 #description=data_input.abstract,
-                widget=widget.TextInputWidget()))
+                widget=cls._literal_widget(data_input) ))
     @classmethod
     def _add_boolean(cls, schema, data_input):
         schema.add(colander.SchemaNode(colander.Boolean(), 

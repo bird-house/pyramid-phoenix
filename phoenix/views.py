@@ -311,8 +311,8 @@ class ExecuteView(FormView):
 
         inputs = []
         serialized = self.schema.serialize(appstruct)
-        for item in serialized.iteritems():
-            inputs.append( item )
+        for (key, value) in serialized.iteritems():
+            inputs.append( (str(key), str(value)) )
 
         log.debug('inputs =  %s', inputs)
 
