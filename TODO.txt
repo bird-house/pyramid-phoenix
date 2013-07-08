@@ -1,6 +1,8 @@
 Features
 --------
 
+* integrate local pywps
+* maybe integrate also geoserver
 * integrated shell (python or javascript, see mongodb shell)
 * check out ipython notebook
 * use mongodb
@@ -16,6 +18,7 @@ Features
 * integrate workflow enging (taverna, ...)
 * create base classes for wps processes
 * make process configurable with yaml
+* provide paster template/scaffold for new processes
 * integrate phoenix logo
 
 Improvements
@@ -31,4 +34,7 @@ Other
 ----
 
 * try accessing wcs server
+* try accessing with openlayers
+* try with udig
+* evalute security concepts (check also salt)
 
