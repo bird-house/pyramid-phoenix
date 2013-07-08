@@ -1,0 +1,34 @@
+Features
+--------
+
+* integrated shell (python or javascript, see mongodb shell)
+* check out ipython notebook
+* use mongodb
+* integrate esgf staging and seach
+* need to access opendap/thredds
+* integrate cera staging and iso meta search
+* integrate metadata tool
+* integrate preview of results (using openlayers)
+* integration of openid (maybe configurable auth)
+* need handling of user rights
+* enable forms/wizzard for cascaded wps calls
+* integrate catalog service
+* integrate workflow enging (taverna, ...)
+* create base classes for wps processes
+* make process configurable with yaml
+* integrate phoenix logo
+
+Improvements
+------------
+
+* finish input param form
+* rework output param form
+* rework buildout (nginx+gunicorn, system packages)
+* start documentation with sphinx
+
+
+Other
+----
+
+* try accessing wcs server
+
