@@ -20,6 +20,7 @@ Features
 * make process configurable with yaml
 * provide paster template/scaffold for new processes
 * integrate phoenix logo
+* dashboard with status and statistics
 
 Improvements
 ------------
