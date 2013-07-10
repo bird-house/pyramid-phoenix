@@ -21,7 +21,8 @@ def navbar(context, request):
 
     nav = [nav_item('Home', request.route_url('home'), 'icon-home'),
            nav_item('Processes', request.route_url('processes'), 'icon-tasks'),
-           nav_item('History', request.route_url('history'), 'icon-time')]
+           nav_item('History', request.route_url('history'), 'icon-time'),
+           nav_item('Monitor', request.route_url('monitor'), 'icon-time')]
 
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request))
 

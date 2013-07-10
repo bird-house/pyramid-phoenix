@@ -180,74 +180,6 @@ def output_details(request):
     return dict(form=form)
 
 
-
-#==============================================================================
-# login
-#==============================================================================
-
-# @view_config(route_name='login',
-#              renderer='templates/login.pt',
-#              layout='default')
-# @forbidden_view_config(renderer='templates/login.pt')
-# def login(request):
-#     login_url = request.route_url('login')
-#     referrer = request.url
-
-#     if referrer == login_url:
-#         referrer = '/'  # never use the login form itself as came_from
-
-#     came_from = request.params.get('came_from', referrer)
-#     message_type = 'alert-error'
-#     message = ''
-#     login = ''
-#     password = ''
-
-#     if 'form.submitted' in request.params:
-#         login = request.params['login'].lower().strip()
-#         password = request.params['password']
-
-#         user = User.by_name(login)
-
-#         if user and user.validate_password(password):
-#             if user.disabled:
-#                 message = 'Your profile is disabled. ' \
-#                           'Please contact support for assistance.'
-#             else:
-#                 headers = remember(request, user.id)
-
-#                 if user.lastlogin is None and user.id == 1:
-#                     return HTTPFound(location=request.route_url('profile'),
-#                                      headers=headers)
-#                 else:
-#                     response = HTTPFound(location=came_from, headers=headers)
-#                     if user.lastlogin is not None:
-#                         response.set_cookie('lastlogin',
-#                                             user.lastlogin.strftime(
-#                                                    '%a, %d %h %Y %I:%M:%S %p'))
-#                     user.lastlogin = datetime.datetime.now()
-#                     return response
-#         else:
-#             message = 'Incorrect Username or Password!'
-
-#     return dict(url=login_url, came_from=came_from, login=login,
-#                 password=password, message_type=message_type, message=message)
-
-
-
-
-#==============================================================================
-# logout
-#==============================================================================
-
-# @view_config(route_name='logout',
-#              layout='default')
-# def logout(request):
-#     headers = forget(request)
-#     response = HTTPFound(location=request.route_url('home'), headers=headers)
-#     response.delete_cookie('lastlogin')
-#     return response
-
-
 #==============================================================================
 # form
 #==============================================================================
@@ -348,3 +280,13 @@ class ExecuteView(FormView):
         proc.start_time = datetime.datetime.now()
                
         return HTTPFound(location=self.request.route_url('history'))
+
+@view_config(route_name='monitor',
+             renderer='templates/embedded.pt',
+             layout='default',
+             permission='view'
+             )
+def monitor(request):
+    log.debug('rendering monitor view')
+    return dict(external_url='http://localhost:9001')
+

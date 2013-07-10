@@ -87,10 +87,7 @@ def main(global_config, **settings):
     #config.add_route('profile', '/profile')
     #config.add_route('logout', '/logout')
     config.add_route('form', '/form')
-    # config.add_route('wps', '/wps')
-
-    # config.add_view(view=wsgiapp2(wsgiwps.dispatchWps), permission=USER_GROUP,
-    #                 route_name='wps')
+    config.add_route('monitor', '/monitor')
 
     config.scan('.layouts')
     config.scan('.panels')
