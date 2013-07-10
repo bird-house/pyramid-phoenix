@@ -16,7 +16,4 @@
     <p>
         <a class="btn btn-primary btn-large" href="${wps_service_url}?Request=GetCapabilities&Service=WPS">Capabilities (XML) &raquo;</a>
     </p>
-    <p>
-        <a class="btn btn-primary btn-large" href="http://localhost:9001">Service Monitor</a>
-    </p>
 </div>
