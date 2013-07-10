@@ -83,6 +83,11 @@ def history(request):
 
     history = []
 
+    conn = mongodb_conn(request)
+    for proc in conn.phoenix_db.history.find(dict(
+        user_id=authenticated_userid(request))):
+        log.debug(proc)
+
     for proc in ProcessHistory.by_userid(authenticated_userid(request)):
         h = dict(uuid=proc.uuid, 
                  identifier=proc.identifier,
