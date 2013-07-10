@@ -88,6 +88,7 @@ def main(global_config, **settings):
     #config.add_route('logout', '/logout')
     config.add_route('form', '/form')
     config.add_route('monitor', '/monitor')
+    config.add_route('help', '/help')
 
     config.scan('.layouts')
     config.scan('.panels')

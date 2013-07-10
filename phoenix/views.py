@@ -290,3 +290,12 @@ def monitor(request):
     log.debug('rendering monitor view')
     return dict(external_url='http://localhost:9001')
 
+@view_config(route_name='help',
+             renderer='templates/embedded.pt',
+             layout='default',
+             permission='view'
+             )
+def help(request):
+    log.debug('rendering help view')
+    return dict(external_url='/docs')
+
