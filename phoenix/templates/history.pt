@@ -16,20 +16,20 @@
                         <td><a rel="tooltip" data-placement="right" title="ID: ${p.uuid}">${p.identifier}</a></td>
                         <td>${p.starttime}</td>
                         <td>${p.duration}</td>
-                        <td tal:condition="p.status[0] == 1">
-                            <small>${p.status[1]}</small>
+                        <td tal:condition="p.status == 'ProcessAccepted'">
+                            <small>${p.status}</small>
                             <div class="progress progress-info">
-                                <div class="bar" style="width: ${p.status[2]}%;">${p.status[2]}%</div>
+                                <div class="bar" style="width: ${p.progress}%;">${p.progress}%</div>
                             </div>
                         </td>
-                        <td tal:condition="p.status[0] == 2">
-                            <a href="/output_details?uuid=${p.uuid}" class="label label-${p.status[2]}">${p.status[1]}</a>
+                        <td tal:condition="p.status == 'ProcessSucceeded'">
+                            <a href="/output_details?uuid=${p.uuid}" class="label label-${p.status}">${p.status}</a>
                         </td>
-                        <td tal:condition="p.status[0] == 3">
-                            <span class="label label-${p.status[2]}">${p.status[1]}</span>
+                        <td tal:condition="p.status == 'ProcessFailed'">
+                            <span class="label label-${p.status}">${p.status}</span>
                         </td>
-                        <td tal:condition="p.status[0] == 4">
-                            <a href="#" class="label label-${p.status[2]}" data-toggle="popover" data-placement="left" data-content="${p.status[3]}" data-original-title="Error Message">${p.status[1]}</a>
+                        <td tal:condition="p.status == ''">
+                            <a href="#" class="label label-${p.status}" data-toggle="popover" data-placement="left" data-content="${p.status[3]}" data-original-title="Error Message">${p.status}</a>
                         </td>
                     </tr>
                     <tr>                    

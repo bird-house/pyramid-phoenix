@@ -9,7 +9,6 @@ from pyramid_deform import FormView
 import deform
 import peppercorn
 
-from .models import DBSession, ProcessHistory, Status
 from .helpers import get_service_url, mongodb_conn
 
 import logging
@@ -88,53 +87,32 @@ def history(request):
     for proc in db.history.find(dict(
         user_id=authenticated_userid(request))):
         log.debug(proc)
-        proc['status'] = 'CompleteTest'
-        proc['end_time'] = datetime.datetime.now()
-        db.history.update({'uuid':proc['uuid']}, proc)
+        log.debug('status_location = %s', proc['status_location'])
 
-    for proc in ProcessHistory.by_userid(authenticated_userid(request)):
-        h = dict(uuid=proc.uuid, 
-                 identifier=proc.identifier,
-                 status_location=proc.status_location)
+        proc['starttime'] = proc['start_time'].strftime('%a, %d %h %Y %I:%M:%S %p')
 
-        log.debug('status_location = %s', proc.status_location)
-
-        h['starttime'] = proc.start_time.strftime('%a, %d %h %Y %I:%M:%S %p')
-
-        if proc.status.id == 1:
-            wps = WebProcessingService(proc.service_url, verbose=False, skip_caps=True)
+        if proc['status'] == 'ProcessAccepted':
+            wps = WebProcessingService(proc['service_url'], verbose=False)
             execution = WPSExecution(url=wps.url)
-            execution.checkStatus(url=h['status_location'], sleepSecs=0)
+            execution.checkStatus(url=proc['status_location'], sleepSecs=0)
             if execution.isComplete():
-                if execution.isSucceded():
-                    proc.status = Status.by_id(2)
-                else:
-                    proc.status = Status.by_id(4)
-                    proc.run_message = execution.status
-
-            proc.end_time = datetime.datetime.now()
-
+                proc['status'] = execution.status
+            proc['end_time'] = datetime.datetime.now()
+           
             # TODO: configure output delete time
             dd = 3
-            proc.output_delete_time = datetime.datetime.now() + \
+            proc['output_delete_time'] = datetime.datetime.now() + \
                                       datetime.timedelta(days=dd)
 
-        if proc.status.id == 1:
+        if proc['status'] == 'ProcessAccepted':
             percent = 45  # TODO: poll percent
-            h['status'] = (1, proc.status.status, percent)
-
-            h['duration'] = str(datetime.datetime.now() - proc.start_time)
+            proc['progress'] = percent
+            proc['duration'] = str(datetime.datetime.now() - proc['start_time'])
         else:
-            h['duration'] = str(proc.end_time - proc.start_time)
+            proc['duration'] = str(proc['end_time'] - proc['start_time'])
 
-            if proc.status.id == 2:
-                h['status'] = (2, proc.status.status, 'success')
-            elif proc.status.id == 3:
-                h['status'] = (3, proc.status.status, 'warning')
-            elif proc.status.id == 4:
-                h['status'] = (4, proc.status.status, 'important', proc.run_message)
-
-        history.append(h)
+        history.append(proc)
+        db.history.update({'uuid':proc['uuid']}, proc)
 
         log.debug('leaving history')
 
@@ -164,13 +142,14 @@ def output_details(request):
                 'succeded' : False,
             }
     if 'uuid' in request.params:
-        proc = ProcessHistory.by_uuid(request.params.get('uuid'))
-        wps = WebProcessingService(proc.service_url, verbose=False)
+        conn = mongodb_conn(request)
+        db = conn.phoenix_db
+        proc = db.history.find_one({'uuid':request.params.get('uuid')})
+        wps = WebProcessingService(proc['service_url'], verbose=False)
         execution = WPSExecution(url=wps.url)
-        execution.checkStatus(url=proc.status_location, sleepSecs=0)
+        execution.checkStatus(url=proc['status_location'], sleepSecs=0)
                 
         appstruct = {
-           
             'identifier' : execution.process.identifier,
             'complete' : execution.isComplete(),
             'succeded' : execution.isSucceded(),
@@ -274,20 +253,9 @@ class ExecuteView(FormView):
         # TODO: fix wps-client for store/status setting or use own xml template
         
         log.debug('status_location = %s', execution.statusLocation)
-
-        session = DBSession()
+ 
         import uuid
-        proc = ProcessHistory(
-            #TODO set uuid of pywps
-                       user_id=authenticated_userid(self.request), 
-                       uuid=uuid.uuid4().get_hex(),
-                       identifier=identifier,
-                       service_url=wps.url,
-                       status_location=execution.statusLocation)
-        proc.status = Status.by_id(1)
-        proc.user = authenticated_userid(self.request)
-        proc.start_time = datetime.datetime.now()
-
+       
         # mongodb
         conn = mongodb_conn(self.request)
         conn.phoenix_db.history.save(dict(
