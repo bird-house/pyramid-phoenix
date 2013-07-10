@@ -6,12 +6,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 
 import pymongo
 
-from sqlalchemy import engine_from_config
-from sqlalchemy.exc import IntegrityError
-import transaction
-
 from .resources import Root
-from .models import DBSession, Base, Status
 import logging
 
 log = logging.getLogger(__name__)
@@ -20,30 +15,6 @@ def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     log.debug("init phoenix application")
-
-    engine = engine_from_config(settings, 'sqlalchemy.')
-    DBSession.configure(bind=engine)
-    Base.metadata.bind = engine
-
-    ## Initial Database Setup #################################################
-    session = DBSession()
-
-    try:
-        Base.metadata.create_all(engine)
-
-        # Order is important!
-        session.add(Status('Running'))
-        session.add(Status('Completed'))
-        session.add(Status('Cancelled'))
-        session.add(Status('Failed'))
-
-        session.flush()
-        transaction.commit()
-    except IntegrityError:
-        transaction.abort()
-        session = DBSession()
-    
-    ###########################################################################
 
     config = Configurator(settings=settings, root_factory=Root)
 
@@ -86,17 +57,9 @@ def main(global_config, **settings):
     config.add_route('processes', '/processes')
     config.add_route('history', '/history')
     config.add_route('output_details', '/output_details')
-    #config.add_route('signup', '/signup')
-    #config.add_route('login', '/login')
-    #config.add_route('profile', '/profile')
-    #config.add_route('logout', '/logout')
     config.add_route('form', '/form')
     config.add_route('monitor', '/monitor')
     config.add_route('help', '/help')
-
-    #config.scan('.layouts')
-    #config.scan('.panels')
-    #config.scan('.views')
 
      # MongoDB
     def add_mongo_db(event):

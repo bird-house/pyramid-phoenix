@@ -8,7 +8,6 @@ CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
 requires = [
     'pyramid',
-    'SQLAlchemy',
     'pymongo',
     'transaction',
     'pyramid_tm',
