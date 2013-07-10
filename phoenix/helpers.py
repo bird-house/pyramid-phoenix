@@ -8,3 +8,8 @@ def get_service_url(request):
     service_url = settings.get('phoenix.wps', None)
     log.debug('using wps = %s', service_url)
     return service_url
+
+def mongodb_conn(request):
+	settings = request.registry.settings
+	conn = settings.get('mongodb_conn', None)
+	return conn

@@ -10,7 +10,7 @@ import deform
 import peppercorn
 
 from .models import DBSession, ProcessHistory, Status
-from .helpers import get_service_url
+from .helpers import get_service_url, mongodb_conn
 
 import logging
 
@@ -278,6 +278,19 @@ class ExecuteView(FormView):
         proc.status = Status.by_id(1)
         proc.user = authenticated_userid(self.request)
         proc.start_time = datetime.datetime.now()
+
+        # mongodb
+        conn = mongodb_conn(self.request)
+        conn.phoenix_db.history.save(dict(
+          user_id=authenticated_userid(self.request), 
+          uuid=uuid.uuid4().get_hex(),
+          identifier=identifier,
+          service_url=wps.url,
+          status_location=execution.statusLocation,
+          status = execution.status,
+          user = authenticated_userid(self.request),
+          start_time = datetime.datetime.now()
+          ))
                
         return HTTPFound(location=self.request.route_url('history'))
 
