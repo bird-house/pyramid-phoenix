@@ -11,7 +11,7 @@
         ${title} uses the <a href="http://geopython.github.io/OWSLib/">Python WPS Client</a> from the <a href="https://github.com/geopython">Geopython Project</a> to communicate with Web Processing Services.
     </p>
     <p>
-        ${title} is part of the <a href="http://www.dkrz.de">ClimDaPs</a> Project for Climate Data Processing.
+        ${title} is part of the <a href="/docs">ClimDaPs</a> Project for Climate Data Processing.
     </p>
     <p>
         <a class="btn btn-primary btn-large" href="${wps_service_url}?Request=GetCapabilities&Service=WPS">Capabilities (XML) &raquo;</a>
