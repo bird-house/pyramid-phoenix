@@ -9,6 +9,7 @@ CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 requires = [
     'pyramid',
     'SQLAlchemy',
+    'pymongo',
     'transaction',
     'pyramid_tm',
     'pyramid_debugtoolbar',
@@ -48,7 +49,5 @@ setup(name='Phoenix',
       entry_points="""\
       [paste.app_factory]
       main = phoenix:main
-      [console_scripts]
-      initialize_Phoenix_db = phoenix.scripts.initializedb:main
       """,
       )

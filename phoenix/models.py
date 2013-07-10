@@ -3,8 +3,6 @@ import datetime
 import uuid
 from hashlib import sha1
 
-from pyramid.security import Allow, Everyone, Authenticated, ALL_PERMISSIONS
-
 from sqlalchemy import (Table, Column, Integer, Float, Text, String, Boolean,
                         DateTime, Sequence, Unicode, ForeignKey, func)
 from sqlalchemy.ext.declarative import declarative_base
@@ -19,26 +17,6 @@ log = logging.getLogger(__name__)
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
-
-#==============================================================================
-# Authentication and Authorization
-#==============================================================================
-
-
-class RootFactory(object):
-    __acl__ = [
-                (Allow, Everyone, 'view'),
-                (Allow, Authenticated, 'edit'),
-               #(Allow, 'group:%s' % ADMIN_GROUP, ALL_PERMISSIONS)
-               ]
-
-    def __init__(self, request):
-        pass
-
-
-#==============================================================================
-# Processes
-#==============================================================================
 
 
 class ProcessHistory(Base):
