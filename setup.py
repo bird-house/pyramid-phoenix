@@ -9,8 +9,6 @@ CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 requires = [
     'pyramid',
     'pymongo',
-    'transaction',
-    'pyramid_tm',
     'pyramid_debugtoolbar',
     'zope.sqlalchemy',
     'waitress',
@@ -18,12 +16,14 @@ requires = [
     'pyramid_deform',
     'deform',
     'deform_bootstrap',
-    #'deform_bootstrap_extra',
+    'deform_bootstrap_extra',
     'pyramid_persona',
     #'WebHelpers',
     'waitress',
     'OWSLib',
     'lxml',
+    'python-dateutil',
+    #'egenix-mx-base',
     ]
 
 setup(name='Phoenix',

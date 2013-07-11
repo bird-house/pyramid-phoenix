@@ -18,6 +18,9 @@
 
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
           href="${request.static_url('deform_bootstrap:static/deform_bootstrap.css')}" />
+
+    <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
+          href="${request.static_url('deform_bootstrap:static/bootstrap-datepicker.css')}" />
    
     <metal:css define-slot="css"/>
 
@@ -33,7 +36,9 @@
 
     <script src="${request.static_url('deform_bootstrap:static/deform_bootstrap.js')}"></script>
     <script src="${request.static_url('deform_bootstrap:static/bootstrap.min.js')}"></script>
-
+    <script src="${request.static_url('deform_bootstrap:static/bootstrap-typeahead.js')}"></script>
+    <script src="${request.static_url('deform_bootstrap:static/bootstrap-datepicker.js')}"></script>
+    
     <metal:js define-slot="javascript"/>   
     
   </head>

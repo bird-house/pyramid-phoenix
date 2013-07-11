@@ -266,7 +266,8 @@ class ExecuteView(FormView):
           status_location=execution.statusLocation,
           status = execution.status,
           user = authenticated_userid(self.request),
-          start_time = datetime.datetime.now()
+          start_time = datetime.datetime.now(),
+          end_time = datetime.datetime.now(),
           ))
                
         return HTTPFound(location=self.request.route_url('history'))

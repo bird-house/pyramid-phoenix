@@ -1,6 +1,12 @@
+import dateutil
+
 import colander
 from deform import widget
 from .widget import BoundingBoxWidget
+
+import logging
+
+log = logging.getLogger(__name__)
 
 # Ouput Details ...
 # -----------------
@@ -33,7 +39,7 @@ class OutputDetails(colander.MappingSchema):
 # DataInputs ...
 # ---------------
 
-
+ 
 # schema is build dynamically
 class DataInputsSchema(colander.MappingSchema):
     @classmethod
@@ -53,59 +59,85 @@ class DataInputsSchema(colander.MappingSchema):
 
     @classmethod
     def _add_literal_data(cls, schema, data_input):
-        if 'boolean' in data_input.dataType:
-            cls._add_boolean(schema, data_input)
-        elif 'integer' in data_input.dataType:
-            cls._add_integer(schema, data_input)
-        elif 'float' in data_input.dataType:
-            cls._add_float(schema, data_input)
+        node = colander.SchemaNode(
+            cls._colander_type(data_input),
+            name = data_input.identifier,
+            title = data_input.title,
+            )
+
+        # sometimes abstract is not set
+        if hasattr(data_input, 'abstract'):
+            node.description = data_input.abstract
+        # optional value?
+        if data_input.minOccurs == 0:
+            node.missing = colander.drop
+        # TODO: fix init of default
+        if hasattr(data_input, 'defaultValue'):
+            if type(node.typ) == colander.DateTime:
+                log.debug('we have a datetime default value')
+                node.default = dateutil.parser.parse(data_input.defaultValue)
+            else:
+                node.default = data_input.defaultValue
+        cls._colander_widget(node, data_input)
+
+        # sequence of nodes ...
+        if data_input.maxOccurs > 1:
+            schema.add(colander.SchemaNode(
+                colander.Sequence(), 
+                node,
+                name=data_input.identifier,
+                title=data_input.title,
+                validator=colander.Length(max=data_input.maxOccurs)
+                ))
         else:
-            cls._add_string(schema, data_input)
+            schema.add(node)
 
     @classmethod
-    def _literal_widget(cls, data_input):
+    def _colander_type(cls, data_input):
+        log.debug('data input type = %s', data_input.dataType)
+        if 'boolean' in data_input.dataType:
+            return colander.Boolean()
+        elif 'integer' in data_input.dataType:
+            return colander.Integer()
+        elif 'float' in data_input.dataType:
+            return colander.Float()
+        elif 'double' in data_input.dataType:
+            return colander.Float()
+        elif 'decimal' in data_input.dataType:
+            return colander.Decimal()
+        elif 'dateTime' in data_input.dataType:
+            return colander.DateTime()
+        elif 'date' in data_input.dataType:
+            return colander.Date()
+        elif 'time' in data_input.dataType:
+            return colander.Time()
+        elif 'duration' in data_input.dataType:
+            # TODO: check correct type
+            # http://www.w3.org/TR/xmlschema-2/#duration
+            return colander.Time()
+        # guessing from default
+        elif hasattr(data_input, 'defaultValue'):
+            try:
+                dt = dateutil.parser.parse(data_input.defaultValue)
+            except:
+                return colander.String()
+            else:
+                return colander.DateTime()
+        else:
+            return colander.String()
+
+    @classmethod
+    def _colander_widget(cls, node, data_input):
         if len(data_input.allowedValues) > 1:
             if not 'AnyValue' in data_input.allowedValues:
                 choices = []
                 for value in data_input.allowedValues:
                     choices.append([value, value])
-                return widget.SelectWidget(values=choices)
-        return widget.TextInputWidget()
-
-    @classmethod
-    def _add_string(cls, schema, data_input):
-        schema.add(colander.SchemaNode(colander.String(), 
-                name=data_input.identifier,
-                title=data_input.title,
-                default=data_input.defaultValue,
-                #description=data_input.abstract,
-                widget=cls._literal_widget(data_input) ))
-
-    @classmethod
-    def _add_integer(cls, schema, data_input):
-        schema.add(colander.SchemaNode(colander.Integer(), 
-                name=data_input.identifier,
-                title=data_input.title,
-                default=data_input.defaultValue,
-                #description=data_input.abstract,
-                widget=cls._literal_widget(data_input) ))
-                
-    @classmethod
-    def _add_float(cls, schema, data_input):
-        schema.add(colander.SchemaNode(colander.Float(), 
-                name=data_input.identifier,
-                title=data_input.title,
-                default=data_input.defaultValue,
-                #description=data_input.abstract,
-                widget=cls._literal_widget(data_input) ))
-    @classmethod
-    def _add_boolean(cls, schema, data_input):
-        schema.add(colander.SchemaNode(colander.Boolean(), 
-                name=data_input.identifier,
-                title=data_input.title,
-                default=data_input.defaultValue,
-                #description=data_input.abstract,
-                widget=widget.CheckboxWidget()))
+                node.widget = widget.SelectWidget(values=choices)
+        elif type(node.typ) == colander.DateTime:
+            node.widget = widget.DateInputWidget()
+        else:
+            node.widget = widget.TextInputWidget()
 
     @classmethod
     def _add_complex_data(cls, schema, data_input):

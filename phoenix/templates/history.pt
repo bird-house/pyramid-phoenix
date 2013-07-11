@@ -23,13 +23,13 @@
                             </div>
                         </td>
                         <td tal:condition="p.status == 'ProcessSucceeded'">
-                            <a href="/output_details?uuid=${p.uuid}" class="label label-${p.status}">${p.status}</a>
+                            <a href="/output_details?uuid=${p.uuid}" class="label label-success">${p.status}</a>
                         </td>
                         <td tal:condition="p.status == 'ProcessFailed'">
-                            <span class="label label-${p.status}">${p.status}</span>
+                            <span class="label label-warning">${p.status}</span>
                         </td>
-                        <td tal:condition="p.status == ''">
-                            <a href="#" class="label label-${p.status}" data-toggle="popover" data-placement="left" data-content="${p.status[3]}" data-original-title="Error Message">${p.status}</a>
+                        <td tal:condition="p.status == 'Exception'">
+                            <a href="#" class="label label-important" data-toggle="popover" data-placement="left" data-content="${p.status[3]}" data-original-title="Error Message">${p.status}</a>
                         </td>
                     </tr>
                     <tr>                    
