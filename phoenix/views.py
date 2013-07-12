@@ -198,7 +198,7 @@ class ExecuteView(FormView):
 
         try:
             identifier = self.request.params.get('identifier')
-            self.wps = WebProcessingService(get_service_url(self.request), verbose=False)
+            self.wps = WebProcessingService(get_service_url(self.request), verbose=True)
             self.process = self.wps.describeprocess(identifier)
             DataInputsSchema.build(schema=self.schema, process=self.process)
 
@@ -235,6 +235,13 @@ class ExecuteView(FormView):
                 #     inputs.append( (key, str(bbox)) )
                 # else:
                 #     inputs.append( (key, str(value)) )
+            elif self.input_types[key] == 'ComplexData':
+                # TODO: handle complex data
+                log.debug('complex value: %s' % value)
+                if len(value) > 0:
+                    #str_value = value[0].get('fp').read()
+                    str_value = str(value[0].get('filename'))
+                    inputs.append( (key, str_value) )
             else:
                 inputs.append( (key, str(value)) )
 
