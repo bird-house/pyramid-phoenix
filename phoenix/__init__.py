@@ -32,14 +32,6 @@ def main(global_config, **settings):
     from deform import Form
     import os
 
-    deform_templates = resource_filename('deform', 'templates')
-    deform_bootstrap_templates = resource_filename('deform_bootstrap', 'templates')
-    own_templates = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                 'templates/deform'))
-    search_path = (own_templates, deform_bootstrap_templates, deform_templates)
-
-    Form.set_zpt_renderer(search_path)
-
     # static views (stylesheets etc)
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_static_view('deform_static', 'deform:static', cache_max_age=3600)

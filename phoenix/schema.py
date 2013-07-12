@@ -1,8 +1,8 @@
 import dateutil
+import re
 
 import colander
 from deform import widget
-from .widget import BoundingBoxWidget
 
 import logging
 
@@ -39,6 +39,7 @@ class OutputDetails(colander.MappingSchema):
 # DataInputs ...
 # ---------------
 
+# TODO: use widget category as grouping info
  
 # schema is build dynamically
 class DataInputsSchema(colander.MappingSchema):
@@ -60,7 +61,7 @@ class DataInputsSchema(colander.MappingSchema):
     @classmethod
     def _add_literal_data(cls, schema, data_input):
         node = colander.SchemaNode(
-            cls._colander_type(data_input),
+            cls._colander_literal_type(data_input),
             name = data_input.identifier,
             title = data_input.title,
             )
@@ -78,7 +79,7 @@ class DataInputsSchema(colander.MappingSchema):
                 node.default = dateutil.parser.parse(data_input.defaultValue)
             else:
                 node.default = data_input.defaultValue
-        cls._colander_widget(node, data_input)
+        cls._colander_literal_widget(node, data_input)
 
         # sequence of nodes ...
         if data_input.maxOccurs > 1:
@@ -93,7 +94,7 @@ class DataInputsSchema(colander.MappingSchema):
             schema.add(node)
 
     @classmethod
-    def _colander_type(cls, data_input):
+    def _colander_literal_type(cls, data_input):
         log.debug('data input type = %s', data_input.dataType)
         if 'boolean' in data_input.dataType:
             return colander.Boolean()
@@ -127,7 +128,7 @@ class DataInputsSchema(colander.MappingSchema):
             return colander.String()
 
     @classmethod
-    def _colander_widget(cls, node, data_input):
+    def _colander_literal_widget(cls, node, data_input):
         if len(data_input.allowedValues) > 1:
             if not 'AnyValue' in data_input.allowedValues:
                 choices = []
@@ -151,12 +152,47 @@ class DataInputsSchema(colander.MappingSchema):
 
     @classmethod
     def _add_boundingbox(cls, schema, data_input):
-        schema.add(colander.SchemaNode(
+        node = colander.SchemaNode(
             colander.String(),
             name=data_input.identifier,
             title=data_input.title,
-            #description=data_input.abstract,
-            widget=BoundingBoxWidget(),
-            ))
+            default="0,-90,180,90"
+            )
+        # sometimes abstract is not set
+        if hasattr(data_input, 'abstract'):
+            node.description = data_input.abstract
+
+        # optional value?
+        if data_input.minOccurs == 0:
+            node.missing = colander.drop
+
+        # widget
+        # TODO: need special widget for bbox
+        node.widget = widget.TextInputWidget(
+            #mask = '99,99,99,99',
+            #mask_placeholder = '#',
+            )
+        # validator
+        pattern = '-?\d+,-?\d+,-?\d+,-?\d+'
+        regex = re.compile(pattern)
+        node.validator = colander.Regex(
+            regex=regex, 
+            msg='String does not match pattern: min-X,min-Y,max-X,max-Y')
+
+        # finally add node to root schema
+        # sequence of nodes ...
+        if data_input.maxOccurs > 1:
+            schema.add(colander.SchemaNode(
+                colander.Sequence(), 
+                node,
+                name=data_input.identifier,
+                title=data_input.title,
+                validator=colander.Length(max=data_input.maxOccurs)
+                ))
+        else:
+            schema.add(node)
+        
+
+
 
     
