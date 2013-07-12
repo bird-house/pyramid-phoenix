@@ -95,25 +95,19 @@ def history(request):
             wps = WebProcessingService(proc['service_url'], verbose=False)
             execution = WPSExecution(url=wps.url)
             execution.checkStatus(url=proc['status_location'], sleepSecs=0)
-            if execution.isComplete():
-                proc['status'] = execution.status
+            proc['status'] = execution.status
             proc['end_time'] = datetime.datetime.now()
            
             # TODO: configure output delete time
             dd = 3
             proc['output_delete_time'] = datetime.datetime.now() + \
                                       datetime.timedelta(days=dd)
-
-        if proc['status'] == 'ProcessAccepted':
             percent = 45  # TODO: poll percent
             proc['progress'] = percent
-            proc['duration'] = str(datetime.datetime.now() - proc['start_time'])
-        else:
             proc['duration'] = str(proc['end_time'] - proc['start_time'])
-
+            db.history.update({'uuid':proc['uuid']}, proc)
         history.append(proc)
-        db.history.update({'uuid':proc['uuid']}, proc)
-
+        
         log.debug('leaving history')
 
     return dict(history=history)
