@@ -1,12 +1,30 @@
+# Author:   Carsten Ehbrecht
+#           ehbrecht@dkrz.de
+#
+# TODO: schema code quite dirty. Needs refactoring!
+
+
+
 import dateutil
 import re
 
 import colander
-from deform import widget
+import deform
 
 import logging
 
 log = logging.getLogger(__name__)
+
+# Memory tempstore for file uploads
+# ---------------------------------
+
+class MemoryTmpStore(dict):
+    """ Instances of this class implement the
+    :class:`deform.interfaces.FileUploadTempStore` interface"""
+    def preview_url(self, uid):
+        return None
+
+tmpstore = MemoryTmpStore()
 
 # Ouput Details ...
 # -----------------
@@ -14,10 +32,10 @@ log = logging.getLogger(__name__)
 class OutputContent(colander.MappingSchema):
     data = colander.SchemaNode(
         colander.String(),
-        widget=widget.TextInputWidget())
+        widget=deform.widget.TextInputWidget())
     reference = colander.SchemaNode(
         colander.Boolean(),
-        widget=widget.CheckboxWidget())
+        widget=deform.widget.CheckboxWidget())
 
 class OutputContents(colander.SequenceSchema):
     content = OutputContent()
@@ -25,13 +43,13 @@ class OutputContents(colander.SequenceSchema):
 class OutputDetails(colander.MappingSchema):
     identifier = colander.SchemaNode(
         colander.String(),
-        widget=widget.TextInputWidget())
+        widget=deform.widget.TextInputWidget())
     complete = colander.SchemaNode(
         colander.Boolean(),
-        widget=widget.CheckboxWidget())
+        widget=deform.widget.CheckboxWidget())
     succeded = colander.SchemaNode(
         colander.Boolean(),
-        widget=widget.CheckboxWidget())
+        widget=deform.widget.CheckboxWidget())
 
     contents = OutputContents()
 
@@ -134,21 +152,41 @@ class DataInputsSchema(colander.MappingSchema):
                 choices = []
                 for value in data_input.allowedValues:
                     choices.append([value, value])
-                node.widget = widget.SelectWidget(values=choices)
+                node.widget = deform.widget.SelectWidget(values=choices)
         elif type(node.typ) == colander.DateTime:
-            node.widget = widget.DateInputWidget()
+            node.widget = deform.widget.DateInputWidget()
         else:
-            node.widget = widget.TextInputWidget()
+            node.widget = deform.widget.TextInputWidget()
 
     @classmethod
     def _add_complex_data(cls, schema, data_input):
-        schema.add(colander.SchemaNode(
-              colander.String(),
-              name=data_input.identifier,
-              title=data_input.title,
-              #description=data_input.abstract,
-              widget=widget.TextAreaWidget(rows=5),
-              ))
+        node = colander.SchemaNode(
+            deform.FileData(),
+            name=data_input.identifier,
+            title=data_input.title,
+            widget=deform.widget.FileUploadWidget(tmpstore)
+            )
+
+        # sometimes abstract is not set
+        if hasattr(data_input, 'abstract'):
+            node.description = data_input.abstract
+
+        # optional value?
+        if data_input.minOccurs == 0:
+            node.missing = colander.drop
+
+        # finally add node to root schema
+        # sequence of nodes ...
+        if data_input.maxOccurs > 1:
+            schema.add(colander.SchemaNode(
+                colander.Sequence(), 
+                node,
+                name=data_input.identifier,
+                title=data_input.title,
+                validator=colander.Length(max=data_input.maxOccurs)
+                ))
+        else:
+            schema.add(node)
 
     @classmethod
     def _add_boundingbox(cls, schema, data_input):
@@ -156,7 +194,8 @@ class DataInputsSchema(colander.MappingSchema):
             colander.String(),
             name=data_input.identifier,
             title=data_input.title,
-            default="0,-90,180,90"
+            default="0,-90,180,90",
+            widget=deform.widget.TextInputWidget()
             )
         # sometimes abstract is not set
         if hasattr(data_input, 'abstract'):
@@ -166,12 +205,6 @@ class DataInputsSchema(colander.MappingSchema):
         if data_input.minOccurs == 0:
             node.missing = colander.drop
 
-        # widget
-        # TODO: need special widget for bbox
-        node.widget = widget.TextInputWidget(
-            #mask = '99,99,99,99',
-            #mask_placeholder = '#',
-            )
         # validator
         pattern = '-?\d+,-?\d+,-?\d+,-?\d+'
         regex = re.compile(pattern)
