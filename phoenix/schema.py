@@ -210,7 +210,7 @@ class DataInputsSchema(colander.MappingSchema):
         regex = re.compile(pattern)
         node.validator = colander.Regex(
             regex=regex, 
-            msg='String does not match pattern: min-X,min-Y,max-X,max-Y')
+            msg='String does not match pattern: minx,miny,maxx,maxy')
 
         # finally add node to root schema
         # sequence of nodes ...

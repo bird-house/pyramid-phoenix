@@ -183,6 +183,9 @@ class ExecuteView(FormView):
     buttons = ('submit',)
     title = u"Process Output"
     schema_factory = None
+    wps = None
+    process = None
+    input_types = None
    
     def __call__(self):
         from .schema import DataInputsSchema  
@@ -195,9 +198,13 @@ class ExecuteView(FormView):
 
         try:
             identifier = self.request.params.get('identifier')
-            wps = WebProcessingService(get_service_url(self.request), verbose=False)
-            process = wps.describeprocess(identifier)
-            DataInputsSchema.build(schema=self.schema, process=process)
+            self.wps = WebProcessingService(get_service_url(self.request), verbose=False)
+            self.process = self.wps.describeprocess(identifier)
+            DataInputsSchema.build(schema=self.schema, process=self.process)
+
+            self.input_types = {}
+            for data_input in self.process.dataInputs:
+                self.input_types[data_input.identifier] = data_input.dataType
         except:
             raise
        
@@ -215,36 +222,30 @@ class ExecuteView(FormView):
         log.debug('identifier = %s', identifier)
         # params = peppercorn.parse(request.params.items())
 
-        # if 'gui_desc' in params:
-        #     inputs = {'literal': {}, 'complex': {}, 'boundingbox': {}}
-
-        #     for k, v in eval(params['gui_desc']).items():
-        #         if v.startswith('literal'):
-        #             inputs['literal'][k] = params[k]
-        #         elif v.startswith('complex'):
-        #             if v.split(':')[1] == 'list':
-        #                 inputs['complex'][k] = params[k].split()
-        #             else:
-        #                 inputs['complex'][k] = [params[k]]
-        #         elif v.startswith('boundingbox'):
-        #             inputs['boundingbox'][k] = params[k]
-
         inputs = []
         serialized = self.schema.serialize(appstruct)
         for (key, value) in serialized.iteritems():
-            inputs.append( (str(key), str(value)) )
+            if self.input_types[key] == None:
+                # TODO: handle bounding box
+                log.debug('bbox value: %s' % value)
+                inputs.append( (key, str(value)) )
+                # if len(value) > 0:
+                #     (minx, miny, maxx, maxy) = value[0].split(',')
+                #     bbox = [[float(minx),float(miny)],[float(maxx),float(maxy)]]
+                #     inputs.append( (key, str(bbox)) )
+                # else:
+                #     inputs.append( (key, str(value)) )
+            else:
+                inputs.append( (key, str(value)) )
 
         log.debug('inputs =  %s', inputs)
 
-        wps = WebProcessingService(get_service_url(self.request), verbose=False)
-        process = wps.describeprocess(identifier)
-
         outputs = []
-        for output in process.processOutputs:
+        for output in self.process.processOutputs:
             outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
 
         log.debug('before wps.execute')
-        execution = wps.execute(identifier, inputs=inputs, output=outputs)
+        execution = self.wps.execute(identifier, inputs=inputs, output=outputs)
         #execution = wps.execute(identifier, inputs, output="out")
         log.debug('after wps.execute')
 
@@ -262,7 +263,7 @@ class ExecuteView(FormView):
           user_id=authenticated_userid(self.request), 
           uuid=uuid.uuid4().get_hex(),
           identifier=identifier,
-          service_url=wps.url,
+          service_url=self.wps.url,
           status_location=execution.statusLocation,
           status = execution.status,
           user = authenticated_userid(self.request),
