@@ -9,6 +9,12 @@ def get_service_url(request):
     log.debug('using wps = %s', service_url)
     return service_url
 
+def whitelist(request):
+	settings = request.registry.settings
+	whitelist_str = settings.get('phoenix.login.whitelist', '')
+	whitelist = whitelist_str.split(',')
+	return whitelist
+
 def mongodb_conn(request):
 	settings = request.registry.settings
 	conn = settings.get('mongodb_conn', None)

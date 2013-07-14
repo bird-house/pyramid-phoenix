@@ -6,10 +6,11 @@ from pyramid.response import Response
 from pyramid.security import remember, forget, authenticated_userid
 from pyramid.events import subscriber, BeforeRender
 from pyramid_deform import FormView
+from pyramid_persona.views import verify_login 
 import deform
 import peppercorn
 
-from .helpers import get_service_url, mongodb_conn
+from .helpers import get_service_url, whitelist, mongodb_conn
 
 import logging
 
@@ -33,6 +34,26 @@ def add_global(event):
 #     response.status_int = 500
 #     response.content_type = 'text/xml'
 #     return response
+
+
+# login
+# -----
+
+@view_config(route_name='login', check_csrf=True, renderer='json')
+def login(request):
+    # TODO: update login to my needs
+    # https://pyramid_persona.readthedocs.org/en/latest/customization.html#do-extra-work-or-verification-at-login
+
+    # Verify the assertion and get the email of the user
+    email = verify_login(request)
+    # check whitelist
+    if email not in whitelist(request):
+        request.session.flash('Sorry, you are not on the list')
+        return {'redirect': '/', 'success': False}
+    # Add the headers required to remember the user to the response
+    request.response.headers.extend(remember(request, email))
+    # Return a json message containing the address or path to redirect to.
+    return {'redirect': request.POST['came_from'], 'success': True}
 
 
 # home view
