@@ -22,9 +22,9 @@ def add_global(event):
     event['message_type'] = 'alert-info'
     event['message'] = ''
 
-#==============================================================================
+
 # Exception view
-#==============================================================================
+# --------------
 
 # @view_config(context=Exception)
 # def error_view(exc, request):
@@ -35,9 +35,8 @@ def add_global(event):
 #     return response
 
 
-#==============================================================================
-# home
-#==============================================================================
+# home view
+# ---------
 
 @view_config(route_name='home',
              renderer='templates/home.pt',
@@ -53,10 +52,8 @@ def home(request):
     return dict()
 
 
-#==============================================================================
 # processes
-#==============================================================================
-
+# ---------
 
 @view_config(route_name='processes',
              renderer='templates/processes.pt',
@@ -68,9 +65,8 @@ def processes(request):
     wps.getcapabilities()
     return dict( wps=wps, logged_in=authenticated_userid(request))
    
-#==============================================================================
 # history
-#==============================================================================
+# -------
 
 @view_config(route_name='history',
              renderer='templates/history.pt',
@@ -113,9 +109,9 @@ def history(request):
     return dict(history=history)
 
 
-#==============================================================================
+
 # output_details
-#==============================================================================
+# --------------
 
 @view_config(
              route_name='output_details',
@@ -162,9 +158,9 @@ def output_details(request):
     return dict(form=form)
 
 
-#==============================================================================
 # form
-#==============================================================================
+# -----
+
 
 @view_config(route_name='form',
              renderer='templates/form.pt',
