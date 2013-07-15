@@ -35,34 +35,6 @@ class AdminSchema(colander.MappingSchema):
         widget = deform.widget.TextInputWidget(readonly=True)
         )
 
-# Ouput Details ...
-# -----------------
-
-class OutputContent(colander.MappingSchema):
-    data = colander.SchemaNode(
-        colander.String(),
-        widget=deform.widget.TextInputWidget())
-    reference = colander.SchemaNode(
-        colander.Boolean(),
-        widget=deform.widget.CheckboxWidget())
-
-class OutputContents(colander.SequenceSchema):
-    content = OutputContent()
-
-class OutputDetails(colander.MappingSchema):
-    identifier = colander.SchemaNode(
-        colander.String(),
-        widget=deform.widget.TextInputWidget())
-    complete = colander.SchemaNode(
-        colander.Boolean(),
-        widget=deform.widget.CheckboxWidget())
-    succeded = colander.SchemaNode(
-        colander.Boolean(),
-        widget=deform.widget.CheckboxWidget())
-
-    contents = OutputContents()
-
-
 # DataInputs ...
 # ---------------
 
@@ -234,7 +206,51 @@ class DataInputsSchema(colander.MappingSchema):
         else:
             schema.add(node)
         
-
-
-
     
+# Ouput Details ...
+# -----------------
+
+class OutputValue(colander.MappingSchema):
+    mime_type = colander.SchemaNode(
+        colander.String())
+    encoding = colander.SchemaNode(
+        colander.String())
+    value_schema = colander.SchemaNode(
+        colander.String())
+    value = colander.SchemaNode(
+        colander.String())
+
+
+class OutputValues(colander.SequenceSchema):
+    value = OutputValue()
+
+class OutputContent(colander.MappingSchema):
+    identifier = colander.SchemaNode(
+        colander.String())
+    title = colander.SchemaNode(
+        colander.String())
+    abstract = colander.SchemaNode(
+        colander.String())
+    data_type = colander.SchemaNode(
+        colander.String())
+    mime_type = colander.SchemaNode(
+        colander.String())
+    reference = colander.SchemaNode(
+        colander.String())
+    values = OutputValues()
+
+class OutputContents(colander.SequenceSchema):
+    content = OutputContent()
+
+class OutputDetails(colander.MappingSchema):
+    identifier = colander.SchemaNode(
+        colander.String(),
+        widget=deform.widget.TextInputWidget())
+    complete = colander.SchemaNode(
+        colander.Boolean(),
+        widget=deform.widget.CheckboxWidget())
+    succeded = colander.SchemaNode(
+        colander.Boolean(),
+        widget=deform.widget.CheckboxWidget())
+
+    contents = OutputContents()

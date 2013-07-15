@@ -16,7 +16,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-from owslib.wps import WebProcessingService, WPSExecution
+from owslib.wps import WebProcessingService, WPSExecution, ComplexData
 
 @subscriber(BeforeRender)
 def add_global(event):
@@ -177,12 +177,24 @@ def output_details(request):
             'contents'  : []  
         }
         for output in execution.processOutputs:
-            if output.reference is not None:
-                content = {'data' : output.reference, 'reference' : True}
-                appstruct['contents'].append(content)
-            else:
-                content = {'data' : output.data, 'reference' : False}
-                appstruct['contents'].append(content)
+            content = {}
+            content['identifier'] = output.identifier
+            content['title'] = output.title
+            content['mime_type'] = output.mimeType
+            if hasattr(output, 'abstract'):
+                content['abstract'] = output.abstract
+            content['data_type'] = output.dataType
+            content['reference'] = output.reference
+            content['values'] = []
+            for datum in output.data:
+                if isinstance(datum, ComplexData):
+                    value = {
+                        'reference' : datum.reference,
+                        'mime_type' : datum.mime_type }
+                else:
+                    value = {'value' : datum}
+                content['values'].append(value)
+            appstruct['contents'].append(content)
     log.debug('out appstruct = %s', appstruct)
 
     form = myform.render(appstruct, readonly=True)
