@@ -309,6 +309,34 @@ def monitor(request):
     log.debug('rendering monitor view')
     return dict(external_url='http://localhost:9001')
 
+@view_config(route_name='admin',
+             renderer='templates/form.pt',
+             layout='default',
+             permission='view',
+             )
+class AdminView(FormView):
+    from .schema import AdminSchema
+
+    log.debug('rendering admin view')
+    #form_info = "Hover your mouse over the widgets for description."
+    schema = AdminSchema()
+    buttons = ('clear_database',)
+    title = u"Administration"
+
+    def appstruct(self):
+        # mongodb
+        conn = mongodb_conn(self.request)
+        db = conn.phoenix_db
+               
+        return {'history_count' : db.history.count()}
+
+    def clear_database_success(self, appstruct):
+        # mongodb
+        conn = mongodb_conn(self.request)
+        conn.phoenix_db.history.drop()
+               
+        return HTTPFound(location=self.request.route_url('admin'))
+
 @view_config(route_name='help',
              renderer='templates/embedded.pt',
              layout='default',

@@ -26,6 +26,15 @@ class MemoryTmpStore(dict):
 
 tmpstore = MemoryTmpStore()
 
+class AdminSchema(colander.MappingSchema):
+    history_count = colander.SchemaNode(
+        colander.Int(),
+        name = 'history_count',
+        title = "Number of Processings",
+        missing = 0,
+        widget = deform.widget.TextInputWidget(readonly=True)
+        )
+
 # Ouput Details ...
 # -----------------
 
