@@ -196,7 +196,7 @@ def output_details(request):
 @view_config(route_name='form',
              renderer='templates/form.pt',
              layout='default',
-             permission='view'
+             permission='edit'
              )
 class ExecuteView(FormView):
     log.debug('rendering execute')
@@ -304,7 +304,7 @@ class ExecuteView(FormView):
 @view_config(route_name='monitor',
              renderer='templates/embedded.pt',
              layout='default',
-             permission='view'
+             permission='edit'
              )
 def monitor(request):
     log.debug('rendering monitor view')
@@ -313,7 +313,7 @@ def monitor(request):
 @view_config(route_name='admin',
              renderer='templates/form.pt',
              layout='default',
-             permission='view',
+             permission='edit',
              )
 class AdminView(FormView):
     from .schema import AdminSchema
