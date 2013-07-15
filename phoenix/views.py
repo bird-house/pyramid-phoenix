@@ -55,6 +55,15 @@ def login(request):
     # Return a json message containing the address or path to redirect to.
     return {'redirect': request.POST['came_from'], 'success': True}
 
+# logout
+# ------
+
+
+@view_config(route_name='logout', check_csrf=True, renderer='json')
+def logout(request):
+    request.response.headers.extend(forget(request))
+    return {'redirect': request.POST['came_from']}
+
 
 # home view
 # ---------
