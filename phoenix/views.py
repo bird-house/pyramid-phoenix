@@ -117,7 +117,8 @@ def history(request):
 
         proc['starttime'] = proc['start_time'].strftime('%a, %d %h %Y %I:%M:%S %p')
 
-        if proc['status'] == 'ProcessAccepted':
+        # TODO: handle different process status
+        if proc['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
             wps = WebProcessingService(proc['service_url'], verbose=False)
             execution = WPSExecution(url=wps.url)
             execution.checkStatus(url=proc['status_location'], sleepSecs=0)

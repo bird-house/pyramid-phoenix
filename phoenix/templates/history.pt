@@ -16,7 +16,7 @@
                         <td><a rel="tooltip" data-placement="right" title="ID: ${p.uuid}">${p.identifier}</a></td>
                         <td>${p.starttime}</td>
                         <td>${p.duration}</td>
-                        <td tal:condition="p.status == 'ProcessAccepted'">
+                        <td tal:condition="p.status in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']">
                             <small>${p.status}</small>
                             <div class="progress progress-info">
                                 <div class="bar" style="width: ${p.progress}%;">${p.progress}%</div>
