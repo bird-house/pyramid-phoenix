@@ -207,7 +207,7 @@ class DataInputsSchema(colander.MappingSchema):
             schema.add(node)
         
     
-# Ouput Details ...
+# Ouput Data ...
 # -----------------
 
 class OutputValue(colander.MappingSchema):
@@ -220,7 +220,6 @@ class OutputValue(colander.MappingSchema):
     value = colander.SchemaNode(
         colander.String())
 
-
 class OutputValues(colander.SequenceSchema):
     value = OutputValue()
 
@@ -229,28 +228,46 @@ class OutputContent(colander.MappingSchema):
         colander.String())
     title = colander.SchemaNode(
         colander.String())
-    abstract = colander.SchemaNode(
-        colander.String())
+    #abstract = colander.SchemaNode(
+    #    colander.String(),
+    #    missing = colander.drop)
     data_type = colander.SchemaNode(
         colander.String())
     mime_type = colander.SchemaNode(
         colander.String())
     reference = colander.SchemaNode(
         colander.String())
-    values = OutputValues()
+    value = colander.SchemaNode(
+        colander.String())
+    #values = OutputValues()
 
 class OutputContents(colander.SequenceSchema):
     content = OutputContent()
 
-class OutputDetails(colander.MappingSchema):
+
+class OutputDataSchema(colander.MappingSchema):
     identifier = colander.SchemaNode(
         colander.String(),
-        widget=deform.widget.TextInputWidget())
+        widget = deform.widget.TextInputWidget(readonly=True))
     complete = colander.SchemaNode(
         colander.Boolean(),
-        widget=deform.widget.CheckboxWidget())
+        widget = deform.widget.CheckboxWidget(readonly=True))
     succeded = colander.SchemaNode(
         colander.Boolean(),
-        widget=deform.widget.CheckboxWidget())
+        widget = deform.widget.CheckboxWidget(readonly=True))
 
-    contents = OutputContents()
+    @classmethod
+    def build(cls, schema, process_outputs):
+        for output in process_outputs:
+            output_schema = colander.SchemaNode(
+                colander.String(),
+                name = output.identifier,
+                title = output.title,
+                widget = deform.widget.TextInputWidget(readonly=True))
+            # sometimes abstract is not set
+            if hasattr(output, 'abstract'):
+                output_schema.description = output.abstract
+            schema.add(output_schema)
+      
+
+    

@@ -139,71 +139,75 @@ def history(request):
 
     return dict(history=history)
 
-
-
 # output_details
 # --------------
 
 @view_config(
-             route_name='output_details',
-             renderer='templates/form.pt',
-             layout='default',
-             permission='edit'
-             )
-def output_details(request):
-    log.debug('rendering output_details')
-    from .schema import OutputDetails
-    schema = OutputDetails()
-    myform = deform.Form(schema)
+     route_name='output_details',
+     renderer='templates/form.pt',
+     layout='default',
+     permission='edit')
+class OutputDetailsView(FormView):
+    log.debug('output details execute')
+    title = u"Process Outputs"
+    schema_factory = None
+    wps = None
+    execution = None
+   
 
-    appstruct = {
-               
-                'result' : 'nothing',
-                'complete' : False,
-                'succeded' : False,
-            }
-    if 'uuid' in request.params:
-        conn = mongodb_conn(request)
-        db = conn.phoenix_db
-        proc = db.history.find_one({'uuid':request.params.get('uuid')})
-        wps = WebProcessingService(proc['service_url'], verbose=False)
-        execution = WPSExecution(url=wps.url)
-        execution.checkStatus(url=proc['status_location'], sleepSecs=0)
-                
+    def __call__(self):
+        from .schema import OutputDataSchema  
+        
+        # build the schema if it not exist
+        if self.schema is None:
+            if self.schema_factory is None:
+                self.schema_factory = OutputDataSchema
+            self.schema = self.schema_factory()
+
+        try:
+            conn = mongodb_conn(self.request)
+            db = conn.phoenix_db
+            proc = db.history.find_one({'uuid':self.request.params.get('uuid')})
+            self.wps = WebProcessingService(proc['service_url'], verbose=False)
+            self.execution = WPSExecution(url=self.wps.url)
+            self.execution.checkStatus(url=proc['status_location'], sleepSecs=0)
+
+            OutputDataSchema.build(
+                schema=self.schema, 
+                process_outputs=self.execution.processOutputs)            
+        except:
+            raise
+       
+        return super(OutputDetailsView, self).__call__()
+
+    def appstruct(self):
         appstruct = {
-            'identifier' : execution.process.identifier,
-            'complete' : execution.isComplete(),
-            'succeded' : execution.isSucceded(),
-            'contents'  : []  
+            'identifier' : self.execution.process.identifier,
+            'complete' : self.execution.isComplete(),
+            'succeded' : self.execution.isSucceded(),
         }
-        for output in execution.processOutputs:
-            content = {}
-            content['identifier'] = output.identifier
-            content['title'] = output.title
-            content['mime_type'] = output.mimeType
-            if hasattr(output, 'abstract'):
-                content['abstract'] = output.abstract
-            content['data_type'] = output.dataType
-            content['reference'] = output.reference
-            content['values'] = []
-            for datum in output.data:
-                if isinstance(datum, ComplexData):
-                    value = {
-                        'reference' : datum.reference,
-                        'mime_type' : datum.mime_type }
-                else:
-                    value = {'value' : datum}
-                content['values'].append(value)
-            appstruct['contents'].append(content)
-    log.debug('out appstruct = %s', appstruct)
+        for output in self.execution.processOutputs:
+            appstruct[output.identifier] = output.data
+       
+            #content['data_type'] = output.dataType
+            #content['mime_type'] = output.mimeType
+            #content['reference'] = output.reference
+            #content['value'] = output.data
+            #content['values'] = []
+            # for datum in output.data:
+            #     if isinstance(datum, ComplexData):
+            #         value = {
+            #             'reference' : datum.reference,
+            #             'mime_type' : datum.mime_type }
+            #     else:
+            #         value = {'value' : datum}
+            #     content['values'].append(value)
+        log.debug('out appstruct = %s', appstruct)
 
-    form = myform.render(appstruct, readonly=True)
-    return dict(form=form)
-
+        return appstruct
 
 # form
 # -----
-
 
 @view_config(route_name='form',
              renderer='templates/form.pt',
