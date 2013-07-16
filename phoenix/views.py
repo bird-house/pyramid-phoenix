@@ -142,57 +142,56 @@ def history(request):
 # output_details
 # --------------
 
+class ReadOnlyView(FormView):
+    def show(self, form):
+        appstruct = self.appstruct()
+        if appstruct is None:
+            rendered = form.render(readonly=True)
+        else:
+            rendered = form.render(appstruct, readonly=True)
+        return { 'form': rendered, }
+
 @view_config(
      route_name='output_details',
      renderer='templates/form.pt',
      layout='default',
      permission='edit')
-class OutputDetailsView(FormView):
+class OutputDetailsView(ReadOnlyView):
     log.debug('output details execute')
     title = u"Process Outputs"
-    schema_factory = None
-    wps = None
-    execution = None
+    from .schema import output_schema
+    schema = output_schema()
    
-
-    def __call__(self):
-        from .schema import OutputDataSchema  
-        
-        # build the schema if it not exist
-        if self.schema is None:
-            if self.schema_factory is None:
-                self.schema_factory = OutputDataSchema
-            self.schema = self.schema_factory()
-
-        try:
-            conn = mongodb_conn(self.request)
-            db = conn.phoenix_db
-            proc = db.history.find_one({'uuid':self.request.params.get('uuid')})
-            self.wps = WebProcessingService(proc['service_url'], verbose=False)
-            self.execution = WPSExecution(url=self.wps.url)
-            self.execution.checkStatus(url=proc['status_location'], sleepSecs=0)
-
-            OutputDataSchema.build(
-                schema=self.schema, 
-                process_outputs=self.execution.processOutputs)            
-        except:
-            raise
-       
-        return super(OutputDetailsView, self).__call__()
-
     def appstruct(self):
+        conn = mongodb_conn(self.request)
+        db = conn.phoenix_db
+        proc = db.history.find_one({'uuid':self.request.params.get('uuid')})
+        self.wps = WebProcessingService(proc['service_url'], verbose=False)
+        self.execution = WPSExecution(url=self.wps.url)
+        self.execution.checkStatus(url=proc['status_location'], sleepSecs=0)
+
         appstruct = {
             'identifier' : self.execution.process.identifier,
             'complete' : self.execution.isComplete(),
             'succeded' : self.execution.isSucceded(),
         }
+
+        appstruct['outputs'] = []
         for output in self.execution.processOutputs:
-            appstruct[output.identifier] = output.data
-       
+            output_appstruct = {}
+            output_appstruct['name'] = output.title
+            output_appstruct['mime_type'] = output.mimeType
+            if output.reference != None:
+                output_appstruct['reference'] = output.reference
+            output_appstruct['data'] = []
+            for datum in output.data:
+                data_appstruct = {}
+                data_appstruct['value'] = datum
+                output_appstruct['data'].append(data_appstruct)
+            appstruct['outputs'].append(output_appstruct)
+          
             #content['data_type'] = output.dataType
-            #content['mime_type'] = output.mimeType
-            #content['reference'] = output.reference
-            #content['value'] = output.data
+          
             #content['values'] = []
             # for datum in output.data:
             #     if isinstance(datum, ComplexData):

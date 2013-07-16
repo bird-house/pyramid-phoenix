@@ -210,64 +210,80 @@ class DataInputsSchema(colander.MappingSchema):
 # Ouput Data ...
 # -----------------
 
-class OutputValue(colander.MappingSchema):
-    mime_type = colander.SchemaNode(
-        colander.String())
-    encoding = colander.SchemaNode(
-        colander.String())
-    value_schema = colander.SchemaNode(
-        colander.String())
-    value = colander.SchemaNode(
-        colander.String())
+# class OutputValue(colander.MappingSchema):
+#     mime_type = colander.SchemaNode(
+#         colander.String())
+#     encoding = colander.SchemaNode(
+#         colander.String())
+#     value_schema = colander.SchemaNode(
+#         colander.String())
+#     value = colander.SchemaNode(
+#         colander.String())
 
-class OutputValues(colander.SequenceSchema):
-    value = OutputValue()
-
-class OutputContent(colander.MappingSchema):
-    identifier = colander.SchemaNode(
-        colander.String())
-    title = colander.SchemaNode(
-        colander.String())
-    #abstract = colander.SchemaNode(
-    #    colander.String(),
-    #    missing = colander.drop)
-    data_type = colander.SchemaNode(
-        colander.String())
-    mime_type = colander.SchemaNode(
-        colander.String())
-    reference = colander.SchemaNode(
-        colander.String())
-    value = colander.SchemaNode(
-        colander.String())
-    #values = OutputValues()
-
-class OutputContents(colander.SequenceSchema):
-    content = OutputContent()
+# class OutputContent(colander.MappingSchema):
+#     identifier = colander.SchemaNode(
+#         colander.String())
+#     title = colander.SchemaNode(
+#         colander.String())
+#     #abstract = colander.SchemaNode(
+#     #    colander.String(),
+#     #    missing = colander.drop)
+#     data_type = colander.SchemaNode(
+#         colander.String())
+#     mime_type = colander.SchemaNode(
+#         colander.String())
+#     reference = colander.SchemaNode(
+#         colander.String())
+#     value = colander.SchemaNode(
+#         colander.String())
+#     #values = OutputValues()
 
 
-class OutputDataSchema(colander.MappingSchema):
-    identifier = colander.SchemaNode(
-        colander.String(),
-        widget = deform.widget.TextInputWidget(readonly=True))
-    complete = colander.SchemaNode(
-        colander.Boolean(),
-        widget = deform.widget.CheckboxWidget(readonly=True))
-    succeded = colander.SchemaNode(
-        colander.Boolean(),
-        widget = deform.widget.CheckboxWidget(readonly=True))
 
-    @classmethod
-    def build(cls, schema, process_outputs):
-        for output in process_outputs:
-            output_schema = colander.SchemaNode(
-                colander.String(),
-                name = output.identifier,
-                title = output.title,
-                widget = deform.widget.TextInputWidget(readonly=True))
-            # sometimes abstract is not set
-            if hasattr(output, 'abstract'):
-                output_schema.description = output.abstract
-            schema.add(output_schema)
+# friend = colander.SchemaNode(Tuple())
+# friend.add(colander.SchemaNode(colander.Int(),
+#                               validator=colander.Range(0, 9999),
+#            name='rank'))
+# friend.add(colander.SchemaNode(colander.String(), name='name')
+
+# phone = colander.SchemaNode(Mapping())
+# phone.add(colander.SchemaNode(colander.String(),
+#                              validator=colander.OneOf(['home', 'work']),
+#                              name='location'))
+# phone.add(colander.SchemaNode(colander.String(), name='number'))
+
+# schema = colander.SchemaNode(Mapping())
+# schema.add(colander.SchemaNode(colander.String(), name='name'))
+# schema.add(colander.SchemaNode(colander.Int(), name='age'),
+#                               validator=colander.Range(0, 200))
+# schema.add(colander.SchemaNode(colander.Sequence(), friend, name='friends'))
+# schema.add(colander.SchemaNode(colander.Sequence(), phone, name='phones'))
+
+
+def output_schema():
+    # data
+    data = colander.SchemaNode(colander.Mapping())
+    data.add(colander.SchemaNode(colander.String(), name='value'))
+
+    # output
+    output = colander.SchemaNode(colander.Mapping())
+    output.add(colander.SchemaNode(colander.String(), name = 'name'))
+    output.add(colander.SchemaNode(colander.String(), name = 'reference',
+        missing = colander.drop))
+    output.add(colander.SchemaNode(colander.String(), name = 'mime_type'))
+    # data sequence
+    output.add(colander.SchemaNode(colander.Sequence(), data, name = 'data'))
+        
+    # process output
+    schema = colander.SchemaNode(colander.Mapping())
+    schema.add(colander.SchemaNode(colander.String(), name = 'identifier'))
+    schema.add(colander.SchemaNode(colander.Boolean(), name = 'complete'))
+    schema.add(colander.SchemaNode(colander.Boolean(), name = 'succeded'))
+
+    # output sequence
+    schema.add(colander.SchemaNode(colander.Sequence(), output, name="outputs"))
+
+    return schema
       
 
     
