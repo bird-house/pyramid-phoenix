@@ -156,7 +156,7 @@ class ReadOnlyView(FormView):
      renderer='templates/form.pt',
      layout='default',
      permission='edit')
-class OutputDetailsView(ReadOnlyView):
+class ProcessOutputsView(ReadOnlyView):
     log.debug('output details execute')
     title = u"Process Outputs"
     from .schema import output_schema
@@ -181,26 +181,20 @@ class OutputDetailsView(ReadOnlyView):
             output_appstruct = {}
             output_appstruct['name'] = output.title
             output_appstruct['mime_type'] = output.mimeType
+            output_appstruct['data_type'] = output.dataType
             if output.reference != None:
                 output_appstruct['reference'] = output.reference
             output_appstruct['data'] = []
             for datum in output.data:
                 data_appstruct = {}
-                data_appstruct['value'] = datum
+                if isinstance(datum, ComplexData):
+                    data_appstruct['reference'] = datum.readonly
+                    data_appstruct['mime_type'] = datum.mimeType
+                else:
+                    data_appstruct['value'] = datum
                 output_appstruct['data'].append(data_appstruct)
             appstruct['outputs'].append(output_appstruct)
           
-            #content['data_type'] = output.dataType
-          
-            #content['values'] = []
-            # for datum in output.data:
-            #     if isinstance(datum, ComplexData):
-            #         value = {
-            #             'reference' : datum.reference,
-            #             'mime_type' : datum.mime_type }
-            #     else:
-            #         value = {'value' : datum}
-            #     content['values'].append(value)
         log.debug('out appstruct = %s', appstruct)
 
         return appstruct

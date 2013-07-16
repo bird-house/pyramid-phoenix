@@ -210,60 +210,15 @@ class DataInputsSchema(colander.MappingSchema):
 # Ouput Data ...
 # -----------------
 
-# class OutputValue(colander.MappingSchema):
-#     mime_type = colander.SchemaNode(
-#         colander.String())
-#     encoding = colander.SchemaNode(
-#         colander.String())
-#     value_schema = colander.SchemaNode(
-#         colander.String())
-#     value = colander.SchemaNode(
-#         colander.String())
-
-# class OutputContent(colander.MappingSchema):
-#     identifier = colander.SchemaNode(
-#         colander.String())
-#     title = colander.SchemaNode(
-#         colander.String())
-#     #abstract = colander.SchemaNode(
-#     #    colander.String(),
-#     #    missing = colander.drop)
-#     data_type = colander.SchemaNode(
-#         colander.String())
-#     mime_type = colander.SchemaNode(
-#         colander.String())
-#     reference = colander.SchemaNode(
-#         colander.String())
-#     value = colander.SchemaNode(
-#         colander.String())
-#     #values = OutputValues()
-
-
-
-# friend = colander.SchemaNode(Tuple())
-# friend.add(colander.SchemaNode(colander.Int(),
-#                               validator=colander.Range(0, 9999),
-#            name='rank'))
-# friend.add(colander.SchemaNode(colander.String(), name='name')
-
-# phone = colander.SchemaNode(Mapping())
-# phone.add(colander.SchemaNode(colander.String(),
-#                              validator=colander.OneOf(['home', 'work']),
-#                              name='location'))
-# phone.add(colander.SchemaNode(colander.String(), name='number'))
-
-# schema = colander.SchemaNode(Mapping())
-# schema.add(colander.SchemaNode(colander.String(), name='name'))
-# schema.add(colander.SchemaNode(colander.Int(), name='age'),
-#                               validator=colander.Range(0, 200))
-# schema.add(colander.SchemaNode(colander.Sequence(), friend, name='friends'))
-# schema.add(colander.SchemaNode(colander.Sequence(), phone, name='phones'))
-
-
 def output_schema():
     # data
     data = colander.SchemaNode(colander.Mapping())
-    data.add(colander.SchemaNode(colander.String(), name='value'))
+    data.add(colander.SchemaNode(colander.String(), name='value',
+        missing = colander.drop))
+    data.add(colander.SchemaNode(colander.String(), name='reference',
+        missing = colander.drop))
+    data.add(colander.SchemaNode(colander.String(), name='mime_type',
+        missing = colander.drop))
 
     # output
     output = colander.SchemaNode(colander.Mapping())
@@ -271,6 +226,7 @@ def output_schema():
     output.add(colander.SchemaNode(colander.String(), name = 'reference',
         missing = colander.drop))
     output.add(colander.SchemaNode(colander.String(), name = 'mime_type'))
+    output.add(colander.SchemaNode(colander.String(), name = 'data_type'))
     # data sequence
     output.add(colander.SchemaNode(colander.Sequence(), data, name = 'data'))
         
