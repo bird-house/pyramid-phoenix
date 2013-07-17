@@ -264,30 +264,28 @@ class ExecuteView(FormView):
             else:
                 values = [value]
 
-            # nothing to append
-            if len(values) == 0:
-                continue
-
-            # bbox
-            if self.input_types[key] == None:
-                # TODO: handle bounding box
-                log.debug('bbox value: %s' % values)
-                inputs.append( (key, str(values[0])) )
-                # if len(value) > 0:
-                #     (minx, miny, maxx, maxy) = value[0].split(',')
-                #     bbox = [[float(minx),float(miny)],[float(maxx),float(maxy)]]
-                #     inputs.append( (key, str(bbox)) )
-                # else:
-                #     inputs.append( (key, str(value)) )
-            # complex data
-            elif self.input_types[key] == 'ComplexData':
-                # TODO: handle complex data
-                log.debug('complex value: %s' % values)
-                if values[0].has_key('fp'):
-                    str_value = values[0].get('fp').read()
-                    inputs.append( (key, str_value) )
-            else:
-                inputs.append( (key, str(values[0])) )
+            # there might be more than one value (maxOccurs > 1)
+            for value in values:
+                # bbox
+                if self.input_types[key] == None:
+                    # TODO: handle bounding box
+                    log.debug('bbox value: %s' % value)
+                    inputs.append( (key, str(value)) )
+                    # if len(value) > 0:
+                    #     (minx, miny, maxx, maxy) = value[0].split(',')
+                    #     bbox = [[float(minx),float(miny)],[float(maxx),float(maxy)]]
+                    #     inputs.append( (key, str(bbox)) )
+                    # else:
+                    #     inputs.append( (key, str(value)) )
+                # complex data
+                elif self.input_types[key] == 'ComplexData':
+                    # TODO: handle complex data
+                    log.debug('complex value: %s' % value)
+                    if value.has_key('fp'):
+                        str_value = value.get('fp').read()
+                        inputs.append( (key, str_value) )
+                else:
+                    inputs.append( (key, str(value)) )
 
         log.debug('inputs =  %s', inputs)
 
