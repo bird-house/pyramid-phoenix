@@ -136,6 +136,8 @@ class DataInputsSchema(colander.MappingSchema):
                 node.widget = deform.widget.SelectWidget(values=choices)
         elif type(node.typ) == colander.DateTime:
             node.widget = deform.widget.DateInputWidget()
+        elif type(node.typ) == colander.Boolean:
+            node.widget = deform.widget.CheckboxWidget()
         else:
             node.widget = deform.widget.TextInputWidget()
 
