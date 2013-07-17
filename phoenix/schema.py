@@ -143,12 +143,22 @@ class DataInputsSchema(colander.MappingSchema):
 
     @classmethod
     def _add_complex_data(cls, schema, data_input):
-        node = colander.SchemaNode(
+        # TODO: handle upload, url, direct input for complex data
+
+        node_upload = colander.SchemaNode(
             deform.FileData(),
             name=data_input.identifier,
             title=data_input.title,
             widget=deform.widget.FileUploadWidget(tmpstore)
             )
+        # node_url = colander.SchemaNode(
+        #     colander.String(),
+        #     name = data_input.identifier,
+        #     title = data_input.title,
+        #     widget = deform.widget.TextInputWidget(),
+        #     validator = colander.url)
+
+        node = node_upload
 
         # sometimes abstract is not set
         if hasattr(data_input, 'abstract'):
