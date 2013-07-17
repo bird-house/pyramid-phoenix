@@ -1,4 +1,5 @@
 import datetime
+import types
 
 from pyramid.view import view_config, forbidden_view_config
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
@@ -254,26 +255,39 @@ class ExecuteView(FormView):
 
         inputs = []
         serialized = self.schema.serialize(appstruct)
+        # TODO: dont append value if default
         for (key, value) in serialized.iteritems():
+            values = []
+            # TODO: how do i handle serveral values in wps?
+            if type(value) == types.ListType:
+                values = value
+            else:
+                values = [value]
+
+            # nothing to append
+            if len(values) == 0:
+                continue
+
+            # bbox
             if self.input_types[key] == None:
                 # TODO: handle bounding box
-                log.debug('bbox value: %s' % value)
-                inputs.append( (key, str(value)) )
+                log.debug('bbox value: %s' % values)
+                inputs.append( (key, str(values[0])) )
                 # if len(value) > 0:
                 #     (minx, miny, maxx, maxy) = value[0].split(',')
                 #     bbox = [[float(minx),float(miny)],[float(maxx),float(maxy)]]
                 #     inputs.append( (key, str(bbox)) )
                 # else:
                 #     inputs.append( (key, str(value)) )
+            # complex data
             elif self.input_types[key] == 'ComplexData':
                 # TODO: handle complex data
-                log.debug('complex value: %s' % value)
-                if len(value) > 0:
-                    #str_value = value[0].get('fp').read()
-                    str_value = str(value[0].get('filename'))
+                log.debug('complex value: %s' % values)
+                if values[0].has_key('fp'):
+                    str_value = values[0].get('fp').read()
                     inputs.append( (key, str_value) )
             else:
-                inputs.append( (key, str(value)) )
+                inputs.append( (key, str(values[0])) )
 
         log.debug('inputs =  %s', inputs)
 
