@@ -11,7 +11,7 @@ from pyramid_persona.views import verify_login
 import deform
 import peppercorn
 
-from .helpers import get_service_url, whitelist, mongodb_conn
+from .helpers import get_service_url, whitelist, mongodb_conn, is_url
 
 import logging
 
@@ -281,9 +281,14 @@ class ExecuteView(FormView):
                 elif self.input_types[key] == 'ComplexData':
                     # TODO: handle complex data
                     log.debug('complex value: %s' % value)
-                    if value.has_key('fp'):
-                        str_value = value.get('fp').read()
-                        inputs.append( (key, str_value) )
+                    if is_url(value):
+                        inputs.append( (key, value) )
+                    elif type(value) == type({}):
+                        if value.has_key('fp'):
+                            str_value = value.get('fp').read()
+                            inputs.append( (key, str_value) )
+                    else:
+                        inputs.append( (key, str(value) ))
                 else:
                     inputs.append( (key, str(value)) )
 

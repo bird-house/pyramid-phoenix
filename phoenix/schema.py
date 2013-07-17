@@ -151,14 +151,14 @@ class DataInputsSchema(colander.MappingSchema):
             title=data_input.title,
             widget=deform.widget.FileUploadWidget(tmpstore)
             )
-        # node_url = colander.SchemaNode(
-        #     colander.String(),
-        #     name = data_input.identifier,
-        #     title = data_input.title,
-        #     widget = deform.widget.TextInputWidget(),
-        #     validator = colander.url)
+        node_url = colander.SchemaNode(
+            colander.String(),
+            name = data_input.identifier,
+            title = data_input.title,
+            widget = deform.widget.TextInputWidget(),
+            validator = colander.url)
 
-        node = node_upload
+        node = node_url
 
         # sometimes abstract is not set
         if hasattr(data_input, 'abstract'):

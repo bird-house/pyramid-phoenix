@@ -19,3 +19,19 @@ def mongodb_conn(request):
 	settings = request.registry.settings
 	conn = settings.get('mongodb_conn', None)
 	return conn
+
+def is_url(text):
+    """Check wheather given text is url or not
+
+    TODO: code is taken from pywps. Maybe there is a better alternative.
+    """
+        
+    try:
+        (urltype, opaquestring) = urllib.splittype(text)
+
+        if urltype in ["http","https","ftp"]:
+            return True
+        else:
+            return False
+    except:
+        return False
