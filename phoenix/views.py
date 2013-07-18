@@ -336,6 +336,37 @@ def monitor(request):
     log.debug('rendering monitor view')
     return dict(external_url='http://localhost:9001')
 
+@view_config(route_name='catalog',
+             renderer='templates/form.pt',
+             layout='default',
+             permission='edit',
+             )
+class CatalogView(FormView):
+    from .schema import CatalogSchema
+
+    log.debug('rendering catalog view')
+    #form_info = "Hover your mouse over the widgets for description."
+    schema = CatalogSchema()
+    buttons = ('add_wps','set_active',)
+    title = u"Catalog"
+
+    def appstruct(self):
+        return {'active_wps' : 'current'}
+
+    def add_wps_success(self, appstruct):
+        log.debug('add wps')
+        log.debug('appstruct = %s', appstruct)
+
+        serialized = self.schema.serialize(appstruct)
+        return HTTPFound(location=self.request.route_url('catalog'))
+
+    def set_active_success(self, appstruct):
+        log.debug('set active wps')
+        log.debug('appstruct = %s', appstruct)
+
+        serialized = self.schema.serialize(appstruct)
+        return HTTPFound(location=self.request.route_url('catalog'))
+
 @view_config(route_name='admin',
              renderer='templates/form.pt',
              layout='default',

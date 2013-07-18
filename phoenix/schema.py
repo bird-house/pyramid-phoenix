@@ -35,6 +35,27 @@ class AdminSchema(colander.MappingSchema):
         widget = deform.widget.TextInputWidget(readonly=True)
         )
 
+class CatalogSchema(colander.MappingSchema):
+    new_wps_url = colander.SchemaNode(
+        colander.String(),
+        title = 'New WPS URL',
+        missing = '',
+        default = '',
+        validator = colander.url,
+        widget = deform.widget.TextInputWidget())
+
+    choices = [
+            ['current', 'current'],
+            ['http://localhost:8090/wps', 'localhost'], 
+            ['http://mrsgreenbird.local:8090/wps', 'mrsgreenbird'],
+            ]
+    active_wps = colander.SchemaNode(
+        colander.String(),
+        title = 'Choose active WPS',
+        default = 'http://localhost:8090/wps',
+        widget = deform.widget.SelectWidget(values=choices)
+        )
+
 # DataInputs ...
 # ---------------
 

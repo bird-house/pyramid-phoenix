@@ -20,6 +20,7 @@ def navbar(context, request):
         return dict(name=name, url=url, active=active, icon=icon)
 
     nav = [nav_item('Home', request.route_url('home'), 'icon-home'),
+          nav_item('Catalog', request.route_url('catalog'), 'icon-tasks'),
           nav_item('Processes', request.route_url('processes'), 'icon-tasks'),
           nav_item('History', request.route_url('history'), 'icon-time'),
           nav_item('Monitor', request.route_url('monitor'), 'icon-time'),
