@@ -344,29 +344,36 @@ def monitor(request):
              permission='edit',
              )
 class CatalogAddWPSView(FormView):
-    from .schema import CatalogAddWPSSchema
-
-    log.debug('rendering catalog view')
     #form_info = "Hover your mouse over the widgets for description."
-    schema = CatalogAddWPSSchema()
+    schema = None
+    schema_factory = None
     buttons = ('add',)
     title = u"Catalog"
 
-    def appstruct(self):
+    def __call__(self):
         csw = CatalogueServiceWeb(csw_url(self.request))
         csw.getrecords2(maxrecords=100)
         wps_list = []
         for rec_id in csw.records:
             rec = csw.records[rec_id]
             if rec.format == 'WPS':
-                wps_list.append(rec.title)
-        list_str = '\r\n'.join(wps_list)
-        return {'wps_list' : list_str}
+                wps_list.append((rec.references[0]['url'], rec.title))
+
+        from .schema import CatalogAddWPSSchema
+        # build the schema if it not exist
+        if self.schema is None:
+            if self.schema_factory is None:
+                self.schema_factory = CatalogAddWPSSchema
+            self.schema = self.schema_factory().bind(
+                wps_list = wps_list,
+                readonly = True)
+
+        return super(CatalogAddWPSView, self).__call__()
+
+    def appstruct(self):
+        return {'current_wps' : wps_url(self.request)}
 
     def add_success(self, appstruct):
-        log.debug('add wps')
-        log.debug('appstruct = %s', appstruct)
-
         serialized = self.schema.serialize(appstruct)
         url = serialized['wps_url']
 

@@ -20,7 +20,7 @@ def navbar(context, request):
         return dict(name=name, url=url, active=active, icon=icon)
 
     nav = [nav_item('Home', request.route_url('home'), 'icon-home'),
-          nav_item('Catalog', request.route_url('catalog_wps_add'), 'icon-tasks'),
+          nav_item('Catalog', request.route_url('catalog_wps_select'), 'icon-tasks'),
           nav_item('Processes', request.route_url('processes'), 'icon-tasks'),
           nav_item('History', request.route_url('history'), 'icon-time'),
           nav_item('Monitor', request.route_url('monitor'), 'icon-time'),
@@ -38,8 +38,8 @@ def catalog_navbar(context, request):
         active = request.current_route_url() == url
         return dict(name=name, url=url, active=active, icon=icon)
 
-    nav = [nav_item('Add WPS', request.route_url('catalog_wps_add'), 'icon-tasks'),
-           nav_item('Select WPS', request.route_url('catalog_wps_select'), 'icon-tasks'),
+    nav = [nav_item('Select WPS', request.route_url('catalog_wps_select'), 'icon-tasks'),
+           nav_item('Add WPS', request.route_url('catalog_wps_add'), 'icon-tasks'),
           ]
 
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request))

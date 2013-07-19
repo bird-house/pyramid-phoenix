@@ -35,13 +35,21 @@ class AdminSchema(colander.MappingSchema):
         widget = deform.widget.TextInputWidget(readonly=True)
         )
 
+@colander.deferred
+def deferred_wps_list_widget(node, kw):
+    wps_list = kw.get('wps_list', [])
+    readonly = kw.get('readonly', False)
+    return deform.widget.RadioChoiceWidget(
+        values=wps_list,
+        readonly=readonly)
+
 class CatalogAddWPSSchema(colander.MappingSchema):
-    wps_list = colander.SchemaNode(
+    current_wps = colander.SchemaNode(
         colander.String(),
         title = "WPS List",
         description = 'List of known WPS',
         missing = '',
-        widget=deform.widget.TextAreaWidget(rows=10, cols=100))
+        widget=deferred_wps_list_widget)
 
     wps_url = colander.SchemaNode(
         colander.String(),
@@ -52,11 +60,6 @@ class CatalogAddWPSSchema(colander.MappingSchema):
         validator = colander.url,
         widget = deform.widget.TextInputWidget())
 
-@colander.deferred
-def deferred_wps_list_widget(node, kw):
-    wps_list = kw.get('wps_list', [])
-    return deform.widget.RadioChoiceWidget(values=wps_list)
-        
 class CatalogSelectWPSSchema(colander.MappingSchema):
    
     active_wps = colander.SchemaNode(
