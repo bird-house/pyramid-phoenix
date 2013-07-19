@@ -118,6 +118,7 @@ def history(request):
         log.debug('status_location = %s', proc['status_location'])
 
         proc['starttime'] = proc['start_time'].strftime('%a, %d %h %Y %I:%M:%S %p')
+        proc['duration'] = 0
 
         # TODO: handle different process status
         if proc['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
