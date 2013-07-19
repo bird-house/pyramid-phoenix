@@ -338,7 +338,7 @@ def monitor(request):
     return dict(external_url='http://localhost:9001')
 
 
-@view_config(route_name='catalog_addwps',
+@view_config(route_name='catalog_wps_add',
              renderer='templates/catalog.pt',
              layout='default',
              permission='edit',
@@ -373,7 +373,50 @@ class CatalogAddWPSView(FormView):
         csw = CatalogueServiceWeb(csw_url(self.request))
         csw.harvest(url, 'http://www.opengis.net/wps/1.0.0')
 
-        return HTTPFound(location=self.request.route_url('catalog_addwps'))
+        return HTTPFound(location=self.request.route_url('catalog_wps_add'))
+
+@view_config(route_name='catalog_wps_select',
+             renderer='templates/catalog.pt',
+             layout='default',
+             permission='edit',
+             )
+class CatalogSelectWPSView(FormView):
+    log.debug('rendering catalog select wps')
+    #form_info = "Hover your mouse over the widgets for description."
+    schema = None
+    schema_factory = None
+    buttons = ('submit',)
+    title = u"Catalog"
+
+    def __call__(self):
+        csw = CatalogueServiceWeb(csw_url(self.request))
+        csw.getrecords2(maxrecords=100)
+        wps_list = [('current', 'current')]
+        for rec_id in csw.records:
+            rec = csw.records[rec_id]
+            if rec.format == 'WPS':
+                wps_list.append((rec.identifier, rec.title))
+
+        from .schema import CatalogSelectWPSSchema
+        # build the schema if it not exist
+        if self.schema is None:
+            if self.schema_factory is None:
+                self.schema_factory = CatalogSelectWPSSchema
+            self.schema = self.schema_factory().bind(wps_list = wps_list)
+
+        return super(CatalogSelectWPSView, self).__call__()
+
+    def appstruct(self):
+        return {}
+
+    def submit_success(self, appstruct):
+        serialized = self.schema.serialize(appstruct)
+        wps_id = serialized['active_wps']
+
+        csw = CatalogueServiceWeb(csw_url(self.request))
+        csw.getrecordbyid(wps_id)
+
+        return HTTPFound(location=self.request.route_url('catalog_wps_select'))
 
 @view_config(route_name='admin',
              renderer='templates/form.pt',

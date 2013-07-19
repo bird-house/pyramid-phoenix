@@ -52,17 +52,20 @@ class CatalogAddWPSSchema(colander.MappingSchema):
         validator = colander.url,
         widget = deform.widget.TextInputWidget())
 
-class CatalogChooseWPSSchema(colander.MappingSchema):
-    choices = [
-            ['current', 'current'],
-            ['http://localhost:8090/wps', 'localhost'], 
-            ['http://mrsgreenbird.local:8090/wps', 'mrsgreenbird'],
-            ]
+@colander.deferred
+def deferred_wps_list_widget(node, kw):
+    wps_list = kw.get('wps_list', [])
+    return deform.widget.SelectWidget(values=wps_list)
+        
+class CatalogSelectWPSSchema(colander.MappingSchema):
+   
     active_wps = colander.SchemaNode(
         colander.String(),
-        title = 'Choose active WPS',
+        title = 'WPS',
         default = 'http://localhost:8090/wps',
-        widget = deform.widget.SelectWidget(values=choices)
+        description = "Select active WPS",
+        missing = 'current',
+        widget = deferred_wps_list_widget
         )
 
 # DataInputs ...
