@@ -11,12 +11,13 @@ from pyramid_persona.views import verify_login
 import deform
 import peppercorn
 
-from .helpers import get_service_url, whitelist, mongodb_conn, is_url
+from .helpers import wps_url, csw_url, whitelist, mongodb_conn, is_url
 
 import logging
 
 log = logging.getLogger(__name__)
 
+from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
 
 @subscriber(BeforeRender)
@@ -92,7 +93,7 @@ def home(request):
              permission='view'
              )
 def processes(request):
-    wps = WebProcessingService(get_service_url(request), verbose=False, skip_caps=True)
+    wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
     wps.getcapabilities()
     return dict( wps=wps, logged_in=authenticated_userid(request))
    
@@ -229,7 +230,7 @@ class ExecuteView(FormView):
 
         try:
             identifier = self.request.params.get('identifier')
-            self.wps = WebProcessingService(get_service_url(self.request), verbose=True)
+            self.wps = WebProcessingService(wps_url(self.request), verbose=True)
             self.process = self.wps.describeprocess(identifier)
             DataInputsSchema.build(schema=self.schema, process=self.process)
 
@@ -342,29 +343,35 @@ def monitor(request):
              permission='edit',
              )
 class CatalogView(FormView):
-    from .schema import CatalogSchema
+    from .schema import CatalogAddWPSSchema
 
     log.debug('rendering catalog view')
     #form_info = "Hover your mouse over the widgets for description."
-    schema = CatalogSchema()
-    buttons = ('add_wps','set_active',)
+    schema = CatalogAddWPSSchema()
+    buttons = ('add',)
     title = u"Catalog"
 
     def appstruct(self):
-        return {'active_wps' : 'current'}
+        csw = CatalogueServiceWeb(csw_url(self.request))
+        csw.getrecords2(maxrecords=100)
+        wps_list = []
+        for rec_id in csw.records:
+            rec = csw.records[rec_id]
+            if rec.format == 'WPS':
+                wps_list.append(rec.title)
+        list_str = '\r\n'.join(wps_list)
+        return {'wps_list' : list_str}
 
-    def add_wps_success(self, appstruct):
+    def add_success(self, appstruct):
         log.debug('add wps')
         log.debug('appstruct = %s', appstruct)
 
         serialized = self.schema.serialize(appstruct)
-        return HTTPFound(location=self.request.route_url('catalog'))
+        url = serialized['wps_url']
 
-    def set_active_success(self, appstruct):
-        log.debug('set active wps')
-        log.debug('appstruct = %s', appstruct)
+        csw = CatalogueServiceWeb(csw_url(self.request))
+        csw.harvest(url, 'http://www.opengis.net/wps/1.0.0')
 
-        serialized = self.schema.serialize(appstruct)
         return HTTPFound(location=self.request.route_url('catalog'))
 
 @view_config(route_name='admin',

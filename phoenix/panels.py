@@ -6,7 +6,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from .models import ProcessHistory
-from .helpers import get_service_url
+from .helpers import wps_url
 
 
 #==============================================================================
@@ -60,7 +60,7 @@ def welcome(context, request, title):
     log.debug('rendering welcome panel')
     return dict(title=title,
                 logged_in=authenticated_userid(request),
-                wps_service_url=get_service_url(request))
+                wps_service_url=wps_url(request))
 
 
 #==============================================================================
