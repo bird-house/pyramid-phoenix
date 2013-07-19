@@ -11,7 +11,7 @@ from pyramid_persona.views import verify_login
 import deform
 import peppercorn
 
-from .helpers import wps_url, csw_url, whitelist, mongodb_conn, is_url
+from .helpers import wps_url, update_wps_url, csw_url, whitelist, mongodb_conn, is_url
 
 import logging
 
@@ -391,11 +391,11 @@ class CatalogSelectWPSView(FormView):
     def __call__(self):
         csw = CatalogueServiceWeb(csw_url(self.request))
         csw.getrecords2(maxrecords=100)
-        wps_list = [('current', 'current')]
+        wps_list = []
         for rec_id in csw.records:
             rec = csw.records[rec_id]
             if rec.format == 'WPS':
-                wps_list.append((rec.identifier, rec.title))
+                wps_list.append((rec.references[0]['url'], rec.title))
 
         from .schema import CatalogSelectWPSSchema
         # build the schema if it not exist
@@ -407,14 +407,13 @@ class CatalogSelectWPSView(FormView):
         return super(CatalogSelectWPSView, self).__call__()
 
     def appstruct(self):
-        return {}
+        return {'active_wps' : wps_url(self.request)}
 
     def submit_success(self, appstruct):
         serialized = self.schema.serialize(appstruct)
         wps_id = serialized['active_wps']
-
-        csw = CatalogueServiceWeb(csw_url(self.request))
-        csw.getrecordbyid(wps_id)
+        log.debug('wps_id = %s', wps_id)
+        update_wps_url(self.request, wps_id)        
 
         return HTTPFound(location=self.request.route_url('catalog_wps_select'))
 

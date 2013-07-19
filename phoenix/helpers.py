@@ -9,6 +9,10 @@ def wps_url(request):
     log.debug('using wps = %s', service_url)
     return service_url
 
+def update_wps_url(request, wps_url):
+    settings = request.registry.settings
+    settings['phoenix.wps'] = wps_url
+   
 def csw_url(request):
     settings = request.registry.settings
     # TODO: dont use hard coded project name

@@ -55,16 +55,14 @@ class CatalogAddWPSSchema(colander.MappingSchema):
 @colander.deferred
 def deferred_wps_list_widget(node, kw):
     wps_list = kw.get('wps_list', [])
-    return deform.widget.SelectWidget(values=wps_list)
+    return deform.widget.RadioChoiceWidget(values=wps_list)
         
 class CatalogSelectWPSSchema(colander.MappingSchema):
    
     active_wps = colander.SchemaNode(
         colander.String(),
         title = 'WPS',
-        default = 'http://localhost:8090/wps',
         description = "Select active WPS",
-        missing = 'current',
         widget = deferred_wps_list_widget
         )
 
