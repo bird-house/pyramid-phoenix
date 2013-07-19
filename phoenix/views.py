@@ -337,12 +337,13 @@ def monitor(request):
     log.debug('rendering monitor view')
     return dict(external_url='http://localhost:9001')
 
-@view_config(route_name='catalog',
-             renderer='templates/form.pt',
+
+@view_config(route_name='catalog_addwps',
+             renderer='templates/catalog.pt',
              layout='default',
              permission='edit',
              )
-class CatalogView(FormView):
+class CatalogAddWPSView(FormView):
     from .schema import CatalogAddWPSSchema
 
     log.debug('rendering catalog view')
@@ -372,7 +373,7 @@ class CatalogView(FormView):
         csw = CatalogueServiceWeb(csw_url(self.request))
         csw.harvest(url, 'http://www.opengis.net/wps/1.0.0')
 
-        return HTTPFound(location=self.request.route_url('catalog'))
+        return HTTPFound(location=self.request.route_url('catalog_addwps'))
 
 @view_config(route_name='admin',
              renderer='templates/form.pt',
