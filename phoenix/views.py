@@ -466,24 +466,35 @@ class SearchView(FormView):
     buttons = ('search',)
     title = u"Search"
 
+    category = 'experiment'
+
     from pyesgf.search import SearchConnection
     conn = SearchConnection('http://esgf-data.dkrz.de/esg-search', distrib=False)
 
     def __call__(self):
         from .schema import SearchSchema
-        # build the schema if it not exist
-        if self.schema is None:
-            if self.schema_factory is None:
-                self.schema_factory = SearchSchema
-            self.schema = self.schema_factory().bind(
-                search_context = self.conn.new_context(project='CMIP5', query='humidity'))
+        # build the schema
+        if self.schema_factory is None:
+            self.schema_factory = SearchSchema
+        conn = mongodb_conn(self.request)
+        entry =conn.phoenix_db.search.find_one({'id':1})
+        if entry == None:
+            conn.phoenix_db.search.save(dict(id=1,category=category))
+        else:
+            self.category = entry.get('category')
+        self.schema = self.schema_factory().bind(
+            category = self.category,
+            search_context = self.conn.new_context(project='CMIP5', query='humidity', replica=False))
 
         return super(SearchView, self).__call__()
 
     def appstruct(self):
-        return {}
+        return {'category' : self.category}
        
     def search_success(self, appstruct):
+        category = appstruct['category']
+        conn = mongodb_conn(self.request)
+        conn.phoenix_db.search.update(dict(id=1), dict(id=1,category=category))
         return HTTPFound(location=self.request.route_url('search'))
 
 @view_config(route_name='help',
