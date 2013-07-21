@@ -453,6 +453,37 @@ class AdminView(FormView):
                
         return HTTPFound(location=self.request.route_url('admin'))
 
+@view_config(route_name='search',
+             renderer='templates/form.pt',
+             layout='default',
+             permission='edit',
+             )
+class SearchView(FormView):
+    log.debug('rendering search view')
+    #form_info = "Hover your mouse over the widgets for description."
+    schema = None
+    schema_factory = None
+    buttons = ('search',)
+    title = u"Search"
+
+    def __call__(self):
+        from .schema import SearchSchema
+        # build the schema if it not exist
+        if self.schema is None:
+            if self.schema_factory is None:
+                self.schema_factory = SearchSchema
+            self.schema = self.schema_factory().bind(
+                category_list = [],
+                facet_list = [])
+
+        return super(SearchView, self).__call__()
+
+    def appstruct(self):
+        return {}
+       
+    def search_success(self, appstruct):
+        return HTTPFound(location=self.request.route_url('search'))
+
 @view_config(route_name='help',
              renderer='templates/embedded.pt',
              layout='default',

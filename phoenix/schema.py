@@ -36,6 +36,29 @@ class AdminSchema(colander.MappingSchema):
         )
 
 @colander.deferred
+def deferred_category_widget(node, kw):
+    choices = kw.get('category_list')
+    return deform.widget.SelectWidget(values = choices)
+
+@colander.deferred
+def deferred_facet_widget(node, kw):
+    choices = kw.get('facet_list')
+    return deform.widget.SelectWidget(values = choices)
+
+class SearchSchema(colander.MappingSchema):
+    category = colander.SchemaNode(
+        colander.String(),
+        name = 'category',
+        title = 'Category',
+        description = 'Choose search category',
+        widget = deferred_category_widget)
+
+    facet = colander.SchemaNode(
+        colander.String(),
+        description = 'Choose facet',
+        widget = deferred_facet_widget)
+
+@colander.deferred
 def deferred_wps_list_widget(node, kw):
     wps_list = kw.get('wps_list', [])
     readonly = kw.get('readonly', False)
