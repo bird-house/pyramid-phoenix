@@ -22,8 +22,8 @@ def main(global_config, **settings):
     config.include('pyramid_persona')
 
     # includes
-    config.include('deform_bootstrap')
-    #config.include('deform_bootstrap_extra')
+    #config.include('deform_bootstrap')
+    config.include('deform_bootstrap_extra')
 
     # add my own templates
     # TODO: improve config of my own templates

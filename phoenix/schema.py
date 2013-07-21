@@ -50,6 +50,11 @@ def deferred_facet_widget(node, kw):
     choices = zip(keys, keys)
     return deform.widget.SelectWidget(values = choices)
 
+@colander.deferred
+def deferred_tags_widget(node, kw):
+    #return deform_bootstrap_extra.widgets.TagsWidget()
+    return deform.widget.TextInputWidget()
+
 class SearchSchema(colander.MappingSchema):
     category = colander.SchemaNode(
         colander.String(),
@@ -62,6 +67,11 @@ class SearchSchema(colander.MappingSchema):
         colander.String(),
         description = 'Choose facet',
         widget = deferred_facet_widget)
+
+    tags = colander.SchemaNode(
+        colander.String(),
+        description = 'Choosen constraints',
+        widget = deferred_tags_widget)
 
 @colander.deferred
 def deferred_wps_list_widget(node, kw):
