@@ -466,6 +466,9 @@ class SearchView(FormView):
     buttons = ('search',)
     title = u"Search"
 
+    from pyesgf.search import SearchConnection
+    conn = SearchConnection('http://esgf-data.dkrz.de/esg-search', distrib=False)
+
     def __call__(self):
         from .schema import SearchSchema
         # build the schema if it not exist
@@ -473,8 +476,7 @@ class SearchView(FormView):
             if self.schema_factory is None:
                 self.schema_factory = SearchSchema
             self.schema = self.schema_factory().bind(
-                category_list = [],
-                facet_list = [])
+                search_context = self.conn.new_context(project='CMIP5', query='humidity'))
 
         return super(SearchView, self).__call__()
 

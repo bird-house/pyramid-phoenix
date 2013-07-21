@@ -37,12 +37,16 @@ class AdminSchema(colander.MappingSchema):
 
 @colander.deferred
 def deferred_category_widget(node, kw):
-    choices = kw.get('category_list')
+    ctx = kw.get('search_context')
+    keys = ctx.facet_counts.keys()
+    choices = zip(keys, keys)
     return deform.widget.SelectWidget(values = choices)
 
 @colander.deferred
 def deferred_facet_widget(node, kw):
-    choices = kw.get('facet_list')
+    ctx = kw.get('search_context')
+    keys = ctx.facet_counts['experiment'].keys()
+    choices = zip(keys, keys)
     return deform.widget.SelectWidget(values = choices)
 
 class SearchSchema(colander.MappingSchema):

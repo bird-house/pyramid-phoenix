@@ -22,6 +22,7 @@ requires = [
     'waitress',
     'OWSLib',
     'lxml',
+    'esgf-pyclient',
     'python-dateutil',
     #'egenix-mx-base',
     ]
