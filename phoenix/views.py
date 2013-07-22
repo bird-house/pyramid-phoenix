@@ -464,7 +464,7 @@ class SearchView(FormView):
     #form_info = "Hover your mouse over the widgets for description."
     schema = None
     schema_factory = None
-    buttons = ('search', 'tag',)
+    buttons = ('update', 'tag',)
     title = u"Search"
 
     category = 'experiment'
@@ -472,7 +472,7 @@ class SearchView(FormView):
 
     from pyesgf.search import SearchConnection
     search_conn = SearchConnection('http://esgf-data.dkrz.de/esg-search', distrib=False)
-    search_context = search_conn.new_context(project='CMIP5', replica=False)
+    search_context = search_conn.new_context(project='CMIP5', product='output1', replica=False)
 
     def __call__(self):
         from .schema import SearchSchema
@@ -498,7 +498,7 @@ class SearchView(FormView):
     def appstruct(self):
         return {'category' : self.category, 'hit_count' : self.search_context.hit_count}
        
-    def search_success(self, appstruct):
+    def update_success(self, appstruct):
         self.category = appstruct['category']
         db_conn = mongodb_conn(self.request)
         db_conn.phoenix_db.search.update(dict(id=1), dict(id=1,category=self.category, tags=self.tags))

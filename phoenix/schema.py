@@ -40,16 +40,18 @@ def deferred_category_widget(node, kw):
     ctx = kw.get('search_context')
     choices = []
     for key in ctx.facet_counts.keys():
-        if len(ctx.facet_counts[key]) > 1:
-            choices.append( (key, key) )
+        count = len(ctx.facet_counts[key])
+        if count > 1:
+            choices.append( (key, '%s (%s)' % (key, count)) )
     return deform.widget.SelectWidget(values = choices)
 
 @colander.deferred
 def deferred_facet_widget(node, kw):
     ctx = kw.get('search_context')
     category = kw.get('category')
-    keys = ctx.facet_counts[category].keys()
-    choices = zip(keys, keys)
+    choices = []
+    for (key,value) in ctx.facet_counts[category].iteritems():
+        choices.append( (key, '%s (%s)' % (key, value)) )
     return deform.widget.SelectWidget(values = choices)
 
 @colander.deferred
