@@ -471,38 +471,37 @@ class SearchView(FormView):
     tags = {}
 
     from pyesgf.search import SearchConnection
-    conn = SearchConnection('http://esgf-data.dkrz.de/esg-search', distrib=False)
+    search_conn = SearchConnection('http://esgf-data.dkrz.de/esg-search', distrib=False)
+    search_context = search_conn.new_context(project='CMIP5', replica=False)
 
     def __call__(self):
         from .schema import SearchSchema
         # build the schema
         if self.schema_factory is None:
             self.schema_factory = SearchSchema
-        conn = mongodb_conn(self.request)
-        entry =conn.phoenix_db.search.find_one({'id':1})
+        db_conn = mongodb_conn(self.request)
+        entry =db_conn.phoenix_db.search.find_one({'id':1})
         if entry == None:
-            conn.phoenix_db.search.save(dict(id=1,category=self.category, tags={}))
+            db_conn.phoenix_db.search.save(dict(id=1,category=self.category, tags={}))
         else:
             self.category = entry.get('category')
             self.tags = entry.get('tags', {})
             log.debug('tags = %s', self.tags)
-        constraints = dict()
-        for (key,value) in self.tags.iteritems():
-            constraints[key] = value
+        self.search_context = self.search_context.constrain(**self.tags)
         self.schema = self.schema_factory().bind(
             category = self.category,
             tags = self.tags,
-            search_context = self.conn.new_context(replica=False, **constraints))
+            search_context = self.search_context)
 
         return super(SearchView, self).__call__()
 
     def appstruct(self):
-        return {'category' : self.category}
+        return {'category' : self.category, 'hit_count' : self.search_context.hit_count}
        
     def search_success(self, appstruct):
         self.category = appstruct['category']
-        conn = mongodb_conn(self.request)
-        conn.phoenix_db.search.update(dict(id=1), dict(id=1,category=self.category, tags=self.tags))
+        db_conn = mongodb_conn(self.request)
+        db_conn.phoenix_db.search.update(dict(id=1), dict(id=1,category=self.category, tags=self.tags))
         return HTTPFound(location=self.request.route_url('search'))
 
     def tag_success(self, appstruct):
@@ -510,8 +509,8 @@ class SearchView(FormView):
         facet = appstruct['facet']
         self.tags[self.category] = facet
         log.debug("tag_success, tags = %s", self.tags)
-        conn = mongodb_conn(self.request)
-        conn.phoenix_db.search.update(dict(id=1), dict(id=1,category=self.category, tags=self.tags))
+        db_conn = mongodb_conn(self.request)
+        db_conn.phoenix_db.search.update(dict(id=1), dict(id=1,category=self.category, tags=self.tags))
         return HTTPFound(location=self.request.route_url('search'))
 
 @view_config(route_name='help',

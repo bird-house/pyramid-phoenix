@@ -38,8 +38,10 @@ class AdminSchema(colander.MappingSchema):
 @colander.deferred
 def deferred_category_widget(node, kw):
     ctx = kw.get('search_context')
-    keys = ctx.facet_counts.keys()
-    choices = zip(keys, keys)
+    choices = []
+    for key in ctx.facet_counts.keys():
+        if len(ctx.facet_counts[key]) > 1:
+            choices.append( (key, key) )
     return deform.widget.SelectWidget(values = choices)
 
 @colander.deferred
@@ -78,6 +80,12 @@ class SearchSchema(colander.MappingSchema):
         description = 'Choosen tags',
         missing = '',
         widget = deferred_tags_widget)
+
+    hit_count = colander.SchemaNode(
+        colander.Integer(),
+        description = "Hit count",
+        missing = 0,
+        widget = deform.widget.TextInputWidget(readonly=True))
 
 @colander.deferred
 def deferred_wps_list_widget(node, kw):
