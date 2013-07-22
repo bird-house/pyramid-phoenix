@@ -463,10 +463,11 @@ class SearchView(FormView):
     #form_info = "Hover your mouse over the widgets for description."
     schema = None
     schema_factory = None
-    buttons = ('search',)
+    buttons = ('search', 'tag',)
     title = u"Search"
 
     category = 'experiment'
+    tags =[]
 
     from pyesgf.search import SearchConnection
     conn = SearchConnection('http://esgf-data.dkrz.de/esg-search', distrib=False)
@@ -479,11 +480,14 @@ class SearchView(FormView):
         conn = mongodb_conn(self.request)
         entry =conn.phoenix_db.search.find_one({'id':1})
         if entry == None:
-            conn.phoenix_db.search.save(dict(id=1,category=category))
+            conn.phoenix_db.search.save(dict(id=1,category=self.category, tags=[]))
         else:
             self.category = entry.get('category')
+            self.tags = entry.get('tags', [])
+            log.debug('tags = %s', self.tags)
         self.schema = self.schema_factory().bind(
             category = self.category,
+            tags = self.tags,
             search_context = self.conn.new_context(project='CMIP5', query='humidity', replica=False))
 
         return super(SearchView, self).__call__()
@@ -492,9 +496,18 @@ class SearchView(FormView):
         return {'category' : self.category}
        
     def search_success(self, appstruct):
-        category = appstruct['category']
+        self.category = appstruct['category']
         conn = mongodb_conn(self.request)
-        conn.phoenix_db.search.update(dict(id=1), dict(id=1,category=category))
+        conn.phoenix_db.search.update(dict(id=1), dict(id=1,category=self.category, tags=self.tags))
+        return HTTPFound(location=self.request.route_url('search'))
+
+    def tag_success(self, appstruct):
+        self.category = appstruct['category']
+        facet = appstruct['facet']
+        self.tags.append('%s:%s' % (self.category, facet))
+        log.debug("tag_success, tags = %s", self.tags)
+        conn = mongodb_conn(self.request)
+        conn.phoenix_db.search.update(dict(id=1), dict(id=1,category=self.category, tags=self.tags))
         return HTTPFound(location=self.request.route_url('search'))
 
 @view_config(route_name='help',

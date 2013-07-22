@@ -52,8 +52,14 @@ def deferred_facet_widget(node, kw):
 
 @colander.deferred
 def deferred_tags_widget(node, kw):
+    ctx = kw.get('search_context')
+    tags = kw.get('tags')
+    if tags and len(tags) > 0:
+        choices = zip(tags, tags)
+    else:
+        choices = []
     #return deform_bootstrap_extra.widgets.TagsWidget()
-    return deform.widget.TextInputWidget()
+    return deform.widget.SelectWidget(values = choices)
 
 class SearchSchema(colander.MappingSchema):
     category = colander.SchemaNode(
@@ -70,7 +76,8 @@ class SearchSchema(colander.MappingSchema):
 
     tags = colander.SchemaNode(
         colander.String(),
-        description = 'Choosen constraints',
+        description = 'Choosen tags',
+        missing = '',
         widget = deferred_tags_widget)
 
 @colander.deferred
