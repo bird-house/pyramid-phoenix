@@ -450,6 +450,7 @@ class AdminView(FormView):
         # mongodb
         conn = mongodb_conn(self.request)
         conn.phoenix_db.history.drop()
+        conn.phoenix_db.search.drop()
                
         return HTTPFound(location=self.request.route_url('admin'))
 
@@ -467,7 +468,7 @@ class SearchView(FormView):
     title = u"Search"
 
     category = 'experiment'
-    tags =[]
+    tags = {}
 
     from pyesgf.search import SearchConnection
     conn = SearchConnection('http://esgf-data.dkrz.de/esg-search', distrib=False)
@@ -480,15 +481,18 @@ class SearchView(FormView):
         conn = mongodb_conn(self.request)
         entry =conn.phoenix_db.search.find_one({'id':1})
         if entry == None:
-            conn.phoenix_db.search.save(dict(id=1,category=self.category, tags=[]))
+            conn.phoenix_db.search.save(dict(id=1,category=self.category, tags={}))
         else:
             self.category = entry.get('category')
-            self.tags = entry.get('tags', [])
+            self.tags = entry.get('tags', {})
             log.debug('tags = %s', self.tags)
+        constraints = dict()
+        for (key,value) in self.tags.iteritems():
+            constraints[key] = value
         self.schema = self.schema_factory().bind(
             category = self.category,
             tags = self.tags,
-            search_context = self.conn.new_context(project='CMIP5', query='humidity', replica=False))
+            search_context = self.conn.new_context(replica=False, **constraints))
 
         return super(SearchView, self).__call__()
 
@@ -504,7 +508,7 @@ class SearchView(FormView):
     def tag_success(self, appstruct):
         self.category = appstruct['category']
         facet = appstruct['facet']
-        self.tags.append('%s:%s' % (self.category, facet))
+        self.tags[self.category] = facet
         log.debug("tag_success, tags = %s", self.tags)
         conn = mongodb_conn(self.request)
         conn.phoenix_db.search.update(dict(id=1), dict(id=1,category=self.category, tags=self.tags))

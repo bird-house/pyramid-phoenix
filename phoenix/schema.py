@@ -54,10 +54,9 @@ def deferred_facet_widget(node, kw):
 def deferred_tags_widget(node, kw):
     ctx = kw.get('search_context')
     tags = kw.get('tags')
-    if tags and len(tags) > 0:
-        choices = zip(tags, tags)
-    else:
-        choices = []
+    choices = []
+    for (key,value) in tags.iteritems():
+        choices.append((key, '%s:%s' % (key, value)))
     #return deform_bootstrap_extra.widgets.TagsWidget()
     return deform.widget.SelectWidget(values = choices)
 
