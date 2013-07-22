@@ -36,7 +36,7 @@ class AdminSchema(colander.MappingSchema):
         )
 
 @colander.deferred
-def deferred_category_widget(node, kw):
+def deferred_facet_widget(node, kw):
     ctx = kw.get('search_context')
     choices = []
     facets = ctx.get_facet_options()
@@ -46,9 +46,9 @@ def deferred_category_widget(node, kw):
     return deform.widget.SelectWidget(values = choices)
 
 @colander.deferred
-def deferred_facet_widget(node, kw):
+def deferred_item_widget(node, kw):
     ctx = kw.get('search_context')
-    facet = kw.get('category')
+    facet = kw.get('facet')
     choices = []
     for (item,count) in ctx.facet_counts[facet].iteritems():
         choices.append( (item, '%s (%s)' % (item, count)) )
@@ -78,17 +78,15 @@ def deferred_opendap_widget(node, kw):
     return deform.widget.RadioChoiceWidget(values = choices)
 
 class SearchSchema(colander.MappingSchema):
-    category = colander.SchemaNode(
-        colander.String(),
-        name = 'category',
-        title = 'Category',
-        description = 'Choose search category',
-        widget = deferred_category_widget)
-
     facet = colander.SchemaNode(
         colander.String(),
-        description = 'Choose facet',
+        description = 'Choose search facet',
         widget = deferred_facet_widget)
+
+    item = colander.SchemaNode(
+        colander.String(),
+        description = 'Choose item',
+        widget = deferred_item_widget)
 
     tags = colander.SchemaNode(
         colander.String(),
