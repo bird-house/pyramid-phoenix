@@ -79,6 +79,17 @@ def deferred_opendap_widget(node, kw):
 
     return deform.widget.RadioChoiceWidget(values = choices)
 
+@colander.deferred
+def deferred_files_widget(node, kw):
+    ctx = kw.get('search_context')
+    choices = []
+    if ctx.hit_count == 1:
+        result = ctx.search()[0]
+        files_ctx = result.file_context()
+        myfile = files_ctx.search()[0]
+        choices.append( (myfile.download_url, myfile.download_url) )
+    return deform.widget.RadioChoiceWidget(values = choices)
+
 class SearchSchema(colander.MappingSchema):
     facet = colander.SchemaNode(
         colander.String(),
@@ -102,11 +113,18 @@ class SearchSchema(colander.MappingSchema):
         missing = 0,
         widget = deform.widget.TextInputWidget(readonly=True))
 
-    opendap_urls = colander.SchemaNode(
+    opendap_url = colander.SchemaNode(
         colander.String(),
         description = 'OpenDAP Access URL',
         missing = '',
         widget = deferred_opendap_widget)
+
+    files_url = colander.SchemaNode(
+        colander.String(),
+        description = 'File Access',
+        missing = '',
+        widget = deferred_files_widget)
+
 
 @colander.deferred
 def deferred_wps_list_widget(node, kw):

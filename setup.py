@@ -23,6 +23,7 @@ requires = [
     'OWSLib',
     'lxml',
     'esgf-pyclient',
+    'MyProxyClient',
     'python-dateutil',
     #'egenix-mx-base',
     ]

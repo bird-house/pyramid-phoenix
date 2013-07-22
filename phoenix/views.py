@@ -464,7 +464,7 @@ class SearchView(FormView):
     #form_info = "Hover your mouse over the widgets for description."
     schema = None
     schema_factory = None
-    buttons = ('update', 'tag',)
+    buttons = ('update', 'tag', 'download',)
     title = u"Search"
 
     from pyesgf.search import SearchConnection
@@ -510,6 +510,9 @@ class SearchView(FormView):
         log.debug('tags = %s' % (tags))
         db_conn.phoenix_db.search.update(dict(id=1), dict(id=1, tags=tags))
         return HTTPFound(location=self.request.route_url('search'))
+
+    def download_success(self, appstruct):
+        opendap_url = appstruct['opendap_url']
 
 @view_config(route_name='help',
              renderer='templates/embedded.pt',
