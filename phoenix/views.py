@@ -467,9 +467,6 @@ class SearchView(FormView):
     buttons = ('update', 'tag',)
     title = u"Search"
 
-    facet = 'experiment'
-    tags = {}
-
     from pyesgf.search import SearchConnection
     search_conn = SearchConnection('http://esgf-data.dkrz.de/esg-search', distrib=False)
     search_context = search_conn.new_context(
@@ -481,38 +478,37 @@ class SearchView(FormView):
         # build the schema
         if self.schema_factory is None:
             self.schema_factory = SearchSchema
+        tags = {}
         db_conn = mongodb_conn(self.request)
         entry =db_conn.phoenix_db.search.find_one({'id':1})
         if entry == None:
-            db_conn.phoenix_db.search.save(dict(id=1,facet=self.facet, tags={}))
+            db_conn.phoenix_db.search.save(dict(id=1, tags=tags))
         else:
-            self.facet = entry.get('facet')
-            self.tags = entry.get('tags', {})
-            log.debug('tags = %s', self.tags)
-        self.search_context = self.search_context.constrain(**self.tags)
+            tags = entry.get('tags', {})
+        self.search_context = self.search_context.constrain(**tags)
         self.schema = self.schema_factory().bind(
-            facet = self.facet,
-            tags = self.tags,
+            tags = tags,
             search_context = self.search_context)
 
         return super(SearchView, self).__call__()
 
     def appstruct(self):
-        return {'facet' : self.facet, 'hit_count' : self.search_context.hit_count}
+        return {'hit_count' : self.search_context.hit_count}
        
     def update_success(self, appstruct):
-        self.facet = appstruct['facet']
-        db_conn = mongodb_conn(self.request)
-        db_conn.phoenix_db.search.update(dict(id=1), dict(id=1,facet=self.facet, tags=self.tags))
         return HTTPFound(location=self.request.route_url('search'))
 
     def tag_success(self, appstruct):
-        self.facet = appstruct['facet']
+        facet = appstruct['facet']
         item = appstruct['item']
-        self.tags[self.facet] = item
-        log.debug("tag_success, tags = %s", self.tags)
+       
+        tags = {}
         db_conn = mongodb_conn(self.request)
-        db_conn.phoenix_db.search.update(dict(id=1), dict(id=1,facet=self.facet, tags=self.tags))
+        entry = db_conn.phoenix_db.search.find_one({'id':1})
+        tags = entry.get('tags', {})
+        tags[facet] = item
+        log.debug('tags = %s' % (tags))
+        db_conn.phoenix_db.search.update(dict(id=1), dict(id=1, tags=tags))
         return HTTPFound(location=self.request.route_url('search'))
 
 @view_config(route_name='help',
