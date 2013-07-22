@@ -472,7 +472,9 @@ class SearchView(FormView):
 
     from pyesgf.search import SearchConnection
     search_conn = SearchConnection('http://esgf-data.dkrz.de/esg-search', distrib=False)
-    search_context = search_conn.new_context(project='CMIP5', product='output1', replica=False)
+    search_context = search_conn.new_context(
+        project='CMIP5', product='output1', 
+        replica=False, latest=True)
 
     def __call__(self):
         from .schema import SearchSchema

@@ -39,19 +39,19 @@ class AdminSchema(colander.MappingSchema):
 def deferred_category_widget(node, kw):
     ctx = kw.get('search_context')
     choices = []
-    for key in ctx.facet_counts.keys():
-        count = len(ctx.facet_counts[key])
-        if count > 1:
-            choices.append( (key, '%s (%s)' % (key, count)) )
+    facets = ctx.get_facet_options()
+    for facet in facets.keys():
+        counts = facets[facet]
+        choices.append( (facet, '%s (%s)' % (facet, len(counts))) )
     return deform.widget.SelectWidget(values = choices)
 
 @colander.deferred
 def deferred_facet_widget(node, kw):
     ctx = kw.get('search_context')
-    category = kw.get('category')
+    facet = kw.get('category')
     choices = []
-    for (key,value) in ctx.facet_counts[category].iteritems():
-        choices.append( (key, '%s (%s)' % (key, value)) )
+    for (item,count) in ctx.facet_counts[facet].iteritems():
+        choices.append( (item, '%s (%s)' % (item, count)) )
     return deform.widget.SelectWidget(values = choices)
 
 @colander.deferred
@@ -63,6 +63,19 @@ def deferred_tags_widget(node, kw):
         choices.append((key, '%s:%s' % (key, value)))
     #return deform_bootstrap_extra.widgets.TagsWidget()
     return deform.widget.SelectWidget(values = choices)
+
+@colander.deferred
+def deferred_opendap_widget(node, kw):
+    ctx = kw.get('search_context')
+    tags = kw.get('tags')
+    choices = []
+    if ctx.hit_count == 1:
+        for result in ctx.search():
+            agg_ctx = result.aggregation_context()
+            for agg in agg_ctx.search():
+                choices.append( (agg.opendap_url, agg.opendap_url) )
+
+    return deform.widget.RadioChoiceWidget(values = choices)
 
 class SearchSchema(colander.MappingSchema):
     category = colander.SchemaNode(
@@ -88,6 +101,12 @@ class SearchSchema(colander.MappingSchema):
         description = "Hit count",
         missing = 0,
         widget = deform.widget.TextInputWidget(readonly=True))
+
+    opendap_urls = colander.SchemaNode(
+        colander.String(),
+        description = 'OpenDAP Access URL',
+        missing = '',
+        widget = deferred_opendap_widget)
 
 @colander.deferred
 def deferred_wps_list_widget(node, kw):
