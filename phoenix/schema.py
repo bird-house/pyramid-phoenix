@@ -72,10 +72,10 @@ def deferred_opendap_widget(node, kw):
     tags = kw.get('tags')
     choices = []
     if ctx.hit_count == 1:
-        for result in ctx.search():
-            agg_ctx = result.aggregation_context()
-            for agg in agg_ctx.search():
-                choices.append( (agg.opendap_url, agg.opendap_url) )
+        result = ctx.search()[0]
+        agg_ctx = result.aggregation_context()
+        agg = agg_ctx.search()[0]
+        choices.append( (agg.opendap_url, agg.opendap_url) )
 
     return deform.widget.RadioChoiceWidget(values = choices)
 
