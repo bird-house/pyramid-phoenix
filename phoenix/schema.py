@@ -26,6 +26,21 @@ class MemoryTmpStore(dict):
 
 tmpstore = MemoryTmpStore()
 
+class WorkflowDataSourceSchema(colander.MappingSchema):
+    data_source = colander.SchemaNode(
+        colander.String()
+        )
+
+class WorkflowSearchSchema(colander.MappingSchema):
+    search = colander.SchemaNode(
+        colander.String()
+        )
+
+class WorkflowRunSchema(colander.MappingSchema):
+    run = colander.SchemaNode(
+        colander.String()
+        )
+
 class AdminSchema(colander.MappingSchema):
     history_count = colander.SchemaNode(
         colander.Int(),

@@ -6,7 +6,7 @@ from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.response import Response
 from pyramid.security import remember, forget, authenticated_userid
 from pyramid.events import subscriber, BeforeRender
-from pyramid_deform import FormView
+from pyramid_deform import FormView, FormWizard, FormWizardView
 from pyramid_persona.views import verify_login 
 import deform
 import peppercorn
@@ -516,6 +516,25 @@ class SearchView(FormView):
 
     def download_success(self, appstruct):
         opendap_url = appstruct['opendap_url']
+
+def workflow_wizard_done(request, states):
+    log.debug('states = %s', states)
+    return {'form' : FormView(request)}
+
+@view_config(route_name='workflow',
+             renderer='templates/form.pt',
+             layout='default',
+             permission='edit',
+             )
+def workflow_wizard(request):
+    from .schema import WorkflowDataSourceSchema, WorkflowSearchSchema, WorkflowRunSchema
+    schema_1 = WorkflowDataSourceSchema()
+    schema_2 = WorkflowSearchSchema()
+    schema_3 = WorkflowRunSchema()
+    wizard = FormWizard('Workflow', workflow_wizard_done, 
+                        schema_1, schema_2, schema_3)
+    view = FormWizardView(wizard)
+    return view(request)
 
 @view_config(route_name='help',
              renderer='templates/embedded.pt',
