@@ -11,7 +11,7 @@ from pyramid_persona.views import verify_login
 import deform
 import peppercorn
 
-from .helpers import wps_url, update_wps_url, csw_url, whitelist, mongodb_conn, is_url
+from .helpers import wps_url, update_wps_url, csw_url, esgsearch_url, whitelist, mongodb_conn, is_url
 
 import logging
 
@@ -454,6 +454,8 @@ class AdminView(FormView):
                
         return HTTPFound(location=self.request.route_url('admin'))
 
+from pyesgf.search import SearchConnection
+
 @view_config(route_name='search',
              renderer='templates/form.pt',
              layout='default',
@@ -467,17 +469,18 @@ class SearchView(FormView):
     buttons = ('update', 'tag', 'download',)
     title = u"Search"
 
-    from pyesgf.search import SearchConnection
-    search_conn = SearchConnection('http://esgf-data.dkrz.de/esg-search', distrib=False)
-    search_context = search_conn.new_context(
-        project='CMIP5', product='output1', 
-        replica=False, latest=True)
+    search_conn = None
+    search_context = None
 
     def __call__(self):
         from .schema import SearchSchema
         # build the schema
         if self.schema_factory is None:
             self.schema_factory = SearchSchema
+            self.search_conn = SearchConnection(esgsearch_url(self.request), distrib=False)
+            self.search_context = self.search_conn.new_context(
+                project='CMIP5', product='output1', 
+                replica=False, latest=True)
         tags = {}
         db_conn = mongodb_conn(self.request)
         entry =db_conn.phoenix_db.search.find_one({'id':1})

@@ -263,6 +263,8 @@ class DataInputsSchema(colander.MappingSchema):
             node.widget = deform.widget.DateInputWidget()
         elif type(node.typ) == colander.Boolean:
             node.widget = deform.widget.CheckboxWidget()
+        elif 'password' in data_input.identifier:
+            node.widget = deform.widget.PasswordWidget(size=20)
         else:
             node.widget = deform.widget.TextInputWidget()
 

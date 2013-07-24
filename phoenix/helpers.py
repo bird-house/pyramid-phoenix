@@ -20,6 +20,13 @@ def csw_url(request):
     log.debug('using csw = %s', service_url)
     return service_url
 
+def esgsearch_url(request):
+    settings = request.registry.settings
+    # TODO: dont use hard coded project name
+    service_url = settings.get('esgf.search', None)
+    log.debug('using esgf seach = %s', service_url)
+    return service_url
+
 def whitelist(request):
 	settings = request.registry.settings
 	whitelist_str = settings.get('phoenix.login.whitelist', '')
