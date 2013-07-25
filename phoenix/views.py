@@ -531,6 +531,26 @@ class WorkflowFormView(FormView):
     def __call__(self):
         return FormView.__call__(self)
 
+    def before(self, form):
+        update_disabled = True
+
+        if hasattr(self.schema, 'update_ok'):
+            update_disabled = not self.schema.update_ok(self.request)
+
+        if not update_disabled:
+            update_button = deform.form.Button(name='update', title='Update',
+                                               disabled=update_disabled)
+            form.buttons.append(update_button)
+            form.update_success = self.update_success
+    
+    def update_success(self, appstruct):
+        log.debug('update_success = %s' % (appstruct))
+        log.debug('update params = %s' % (self.request.params))
+        return HTTPFound(
+            location=self.request.route_url('workflow'))
+                #'facet': appstruct['facet'], 
+                #'facet_item': appstruct['facet_item']}
+        
 class WorkflowFormWizardView(FormWizardView):
     form_view_class = WorkflowFormView
 

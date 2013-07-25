@@ -102,7 +102,8 @@ class SearchWorkflowEsgfDataSchema(colander.MappingSchema):
         description = 'Choose facet item',
         widget = deferred_esgf_facet_item_widget)
 
-
+    def update_ok(self, request):
+        return True
 
 class AdminSchema(colander.MappingSchema):
     history_count = colander.SchemaNode(
