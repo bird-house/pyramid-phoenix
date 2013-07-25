@@ -57,6 +57,7 @@ class ChooseWorkflowDataSourceSchema(colander.MappingSchema):
 
 @colander.deferred
 def deferred_esgf_facet_widget(node, kw):
+    state = kw.get('state')
     ctx = kw.get('search_context')
 
     choices = []
@@ -70,7 +71,7 @@ def deferred_esgf_facet_widget(node, kw):
 def deferred_esgf_facet_item_widget(node, kw):
     state = kw.get('state')
     log.debug('hello state = %s', state)
-    facet = state.get('facet')
+    facet = state.get('facet', 'institute')
     log.debug('current facet = %s', facet)
     ctx = kw.get('search_context')
 
@@ -81,19 +82,84 @@ def deferred_esgf_facet_item_widget(node, kw):
             choices.append( (item, '%s (%s)' % (item, count)) )
     return deform.widget.SelectWidget(values = choices)
 
+@colander.deferred
+def deferred_esgf_tags_widget(node, kw):
+    state = kw.get('state')
+    ctx = kw.get('search_context')
+    tagstruct = kw.get('tagstruct', {})
+    choices = []
+    for (key,value) in tagstruct.iteritems():
+        choices.append((key, '%s:%s' % (key, value)))
+    #return deform_bootstrap_extra.widgets.TagsWidget()
+    return deform.widget.SelectWidget(values = choices)
+
+@colander.deferred
+def deferred_esgf_opendap_widget(node, kw):
+    ctx = kw.get('search_context')
+    tags = kw.get('tagsstruct')
+    choices = []
+    if ctx.hit_count == 1:
+        result = ctx.search()[0]
+        agg_ctx = result.aggregation_context()
+        agg = agg_ctx.search()[0]
+        choices.append( (agg.opendap_url, agg.opendap_url) )
+
+    return deform.widget.RadioChoiceWidget(values = choices)
+
+@colander.deferred
+def deferred_esgf_files_widget(node, kw):
+    ctx = kw.get('search_context')
+    choices = []
+    if ctx.hit_count == 1:
+        result = ctx.search()[0]
+        files_ctx = result.file_context()
+        myfile = files_ctx.search()[0]
+        choices.append( (myfile.download_url, myfile.download_url) )
+    return deform.widget.RadioChoiceWidget(values = choices)
+
+
 class SearchWorkflowEsgfDataSchema(colander.MappingSchema):
     facet = colander.SchemaNode(
         colander.String(),
         description = 'Choose search facet',
         default = 'institute',
+        missing = '',
         widget = deferred_esgf_facet_widget)
 
     facet_item = colander.SchemaNode(
         colander.String(),
         description = 'Choose facet item',
+        missing = '',
         widget = deferred_esgf_facet_item_widget)
 
+    tags = colander.SchemaNode(
+        colander.String(),
+        description = 'Choosen tags',
+        missing = '',
+        widget = deferred_esgf_tags_widget)
+
+    hit_count = colander.SchemaNode(
+        colander.Integer(),
+        description = "Hit count",
+        missing = 0,
+        widget = deform.widget.TextInputWidget(readonly=True))
+
+    opendap_url = colander.SchemaNode(
+        colander.String(),
+        description = 'OpenDAP Access URL',
+        missing = '',
+        widget = deferred_esgf_opendap_widget)
+
+    files_url = colander.SchemaNode(
+        colander.String(),
+        description = 'File Access',
+        missing = '',
+        widget = deferred_esgf_files_widget)
+
     def update_ok(self, request):
+        return True
+
+    def tag_ok(self, request):
         return True
 
 class AdminSchema(colander.MappingSchema):

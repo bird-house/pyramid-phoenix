@@ -21,6 +21,8 @@ log = logging.getLogger(__name__)
 from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
 
+__tagstruct__ = {}
+
 @subscriber(BeforeRender)
 def add_global(event):
     event['message_type'] = 'alert-info'
@@ -520,6 +522,7 @@ class SearchView(FormView):
 
 class WorkflowFormWizard(FormWizard):
     def __init__(self, name, done, *schemas):
+        log.debug('init wizard')
         FormWizard.__init__(self, name, done, *schemas)
 
     def __call__(self, request):
@@ -530,15 +533,16 @@ class WorkflowFormView(FormView):
          
 class WorkflowFormWizardView(FormWizardView):
     form_view_class = WorkflowFormView
-    search_context = None
 
     def __init__(self, wizard):
+        log.debug('init esgf search')
         FormWizardView.__init__(self, wizard)
 
     def __call__(self, request):
-        if self.search_context == None:
-            self.search_context = esgf_search_context(request)
+        global __tagstruct__
+
         self.request = request
+        self.search_context = esgf_search_context(request)
         self.wizard_state = self.wizard_state_class(request, self.wizard.name)
         step = self.wizard_state.get_step_num()
         
@@ -551,9 +555,11 @@ class WorkflowFormWizardView(FormWizardView):
         schema = self.wizard.schemas[step]
         state = self.wizard_state.get_step_state(None)
         state = self.deserialize(state)
+        self.search_context = self.search_context.constrain(**__tagstruct__)
         self.schema = schema.bind(
             request=request, 
             search_context=self.search_context,
+            tagstruct=__tagstruct__,
             state=state)
         form_view.schema = self.schema
         buttons = []
@@ -561,6 +567,7 @@ class WorkflowFormWizardView(FormWizardView):
         prev_disabled = False
         next_disabled = False
         update_disabled = True
+        tag_disabled = True
 
         if hasattr(schema, 'prev_ok'):
             prev_disabled = not schema.prev_ok(request)
@@ -571,6 +578,9 @@ class WorkflowFormWizardView(FormWizardView):
         if hasattr(schema, 'update_ok'):
             update_disabled = not schema.update_ok(request)
 
+        if hasattr(schema, 'tag_ok'):
+            tag_disabled = not schema.tag_ok(request)
+
         prev_button = deform.form.Button(name='previous', title='Previous',
                                          disabled=prev_disabled)
         next_button = deform.form.Button(name='next', title='Next',
@@ -579,9 +589,13 @@ class WorkflowFormWizardView(FormWizardView):
                              disabled=next_disabled)
         update_button = deform.form.Button(name='update', title='Update',
                                disabled=update_disabled)
+        tag_button = deform.form.Button(name='tag', title='Tag',
+                                        disabled=tag_disabled)
 
         if step > 0:
             buttons.append(prev_button)
+        else:
+            __tagstruct__ = {}
 
         if step < len(self.wizard.schemas)-1:
             buttons.append(next_button)
@@ -591,18 +605,25 @@ class WorkflowFormWizardView(FormWizardView):
         if not update_disabled:
             buttons.append(update_button)
 
+        if not tag_disabled:
+            buttons.append(tag_button)
+
         form_view.buttons = buttons
         form_view.next_success = self.next_success
         form_view.previous_success = self.previous_success
         form_view.previous_failure = self.previous_failure
         form_view.update_success = self.update_success
+        form_view.tag_success = self.tag_success
         form_view.show = self.show
         form_view.appstruct = getattr(schema, 'appstruct', None)
         result = form_view()
         return result
 
     def show(self, form):
-        appstruct = getattr(self.schema, 'appstruct', None)
+        global __tagstruct__
+        appstruct = getattr(self.schema, 'appstruct', {})
+        self.search_context = self.search_context.constrain(**__tagstruct__)
+        appstruct['hit_count'] = self.search_context.hit_count
         state = self.wizard_state.get_step_state(appstruct)
         state = self.deserialize(state)
         log.debug('show, state=%s', state)
@@ -613,6 +634,25 @@ class WorkflowFormWizardView(FormWizardView):
         validated = self.serialize(validated)
         self.wizard_state.set_state(self.schema.name, validated)
         #self.wizard_state.increment_step()
+        return HTTPFound(location = self.request.path_url)
+
+    def tag_success(self, validated):
+        global __tagstruct__
+
+        validated = self.serialize(validated)
+        
+        # update tags
+        facet = validated['facet']
+        item = validated['facet_item']
+        __tagstruct__[facet] = item
+        log.debug('tags = %s' % (__tagstruct__))
+
+        # norrow search
+        self.search_context = self.search_context.constrain(**__tagstruct__)
+        facets = self.search_context.get_facet_options()
+        if len(facets.keys()) > 0:
+            validated['facet'] = facets.keys()[0]
+        self.wizard_state.set_state(self.schema.name, validated)
         return HTTPFound(location = self.request.path_url)
 
 def workflow_wizard_done(request, states):
