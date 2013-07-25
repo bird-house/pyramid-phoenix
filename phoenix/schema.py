@@ -11,6 +11,8 @@ import re
 import colander
 import deform
 
+from .helpers import esgf_search_context
+
 import logging
 
 log = logging.getLogger(__name__)
@@ -55,16 +57,10 @@ class ChooseWorkflowDataSourceSchema(colander.MappingSchema):
         widget = deform.widget.RadioChoiceWidget(values = choices)
         )
 
-from pyesgf.search import SearchConnection
-from .helpers import esgsearch_url
-
 @colander.deferred
 def deferred_esgf_facet_widget(node, kw):
     request = kw.get('request')
-    conn = SearchConnection(esgsearch_url(request), distrib=False)
-    ctx = conn.new_context(
-        project='CMIP5', product='output1', 
-        replica=False, latest=True)
+    ctx = esgf_search_context(request)
 
     choices = []
     facets = ctx.get_facet_options()
@@ -73,11 +69,40 @@ def deferred_esgf_facet_widget(node, kw):
         choices.append( (facet, '%s (%s)' % (facet, len(counts))) )
     return deform.widget.SelectWidget(values = choices)
 
+@colander.deferred
+def deferred_esgf_facet_default(node, kw):
+    request = kw.get('request')
+    facet = request.params.get('facet', 'institute')
+    log.debug('current esgf facet = %s' % (facet))
+    return facet
+
+@colander.deferred
+def deferred_esgf_facet_item_widget(node, kw):
+    request = kw.get('request')
+    facet = request.params.get('facet', 'institute')
+    log.debug('current facet = %s' % (facet))
+    ctx = esgf_search_context(request)
+
+    facets = ctx.get_facet_options()
+    choices = []
+    if len(facets.keys()) > 0:
+        for (item,count) in ctx.facet_counts[facet].iteritems():
+            choices.append( (item, '%s (%s)' % (item, count)) )
+    return deform.widget.SelectWidget(values = choices)
+
 class SearchWorkflowEsgfDataSchema(colander.MappingSchema):
     facet = colander.SchemaNode(
         colander.String(),
         description = 'Choose search facet',
+        default = deferred_esgf_facet_default,
         widget = deferred_esgf_facet_widget)
+
+    facet_item = colander.SchemaNode(
+        colander.String(),
+        description = 'Choose facet item',
+        widget = deferred_esgf_facet_item_widget)
+
+
 
 class AdminSchema(colander.MappingSchema):
     history_count = colander.SchemaNode(

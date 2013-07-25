@@ -517,6 +517,21 @@ class SearchView(FormView):
     def download_success(self, appstruct):
         opendap_url = appstruct['opendap_url']
 
+class WorkflowFormWizard(FormWizard):
+    def __init__(self, name, done, *schemas):
+        FormWizard.__init__(self, name, done, *schemas)
+
+    def __call__(self, request):
+        FormWizard.__call__(self, request)
+
+class WorkflowFormWizardView(FormWizardView):
+    def __init__(self, wizard):
+        FormWizardView.__init__(self, wizard)
+
+    def __call__(self, request):
+        return FormWizardView.__call__(self, request)
+
+
 def workflow_wizard_done(request, states):
     log.debug('states = %s', states)
     #wizard.get_summary(request)
@@ -542,9 +557,9 @@ def workflow_wizard(request):
 
     # step 3, enter workflow params
     #schema_3 = WorkflowRunSchema()
-    wizard = FormWizard('Workflow', workflow_wizard_done, 
-                        schema_0, schema_1, schema_2)
-    view = FormWizardView(wizard)
+    wizard = WorkflowFormWizard('Workflow', workflow_wizard_done, 
+                                schema_0, schema_1, schema_2)
+    view = WorkflowFormWizardView(wizard)
     return view(request)
 
 @view_config(route_name='help',
