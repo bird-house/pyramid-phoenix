@@ -12,6 +12,7 @@ import deform
 import peppercorn
 
 from .helpers import wps_url, update_wps_url, csw_url, esgsearch_url, whitelist, mongodb_conn, is_url
+from .helpers import esgf_search_context
 
 import logging
 
@@ -525,41 +526,94 @@ class WorkflowFormWizard(FormWizard):
         FormWizard.__call__(self, request)
 
 class WorkflowFormView(FormView):
-    def __init__(self, request):
-        FormView.__init__(self, request)
-
-    def __call__(self):
-        return FormView.__call__(self)
-
-    def before(self, form):
-        update_disabled = True
-
-        if hasattr(self.schema, 'update_ok'):
-            update_disabled = not self.schema.update_ok(self.request)
-
-        if not update_disabled:
-            update_button = deform.form.Button(name='update', title='Update',
-                                               disabled=update_disabled)
-            form.buttons.append(update_button)
-            form.update_success = self.update_success
-    
-    def update_success(self, appstruct):
-        log.debug('update_success = %s' % (appstruct))
-        log.debug('update params = %s' % (self.request.params))
-        return HTTPFound(
-            location=self.request.route_url('workflow'))
-                #'facet': appstruct['facet'], 
-                #'facet_item': appstruct['facet_item']}
-        
+    pass
+         
 class WorkflowFormWizardView(FormWizardView):
     form_view_class = WorkflowFormView
+    search_context = None
 
     def __init__(self, wizard):
         FormWizardView.__init__(self, wizard)
 
     def __call__(self, request):
-        return FormWizardView.__call__(self, request)
+        if self.search_context == None:
+            self.search_context = esgf_search_context(request)
+        self.request = request
+        self.wizard_state = self.wizard_state_class(request, self.wizard.name)
+        step = self.wizard_state.get_step_num()
+        
+        if step > len(self.wizard.schemas)-1:
+            states = self.wizard_state.get_step_states()
+            result = self.wizard.done(request, states)
+            self.wizard_state.clear()
+            return result
+        form_view = self.form_view_class(request)
+        schema = self.wizard.schemas[step]
+        state = self.wizard_state.get_step_state(None)
+        state = self.deserialize(state)
+        self.schema = schema.bind(
+            request=request, 
+            search_context=self.search_context,
+            state=state)
+        form_view.schema = self.schema
+        buttons = []
 
+        prev_disabled = False
+        next_disabled = False
+        update_disabled = True
+
+        if hasattr(schema, 'prev_ok'):
+            prev_disabled = not schema.prev_ok(request)
+
+        if hasattr(schema, 'next_ok'):
+            next_disabled = not schema.next_ok(request)
+            
+        if hasattr(schema, 'update_ok'):
+            update_disabled = not schema.update_ok(request)
+
+        prev_button = deform.form.Button(name='previous', title='Previous',
+                                         disabled=prev_disabled)
+        next_button = deform.form.Button(name='next', title='Next',
+                             disabled=next_disabled)
+        done_button = deform.form.Button(name='next', title='Done',
+                             disabled=next_disabled)
+        update_button = deform.form.Button(name='update', title='Update',
+                               disabled=update_disabled)
+
+        if step > 0:
+            buttons.append(prev_button)
+
+        if step < len(self.wizard.schemas)-1:
+            buttons.append(next_button)
+        else:
+            buttons.append(done_button)
+
+        if not update_disabled:
+            buttons.append(update_button)
+
+        form_view.buttons = buttons
+        form_view.next_success = self.next_success
+        form_view.previous_success = self.previous_success
+        form_view.previous_failure = self.previous_failure
+        form_view.update_success = self.update_success
+        form_view.show = self.show
+        form_view.appstruct = getattr(schema, 'appstruct', None)
+        result = form_view()
+        return result
+
+    def show(self, form):
+        appstruct = getattr(self.schema, 'appstruct', None)
+        state = self.wizard_state.get_step_state(appstruct)
+        state = self.deserialize(state)
+        log.debug('show, state=%s', state)
+        result = dict(form=form.render(appstruct=state))
+        return result
+
+    def update_success(self, validated):
+        validated = self.serialize(validated)
+        self.wizard_state.set_state(self.schema.name, validated)
+        #self.wizard_state.increment_step()
+        return HTTPFound(location = self.request.path_url)
 
 def workflow_wizard_done(request, states):
     log.debug('states = %s', states)

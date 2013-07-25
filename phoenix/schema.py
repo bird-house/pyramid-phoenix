@@ -11,8 +11,6 @@ import re
 import colander
 import deform
 
-from .helpers import esgf_search_context
-
 import logging
 
 log = logging.getLogger(__name__)
@@ -59,8 +57,7 @@ class ChooseWorkflowDataSourceSchema(colander.MappingSchema):
 
 @colander.deferred
 def deferred_esgf_facet_widget(node, kw):
-    request = kw.get('request')
-    ctx = esgf_search_context(request)
+    ctx = kw.get('search_context')
 
     choices = []
     facets = ctx.get_facet_options()
@@ -70,18 +67,12 @@ def deferred_esgf_facet_widget(node, kw):
     return deform.widget.SelectWidget(values = choices)
 
 @colander.deferred
-def deferred_esgf_facet_default(node, kw):
-    request = kw.get('request')
-    facet = request.params.get('facet', 'institute')
-    log.debug('current esgf facet = %s' % (facet))
-    return facet
-
-@colander.deferred
 def deferred_esgf_facet_item_widget(node, kw):
-    request = kw.get('request')
-    facet = request.params.get('facet', 'institute')
-    log.debug('current facet = %s' % (facet))
-    ctx = esgf_search_context(request)
+    state = kw.get('state')
+    log.debug('hello state = %s', state)
+    facet = state.get('facet')
+    log.debug('current facet = %s', facet)
+    ctx = kw.get('search_context')
 
     facets = ctx.get_facet_options()
     choices = []
@@ -94,7 +85,7 @@ class SearchWorkflowEsgfDataSchema(colander.MappingSchema):
     facet = colander.SchemaNode(
         colander.String(),
         description = 'Choose search facet',
-        default = deferred_esgf_facet_default,
+        default = 'institute',
         widget = deferred_esgf_facet_widget)
 
     facet_item = colander.SchemaNode(
