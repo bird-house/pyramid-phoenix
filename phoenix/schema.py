@@ -36,7 +36,8 @@ def deferred_choose_workflow_widget(node, kw):
     wps.getcapabilities()
     choices = []
     for process in wps.processes:
-        choices.append( (process.identifier, process.title) )
+        if '_workflow' in process.identifier:
+            choices.append( (process.identifier, process.title) )
     return deform.widget.SelectWidget(values = choices)
 
 class ChooseWorkflowSchema(colander.MappingSchema):
