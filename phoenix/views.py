@@ -519,6 +519,7 @@ class SearchView(FormView):
 
 def workflow_wizard_done(request, states):
     log.debug('states = %s', states)
+    #wizard.get_summary(request)
     return {'form' : FormView(request)}
 
 @view_config(route_name='workflow',
@@ -536,12 +537,13 @@ def workflow_wizard(request):
     schema_1 = ChooseWorkflowDataSourceSchema()
 
     # step 2, seach esgf data
-    #schema_2 = WorkflowSearchSchema()
+    from .schema import SearchWorkflowEsgfDataSchema
+    schema_2 = SearchWorkflowEsgfDataSchema()
 
     # step 3, enter workflow params
     #schema_3 = WorkflowRunSchema()
     wizard = FormWizard('Workflow', workflow_wizard_done, 
-                        schema_0, schema_1)
+                        schema_0, schema_1, schema_2)
     view = FormWizardView(wizard)
     return view(request)
 

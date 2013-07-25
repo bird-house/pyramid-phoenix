@@ -55,15 +55,29 @@ class ChooseWorkflowDataSourceSchema(colander.MappingSchema):
         widget = deform.widget.RadioChoiceWidget(values = choices)
         )
 
-class WorkflowSearchSchema(colander.MappingSchema):
-    search = colander.SchemaNode(
-        colander.String()
-        )
+from pyesgf.search import SearchConnection
+from .helpers import esgsearch_url
 
-class WorkflowRunSchema(colander.MappingSchema):
-    run = colander.SchemaNode(
-        colander.String()
-        )
+@colander.deferred
+def deferred_esgf_facet_widget(node, kw):
+    request = kw.get('request')
+    conn = SearchConnection(esgsearch_url(request), distrib=False)
+    ctx = conn.new_context(
+        project='CMIP5', product='output1', 
+        replica=False, latest=True)
+
+    choices = []
+    facets = ctx.get_facet_options()
+    for facet in facets.keys():
+        counts = facets[facet]
+        choices.append( (facet, '%s (%s)' % (facet, len(counts))) )
+    return deform.widget.SelectWidget(values = choices)
+
+class SearchWorkflowEsgfDataSchema(colander.MappingSchema):
+    facet = colander.SchemaNode(
+        colander.String(),
+        description = 'Choose search facet',
+        widget = deferred_esgf_facet_widget)
 
 class AdminSchema(colander.MappingSchema):
     history_count = colander.SchemaNode(
