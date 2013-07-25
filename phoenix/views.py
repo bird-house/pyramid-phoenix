@@ -524,7 +524,16 @@ class WorkflowFormWizard(FormWizard):
     def __call__(self, request):
         FormWizard.__call__(self, request)
 
+class WorkflowFormView(FormView):
+    def __init__(self, request):
+        FormView.__init__(self, request)
+
+    def __call__(self):
+        return FormView.__call__(self)
+
 class WorkflowFormWizardView(FormWizardView):
+    form_view_class = WorkflowFormView
+
     def __init__(self, wizard):
         FormWizardView.__init__(self, wizard)
 
