@@ -527,12 +527,18 @@ def workflow_wizard_done(request, states):
              permission='edit',
              )
 def workflow_wizard(request):
+    # step 0, choose wps
+    from .schema import ChooseWorkflowSchema
+    #class ChooseWorkflowSchemaWithAppstruct(ChooseWorkflowSchema):
+    #    appstruct = {}            
+    schema_0 = ChooseWorkflowSchema()
+    
     from .schema import WorkflowDataSourceSchema, WorkflowSearchSchema, WorkflowRunSchema
     schema_1 = WorkflowDataSourceSchema()
     schema_2 = WorkflowSearchSchema()
     schema_3 = WorkflowRunSchema()
     wizard = FormWizard('Workflow', workflow_wizard_done, 
-                        schema_1, schema_2, schema_3)
+                        schema_0, schema_1, schema_2, schema_3)
     view = FormWizardView(wizard)
     return view(request)
 

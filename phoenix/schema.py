@@ -26,6 +26,24 @@ class MemoryTmpStore(dict):
 
 tmpstore = MemoryTmpStore()
 
+from owslib.wps import WebProcessingService
+from .helpers import wps_url
+
+@colander.deferred
+def deferred_choose_workflow_widget(node, kw):
+    request = kw.get('request')
+    wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
+    wps.getcapabilities()
+    choices = []
+    for process in wps.processes:
+        choices.append( (process.identifier, process.title) )
+    return deform.widget.SelectWidget(values = choices)
+
+class ChooseWorkflowSchema(colander.MappingSchema):
+    workflow = colander.SchemaNode(
+        colander.String(),
+        widget = deferred_choose_workflow_widget)
+
 class WorkflowDataSourceSchema(colander.MappingSchema):
     data_source = colander.SchemaNode(
         colander.String()
