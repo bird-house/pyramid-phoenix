@@ -125,16 +125,19 @@ def history(request):
 
         # TODO: handle different process status
         if proc['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
-            wps = WebProcessingService(proc['service_url'], verbose=False)
-            execution = WPSExecution(url=wps.url)
-            execution.checkStatus(url=proc['status_location'], sleepSecs=0)
-            proc['status'] = execution.status
-            proc['end_time'] = datetime.datetime.now()
-           
+            try:
+                wps = WebProcessingService(proc['service_url'], verbose=False)
+                execution = WPSExecution(url=wps.url)
+                execution.checkStatus(url=proc['status_location'], sleepSecs=0)
+                proc['status'] = execution.status
+                proc['end_time'] = datetime.datetime.now()
+            except:
+                log.warn('could not access %s', proc['status_location'])
+                continue
+
             # TODO: configure output delete time
             dd = 3
-            proc['output_delete_time'] = datetime.datetime.now() + \
-                                      datetime.timedelta(days=dd)
+            proc['output_delete_time'] = datetime.datetime.now() + datetime.timedelta(days=dd)
             percent = 45  # TODO: poll percent
             proc['progress'] = percent
             proc['duration'] = str(proc['end_time'] - proc['start_time'])
