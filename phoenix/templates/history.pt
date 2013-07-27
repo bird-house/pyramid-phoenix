@@ -47,6 +47,11 @@
                     selector: 'a[rel="tooltip"], [data-toggle="tooltip"]'
                 });
             });
+
+	    $(function() {
+	        setTimeout("location.reload(true);",10000);
+	    });
+
         </script>
     </div>
 
