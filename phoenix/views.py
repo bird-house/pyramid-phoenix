@@ -130,10 +130,20 @@ def history(request):
                 execution = WPSExecution(url=wps.url)
                 execution.checkStatus(url=proc['status_location'], sleepSecs=0)
                 proc['status'] = execution.status
-                proc['end_time'] = datetime.datetime.now()
+                proc['errors'] = []
+                proc['error_message'] = ''
+                for err in execution.errors:
+                    proc['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
+               
             except:
-                log.warn('could not access %s', proc['status_location'])
-                continue
+                msg = 'could not access wps %s' % (proc['status_location'])
+                log.warn(msg)
+                proc['status'] = 'Exception'
+                proc['errors'] = [dict(code='', locator='', text=msg)]
+            
+            proc['end_time'] = datetime.datetime.now()
+            for err in proc['errors']:
+                proc['error_message'] = err.get('text', '') + ';'
 
             # TODO: configure output delete time
             dd = 3
