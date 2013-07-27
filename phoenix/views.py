@@ -121,7 +121,6 @@ def history(request):
         log.debug('status_location = %s', proc['status_location'])
 
         proc['starttime'] = proc['start_time'].strftime('%a, %d %h %Y %I:%M:%S %p')
-        proc['duration'] = 0
 
         # TODO: handle different process status
         if proc['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
@@ -130,6 +129,8 @@ def history(request):
                 execution = WPSExecution(url=wps.url)
                 execution.checkStatus(url=proc['status_location'], sleepSecs=0)
                 proc['status'] = execution.status
+                proc['percent_completed'] = execution.percentCompleted
+                proc['status_message'] = execution.statusMessage
                 proc['errors'] = []
                 proc['error_message'] = ''
                 for err in execution.errors:
@@ -149,7 +150,6 @@ def history(request):
             dd = 3
             proc['output_delete_time'] = datetime.datetime.now() + datetime.timedelta(days=dd)
             percent = 45  # TODO: poll percent
-            proc['progress'] = percent
             proc['duration'] = str(proc['end_time'] - proc['start_time'])
             db.history.update({'uuid':proc['uuid']}, proc)
         history.append(proc)

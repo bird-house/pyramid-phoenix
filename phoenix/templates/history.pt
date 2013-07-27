@@ -17,9 +17,9 @@
                         <td>${p.starttime}</td>
                         <td>${p.duration}</td>
                         <td tal:condition="p.status in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']">
-                            <small>${p.status}</small>
+			    <a href="#" class="label label-info" data-toggle="popover" data-placement="left" data-content="${p.status_message}" data-original-title="Status Message">${p.status}</a>
                             <div class="progress progress-info">
-                                <div class="bar" style="width: ${p.progress}%;">${p.progress}%</div>
+                                <div class="bar" style="width: ${p.percent_completed}%;">${p.percent_completed}%</div>
                             </div>
                         </td>
                         <td tal:condition="p.status == 'ProcessSucceeded'">
