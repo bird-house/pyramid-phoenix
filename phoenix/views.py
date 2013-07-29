@@ -472,11 +472,34 @@ class AdminView(FormView):
 
 from pyesgf.search import SearchConnection
 
-@view_config(route_name='search',
-             renderer='templates/form.pt',
+@view_config(route_name='esgsearch',
+             renderer='templates/esgsearch.pt',
              layout='default',
-             permission='edit',
-             )
+             permission='view')
+def esgsearch_view(request):
+    category = request.matchdict.get('category', 'institute')
+    tag = request.matchdict.get('tag', None)
+    tag_cloud = request.matchdict.get('tag_cloud', {})
+
+    search_conn = SearchConnection(esgsearch_url(request), distrib=False)
+    search_context = search_conn.new_context(
+        project='CMIP5', 
+        product='output1', 
+        replica=False, 
+        latest=True)
+    search_context = search_context.constrain(**tag_cloud)
+    
+    return {
+        'category': category,
+        'tag': tag,
+        'search_context' : search_context,
+    }
+
+#@view_config(route_name='search',
+#             renderer='templates/form.pt',
+#             layout='default',
+#             permission='edit',
+#             )
 class SearchView(FormView):
     log.debug('rendering search view')
     #form_info = "Hover your mouse over the widgets for description."
