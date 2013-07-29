@@ -124,6 +124,7 @@ def history(request):
 
         # TODO: handle different process status
         if proc['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
+            proc['errors'] = []
             try:
                 wps = WebProcessingService(proc['service_url'], verbose=False)
                 execution = WPSExecution(url=wps.url)
@@ -131,7 +132,6 @@ def history(request):
                 proc['status'] = execution.status
                 proc['percent_completed'] = execution.percentCompleted
                 proc['status_message'] = execution.statusMessage
-                proc['errors'] = []
                 proc['error_message'] = ''
                 for err in execution.errors:
                     proc['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
@@ -140,7 +140,7 @@ def history(request):
                 msg = 'could not access wps %s' % (proc['status_location'])
                 log.warn(msg)
                 proc['status'] = 'Exception'
-                proc['errors'] = [dict(code='', locator='', text=msg)]
+                proc['errors'].append( dict(code='', locator='', text=msg) )
             
             proc['end_time'] = datetime.datetime.now()
             for err in proc['errors']:
