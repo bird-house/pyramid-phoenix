@@ -479,18 +479,24 @@ from pyesgf.search import SearchConnection
 def esgsearch_view(request):
     # TODO: handle request params
     # http://docs.pylonsproject.org/projects/pyramid/en/1.0-branch/api/url.html
-    #action = request.matchdict.get('action', None)
-    action = request.params.get('action', None)
-    facet = request.params.get('facet', None)
-    item = request.params.get('item', None)
-    constraints = request.params.get('constraints', {})
+    
+    action = request.matchdict.get('action', None)
+    facet = request.matchdict.get('facet', None)
+    item = request.matchdict.get('item', None)
+    constraints = {}
+    for (key,value) in request.params.iteritems():
+        constraints[key] = value
     log.debug('request params = %s', request.params)
 
     log.debug('facet=%s, item=%s, action=%s', facet, item, action)
     log.debug('constraints=%s', constraints)
-    
-    if action == 'select_item':
+
+    if action == 'facet':
+        pass
+    elif action == 'item':
         constraints[facet] = item
+    elif action == 'constraint':
+        del constraints[facet]
     
     conn = SearchConnection(esgsearch_url(request), distrib=False)
     ctx = conn.new_context(

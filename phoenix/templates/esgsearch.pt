@@ -10,7 +10,7 @@
     <h4>Facet</h4>
     <div>
       <span class="tags">
-	<a tal:repeat="(facet,counts) ctx.get_facet_options().iteritems()" href="${request.route_url('esgsearch', _query=[ ('facet',facet), ('action','select_facet') ])}">
+	<a tal:repeat="(facet,counts) ctx.get_facet_options().iteritems()" href="${request.route_url('esgsearch', action='facet', facet=facet, item=None, _query=constraints)}">
           ${facet} (${len(counts)})
 	</a>
       </span>
@@ -19,7 +19,7 @@
     <h4>${facet}</h4>
     <div tal:condition="facet">
       <span class="tags">
-	<a tal:repeat="(item,count) ctx.facet_counts[facet].iteritems()" href="${request.route_url('esgsearch', _query=[('facet',facet), ('item',item), ('action','select_item')])}">
+	<a tal:repeat="(item,count) ctx.facet_counts[facet].iteritems()" href="${request.route_url('esgsearch', action='item', facet=facet, item=item, _query=constraints)}">
 	  ${item} (${count})
 	</a>
       </span>
@@ -28,7 +28,7 @@
     <h4>Constraints</h4>
     <div>
       <span class="tags">
-	<a tal:repeat="(facet,item) constraints.iteritems()" href="${request.route_url('esgsearch', _query=[('facet',facet),('item',item),('action','unselect_constraint')])}">
+	<a tal:repeat="(facet,item) constraints.iteritems()" href="${request.route_url('esgsearch', action='constraint', facet=facet, item=item, _query=constraints)}">
 	  ${facet}:${item}
 	</a>
       </span>
