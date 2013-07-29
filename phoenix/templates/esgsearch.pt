@@ -7,6 +7,32 @@
       <small>form_info</small>
     </legend>  
 
+    <h4>Facet</h4>
+    <div>
+      <span class="tags">
+	<a tal:repeat="(facet,counts) ctx.get_facet_options().iteritems()" href="${request.route_url('esgsearch', _query=[ ('facet',facet), ('action','select_facet') ])}">
+          ${facet} (${len(counts)})
+	</a>
+      </span>
+    </div>
+
+    <h4>${facet}</h4>
+    <div tal:condition="facet">
+      <span class="tags">
+	<a tal:repeat="(item,count) ctx.facet_counts[facet].iteritems()" href="${request.route_url('esgsearch', _query=[('facet',facet), ('item',item), ('action','select_item')])}">
+	  ${item} (${count})
+	</a>
+      </span>
+    </div>
+
+    <h4>Constraints</h4>
+    <div>
+      <span class="tags">
+	<a tal:repeat="(facet,item) constraints.iteritems()" href="${request.route_url('esgsearch', _query=[('facet',facet),('item',item),('action','unselect_constraint')])}">
+	  ${facet}:${item}
+	</a>
+      </span>
+    </div>
   </div>
    
 </metal:block>

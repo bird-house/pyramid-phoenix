@@ -477,22 +477,34 @@ from pyesgf.search import SearchConnection
              layout='default',
              permission='view')
 def esgsearch_view(request):
-    category = request.matchdict.get('category', 'institute')
-    tag = request.matchdict.get('tag', None)
-    tag_cloud = request.matchdict.get('tag_cloud', {})
+    # TODO: handle request params
+    # http://docs.pylonsproject.org/projects/pyramid/en/1.0-branch/api/url.html
+    #action = request.matchdict.get('action', None)
+    action = request.params.get('action', None)
+    facet = request.params.get('facet', None)
+    item = request.params.get('item', None)
+    constraints = request.params.get('constraints', {})
+    log.debug('request params = %s', request.params)
 
-    search_conn = SearchConnection(esgsearch_url(request), distrib=False)
-    search_context = search_conn.new_context(
+    log.debug('facet=%s, item=%s, action=%s', facet, item, action)
+    log.debug('constraints=%s', constraints)
+    
+    if action == 'select_item':
+        constraints[facet] = item
+    
+    conn = SearchConnection(esgsearch_url(request), distrib=False)
+    ctx = conn.new_context(
         project='CMIP5', 
         product='output1', 
         replica=False, 
         latest=True)
-    search_context = search_context.constrain(**tag_cloud)
-    
+    ctx = ctx.constrain(**constraints)
+
     return {
-        'category': category,
-        'tag': tag,
-        'search_context' : search_context,
+        'facet': facet,
+        'item': item,
+        'constraints': constraints,
+        'ctx' : ctx,
     }
 
 #@view_config(route_name='search',

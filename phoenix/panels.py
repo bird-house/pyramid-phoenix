@@ -8,8 +8,6 @@ log = logging.getLogger(__name__)
 from .models import ProcessHistory
 from .helpers import wps_url
 
-
-
 # navbar
 # ------
 @panel_config(name='navbar',
