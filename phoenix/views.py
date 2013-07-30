@@ -497,7 +497,7 @@ class EsgSearchView(FormView):
         opendap_url = appstruct['opendap_url']
         log.debug("submit result = %s", appstruct)
         #self.request.session.flash(u"Your changes have been saved.")
-        return HTTPFound(location = self.request.path_url)
+        return HTTPFound(location = self.request.route_url('admin'))
 
     def appstruct(self):
         return None
@@ -518,7 +518,7 @@ def esgsearch_view(request):
 
     all_facets = ctx.facet_counts.keys()
 
-    action = request.matchdict.get('action', None)
+    action = request.matchdict.get('action', 'update')
     facet = request.matchdict.get('facet', None)
     item = request.matchdict.get('item', None)
     constraints = {}
@@ -540,13 +540,9 @@ def esgsearch_view(request):
 
     ctx = ctx.constrain(**constraints)
 
-    rendered_form = None
-    try:
-        form_view = EsgSearchView(request, ctx)
-        rendered_form = form_view()['form']
-    except:
-        log.warning("form creation failed")
-
+    form_view = EsgSearchView(request, ctx)
+    rendered_form = form_view()['form']
+    
     return { 
         'form': rendered_form,
         'title': "ESGF Search",
