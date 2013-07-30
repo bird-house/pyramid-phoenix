@@ -475,23 +475,7 @@ class AdminView(FormView):
         return HTTPFound(location=self.request.route_url('admin'))
 
 class EsgSearchView(FormView):
-    from .schema import EsgSearchSchema
-
-    schema = EsgSearchSchema()
-    buttons = ('submit',)
-    
-    def __init__(self, request, ctx):
-        super(EsgSearchView, self).__init__(request)
-        self.ctx = ctx
-
-    def get_bind_data(self):
-        # ensure we get any base data defined by FormView
-        data = super(EsgSearchView, self).get_bind_data()
-        # add any custom data here
-        data.update({
-            'ctx': self.ctx,
-        })
-        return data
+    schema = None
 
     def submit_success(self, appstruct):
         opendap_url = appstruct['opendap_url']
@@ -540,7 +524,8 @@ def esgsearch_view(request):
 
     ctx = ctx.constrain(**constraints)
 
-    form_view = EsgSearchView(request, ctx)
+    form_view = EsgSearchView(request)
+    form_view.schema = EsgSearchSchema().bind(request=request, ctx=ctx)
     rendered_form = form_view()['form']
     
     return { 
@@ -557,12 +542,71 @@ def esgsearch_view(request):
 
 class WorkflowFormWizard(FormWizard):
     pass
-
-class WorkflowFormView(FormView):
-    pass
          
 class WorkflowFormWizardView(FormWizardView):
-    form_view_class = WorkflowFormView
+    form_view_class = EsgSearchView
+
+    def __call__(self, request):
+        self.request = request
+        self.wizard_state = self.wizard_state_class(request, self.wizard.name)
+        step = self.wizard_state.get_step_num()
+        
+        if step > len(self.wizard.schemas)-1:
+            states = self.wizard_state.get_step_states()
+            result = self.wizard.done(request, states)
+            self.wizard_state.clear()
+            return result
+        form_view = self.form_view_class(request)
+        schema = self.wizard.schemas[step]
+        conn = SearchConnection(esgsearch_url(request), distrib=False)
+        ctx = conn.new_context(
+            project='CMIP5', 
+            product='output1', 
+            replica=False, 
+            latest=True)
+        #form_view.ctx = ctx
+        self.schema = schema.bind(request=request, ctx=ctx)
+        form_view.schema = self.schema
+        buttons = []
+
+        prev_disabled = False
+        next_disabled = False
+
+        if hasattr(schema, 'prev_ok'):
+            prev_disabled = not schema.prev_ok(request)
+
+        if hasattr(schema, 'next_ok'):
+            next_disabled = not schema.next_ok(request)
+
+        prev_button = Button(name='previous', title='Previous',
+                             disabled=prev_disabled)
+        next_button = Button(name='next', title='Next',
+                             disabled=next_disabled)
+        done_button = Button(name='next', title='Done',
+                             disabled=next_disabled)
+
+        if step > 0:
+            buttons.append(prev_button)
+
+        if step < len(self.wizard.schemas)-1:
+            buttons.append(next_button)
+        else:
+            buttons.append(done_button)
+
+        form_view.buttons = buttons
+        form_view.next_success = self.next_success
+        form_view.previous_success = self.previous_success
+        form_view.previous_failure = self.previous_failure
+        form_view.show = self.show
+        form_view.appstruct = getattr(schema, 'appstruct', None)
+
+
+
+        result = form_view()
+        return result
+
+class Workflow(object):
+    pass
 
 def workflow_wizard_done(request, states):
     log.debug('states = %s', states)
@@ -577,16 +621,18 @@ def workflow_wizard_done(request, states):
 def workflow_wizard(request):
     # step 0, choose wps
     from .schema import ChooseWorkflowSchema
-    schema_0 = ChooseWorkflowSchema()
+    schema_choose_wf = ChooseWorkflowSchema()
 
     # step 2, seach esgf data
-    #from .schema import EsgSearchSchema
-    #schema_2 = EsgSearchSchema()
+    from .schema import EsgSearchSchema
+    schema_esgsearch = EsgSearchSchema()
 
     # step 3, enter workflow params
     #schema_3 = WorkflowRunSchema()
-    wizard = WorkflowFormWizard('Workflow', workflow_wizard_done, 
-                                schema_0, )
+    wizard = WorkflowFormWizard('Workflow', 
+                                workflow_wizard_done, 
+                                schema_choose_wf, 
+                                schema_esgsearch)
     view = WorkflowFormWizardView(wizard)
     return view(request)
 
