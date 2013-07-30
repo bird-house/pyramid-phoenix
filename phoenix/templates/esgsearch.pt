@@ -34,5 +34,7 @@
       </span>
     </div>
 
+    <span class="hits">${ctx.hit_count}</span> hits
+
   </div>
 </metal:block>

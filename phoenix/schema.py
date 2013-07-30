@@ -29,6 +29,33 @@ tmpstore = MemoryTmpStore()
 from owslib.wps import WebProcessingService
 from .helpers import wps_url
 
+# esg search schema
+# ------------------
+
+@colander.deferred
+def deferred_esgsearch_opendap_widget(node, kw):
+    ctx = kw.get('ctx')
+   
+    choices = []
+    if ctx.hit_count == 1:
+        result = ctx.search()[0]
+        agg_ctx = result.aggregation_context()
+        agg = agg_ctx.search()[0]
+        choices.append( (agg.opendap_url, agg.opendap_url) )
+
+    return deform.widget.RadioChoiceWidget(values = choices)
+
+class EsgSearchSchema(colander.MappingSchema):
+    opendap_url = colander.SchemaNode(
+        colander.String(),
+        description = 'OpenDAP Access URL',
+        missing = '',
+        #widget = deferred_esgsearch_opendap_widget)
+        widget = deform.widget.HiddenWidget())
+
+# workflow wizard
+# ---------------
+
 @colander.deferred
 def deferred_choose_workflow_widget(node, kw):
     request = kw.get('request')
