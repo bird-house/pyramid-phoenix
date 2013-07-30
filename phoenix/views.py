@@ -552,140 +552,17 @@ def esgsearch_view(request):
         'constraints': constraints,
         'ctx' : ctx, } 
 
-class WorkflowFormWizard(FormWizard):
-    def __init__(self, name, done, *schemas):
-        log.debug('init wizard')
-        FormWizard.__init__(self, name, done, *schemas)
+# workflow
+# --------
 
-    def __call__(self, request):
-        FormWizard.__call__(self, request)
+class WorkflowFormWizard(FormWizard):
+    pass
 
 class WorkflowFormView(FormView):
     pass
          
 class WorkflowFormWizardView(FormWizardView):
     form_view_class = WorkflowFormView
-
-    def __init__(self, wizard):
-        log.debug('init esgf search')
-        FormWizardView.__init__(self, wizard)
-
-    def __call__(self, request):
-        global __tagstruct__
-
-        self.request = request
-        self.search_context = esgf_search_context(request)
-        self.wizard_state = self.wizard_state_class(request, self.wizard.name)
-        step = self.wizard_state.get_step_num()
-        
-        if step > len(self.wizard.schemas)-1:
-            states = self.wizard_state.get_step_states()
-            result = self.wizard.done(request, states)
-            self.wizard_state.clear()
-            return result
-        form_view = self.form_view_class(request)
-        schema = self.wizard.schemas[step]
-        state = self.wizard_state.get_step_state(None)
-        state = self.deserialize(state)
-        self.search_context = self.search_context.constrain(**__tagstruct__)
-        self.schema = schema.bind(
-            request=request, 
-            search_context=self.search_context,
-            tagstruct=__tagstruct__,
-            state=state)
-        form_view.schema = self.schema
-        buttons = []
-
-        prev_disabled = False
-        next_disabled = False
-        update_disabled = True
-        tag_disabled = True
-
-        if hasattr(schema, 'prev_ok'):
-            prev_disabled = not schema.prev_ok(request)
-
-        if hasattr(schema, 'next_ok'):
-            next_disabled = not schema.next_ok(request)
-            
-        if hasattr(schema, 'update_ok'):
-            update_disabled = not schema.update_ok(request)
-
-        if hasattr(schema, 'tag_ok'):
-            tag_disabled = not schema.tag_ok(request)
-
-        prev_button = Button(name='previous', title='Previous',
-                             disabled=prev_disabled)
-        next_button = Button(name='next', title='Next',
-                             disabled=next_disabled)
-        done_button = Button(name='next', title='Done',
-                             disabled=next_disabled)
-        update_button = Button(name='update', title='Update',
-                               disabled=update_disabled)
-        tag_button = Button(name='tag', title='Tag',
-                            disabled=tag_disabled)
-
-        if step > 0:
-            buttons.append(prev_button)
-        else:
-            __tagstruct__ = {}
-
-        if step < len(self.wizard.schemas)-1:
-            buttons.append(next_button)
-        else:
-            buttons.append(done_button)
-
-        if not update_disabled:
-            buttons.append(update_button)
-
-        if not tag_disabled:
-            buttons.append(tag_button)
-
-        form_view.buttons = buttons
-        form_view.next_success = self.next_success
-        form_view.previous_success = self.previous_success
-        form_view.previous_failure = self.previous_failure
-        form_view.update_success = self.update_success
-        form_view.tag_success = self.tag_success
-        form_view.show = self.show
-        form_view.appstruct = getattr(schema, 'appstruct', None)
-        result = form_view()
-        return result
-
-    def show(self, form):
-        global __tagstruct__
-        appstruct = getattr(self.schema, 'appstruct', {})
-        self.search_context = self.search_context.constrain(**__tagstruct__)
-        appstruct['hit_count'] = self.search_context.hit_count
-        state = self.wizard_state.get_step_state(appstruct)
-        state = self.deserialize(state)
-        log.debug('show, state=%s', state)
-        result = dict(form=form.render(appstruct=state))
-        return result
-
-    def update_success(self, validated):
-        validated = self.serialize(validated)
-        self.wizard_state.set_state(self.schema.name, validated)
-        #self.wizard_state.increment_step()
-        return HTTPFound(location = self.request.path_url)
-
-    def tag_success(self, validated):
-        global __tagstruct__
-
-        validated = self.serialize(validated)
-        
-        # update tags
-        facet = validated['facet']
-        item = validated['facet_item']
-        __tagstruct__[facet] = item
-        log.debug('tags = %s' % (__tagstruct__))
-
-        # norrow search
-        self.search_context = self.search_context.constrain(**__tagstruct__)
-        facets = self.search_context.get_facet_options()
-        if len(facets.keys()) > 0:
-            validated['facet'] = facets.keys()[0]
-        self.wizard_state.set_state(self.schema.name, validated)
-        return HTTPFound(location = self.request.path_url)
 
 def workflow_wizard_done(request, states):
     log.debug('states = %s', states)
@@ -707,13 +584,13 @@ def workflow_wizard(request):
     schema_1 = ChooseWorkflowDataSourceSchema()
 
     # step 2, seach esgf data
-    from .schema import SearchWorkflowEsgfDataSchema
-    schema_2 = SearchWorkflowEsgfDataSchema()
+    #from .schema import EsgSearchSchema
+    #schema_2 = EsgSearchSchema()
 
     # step 3, enter workflow params
     #schema_3 = WorkflowRunSchema()
     wizard = WorkflowFormWizard('Workflow', workflow_wizard_done, 
-                                schema_0, schema_1, schema_2)
+                                schema_0, schema_1)
     view = WorkflowFormWizardView(wizard)
     return view(request)
 
