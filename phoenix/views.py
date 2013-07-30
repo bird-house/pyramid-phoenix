@@ -545,6 +545,7 @@ class WorkflowFormWizard(FormWizard):
          
 class WorkflowFormWizardView(FormWizardView):
     form_view_class = EsgSearchView
+    ctx = None
 
     def __call__(self, request):
         self.request = request
@@ -559,13 +560,13 @@ class WorkflowFormWizardView(FormWizardView):
         form_view = self.form_view_class(request)
         schema = self.wizard.schemas[step]
         conn = SearchConnection(esgsearch_url(request), distrib=False)
-        ctx = conn.new_context(
+        self.ctx = conn.new_context(
             project='CMIP5', 
             product='output1', 
             replica=False, 
             latest=True)
         #form_view.ctx = ctx
-        self.schema = schema.bind(request=request, ctx=ctx)
+        self.schema = schema.bind(request=request, ctx=self.ctx)
         form_view.schema = self.schema
         buttons = []
 
@@ -600,9 +601,29 @@ class WorkflowFormWizardView(FormWizardView):
         form_view.show = self.show
         form_view.appstruct = getattr(schema, 'appstruct', None)
 
-
-
         result = form_view()
+        return result
+
+    def show(self, form):
+        title = getattr(self.schema, 'wf_title', 'Title')
+        description = getattr(self.schema, 'description', 'Description')
+        appstruct = getattr(self.schema, 'appstruct', None)
+
+        state = self.wizard_state.get_step_state(appstruct)
+        state = self.deserialize(state)
+        result = dict(form=form.render(appstruct=state))
+
+        log.debug('title=%s, description=%s', title, description)
+
+        result.update(
+        dict(
+            title=title,
+            description=description,
+            ctx=self.ctx,
+            constraints={},
+            facet=None,
+            item=None)
+        )
         return result
 
 class Workflow(object):
@@ -614,7 +635,7 @@ def workflow_wizard_done(request, states):
     return {'form' : FormView(request)}
 
 @view_config(route_name='workflow',
-             renderer='templates/form.pt',
+             renderer='templates/workflow.pt',
              layout='default',
              permission='edit',
              )
