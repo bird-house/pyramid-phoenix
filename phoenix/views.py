@@ -511,67 +511,6 @@ def esgsearch_view(request):
         'ctx' : ctx,
     }
 
-#@view_config(route_name='search',
-#             renderer='templates/form.pt',
-#             layout='default',
-#             permission='edit',
-#             )
-class SearchView(FormView):
-    log.debug('rendering search view')
-    #form_info = "Hover your mouse over the widgets for description."
-    schema = None
-    schema_factory = None
-    buttons = ('update', 'tag', 'download',)
-    title = u"Search"
-
-    search_conn = None
-    search_context = None
-
-    def __call__(self):
-        from .schema import SearchSchema
-        # build the schema
-        if self.schema_factory is None:
-            self.schema_factory = SearchSchema
-            self.search_conn = SearchConnection(esgsearch_url(self.request), distrib=False)
-            self.search_context = self.search_conn.new_context(
-                project='CMIP5', product='output1', 
-                replica=False, latest=True)
-        tags = {}
-        db_conn = mongodb_conn(self.request)
-        entry =db_conn.phoenix_db.search.find_one({'id':1})
-        if entry == None:
-            db_conn.phoenix_db.search.save(dict(id=1, tags=tags))
-        else:
-            tags = entry.get('tags', {})
-        self.search_context = self.search_context.constrain(**tags)
-        self.schema = self.schema_factory().bind(
-            tags = tags,
-            search_context = self.search_context)
-
-        return super(SearchView, self).__call__()
-
-    def appstruct(self):
-        return {'hit_count' : self.search_context.hit_count}
-       
-    def update_success(self, appstruct):
-        return HTTPFound(location=self.request.route_url('search'))
-
-    def tag_success(self, appstruct):
-        facet = appstruct['facet']
-        item = appstruct['item']
-       
-        tags = {}
-        db_conn = mongodb_conn(self.request)
-        entry = db_conn.phoenix_db.search.find_one({'id':1})
-        tags = entry.get('tags', {})
-        tags[facet] = item
-        log.debug('tags = %s' % (tags))
-        db_conn.phoenix_db.search.update(dict(id=1), dict(id=1, tags=tags))
-        return HTTPFound(location=self.request.route_url('search'))
-
-    def download_success(self, appstruct):
-        opendap_url = appstruct['opendap_url']
-
 class WorkflowFormWizard(FormWizard):
     def __init__(self, name, done, *schemas):
         log.debug('init wizard')
