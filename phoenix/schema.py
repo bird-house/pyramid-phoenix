@@ -72,16 +72,6 @@ class ChooseWorkflowSchema(colander.MappingSchema):
         colander.String(),
         widget = deferred_choose_workflow_widget)
 
-class ChooseWorkflowDataSourceSchema(colander.MappingSchema):
-    choices = []
-    choices.append( ('esgf_opendap', 'ESGF OpenDAP') )
-    choices.append( ('esgf_files', 'ESGF Files') )
-    data_source = colander.SchemaNode(
-        colander.String(),
-        default = 'esgf_opendap',
-        widget = deform.widget.RadioChoiceWidget(values = choices)
-        )
-
 # admin
 # -----
 

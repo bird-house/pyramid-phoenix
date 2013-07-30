@@ -579,10 +579,6 @@ def workflow_wizard(request):
     from .schema import ChooseWorkflowSchema
     schema_0 = ChooseWorkflowSchema()
 
-    # step 1, choose data source
-    from .schema import ChooseWorkflowDataSourceSchema
-    schema_1 = ChooseWorkflowDataSourceSchema()
-
     # step 2, seach esgf data
     #from .schema import EsgSearchSchema
     #schema_2 = EsgSearchSchema()
@@ -590,7 +586,7 @@ def workflow_wizard(request):
     # step 3, enter workflow params
     #schema_3 = WorkflowRunSchema()
     wizard = WorkflowFormWizard('Workflow', workflow_wizard_done, 
-                                schema_0, schema_1)
+                                schema_0, )
     view = WorkflowFormWizardView(wizard)
     return view(request)
 
