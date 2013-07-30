@@ -20,6 +20,7 @@ log = logging.getLogger(__name__)
 
 from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
+from pyesgf.search import SearchConnection
 
 __tagstruct__ = {}
 
@@ -470,16 +471,13 @@ class AdminView(FormView):
                
         return HTTPFound(location=self.request.route_url('admin'))
 
-from pyesgf.search import SearchConnection
+
 
 @view_config(route_name='esgsearch',
              renderer='templates/esgsearch.pt',
              layout='default',
              permission='view')
 def esgsearch_view(request):
-    # TODO: handle request params
-    # http://docs.pylonsproject.org/projects/pyramid/en/1.0-branch/api/url.html
-    
     action = request.matchdict.get('action', None)
     facet = request.matchdict.get('facet', None)
     item = request.matchdict.get('item', None)
@@ -491,11 +489,11 @@ def esgsearch_view(request):
     log.debug('facet=%s, item=%s, action=%s', facet, item, action)
     log.debug('constraints=%s', constraints)
 
-    if action == 'facet':
+    if action == 'update':
         pass
-    elif action == 'item':
+    elif action == 'add':
         constraints[facet] = item
-    elif action == 'constraint':
+    elif action == 'delete':
         del constraints[facet]
     
     conn = SearchConnection(esgsearch_url(request), distrib=False)

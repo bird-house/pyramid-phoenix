@@ -1,5 +1,5 @@
 <metal:block use-macro="main_template">
-	
+  
   <div metal:fill-slot="content">
 
     <legend>
@@ -7,32 +7,32 @@
       <small>form_info</small>
     </legend>  
 
-    <h4>Facet</h4>
+    <h4>Current Selections</h4>
     <div>
       <span class="tags">
-	<a tal:repeat="(facet,counts) ctx.get_facet_options().iteritems()" href="${request.route_url('esgsearch', action='facet', facet=facet, item=None, _query=constraints)}">
-          ${facet} (${len(counts)})
-	</a>
+        <a tal:repeat="(facet,item) constraints.iteritems()" href="${request.route_url('esgsearch', action='delete', facet=facet, item=item, _query=constraints)}">
+          ${facet}:${item}
+        </a>
+      </span>
+    </div>
+
+    <h4>Search Categories</h4>
+    <div>
+      <span class="tags">
+        <a tal:repeat="(facet,counts) ctx.get_facet_options().iteritems()" href="${request.route_url('esgsearch', action='update', facet=facet, item=None, _query=constraints)}">
+          ${facet}
+        </a>
       </span>
     </div>
 
     <h4>${facet}</h4>
     <div tal:condition="facet">
       <span class="tags">
-	<a tal:repeat="(item,count) ctx.facet_counts[facet].iteritems()" href="${request.route_url('esgsearch', action='item', facet=facet, item=item, _query=constraints)}">
-	  ${item} (${count})
-	</a>
+        <a tal:repeat="(item,count) ctx.facet_counts[facet].iteritems()" href="${request.route_url('esgsearch', action='add', facet=facet, item=item, _query=constraints)}">
+          ${item} (${count})
+      </a>
       </span>
     </div>
 
-    <h4>Constraints</h4>
-    <div>
-      <span class="tags">
-	<a tal:repeat="(facet,item) constraints.iteritems()" href="${request.route_url('esgsearch', action='constraint', facet=facet, item=item, _query=constraints)}">
-	  ${facet}:${item}
-	</a>
-      </span>
-    </div>
   </div>
-   
 </metal:block>
