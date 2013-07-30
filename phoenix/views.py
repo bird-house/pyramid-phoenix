@@ -507,8 +507,14 @@ def esgsearch_view(request):
         latest=True)
     ctx = ctx.constrain(**constraints)
 
-    schema = EsgSearchSchema()
-    form = Form(schema, buttons=('submit,'))
+    if 'submit' in request.POST:
+        controls = request.POST.items()
+        values = peppercorn.parse(request.params.items())
+        opendap_url = values.get('opendap_url')  
+        return HTTPFound('/processes')  
+
+    schema = EsgSearchSchema().bind(ctx=ctx)
+    form = Form(schema, buttons=('submit',))
     appstruct = {}
 
     return {

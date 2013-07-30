@@ -36,5 +36,9 @@
 
     <span class="hits">${ctx.hit_count}</span> hits
 
+    <div tal:condition="ctx.hit_count == 1">
+      <tal:form replace="structure form">The form will render here</tal:form>
+    </div>  
+
   </div>
 </metal:block>
