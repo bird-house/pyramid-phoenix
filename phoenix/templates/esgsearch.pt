@@ -7,14 +7,19 @@
       <small>form_info</small>
     </legend>  
 
+    <span class="hits">${ctx.hit_count}</span> Datasets found
+
+    <p/>
+
     <h4>Current Selections</h4>
-    <div>
-      <span class="tags">
-        <a tal:repeat="(facet,item) constraints.iteritems()" href="${request.route_url('esgsearch', action='delete', facet=facet, item=item, _query=constraints)}">
-          ${facet}:${item}
-        </a>
+    <div class="tag-box" >
+      <span class="tag" tal:repeat="(facet,item) constraints.iteritems()">
+        <div class="tag">${facet}:${item}</div>
+        <a class="tag" href="${request.route_url('esgsearch', action='delete', facet=facet, item=item, _query=constraints)}">X</a>
       </span>
     </div>
+
+    <p/>
 
     <h4>Search Categories</h4>
     <div>
@@ -25,16 +30,18 @@
       </span>
     </div>
 
-    <h4>${facet}</h4>
+    <p/>
+
+    <h4>Category: ${facet}</h4>
     <div tal:condition="facet">
       <span class="tags">
         <a tal:repeat="(item,count) ctx.facet_counts[facet].iteritems()" href="${request.route_url('esgsearch', action='add', facet=facet, item=item, _query=constraints)}">
           ${item} (${count})
-      </a>
+        </a>
       </span>
     </div>
-
-    <span class="hits">${ctx.hit_count}</span> hits
+    
+    <p/>
 
     <div tal:condition="ctx.hit_count == 1">
       <tal:form replace="structure form">The form will render here</tal:form>
