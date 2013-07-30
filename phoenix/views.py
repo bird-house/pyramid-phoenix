@@ -607,6 +607,7 @@ class WorkflowFormWizardView(FormWizardView):
     def show(self, form):
         title = getattr(self.schema, 'wf_title', 'Title')
         description = getattr(self.schema, 'description', 'Description')
+        is_esgsearch = getattr(self.schema, 'is_esgsearch', False)
         appstruct = getattr(self.schema, 'appstruct', None)
 
         state = self.wizard_state.get_step_state(appstruct)
@@ -619,6 +620,7 @@ class WorkflowFormWizardView(FormWizardView):
         dict(
             title=title,
             description=description,
+            is_esgsearch=is_esgsearch,
             ctx=self.ctx,
             constraints={},
             facet=None,
@@ -632,7 +634,12 @@ class Workflow(object):
 def workflow_wizard_done(request, states):
     log.debug('states = %s', states)
     #wizard.get_summary(request)
-    return {'form' : FormView(request)}
+    return {
+        'form' : FormView(request),
+        'title': 'Summary',
+        'description': '...',
+        'is_esgsearch': False,
+        }
 
 @view_config(route_name='workflow',
              renderer='templates/workflow.pt',

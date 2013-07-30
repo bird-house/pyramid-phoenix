@@ -7,6 +7,8 @@
       <small>${description}</small>
     </legend>  
 
+    <div tal:condition="is_esgsearch">
+
     <span class="hits">${ctx.hit_count}</span> Datasets found
 
     <p/>
@@ -43,9 +45,9 @@
     
     <p/>
 
-    <div tal:condition="ctx.hit_count == 1">
-      <tal:form replace="structure form">The form will render here</tal:form>
-    </div>  
+    </div>
+
+    <tal:form replace="structure form">The form will render here</tal:form>
 
   </div>
 </metal:block>
