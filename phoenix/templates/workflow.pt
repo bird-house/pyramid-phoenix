@@ -17,7 +17,7 @@
     <div class="tag-box" >
       <span class="tag" tal:repeat="(facet,item) constraints.iteritems()">
         <div class="tag">${facet}:${item}</div>
-        <a class="tag" href="${request.route_url('esgsearch', action='delete', facet=facet, item=item, _query=constraints)}">X</a>
+        <a class="tag" href="${request.route_url('workflow', action='delete', facet=facet, item=item, _query=constraints)}">X</a>
       </span>
     </div>
 
@@ -26,7 +26,7 @@
     <h4>Search Categories</h4>
     <div>
       <span class="tags">
-        <a tal:repeat="(facet,counts) ctx.get_facet_options().iteritems()" href="${request.route_url('esgsearch', action='update', facet=facet, item=None, _query=constraints)}">
+        <a tal:repeat="(facet,counts) ctx.get_facet_options().iteritems()" href="${request.route_url('workflow', action='update', facet=facet, item=None, _query=constraints)}">
           ${facet}
         </a>
       </span>
@@ -37,7 +37,7 @@
     <h4>Category: ${facet}</h4>
     <div tal:condition="facet">
       <span class="tags">
-        <a tal:repeat="(item,count) ctx.facet_counts[facet].iteritems()" href="${request.route_url('esgsearch', action='add', facet=facet, item=item, _query=constraints)}">
+        <a tal:repeat="(item,count) ctx.facet_counts[facet].iteritems()" href="${request.route_url('workflow', action='add', facet=facet, item=item, _query=constraints)}">
           ${item} (${count})
         </a>
       </span>

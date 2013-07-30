@@ -546,6 +546,9 @@ class WorkflowFormWizard(FormWizard):
 class WorkflowFormWizardView(FormWizardView):
     form_view_class = EsgSearchView
     ctx = None
+    facet = None
+    item = None
+    constraints = None
 
     def __call__(self, request):
         self.request = request
@@ -559,13 +562,6 @@ class WorkflowFormWizardView(FormWizardView):
             return result
         form_view = self.form_view_class(request)
         schema = self.wizard.schemas[step]
-        conn = SearchConnection(esgsearch_url(request), distrib=False)
-        self.ctx = conn.new_context(
-            project='CMIP5', 
-            product='output1', 
-            replica=False, 
-            latest=True)
-        #form_view.ctx = ctx
         self.schema = schema.bind(request=request, ctx=self.ctx)
         form_view.schema = self.schema
         buttons = []
@@ -622,9 +618,9 @@ class WorkflowFormWizardView(FormWizardView):
             description=description,
             is_esgsearch=is_esgsearch,
             ctx=self.ctx,
-            constraints={},
-            facet=None,
-            item=None)
+            constraints=self.constraints,
+            facet=self.facet,
+            item=self.item)
         )
         return result
 
@@ -647,6 +643,36 @@ def workflow_wizard_done(request, states):
              permission='edit',
              )
 def workflow_wizard(request):
+    conn = SearchConnection(esgsearch_url(request), distrib=False)
+    ctx = conn.new_context(
+        project='CMIP5', 
+        product='output1', 
+        replica=False, 
+        latest=True)
+
+    all_facets = ctx.facet_counts.keys()
+
+    action = request.matchdict.get('action', 'update')
+    facet = request.matchdict.get('facet', None)
+    item = request.matchdict.get('item', None)
+    constraints = {}
+    for (key,value) in request.params.iteritems():
+        if not key in all_facets:
+            continue
+        constraints[key] = value
+    
+    log.debug('facet=%s, item=%s, action=%s', facet, item, action)
+    log.debug('constraints=%s', constraints)
+
+    if action == 'update':
+        pass
+    elif action == 'add':
+        constraints[facet] = item
+    elif action == 'delete':
+        del constraints[facet]
+
+    ctx = ctx.constrain(**constraints)
+    
     # step 0, choose wps
     from .schema import ChooseWorkflowSchema
     schema_choose_wf = ChooseWorkflowSchema()
@@ -662,6 +688,10 @@ def workflow_wizard(request):
                                 schema_choose_wf, 
                                 schema_esgsearch)
     view = WorkflowFormWizardView(wizard)
+    view.ctx = ctx
+    view.facet = facet
+    view.item = item
+    view.constraints = constraints
     return view(request)
 
 @view_config(route_name='help',
