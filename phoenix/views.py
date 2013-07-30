@@ -12,6 +12,10 @@ from deform import Form
 from deform.form import Button
 import peppercorn
 
+from owslib.csw import CatalogueServiceWeb
+from owslib.wps import WebProcessingService, WPSExecution, ComplexData
+from pyesgf.search import SearchConnection
+
 from .helpers import wps_url, update_wps_url, csw_url, esgsearch_url, whitelist, mongodb_conn, is_url
 from .helpers import esgf_search_context
 
@@ -19,9 +23,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-from owslib.csw import CatalogueServiceWeb
-from owslib.wps import WebProcessingService, WPSExecution, ComplexData
-from pyesgf.search import SearchConnection
+
 
 __tagstruct__ = {}
 
@@ -472,7 +474,33 @@ class AdminView(FormView):
                
         return HTTPFound(location=self.request.route_url('admin'))
 
+class EsgSearchView(FormView):
+    from .schema import EsgSearchSchema
 
+    schema = EsgSearchSchema()
+    buttons = ('submit',)
+    
+    def __init__(self, request, ctx):
+        super(EsgSearchView, self).__init__(request)
+        self.ctx = ctx
+
+    def get_bind_data(self):
+        # ensure we get any base data defined by FormView
+        data = super(EsgSearchView, self).get_bind_data()
+        # add any custom data here
+        data.update({
+            'ctx': self.ctx,
+        })
+        return data
+
+    def submit_success(self, appstruct):
+        opendap_url = appstruct['opendap_url']
+        log.debug("submit result = %s", appstruct)
+        #self.request.session.flash(u"Your changes have been saved.")
+        return HTTPFound(location = self.request.path_url)
+
+    def appstruct(self):
+        return None
 
 @view_config(route_name='esgsearch',
              renderer='templates/esgsearch.pt',
@@ -481,11 +509,22 @@ class AdminView(FormView):
 def esgsearch_view(request):
     from .schema import EsgSearchSchema
 
+    conn = SearchConnection(esgsearch_url(request), distrib=False)
+    ctx = conn.new_context(
+        project='CMIP5', 
+        product='output1', 
+        replica=False, 
+        latest=True)
+
+    all_facets = ctx.facet_counts.keys()
+
     action = request.matchdict.get('action', None)
     facet = request.matchdict.get('facet', None)
     item = request.matchdict.get('item', None)
     constraints = {}
     for (key,value) in request.params.iteritems():
+        if not key in all_facets:
+            continue
         constraints[key] = value
     log.debug('request params = %s', request.params)
 
@@ -498,32 +537,24 @@ def esgsearch_view(request):
         constraints[facet] = item
     elif action == 'delete':
         del constraints[facet]
-    
-    conn = SearchConnection(esgsearch_url(request), distrib=False)
-    ctx = conn.new_context(
-        project='CMIP5', 
-        product='output1', 
-        replica=False, 
-        latest=True)
+
     ctx = ctx.constrain(**constraints)
 
-    if 'submit' in request.POST:
-        controls = request.POST.items()
-        values = peppercorn.parse(request.params.items())
-        opendap_url = values.get('opendap_url')  
-        return HTTPFound('/processes')  
+    rendered_form = None
+    try:
+        form_view = EsgSearchView(request, ctx)
+        rendered_form = form_view()['form']
+    except:
+        log.warning("form creation failed")
 
-    schema = EsgSearchSchema().bind(ctx=ctx)
-    form = Form(schema, buttons=('submit',))
-    appstruct = {}
-
-    return {
-        'form': form.render(appstruct),
+    return { 
+        'form': rendered_form,
+        'title': "ESGF Search",
+        'description': "Choose ESGF Dataset",
         'facet': facet,
         'item': item,
         'constraints': constraints,
-        'ctx' : ctx,
-    }
+        'ctx' : ctx, } 
 
 class WorkflowFormWizard(FormWizard):
     def __init__(self, name, done, *schemas):

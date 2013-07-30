@@ -3,8 +3,8 @@
   <div metal:fill-slot="content">
 
     <legend>
-      <h3>title</h3>
-      <small>form_info</small>
+      <h3>${title}</h3>
+      <small>${description}</small>
     </legend>  
 
     <span class="hits">${ctx.hit_count}</span> Datasets found

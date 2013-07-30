@@ -37,11 +37,14 @@ def deferred_esgsearch_opendap_widget(node, kw):
     ctx = kw.get('ctx')
    
     choices = []
-    if ctx.hit_count == 1:
-        result = ctx.search()[0]
-        agg_ctx = result.aggregation_context()
-        for agg in agg_ctx.search():
-            choices.append( (agg.opendap_url, agg.opendap_url) )
+    try:
+        if ctx.hit_count == 1:
+            result = ctx.search()[0]
+            agg_ctx = result.aggregation_context()
+            for agg in agg_ctx.search():
+                choices.append( (agg.opendap_url, agg.opendap_url) )
+    except:
+        log.warning("search failed")
 
     return deform.widget.SelectWidget(values = choices)
 
