@@ -266,16 +266,10 @@ class WPSInputSchemaNode(colander.SchemaNode):
         return node
 
     def bind(self, **kw):
-        # TODO: dirty hack for late binding of process
-        cloned = None
-        # add late binding for process
-        if kw.has_key('process'):
-            self.process = kw.pop('process')
-            cloned = self.__class__(self.process,
-                                    self.unknown,
-                                    **self.kwargs)
-        else:
-            cloned = self.clone()
+        cloned = self.__class__(self.process,
+                                self.unknown,
+                                **self.kwargs)
+        cloned = self.clone()
         cloned._bind(kw)
 
         log.debug('after bind: num schema children = %s', len(cloned.children))

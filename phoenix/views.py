@@ -554,23 +554,27 @@ class WorkflowFormWizardView(FormWizardView):
         
         process = None
 
+        schema = None
         if step > len(self.wizard.schemas)-1:
             states = self.wizard_state.get_step_states()
             result = self.wizard.done(request, states)
             self.wizard_state.clear()
             return result
-        elif step == 2:
+        elif step == 3:
             states = self.wizard_state.get_step_states()
             wps = WebProcessingService(wps_url(self.request), verbose=True)
             state = self.deserialize(states[0])
             identifier = state['process']
             process = wps.describeprocess(identifier)
             log.debug('identifier = %s', identifier)
+            schema = self.wizard.schemas[step]
+            schema = schema.__class__(process=process)
+        else:
+            schema = self.wizard.schemas[step]
 
         form_view = self.form_view_class(request)
-        schema = self.wizard.schemas[step]
         log.debug('process = %s', process)
-        self.schema = schema.bind(request=request, ctx=self.ctx, process=process)
+        self.schema = schema.bind(request=request, ctx=self.ctx)
         log.debug('num schema children = %s', len(self.schema.children))
         form_view.schema = self.schema
         buttons = []
@@ -688,14 +692,22 @@ def workflow_wizard(request):
     from .schema import EsgSearchSchema
     schema_esgsearch = EsgSearchSchema(title='Select ESGF Dataset')
 
-    # get wps process params
+    
     from .wpsschema import WPSInputSchemaNode
+
+    # opendap process
+    wps = WebProcessingService(wps_url(request), verbose=True)
+    process = wps.describeprocess('de.dkrz.esgf.opendap')
+    schema_opendap = WPSInputSchemaNode(process=process)
+
+    # get wps process params
     schema_process = WPSInputSchemaNode()
 
     wizard = WorkflowFormWizard('Workflow', 
                                 workflow_wizard_done, 
                                 schema_select_process, 
                                 schema_esgsearch,
+                                schema_opendap,
                                 schema_process)
     view = WorkflowFormWizardView(wizard)
     view.ctx = ctx
