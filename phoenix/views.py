@@ -601,8 +601,6 @@ class WorkflowFormWizardView(FormWizardView):
         return result
 
     def show(self, form):
-        title = getattr(self.schema, 'wf_title', 'Title')
-        description = getattr(self.schema, 'description', 'Description')
         is_esgsearch = getattr(self.schema, 'is_esgsearch', False)
         appstruct = getattr(self.schema, 'appstruct', None)
 
@@ -610,12 +608,12 @@ class WorkflowFormWizardView(FormWizardView):
         state = self.deserialize(state)
         result = dict(form=form.render(appstruct=state))
 
-        log.debug('title=%s, description=%s', title, description)
+        log.debug('title=%s, description=%s', self.schema.title, self.schema.description)
 
         result.update(
         dict(
-            title=title,
-            description=description,
+            title=self.schema.title,
+            description=self.schema.description,
             is_esgsearch=is_esgsearch,
             ctx=self.ctx,
             constraints=self.constraints,

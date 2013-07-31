@@ -47,8 +47,8 @@ def deferred_esgsearch_opendap_widget(node, kw):
     return deform.widget.SelectWidget(values = choices)
 
 class EsgSearchSchema(colander.MappingSchema):
-    wf_title = 'Select ESGF Dataset'
-    description = '...'
+    name = "Select ESGF Dataset"
+    description = 'You need to choose a single dataset'
     is_esgsearch = True
     appstruct = {}
 
@@ -73,8 +73,8 @@ def deferred_choose_workflow_widget(node, kw):
     return deform.widget.SelectWidget(values = choices)
 
 class ChooseWorkflowSchema(colander.MappingSchema):
-    wf_title = "Choose Workflow"
-    description = "Choose Workflow with ESGF data input"
+    name = "Select Workflow Process"
+    description = "Select a workflow process for ESGF data"
     is_esgsearch = False
     appstruct = {}
 
