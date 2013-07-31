@@ -135,29 +135,79 @@ class CatalogSelectWPSSchema(colander.MappingSchema):
 # DataInputs ...
 # ---------------
 
-# TODO: use widget category as grouping info
- 
-# schema is build dynamically
-class DataInputsSchema(colander.MappingSchema):
-    @classmethod
-    def build(cls, schema, process):
-        # TODO: what is the right way to build schema dynamically?
-        # TODO: fix dataType in wps client
+class DataInputsSchemaNode(colander.SchemaNode):
+    """ Build a Colander Schema based on the WPS data inputs.
+
+    This Schema generator is based on:
+    http://colanderalchemy.readthedocs.org/en/latest/
+
+    TODO: use widget category as grouping info
+    TODO: fix dataType in wps client
+    """
+
+    def __init__(self, process, unknown='ignore', **kw):
+        """ Initialise the given mapped schema according to options provided.
+
+        Arguments/Keywords
+
+        process
+           An ``WPS`` process description that you want a ``Colander`` schema
+           to be generated for.
+
+        unknown
+           Represents the `unknown` argument passed to
+           :class:`colander.Mapping`.
+
+           From Colander:
+
+           ``unknown`` controls the behavior of this type when an unknown
+           key is encountered in the cstruct passed to the deserialize
+           method of this instance.
+
+           Default: 'ignore'
+        \*\*kw
+           Represents *all* other options able to be passed to a
+           :class:`colander.SchemaNode`. Keywords passed will influence the
+           resulting mapped schema accordingly (for instance, passing
+           ``title='My Model'`` means the returned schema will have its
+           ``title`` attribute set accordingly.
+
+           See http://docs.pylonsproject.org/projects/colander/en/latest/basics.html for more information.
+        """
+
+        log.debug('DataInputsSchemaNode.__init__: %s', process)
+
+        kwargs = kw.copy()
+
+        # The default type of this SchemaNode is Mapping.
+        colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
+        self.process = process
+        self.unknown = unknown
+        self.kwargs = kwargs or {}
+
+        self.add_nodes(process)        
+        
+    def add_nodes(self, process):
         for data_input in process.dataInputs:
+            node = None
+
             if data_input.dataType == None:
-                cls._add_boundingbox(schema, data_input) 
+                node = self.boundingbox(data_input) 
             elif 'www.w3.org' in data_input.dataType:
-                cls._add_literal_data(schema, data_input)
+                node = self.literal_data(data_input)
             elif 'ComplexData' in data_input.dataType:
-                cls._add_complex_data(schema, data_input)
+                node = self.complex_data(data_input)
             else:
                 raise Exception('unknown data type %s' % (data_input.dataType))
-                         
 
-    @classmethod
-    def _add_literal_data(cls, schema, data_input):
+            if node is None:
+                continue
+
+            self.add(node)
+
+    def literal_data(self, data_input):
         node = colander.SchemaNode(
-            cls._colander_literal_type(data_input),
+            self.colander_literal_type(data_input),
             name = data_input.identifier,
             title = data_input.title,
             )
@@ -175,22 +225,21 @@ class DataInputsSchema(colander.MappingSchema):
                 node.default = dateutil.parser.parse(data_input.defaultValue)
             else:
                 node.default = data_input.defaultValue
-        cls._colander_literal_widget(node, data_input)
+        self.colander_literal_widget(node, data_input)
 
         # sequence of nodes ...
         if data_input.maxOccurs > 1:
-            schema.add(colander.SchemaNode(
+            node = colander.SchemaNode(
                 colander.Sequence(), 
                 node,
                 name=data_input.identifier,
                 title=data_input.title,
                 validator=colander.Length(max=data_input.maxOccurs)
-                ))
-        else:
-            schema.add(node)
+                )
 
-    @classmethod
-    def _colander_literal_type(cls, data_input):
+        return node
+
+    def colander_literal_type(self, data_input):
         log.debug('data input type = %s', data_input.dataType)
         if 'boolean' in data_input.dataType:
             return colander.Boolean()
@@ -223,8 +272,7 @@ class DataInputsSchema(colander.MappingSchema):
         else:
             return colander.String()
 
-    @classmethod
-    def _colander_literal_widget(cls, node, data_input):
+    def colander_literal_widget(self, node, data_input):
         if len(data_input.allowedValues) > 1:
             if not 'AnyValue' in data_input.allowedValues:
                 choices = []
@@ -240,8 +288,7 @@ class DataInputsSchema(colander.MappingSchema):
         else:
             node.widget = deform.widget.TextInputWidget()
 
-    @classmethod
-    def _add_complex_data(cls, schema, data_input):
+    def complex_data(self, data_input):
         # TODO: handle upload, url, direct input for complex data
 
         node_upload = colander.SchemaNode(
@@ -270,18 +317,17 @@ class DataInputsSchema(colander.MappingSchema):
         # finally add node to root schema
         # sequence of nodes ...
         if data_input.maxOccurs > 1:
-            schema.add(colander.SchemaNode(
+            node = colander.SchemaNode(
                 colander.Sequence(), 
                 node,
                 name=data_input.identifier,
                 title=data_input.title,
                 validator=colander.Length(max=data_input.maxOccurs)
-                ))
-        else:
-            schema.add(node)
+                )
+        
+        return node
 
-    @classmethod
-    def _add_boundingbox(cls, schema, data_input):
+    def boundingbox(self, data_input):
         node = colander.SchemaNode(
             colander.String(),
             name=data_input.identifier,
@@ -307,15 +353,23 @@ class DataInputsSchema(colander.MappingSchema):
         # finally add node to root schema
         # sequence of nodes ...
         if data_input.maxOccurs > 1:
-            schema.add(colander.SchemaNode(
+            node = colander.SchemaNode(
                 colander.Sequence(), 
                 node,
                 name=data_input.identifier,
                 title=data_input.title,
                 validator=colander.Length(max=data_input.maxOccurs)
-                ))
-        else:
-            schema.add(node)
+                )
+        
+        return node
+
+    def clone(self):
+        cloned = self.__class__(self.process,
+                                self.unknown,
+                                **self.kwargs)
+        cloned.__dict__.update(self.__dict__)
+        cloned.children = [node.clone() for node in self.children]
+        return cloned
         
     
 # Ouput Data ...

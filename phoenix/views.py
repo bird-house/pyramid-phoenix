@@ -241,19 +241,19 @@ class ExecuteView(FormView):
     input_types = None
    
     def __call__(self):
-        from .schema import DataInputsSchema  
+        from .schema import DataInputsSchemaNode  
         
         # build the schema if it not exist
         if self.schema is None:
             if self.schema_factory is None:
-                self.schema_factory = DataInputsSchema
-            self.schema = self.schema_factory()
+                self.schema_factory = DataInputsSchemaNode
+            
 
         try:
             identifier = self.request.params.get('identifier')
             self.wps = WebProcessingService(wps_url(self.request), verbose=True)
             self.process = self.wps.describeprocess(identifier)
-            DataInputsSchema.build(schema=self.schema, process=self.process)
+            self.schema = self.schema_factory(self.process)
 
             self.input_types = {}
             for data_input in self.process.dataInputs:
