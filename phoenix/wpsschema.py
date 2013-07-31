@@ -42,6 +42,8 @@ class WPSInputSchemaNode(colander.SchemaNode):
     TODO: fix dataType in wps client
     """
 
+    appstruct = {}
+
     def __init__(self, process=None, unknown='ignore', **kw):
         """ Initialise the given mapped schema according to options provided.
 

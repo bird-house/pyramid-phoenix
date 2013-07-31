@@ -554,12 +554,18 @@ class WorkflowFormWizardView(FormWizardView):
         
         process = None
 
-        schema = None
         if step > len(self.wizard.schemas)-1:
             states = self.wizard_state.get_step_states()
             result = self.wizard.done(request, states)
             self.wizard_state.clear()
             return result
+
+        schema = self.wizard.schemas[step]
+        
+        if step == 2:
+            states = self.wizard_state.get_step_states()
+            state = self.deserialize(states[1])
+            schema.appstruct['opendap_url'] = state['opendap_url']
         elif step == 3:
             states = self.wizard_state.get_step_states()
             wps = WebProcessingService(wps_url(self.request), verbose=True)
@@ -567,10 +573,7 @@ class WorkflowFormWizardView(FormWizardView):
             identifier = state['process']
             process = wps.describeprocess(identifier)
             log.debug('identifier = %s', identifier)
-            schema = self.wizard.schemas[step]
             schema = schema.__class__(process=process)
-        else:
-            schema = self.wizard.schemas[step]
 
         form_view = self.form_view_class(request)
         log.debug('process = %s', process)
