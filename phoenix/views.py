@@ -23,10 +23,6 @@ import logging
 
 log = logging.getLogger(__name__)
 
-
-
-__tagstruct__ = {}
-
 @subscriber(BeforeRender)
 def add_global(event):
     event['message_type'] = 'alert-info'
@@ -182,7 +178,7 @@ class ReadOnlyView(FormView):
 class ProcessOutputsView(ReadOnlyView):
     log.debug('output details execute')
     title = u"Process Outputs"
-    from .schema import output_schema
+    from .wpsschema import output_schema
     schema = output_schema()
    
     def appstruct(self):
@@ -241,14 +237,13 @@ class ExecuteView(FormView):
     input_types = None
    
     def __call__(self):
-        from .schema import DataInputsSchemaNode  
+        from .wpsschema import WPSInputSchemaNode  
         
         # build the schema if it not exist
         if self.schema is None:
             if self.schema_factory is None:
-                self.schema_factory = DataInputsSchemaNode
+                self.schema_factory = WPSInputSchemaNode
             
-
         try:
             identifier = self.request.params.get('identifier')
             self.wps = WebProcessingService(wps_url(self.request), verbose=True)
