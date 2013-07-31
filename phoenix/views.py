@@ -488,7 +488,7 @@ class EsgSearchView(FormView):
 def esgsearch_view(request):
     from .schema import EsgSearchSchema
 
-    conn = SearchConnection(esgsearch_url(request), distrib=False)
+    conn = SearchConnection(esgsearch_url(request), distrib=True)
     ctx = conn.new_context(
         project='CMIP5', 
         product='output1', 
