@@ -31,6 +31,7 @@ tmpstore = MemoryTmpStore()
 # input data
 # ----------
 
+
 class WPSInputSchemaNode(colander.SchemaNode):
     """ Build a Colander Schema based on the WPS data inputs.
 
@@ -41,7 +42,7 @@ class WPSInputSchemaNode(colander.SchemaNode):
     TODO: fix dataType in wps client
     """
 
-    def __init__(self, process, unknown='ignore', **kw):
+    def __init__(self, process=None, unknown='ignore', **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
@@ -71,7 +72,7 @@ class WPSInputSchemaNode(colander.SchemaNode):
            See http://docs.pylonsproject.org/projects/colander/en/latest/basics.html for more information.
         """
 
-        log.debug('DataInputsSchemaNode.__init__: %s', process)
+        log.debug('DataInputsSchemaNode.__init__: process=%s, kw=%s', process, kw)
 
         kwargs = kw.copy()
 
@@ -79,11 +80,16 @@ class WPSInputSchemaNode(colander.SchemaNode):
         colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
         self.process = process
         self.unknown = unknown
-        self.kwargs = kwargs or {}
+        self.kwargs = kwargs or {}   
 
-        self.add_nodes(process)        
+        self.add_nodes(process)    
         
     def add_nodes(self, process):
+        if process is None:
+            return
+
+        log.debug("adding nodes for process inputs, num inputs = %s", len(process.dataInputs))
+
         for data_input in process.dataInputs:
             node = None
 
@@ -258,6 +264,22 @@ class WPSInputSchemaNode(colander.SchemaNode):
                 )
         
         return node
+
+    def bind(self, **kw):
+        # TODO: dirty hack for late binding of process
+        cloned = None
+        # add late binding for process
+        if kw.has_key('process'):
+            self.process = kw.pop('process')
+            cloned = self.__class__(self.process,
+                                    self.unknown,
+                                    **self.kwargs)
+        else:
+            cloned = self.clone()
+        cloned._bind(kw)
+
+        log.debug('after bind: num schema children = %s', len(cloned.children))
+        return cloned
 
     def clone(self):
         cloned = self.__class__(self.process,

@@ -248,7 +248,7 @@ class ExecuteView(FormView):
             identifier = self.request.params.get('identifier')
             self.wps = WebProcessingService(wps_url(self.request), verbose=True)
             self.process = self.wps.describeprocess(identifier)
-            self.schema = self.schema_factory(self.process)
+            self.schema = self.schema_factory(process=self.process)
 
             self.input_types = {}
             for data_input in self.process.dataInputs:
@@ -549,15 +549,29 @@ class WorkflowFormWizardView(FormWizardView):
         self.request = request
         self.wizard_state = self.wizard_state_class(request, self.wizard.name)
         step = self.wizard_state.get_step_num()
+
+        log.debug('step = %s', step)
         
+        process = None
+
         if step > len(self.wizard.schemas)-1:
             states = self.wizard_state.get_step_states()
             result = self.wizard.done(request, states)
             self.wizard_state.clear()
             return result
+        elif step == 2:
+            states = self.wizard_state.get_step_states()
+            wps = WebProcessingService(wps_url(self.request), verbose=True)
+            state = self.deserialize(states[0])
+            identifier = state['process']
+            process = wps.describeprocess(identifier)
+            log.debug('identifier = %s', identifier)
+
         form_view = self.form_view_class(request)
         schema = self.wizard.schemas[step]
-        self.schema = schema.bind(request=request, ctx=self.ctx)
+        log.debug('process = %s', process)
+        self.schema = schema.bind(request=request, ctx=self.ctx, process=process)
+        log.debug('num schema children = %s', len(self.schema.children))
         form_view.schema = self.schema
         buttons = []
 
@@ -666,20 +680,23 @@ def workflow_wizard(request):
 
     ctx = ctx.constrain(**constraints)
     
-    # step 0, choose wps
-    from .schema import ChooseWorkflowSchema
-    schema_choose_wf = ChooseWorkflowSchema()
+    # choose wps
+    from .schema import SelectProcessSchema
+    schema_select_process = SelectProcessSchema(title='Select Process')
 
-    # step 2, seach esgf data
+    # select esgf dataset
     from .schema import EsgSearchSchema
-    schema_esgsearch = EsgSearchSchema()
+    schema_esgsearch = EsgSearchSchema(title='Select ESGF Dataset')
 
-    # step 3, enter workflow params
-    #schema_3 = WorkflowRunSchema()
+    # get wps process params
+    from .wpsschema import WPSInputSchemaNode
+    schema_process = WPSInputSchemaNode()
+
     wizard = WorkflowFormWizard('Workflow', 
                                 workflow_wizard_done, 
-                                schema_choose_wf, 
-                                schema_esgsearch)
+                                schema_select_process, 
+                                schema_esgsearch,
+                                schema_process)
     view = WorkflowFormWizardView(wizard)
     view.ctx = ctx
     view.facet = facet
