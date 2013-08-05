@@ -68,8 +68,18 @@ def esgf_search_context(request):
         replica=False, latest=True)
     return ctx
 
-def execute_wps(identifier, params, wps, process, input_types):
+def execute_wps(wps, identifier, params):
+    # TODO: handle sync/async case, 
+    # TODO: fix wps-client (parsing response)
+    # TODO: fix wps-client for store/status setting or use own xml template
+
     log.debug('execute wps process')
+
+    process = wps.describeprocess(identifier)
+
+    input_types = {}
+    for data_input in process.dataInputs:
+        input_types[data_input.identifier] = data_input.dataType
  
     inputs = []
     # TODO: dont append value if default
@@ -116,11 +126,7 @@ def execute_wps(identifier, params, wps, process, input_types):
         outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
 
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
-
-    # TODO: handle sync/async case, 
-    # TODO: fix wps-client (parsing response)
-    # TODO: fix wps-client for store/status setting or use own xml template
-    
+ 
     log.debug('status_location = %s', execution.statusLocation)
 
     return execution

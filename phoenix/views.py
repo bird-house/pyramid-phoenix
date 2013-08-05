@@ -236,8 +236,6 @@ class ExecuteView(FormView):
     title = u"Process Output"
     schema_factory = None
     wps = None
-    process = None
-    input_types = None
    
     def __call__(self):
         from .wpsschema import WPSInputSchemaNode  
@@ -250,12 +248,8 @@ class ExecuteView(FormView):
         try:
             identifier = self.request.params.get('identifier')
             self.wps = WebProcessingService(wps_url(self.request), verbose=True)
-            self.process = self.wps.describeprocess(identifier)
-            self.schema = self.schema_factory(process=self.process)
-
-            self.input_types = {}
-            for data_input in self.process.dataInputs:
-                self.input_types[data_input.identifier] = data_input.dataType
+            process = self.wps.describeprocess(identifier)
+            self.schema = self.schema_factory(process)
         except:
             raise
        
@@ -268,7 +262,7 @@ class ExecuteView(FormView):
         identifier = self.request.params.get("identifier")
         serialized = self.schema.serialize(appstruct)
       
-        execution = execute_wps(identifier, serialized, self.wps, self.process, self.input_types)
+        execution = execute_wps(self.wps, identifier, serialized)
 
         import uuid
    
