@@ -31,7 +31,19 @@ def deferred_esgsearch_opendap_widget(node, kw):
         for agg in agg_ctx.search():
             choices.append( (agg.opendap_url, agg.opendap_url) )
    
+    return deform.widget.SelectWidget(values = choices)
 
+@colander.deferred
+def deferred_esgsearch_files_widget(node, kw):
+    ctx = kw.get('ctx')
+   
+    choices = []
+    if ctx.hit_count == 1:
+        result = ctx.search()[0]
+        file_ctx = result.file_context()
+        for my_file in file_ctx.search():
+            choices.append( (my_file.download_url, my_file.download_url) )
+   
     return deform.widget.SelectWidget(values = choices)
 
 class EsgSearchSchema(colander.MappingSchema):
@@ -39,11 +51,28 @@ class EsgSearchSchema(colander.MappingSchema):
     is_esgsearch = True
     appstruct = {}
 
-    opendap_url = colander.SchemaNode(
+    files_url = colander.SchemaNode(
         colander.String(),
-        description = 'OpenDAP Access URL',
+        description = 'Files Access URL',
         missing = '',
-        widget = deferred_esgsearch_opendap_widget)
+        widget = deferred_esgsearch_files_widget)
+
+class EsgFilesSchema(colander.MappingSchema):
+    description = 'You need to choose a single file'
+    is_esgsearch = False
+    appstruct = {}
+
+    # opendap_url = colander.SchemaNode(
+    #     colander.String(),
+    #     description = 'OpenDAP Access URL',
+    #     missing = '',
+    #     widget = deferred_esgsearch_opendap_widget)
+
+    files_url = colander.SchemaNode(
+        colander.String(),
+        description = 'Files Access URL',
+        missing = '',
+        widget = deferred_esgsearch_files_widget)
 
 # workflow wizard
 # ---------------

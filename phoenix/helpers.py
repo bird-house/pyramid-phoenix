@@ -1,3 +1,5 @@
+import types
+
 from pyesgf.search import SearchConnection
 
 import logging
@@ -65,4 +67,64 @@ def esgf_search_context(request):
         project='CMIP5', product='output1', 
         replica=False, latest=True)
     return ctx
+
+def execute_wps(identifier, request, appstruct, schema, wps, process, input_types):
+    log.debug('execute wps process')
+    log.debug('appstruct = %s', appstruct)
+
+    inputs = []
+    serialized = schema.serialize(appstruct)
+    # TODO: dont append value if default
+    for (key, value) in serialized.iteritems():
+        values = []
+        # TODO: how do i handle serveral values in wps?
+        if type(value) == types.ListType:
+            values = value
+        else:
+            values = [value]
+
+        # there might be more than one value (maxOccurs > 1)
+        for value in values:
+            # bbox
+            if input_types[key] == None:
+                # TODO: handle bounding box
+                log.debug('bbox value: %s' % value)
+                inputs.append( (key, str(value)) )
+                # if len(value) > 0:
+                #     (minx, miny, maxx, maxy) = value[0].split(',')
+                #     bbox = [[float(minx),float(miny)],[float(maxx),float(maxy)]]
+                #     inputs.append( (key, str(bbox)) )
+                # else:
+                #     inputs.append( (key, str(value)) )
+            # complex data
+            elif input_types[key] == 'ComplexData':
+                # TODO: handle complex data
+                log.debug('complex value: %s' % value)
+                if is_url(value):
+                    inputs.append( (key, value) )
+                elif type(value) == type({}):
+                    if value.has_key('fp'):
+                        str_value = value.get('fp').read()
+                        inputs.append( (key, str_value) )
+                else:
+                    inputs.append( (key, str(value) ))
+            else:
+                inputs.append( (key, str(value)) )
+
+    log.debug('inputs =  %s', inputs)
+
+    outputs = []
+    for output in process.processOutputs:
+        outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
+
+    execution = wps.execute(identifier, inputs=inputs, output=outputs)
+
+    # TODO: handle sync/async case, 
+    # TODO: fix wps-client (parsing response)
+    # TODO: fix wps-client for store/status setting or use own xml template
+    
+    log.debug('status_location = %s', execution.statusLocation)
+
+    return execution
+
 

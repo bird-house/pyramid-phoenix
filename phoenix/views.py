@@ -16,8 +16,11 @@ from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
 from pyesgf.search import SearchConnection
 
-from .helpers import wps_url, update_wps_url, csw_url, esgsearch_url, whitelist, mongodb_conn, is_url
+from .helpers import ( wps_url, 
+    update_wps_url, csw_url, esgsearch_url, whitelist, 
+    mongodb_conn, is_url )
 from .helpers import esgf_search_context
+from .helpers import execute_wps
 
 import logging
 
@@ -262,72 +265,12 @@ class ExecuteView(FormView):
         return {}
 
     def submit_success(self, appstruct):
-        log.debug('execute process')
-        log.debug('appstruct = %s', appstruct)
-        from owslib.wps import monitorExecution
-
         identifier = self.request.params.get("identifier")
-        log.debug('identifier = %s', identifier)
-        # params = peppercorn.parse(request.params.items())
+      
+        execution = execute_wps(identifier, self.request, appstruct, self.schema, self.wps, self.process, self.input_types)
 
-        inputs = []
-        serialized = self.schema.serialize(appstruct)
-        # TODO: dont append value if default
-        for (key, value) in serialized.iteritems():
-            values = []
-            # TODO: how do i handle serveral values in wps?
-            if type(value) == types.ListType:
-                values = value
-            else:
-                values = [value]
-
-            # there might be more than one value (maxOccurs > 1)
-            for value in values:
-                # bbox
-                if self.input_types[key] == None:
-                    # TODO: handle bounding box
-                    log.debug('bbox value: %s' % value)
-                    inputs.append( (key, str(value)) )
-                    # if len(value) > 0:
-                    #     (minx, miny, maxx, maxy) = value[0].split(',')
-                    #     bbox = [[float(minx),float(miny)],[float(maxx),float(maxy)]]
-                    #     inputs.append( (key, str(bbox)) )
-                    # else:
-                    #     inputs.append( (key, str(value)) )
-                # complex data
-                elif self.input_types[key] == 'ComplexData':
-                    # TODO: handle complex data
-                    log.debug('complex value: %s' % value)
-                    if is_url(value):
-                        inputs.append( (key, value) )
-                    elif type(value) == type({}):
-                        if value.has_key('fp'):
-                            str_value = value.get('fp').read()
-                            inputs.append( (key, str_value) )
-                    else:
-                        inputs.append( (key, str(value) ))
-                else:
-                    inputs.append( (key, str(value)) )
-
-        log.debug('inputs =  %s', inputs)
-
-        outputs = []
-        for output in self.process.processOutputs:
-            outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
-
-        log.debug('before wps.execute')
-        execution = self.wps.execute(identifier, inputs=inputs, output=outputs)
-        #execution = wps.execute(identifier, inputs, output="out")
-        log.debug('after wps.execute')
-
-        # TODO: handle sync/async case, 
-        # TODO: fix wps-client (parsing response)
-        # TODO: fix wps-client for store/status setting or use own xml template
-        
-        log.debug('status_location = %s', execution.statusLocation)
- 
         import uuid
-       
+   
         # mongodb
         conn = mongodb_conn(self.request)
         conn.phoenix_db.history.save(dict(
@@ -515,7 +458,7 @@ class WorkflowFormWizardView(FormWizardView):
         if step == 2:
             states = self.wizard_state.get_step_states()
             state = self.deserialize(states[1])
-            schema.appstruct['opendap_url'] = state['opendap_url']
+            schema.appstruct['netcdf_url'] = state['files_url']
         elif step == 3:
             states = self.wizard_state.get_step_states()
             wps = WebProcessingService(wps_url(self.request), verbose=True)
@@ -645,13 +588,15 @@ def workflow_wizard(request):
     from .schema import EsgSearchSchema
     schema_esgsearch = EsgSearchSchema(title='Select ESGF Dataset')
 
-    
-    from .wpsschema import WPSInputSchemaNode
+    # select files
+    #from .schema import EsgFilesSchema
+    #schema_esgfiles = EsgFilesSchema(title='Select ESGF File')
 
-    # opendap process
+    # wget process
+    from .wpsschema import WPSInputSchemaNode
     wps = WebProcessingService(wps_url(request), verbose=True)
-    process = wps.describeprocess('de.dkrz.esgf.opendap')
-    schema_opendap = WPSInputSchemaNode(process=process)
+    process = wps.describeprocess('de.dkrz.esgf.wget')
+    schema_wget = WPSInputSchemaNode(process=process)
 
     # get wps process params
     schema_process = WPSInputSchemaNode()
@@ -660,7 +605,8 @@ def workflow_wizard(request):
                                 workflow_wizard_done, 
                                 schema_select_process, 
                                 schema_esgsearch,
-                                schema_opendap,
+                                #schema_esgfiles,
+                                schema_wget,
                                 schema_process)
     view = WorkflowFormWizardView(wizard)
     view.ctx = ctx
