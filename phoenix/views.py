@@ -266,8 +266,9 @@ class ExecuteView(FormView):
 
     def submit_success(self, appstruct):
         identifier = self.request.params.get("identifier")
+        serialized = self.schema.serialize(appstruct)
       
-        execution = execute_wps(identifier, self.request, appstruct, self.schema, self.wps, self.process, self.input_types)
+        execution = execute_wps(identifier, serialized, self.wps, self.process, self.input_types)
 
         import uuid
    

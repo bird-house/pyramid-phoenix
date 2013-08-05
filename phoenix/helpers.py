@@ -68,14 +68,12 @@ def esgf_search_context(request):
         replica=False, latest=True)
     return ctx
 
-def execute_wps(identifier, request, appstruct, schema, wps, process, input_types):
+def execute_wps(identifier, params, wps, process, input_types):
     log.debug('execute wps process')
-    log.debug('appstruct = %s', appstruct)
-
+ 
     inputs = []
-    serialized = schema.serialize(appstruct)
     # TODO: dont append value if default
-    for (key, value) in serialized.iteritems():
+    for (key, value) in params.iteritems():
         values = []
         # TODO: how do i handle serveral values in wps?
         if type(value) == types.ListType:
