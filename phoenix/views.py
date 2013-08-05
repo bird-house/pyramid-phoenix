@@ -481,56 +481,6 @@ class EsgSearchView(FormView):
     def appstruct(self):
         return None
 
-@view_config(route_name='esgsearch',
-             renderer='templates/esgsearch.pt',
-             layout='default',
-             permission='view')
-def esgsearch_view(request):
-    from .schema import EsgSearchSchema
-
-    conn = SearchConnection(esgsearch_url(request), distrib=True)
-    ctx = conn.new_context(
-        project='CMIP5', 
-        product='output1', 
-        replica=False, 
-        latest=True)
-
-    all_facets = ctx.facet_counts.keys()
-
-    action = request.matchdict.get('action', 'update')
-    facet = request.matchdict.get('facet', None)
-    item = request.matchdict.get('item', None)
-    constraints = {}
-    for (key,value) in request.params.iteritems():
-        if not key in all_facets:
-            continue
-        constraints[key] = value
-    log.debug('request params = %s', request.params)
-
-    log.debug('facet=%s, item=%s, action=%s', facet, item, action)
-    log.debug('constraints=%s', constraints)
-
-    if action == 'update':
-        pass
-    elif action == 'add':
-        constraints[facet] = item
-    elif action == 'delete':
-        del constraints[facet]
-
-    ctx = ctx.constrain(**constraints)
-
-    form_view = EsgSearchView(request)
-    form_view.schema = EsgSearchSchema().bind(request=request, ctx=ctx)
-    rendered_form = form_view()['form']
-    
-    return { 
-        'form': rendered_form,
-        'title': "ESGF Search",
-        'description': "Choose ESGF Dataset",
-        'facet': facet,
-        'item': item,
-        'constraints': constraints,
-        'ctx' : ctx, } 
 
 # workflow
 # --------
