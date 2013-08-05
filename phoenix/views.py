@@ -1,5 +1,4 @@
 import datetime
-import types
 
 from pyramid.view import view_config, forbidden_view_config
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
@@ -21,6 +20,7 @@ from .helpers import ( wps_url,
     mongodb_conn, is_url )
 from .helpers import esgf_search_context
 from .helpers import execute_wps
+from .helpers import mongodb_add_job
 
 import logging
 
@@ -264,22 +264,13 @@ class ExecuteView(FormView):
       
         execution = execute_wps(self.wps, identifier, serialized)
 
-        import uuid
-   
-        # mongodb
-        conn = mongodb_conn(self.request)
-        conn.phoenix_db.history.save(dict(
-          user_id=authenticated_userid(self.request), 
-          uuid=uuid.uuid4().get_hex(),
-          identifier=identifier,
-          service_url=self.wps.url,
-          status_location=execution.statusLocation,
-          status = execution.status,
-          user = authenticated_userid(self.request),
-          start_time = datetime.datetime.now(),
-          end_time = datetime.datetime.now(),
-          ))
-               
+        mongodb_add_job(
+            request = self.request, 
+            user_id = authenticated_userid(self.request), 
+            identifier = identifier, 
+            wps_url = self.wps.url, 
+            execution = execution)
+
         return HTTPFound(location=self.request.route_url('history'))
 
 @view_config(route_name='monitor',
@@ -532,6 +523,19 @@ class Workflow(object):
 def workflow_wizard_done(request, states):
     log.debug('states = %s', states)
     #wizard.get_summary(request)
+
+    wps = WebProcessingService(wps_url(request), verbose=True)
+    identifier = 'de.dkrz.esgf.wget'
+    state = states[2]
+    execution = execute_wps(wps, identifier, state)
+
+    mongodb_add_job(
+        request = request,
+        user_id = authenticated_userid(request), 
+        identifier = identifier, 
+        wps_url = wps.url, 
+        execution = execution)
+
     return {
         'form' : FormView(request),
         'title': 'Summary',
