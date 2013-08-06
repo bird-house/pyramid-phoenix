@@ -6,25 +6,15 @@ imports:
 
 components:
 
-- id: Test1
+- id: ESGFWorkflow
   type: Workflow
   properties:
     director: !ref MTDataDrivenDirector
     nodes:
-    - !ref Identifier
     - !ref ServiceURL
-    - !ref Input
-    - !ref RunProcess
+    - !ref DownloadEsgfFile
+    - !ref RunCDOInfo
     - !ref RenderResult
-
-- id: Identifier
-  type: Node
-  properties:  
-    actor: !ref ConstantSource
-    constants:
-      value: de.dkrz.cdo.sinfo_workflow
-    outflows:
-      value: /wps/identifier/
 
 - id: ServiceURL
   type: Node
@@ -35,35 +25,61 @@ components:
     outflows:
       value: /wps/serviceURL/
 
-- id: Input
+- id: DownloadEsgfFile
   type: Node
-  properties:  
-    actor: !ref ConstantSource
+  properties:
+    actor: !ref ExecuteEsgfWPS
     constants:
-      value: http://localhost:8090/files/clm1.nc
-    outflows:
-      value: /wps/input/
-
-- id: RunProcess
-  type: Node
-  properties:
-    actor: !ref ExecuteWPS
+      identifier: de.dkrz.esgf.wget
+      openid: https://esgf-data.dkrz.de/esgf-idp/openid/pingutest
+      password: Pingutest1
+      netcdf_url: http://bmbf-ipcc-ar5.dkrz.de/thredds/fileServer/cmip5/output1/MPI-M/MPI-ESM-LR/1pctCO2/yr/ocnBgchem/Oyr/r1i1p1/v20120314/o2/o2_Oyr_MPI-ESM-LR_1pctCO2_r1i1p1_1850-1899.nc
     inflows:
-      identifier: /wps/identifier/
       serviceURL: /wps/serviceURL/
-      input: /wps/input/
     outflows:
-      status: /wps/status/
-      outputURL: /wps/outputURL/  
- 
-- id: RenderResult
+      status: /wps/esgf/status/
+      outputURL: /wps/esgf/outputURL/
+
+- id: ExecuteEsgfWPS
+  type: PythonActor
+  properties:
+    step: |
+      import sys
+      sys.path.append("/home/pingu/sandbox/climdaps/src/OWSLib")
+      from owslib.wps import WebProcessingService, monitorExecution
+      wps = WebProcessingService(serviceURL, verbose=False)
+      inputs = [("openid", openid), ("password", password), ("netcdf_url", netcdf_url)]
+      outputs = [("output",True)]
+      execution = wps.execute(identifier, inputs=inputs, output=outputs)
+      # TODO: fix delay of copying output file ...
+      monitorExecution(execution, sleepSecs=30)
+      status = execution.status
+      output = execution.processOutputs[0]
+      outputURL = output.reference
+    inputs:
+      identifier: 
+      serviceURL:
+      openid:
+      password:
+      netcdf_url:
+    outputs:
+      status:
+      outputURL:  
+
+- id: RunCDOInfo
   type: Node
   properties:
-    actor: !ref PrintStreamWriter
+    actor: !ref ExecuteCDOWPS
+    constants:
+      identifier: de.dkrz.cdo.sinfo_workflow
     inflows:
-      message: /wps/status/
-
-- id: ExecuteWPS
+      serviceURL: /wps/serviceURL/
+      input: /wps/esgf/outputURL/
+    outflows:
+      status: /wps/cdo/status/
+      outputURL: /wps/cdo/outputURL/  
+ 
+- id: ExecuteCDOWPS
   type: PythonActor
   properties:
     step: |
@@ -79,9 +95,16 @@ components:
       output = execution.processOutputs[0]
       outputURL = output.reference
     inputs:
-      identifier:
+      identifier: 
       serviceURL:
       input:
     outputs:
       status: 
       outputURL:
+
+- id: RenderResult
+  type: Node
+  properties:
+    actor: !ref PrintStreamWriter
+    inflows:
+      message: /wps/cdo/status/
