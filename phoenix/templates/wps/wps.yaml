@@ -1,0 +1,87 @@
+imports:
+
+- classpath:/common/groovy/actors.yaml
+- classpath:/common/directors.yaml
+- classpath:/common/python/actors.yaml
+
+components:
+
+- id: Test1
+  type: Workflow
+  properties:
+    director: !ref MTDataDrivenDirector
+    nodes:
+    - !ref Identifier
+    - !ref ServiceURL
+    - !ref Input
+    - !ref RunProcess
+    - !ref RenderResult
+
+- id: Identifier
+  type: Node
+  properties:  
+    actor: !ref ConstantSource
+    constants:
+      value: de.dkrz.cdo.sinfo_workflow
+    outflows:
+      value: /wps/identifier/
+
+- id: ServiceURL
+  type: Node
+  properties:  
+    actor: !ref ConstantSource
+    constants:
+      value: http://localhost:8090/wps
+    outflows:
+      value: /wps/serviceURL/
+
+- id: Input
+  type: Node
+  properties:  
+    actor: !ref ConstantSource
+    constants:
+      value: http://localhost:8090/files/clm1.nc
+    outflows:
+      value: /wps/input/
+
+- id: RunProcess
+  type: Node
+  properties:
+    actor: !ref ExecuteWPS
+    inflows:
+      identifier: /wps/identifier/
+      serviceURL: /wps/serviceURL/
+      input: /wps/input/
+    outflows:
+      status: /wps/status/
+      outputURL: /wps/outputURL/  
+ 
+- id: RenderResult
+  type: Node
+  properties:
+    actor: !ref PrintStreamWriter
+    inflows:
+      message: /wps/status/
+
+- id: ExecuteWPS
+  type: PythonActor
+  properties:
+    step: |
+      import sys
+      sys.path.append("/home/pingu/sandbox/climdaps/src/OWSLib")
+      from owslib.wps import WebProcessingService, monitorExecution
+      wps = WebProcessingService(serviceURL, verbose=True)
+      inputs = [("input", input)]
+      outputs = [("output",True)]
+      execution = wps.execute(identifier, inputs=inputs, output=outputs)
+      monitorExecution(execution)
+      status = execution.status
+      output = execution.processOutputs[0]
+      outputURL = output.reference
+    inputs:
+      identifier:
+      serviceURL:
+      input:
+    outputs:
+      status: 
+      outputURL:
