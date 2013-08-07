@@ -8,41 +8,32 @@ import logging
 
 log = logging.getLogger(__name__)
 
-def wps_url(request):
+def get_setting(request, key):
     settings = request.registry.settings
-    # TODO: dont use hard coded project name
-    service_url = settings.get('phoenix.wps', None)
-    log.debug('using wps = %s', service_url)
-    return service_url
+    value = settings.get(key, None)
+    return value
+
+def set_setting(request, key, value):
+    settings = request.registry.settings
+    settings[key] = value
+
+def wps_url(request):
+    return get_setting(request, 'phoenix.wps')
 
 def update_wps_url(request, wps_url):
-    settings = request.registry.settings
-    settings['phoenix.wps'] = wps_url
+    set_setting(request, 'phoenix.wps', wps_url)
    
 def csw_url(request):
-    settings = request.registry.settings
-    # TODO: dont use hard coded project name
-    service_url = settings.get('phoenix.csw', None)
-    log.debug('using csw = %s', service_url)
-    return service_url
-
+    return get_setting(request, 'phoenix.csw')
+   
 def esgsearch_url(request):
-    settings = request.registry.settings
-    # TODO: dont use hard coded project name
-    service_url = settings.get('esgf.search', None)
-    log.debug('using esgf seach = %s', service_url)
-    return service_url
+    return get_setting(request, 'esgf.search')
 
 def whitelist(request):
-	settings = request.registry.settings
-	whitelist_str = settings.get('phoenix.login.whitelist', '')
-	whitelist = whitelist_str.split(',')
-	return whitelist
+    return get_setting(request, 'phoenix.login.whitelist')
 
 def mongodb_conn(request):
-	settings = request.registry.settings
-	conn = settings.get('mongodb_conn', None)
-	return conn
+    return get_setting(request, 'mongodb_conn')
 
 def is_url(text):
     """Check wheather given text is url or not
