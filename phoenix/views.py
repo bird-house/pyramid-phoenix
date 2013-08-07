@@ -522,15 +522,19 @@ class Workflow(object):
     pass
 
 def workflow_wizard_done(request, states):
+    from mako.template import Template
+
     log.debug('states = %s', states)
     #wizard.get_summary(request)
 
     wps = WebProcessingService(wps_url(request), verbose=True)
     identifier = 'de.dkrz.restflow.run'
     state = states[2]
-    yaml_path = os.path.join(os.path.abspath(os.curdir), 'phoenix/templates/wps/wps.yaml')
-    yaml_description = open(yaml_path, 'r').read()
-    inputs = [("workflow", yaml_description)]
+    workflow_template_filename = os.path.join(os.path.abspath(os.curdir), 'phoenix/templates/wps/wps.yaml')
+    workflow_template = Template(filename=workflow_template_filename)
+    workflow_description = workflow_template.render()
+    log.debug("workflow_description = %s", workflow_description)
+    inputs = [("workflow_description", str(workflow_description))]
     outputs = [("output",True)]
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
