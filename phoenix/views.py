@@ -19,6 +19,8 @@ from .helpers import wps_url
 from .helpers import csw_url
 from .helpers import mongodb_conn
 from .helpers import update_wps_url
+from .helpers import execute_wps
+from .helpers import mongodb_add_job
 
 import logging
 
@@ -84,7 +86,7 @@ def home(request):
 
     lm = request.layout_manager
     lm.layout.add_heading('heading_processes')
-    lm.layout.add_heading('heading_history')
+    lm.layout.add_heading('heading_jobs')
     return dict()
 
 
@@ -101,22 +103,20 @@ def processes(request):
     wps.getcapabilities()
     return dict( wps=wps, logged_in=authenticated_userid(request))
    
-# history
+# jobs
 # -------
 
-@view_config(route_name='history',
-             renderer='templates/history.pt',
+@view_config(route_name='jobs',
+             renderer='templates/jobs.pt',
              layout='default',
              permission='edit'
              )
-def history(request):
-    log.debug('rendering history')
-
-    history = []
+def jobs(request):
+    jobs = []
 
     conn = mongodb_conn(request)
     db = conn.phoenix_db
-    for proc in db.history.find(dict(
+    for proc in db.jobs.find(dict(
         user_id=authenticated_userid(request))):
         log.debug(proc)
         log.debug('status_location = %s', proc['status_location'])
@@ -152,12 +152,12 @@ def history(request):
             proc['output_delete_time'] = datetime.datetime.now() + datetime.timedelta(days=dd)
             percent = 45  # TODO: poll percent
             proc['duration'] = str(proc['end_time'] - proc['start_time'])
-            db.history.update({'uuid':proc['uuid']}, proc)
-        history.append(proc)
+            db.jobs.update({'uuid':proc['uuid']}, proc)
+        jobs.append(proc)
         
-        log.debug('leaving history')
+        log.debug('leaving jobs')
 
-    return dict(history=history)
+    return dict(jobs=jobs)
 
 # output_details
 # --------------
@@ -185,7 +185,7 @@ class ProcessOutputsView(ReadOnlyView):
     def appstruct(self):
         conn = mongodb_conn(self.request)
         db = conn.phoenix_db
-        proc = db.history.find_one({'uuid':self.request.params.get('uuid')})
+        proc = db.jobs.find_one({'uuid':self.request.params.get('uuid')})
         self.wps = WebProcessingService(proc['service_url'], verbose=False)
         self.execution = WPSExecution(url=self.wps.url)
         self.execution.checkStatus(url=proc['status_location'], sleepSecs=0)
@@ -236,7 +236,7 @@ class ExecuteView(FormView):
     wps = None
    
     def __call__(self):
-        from .wpsschema import WPSInputSchemaNode  
+        from .wps.schema import WPSInputSchemaNode  
         
         # build the schema if it not exist
         if self.schema is None:
@@ -269,7 +269,7 @@ class ExecuteView(FormView):
             wps_url = self.wps.url, 
             execution = execution)
 
-        return HTTPFound(location=self.request.route_url('history'))
+        return HTTPFound(location=self.request.route_url('jobs'))
 
 @view_config(route_name='monitor',
              renderer='templates/embedded.pt',
@@ -386,13 +386,12 @@ class AdminView(FormView):
         conn = mongodb_conn(self.request)
         db = conn.phoenix_db
                
-        return {'history_count' : db.history.count()}
+        return {'jobs_count' : db.jobs.count()}
 
     def clear_database_success(self, appstruct):
         # mongodb
         conn = mongodb_conn(self.request)
-        conn.phoenix_db.history.drop()
-        conn.phoenix_db.search.drop()
+        conn.phoenix_db.jobs.drop()
                
         return HTTPFound(location=self.request.route_url('admin'))
 

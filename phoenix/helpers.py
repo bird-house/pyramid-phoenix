@@ -63,7 +63,7 @@ def esgf_search_context(request):
 
 def mongodb_add_job(request, user_id, identifier, wps_url, execution):
     conn = mongodb_conn(request)
-    conn.phoenix_db.history.save(dict(
+    conn.phoenix_db.jobs.save(dict(
         user_id= user_id, 
         uuid=uuid.uuid4().get_hex(),
         identifier=identifier,
@@ -73,6 +73,7 @@ def mongodb_add_job(request, user_id, identifier, wps_url, execution):
         start_time = datetime.datetime.now(),
         end_time = datetime.datetime.now(),
       ))
+    log.debug('count jobs = %s', conn.phoenix_db.jobs.count())
 
 def execute_wps(wps, identifier, params):
     # TODO: handle sync/async case, 

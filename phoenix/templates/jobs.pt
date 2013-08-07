@@ -1,0 +1,58 @@
+<metal:block use-macro="main_template">
+
+    <div metal:fill-slot="content">
+        <table id="process_table" class="table table-condensed accordion-group" style="table-layout: fixed; word-wrap: break-word;">
+            <thead>
+                <tr>
+                    <th>Identifier</th>
+                    <th>Start Time</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <div tal:repeat="job jobs">
+                    <tr>
+                        <td><a rel="tooltip" data-placement="right" title="ID: ${job.uuid}">${job.identifier}</a></td>
+                        <td>${job.starttime}</td>
+                        <td>${job.duration}</td>
+                        <td tal:condition="job.status in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']">
+			    <a href="#" class="label label-info" data-toggle="popover" data-placement="left" data-content="${job.status_message}" data-original-title="Status Message">${job.status}</a>
+                            <div class="progress progress-info">
+                                <div class="bar" style="width: ${job.percent_completed}%;">${job.percent_completed}%</div>
+                            </div>
+                        </td>
+                        <td tal:condition="job.status == 'ProcessSucceeded'">
+                            <a href="/output_details?uuid=${job.uuid}" class="label label-success">${job.status}</a>
+                        </td>
+                        <td tal:condition="job.status == 'ProcessFailed'">
+			    <a href="#" class="label label-warning" data-toggle="popover" data-placement="left" data-content="${job.error_message}" data-original-title="Error Message">${job.status}</a>
+                        </td>
+                        <td tal:condition="job.status == 'Exception'">
+                            <a href="#" class="label label-important" data-toggle="popover" data-placement="left" data-content="${job.error_message}" data-original-title="Error Message">${job.status}</a>
+                        </td>
+                    </tr>
+                    <tr>                    
+                </div>
+            </tbody>
+        </table>
+        
+        <script type="text/javascript">
+            $(function(){
+                $('body').popover({
+                    selector: '[data-toggle="popover"]'
+                });
+                
+                $('body').tooltip({
+                    selector: 'a[rel="tooltip"], [data-toggle="tooltip"]'
+                });
+            });
+
+	    $(function() {
+	        setTimeout("location.reload(true);",5000);
+	    });
+
+        </script>
+    </div>
+
+</metal:block>

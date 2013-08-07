@@ -49,7 +49,7 @@ def main(global_config, **settings):
     config.add_route('catalog_wps_add', '/catalog/wps/add')
     config.add_route('catalog_wps_select', '/catalog/wps/select')
     config.add_route('processes', '/processes')
-    config.add_route('history', '/history')
+    config.add_route('jobs', '/jobs')
     config.add_route('output_details', '/output_details')
     config.add_route('form', '/form')
     config.add_route('monitor', '/monitor')

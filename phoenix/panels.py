@@ -5,7 +5,6 @@ import logging
 
 log = logging.getLogger(__name__)
 
-from .models import ProcessHistory
 from .helpers import wps_url
 
 # navbar
@@ -20,7 +19,7 @@ def navbar(context, request):
     nav = [nav_item('Home', request.route_url('home'), 'icon-home'),
            nav_item('Catalog', request.route_url('catalog_wps_select'), 'icon-tasks'),
            nav_item('Processes', request.route_url('processes'), 'icon-tasks'),
-           nav_item('History', request.route_url('history'), 'icon-time'),
+           nav_item('My Jobs', request.route_url('jobs'), 'icon-time'),
            nav_item('Monitor', request.route_url('monitor'), 'icon-time'),
            nav_item('Admin', request.route_url('admin'), 'icon-time'),
            nav_item('Workflow', request.route_url('workflow', action='update', facet='institute', item=None), 'icon-time'),
@@ -48,20 +47,20 @@ def catalog_navbar(context, request):
 # user_statistic
 #==============================================================================
 
-@panel_config(name='user_statistic',
-              renderer='templates/panels/user_statistic.pt')
-def user_statistic(context, request):
-    userid = authenticated_userid(request)
-    processes = []
+# @panel_config(name='user_statistic',
+#               renderer='templates/panels/user_statistic.pt')
+# def user_statistic(context, request):
+#     userid = authenticated_userid(request)
+#     processes = []
 
-    if userid:
-        processes = ProcessHistory.status_count_by_userid(userid)
+#     if userid:
+#         processes = ProcessHistory.status_count_by_userid(userid)
 
-    lastlogin = 'first login'
-    if 'lastlogin' in request.cookies:
-        lastlogin = request.cookies['lastlogin']
+#     lastlogin = 'first login'
+#     if 'lastlogin' in request.cookies:
+#         lastlogin = request.cookies['lastlogin']
 
-    return dict(lastlogin=lastlogin, processes=processes)
+#     return dict(lastlogin=lastlogin, processes=processes)
 
 
 #==============================================================================
@@ -91,8 +90,8 @@ def heading_processes(context, request):
 # heading_history
 #==============================================================================
 
-@panel_config(name='heading_history',
-              renderer='templates/panels/heading_history.pt')
+@panel_config(name='heading_jobs',
+              renderer='templates/panels/heading_jobs.pt')
 def heading_history(context, request):
     return dict(title='Monitor processes')
 

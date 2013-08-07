@@ -1,7 +1,7 @@
 <div class="span4">
     <h3>${title}</h3>
     <p>
-        Click on the <a href="/history">History</a> page to view the status of
+        Click on the <a href="/jobs">My Jobs</a> page to view the status of
         all current and previous processes.
     </p>
     <p>
