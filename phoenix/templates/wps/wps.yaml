@@ -20,14 +20,14 @@ components:
   properties:
     actor: !ref ExecuteEsgfWPS
     constants:
-      service: http://localhost:8090/wps
+      service: ${service}
       identifier: de.dkrz.esgf.wget
-      openid: https://esgf-data.dkrz.de/esgf-idp/openid/pingutest
-      password: Pingutest1
-      netcdf_url: http://bmbf-ipcc-ar5.dkrz.de/thredds/fileServer/cmip5/output1/MPI-M/MPI-ESM-LR/1pctCO2/yr/ocnBgchem/Oyr/r1i1p1/v20120314/o2/o2_Oyr_MPI-ESM-LR_1pctCO2_r1i1p1_1850-1899.nc
+      openid: ${openid}
+      password: ${password}
+      netcdf_url: ${netcdf_url}
     outflows:
-      status: /wps/esgf/status/
-      output: /wps/esgf/output/
+      status: /wps/esgf/wget/status/
+      output: /wps/esgf/wget/file_url/
 
 - id: ExecuteEsgfWPS
   type: PythonActor
@@ -41,7 +41,7 @@ components:
       outputs = [("output",True)]
       execution = wps.execute(identifier, inputs=inputs, output=outputs)
       # TODO: fix delay of copying output file ...
-      monitorExecution(execution, sleepSecs=30)
+      monitorExecution(execution, sleepSecs=60)
       status = execution.status
       output = execution.processOutputs[0].reference
     inputs:
@@ -59,10 +59,10 @@ components:
   properties:
     actor: !ref ExecuteWPSProcess
     constants:
-      service: http://localhost:8090/wps
-      identifier: de.dkrz.cdo.sinfo_workflow
+      service: ${service}
+      identifier: ${process}
     inflows:
-      input: /wps/esgf/output/
+      input: /wps/esgf/wget/file_url
     outflows:
       status: /wps/process/status/
       output: /wps/process/output/  
@@ -74,7 +74,7 @@ components:
       import sys
       sys.path.append("/home/pingu/sandbox/climdaps/src/OWSLib")
       from owslib.wps import WebProcessingService, monitorExecution
-      wps = WebProcessingService(service, verbose=True)
+      wps = WebProcessingService(service, verbose=False)
       inputs = [("input", input)]
       outputs = [("output",True)]
       execution = wps.execute(identifier, inputs=inputs, output=outputs)

@@ -529,11 +529,16 @@ def workflow_wizard_done(request, states):
 
     wps = WebProcessingService(wps_url(request), verbose=True)
     identifier = 'de.dkrz.restflow.run'
-    state = states[2]
     workflow_template_filename = os.path.join(os.path.abspath(os.curdir), 'phoenix/templates/wps/wps.yaml')
     workflow_template = Template(filename=workflow_template_filename)
-    workflow_description = workflow_template.render()
-    log.debug("workflow_description = %s", workflow_description)
+    workflow_description = workflow_template.render(
+        service = wps.url,
+        process = states[0].get('process'),
+        openid = states[2].get('openid'),
+        password = states[2].get('password'),
+        netcdf_url = states[2].get('netcdf_url')
+        )
+    #log.debug("workflow_description = %s", workflow_description)
     inputs = [("workflow_description", str(workflow_description))]
     outputs = [("output",True)]
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
@@ -549,7 +554,7 @@ def workflow_wizard_done(request, states):
         'form' : FormView(request),
         'title': 'Summary',
         'description': '...',
-        'is_esgsearch': False,
+        'is_esgsearch': False 
         }
 
 @view_config(route_name='workflow',
