@@ -11,34 +11,23 @@ components:
   properties:
     director: !ref MTDataDrivenDirector
     nodes:
-    - !ref ServiceURL
     - !ref DownloadEsgfFile
-    - !ref RunCDOInfo
+    - !ref RunProcess
     - !ref RenderResult
-
-- id: ServiceURL
-  type: Node
-  properties:  
-    actor: !ref ConstantSource
-    constants:
-      value: http://localhost:8090/wps
-    outflows:
-      value: /wps/serviceURL/
 
 - id: DownloadEsgfFile
   type: Node
   properties:
     actor: !ref ExecuteEsgfWPS
     constants:
+      service: http://localhost:8090/wps
       identifier: de.dkrz.esgf.wget
       openid: https://esgf-data.dkrz.de/esgf-idp/openid/pingutest
       password: Pingutest1
       netcdf_url: http://bmbf-ipcc-ar5.dkrz.de/thredds/fileServer/cmip5/output1/MPI-M/MPI-ESM-LR/1pctCO2/yr/ocnBgchem/Oyr/r1i1p1/v20120314/o2/o2_Oyr_MPI-ESM-LR_1pctCO2_r1i1p1_1850-1899.nc
-    inflows:
-      serviceURL: /wps/serviceURL/
     outflows:
       status: /wps/esgf/status/
-      outputURL: /wps/esgf/outputURL/
+      output: /wps/esgf/output/
 
 - id: ExecuteEsgfWPS
   type: PythonActor
@@ -47,64 +36,62 @@ components:
       import sys
       sys.path.append("/home/pingu/sandbox/climdaps/src/OWSLib")
       from owslib.wps import WebProcessingService, monitorExecution
-      wps = WebProcessingService(serviceURL, verbose=False)
+      wps = WebProcessingService(service, verbose=False)
       inputs = [("openid", openid), ("password", password), ("netcdf_url", netcdf_url)]
       outputs = [("output",True)]
       execution = wps.execute(identifier, inputs=inputs, output=outputs)
       # TODO: fix delay of copying output file ...
       monitorExecution(execution, sleepSecs=30)
       status = execution.status
-      output = execution.processOutputs[0]
-      outputURL = output.reference
+      output = execution.processOutputs[0].reference
     inputs:
       identifier: 
-      serviceURL:
+      service:
       openid:
       password:
       netcdf_url:
     outputs:
       status:
-      outputURL:  
+      output:  
 
-- id: RunCDOInfo
+- id: RunProcess
   type: Node
   properties:
-    actor: !ref ExecuteCDOWPS
+    actor: !ref ExecuteWPSProcess
     constants:
+      service: http://localhost:8090/wps
       identifier: de.dkrz.cdo.sinfo_workflow
     inflows:
-      serviceURL: /wps/serviceURL/
-      input: /wps/esgf/outputURL/
+      input: /wps/esgf/output/
     outflows:
-      status: /wps/cdo/status/
-      outputURL: /wps/cdo/outputURL/  
+      status: /wps/process/status/
+      output: /wps/process/output/  
  
-- id: ExecuteCDOWPS
+- id: ExecuteWPSProcess
   type: PythonActor
   properties:
     step: |
       import sys
       sys.path.append("/home/pingu/sandbox/climdaps/src/OWSLib")
       from owslib.wps import WebProcessingService, monitorExecution
-      wps = WebProcessingService(serviceURL, verbose=True)
+      wps = WebProcessingService(service, verbose=True)
       inputs = [("input", input)]
       outputs = [("output",True)]
       execution = wps.execute(identifier, inputs=inputs, output=outputs)
       monitorExecution(execution)
       status = execution.status
-      output = execution.processOutputs[0]
-      outputURL = output.reference
+      output = execution.processOutputs[0].reference
     inputs:
       identifier: 
-      serviceURL:
+      service:
       input:
     outputs:
       status: 
-      outputURL:
+      output:
 
 - id: RenderResult
   type: Node
   properties:
     actor: !ref PrintStreamWriter
     inflows:
-      message: /wps/cdo/status/
+      message: /wps/process/status/
