@@ -1,3 +1,10 @@
+# schema.py
+# Copyright (C) 2013 the ClimDaPs/Phoenix authors and contributors
+# <see AUTHORS file>
+#
+# This module is part of ClimDaPs/Phoenix and is released under
+# the MIT License: http://www.opensource.org/licenses/mit-license.php
+
 import types
 
 from pyesgf.search import SearchConnection

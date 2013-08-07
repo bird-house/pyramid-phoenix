@@ -22,10 +22,10 @@ from .helpers import wps_url
 # -----
 
 class AdminSchema(colander.MappingSchema):
-    history_count = colander.SchemaNode(
+    jobs_count = colander.SchemaNode(
         colander.Int(),
-        name = 'history_count',
-        title = "Number of Processings",
+        name = 'jobs_count',
+        title = "Number of Jobs",
         missing = 0,
         widget = deform.widget.TextInputWidget(readonly=True)
         )

@@ -1,3 +1,10 @@
+# schema.py
+# Copyright (C) 2013 the ClimDaPs/Phoenix authors and contributors
+# <see AUTHORS file>
+#
+# This module is part of ClimDaPs/Phoenix and is released under
+# the MIT License: http://www.opensource.org/licenses/mit-license.php
+
 import os
 import datetime
 
@@ -15,11 +22,10 @@ from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
 from pyesgf.search import SearchConnection
 
-from .models import mongodb_add_job
+from .models import add_job, get_job, drop_jobs, update_job, num_jobs, jobs_by_userid
 
 from .helpers import wps_url
 from .helpers import csw_url
-from .helpers import mongodb_conn
 from .helpers import update_wps_url
 from .helpers import execute_wps
 
@@ -115,46 +121,43 @@ def processes(request):
 def jobs(request):
     jobs = []
 
-    conn = mongodb_conn(request)
-    db = conn.phoenix_db
-    for proc in db.jobs.find(dict(
-        user_id=authenticated_userid(request))):
-        log.debug(proc)
-        log.debug('status_location = %s', proc['status_location'])
+    for job in jobs_by_userid(request, user_id=authenticated_userid(request)):
+        log.debug(job)
+        log.debug('status_location = %s', job['status_location'])
 
-        proc['starttime'] = proc['start_time'].strftime('%a, %d %h %Y %I:%M:%S %p')
+        job['starttime'] = job['start_time'].strftime('%a, %d %h %Y %I:%M:%S %p')
 
         # TODO: handle different process status
-        if proc['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
-            proc['errors'] = []
+        if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
+            job['errors'] = []
             try:
-                wps = WebProcessingService(proc['service_url'], verbose=False)
+                wps = WebProcessingService(job['service_url'], verbose=False)
                 execution = WPSExecution(url=wps.url)
-                execution.checkStatus(url=proc['status_location'], sleepSecs=0)
-                proc['status'] = execution.status
-                proc['percent_completed'] = execution.percentCompleted
-                proc['status_message'] = execution.statusMessage
-                proc['error_message'] = ''
+                execution.checkStatus(url=job['status_location'], sleepSecs=0)
+                job['status'] = execution.status
+                job['percent_completed'] = execution.percentCompleted
+                job['status_message'] = execution.statusMessage
+                job['error_message'] = ''
                 for err in execution.errors:
-                    proc['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
+                    job['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
                
             except:
-                msg = 'could not access wps %s' % (proc['status_location'])
+                msg = 'could not access wps %s' % (job['status_location'])
                 log.warn(msg)
-                proc['status'] = 'Exception'
-                proc['errors'].append( dict(code='', locator='', text=msg) )
+                job['status'] = 'Exception'
+                job['errors'].append( dict(code='', locator='', text=msg) )
             
-            proc['end_time'] = datetime.datetime.now()
-            for err in proc['errors']:
-                proc['error_message'] = err.get('text', '') + ';'
+            job['end_time'] = datetime.datetime.now()
+            for err in job['errors']:
+                job['error_message'] = err.get('text', '') + ';'
 
             # TODO: configure output delete time
             dd = 3
-            proc['output_delete_time'] = datetime.datetime.now() + datetime.timedelta(days=dd)
+            job['output_delete_time'] = datetime.datetime.now() + datetime.timedelta(days=dd)
             percent = 45  # TODO: poll percent
-            proc['duration'] = str(proc['end_time'] - proc['start_time'])
-            db.jobs.update({'uuid':proc['uuid']}, proc)
-        jobs.append(proc)
+            job['duration'] = str(job['end_time'] - job['start_time'])
+            update_job(request, job)
+        jobs.append(job)
         
         log.debug('leaving jobs')
 
@@ -184,12 +187,10 @@ class ProcessOutputsView(ReadOnlyView):
     schema = output_schema()
    
     def appstruct(self):
-        conn = mongodb_conn(self.request)
-        db = conn.phoenix_db
-        proc = db.jobs.find_one({'uuid':self.request.params.get('uuid')})
-        self.wps = WebProcessingService(proc['service_url'], verbose=False)
+        job = db_get_job(self.request, uuid=self.request.params.get('uuid'))
+        self.wps = WebProcessingService(job['service_url'], verbose=False)
         self.execution = WPSExecution(url=self.wps.url)
-        self.execution.checkStatus(url=proc['status_location'], sleepSecs=0)
+        self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
 
         appstruct = {
             'identifier' : self.execution.process.identifier,
@@ -246,7 +247,7 @@ class ExecuteView(FormView):
             
         try:
             identifier = self.request.params.get('identifier')
-            self.wps = WebProcessingService(wps_url(self.request), verbose=True)
+            self.wps = WebProcessingService(wps_url(self.request), verbose=False)
             process = self.wps.describeprocess(identifier)
             self.schema = self.schema_factory(process)
         except:
@@ -263,7 +264,7 @@ class ExecuteView(FormView):
       
         execution = execute_wps(self.wps, identifier, serialized)
 
-        mongodb_add_job(
+        add_job(
             request = self.request, 
             user_id = authenticated_userid(self.request), 
             identifier = identifier, 
@@ -383,16 +384,10 @@ class AdminView(FormView):
     title = u"Administration"
 
     def appstruct(self):
-        # mongodb
-        conn = mongodb_conn(self.request)
-        db = conn.phoenix_db
-               
-        return {'jobs_count' : db.jobs.count()}
+        return {'jobs_count' : num_jobs(self.request)}
 
     def clear_database_success(self, appstruct):
-        # mongodb
-        conn = mongodb_conn(self.request)
-        conn.phoenix_db.jobs.drop()
+        drop_jobs(self.request)
                
         return HTTPFound(location=self.request.route_url('admin'))
 
