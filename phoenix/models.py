@@ -1,4 +1,4 @@
-# schema.py
+# models.py
 # Copyright (C) 2013 the ClimDaPs/Phoenix authors and contributors
 # <see AUTHORS file>
 #
@@ -10,11 +10,16 @@
 import uuid
 import datetime
 
+from pyesgf.search import SearchConnection
+
 import logging
 
 log = logging.getLogger(__name__)
 
-from helpers import mongodb_conn
+from .helpers import mongodb_conn, esgsearch_url
+
+# mongodb ...
+# -----------
 
 def database(request):
     conn = mongodb_conn(request)
@@ -55,3 +60,16 @@ def jobs_by_userid(request, user_id):
     db = database(request)
     return db.jobs.find( dict(user_id=user_id) )
 
+
+# esgf search ....
+# ----------------
+
+def esgf_search_conn(request):
+    return SearchConnection(esgsearch_url(request), distrib=False)
+    
+def esgf_search_context(request):
+    conn = esgf_search_conn(request)
+    ctx = conn.new_context(
+        project='CMIP5', product='output1', 
+        replica=False, latest=True)
+    return ctx

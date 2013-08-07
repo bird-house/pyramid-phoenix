@@ -1,4 +1,4 @@
-# schema.py
+# views.py
 # Copyright (C) 2013 the ClimDaPs/Phoenix authors and contributors
 # <see AUTHORS file>
 #

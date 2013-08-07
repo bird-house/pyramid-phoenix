@@ -1,3 +1,10 @@
+# views.py
+# Copyright (C) 2013 the ClimDaPs/Phoenix authors and contributors
+# <see AUTHORS file>
+#
+# This module is part of ClimDaPs/Phoenix and is released under
+# the MIT License: http://www.opensource.org/licenses/mit-license.php
+
 import os
 
 from pyramid.view import view_config, forbidden_view_config
@@ -7,9 +14,11 @@ from pyramid_deform import FormView, FormWizard, FormWizardView
 from deform.form import Button
 
 from owslib.wps import WebProcessingService
-from pyesgf.search import SearchConnection
 
-from phoenix import helpers
+from phoenix.models import esgf_search_context, add_job
+
+from phoenix.helpers import wps_url
+
 
 import logging
 
@@ -65,7 +74,7 @@ class WorkflowFormWizardView(FormWizardView):
             schema.appstruct['netcdf_url'] = state['files_url']
         elif step == 3:
             states = self.wizard_state.get_step_states()
-            wps = WebProcessingService(helpers.wps_url(self.request), verbose=True)
+            wps = WebProcessingService(wps_url(self.request), verbose=True)
             state = self.deserialize(states[0])
             identifier = state['process']
             process = wps.describeprocess(identifier)
@@ -144,7 +153,7 @@ def workflow_wizard_done(request, states):
     log.debug('states = %s', states)
     #wizard.get_summary(request)
 
-    wps = WebProcessingService(helpers.wps_url(request), verbose=True)
+    wps = WebProcessingService(wps_url(request), verbose=True)
     identifier = 'de.dkrz.restflow.run'
     workflow_template_filename = os.path.join(os.path.abspath(os.curdir), 'phoenix/wps/templates/wps.yaml')
     workflow_template = Template(filename=workflow_template_filename)
@@ -160,7 +169,7 @@ def workflow_wizard_done(request, states):
     outputs = [("output",True)]
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
-    helpers.mongodb_add_job(
+    add_job(
         request = request,
         user_id = authenticated_userid(request), 
         identifier = identifier, 
@@ -180,12 +189,7 @@ def workflow_wizard_done(request, states):
              permission='edit',
              )
 def workflow_wizard(request):
-    conn = SearchConnection(helpers.esgsearch_url(request), distrib=False)
-    ctx = conn.new_context(
-        project='CMIP5', 
-        product='output1', 
-        replica=False, 
-        latest=True)
+    ctx = esgf_search_context(request)
 
     all_facets = ctx.facet_counts.keys()
 
@@ -224,7 +228,7 @@ def workflow_wizard(request):
 
     # wget process
     from phoenix.wps.schema import WPSInputSchemaNode
-    wps = WebProcessingService(helpers.wps_url(request), verbose=True)
+    wps = WebProcessingService(wps_url(request), verbose=True)
     process = wps.describeprocess('de.dkrz.esgf.wget')
     schema_wget = WPSInputSchemaNode(process=process)
 

@@ -7,8 +7,6 @@
 
 import types
 
-from pyesgf.search import SearchConnection
-
 import logging
 
 log = logging.getLogger(__name__)
@@ -56,15 +54,6 @@ def is_url(text):
     except:
         return False
 
-def esgf_search_conn(request):
-    return SearchConnection(esgsearch_url(request), distrib=False)
-    
-def esgf_search_context(request):
-    conn = esgf_search_conn(request)
-    ctx = conn.new_context(
-        project='CMIP5', product='output1', 
-        replica=False, latest=True)
-    return ctx
 
 def execute_wps(wps, identifier, params):
     # TODO: handle sync/async case, 

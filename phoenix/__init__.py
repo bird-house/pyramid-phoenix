@@ -1,3 +1,10 @@
+# __init__.py
+# Copyright (C) 2013 the ClimDaPs/Phoenix authors and contributors
+# <see AUTHORS file>
+#
+# This module is part of ClimDaPs/Phoenix and is released under
+# the MIT License: http://www.opensource.org/licenses/mit-license.php
+
 from pyramid.config import Configurator
 from pyramid.events import subscriber
 from pyramid.events import NewRequest
@@ -58,7 +65,8 @@ def main(global_config, **settings):
     config.add_route('workflow', '/workflow/{action}/{facet}/{item}')
     config.add_route('help', '/help')
 
-     # MongoDB
+    # MongoDB
+    # TODO: move this to models.py
     def add_mongo_db(event):
         settings = event.request.registry.settings
         url = settings['mongodb.url']
