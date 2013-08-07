@@ -15,12 +15,13 @@ from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
 from pyesgf.search import SearchConnection
 
+from .models import mongodb_add_job
+
 from .helpers import wps_url
 from .helpers import csw_url
 from .helpers import mongodb_conn
 from .helpers import update_wps_url
 from .helpers import execute_wps
-from .helpers import mongodb_add_job
 
 import logging
 
