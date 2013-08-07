@@ -1,3 +1,4 @@
+import os
 import datetime
 
 from pyramid.view import view_config, forbidden_view_config
@@ -525,9 +526,13 @@ def workflow_wizard_done(request, states):
     #wizard.get_summary(request)
 
     wps = WebProcessingService(wps_url(request), verbose=True)
-    identifier = 'de.dkrz.esgf.wget'
+    identifier = 'de.dkrz.restflow.run'
     state = states[2]
-    execution = execute_wps(wps, identifier, state)
+    yaml_path = os.path.join(os.path.abspath(os.curdir), 'phoenix/templates/wps/wps.yaml')
+    yaml_description = open(yaml_path, 'r').read()
+    inputs = [("workflow", yaml_description)]
+    outputs = [("output",True)]
+    execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
     mongodb_add_job(
         request = request,
