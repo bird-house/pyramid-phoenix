@@ -1,5 +1,5 @@
 import unittest
-import transaction
+#import transaction
 
 from pyramid import testing
 
