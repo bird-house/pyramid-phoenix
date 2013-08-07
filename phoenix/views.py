@@ -181,7 +181,7 @@ class ReadOnlyView(FormView):
 class ProcessOutputsView(ReadOnlyView):
     log.debug('output details execute')
     title = u"Process Outputs"
-    from .wpsschema import output_schema
+    from .wps.schema import output_schema
     schema = output_schema()
    
     def appstruct(self):

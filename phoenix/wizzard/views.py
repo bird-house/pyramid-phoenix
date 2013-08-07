@@ -146,7 +146,7 @@ def workflow_wizard_done(request, states):
 
     wps = WebProcessingService(helpers.wps_url(request), verbose=True)
     identifier = 'de.dkrz.restflow.run'
-    workflow_template_filename = os.path.join(os.path.abspath(os.curdir), 'phoenix/templates/wps/wps.yaml')
+    workflow_template_filename = os.path.join(os.path.abspath(os.curdir), 'phoenix/wps/templates/wps.yaml')
     workflow_template = Template(filename=workflow_template_filename)
     workflow_description = workflow_template.render(
         service = wps.url,
@@ -223,7 +223,7 @@ def workflow_wizard(request):
     #schema_esgfiles = EsgFilesSchema(title='Select ESGF File')
 
     # wget process
-    from phoenix.wpsschema import WPSInputSchemaNode
+    from phoenix.wps.schema import WPSInputSchemaNode
     wps = WebProcessingService(helpers.wps_url(request), verbose=True)
     process = wps.describeprocess('de.dkrz.esgf.wget')
     schema_wget = WPSInputSchemaNode(process=process)
