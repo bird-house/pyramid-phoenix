@@ -6,7 +6,7 @@
       <small>${form_info}</small>
     </legend>
             
-    <table id="job_details_table" class="table table-condensed accordion-group" style="table-layout: fixed; word-wrap: break-word;">
+    <table id="output_details_table" class="table table-condensed accordion-group" style="table-layout: fixed; word-wrap: break-word;">
       <thead>
         <tr>
 	  <th>Identifier</th>
