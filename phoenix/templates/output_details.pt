@@ -9,15 +9,22 @@
     <table id="job_details_table" class="table table-condensed accordion-group" style="table-layout: fixed; word-wrap: break-word;">
       <thead>
         <tr>
-          <th>Output</th>
-          <th>Mime Type</th>
+	  <th>Identifier</th>
+          <th>Title</th>
+	  <th>Value</th>
         </tr>
       </thead>
       <tbody>
         <div tal:repeat="output outputs">
           <tr>
-            <td><a href="${output.reference}">${output.identifier}</a></td>
-            <td>${output.mimeType}</td>
+	    <td>${output.identifier}</td>
+	    <td>${output.title}</td>
+	    <div tal:condition="output.reference">
+              <td><a href="${output.reference}">Download</a> (${output.mimeType})</td>
+            </div>
+	    <div tal:condition="not output.reference">
+	      <td>${', '.join(output.data)}</td>
+	    </div>
 	  <tr>                    
         </div>
       </tbody>
