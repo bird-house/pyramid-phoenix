@@ -28,6 +28,7 @@ from .helpers import wps_url
 from .helpers import csw_url
 from .helpers import update_wps_url
 from .helpers import execute_wps
+from .helpers import whitelist
 
 import logging
 
