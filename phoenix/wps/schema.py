@@ -286,36 +286,3 @@ class WPSInputSchemaNode(colander.SchemaNode):
         return cloned
         
     
-# Ouput Data ...
-# -----------------
-
-def output_schema():
-    # data
-    data = colander.SchemaNode(colander.Mapping())
-    data.add(colander.SchemaNode(colander.String(), name='value',
-        missing = colander.drop))
-    data.add(colander.SchemaNode(colander.String(), name='reference',
-        missing = colander.drop))
-    data.add(colander.SchemaNode(colander.String(), name='mime_type',
-        missing = colander.drop))
-
-    # output
-    output = colander.SchemaNode(colander.Mapping())
-    output.add(colander.SchemaNode(colander.String(), name = 'name'))
-    output.add(colander.SchemaNode(colander.String(), name = 'reference',
-        missing = colander.drop))
-    output.add(colander.SchemaNode(colander.String(), name = 'mime_type'))
-    output.add(colander.SchemaNode(colander.String(), name = 'data_type'))
-    # data sequence
-    output.add(colander.SchemaNode(colander.Sequence(), data, name = 'data'))
-        
-    # process output
-    schema = colander.SchemaNode(colander.Mapping())
-    schema.add(colander.SchemaNode(colander.String(), name = 'identifier'))
-    schema.add(colander.SchemaNode(colander.Boolean(), name = 'complete'))
-    schema.add(colander.SchemaNode(colander.Boolean(), name = 'succeded'))
-
-    # output sequence
-    schema.add(colander.SchemaNode(colander.Sequence(), output, name="outputs"))
-
-    return schema

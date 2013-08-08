@@ -167,60 +167,25 @@ def jobs(request):
 # output_details
 # --------------
 
-class ReadOnlyView(FormView):
-    def show(self, form):
-        appstruct = self.appstruct()
-        if appstruct is None:
-            rendered = form.render(readonly=True)
-        else:
-            rendered = form.render(appstruct, readonly=True)
-        return { 'form': rendered, }
-
 @view_config(
      route_name='output_details',
-     renderer='templates/form.pt',
+     renderer='templates/output_details.pt',
      layout='default',
      permission='edit')
-class ProcessOutputsView(ReadOnlyView):
-    log.debug('output details execute')
+def output_details(request):
     title = u"Process Outputs"
-    from .wps.schema import output_schema
-    schema = output_schema()
-   
-    def appstruct(self):
-        job = get_job(self.request, uuid=self.request.params.get('uuid'))
-        self.wps = WebProcessingService(job['service_url'], verbose=False)
-        self.execution = WPSExecution(url=self.wps.url)
-        self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
 
-        appstruct = {
-            'identifier' : self.execution.process.identifier,
-            'complete' : self.execution.isComplete(),
-            'succeded' : self.execution.isSucceded(),
-        }
+    job = get_job(request, uuid=request.params.get('uuid'))
+    wps = WebProcessingService(job['service_url'], verbose=False)
+    execution = WPSExecution(url=wps.url)
+    execution.checkStatus(url=job['status_location'], sleepSecs=0)
 
-        appstruct['outputs'] = []
-        for output in self.execution.processOutputs:
-            output_appstruct = {}
-            output_appstruct['name'] = output.title
-            output_appstruct['mime_type'] = output.mimeType
-            output_appstruct['data_type'] = output.dataType
-            if output.reference != None:
-                output_appstruct['reference'] = output.reference
-            output_appstruct['data'] = []
-            for datum in output.data:
-                data_appstruct = {}
-                if isinstance(datum, ComplexData):
-                    data_appstruct['reference'] = datum.readonly
-                    data_appstruct['mime_type'] = datum.mimeType
-                else:
-                    data_appstruct['value'] = datum
-                output_appstruct['data'].append(data_appstruct)
-            appstruct['outputs'].append(output_appstruct)
-          
-        log.debug('out appstruct = %s', appstruct)
-
-        return appstruct
+    form_info="Status: %s" % (execution.status)
+    
+    return( dict(
+        title=execution.process.title, 
+        form_info=form_info,
+        outputs=execution.processOutputs) )
 
 # form
 # -----
