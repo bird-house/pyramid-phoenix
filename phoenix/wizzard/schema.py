@@ -51,6 +51,12 @@ class EsgSearchSchema(colander.MappingSchema):
     is_esgsearch = True
     appstruct = {}
 
+    opendap_url = colander.SchemaNode(
+        colander.String(),
+        description = 'OpenDAP Access URL',
+        missing = '',
+        widget = deferred_esgsearch_opendap_widget)
+
     files_url = colander.SchemaNode(
         colander.String(),
         description = 'Files Access URL',
@@ -62,11 +68,11 @@ class EsgFilesSchema(colander.MappingSchema):
     is_esgsearch = False
     appstruct = {}
 
-    # opendap_url = colander.SchemaNode(
-    #     colander.String(),
-    #     description = 'OpenDAP Access URL',
-    #     missing = '',
-    #     widget = deferred_esgsearch_opendap_widget)
+    opendap_url = colander.SchemaNode(
+        colander.String(),
+        description = 'OpenDAP Access URL',
+        missing = '',
+        widget = deferred_esgsearch_opendap_widget)
 
     files_url = colander.SchemaNode(
         colander.String(),

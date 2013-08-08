@@ -21,10 +21,10 @@ components:
     actor: !ref ExecuteEsgfWPS
     constants:
       service: ${service}
-      identifier: de.dkrz.esgf.wget
+      identifier: de.dkrz.esgf.opendap
       openid: ${openid}
       password: ${password}
-      netcdf_url: ${netcdf_url}
+      opendap_url: ${opendap_url}
     outflows:
       status: /wps/esgf/wget/status/
       output: /wps/esgf/wget/file_url/
@@ -37,11 +37,11 @@ components:
       sys.path.append("/home/pingu/sandbox/climdaps/src/OWSLib")
       from owslib.wps import WebProcessingService, monitorExecution
       wps = WebProcessingService(service, verbose=False)
-      inputs = [("openid", openid), ("password", password), ("netcdf_url", netcdf_url)]
+      inputs = [("openid", openid), ("password", password), ("opendap_url", opendap_url)]
       outputs = [("output",True)]
       execution = wps.execute(identifier, inputs=inputs, output=outputs)
       # TODO: fix delay of copying output file ...
-      monitorExecution(execution, sleepSecs=60)
+      monitorExecution(execution, sleepSecs=20)
       status = execution.status
       output = execution.processOutputs[0].reference
     inputs:
@@ -49,7 +49,7 @@ components:
       service:
       openid:
       password:
-      netcdf_url:
+      opendap_url:
     outputs:
       status:
       output:  

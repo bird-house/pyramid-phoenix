@@ -71,7 +71,7 @@ class WorkflowFormWizardView(FormWizardView):
         if step == 2:
             states = self.wizard_state.get_step_states()
             state = self.deserialize(states[1])
-            schema.appstruct['netcdf_url'] = state['files_url']
+            schema.appstruct['opendap_url'] = state['opendap_url']
         elif step == 3:
             states = self.wizard_state.get_step_states()
             wps = WebProcessingService(wps_url(self.request), verbose=True)
@@ -162,7 +162,7 @@ def workflow_wizard_done(request, states):
         process = states[0].get('process'),
         openid = states[2].get('openid'),
         password = states[2].get('password'),
-        netcdf_url = states[2].get('netcdf_url')
+        opendap_url = states[2].get('opendap_url')
         )
     #log.debug("workflow_description = %s", workflow_description)
     inputs = [("workflow_description", str(workflow_description))]
@@ -232,6 +232,9 @@ def workflow_wizard(request):
     process = wps.describeprocess('de.dkrz.esgf.wget')
     schema_wget = WPSInputSchemaNode(process=process)
 
+    process = wps.describeprocess('de.dkrz.esgf.opendap')
+    schema_opendap = WPSInputSchemaNode(process=process)
+
     # get wps process params
     schema_process = WPSInputSchemaNode()
 
@@ -240,7 +243,8 @@ def workflow_wizard(request):
                                 schema_select_process, 
                                 schema_esgsearch,
                                 #schema_esgfiles,
-                                schema_wget,
+                                #schema_wget,
+                                schema_opendap,
                                 schema_process)
     view = WorkflowFormWizardView(wizard)
     view.ctx = ctx
