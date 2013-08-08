@@ -188,7 +188,7 @@ class ProcessOutputsView(ReadOnlyView):
     schema = output_schema()
    
     def appstruct(self):
-        job = db_get_job(self.request, uuid=self.request.params.get('uuid'))
+        job = get_job(self.request, uuid=self.request.params.get('uuid'))
         self.wps = WebProcessingService(job['service_url'], verbose=False)
         self.execution = WPSExecution(url=self.wps.url)
         self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
