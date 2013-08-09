@@ -152,6 +152,12 @@ def workflow_wizard_done(request, states):
 
     log.debug('states = %s', states)
     #wizard.get_summary(request)
+    return {
+        'form' : FormView(request),
+        'title': 'Summary',
+        'description': '...',
+        'is_esgsearch': False 
+        }
 
     wps = WebProcessingService(wps_url(request), verbose=True)
     identifier = 'de.dkrz.restflow.run'
@@ -247,8 +253,9 @@ def wizard(request):
                                 schema_esgsearch,
                                 #schema_esgfiles,
                                 #schema_wget,
-                                schema_opendap,
-                                schema_process)
+                                #schema_opendap,
+                                #schema_process
+                                )
     view = WorkflowFormWizardView(wizard)
     view.ctx = ctx
     view.facet = facet

@@ -18,6 +18,17 @@ import logging
 
 log = logging.getLogger(__name__)
 
+from deform import Form
+
+def add_search_path():
+    # register templates
+    loader = Form.default_renderer.loader
+   
+    from os.path import dirname, join
+    path = join(dirname(__file__), 'templates', 'deform')
+    loader.search_path = (path,) + loader.search_path
+
+
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
@@ -35,9 +46,9 @@ def main(global_config, **settings):
     # add my own templates
     # TODO: improve config of my own templates
     # see also: http://docs.pylonsproject.org/projects/deform/en/latest/templates.html#overriding-for-all-forms
-    from pkg_resources import resource_filename
-    from deform import Form
-    import os
+    # register template search path
+    add_search_path()
+    log.debug('search path= %s', Form.default_renderer.loader.search_path)
 
     # static views (stylesheets etc)
     config.add_static_view('static', 'static', cache_max_age=3600)
