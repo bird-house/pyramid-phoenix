@@ -62,7 +62,7 @@ def main(global_config, **settings):
     config.add_route('monitor', '/monitor')
     config.add_route('admin', '/admin')
     config.add_route('esgsearch', '/esgsearch/{action}/{facet}/{item}')
-    config.add_route('workflow', '/workflow/{action}/{facet}/{item}')
+    config.add_route('wizzard', '/wizzard/{action}/{facet}/{item}')
     config.add_route('help', '/help')
 
     # MongoDB

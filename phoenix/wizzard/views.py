@@ -183,12 +183,12 @@ def workflow_wizard_done(request, states):
         'is_esgsearch': False 
         }
 
-@view_config(route_name='workflow',
-             renderer='templates/workflow.pt',
+@view_config(route_name='wizzard',
+             renderer='templates/wizzard.pt',
              layout='default',
              permission='edit',
              )
-def workflow_wizard(request):
+def wizard(request):
     ctx = esgf_search_context(request)
 
     all_facets = ctx.facet_counts.keys()
