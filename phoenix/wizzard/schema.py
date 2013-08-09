@@ -9,13 +9,25 @@
 import colander
 import deform
 
+
 import logging
 
 log = logging.getLogger(__name__)
 
 
 from owslib.wps import WebProcessingService
-from phoenix import helpers
+from phoenix.helpers import wps_url
+from phoenix.widget import EsgSearchWidget
+
+class TestSearchSchema(colander.MappingSchema):
+    description = 'Just testing ...'
+    appstruct = {}
+
+    search_filter = colander.SchemaNode(
+        colander.String(),
+        description = 'Search Filter',
+        missing = '',
+        widget = EsgSearchWidget())
 
 # esg search schema
 # ------------------
@@ -86,7 +98,7 @@ class EsgFilesSchema(colander.MappingSchema):
 @colander.deferred
 def deferred_choose_workflow_widget(node, kw):
     request = kw.get('request')
-    wps = WebProcessingService(helpers.wps_url(request), verbose=False, skip_caps=True)
+    wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
     wps.getcapabilities()
     choices = []
     for process in wps.processes:

@@ -218,9 +218,12 @@ def wizard(request):
     from .schema import SelectProcessSchema
     schema_select_process = SelectProcessSchema(title='Select Process')
 
+    from .schema import TestSearchSchema
+    schema_esgsearch = TestSearchSchema(title="Test Search Schema")
+
     # select esgf dataset
     from .schema import EsgSearchSchema
-    schema_esgsearch = EsgSearchSchema(title='Select ESGF Dataset')
+    #schema_esgsearch = EsgSearchSchema(title='Select ESGF Dataset')
 
     # select files
     #from .schema import EsgFilesSchema
