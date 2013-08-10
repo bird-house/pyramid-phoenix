@@ -36,7 +36,7 @@ AjaxSolr.AbstractTextWidget = AjaxSolr.AbstractWidget.extend(
    */
   set: function (q) {
     return this.changeSelection(function () {
-      this.manager.store.get('query').val(q);
+      this.manager.store.get('fq').val(q);
     });
   },
 
@@ -47,7 +47,7 @@ AjaxSolr.AbstractTextWidget = AjaxSolr.AbstractWidget.extend(
    */
   clear: function () {
     return this.changeSelection(function () {
-      this.manager.store.remove('query');
+      this.manager.store.remove('fq');
     });
   },
 
@@ -58,9 +58,9 @@ AjaxSolr.AbstractTextWidget = AjaxSolr.AbstractWidget.extend(
    * @returns {Boolean} Whether the selection changed.
    */
   changeSelection: function (func) {
-    var before = this.manager.store.get('query').val();
+    var before = this.manager.store.get('fq').val();
     func.apply(this);
-    var after = this.manager.store.get('query').val();
+    var after = this.manager.store.get('fq').val();
     if (after !== before) {
       this.afterChangeSelection(after);
     }

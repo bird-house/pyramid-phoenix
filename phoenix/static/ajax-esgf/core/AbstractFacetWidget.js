@@ -96,7 +96,7 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
    *   widget's facet field.
    */
   isEmpty: function () {
-    return !this.manager.store.find('query', new RegExp('^-?' + this.field + ':'));
+    return !this.manager.store.find('fq', new RegExp('^-?' + this.field + ':'));
   },
 
   /**
@@ -106,8 +106,8 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
    */
   set: function (value) {
     return this.changeSelection(function () {
-      var a = this.manager.store.removeByValue('query', new RegExp('^-?' + this.field + ':')),
-          b = this.manager.store.addByValue('query', this.fq(value));
+      var a = this.manager.store.removeByValue('fq', new RegExp('^-?' + this.field + ':')),
+          b = this.manager.store.addByValue('fq', this.fq(value));
       return a || b;
     });
   },
@@ -119,7 +119,7 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
    */
   add: function (value) {
     return this.changeSelection(function () {
-      return this.manager.store.addByValue('query', this.fq(value));
+      return this.manager.store.addByValue('fq', this.fq(value));
     });
   },
 
@@ -130,7 +130,7 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
    */
   remove: function (value) {
     return this.changeSelection(function () {
-      return this.manager.store.removeByValue('query', this.fq(value));
+      return this.manager.store.removeByValue('fq', this.fq(value));
     });
   },
 
@@ -141,7 +141,7 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
    */
   clear: function () {
     return this.changeSelection(function () {
-      return this.manager.store.removeByValue('query', new RegExp('^-?' + this.field + ':'));
+      return this.manager.store.removeByValue('fq', new RegExp('^-?' + this.field + ':'));
     });
   },
 

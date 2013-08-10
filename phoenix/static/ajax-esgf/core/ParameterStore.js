@@ -72,7 +72,7 @@ AjaxSolr.ParameterStore = AjaxSolr.Class.extend(
    * @see http://lucene.apache.org/solr/api/org/apache/solr/handler/DisMaxRequestHandler.html
    */
   isMultiple: function (name) {
-    return name.match(/^(?:bf|bq|facet\.date|facet\.date\.other|facet\.date\.include|facet\.field|facet\.pivot|facet\.range|facet\.range\.other|facet\.range\.include|facet\.query|fq|group\.field|group\.func|group\.query|pf|qf)$/);
+    return name.match(/^(?:fq)$/);
   },
 
   /**
@@ -270,6 +270,39 @@ AjaxSolr.ParameterStore = AjaxSolr.Class.extend(
     }
     return params.join('&');
   },
+
+ /**
+  * Returns parameters for esgf search  
+  */
+ esgsearchString: function () {
+    var params = [], string;
+    for (var name in this.params) {
+      if (name == 'fq') {
+        for (var i = 0, l = this.params[name].length; i < l; i++) {
+          string = this.params[name][i].val();
+          if (string) {
+	    var match = string.match(/^(-?)(.*):(.*)$/);
+	    var esgName = match[2];
+	    if (match[1] == '-') {
+	      name = name + '!';
+	    }
+	    var esgValue = match[3];
+	    var locals = this.params[name][i].locals;
+	    var param = new AjaxSolr.Parameter({'name':esgName,'value':esgValue,'locals':locals});
+            params.push(param.string());
+          }
+        }
+      }
+      else {
+        string = this.params[name].string();
+        if (string) {
+          params.push(string);
+        }
+      }
+    }
+    return params.join('&');
+  },
+
 
   /**
    * Parses a query string into Solr parameters.

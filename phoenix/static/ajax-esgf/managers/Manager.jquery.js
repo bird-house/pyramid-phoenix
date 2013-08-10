@@ -18,7 +18,8 @@ AjaxSolr.Manager = AjaxSolr.AbstractManager.extend(
   executeRequest: function (servlet, string, handler, errorHandler) {
     var self = this,
         options = {dataType: 'json'};
-    string = string || this.store.string();
+    string = string || this.store.esgsearchString();
+    alert(string)
     handler = handler || function (data) {
       self.handleResponse(data);
     };
