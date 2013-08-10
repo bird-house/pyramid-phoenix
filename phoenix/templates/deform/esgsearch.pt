@@ -20,6 +20,8 @@
     </div>
 
     <div class="left">
+      <input id="${oid}" type="hidden" name="${name}" value="buh"/>
+
       <h2>Current Selection</h2>
       <ul id="selection"></ul>
 
@@ -38,15 +40,10 @@
       <div class="clear"></div>
     </div>
     <div class="clear"></div>
+
+    
   </div>  
 
-  <script tal:condition="mask" type="text/javascript">
-    deform.addCallback(
-    '${oid}',
-    function (oid) {
-        $("#" + oid).mask("${mask}", 
-        {placeholder:"${mask_placeholder}"});
-    });
-  </script>
+ 
 </span>
 

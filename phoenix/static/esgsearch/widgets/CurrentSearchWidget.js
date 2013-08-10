@@ -40,6 +40,8 @@ AjaxSolr.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
     else {
       $(this.target).html('<li>Viewing all documents!</li>');
     }
+
+    $('#deformField1').val(fq.join(';'));
   },
 
   removeFacet: function (facet) {

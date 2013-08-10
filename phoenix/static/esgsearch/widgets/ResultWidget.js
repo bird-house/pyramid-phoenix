@@ -57,6 +57,7 @@ AjaxSolr.ResultWidget = AjaxSolr.AbstractWidget.extend({
 
   template: function (doc) {
     var snippet = '';
+    /*
     if (doc.title.length > 300) {
       snippet += doc.timestamp + ' ' + doc.title.substring(0, 300);
       snippet += '<span style="display:none;">' + doc.title.substring(300);
@@ -65,8 +66,8 @@ AjaxSolr.ResultWidget = AjaxSolr.AbstractWidget.extend({
     else {
       snippet += doc.timestamp + ' ' + doc.title;
     }
-
-    var output = '<div><h4>' + doc.instance_id + '</h4>';
+    */
+    var output = '<div><h5>' + doc.instance_id + '</h5>';
     output += '<p id="links_' + doc.id + '" class="links"></p>';
     output += '<p>' + snippet + '</p></div>';
     return output;

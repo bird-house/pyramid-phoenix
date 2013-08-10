@@ -8,6 +8,10 @@ from deform.widget import Widget
 
 from pyesgf.search import SearchConnection
 
+import logging
+
+log = logging.getLogger(__name__)
+
 class EsgSearchWidget(Widget):
     """
     Renders an esg search widget
@@ -34,6 +38,7 @@ class EsgSearchWidget(Widget):
         return field.renderer(self.template, **values)
 
     def deserialize(self, field, pstruct):
+        log.debug('result pstruct=%s', pstruct)
         if pstruct is null:
             return null
         if self.strip:
