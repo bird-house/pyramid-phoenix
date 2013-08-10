@@ -250,7 +250,7 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
     }
     return counts;
   },
-
+ 
   /**
    * @param {String} value The value.
    * @returns {Function} Sends a request to Solr if it successfully adds a

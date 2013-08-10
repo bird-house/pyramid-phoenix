@@ -9,10 +9,10 @@ AjaxSolr.TagcloudWidget = AjaxSolr.AbstractFacetWidget.extend({
 
     var maxCount = 0;
     var objectedItems = [];
-    var facet_counts = this.manager.response.facet_counts.facet_fields[this.field];
-    while (facet_counts.length > 1) {
-      var count = parseInt(facet_counts.pop());
-      var facet = facet_counts.pop();
+    var counts = this.getFacetCountsFlat('facet_fields');
+    for (var i = 0, l = counts.length; i < l; i++) {
+      var count = counts[i].count;
+      var facet = counts[i].facet;
       if (count > maxCount) {
         maxCount = count;
       }

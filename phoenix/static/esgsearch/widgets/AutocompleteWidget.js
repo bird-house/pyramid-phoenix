@@ -1,6 +1,7 @@
 (function ($) {
 
 AjaxSolr.AutocompleteWidget = AjaxSolr.AbstractTextWidget.extend({
+ 
   afterRequest: function () {
     $(this.target).find('input').unbind().removeData('events').val('');
 
@@ -10,11 +11,20 @@ AjaxSolr.AutocompleteWidget = AjaxSolr.AbstractTextWidget.extend({
       var list = [];
       for (var i = 0; i < self.fields.length; i++) {
         var field = self.fields[i];
-        for (var facet in response.facet_counts.facet_fields[field]) {
+	var counts = [];
+	for (var i = 0, l = response.facet_counts.facet_fields[field].length; i < l; i += 2) {
+	  counts.push({
+            facet: response.facet_counts.facet_fields[field][i],
+            count: parseInt(response.facet_counts.facet_fields[field][i+1])
+	  });
+	}
+	for (var i = 0, l = counts.length; i < l; i++) {
+	  facet = counts[i].facet
+	  count = counts[i].count
           list.push({
             field: field,
             value: facet,
-            label: facet + ' (' + response.facet_counts.facet_fields[field][facet] + ') - ' + field
+            label: facet + ' (' + count + ') - ' + field
           });
         }
       }
