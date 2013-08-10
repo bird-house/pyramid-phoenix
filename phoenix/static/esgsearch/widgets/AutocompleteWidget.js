@@ -25,7 +25,7 @@ AjaxSolr.AutocompleteWidget = AjaxSolr.AbstractTextWidget.extend({
         select: function(event, ui) {
           if (ui.item) {
             self.requestSent = true;
-            if (self.manager.store.addByValue('fq', ui.item.field + ':' + AjaxSolr.Parameter.escapeValue(ui.item.value))) {
+            if (self.manager.store.addByValue('query', ui.item.field + ':' + AjaxSolr.Parameter.escapeValue(ui.item.value))) {
               self.doRequest();
             }
           }
