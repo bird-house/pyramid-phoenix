@@ -95,8 +95,9 @@ AjaxSolr.Parameter = AjaxSolr.Class.extend(
     // q parameter must be set to a non-empty value. In case the q parameter
     // has local params but is empty, use the q.alt parameter, which accepts
     // wildcards.
-    else if (this.name == 'q' && prefix) {
-      return 'q.alt=' + prefix + encodeURIComponent('*:*');
+    else if (this.name == 'query' && prefix) {
+      // TODO: query.alt not avail in esgsearch
+      return 'query.alt=' + prefix + encodeURIComponent('*');
     }
     else {
       return '';
@@ -118,8 +119,8 @@ AjaxSolr.Parameter = AjaxSolr.Class.extend(
         param[2] = param[2].replace(matches[0], ''); // Safari's exec seems not to do this on its own
       }
 
-      if (param[1] == 'q.alt') {
-        this.name = 'q';
+      if (param[1] == 'query.alt') {
+        this.name = 'query';
         // if q.alt is present, assume it is because q was empty, as above
       }
       else {
