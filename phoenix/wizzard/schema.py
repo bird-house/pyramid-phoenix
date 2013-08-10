@@ -19,8 +19,8 @@ from owslib.wps import WebProcessingService
 from phoenix.helpers import wps_url
 from phoenix.widget import EsgSearchWidget
 
-class TestSearchSchema(colander.MappingSchema):
-    description = 'Just testing ...'
+class EsgSearchSchema(colander.MappingSchema):
+    description = 'Choose a single Dataset'
     appstruct = {}
 
     search_filter = colander.SchemaNode(
@@ -57,23 +57,6 @@ def deferred_esgsearch_files_widget(node, kw):
             choices.append( (my_file.download_url, my_file.download_url) )
    
     return deform.widget.SelectWidget(values = choices)
-
-class EsgSearchSchema(colander.MappingSchema):
-    description = 'You need to choose a single dataset'
-    is_esgsearch = True
-    appstruct = {}
-
-    opendap_url = colander.SchemaNode(
-        colander.String(),
-        description = 'OpenDAP Access URL',
-        missing = '',
-        widget = deferred_esgsearch_opendap_widget)
-
-    files_url = colander.SchemaNode(
-        colander.String(),
-        description = 'Files Access URL',
-        missing = '',
-        widget = deferred_esgsearch_files_widget)
 
 class EsgFilesSchema(colander.MappingSchema):
     description = 'You need to choose a single file'

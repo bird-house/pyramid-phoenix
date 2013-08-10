@@ -15,8 +15,7 @@ from deform.form import Button
 
 from owslib.wps import WebProcessingService
 
-from phoenix.models import esgf_search_context, add_job
-
+from phoenix.models import add_job
 from phoenix.helpers import wps_url
 
 
@@ -46,10 +45,6 @@ class WorkflowFormWizard(FormWizard):
          
 class WorkflowFormWizardView(FormWizardView):
     form_view_class = EsgSearchView
-    ctx = None
-    facet = None
-    item = None
-    constraints = None
 
     def __call__(self, request):
         self.request = request
@@ -83,7 +78,7 @@ class WorkflowFormWizardView(FormWizardView):
 
         form_view = self.form_view_class(request)
         log.debug('process = %s', process)
-        self.schema = schema.bind(request=request, ctx=self.ctx)
+        self.schema = schema.bind(request=request)
         log.debug('num schema children = %s', len(self.schema.children))
         form_view.schema = self.schema
         buttons = []
@@ -119,30 +114,17 @@ class WorkflowFormWizardView(FormWizardView):
         form_view.show = self.show
         form_view.appstruct = getattr(schema, 'appstruct', None)
 
-        result = form_view()
-        return result
+        return form_view()
 
     def show(self, form):
-        is_esgsearch = getattr(self.schema, 'is_esgsearch', False)
         appstruct = getattr(self.schema, 'appstruct', None)
 
         state = self.wizard_state.get_step_state(appstruct)
         state = self.deserialize(state)
-        result = dict(form=form.render(appstruct=state))
-
-        log.debug('title=%s, description=%s', self.schema.title, self.schema.description)
-
-        result.update(
-        dict(
-            title=self.schema.title,
-            description=self.schema.description,
-            is_esgsearch=is_esgsearch,
-            ctx=self.ctx,
-            constraints=self.constraints,
-            facet=self.facet,
-            item=self.item)
-        )
-        return result
+        return dict(
+            form=form.render(appstruct=state),
+            title=self.schema.title, 
+            description=self.schema.description)
 
 class Workflow(object):
     pass
@@ -156,7 +138,6 @@ def workflow_wizard_done(request, states):
         'form' : FormView(request),
         'title': 'Summary',
         'description': '...',
-        'is_esgsearch': False 
         }
 
     wps = WebProcessingService(wps_url(request), verbose=True)
@@ -186,7 +167,6 @@ def workflow_wizard_done(request, states):
         'form' : FormView(request),
         'title': 'Summary',
         'description': '...',
-        'is_esgsearch': False 
         }
 
 @view_config(route_name='wizzard',
@@ -195,41 +175,13 @@ def workflow_wizard_done(request, states):
              permission='edit',
              )
 def wizard(request):
-    ctx = esgf_search_context(request)
-
-    all_facets = ctx.facet_counts.keys()
-
-    action = request.matchdict.get('action', 'update')
-    facet = request.matchdict.get('facet', None)
-    item = request.matchdict.get('item', None)
-    constraints = {}
-    for (key,value) in request.params.iteritems():
-        if not key in all_facets:
-            continue
-        constraints[key] = value
-    
-    log.debug('facet=%s, item=%s, action=%s', facet, item, action)
-    log.debug('constraints=%s', constraints)
-
-    if action == 'update':
-        pass
-    elif action == 'add':
-        constraints[facet] = item
-    elif action == 'delete':
-        del constraints[facet]
-
-    ctx = ctx.constrain(**constraints)
-    
     # choose wps
     from .schema import SelectProcessSchema
     schema_select_process = SelectProcessSchema(title='Select Process')
 
-    from .schema import TestSearchSchema
-    schema_esgsearch = TestSearchSchema(title="Test Search Schema")
-
     # select esgf dataset
     from .schema import EsgSearchSchema
-    #schema_esgsearch = EsgSearchSchema(title='Select ESGF Dataset')
+    schema_esgsearch = EsgSearchSchema(title='Select ESGF Dataset')
 
     # select files
     #from .schema import EsgFilesSchema
@@ -257,10 +209,6 @@ def wizard(request):
                                 #schema_process
                                 )
     view = WorkflowFormWizardView(wizard)
-    view.ctx = ctx
-    view.facet = facet
-    view.item = item
-    view.constraints = constraints
     return view(request)
 
 

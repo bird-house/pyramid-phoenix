@@ -36,14 +36,17 @@ var Manager;
     Manager.addWidget(new AjaxSolr.AutocompleteWidget({
       id: 'text',
       target: '#search',
-      fields: [ 'institute', 'experiment']
+      fields: [ 'institute', 'experiment', 'realm']
     }));
     Manager.init();
     Manager.store.addByValue('distrib', 'false');
+    Manager.store.addByValue('project', 'CMIP5')
+    Manager.store.addByValue('version', 'latest')
+    Manager.store.addByValue('replica', 'false')
     Manager.store.addByValue('query', '*');
     var params = {
       //facet: true,
-      'facets': [ 'institute', 'experiment'],
+      'facets': [ 'institute', 'experiment', 'realm'],
       //'facet.limit': 20,
       //'facet.mincount': 1,
       //'f.topics.facet.limit': 50,

@@ -9,11 +9,6 @@
       tal:omit-tag="">
 
   <div id="wrap"> 
-    <div id="header">
-      <h1>AJAX Solr Demonstration</h1>
-      <h2>Browse Reuters business news from 1987</h2>
-    </div>
-
     <div class="right">
       <div id="result">
         <div id="navigation">
@@ -34,11 +29,14 @@
         <input type="text" id="query" name="query" autocomplete="off">
       </ul>
 
-      <h2>Top Institutes</h2>
+      <h2>Institute</h2>
       <div class="tagcloud" id="institute"></div>
 
-      <h2>Top Experiments</h2>
+      <h2>Experiment</h2>
       <div class="tagcloud" id="experiment"></div>
+
+      <h2>Realm</h2>
+      <div class="tagcloud" id="realm"></div>
 
       <h2>By Country</h2>
       <div id="countries"></div>

@@ -20,7 +20,6 @@ from deform.form import Button
 
 from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
-from pyesgf.search import SearchConnection
 
 from .models import add_job, get_job, drop_jobs, update_job, num_jobs, jobs_by_userid
 
