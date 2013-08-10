@@ -99,7 +99,7 @@ AjaxSolr.AbstractManager = AjaxSolr.Class.extend(
     }
     // Allow non-pagination widgets to reset the offset parameter.
     if (start !== undefined) {
-      this.store.get('start').val(start);
+      this.store.get('offset').val(start);
     }
     if (servlet === undefined) {
       servlet = this.servlet;

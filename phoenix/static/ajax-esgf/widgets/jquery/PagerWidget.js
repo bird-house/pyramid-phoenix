@@ -150,7 +150,7 @@ AjaxSolr.PagerWidget = AjaxSolr.AbstractWidget.extend(
   clickHandler: function (page) {
     var self = this;
     return function () {
-      self.manager.store.get('start').val((page - 1) * self.perPage());
+      self.manager.store.get('offset').val((page - 1) * self.perPage());
       self.doRequest();
       return false;
     }
@@ -230,7 +230,7 @@ AjaxSolr.PagerWidget = AjaxSolr.AbstractWidget.extend(
    * @returns {Number} The Solr offset parameter's value.
    */
   getOffset: function () {
-    return parseInt(this.manager.response.responseHeader && this.manager.response.responseHeader.params && this.manager.response.responseHeader.params.start || this.manager.store.get('start').val() || 0);
+    return parseInt(this.manager.response.responseHeader && this.manager.response.responseHeader.params && this.manager.response.responseHeader.params.offset || this.manager.store.get('offset').val() || 0);
   },
 
   afterRequest: function () {
