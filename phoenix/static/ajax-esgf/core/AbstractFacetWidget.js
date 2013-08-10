@@ -43,14 +43,14 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
   initStore: function () {
     /* http://wiki.apache.org/solr/SimpleFacetParameters */
     var parameters = [
-      'facet.prefix',
-      'facet.sort',
-      'facet.limit',
-      'facet.offset',
-      'facet.mincount',
-      'facet.missing',
-      'facet.method',
-      'facet.enum.cache.minDf'
+      //'facet.prefix',
+      //'facet.sort',
+      //'facet.limit',
+      //'facet.offset',
+      //'facet.mincount',
+      //'facet.missing',
+      //'facet.method',
+      //'facet.enum.cache.minDf'
     ];
 
     // TODO: cant be used with esg-search
@@ -59,10 +59,10 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
     // Set facet.field, facet.date or facet.range to truthy values to add
     // related per-field parameters to the parameter store.
     if (this['facet.field'] !== undefined) {
-      this.manager.store.addByValue('facet.field', this.field);
+      //this.manager.store.addByValue('facet.field', this.field);
     }
     else if (this['facet.date'] !== undefined) {
-      this.manager.store.addByValue('facet.date', this.field);
+      /*this.manager.store.addByValue('facet.date', this.field);
       parameters = parameters.concat([
         'facet.date.start',
         'facet.date.end',
@@ -70,10 +70,10 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
         'facet.date.hardend',
         'facet.date.other',
         'facet.date.include'
-      ]);
+      ]);*/
     }
     else if (this['facet.range'] !== undefined) {
-      this.manager.store.addByValue('facet.range', this.field);
+      /*this.manager.store.addByValue('facet.range', this.field);
       parameters = parameters.concat([
         'facet.range.start',
         'facet.range.end',
@@ -81,12 +81,12 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
         'facet.range.hardend',
         'facet.range.other',
         'facet.range.include'
-      ]);
+      ]);*/
     }
 
     for (var i = 0, l = parameters.length; i < l; i++) {
       if (this[parameters[i]] !== undefined) {
-        this.manager.store.addByValue('f.' + this.field + '.' + parameters[i], this[parameters[i]]);
+        //this.manager.store.addByValue('f.' + this.field + '.' + parameters[i], this[parameters[i]]);
       }
     }
   },
@@ -96,7 +96,7 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
    *   widget's facet field.
    */
   isEmpty: function () {
-    return !this.manager.store.find('fq', new RegExp('^-?' + this.field + ':'));
+    return !this.manager.store.find('query', new RegExp('^-?' + this.field + ':'));
   },
 
   /**
@@ -106,8 +106,8 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
    */
   set: function (value) {
     return this.changeSelection(function () {
-      var a = this.manager.store.removeByValue('fq', new RegExp('^-?' + this.field + ':')),
-          b = this.manager.store.addByValue('fq', this.fq(value));
+      var a = this.manager.store.removeByValue('query', new RegExp('^-?' + this.field + ':')),
+          b = this.manager.store.addByValue('query', this.fq(value));
       return a || b;
     });
   },
@@ -119,7 +119,7 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
    */
   add: function (value) {
     return this.changeSelection(function () {
-      return this.manager.store.addByValue('fq', this.fq(value));
+      return this.manager.store.addByValue('query', this.fq(value));
     });
   },
 
@@ -130,7 +130,7 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
    */
   remove: function (value) {
     return this.changeSelection(function () {
-      return this.manager.store.removeByValue('fq', this.fq(value));
+      return this.manager.store.removeByValue('query', this.fq(value));
     });
   },
 
@@ -141,7 +141,7 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
    */
   clear: function () {
     return this.changeSelection(function () {
-      return this.manager.store.removeByValue('fq', new RegExp('^-?' + this.field + ':'));
+      return this.manager.store.removeByValue('query', new RegExp('^-?' + this.field + ':'));
     });
   },
 
