@@ -19,6 +19,8 @@
     <script src="${request.static_url('phoenix:static/ajax-esgf/core/AbstractWidget.js')}"></script>
     <script src="${request.static_url('phoenix:static/esgsearch/widgets/ResultWidget.js')}"></script>
     <script src="${request.static_url('phoenix:static/ajax-esgf/widgets/jquery/PagerWidget.js')}"></script>
+    <script src="${request.static_url('phoenix:static/ajax-esgf/core/AbstractFacetWidget.js')}"></script>
+    <script src="${request.static_url('phoenix:static/esgsearch/widgets/TagcloudWidget.js')}"></script>
   </div>
   
   <div metal:fill-slot="content">

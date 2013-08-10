@@ -34,14 +34,11 @@
         <input type="text" id="query" name="query" autocomplete="off">
       </ul>
 
-      <h2>Top Topics</h2>
-      <div class="tagcloud" id="topics"></div>
+      <h2>Top Institutes</h2>
+      <div class="tagcloud" id="institute"></div>
 
-      <h2>Top Organisations</h2>
-      <div class="tagcloud" id="organisations"></div>
-
-      <h2>Top Exchanges</h2>
-      <div class="tagcloud" id="exchanges"></div>
+      <h2>Top Experiments</h2>
+      <div class="tagcloud" id="experiment"></div>
 
       <h2>By Country</h2>
       <div id="countries"></div>

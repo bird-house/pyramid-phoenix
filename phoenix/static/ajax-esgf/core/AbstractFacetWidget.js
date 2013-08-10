@@ -53,7 +53,8 @@ AjaxSolr.AbstractFacetWidget = AjaxSolr.AbstractWidget.extend(
       'facet.enum.cache.minDf'
     ];
 
-    this.manager.store.addByValue('facet', true);
+    // TODO: cant be used with esg-search
+    //this.manager.store.addByValue('facet', true);
 
     // Set facet.field, facet.date or facet.range to truthy values to add
     // related per-field parameters to the parameter store.
