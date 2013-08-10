@@ -33,6 +33,10 @@ var Manager;
       id: 'currentsearch',
       target: '#selection'
     }));
+    Manager.addWidget(new AjaxSolr.TextWidget({
+      id: 'text',
+      target: '#search'
+    }));
     Manager.init();
     Manager.store.addByValue('distrib', 'false');
     //Manager.store.addByValue('query', '*');
