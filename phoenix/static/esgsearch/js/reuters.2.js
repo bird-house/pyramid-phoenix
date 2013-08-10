@@ -4,14 +4,16 @@ var Manager;
 
   $(function () {
     Manager = new AjaxSolr.Manager({
-      solrUrl: 'http://evolvingweb.ca/solr/reuters/'
+      // TODO: configure hostname
+      solrUrl: 'http://tracy.local:8090/esg-search/'
     });
     Manager.addWidget(new AjaxSolr.ResultWidget({
       id: 'result',
       target: '#docs'
     }));
     Manager.init();
-    Manager.store.addByValue('q', '*:*');
+    Manager.store.addByValue('distrib', 'false');
+    Manager.store.addByValue('query', '*');
     Manager.doRequest();
   });
 
