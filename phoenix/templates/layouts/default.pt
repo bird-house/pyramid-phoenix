@@ -43,10 +43,6 @@
                 tal:attributes="src request.static_url(js_path)"></script>
     </tal:resources>
 
-   
-
-     
-    
     <metal:js define-slot="javascript"/>   
     
   </head>

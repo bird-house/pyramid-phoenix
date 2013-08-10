@@ -1,30 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>AJAX Solr</title>
-  <link rel="stylesheet" href="css/reuters.css">
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/themes/smoothness/jquery-ui.css">
-  <script src="js/reuters.js"></script>
-  <script src="../../core/Core.js"></script>
-  <script src="../../core/AbstractManager.js"></script>
-  <script src="../../managers/Manager.jquery.js"></script>
-  <script src="../../core/Parameter.js"></script>
-  <script src="../../core/ParameterStore.js"></script>
-  <script src="../../core/AbstractWidget.js"></script>
-  <script src="widgets/ResultWidget.js"></script>
-  <script src="../../widgets/jquery/PagerWidget.js"></script>
-  <script src="../../core/AbstractFacetWidget.js"></script>
-  <script src="widgets/TagcloudWidget.js"></script>
-  <script src="widgets/CurrentSearchWidget.9.js"></script>
-  <script src="../../core/AbstractTextWidget.js"></script>
-  <script src="widgets/AutocompleteWidget.js"></script>
-  <script src="widgets/CountryCodeWidget.js"></script>
-  <script src="widgets/CalendarWidget.js"></script>
-</head>
-<body>
+<span tal:define="name name|field.name;
+                  size size|field.widget.size;
+                  css_class css_class|field.widget.css_class;
+                  oid oid|field.oid;
+                  mask mask|field.widget.mask;
+                  mask_placeholder mask_placeholder|field.widget.mask_placeholder;
+                  style style|field.widget.style|None;
+"
+      tal:omit-tag="">
+
+
   <div id="wrap"> 
     <div id="header">
       <h1>AJAX Solr Demonstration</h1>
@@ -71,5 +55,14 @@
     </div>
     <div class="clear"></div>
   </div>  
-</body>
-</html>
+
+  <script tal:condition="mask" type="text/javascript">
+    deform.addCallback(
+    '${oid}',
+    function (oid) {
+        $("#" + oid).mask("${mask}", 
+        {placeholder:"${mask_placeholder}"});
+    });
+  </script>
+</span>
+

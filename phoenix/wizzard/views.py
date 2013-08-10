@@ -190,7 +190,7 @@ def workflow_wizard_done(request, states):
         }
 
 @view_config(route_name='wizzard',
-             renderer='templates/wizzard.pt',
+             renderer='../templates/wizzard.pt',
              layout='default',
              permission='edit',
              )
