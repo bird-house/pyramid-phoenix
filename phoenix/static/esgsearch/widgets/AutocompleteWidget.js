@@ -25,7 +25,7 @@ AjaxSolr.AutocompleteWidget = AjaxSolr.AbstractTextWidget.extend({
         select: function(event, ui) {
           if (ui.item) {
             self.requestSent = true;
-            if (self.manager.store.addByValue('query', ui.item.field + ':' + AjaxSolr.Parameter.escapeValue(ui.item.value))) {
+            if (self.manager.store.addByValue('fq', ui.item.field + ':' + AjaxSolr.Parameter.escapeValue(ui.item.value))) {
               self.doRequest();
             }
           }
@@ -43,10 +43,20 @@ AjaxSolr.AutocompleteWidget = AjaxSolr.AbstractTextWidget.extend({
       });
     } // end callback
 
+    //var params = [ 'rows=0&facet=true&facet.limit=-1&facet.mincount=1&json.nl=map' ];
     var params = [ 'distrib=false'];
-    params.push('q=' + this.manager.store.get('q').val());
+    /*for (var i = 0; i < this.fields.length; i++) {
+      params.push('facet.field=' + this.fields[i]);
+    }*/
+    /*var values = this.manager.store.values('fq');
+    for (var i = 0; i < values.length; i++) {
+      params.push('fq=' + encodeURIComponent(values[i]));
+    }*/
+    //params.push('q=' + this.manager.store.get('query').val());
     string = this.manager.store.esgsearchString()
     $.getJSON(this.manager.solrUrl + 'search?' + string + '&format=application%2Fsolr%2Bjson', {}, callback);
+
+    //$.getJSON(this.manager.solrUrl + 'select?' + params.join('&') + '&wt=json&json.wrf=?', {}, callback);
   }
 });
 
