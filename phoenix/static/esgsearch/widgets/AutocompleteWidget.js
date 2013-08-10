@@ -43,16 +43,10 @@ AjaxSolr.AutocompleteWidget = AjaxSolr.AbstractTextWidget.extend({
       });
     } // end callback
 
-    var params = [ 'rows=0&facet=true&facet.limit=-1&facet.mincount=1&json.nl=map' ];
-    for (var i = 0; i < this.fields.length; i++) {
-      params.push('facet.field=' + this.fields[i]);
-    }
-    var values = this.manager.store.values('fq');
-    for (var i = 0; i < values.length; i++) {
-      params.push('fq=' + encodeURIComponent(values[i]));
-    }
+    var params = [ 'distrib=false'];
     params.push('q=' + this.manager.store.get('q').val());
-    $.getJSON(this.manager.solrUrl + 'select?' + params.join('&') + '&format=application%2Fsolr%2Bjson', {}, callback);
+    string = this.manager.store.esgsearchString()
+    $.getJSON(this.manager.solrUrl + 'search?' + string + '&format=application%2Fsolr%2Bjson', {}, callback);
   }
 });
 
