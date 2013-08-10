@@ -21,7 +21,7 @@ var Manager;
         $('#pager-header').html($('<span></span>').text('displaying ' + Math.min(total, offset + 1) + ' to ' + Math.min(total, offset + perPage) + ' of ' + total));
       }
     }));
-    var fields = [ 'institute', 'experiment'];
+    var fields = [ 'institute', 'experiment', 'realm', 'model'];
     for (var i = 0, l = fields.length; i < l; i++) {
       Manager.addWidget(new AjaxSolr.TagcloudWidget({
         id: fields[i],
@@ -36,17 +36,19 @@ var Manager;
     Manager.addWidget(new AjaxSolr.AutocompleteWidget({
       id: 'text',
       target: '#search',
-      fields: [ 'institute', 'experiment', 'realm']
+      fields: fields,
     }));
     Manager.init();
     Manager.store.addByValue('distrib', 'false');
-    Manager.store.addByValue('project', 'CMIP5')
-    Manager.store.addByValue('version', 'latest')
-    Manager.store.addByValue('replica', 'false')
+    Manager.store.addByValue('latest', 'true');
+    Manager.store.addByValue('replica', 'false');
+    Manager.store.addByValue('project', 'CMIP5');
+    Manager.store.addByValue('product', 'output1');
     Manager.store.addByValue('query', '*');
+    Manager.store.addByValue('fields', 'instance_id,title,description,timestamp')
     var params = {
       //facet: true,
-      'facets': [ 'institute', 'experiment', 'realm'],
+      'facets': fields,
       //'facet.limit': 20,
       //'facet.mincount': 1,
       //'f.topics.facet.limit': 50,

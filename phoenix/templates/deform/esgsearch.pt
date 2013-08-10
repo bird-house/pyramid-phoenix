@@ -38,12 +38,8 @@
       <h2>Realm</h2>
       <div class="tagcloud" id="realm"></div>
 
-      <h2>By Country</h2>
-      <div id="countries"></div>
-      <div id="preview"></div>
-
-      <h2>By Date</h2>
-      <div id="calendar"></div>
+      <h2>Model</h2>	    
+      <div class="tagcloud" id="model"></div>
 
       <div class="clear"></div>
     </div>

@@ -43,7 +43,7 @@ AjaxSolr.ResultWidget = AjaxSolr.AbstractWidget.extend({
       $(this.target).append(this.template(doc));
 
       var items = [];
-      //items = items.concat(this.facetLinks('topics', doc.topics));
+      items = items.concat(this.facetLinks('institute', doc.topics));
       //items = items.concat(this.facetLinks('organisations', doc.organisations));
       //items = items.concat(this.facetLinks('exchanges', doc.exchanges));
 
@@ -57,16 +57,16 @@ AjaxSolr.ResultWidget = AjaxSolr.AbstractWidget.extend({
 
   template: function (doc) {
     var snippet = '';
-    /*if (doc.text.length > 300) {
-      snippet += doc.dateline + ' ' + doc.text.substring(0, 300);
-      snippet += '<span style="display:none;">' + doc.text.substring(300);
+    if (doc.title.length > 300) {
+      snippet += doc.timestamp + ' ' + doc.title.substring(0, 300);
+      snippet += '<span style="display:none;">' + doc.title.substring(300);
       snippet += '</span> <a href="#" class="more">more</a>';
     }
     else {
-      snippet += doc.dateline + ' ' + doc.text;
-    }*/
+      snippet += doc.timestamp + ' ' + doc.title;
+    }
 
-    var output = '<div><h2>' + doc.title + '</h2>';
+    var output = '<div><h4>' + doc.instance_id + '</h4>';
     output += '<p id="links_' + doc.id + '" class="links"></p>';
     output += '<p>' + snippet + '</p></div>';
     return output;
