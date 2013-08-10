@@ -23,7 +23,6 @@
     <script src="${request.static_url('phoenix:static/esgsearch/widgets/TagcloudWidget.js')}"></script>
     <script src="${request.static_url('phoenix:static/esgsearch/widgets/CurrentSearchWidget.js')}"></script>
     <script src="${request.static_url('phoenix:static/ajax-esgf/core/AbstractTextWidget.js')}"></script>
-    <!--script src="${request.static_url('phoenix:static/esgsearch/widgets/AutocompleteWidget.js')}"></script-->
   </div>
   
   <div metal:fill-slot="content">

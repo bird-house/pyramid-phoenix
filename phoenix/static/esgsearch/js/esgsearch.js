@@ -33,11 +33,6 @@ var Manager;
       id: 'currentsearch',
       target: '#selection'
     }));
-    Manager.addWidget(new AjaxSolr.AutocompleteWidget({
-      id: 'text',
-      target: '#search',
-      fields: fields,
-    }));
     Manager.init();
     Manager.store.addByValue('distrib', 'false');
     Manager.store.addByValue('latest', 'true');

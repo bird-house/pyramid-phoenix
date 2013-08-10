@@ -27,19 +27,9 @@ class EsgSearchWidget(Widget):
     style = None
     requirements = ( ('jquery.maskedinput', None), )
 
-    conn = SearchConnection("http://esgf-data.dkrz.de/esg-search", distrib=False)
-    ctx = conn.new_context(project='CMIP5', product='output1', replica=False, latest=True)
-    constraints = {'institute': 'MPI-M'}
-    facet = 'institute'
-
     def serialize(self, field, cstruct, **kw):
         if cstruct in (null, None):
             cstruct = ''
-        constraints = kw.get('constraints', self.constraints)
-        kw['constraints'] = constraints
-        ctx = kw.get('ctx', self.ctx)
-        kw['ctx'] = ctx
-        kw['facet'] = self.facet
         values = self.get_template_values(field, cstruct, kw)
         return field.renderer(self.template, **values)
 

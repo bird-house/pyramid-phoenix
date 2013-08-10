@@ -27,7 +27,7 @@ class EsgSearchSchema(colander.MappingSchema):
         colander.String(),
         description = 'Search Filter',
         missing = '',
-        widget = EsgSearchWidget(constraints = {'test': 'fun'}))
+        widget = EsgSearchWidget())
 
 # esg search schema
 # ------------------
