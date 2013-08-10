@@ -55,4 +55,13 @@ var Manager;
     Manager.doRequest();
   });
 
+  $.fn.showIf = function (condition) {
+    if (condition) {
+      return this.show();
+    }
+    else {
+      return this.hide();
+    }
+  }
+
 })(jQuery);
