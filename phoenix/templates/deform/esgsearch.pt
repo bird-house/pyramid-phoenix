@@ -8,25 +8,63 @@
 "
       tal:omit-tag="">
 
-  <div id="wps-result">
-    huhu
-  </div>
+  <h4>Currents Selection</h4>
 
-  <div id="facets">
-  </div>
-
+  <input type="text" name="Current Selection" class="tm-selection" 
+         id="${oid}"/>
+  <input type="hidden" value="${cstruct}" name="hidden-Selection">
   <p/>
 
-  <input type="hidden" name="${name}" value="${cstruct}" 
-         tal:attributes="size size;
-                         class css_class;
-                         style style"
-         id="${oid}"/>
-
-  <script type="text/javascript">
-   $( document ).ready(function() {
-      esgsearch()
-   });
-  </script>
+  <h4>Search Categories</h4>
+  
+  <input type="text" name="Search Categories" class="tm-facets"
+	 id="facets"/>
+  <p/>
+ 
+  <h4>Categorie: Institute</h4>
     
+  <input type="text" name="Categorie: xxx" class="tm-facet"
+	 id="facet"/>
+  <p/>
+  
+  <script type="text/javascript">
+    $(document).ready(function() { 
+       jQuery(".tm-selection").tagsManager({
+         prefilled: ["variable:hus", "experiment:decadal1960"],
+         CapitalizeFirstLetter: true,
+         preventSubmitOnEnter: true,
+         delimiters: [9, 13, 44],
+         maxTags: 2,
+         tagClass: 'tm-tag tm-tag-success',
+         hiddenTagListName: 'hidden-Selection',
+         hiddenTagListId: null,
+         
+       });
+       jQuery(".tm-facets").tagsManager({
+         prefilled: ["experiment", "variable"],
+         CapitalizeFirstLetter: true,
+         preventSubmitOnEnter: true,
+         delimiters: [9, 13, 44],
+         maxTags: 2,
+         tagClass: 'tm-tag tm-tag-info'
+       });
+       jQuery(".tm-facet").tagsManager({
+         prefilled: ["MPI-M", "NCC", "MIROC", "BCC"],
+         preventSubmitOnEnter: true,
+         delimiters: [9, 13, 44],
+         maxTags: 4,
+         tagClass: 'tm-tag tm-tag-warning tm-tag-mini'
+        
+       });
+
+    })
+
+    deform.addCallback(
+      '${oid}',
+      function (oid) {
+        // do something
+    });
+  </script>
 </span>
+
+

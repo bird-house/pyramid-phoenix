@@ -103,7 +103,7 @@ class WorkflowFormWizardView(FormWizardView):
         return dict(
             form=form.render(appstruct=state),
             title=self.schema.title, 
-            form_info=self.schema.description)
+            description=self.schema.description)
 
 class Workflow(object):
     pass
@@ -116,7 +116,7 @@ def workflow_wizard_done(request, states):
     return {
         'form' : FormView(request),
         'title': 'Summary',
-        'form_info': '...',
+        'description': '...',
         }
 
     wps = WebProcessingService(wps_url(request), verbose=True)

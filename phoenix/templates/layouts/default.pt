@@ -23,6 +23,9 @@
           href="${request.static_url('deform_bootstrap:static/bootstrap-datepicker.css')}" />
 
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
+          href="${request.static_url('phoenix:static/bootstrap-tagmanager/bootstrap-tagmanager.css')}" />
+
+    <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
           href="${request.static_url('phoenix:static/deform_phoenix.css')}" />
     
     <metal:css define-slot="css"/>
@@ -36,6 +39,8 @@
     <script src="${request.static_url('deform_bootstrap:static/bootstrap.min.js')}"></script>
     <script src="${request.static_url('deform_bootstrap:static/bootstrap-typeahead.js')}"></script>
     <script src="${request.static_url('deform_bootstrap:static/bootstrap-datepicker.js')}"></script>
+
+    <script src="${request.static_url('phoenix:static/bootstrap-tagmanager/bootstrap-tagmanager.js')}"></script>
 
     <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
     <script src="${request.static_url('phoenix:static/js/WPS.js')}"></script>

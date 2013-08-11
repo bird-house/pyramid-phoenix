@@ -23,8 +23,9 @@ class EsgSearchSchema(colander.MappingSchema):
     description = 'Choose a single Dataset'
     appstruct = {}
 
-    filter = colander.SchemaNode(
+    selection = colander.SchemaNode(
         colander.String(),
+        title = 'Current Selection',
         missing = '',
         widget = EsgSearchWidget())
 
