@@ -46,15 +46,16 @@
          preventSubmitOnEnter: true,
          delimiters: [9, 13, 44],
          maxTags: 2,
-         tagClass: 'tm-tag tm-tag-info'
+         tagClass: 'tm-tag tm-tag-info',
+         tagCloseIcon: '+',
        });
        jQuery(".tm-facet").tagsManager({
          prefilled: ["MPI-M", "NCC", "MIROC", "BCC"],
          preventSubmitOnEnter: true,
          delimiters: [9, 13, 44],
          maxTags: 4,
-         tagClass: 'tm-tag tm-tag-warning tm-tag-mini'
-        
+         tagClass: 'tm-tag tm-tag-warning tm-tag-mini',
+         tagCloseIcon: '+',
        });
 
     })
