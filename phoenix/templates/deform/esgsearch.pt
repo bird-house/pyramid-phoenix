@@ -29,9 +29,11 @@
   
   <script type="text/javascript">
     $(document).ready(function() { 
+     
+
        jQuery(".tm-selection").tagsManager({
          prefilled: ["variable:hus", "experiment:decadal1960"],
-         CapitalizeFirstLetter: true,
+         //CapitalizeFirstLetter: true,
          preventSubmitOnEnter: true,
          delimiters: [9, 13, 44],
          maxTags: 2,
@@ -41,22 +43,25 @@
          
        });
        jQuery(".tm-facets").tagsManager({
-         prefilled: ["experiment", "variable"],
-         CapitalizeFirstLetter: true,
+         //prefilled: ["hello"],
+         //CapitalizeFirstLetter: true,
          preventSubmitOnEnter: true,
          delimiters: [9, 13, 44],
-         maxTags: 2,
+         //maxTags: 1,
          tagClass: 'tm-tag tm-tag-info',
          tagCloseIcon: '+',
        });
+
        jQuery(".tm-facet").tagsManager({
-         prefilled: ["MPI-M", "NCC", "MIROC", "BCC"],
+         //prefilled: ["MPI-M", "NCC", "MIROC", "BCC"],
          preventSubmitOnEnter: true,
          delimiters: [9, 13, 44],
-         maxTags: 4,
+         //maxTags: 4,
          tagClass: 'tm-tag tm-tag-warning tm-tag-mini',
          tagCloseIcon: '+',
        });
+
+       $.esgsearch();
 
     })
 
