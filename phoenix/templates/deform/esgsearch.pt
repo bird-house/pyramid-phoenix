@@ -8,42 +8,56 @@
 "
       tal:omit-tag="">
 
-  <div id="wrap"> 
-    <div class="right">
-      <div id="result">
-        <div id="navigation">
-          <ul id="pager"></ul>
-          <div id="pager-header"></div>
-        </div>
-        <div id="docs"></div>
-      </div>
-    </div>
-
-    <div class="left">
-      <input id="${oid}" type="hidden" name="${name}" value="buh"/>
-
-      <h2>Current Selection</h2>
-      <ul id="selection"></ul>
-
-      <h2>Institute</h2>
-      <div class="tagcloud" id="institute"></div>
-
-      <h2>Experiment</h2>
-      <div class="tagcloud" id="experiment"></div>
-
-      <h2>Realm</h2>
-      <div class="tagcloud" id="realm"></div>
-
-      <h2>Model</h2>	    
-      <div class="tagcloud" id="model"></div>
-
-      <div class="clear"></div>
-    </div>
-    <div class="clear"></div>
-
     
-  </div>  
 
- 
+    <span class="hits">${ctx.hit_count}</span> Datasets found
+
+    <p/>
+
+    <h4>Current Selections</h4>
+    <div class="tag-box" >
+      <span class="tag" tal:repeat="(facet,item) constraints.iteritems()">
+        <div class="tag">${facet}:${item}</div>
+        <a class="tag" href="">X</a>
+      </span>
+    </div>
+
+    <p/>
+
+    <h4>Search Categories</h4>
+    <div>
+      <span class="tags">
+
+        <a tal:repeat="(facet,counts) ctx.get_facet_options().iteritems()" href="">
+           ${facet}
+        </a>
+      </span>
+    </div>
+
+    <p/>
+
+    <h4>Category: ${facet}</h4>
+    <div tal:condition="facet">
+      <span class="tags">
+        <a tal:repeat="(item,count) ctx.facet_counts[facet].iteritems()" href="">
+          ${item} (${count})
+        </a>
+      </span>
+    </div>
+    
+    <p/>
+
+    <input type="text" name="${name}" value="${cstruct}" 
+           tal:attributes="size size;
+                           class css_class;
+                           style style"
+           id="${oid}"/>
+    <script tal:condition="mask" type="text/javascript">
+      deform.addCallback(
+         '${oid}',
+         function (oid) {
+            $("#" + oid).mask("${mask}", 
+                 {placeholder:"${mask_placeholder}"});
+         });
+    </script>
 </span>
-
