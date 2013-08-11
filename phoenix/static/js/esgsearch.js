@@ -22,9 +22,9 @@ function esgsearch() {
  * DescribeProcess
  */
 function onDescribeProcess(process) {
-  process.inputs[0].setValue('');
+  process.inputs[0].setValue('test');
   
-  wps.execute("dummyprocess");
+  wps.execute("de.dkrz.esgf.search");
 };
 
 /**
@@ -47,6 +47,8 @@ function onExecuted(process) {
       output.getValue()+"</dd>";
   }
   executed += "</dl>";
+
   document.getElementById("wps-result").innerHTML = executed;
 
+  //$('wps-result').html(executed)
 };

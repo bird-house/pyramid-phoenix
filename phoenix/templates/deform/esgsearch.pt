@@ -9,22 +9,22 @@
       tal:omit-tag="">
 
   <div id="wps-result">
+    huhu
   </div>
 
   <p/>
 
-  <input type="text" name="${name}" value="${cstruct}" 
+  <input type="hidden" name="${name}" value="${cstruct}" 
          tal:attributes="size size;
                          class css_class;
                          style style"
          id="${oid}"/>
+
   <script type="text/javascript">
-    deform.addCallback(
-         '${oid}',
-         function (oid) {
-             alert('hello');
-             esgsearch();
-         });
+   $( document ).ready(function() {
+      //$('#wps-result').html('<h3>hello</h3>')
+      esgsearch()
+   });
   </script>
     
 </span>
