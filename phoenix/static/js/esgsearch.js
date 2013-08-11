@@ -48,7 +48,20 @@ function onExecuted(process) {
   }
   executed += "</dl>";
 
-  document.getElementById("wps-result").innerHTML = executed;
+  //document.getElementById("wps-result").innerHTML = executed;
+  $('#wps-result').html(executed)
 
-  //$('wps-result').html(executed)
+  var jsonURL = process.outputs[0].getValue()
+  $.getJSON( jsonURL, function( json ) {
+    var items = [];
+    $.each(json, function(key, values) {
+      items.push('<li id="' + key + '">' + key + '</li>');
+    });
+    $('<ul/>', {
+      'class': 'my-new-list',
+      html: items.join('')
+    }).appendTo('#facets');
+    
+  });
+
 };

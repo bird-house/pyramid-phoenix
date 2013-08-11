@@ -12,6 +12,9 @@
     huhu
   </div>
 
+  <div id="facets">
+  </div>
+
   <p/>
 
   <input type="hidden" name="${name}" value="${cstruct}" 
@@ -22,7 +25,6 @@
 
   <script type="text/javascript">
    $( document ).ready(function() {
-      //$('#wps-result').html('<h3>hello</h3>')
       esgsearch()
    });
   </script>
