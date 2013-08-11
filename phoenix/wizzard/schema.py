@@ -25,7 +25,6 @@ class EsgSearchSchema(colander.MappingSchema):
 
     filter = colander.SchemaNode(
         colander.String(),
-        name = 'filter',
         missing = '',
         widget = EsgSearchWidget())
 

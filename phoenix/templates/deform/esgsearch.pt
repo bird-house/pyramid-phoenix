@@ -8,43 +8,6 @@
 "
       tal:omit-tag="">
 
-    
-
-    <span class="hits">${ctx.hit_count}</span> Datasets found
-
-    <p/>
-
-    <h4>Current Selections</h4>
-    <div class="tag-box" >
-      <span class="tag" tal:repeat="(facet,item) constraints.iteritems()">
-        <div class="tag">${facet}:${item}</div>
-        <a class="tag" href="">X</a>
-      </span>
-    </div>
-
-    <p/>
-
-    <h4>Search Categories</h4>
-    <div>
-      <span class="tags">
-
-        <a tal:repeat="(facet,counts) ctx.get_facet_options().iteritems()" href="">
-           ${facet}
-        </a>
-      </span>
-    </div>
-
-    <p/>
-
-    <h4>Category: ${facet}</h4>
-    <div tal:condition="facet">
-      <span class="tags">
-        <a tal:repeat="(item,count) ctx.facet_counts[facet].iteritems()" href="">
-          ${item} (${count})
-        </a>
-      </span>
-    </div>
-    
     <p/>
 
     <input type="text" name="${name}" value="${cstruct}" 

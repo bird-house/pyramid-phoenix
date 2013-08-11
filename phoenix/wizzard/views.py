@@ -27,18 +27,6 @@ log = logging.getLogger(__name__)
 class EsgSearchView(FormView):
     schema = None
 
-    def submit_success(self, appstruct):
-        opendap_url = appstruct['opendap_url']
-        log.debug("submit result = %s", appstruct)
-        #self.request.session.flash(u"Your changes have been saved.")
-        return HTTPFound(location = self.request.route_url('admin'))
-
-    def appstruct(self):
-        return None
-
-
-# workflow
-# --------
 
 class WorkflowFormWizard(FormWizard):
     pass
@@ -53,8 +41,6 @@ class WorkflowFormWizardView(FormWizardView):
 
         log.debug('step = %s', step)
         
-        process = None
-
         if step > len(self.wizard.schemas)-1:
             states = self.wizard_state.get_step_states()
             result = self.wizard.done(request, states)
@@ -66,21 +52,14 @@ class WorkflowFormWizardView(FormWizardView):
         if step == 2:
             states = self.wizard_state.get_step_states()
             state = self.deserialize(states[1])
-            schema.appstruct['opendap_url'] = state['opendap_url']
+            #schema.appstruct['opendap_url'] = state['opendap_url']
         elif step == 3:
-            states = self.wizard_state.get_step_states()
-            wps = WebProcessingService(wps_url(self.request), verbose=True)
-            state = self.deserialize(states[0])
-            identifier = state['process']
-            process = wps.describeprocess(identifier)
-            log.debug('identifier = %s', identifier)
-            schema = schema.__class__(process=process)
-
+            pass
+        
         form_view = self.form_view_class(request)
-        log.debug('process = %s', process)
         self.schema = schema.bind(request=request)
-        log.debug('num schema children = %s', len(self.schema.children))
         form_view.schema = self.schema
+
         buttons = []
 
         prev_disabled = False
@@ -124,7 +103,7 @@ class WorkflowFormWizardView(FormWizardView):
         return dict(
             form=form.render(appstruct=state),
             title=self.schema.title, 
-            description=self.schema.description)
+            form_info=self.schema.description)
 
 class Workflow(object):
     pass
@@ -137,7 +116,7 @@ def workflow_wizard_done(request, states):
     return {
         'form' : FormView(request),
         'title': 'Summary',
-        'description': '...',
+        'form_info': '...',
         }
 
     wps = WebProcessingService(wps_url(request), verbose=True)

@@ -2,8 +2,8 @@
 	
   <div metal:fill-slot="content">
     <legend>
-      <h3>title</h3>
-      <small>form_info</small>
+      <h3>${title}</h3>
+      <small>${form_info}</small>
     </legend>
             
     <tal:form replace="structure form">The form will render here</tal:form>
