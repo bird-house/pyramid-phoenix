@@ -8,19 +8,23 @@
 "
       tal:omit-tag="">
 
-    <p/>
+  <div id="wps-result">
+  </div>
 
-    <input type="text" name="${name}" value="${cstruct}" 
-           tal:attributes="size size;
-                           class css_class;
-                           style style"
-           id="${oid}"/>
-    <script tal:condition="mask" type="text/javascript">
-      deform.addCallback(
+  <p/>
+
+  <input type="text" name="${name}" value="${cstruct}" 
+         tal:attributes="size size;
+                         class css_class;
+                         style style"
+         id="${oid}"/>
+  <script type="text/javascript">
+    deform.addCallback(
          '${oid}',
          function (oid) {
-            $("#" + oid).mask("${mask}", 
-                 {placeholder:"${mask_placeholder}"});
+             alert('hello');
+             esgsearch();
          });
-    </script>
+  </script>
+    
 </span>
