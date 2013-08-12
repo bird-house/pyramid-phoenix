@@ -1,7 +1,7 @@
 (function($) {
   
   $.esgsearch = function() {
-    var url = 'http://tracy.local:8090/esg-search/search?limit=0&distrib=false&facets=*&format=application%2Fsolr%2Bjson'
+    var url = 'http://adelie.d.dkrz.de:8090/esg-search/search?limit=0&distrib=false&facets=*&format=application%2Fsolr%2Bjson'
     var tags = [];
     $.getJSON(url, function(json) {
       tags = json.responseHeader.params['facet.field'];
