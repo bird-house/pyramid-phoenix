@@ -71,7 +71,6 @@ def deferred_esgsearch_files_widget(node, kw):
 
 class EsgFilesSchema(colander.MappingSchema):
     description = 'You need to choose a single file'
-    is_esgsearch = False
     appstruct = {}
 
     opendap_url = colander.SchemaNode(
@@ -99,29 +98,43 @@ def deferred_choose_workflow_widget(node, kw):
 
 class SelectProcessSchema(colander.MappingSchema):
     description = "Select a workflow process for ESGF data"
-    is_esgsearch = False
     appstruct = {}
 
     process = colander.SchemaNode(
         colander.String(),
         widget = deferred_choose_workflow_widget)
 
-class ResultSchema(colander.MappingSchema):
-    description = 'Result'
+
+class SummarySchema(colander.MappingSchema):
+    description = 'Summary'
     appstruct = {}
 
+    states = colander.SchemaNode(
+        colander.String(),
+        title = 'States',
+        missing = '')
 
 # views
 # -----
-    
-def done(request, states):
+
+class Done():
     form_view_class = FormView
+    schema = SummarySchema(title="Summary")
+    states = None
     
-    form_view = form_view_class(request)
-    schema = ResultSchema()
-    form_view.schema = schema.bind()
-    result = form_view()
-    return result
+    def __init__(self):
+        pass
+    
+    def __call__(self, request, states):
+        form_view = self.form_view_class(request)
+        form_view.schema = self.schema.bind()
+        self.states = states
+        form_view.appstruct = self.appstruct 
+        result = form_view()
+        return result
+
+    def appstruct(self):
+        return {'states': str(self.states)}
 
 def done_with_restflow(request, states):
     from mako.template import Template
@@ -185,7 +198,7 @@ def wizard(request):
     #schema_process = WPSInputSchemaNode()
 
     wizard = FormWizard('Workflow', 
-                        done, 
+                        Done(), 
                         schema_select_process, 
                         schema_esgsearch,
                         )
