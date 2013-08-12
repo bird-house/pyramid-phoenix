@@ -12,24 +12,108 @@ from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.security import authenticated_userid
 from pyramid_deform import FormView, FormWizard, FormWizardView
 from deform.form import Button
+import deform
 
 import colander
 
 from owslib.wps import WebProcessingService
 
-from phoenix.models import add_job
-from phoenix.helpers import wps_url
-
+from .models import add_job
+from .helpers import wps_url
 
 import logging
 
 log = logging.getLogger(__name__)
 
 
+# schema
+# ------
+
+from owslib.wps import WebProcessingService
+from phoenix.helpers import wps_url
+from phoenix.widget import EsgSearchWidget
+
+class EsgSearchSchema(colander.MappingSchema):
+    description = 'Choose a single Dataset'
+    appstruct = {}
+
+    selection = colander.SchemaNode(
+        colander.String(),
+        title = 'Current Selection',
+        missing = '',
+        widget = EsgSearchWidget())
+
+@colander.deferred
+def deferred_esgsearch_opendap_widget(node, kw):
+    ctx = kw.get('ctx')
+   
+    choices = []
+    if ctx.hit_count == 1:
+        result = ctx.search()[0]
+        agg_ctx = result.aggregation_context()
+        for agg in agg_ctx.search():
+            choices.append( (agg.opendap_url, agg.opendap_url) )
+   
+    return deform.widget.SelectWidget(values = choices)
+
+@colander.deferred
+def deferred_esgsearch_files_widget(node, kw):
+    ctx = kw.get('ctx')
+   
+    choices = []
+    if ctx.hit_count == 1:
+        result = ctx.search()[0]
+        file_ctx = result.file_context()
+        for my_file in file_ctx.search():
+            choices.append( (my_file.download_url, my_file.download_url) )
+   
+    return deform.widget.SelectWidget(values = choices)
+
+class EsgFilesSchema(colander.MappingSchema):
+    description = 'You need to choose a single file'
+    is_esgsearch = False
+    appstruct = {}
+
+    opendap_url = colander.SchemaNode(
+        colander.String(),
+        description = 'OpenDAP Access URL',
+        missing = '',
+        widget = deferred_esgsearch_opendap_widget)
+
+    files_url = colander.SchemaNode(
+        colander.String(),
+        description = 'Files Access URL',
+        missing = '',
+        widget = deferred_esgsearch_files_widget)
+
+@colander.deferred
+def deferred_choose_workflow_widget(node, kw):
+    request = kw.get('request')
+    wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
+    wps.getcapabilities()
+    choices = []
+    for process in wps.processes:
+        if '_workflow' in process.identifier:
+            choices.append( (process.identifier, process.title) )
+    return deform.widget.SelectWidget(values = choices)
+
+class SelectProcessSchema(colander.MappingSchema):
+    description = "Select a workflow process for ESGF data"
+    is_esgsearch = False
+    appstruct = {}
+
+    process = colander.SchemaNode(
+        colander.String(),
+        widget = deferred_choose_workflow_widget)
+
 class ResultSchema(colander.MappingSchema):
     description = 'Result'
     appstruct = {}
 
+
+# views
+# -----
+    
 def done(request, states):
     form_view_class = FormView
     
@@ -74,25 +158,22 @@ def done_with_restflow(request, states):
         }
 
 @view_config(route_name='wizzard',
-             renderer='../templates/wizzard.pt',
+             renderer='templates/wizzard.pt',
              layout='default',
              permission='edit',
              )
 def wizard(request):
     # choose process
-    from .schema import SelectProcessSchema
     schema_select_process = SelectProcessSchema(title='Select Process')
 
     # select esgf dataset
-    from .schema import EsgSearchSchema
     schema_esgsearch = EsgSearchSchema(title='Select ESGF Dataset')
 
     # select files
-    #from .schema import EsgFilesSchema
     #schema_esgfiles = EsgFilesSchema(title='Select ESGF File')
 
     # wget process
-    #from phoenix.wps.schema import WPSInputSchemaNode
+    #from .wps.schema import WPSInputSchemaNode
     #wps = WebProcessingService(wps_url(request), verbose=True)
     #process = wps.describeprocess('de.dkrz.esgf.wget')
     #schema_wget = WPSInputSchemaNode(process=process)
