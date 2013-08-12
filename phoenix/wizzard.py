@@ -33,6 +33,29 @@ from owslib.wps import WebProcessingService
 from phoenix.helpers import wps_url
 from phoenix.widget import EsgSearchWidget
 
+# select process schema
+
+@colander.deferred
+def deferred_choose_workflow_widget(node, kw):
+    request = kw.get('request')
+    wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
+    wps.getcapabilities()
+    choices = []
+    for process in wps.processes:
+        if '_workflow' in process.identifier:
+            choices.append( (process.identifier, process.title) )
+    return deform.widget.SelectWidget(values = choices)
+
+class SelectProcessSchema(colander.MappingSchema):
+    description = "Select a workflow process for ESGF data"
+    appstruct = {}
+
+    process = colander.SchemaNode(
+        colander.String(),
+        widget = deferred_choose_workflow_widget)
+
+# esg search schema 
+    
 class EsgSearchSchema(colander.MappingSchema):
     description = 'Choose a single Dataset'
     appstruct = {}
@@ -43,6 +66,8 @@ class EsgSearchSchema(colander.MappingSchema):
         missing = '',
         widget = EsgSearchWidget())
 
+# esg files schema
+    
 @colander.deferred
 def deferred_esgsearch_opendap_widget(node, kw):
     ctx = kw.get('ctx')
@@ -85,26 +110,9 @@ class EsgFilesSchema(colander.MappingSchema):
         missing = '',
         widget = deferred_esgsearch_files_widget)
 
-@colander.deferred
-def deferred_choose_workflow_widget(node, kw):
-    request = kw.get('request')
-    wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
-    wps.getcapabilities()
-    choices = []
-    for process in wps.processes:
-        if '_workflow' in process.identifier:
-            choices.append( (process.identifier, process.title) )
-    return deform.widget.SelectWidget(values = choices)
 
-class SelectProcessSchema(colander.MappingSchema):
-    description = "Select a workflow process for ESGF data"
-    appstruct = {}
-
-    process = colander.SchemaNode(
-        colander.String(),
-        widget = deferred_choose_workflow_widget)
-
-
+# summary schema
+    
 class SummarySchema(colander.MappingSchema):
     description = 'Summary'
     appstruct = {}
