@@ -1,9 +1,9 @@
 var init_esgsearch = function(oid) {
   jQuery(".tm-selection").tagsManager({
-    prefilled: ["variable:hus", "experiment:decadal1960"],
+    prefilled: ["experiment:decadal1960"],
     preventSubmitOnEnter: true,
     delimiters: [9, 13, 44],
-    maxTags: 2,
+    //maxTags: 2,
     tagClass: 'tm-tag tm-tag-success',
     hiddenTagListId: oid,
   });
@@ -14,7 +14,7 @@ var init_esgsearch = function(oid) {
     delimiters: [9, 13, 44],
     //maxTags: 1,
     tagClass: 'tm-tag tm-tag-info',
-    tagCloseIcon: '+',
+    tagCloseIcon: '',
   });
 
   jQuery(".tm-facet").tagsManager({
@@ -23,7 +23,7 @@ var init_esgsearch = function(oid) {
     delimiters: [9, 13, 44],
     //maxTags: 4,
     tagClass: 'tm-tag tm-tag-warning tm-tag-mini',
-    tagCloseIcon: '+',
+    tagCloseIcon: '',
   });
 };
 
@@ -37,17 +37,15 @@ var init_esgsearch = function(oid) {
   var distrib = 'false';
   var format = 'application%2Fsolr%2Bjson';
     
-  $.esgsearch = function(constraints) {
-    var constraint_param = '';
-    if (constraints != null) {
-      var searchConstraints = constraints.split(",");
-      $.each(searchConstraints, function(i, constraint) {
-	var facet_constraint = constraint.split(":");
-	constraint_param += '&' + facet_constraint[0] + '=' + facet_constraint[1];
-      });
-    };
+  $.esgsearch = function() {
+    var constraints = '';
+    var tags = $("#deformField1").val().split(",");
+    $.each(tags, function(i, tag) {
+      var constraint = tag.split(":");
+      constraints += '&' + constraint[0] + '=' + constraint[1];
+    });
 
-    var searchURL = url + '?' + 'facets=*' + constraint_param + '&limit=' + limit + '&distrib=' + distrib + '&format=' + format;
+    var searchURL = url + '?' + 'facets=*' + constraints + '&limit=' + limit + '&distrib=' + distrib + '&format=' + format;
    
     $.getJSON(searchURL, function(json) {
       var tags = json.responseHeader.params['facet.field'];
