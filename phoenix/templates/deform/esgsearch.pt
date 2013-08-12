@@ -11,20 +11,21 @@
   <h4>Currents Selection</h4>
 
   <input type="text" name="Current Selection" class="tm-selection" 
-         id="${oid}"/>
-  <input type="hidden" value="${cstruct}" name="hidden-Selection">
+         id="tm-selection"/>
+  <input type="hidden" value="${cstruct}" name="${name}"
+	 id="${oid}">
   <p/>
 
   <h4>Search Categories</h4>
   
   <input type="text" name="Search Categories" class="tm-facets"
-	 id="facets"/>
+	 id="tm-facets"/>
   <p/>
  
   <h4>Categorie: Institute</h4>
     
   <input type="text" name="Categorie: xxx" class="tm-facet"
-	 id="facet"/>
+	 id="tm-facet"/>
   <p/>
   
   <script type="text/javascript">
@@ -38,9 +39,7 @@
          delimiters: [9, 13, 44],
          maxTags: 2,
          tagClass: 'tm-tag tm-tag-success',
-         hiddenTagListName: 'hidden-Selection',
-         hiddenTagListId: null,
-         
+         hiddenTagListId: '${oid}',
        });
        jQuery(".tm-facets").tagsManager({
          //prefilled: ["hello"],
