@@ -32,9 +32,24 @@ var init_esgsearch = function(oid) {
 
   "use strict";
 
-  $.esgsearch = function() {
-    var url = 'http://adelie.d.dkrz.de:8090/esg-search/search?limit=0&distrib=false&facets=*&format=application%2Fsolr%2Bjson'
-    $.getJSON(url, function(json) {
+  var url = 'http://adelie.d.dkrz.de:8090/esg-search/search';
+  var limit = '0';
+  var distrib = 'false';
+  var format = 'application%2Fsolr%2Bjson';
+    
+  $.esgsearch = function(constraints) {
+    var constraint_param = '';
+    if (constraints != null) {
+      var searchConstraints = constraints.split(",");
+      $.each(searchConstraints, function(i, constraint) {
+	var facet_constraint = constraint.split(":");
+	constraint_param += '&' + facet_constraint[0] + '=' + facet_constraint[1];
+      });
+    };
+
+    var searchURL = url + '?' + 'facets=*' + constraint_param + '&limit=' + limit + '&distrib=' + distrib + '&format=' + format;
+   
+    $.getJSON(searchURL, function(json) {
       var tags = json.responseHeader.params['facet.field'];
       $.each(tags, function(i, tag) {
 	jQuery(".tm-facets").tagsManager('pushTag', tag);
@@ -47,7 +62,7 @@ var init_esgsearch = function(oid) {
       });
       
     });
-  }
+  };
 
 })(jQuery);
 

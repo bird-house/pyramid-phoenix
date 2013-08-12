@@ -33,7 +33,7 @@
     
        init_esgsearch('${oid}');
        $.esgsearch();
-    })
+    });
 
     deform.addCallback(
       '${oid}',
