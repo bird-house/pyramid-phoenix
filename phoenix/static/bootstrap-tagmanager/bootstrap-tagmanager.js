@@ -50,6 +50,7 @@
       tagCloseIcon: '×',
       tagClass: '',
       isSelectable: false,
+      selectHandler: null,
       validator: null,
       onlyTagList: false
     };
@@ -291,9 +292,9 @@
       var p = $.inArray(tagId, tlid);
 
       if (-1 != p) {
-        $("#" + objName + "_" + tagId).remove();
-        tlis.splice(p, 1);
-        tlid.splice(p, 1);
+	if (tagManagerOptions.selectHandler != null) {
+	  tagManagerOptions.selectHandler(tlis[p])
+	}
         refreshHiddenTagList();
       }
 

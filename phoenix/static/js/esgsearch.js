@@ -1,3 +1,11 @@
+var selected_facet_handler = function (facet) {
+  alert('facet = ' + facet);
+};
+
+var selected_facet_value_handler = function (facet_value) {
+  alert('facet_value = ' + facet_value);
+};
+
 var init_esgsearch = function(oid) {
   jQuery(".tm-selection").tagsManager({
     prefilled: ["experiment:decadal1960"],
@@ -15,6 +23,7 @@ var init_esgsearch = function(oid) {
     //maxTags: 1,
     tagClass: 'tm-tag tm-tag-info',
     isSelectable: true,
+    selectHandler: selected_facet_handler,
   });
 
   jQuery(".tm-facet").tagsManager({
@@ -24,6 +33,7 @@ var init_esgsearch = function(oid) {
     //maxTags: 4,
     tagClass: 'tm-tag tm-tag-warning tm-tag-mini',
     isSelectable: true,
+    selectHandler: selected_facet_value_handler,
   });
 };
 
