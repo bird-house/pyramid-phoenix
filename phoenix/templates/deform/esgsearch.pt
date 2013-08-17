@@ -30,9 +30,7 @@
   
   <script type="text/javascript">
     $(document).ready(function() { 
-    
-       init_esgsearch('${oid}');
-       $.esgsearch();
+       $.EsgSearch( {oid: '${oid}' } );
     });
 
     deform.addCallback(
