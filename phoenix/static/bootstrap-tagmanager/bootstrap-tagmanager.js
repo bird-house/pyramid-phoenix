@@ -49,7 +49,7 @@
       tagsContainer: null,
       tagCloseIcon: '×',
       tagClass: '',
-      isClickable: false,
+      isSelectable: false,
       validator: null,
       onlyTagList: false
     };
@@ -284,6 +284,24 @@
       }
     };
 
+    var selectTag = function (tagId) {
+      var tlis = obj.data("tlis");
+      var tlid = obj.data("tlid");
+
+      var p = $.inArray(tagId, tlid);
+
+      if (-1 != p) {
+        $("#" + objName + "_" + tagId).remove();
+        tlis.splice(p, 1);
+        tlid.splice(p, 1);
+        refreshHiddenTagList();
+      }
+
+      if (tagManagerOptions.maxTags > 0 && tlis.length < tagManagerOptions.maxTags) {
+        obj.show();
+      }
+    };
+
     var pushAllTags = function (e, tagstring) {
       if (tagManagerOptions.AjaxPushAllTags) {
         $.post(tagManagerOptions.AjaxPush, { tags: tagstring });
@@ -350,16 +368,17 @@
 
         var newTagId = objName + '_' + tagId;
         var newTagRemoveId = objName + '_Remover_' + tagId;
+        var newTagSelectId = objName + '_Selecter_' + tagId;
         var escaped = $("<span></span>").text(tag).html();
 	var htmlTag = escaped;
-	if (tagManagerOptions.isClickable) {
-	  htmlTag = '<a href="#" class="tm-tag-remove" id="' + newTagRemoveId + '" TagIdToRemove="' + tagId + '">';
+	if (tagManagerOptions.isSelectable) {
+	  htmlTag = '<a href="#" id="' + newTagSelectId + '" TagIdToSelect="' + tagId + '">';
           htmlTag += escaped + '</a>';
 	}
 
         var html = '<span class="' + tagClasses() + '" id="' + newTagId + '">';
         html += '<span>' + htmlTag + '</span>';
-	if (!tagManagerOptions.isClickable) {
+	if (!tagManagerOptions.isSelectable) {
           html += '<a href="#" class="tm-tag-remove" id="' + newTagRemoveId + '" TagIdToRemove="' + tagId + '">';
           html += tagManagerOptions.tagCloseIcon + '</a>';
 	}
@@ -376,6 +395,12 @@
           e.preventDefault();
           var TagIdToRemove = parseInt($(this).attr("TagIdToRemove"));
           spliceTag(TagIdToRemove, e.data);
+        });
+
+	$el.find("#" + newTagSelectId).on("click", obj, function (e) {
+          e.preventDefault();
+          var TagIdToSelect = parseInt($(this).attr("TagIdToSelect"));
+          selectTag(TagIdToSelect, e.data);
         });
 
         refreshHiddenTagList();
