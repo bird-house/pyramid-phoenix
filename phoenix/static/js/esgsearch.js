@@ -89,8 +89,15 @@
 	searchURL += '&format=' + searchOptions.format;
    
 	$.getJSON(searchURL, function(json) {
-	  var tags = json.responseHeader.params['facet.field'];
-	  $.each(tags.sort(), function(i, tag) {
+	  var facet_counts = json.facet_counts.facet_fields;
+	  var facets = [];
+	  $.each(facet_counts, function(tag, values) {
+	    if (values.length > 2) {
+	      facets.push(tag);
+	    }
+	  });
+	  $(".tm-facets").tagsManager('empty');
+	  $.each(facets.sort(), function(i, tag) {
 	    jQuery(".tm-facets").tagsManager('pushTag', tag);
 	  });
 	  var counts = json.facet_counts.facet_fields[selectedFacet];
