@@ -22,7 +22,7 @@ def navbar(context, request):
            nav_item('My Jobs', request.route_url('jobs'), 'icon-time'),
            nav_item('Monitor', request.route_url('monitor'), 'icon-time'),
            nav_item('Admin', request.route_url('admin'), 'icon-time'),
-           nav_item('Wizzard', request.route_url('wizzard'), 'icon-time'),
+           nav_item('Wizard', request.route_url('wizard'), 'icon-time'),
            nav_item('Help', request.route_url('help'), 'icon-time')]
 
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request))

@@ -178,8 +178,8 @@ def done_with_restflow(request, states):
         'description': '...',
         }
 
-@view_config(route_name='wizzard',
-             renderer='templates/wizzard.pt',
+@view_config(route_name='wizard',
+             renderer='templates/wizard.pt',
              layout='default',
              permission='edit',
              )
