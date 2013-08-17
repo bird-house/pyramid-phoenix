@@ -90,15 +90,19 @@
    
 	$.getJSON(searchURL, function(json) {
 	  var tags = json.responseHeader.params['facet.field'];
-	  $.each(tags, function(i, tag) {
+	  $.each(tags.sort(), function(i, tag) {
 	    jQuery(".tm-facets").tagsManager('pushTag', tag);
 	  });
 	  var counts = json.facet_counts.facet_fields[selectedFacet];
 	  $(".tm-facet").tagsManager('empty');
+	  var facet_values = [];
 	  $.each(counts, function(i,value) {
 	    if (i % 2 == 0) {
-	      jQuery(".tm-facet").tagsManager('pushTag', value);
+	      facet_values.push(value);
 	    }
+	  });
+	  $.each(facet_values.sort(), function(i,value) {
+	    jQuery(".tm-facet").tagsManager('pushTag', value);
 	  });
 	  update_counts(json.response.numFound);
 	});
