@@ -9,6 +9,7 @@
 	format: 'application%2Fsolr%2Bjson',
       };
       var searchOptions = $.extend(defaults, options);
+      var selectedFacet = 'institute';
 
       var init = function() {
 	init_constraints(searchOptions.oid);
@@ -18,16 +19,19 @@
       };
 
       var selected_facet_handler = function (facet) {
-	alert('facet = ' + facet);
+	selectedFacet = facet;
+	execute();
       };
 
       var selected_facet_value_handler = function (facet_value) {
-	alert('facet_value = ' + facet_value);
+	value = selectedFacet  + ':' + facet_value;
+	jQuery(".tm-selection").tagsManager('pushTag', value);
+	execute();
       };
 
       var init_constraints = function(oid) {
 	jQuery(".tm-selection").tagsManager({
-	  prefilled: ["experiment:decadal1960"],
+	  //prefilled: ["experiment:decadal1960"],
 	  preventSubmitOnEnter: true,
 	  delimiters: [9, 13, 44],
 	  //maxTags: 2,
@@ -62,7 +66,7 @@
     
       var execute = function() {
 	var constraints = '';
-	var tags = $("#deformField1").val().split(",");
+	var tags = $("#" + searchOptions.oid).val().split(",");
 	$.each(tags, function(i, tag) {
 	  var constraint = tag.split(":");
 	  constraints += '&' + constraint[0] + '=' + constraint[1];
@@ -79,7 +83,8 @@
 	  $.each(tags, function(i, tag) {
 	    jQuery(".tm-facets").tagsManager('pushTag', tag);
 	  });
-	  var counts = json.facet_counts.facet_fields['institute'];
+	  var counts = json.facet_counts.facet_fields[selectedFacet];
+	  jQuery(".tm-facet").tagsManager('empty');
 	  $.each(counts, function(i,value) {
 	    if (i % 2 == 0) {
 	      jQuery(".tm-facet").tagsManager('pushTag', value);
