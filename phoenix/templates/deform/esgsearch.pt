@@ -8,6 +8,8 @@
 "
       tal:omit-tag="">
 
+  <label id="search-label-counts">placeholder</label>
+
   <h4>Currents Selection</h4>
 
   <input type="text" name="Current Selection" class="tm-selection" 
@@ -22,7 +24,7 @@
 	 id="tm-facets"/>
   <p/>
  
-  <h4>Categorie: Institute</h4>
+  <h4 id="search-label-category">placeholder</h4>
     
   <input type="text" name="Categorie: xxx" class="tm-facet"
 	 id="tm-facet"/>

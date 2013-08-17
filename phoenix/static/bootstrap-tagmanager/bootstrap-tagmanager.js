@@ -51,6 +51,7 @@
       tagClass: '',
       isSelectable: false,
       selectHandler: null,
+      deleteHandler: null,
       validator: null,
       onlyTagList: false
     };
@@ -277,6 +278,7 @@
         tlis.splice(p, 1);
         tlid.splice(p, 1);
         refreshHiddenTagList();
+	tagManagerOptions.deleteHandler(tlis[p])
         // console.log(tlis);
       }
 
