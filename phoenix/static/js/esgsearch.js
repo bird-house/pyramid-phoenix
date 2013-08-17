@@ -14,7 +14,7 @@ var init_esgsearch = function(oid) {
     delimiters: [9, 13, 44],
     //maxTags: 1,
     tagClass: 'tm-tag tm-tag-info',
-    tagCloseIcon: '',
+    isClickable: true,
   });
 
   jQuery(".tm-facet").tagsManager({
@@ -23,7 +23,7 @@ var init_esgsearch = function(oid) {
     delimiters: [9, 13, 44],
     //maxTags: 4,
     tagClass: 'tm-tag tm-tag-warning tm-tag-mini',
-    tagCloseIcon: '',
+    isClickable: true,
   });
 };
 

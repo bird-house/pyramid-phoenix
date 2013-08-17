@@ -49,6 +49,7 @@
       tagsContainer: null,
       tagCloseIcon: '×',
       tagClass: '',
+      isClickable: false,
       validator: null,
       onlyTagList: false
     };
@@ -350,11 +351,19 @@
         var newTagId = objName + '_' + tagId;
         var newTagRemoveId = objName + '_Remover_' + tagId;
         var escaped = $("<span></span>").text(tag).html();
+	var htmlTag = escaped;
+	if (tagManagerOptions.isClickable) {
+	  htmlTag = '<a href="#" class="tm-tag-remove" id="' + newTagRemoveId + '" TagIdToRemove="' + tagId + '">';
+          htmlTag += escaped + '</a>';
+	}
 
         var html = '<span class="' + tagClasses() + '" id="' + newTagId + '">';
-        html += '<span>' + escaped + '</span>';
-        html += '<a href="#" class="tm-tag-remove" id="' + newTagRemoveId + '" TagIdToRemove="' + tagId + '">';
-        html += tagManagerOptions.tagCloseIcon + '</a></span> ';
+        html += '<span>' + htmlTag + '</span>';
+	if (!tagManagerOptions.isClickable) {
+          html += '<a href="#" class="tm-tag-remove" id="' + newTagRemoveId + '" TagIdToRemove="' + tagId + '">';
+          html += tagManagerOptions.tagCloseIcon + '</a>';
+	}
+	html += '<span> ';
         var $el = $(html);
 
         if (tagManagerOptions.tagsContainer != null) {
