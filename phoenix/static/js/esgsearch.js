@@ -32,7 +32,7 @@ var init_esgsearch = function(oid) {
 
   "use strict";
 
-  var url = 'http://adelie.d.dkrz.de:8090/esg-search/search';
+  var url = 'http://tracy.local:8090/esg-search/search';
   var limit = '0';
   var distrib = 'false';
   var format = 'application%2Fsolr%2Bjson';
