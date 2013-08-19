@@ -71,11 +71,10 @@ class EsgSearchSchema(colander.MappingSchema):
 # esg files schema
 @colander.deferred
 def deferred_esgfiles_widget(node, kw):
-    request = kw.get('request', None)
-    data = request.session.get('pyramid_deform.wizards', {})
-    data = data.get('Workflow', {})
-    states = data.get('states', {})
-    selection = states[1]['selection']
+    wizard_state = kw.get('wizard_state', None)
+    states = wizard_state.get_step_states()
+    state = states.get(wizard_state.get_step_num() - 1)
+    selection = state['selection']
 
     conn = SearchConnection('http://adelie.d.dkrz.de:8090/esg-search', distrib=False)
     ctx = conn.new_context(
@@ -120,8 +119,59 @@ class SummarySchema(colander.MappingSchema):
         title = 'States',
         missing = '')
 
-# views
-# -----
+# wizard
+# ------
+
+class MyFormWizardView(FormWizardView):
+    def __call__(self, request):
+        self.request = request
+        self.wizard_state = self.wizard_state_class(request, self.wizard.name)
+        step = self.wizard_state.get_step_num()
+
+        if step > len(self.wizard.schemas)-1:
+            states = self.wizard_state.get_step_states()
+            result = self.wizard.done(request, states)
+            self.wizard_state.clear()
+            return result
+        form_view = self.form_view_class(request)
+        schema = self.wizard.schemas[step]
+        self.schema = schema.bind(request=request, wizard_state=self.wizard_state)
+        form_view.schema = self.schema
+        buttons = []
+
+        prev_disabled = False
+        next_disabled = False
+
+        if hasattr(schema, 'prev_ok'):
+            prev_disabled = not schema.prev_ok(request)
+
+        if hasattr(schema, 'next_ok'):
+            next_disabled = not schema.next_ok(request)
+
+        prev_button = Button(name='previous', title='Previous',
+                             disabled=prev_disabled)
+        next_button = Button(name='next', title='Next',
+                             disabled=next_disabled)
+        done_button = Button(name='next', title='Done',
+                             disabled=next_disabled)
+
+        if step > 0:
+            buttons.append(prev_button)
+
+        if step < len(self.wizard.schemas)-1:
+            buttons.append(next_button)
+        else:
+            buttons.append(done_button)
+
+        form_view.buttons = buttons
+        form_view.next_success = self.next_success
+        form_view.previous_success = self.previous_success
+        form_view.previous_failure = self.previous_failure
+        form_view.show = self.show
+        form_view.appstruct = getattr(schema, 'appstruct', None)
+        result = form_view()
+        return result
+
 
 class Done():
     form_view_class = FormView
@@ -200,14 +250,18 @@ def wizard(request):
     process = wps.describeprocess('de.dkrz.esgf.opendap')
     schema_opendap = WPSInputSchemaNode(process=process)
 
+    process = wps.describeprocess('de.dkrz.cdo.sinfo_workflow')
+    schema_process = WPSInputSchemaNode(process=process)
+
     wizard = FormWizard('Workflow', 
                         Done(), 
                         schema_select_process, 
                         schema_esgsearch,
                         schema_esgfiles,
                         schema_opendap,
+                        schema_process,
                         )
-    view = FormWizardView(wizard)
+    view = MyFormWizardView(wizard)
     return view(request)
 
 
