@@ -192,22 +192,20 @@ def wizard(request):
     schema_esgfiles = EsgFilesSchema(title='Select ESGF File')
 
     # wget process
-    #from .wps.schema import WPSInputSchemaNode
-    #wps = WebProcessingService(wps_url(request), verbose=True)
+    from .wps.schema import WPSInputSchemaNode
+    wps = WebProcessingService(wps_url(request), verbose=True)
     #process = wps.describeprocess('de.dkrz.esgf.wget')
     #schema_wget = WPSInputSchemaNode(process=process)
 
-    #process = wps.describeprocess('de.dkrz.esgf.opendap')
-    #schema_opendap = WPSInputSchemaNode(process=process)
-
-    # get wps process params
-    #schema_process = WPSInputSchemaNode()
+    process = wps.describeprocess('de.dkrz.esgf.opendap')
+    schema_opendap = WPSInputSchemaNode(process=process)
 
     wizard = FormWizard('Workflow', 
                         Done(), 
                         schema_select_process, 
                         schema_esgsearch,
                         schema_esgfiles,
+                        schema_opendap,
                         )
     view = FormWizardView(wizard)
     return view(request)
