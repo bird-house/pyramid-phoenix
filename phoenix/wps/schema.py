@@ -74,7 +74,7 @@ class WPSInputSchemaNode(colander.SchemaNode):
            See http://docs.pylonsproject.org/projects/colander/en/latest/basics.html for more information.
         """
 
-        log.debug('DataInputsSchemaNode.__init__: process=%s, kw=%s', process, kw)
+        log.debug('WPSInputsSchemaNode.__init__: process=%s, kw=%s', process, kw)
 
         kwargs = kw.copy()
 

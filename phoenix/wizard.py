@@ -18,6 +18,8 @@ import colander
 
 from owslib.wps import WebProcessingService
 
+from mako.template import Template
+
 from .models import add_job
 from .helpers import wps_url
 
@@ -182,6 +184,29 @@ class Done():
         pass
     
     def __call__(self, request, states):
+        wps = WebProcessingService(wps_url(request), verbose=True)
+        identifier = 'de.dkrz.restflow.run'
+        workflow_template_filename = os.path.join(os.path.abspath(os.curdir), 'phoenix/wps/templates/wps.yaml')
+        workflow_template = Template(filename=workflow_template_filename)
+        workflow_description = workflow_template.render(
+            service = wps.url,
+            process = states[0].get('process'),
+            openid = states[2].get('openid'),
+            password = states[2].get('password'),
+            opendap_url = states[1].get('opendap_url')
+            )
+        #log.debug("workflow_description = %s", workflow_description)
+        inputs = [("workflow_description", str(workflow_description))]
+        outputs = [("output",True)]
+        execution = wps.execute(identifier, inputs=inputs, output=outputs)
+        
+        add_job(
+            request = request,
+            user_id = authenticated_userid(request), 
+            identifier = identifier, 
+            wps_url = wps.url, 
+            execution = execution)
+        
         form_view = self.form_view_class(request)
         form_view.schema = self.schema.bind()
         self.states = states
