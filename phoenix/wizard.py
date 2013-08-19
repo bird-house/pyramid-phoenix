@@ -33,6 +33,8 @@ from owslib.wps import WebProcessingService
 from phoenix.helpers import wps_url
 from phoenix.widget import EsgSearchWidget, EsgFilesWidget
 
+from pyesgf.search import SearchConnection
+
 # select process schema
 
 @colander.deferred
@@ -67,16 +69,45 @@ class EsgSearchSchema(colander.MappingSchema):
         widget = EsgSearchWidget())
 
 # esg files schema
+@colander.deferred
+def deferred_esgfiles_widget(node, kw):
+    request = kw.get('request', None)
+    data = request.session.get('pyramid_deform.wizards', {})
+    data = data.get('Workflow', {})
+    states = data.get('states', {})
+    selection = states[1]['selection']
+
+    conn = SearchConnection('http://adelie.d.dkrz.de:8090/esg-search', distrib=False)
+    ctx = conn.new_context(
+        project='CMIP5', product='output1',
+        replica=False, latest=True)
+    constraints = {}
+    for constraint in selection.split(','):
+        key,value = constraint.split(':')
+        constraints[key] = value
+    ctx = ctx.constrain(**constraints) 
+    
+    choices = []
+
+    if ctx.hit_count == 1:
+        result = ctx.search()[0]
+        agg_ctx = result.aggregation_context()
+        for agg in agg_ctx.search():
+            choices.append( (agg.opendap_url, agg.opendap_url) )
+   
+    return deform.widget.RadioChoiceWidget(
+        values=choices)
+
     
 class EsgFilesSchema(colander.MappingSchema):
     description = 'You need to choose a single file'
     appstruct = {}
-   
+    
     opendap_url = colander.SchemaNode(
         colander.String(),
         description = 'OpenDAP Access URL',
         missing = '',
-        widget = EsgFilesWidget())
+        widget = deferred_esgfiles_widget)
 
 # summary schema
     

@@ -1,8 +1,7 @@
-<span  tal:define="oid oid|field.oid;
-                   title title|field.title;
-                   css_class css_class|field.widget.css_class;">
-  <ul
-     class="deformSet">
+<div tal:define="oid oid|field.oid;
+                 title title|field.title;
+                 css_class css_class|field.widget.css_class;">
+  <ul class="deformSet">
      ${field.start_rename()}
      <tal:loop tal:repeat="choice values">
        <tal:def tal:define="(value, title) choice">
@@ -27,5 +26,5 @@
         $.EsgSearch( {oid: oid } );
     });
   </script>
-</span>
+</div>
 
