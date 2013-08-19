@@ -3,7 +3,7 @@
     EsgSearch: function(options) {
       var defaults = {
 	oid: null,
-	url: 'http://tracy.local:8090/esg-search/search',
+	url: 'http://adelie.d.dkrz.de:8090/esg-search/search',
 	limit: '0',
 	distrib: 'false',
 	format: 'application%2Fsolr%2Bjson',
