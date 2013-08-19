@@ -217,40 +217,6 @@ class Done():
     def appstruct(self):
         return {'states': str(self.states)}
 
-def done_with_restflow(request, states):
-    from mako.template import Template
-
-    log.debug('states = %s', states)
-
-    wps = WebProcessingService(wps_url(request), verbose=True)
-    identifier = 'de.dkrz.restflow.run'
-    workflow_template_filename = os.path.join(os.path.abspath(os.curdir), 'phoenix/wps/templates/wps.yaml')
-    workflow_template = Template(filename=workflow_template_filename)
-    workflow_description = workflow_template.render(
-        service = wps.url,
-        process = states[0].get('process'),
-        openid = states[2].get('openid'),
-        password = states[2].get('password'),
-        opendap_url = states[2].get('opendap_url')
-        )
-    #log.debug("workflow_description = %s", workflow_description)
-    inputs = [("workflow_description", str(workflow_description))]
-    outputs = [("output",True)]
-    execution = wps.execute(identifier, inputs=inputs, output=outputs)
-
-    add_job(
-        request = request,
-        user_id = authenticated_userid(request), 
-        identifier = identifier, 
-        wps_url = wps.url, 
-        execution = execution)
-
-    return {
-        'form' : FormView(request),
-        'title': 'Summary',
-        'description': '...',
-        }
-
 @view_config(route_name='wizard',
              renderer='templates/wizard.pt',
              layout='default',
