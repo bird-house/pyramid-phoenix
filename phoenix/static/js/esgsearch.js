@@ -4,15 +4,15 @@
       var defaults = {
 	oid: null,
 	url: 'http://adelie.d.dkrz.de:8090/esg-search/search',
-	limit: '0',
 	distrib: 'false',
-	format: 'application%2Fsolr%2Bjson',
+	constraints: null,
+	type: 'Dataset',
       };
       var searchOptions = $.extend(defaults, options);
       var selectedFacet = 'institute';
 
       var init = function() {
-	init_constraints(searchOptions.oid);
+	init_constraints();
 	init_facets();
 	init_facet_values();
 	execute();
@@ -38,14 +38,14 @@
 	$('#search-label-counts').text("Datasets: " + counts)
       };
 
-      var init_constraints = function(oid) {
+      var init_constraints = function() {
 	$(".tm-selection").tagsManager({
-	  //prefilled: ["experiment:decadal1960"],
+	  prefilled: searchOptions.constraints,
 	  preventSubmitOnEnter: true,
 	  delimiters: [9, 13, 44],
 	  //maxTags: 2,
 	  tagClass: 'tm-tag tm-tag-success',
-	  hiddenTagListId: oid,
+	  hiddenTagListId: searchOptions.oid,
 	  deleteHandler: deleted_constraint_handler,
 	});
       };
@@ -75,6 +75,8 @@
       };
     
       var execute = function() {
+	var limit = '0';
+	var format = 'application%2Fsolr%2Bjson';
 	var constraints = '';
 	var tags = $("#" + searchOptions.oid).val().split(",");
 	$.each(tags, function(i, tag) {
@@ -83,10 +85,11 @@
 	});
 
 	var searchURL = searchOptions.url + '?';
-	searchURL += 'facets=*' + constraints; 
-	searchURL += '&limit=' + searchOptions.limit; 
+	searchURL += 'type=' + searchOptions.type;
+	searchURL += '&facets=*' + constraints; 
+	searchURL += '&limit=' + limit; 
 	searchURL += '&distrib=' + searchOptions.distrib; 
-	searchURL += '&format=' + searchOptions.format;
+	searchURL += '&format=' + format;
    
 	$.getJSON(searchURL, function(json) {
 	  var facet_counts = json.facet_counts.facet_fields;

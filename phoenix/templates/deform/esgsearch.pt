@@ -31,14 +31,10 @@
   <p/>
   
   <script type="text/javascript">
-    $(document).ready(function() { 
-       $.EsgSearch( {oid: '${oid}' } );
-    });
-
     deform.addCallback(
       '${oid}',
       function (oid) {
-        // do something
+        $.EsgSearch( {oid: oid } );
     });
   </script>
 </span>
