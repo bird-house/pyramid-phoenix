@@ -12,7 +12,7 @@ import logging
 import dateutil
 import re
 
-__all__ = ['WPSInputSchemaNode', 'output_schema']
+__all__ = ['WPSSchema']
 
 log = logging.getLogger(__name__)
 
@@ -28,11 +28,10 @@ class MemoryTmpStore(dict):
 tmpstore = MemoryTmpStore()
 
 
-# input data
-# ----------
+# wps input schema
+# ----------------
 
-
-class WPSInputSchemaNode(colander.SchemaNode):
+class WPSSchema(colander.SchemaNode):
     """ Build a Colander Schema based on the WPS data inputs.
 
     This Schema generator is based on:
@@ -74,8 +73,6 @@ class WPSInputSchemaNode(colander.SchemaNode):
 
            See http://docs.pylonsproject.org/projects/colander/en/latest/basics.html for more information.
         """
-
-        log.debug('WPSInputsSchemaNode.__init__: process=%s, kw=%s', process, kw)
 
         kwargs = kw.copy()
 

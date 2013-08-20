@@ -22,7 +22,7 @@ from mako.template import Template
 
 from .models import add_job, esgf_search_context
 from .helpers import wps_url, esgsearch_url
-from .wps.schema import WPSInputSchemaNode
+from .wps.schema import WPSSchema
 
 import logging
 
@@ -120,9 +120,9 @@ class EsgFilesSchema(colander.MappingSchema):
 # wps process schema
 # ------------------
 
-class WPSSchemaAdaptor(WPSInputSchemaNode):
+class WPSSchemaAdaptor(WPSSchema):
     def __init__(self, process=None, unknown='ignore', **kw):
-        WPSInputSchemaNode.__init__(self, process, unknown, **kw)
+        WPSSchema.__init__(self, process, unknown, **kw)
         # TODO: avoid hard coded wps parameters
         if self.get('input') != None:
             self.__delitem__('input')
