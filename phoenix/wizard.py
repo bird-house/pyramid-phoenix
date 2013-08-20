@@ -20,8 +20,8 @@ from owslib.wps import WebProcessingService
 
 from mako.template import Template
 
-from .models import add_job
-from .helpers import wps_url
+from .models import add_job, esgf_search_context
+from .helpers import wps_url, esgsearch_url
 
 import logging
 
@@ -58,7 +58,12 @@ class SelectProcessSchema(colander.MappingSchema):
         colander.String(),
         widget = deferred_choose_workflow_widget)
 
-# esg search schema 
+# esg search schema
+@colander.deferred
+def deferred_esgsearch_widget(node, kw):
+    request = kw.get('request')
+    url = esgsearch_url(request)
+    return EsgSearchWidget(url=url)
     
 class EsgSearchSchema(colander.MappingSchema):
     description = 'Choose a single Dataset'
@@ -68,20 +73,18 @@ class EsgSearchSchema(colander.MappingSchema):
         colander.String(),
         title = 'Current Selection',
         missing = '',
-        widget = EsgSearchWidget())
+        widget = deferred_esgsearch_widget)
 
 # esg files schema
 @colander.deferred
 def deferred_esgfiles_widget(node, kw):
+    request = kw.get('request', None)
     wizard_state = kw.get('wizard_state', None)
     states = wizard_state.get_step_states()
     state = states.get(wizard_state.get_step_num() - 1)
     selection = state['selection']
 
-    conn = SearchConnection('http://adelie.d.dkrz.de:8090/esg-search', distrib=False)
-    ctx = conn.new_context(
-        project='CMIP5', product='output1',
-        replica=False, latest=True)
+    ctx = esgf_search_context(request)
     constraints = {}
     for constraint in selection.split(','):
         key,value = constraint.split(':')

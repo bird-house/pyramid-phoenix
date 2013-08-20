@@ -19,12 +19,5 @@
      ${field.end_rename()}
   </ul>
 
-  <script type="text/javascript">
-    deform.addCallback(
-      '${oid}',
-      function (oid) {
-        $.EsgSearch( {oid: oid } );
-    });
-  </script>
 </div>
 

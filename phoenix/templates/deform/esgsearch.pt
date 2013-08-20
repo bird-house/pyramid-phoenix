@@ -5,6 +5,7 @@
                   mask mask|field.widget.mask;
                   mask_placeholder mask_placeholder|field.widget.mask_placeholder;
                   style style|field.widget.style|None;
+                  url url|field.widget.url;
 "
       tal:omit-tag="">
 
@@ -34,7 +35,9 @@
     deform.addCallback(
       '${oid}',
       function (oid) {
-        $.EsgSearch( {oid: oid } );
+        $.EsgSearch( {
+           oid: oid,
+           url: '${url}', } );
     });
   </script>
 </span>
