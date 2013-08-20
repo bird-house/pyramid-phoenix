@@ -23,6 +23,8 @@ from owslib.wps import WebProcessingService, WPSExecution, ComplexData
 
 from .models import add_job, get_job, drop_jobs, update_job, num_jobs, jobs_by_userid
 
+from .wps import WPSSchema  
+
 from .helpers import wps_url
 from .helpers import csw_url
 from .helpers import update_wps_url
@@ -203,12 +205,10 @@ class ExecuteView(FormView):
     wps = None
    
     def __call__(self):
-        from .wps.schema import WPSInputSchemaNode  
-        
         # build the schema if it not exist
         if self.schema is None:
             if self.schema_factory is None:
-                self.schema_factory = WPSInputSchemaNode
+                self.schema_factory = WPSSchema
             
         try:
             identifier = self.request.params.get('identifier')
