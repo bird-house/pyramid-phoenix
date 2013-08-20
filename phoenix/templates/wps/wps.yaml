@@ -75,7 +75,7 @@ components:
       sys.path.append("/home/pingu/sandbox/climdaps/src/OWSLib")
       from owslib.wps import WebProcessingService, monitorExecution
       wps = WebProcessingService(service, verbose=False)
-      inputs = [("input", input)]
+      inputs = [("netcdf", input)]
       outputs = [("output",True)]
       execution = wps.execute(identifier, inputs=inputs, output=outputs)
       monitorExecution(execution)

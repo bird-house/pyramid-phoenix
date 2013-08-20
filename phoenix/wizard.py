@@ -117,15 +117,26 @@ class EsgFilesSchema(colander.MappingSchema):
         missing = '',
         widget = deferred_esgfiles_widget)
 
-# wps process schema
-# ------------------
 
-class WPSSchemaAdaptor(WPSSchema):
+# opendap schema
+# --------------
+
+class OpendapSchemaAdaptor(WPSSchema):
     def __init__(self, process=None, unknown='ignore', **kw):
         WPSSchema.__init__(self, process, unknown, **kw)
         # TODO: avoid hard coded wps parameters
-        if self.get('input') != None:
-            self.__delitem__('input')
+        if self.get('opendap_url') != None:
+            self.__delitem__('opendap_url')
+
+# wps process schema
+# ------------------
+
+class ProcessSchemaAdaptor(WPSSchema):
+    def __init__(self, process=None, unknown='ignore', **kw):
+        WPSSchema.__init__(self, process, unknown, **kw)
+        # TODO: avoid hard coded wps parameters
+        if self.get('netcdf') != None:
+            self.__delitem__('netcdf')
 
 # summary schema
 # --------------
@@ -202,6 +213,8 @@ class Done():
         pass
     
     def __call__(self, request, states):
+        log.debug('opendap_url = %s' % (states[1].get('opendap_url')))
+
         wps = WebProcessingService(wps_url(request), verbose=True)
         identifier = 'de.dkrz.restflow.run'
         workflow_template_filename = os.path.join(os.path.abspath(os.curdir), 'phoenix/templates/wps/wps.yaml')
@@ -209,9 +222,9 @@ class Done():
         workflow_description = workflow_template.render(
             service = wps.url,
             process = states[0].get('process'),
-            openid = states[2].get('openid'),
-            password = states[2].get('password'),
-            opendap_url = states[1].get('opendap_url')
+            openid = states[3].get('openid'),
+            password = states[3].get('password'),
+            opendap_url = states[2].get('opendap_url')
             )
         #log.debug("workflow_description = %s", workflow_description)
         inputs = [("workflow_description", str(workflow_description))]
@@ -256,10 +269,10 @@ def wizard(request):
     #schema_wget = WPSInputSchemaNode(process=process)
 
     process = wps.describeprocess('de.dkrz.esgf.opendap')
-    schema_opendap = WPSSchemaAdaptor(process=process)
+    schema_opendap = OpendapSchemaAdaptor(process=process)
 
     process = wps.describeprocess('de.dkrz.cdo.sinfo_workflow')
-    schema_process = WPSSchemaAdaptor(process=process)
+    schema_process = ProcessSchemaAdaptor(process=process)
 
     wizard = FormWizard('Workflow', 
                         Done(), 
