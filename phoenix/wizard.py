@@ -22,7 +22,7 @@ from mako.template import Template
 
 from .models import add_job, esgf_search_context
 from .helpers import wps_url, esgsearch_url
-from .wps.schema import WPSSchema
+from .wps import WPSSchema
 
 import logging
 
@@ -204,7 +204,7 @@ class Done():
     def __call__(self, request, states):
         wps = WebProcessingService(wps_url(request), verbose=True)
         identifier = 'de.dkrz.restflow.run'
-        workflow_template_filename = os.path.join(os.path.abspath(os.curdir), 'phoenix/wps/templates/wps.yaml')
+        workflow_template_filename = os.path.join(os.path.abspath(os.curdir), 'phoenix/templates/wps/wps.yaml')
         workflow_template = Template(filename=workflow_template_filename)
         workflow_description = workflow_template.render(
             service = wps.url,
