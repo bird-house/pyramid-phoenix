@@ -22,14 +22,12 @@ from mako.template import Template
 
 from .models import add_job, esgf_search_context
 from .helpers import wps_url, esgsearch_url
+from .wps.schema import WPSInputSchemaNode
 
 import logging
 
 log = logging.getLogger(__name__)
 
-
-# schema
-# ------
 
 from owslib.wps import WebProcessingService
 from phoenix.helpers import wps_url
@@ -38,6 +36,7 @@ from phoenix.widget import EsgSearchWidget, EsgFilesWidget
 from pyesgf.search import SearchConnection
 
 # select process schema
+# ---------------------
 
 @colander.deferred
 def deferred_choose_workflow_widget(node, kw):
@@ -59,6 +58,8 @@ class SelectProcessSchema(colander.MappingSchema):
         widget = deferred_choose_workflow_widget)
 
 # esg search schema
+# -----------------
+
 @colander.deferred
 def deferred_esgsearch_widget(node, kw):
     request = kw.get('request')
@@ -76,6 +77,8 @@ class EsgSearchSchema(colander.MappingSchema):
         widget = deferred_esgsearch_widget)
 
 # esg files schema
+# ----------------
+
 @colander.deferred
 def deferred_esgfiles_widget(node, kw):
     request = kw.get('request', None)
@@ -87,8 +90,9 @@ def deferred_esgfiles_widget(node, kw):
     ctx = esgf_search_context(request)
     constraints = {}
     for constraint in selection.split(','):
-        key,value = constraint.split(':')
-        constraints[key] = value
+        if ':' in constraint:
+            key,value = constraint.split(':')
+            constraints[key] = value
     ctx = ctx.constrain(**constraints) 
     
     choices = []
@@ -113,7 +117,18 @@ class EsgFilesSchema(colander.MappingSchema):
         missing = '',
         widget = deferred_esgfiles_widget)
 
+# wps process schema
+# ------------------
+
+class WPSSchemaAdaptor(WPSInputSchemaNode):
+    def __init__(self, process=None, unknown='ignore', **kw):
+        WPSInputSchemaNode.__init__(self, process, unknown, **kw)
+        # TODO: avoid hard coded wps parameters
+        if self.get('input') != None:
+            self.__delitem__('input')
+
 # summary schema
+# --------------
     
 class SummarySchema(colander.MappingSchema):
     description = 'Summary'
@@ -236,16 +251,15 @@ def wizard(request):
     schema_esgfiles = EsgFilesSchema(title='Select ESGF File')
 
     # wget process
-    from .wps.schema import WPSInputSchemaNode
     wps = WebProcessingService(wps_url(request), verbose=True)
     #process = wps.describeprocess('de.dkrz.esgf.wget')
     #schema_wget = WPSInputSchemaNode(process=process)
 
     process = wps.describeprocess('de.dkrz.esgf.opendap')
-    schema_opendap = WPSInputSchemaNode(process=process)
+    schema_opendap = WPSSchemaAdaptor(process=process)
 
     process = wps.describeprocess('de.dkrz.cdo.sinfo_workflow')
-    schema_process = WPSInputSchemaNode(process=process)
+    schema_process = WPSSchemaAdaptor(process=process)
 
     wizard = FormWizard('Workflow', 
                         Done(), 

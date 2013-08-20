@@ -40,6 +40,7 @@ class WPSInputSchemaNode(colander.SchemaNode):
 
     TODO: use widget category as grouping info
     TODO: fix dataType in wps client
+    TODO: use insert_before, add_before, insert etc for ordering of elements
     """
 
     appstruct = {}
