@@ -34,7 +34,7 @@ components:
   properties:
     step: |
       import sys
-      sys.path.append("/home/pingu/sandbox/climdaps/src/OWSLib")
+      sys.path.append("${sys_path}")
       from owslib.wps import WebProcessingService, monitorExecution
       wps = WebProcessingService(service, verbose=False)
       inputs = [("openid", openid), ("password", password), ("opendap_url", opendap_url)]
@@ -72,7 +72,7 @@ components:
   properties:
     step: |
       import sys
-      sys.path.append("/home/pingu/sandbox/climdaps/src/OWSLib")
+      sys.path.append("${sys_path}")
       from owslib.wps import WebProcessingService, monitorExecution
       wps = WebProcessingService(service, verbose=False)
       inputs = [("netcdf", input)]

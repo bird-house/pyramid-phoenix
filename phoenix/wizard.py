@@ -16,6 +16,7 @@ import deform
 
 import colander
 
+import owslib
 from owslib.wps import WebProcessingService
 
 from mako.template import Template
@@ -215,11 +216,14 @@ class Done():
     def __call__(self, request, states):
         log.debug('opendap_url = %s' % (states[1].get('opendap_url')))
 
+        sys_path = os.path.abspath(os.path.join(os.path.dirname(owslib.__file__), '..'))
+        
         wps = WebProcessingService(wps_url(request), verbose=True)
         identifier = 'de.dkrz.restflow.run'
         workflow_template_filename = os.path.join(os.path.abspath(os.curdir), 'phoenix/templates/wps/wps.yaml')
         workflow_template = Template(filename=workflow_template_filename)
         workflow_description = workflow_template.render(
+            sys_path = sys_path,
             service = wps.url,
             process = states[0].get('process'),
             openid = states[3].get('openid'),
