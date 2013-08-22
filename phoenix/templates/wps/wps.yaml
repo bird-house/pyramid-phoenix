@@ -6,6 +6,63 @@ imports:
 
 components:
 
+
+# actors
+# ------
+
+- id: ExecuteWPSProcess
+  type: PythonActor
+  properties:
+    step: |
+      import sys
+      sys.path.append(sys_path)
+      from owslib.wps import WebProcessingService, monitorExecution
+      wps = WebProcessingService(service, verbose=False)
+      inputs = [("netcdf", input)]
+      outputs = [("output",True)]
+      execution = wps.execute(identifier, inputs=inputs, output=outputs)
+      monitorExecution(execution)
+      status = execution.status
+      output = execution.processOutputs[0].reference
+    inputs:
+      sys_path:
+      identifier: 
+      service:
+      input:
+    outputs:
+      status: 
+      output:
+
+
+- id: ExecuteEsgfWPS
+  type: PythonActor
+  properties:
+    step: |
+      import sys
+      sys.path.append(sys_path)
+      from owslib.wps import WebProcessingService, monitorExecution
+      wps = WebProcessingService(service, verbose=False)
+      inputs = [("openid", openid), ("password", password), ("opendap_url", opendap_url)]
+      outputs = [("output",True)]
+      execution = wps.execute(identifier, inputs=inputs, output=outputs)
+      # TODO: fix delay of copying output file ...
+      monitorExecution(execution, sleepSecs=20)
+      status = execution.status
+      output = execution.processOutputs[0].reference
+    inputs:
+      sys_path: 
+      identifier: 
+      service:
+      openid:
+      password:
+      opendap_url:
+    outputs:
+      status:
+      output:  
+
+# workflow
+# --------
+
 - id: ESGFWorkflow
   type: Workflow
   properties:
@@ -20,6 +77,7 @@ components:
   properties:
     actor: !ref ExecuteEsgfWPS
     constants:
+      sys_path: ${sys_path}
       service: ${service}
       identifier: de.dkrz.esgf.opendap
       openid: ${openid}
@@ -29,36 +87,12 @@ components:
       status: /wps/esgf/wget/status/
       output: /wps/esgf/wget/file_url/
 
-- id: ExecuteEsgfWPS
-  type: PythonActor
-  properties:
-    step: |
-      import sys
-      sys.path.append("${sys_path}")
-      from owslib.wps import WebProcessingService, monitorExecution
-      wps = WebProcessingService(service, verbose=False)
-      inputs = [("openid", openid), ("password", password), ("opendap_url", opendap_url)]
-      outputs = [("output",True)]
-      execution = wps.execute(identifier, inputs=inputs, output=outputs)
-      # TODO: fix delay of copying output file ...
-      monitorExecution(execution, sleepSecs=20)
-      status = execution.status
-      output = execution.processOutputs[0].reference
-    inputs:
-      identifier: 
-      service:
-      openid:
-      password:
-      opendap_url:
-    outputs:
-      status:
-      output:  
-
 - id: RunProcess
   type: Node
   properties:
     actor: !ref ExecuteWPSProcess
     constants:
+      sys_path: ${sys_path}
       service: ${service}
       identifier: ${process}
     inflows:
@@ -67,31 +101,10 @@ components:
       status: /wps/process/status/
       output: /wps/process/output/  
  
-- id: ExecuteWPSProcess
-  type: PythonActor
-  properties:
-    step: |
-      import sys
-      sys.path.append("${sys_path}")
-      from owslib.wps import WebProcessingService, monitorExecution
-      wps = WebProcessingService(service, verbose=False)
-      inputs = [("netcdf", input)]
-      outputs = [("output",True)]
-      execution = wps.execute(identifier, inputs=inputs, output=outputs)
-      monitorExecution(execution)
-      status = execution.status
-      output = execution.processOutputs[0].reference
-    inputs:
-      identifier: 
-      service:
-      input:
-    outputs:
-      status: 
-      output:
-
 - id: RenderResult
   type: Node
   properties:
     actor: !ref PrintStreamWriter
     inflows:
       message: /wps/process/status/
+
