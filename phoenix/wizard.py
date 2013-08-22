@@ -122,36 +122,26 @@ class EsgFilesSchema(colander.MappingSchema):
 # opendap schema
 # --------------
 
-class OpendapSchemaAdaptor(WPSSchema):
-    def __init__(self, process=None, unknown='ignore', **kw):
-        WPSSchema.__init__(self, process, unknown, **kw)
-        # TODO: avoid hard coded wps parameters
-        if self.get('opendap_url') != None:
-            self.__delitem__('opendap_url')
+def remove_opendap_url(node, kw):
+    if node.get('opendap_url', False):
+        del node['opendap_url']
 
 # wps process schema
 # ------------------
 
-class ProcessSchemaAdaptor(WPSSchema):
-    def __init__(self, process=None, unknown='ignore', **kw):
-        WPSSchema.__init__(self, process, unknown, **kw)
-        # TODO: avoid hard coded wps parameters
-        if self.get('netcdf') != None:
-            self.__delitem__('netcdf')
-
-    def bind(self, **kw):
-        log.debug('kw = %s' % (kw))
-        request = kw.get('request', None)
-        log.debug('request = %s' % (request))
-        wizard_state = kw.get('wizard_state', None)
-        log.debug('process schema bind: wizzard_state=%s' % (wizard_state))
-        if request != None and wizard_state != None:
-            states = wizard_state.get_step_states()
-            state = states.get(0)
-            identifier = state['process']
-            wps = WebProcessingService(wps_url(request), verbose=False)
-            self.process = wps.describeprocess(identifier)
-        return WPSSchema.bind(self, **kw)
+def after_bind_wps_schema(node, kw):
+    log.debug("remove netcdf, kw=%s" % (kw))
+    request = kw.get('request', None)
+    wizard_state = kw.get('wizard_state', None)
+    if request != None and wizard_state != None:
+        states = wizard_state.get_step_states()
+        state = states.get(0)
+        identifier = state['process']
+        wps = WebProcessingService(wps_url(request), verbose=False)
+        process = wps.describeprocess(identifier)
+        node.add_nodes(process)
+    if node.get('netcdf', False):
+        del node['netcdf']
 
 # summary schema
 # --------------
@@ -291,10 +281,9 @@ def wizard(request):
     #schema_wget = WPSInputSchemaNode(process=process)
 
     process = wps.describeprocess('de.dkrz.esgf.opendap')
-    schema_opendap = OpendapSchemaAdaptor(process=process)
+    schema_opendap = WPSSchema(after_bind=remove_opendap_url, process=process)
 
-    #process = wps.describeprocess('de.dkrz.cdo.sinfo_workflow')
-    schema_process = ProcessSchemaAdaptor()
+    schema_process = WPSSchema(after_bind=after_bind_wps_schema)
 
     wizard = FormWizard('Workflow', 
                         Done(), 
