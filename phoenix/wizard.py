@@ -139,6 +139,20 @@ class ProcessSchemaAdaptor(WPSSchema):
         if self.get('netcdf') != None:
             self.__delitem__('netcdf')
 
+    def bind(self, **kw):
+        log.debug('kw = %s' % (kw))
+        request = kw.get('request', None)
+        log.debug('request = %s' % (request))
+        wizard_state = kw.get('wizard_state', None)
+        log.debug('process schema bind: wizzard_state=%s' % (wizard_state))
+        if request != None and wizard_state != None:
+            states = wizard_state.get_step_states()
+            state = states.get(0)
+            identifier = state['process']
+            wps = WebProcessingService(wps_url(request), verbose=False)
+            self.process = wps.describeprocess(identifier)
+        return WPSSchema.bind(self, **kw)
+
 # summary schema
 # --------------
     
@@ -167,18 +181,20 @@ class MyFormWizardView(FormWizardView):
             return result
         form_view = self.form_view_class(request)
         schema = self.wizard.schemas[step]
+        log.debug('calling schema.bind on schema=%s' % (schema))
         self.schema = schema.bind(request=request, wizard_state=self.wizard_state)
+        log.debug('after wizard bind, schema = %s' % (self.schema))
         form_view.schema = self.schema
         buttons = []
 
         prev_disabled = False
         next_disabled = False
 
-        if hasattr(schema, 'prev_ok'):
-            prev_disabled = not schema.prev_ok(request)
+        if hasattr(self.schema, 'prev_ok'):
+            prev_disabled = not self.schema.prev_ok(request)
 
-        if hasattr(schema, 'next_ok'):
-            next_disabled = not schema.next_ok(request)
+        if hasattr(self.schema, 'next_ok'):
+            next_disabled = not self.schema.next_ok(request)
 
         prev_button = Button(name='previous', title='Previous',
                              disabled=prev_disabled)
@@ -200,7 +216,8 @@ class MyFormWizardView(FormWizardView):
         form_view.previous_success = self.previous_success
         form_view.previous_failure = self.previous_failure
         form_view.show = self.show
-        form_view.appstruct = getattr(schema, 'appstruct', None)
+        form_view.appstruct = getattr(self.schema, 'appstruct', None)
+        log.debug("before form_view, schema = %s" % (self.schema))
         result = form_view()
         return result
 
@@ -276,8 +293,8 @@ def wizard(request):
     process = wps.describeprocess('de.dkrz.esgf.opendap')
     schema_opendap = OpendapSchemaAdaptor(process=process)
 
-    process = wps.describeprocess('de.dkrz.cdo.sinfo_workflow')
-    schema_process = ProcessSchemaAdaptor(process=process)
+    #process = wps.describeprocess('de.dkrz.cdo.sinfo_workflow')
+    schema_process = ProcessSchemaAdaptor()
 
     wizard = FormWizard('Workflow', 
                         Done(), 

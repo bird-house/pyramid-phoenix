@@ -266,9 +266,6 @@ class WPSSchema(colander.SchemaNode):
         return node
 
     def bind(self, **kw):
-        cloned = self.__class__(self.process,
-                                self.unknown,
-                                **self.kwargs)
         cloned = self.clone()
         cloned._bind(kw)
 
