@@ -20,6 +20,7 @@ import owslib
 from owslib.wps import WebProcessingService
 
 from mako.template import Template
+import json
 
 from .models import add_job, esgf_search_context
 from .helpers import wps_url, esgsearch_url
@@ -236,7 +237,7 @@ class Done():
             openid = states[3].get('openid'),
             password = states[3].get('password'),
             opendap_url = states[2].get('opendap_url'),
-            params = states[4]
+            params = json.dumps(states[4])
             )
         #log.debug("workflow_description = %s", workflow_description)
         inputs = [("workflow_description", str(workflow_description))]
