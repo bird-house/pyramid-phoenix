@@ -29,6 +29,7 @@ components:
       identifier: 
       service:
       input:
+      params:
     outputs:
       status: 
       output:
@@ -95,6 +96,7 @@ components:
       sys_path: ${sys_path}
       service: ${service}
       identifier: ${process}
+      params: ${params}
     inflows:
       input: /wps/esgf/wget/file_url
     outflows:

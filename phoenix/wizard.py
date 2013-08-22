@@ -228,7 +228,8 @@ class Done():
             process = states[0].get('process'),
             openid = states[3].get('openid'),
             password = states[3].get('password'),
-            opendap_url = states[2].get('opendap_url')
+            opendap_url = states[2].get('opendap_url'),
+            params = states[4]
             )
         #log.debug("workflow_description = %s", workflow_description)
         inputs = [("workflow_description", str(workflow_description))]
