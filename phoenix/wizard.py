@@ -66,7 +66,7 @@ class SelectProcessSchema(colander.MappingSchema):
 class SelectDataSourceSchema(colander.MappingSchema):
     description = "Select data source"
     appstruct = {}
-    choices = [('esgf_opendap', "ESGF OpenDAP"), ('esgf_wget', "ESGF wget")]
+    choices = [('de.dkrz.esgf.opendap', "ESGF OpenDAP"), ('de.dkrz.esgf.wget', "ESGF wget")]
 
     data_source = colander.SchemaNode(
         colander.String(),
@@ -116,7 +116,7 @@ def deferred_esg_files_widget(node, kw):
 
     if ctx.hit_count == 1:
         result = ctx.search()[0]
-        if data_source == 'esgf_opendap':
+        if data_source == 'de.dkrz.esgf.opendap':
             agg_ctx = result.aggregation_context()
             for agg in agg_ctx.search():
                 choices.append( (agg.opendap_url, agg.opendap_url) )
@@ -140,9 +140,19 @@ class EsgFilesSchema(colander.MappingSchema):
 # opendap schema
 # --------------
 
-def bind_opendap_schema(node, kw):
-    if node.get('opendap_url', False):
-        del node['opendap_url']
+def bind_esg_access_schema(node, kw):
+    log.debug("bind access schema, kw=%s" % (kw))
+    request = kw.get('request', None)
+    wizard_state = kw.get('wizard_state', None)
+    if request != None and wizard_state != None:
+        states = wizard_state.get_step_states()
+        data_source_state = states.get(wizard_state.get_step_num() - 3)
+        identifier = data_source_state['data_source']
+        wps = WebProcessingService(wps_url(request), verbose=False)
+        process = wps.describeprocess(identifier)
+        node.add_nodes(process)
+    if node.get('file_url', False):
+        del node['file_url']
 
 # wps process schema
 # ------------------
@@ -158,8 +168,8 @@ def bind_wps_schema(node, kw):
         wps = WebProcessingService(wps_url(request), verbose=False)
         process = wps.describeprocess(identifier)
         node.add_nodes(process)
-    if node.get('netcdf_url', False):
-        del node['netcdf_url']
+    if node.get('file_url', False):
+        del node['file_url']
 
 # summary schema
 # --------------
@@ -252,9 +262,10 @@ class Done():
             sys_path = sys_path,
             service = wps.url,
             process = states[0].get('process'),
+            data_source = states[1].get('data_source'),
             openid = states[4].get('openid'),
             password = states[4].get('password'),
-            opendap_url = states[3].get('file_url'),
+            file_url = states[3].get('file_url'),
             params = states[5].items()
             )
         inputs = [("workflow_description", str(workflow_description))]
@@ -284,19 +295,17 @@ class Done():
              permission='edit',
              )
 def wizard(request):
-    wps = WebProcessingService(wps_url(request), verbose=True)
-    process = wps.describeprocess('de.dkrz.esgf.opendap')
-
     schemas = []
     schemas.append( SelectProcessSchema(title='Select Process') )
     schemas.append( SelectDataSourceSchema(title='Select Data Source') )
     schemas.append( EsgSearchSchema(title='Select ESGF Dataset') )
     schemas.append( EsgFilesSchema(title='Select File URL') )
-    schemas.append( WPSSchema(title='OpenDAP Parameters', 
-                              after_bind=bind_opendap_schema, 
-                              process=process) )
+    schemas.append( WPSSchema(title='Access Parameters', 
+                              after_bind=bind_esg_access_schema,
+                              ))
     schemas.append( WPSSchema(title='Process Parameters', 
-                              after_bind=bind_wps_schema) )
+                              after_bind=bind_wps_schema,
+                              ))
 
     wizard = FormWizard('Workflow', 
                         Done(), 

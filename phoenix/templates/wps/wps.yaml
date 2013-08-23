@@ -18,7 +18,7 @@ components:
       sys.path.append(sys_path)
       from owslib.wps import WebProcessingService, monitorExecution
       wps = WebProcessingService(service, verbose=False)
-      inputs = [("netcdf_url", netcdf_url)]
+      inputs = [("file_url", file_url)]
       outputs = [("output",True)]
       inputs.extend(input_params)
       inputs = map(lambda(val): (val[0], str(val[1])), inputs)
@@ -30,7 +30,7 @@ components:
       sys_path:
       identifier: 
       service:
-      netcdf_url:
+      file_url:
         type: String
       input_params:
         type: Collection
@@ -47,7 +47,7 @@ components:
       sys.path.append(sys_path)
       from owslib.wps import WebProcessingService, monitorExecution
       wps = WebProcessingService(service, verbose=False)
-      inputs = [("openid", openid), ("password", password), ("opendap_url", opendap_url)]
+      inputs = [("openid", openid), ("password", password), ("file_url", file_url)]
       outputs = [("output",True)]
       execution = wps.execute(identifier, inputs=inputs, output=outputs)
       # TODO: fix delay of copying output file ...
@@ -60,7 +60,7 @@ components:
       service:
       openid:
       password:
-      opendap_url:
+      file_url:
     outputs:
       status:
       output:  
@@ -84,13 +84,13 @@ components:
     constants:
       sys_path: ${sys_path}
       service: ${service}
-      identifier: de.dkrz.esgf.opendap
+      identifier: ${data_source}
       openid: ${openid}
       password: ${password}
-      opendap_url: ${opendap_url}
+      file_url: ${file_url}
     outflows:
       status: /wps/esgf/download/status/
-      output: /wps/esgf/download/netcdf_url/
+      output: /wps/esgf/download/file_url/
 
 - id: RunProcess
   type: Node
@@ -102,7 +102,7 @@ components:
       identifier: ${process}
       input_params: ${params}
     inflows:
-      netcdf_url: /wps/esgf/download/netcdf_url
+      file_url: /wps/esgf/download/file_url
     outflows:
       status: /wps/process/status/
       output: /wps/process/output/  
