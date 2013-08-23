@@ -249,25 +249,25 @@ class Done():
         pass
     
     def __call__(self, request, states):
-        log.debug('opendap_url = %s' % (states[1].get('opendap_url')))
-        log.debug('process params = %s' % (states[4]))
-
-        sys_path = os.path.abspath(os.path.join(os.path.dirname(owslib.__file__), '..'))
-        
         wps = WebProcessingService(wps_url(request), verbose=True)
-        identifier = 'de.dkrz.restflow.run'
+        
+        sys_path = os.path.abspath(os.path.join(os.path.dirname(owslib.__file__), '..'))
+
+        workflow_params = dict(sys_path = sys_path, service = wps.url)
+        log.debug('states 1 = %s' % (states[1]))
+        workflow_params['download_process'] = str(states[1].get('data_source'))
+        workflow_params['openid'] = str(states[4].get('openid'))
+        workflow_params['password'] = str(states[4].get('password'))
+        workflow_params['file_url'] = str(states[3].get('file_url'))
+        workflow_params['download_params'] = [('nothing',1)]
+        workflow_params['work_process'] = str(states[0].get('process'))
+        workflow_params['work_params'] = states[5].items()
+                
         workflow_template_filename = os.path.join(os.path.abspath(os.curdir), 'phoenix/templates/wps/wps.yaml')
         workflow_template = Template(filename=workflow_template_filename)
-        workflow_description = workflow_template.render(
-            sys_path = sys_path,
-            service = wps.url,
-            process = states[0].get('process'),
-            data_source = states[1].get('data_source'),
-            openid = states[4].get('openid'),
-            password = states[4].get('password'),
-            file_url = states[3].get('file_url'),
-            params = states[5].items()
-            )
+        workflow_description = workflow_template.render(**workflow_params)
+
+        identifier = 'de.dkrz.restflow.run'
         inputs = [("workflow_description", str(workflow_description))]
         outputs = [("output",True)]
         execution = wps.execute(identifier, inputs=inputs, output=outputs)

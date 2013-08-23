@@ -6,7 +6,6 @@ imports:
 
 components:
 
-
 # actors
 # ------
 
@@ -18,7 +17,13 @@ components:
       sys.path.append(sys_path)
       from owslib.wps import WebProcessingService, monitorExecution
       wps = WebProcessingService(service, verbose=False)
-      inputs = [("file_url", file_url)]
+      inputs = []
+      if openid != null:
+        inputs.append( ("openid", openid) )
+      if password != null:
+        inputs.append( ("password", password) )
+      if file_url != null:
+        inputs.append( ("file_url", file_url) )
       outputs = [("output",True)]
       inputs.extend(input_params)
       inputs = map(lambda(val): (val[0], str(val[1])), inputs)
@@ -30,8 +35,18 @@ components:
       sys_path:
       identifier: 
       service:
+      openid:
+        type: String
+        optional: true
+        nullable: true
+      password:
+        type: String
+        optional: true
+        nullable: true
       file_url:
         type: String
+        optional: true
+        nullable: true
       input_params:
         type: Collection
     outputs:
@@ -39,78 +54,53 @@ components:
       output:
 
 
-- id: ExecuteEsgfWPS
-  type: PythonActor
-  properties:
-    step: |
-      import sys
-      sys.path.append(sys_path)
-      from owslib.wps import WebProcessingService, monitorExecution
-      wps = WebProcessingService(service, verbose=False)
-      inputs = [("openid", openid), ("password", password), ("file_url", file_url)]
-      outputs = [("output",True)]
-      execution = wps.execute(identifier, inputs=inputs, output=outputs)
-      # TODO: fix delay of copying output file ...
-      monitorExecution(execution, sleepSecs=20)
-      status = execution.status
-      output = execution.processOutputs[0].reference
-    inputs:
-      sys_path: 
-      identifier: 
-      service:
-      openid:
-      password:
-      file_url:
-    outputs:
-      status:
-      output:  
-
 # workflow
 # --------
 
-- id: ESGFWorkflow
+- id: SimpleProcessing
   type: Workflow
   properties:
     director: !ref MTDataDrivenDirector
     nodes:
-    - !ref DownloadEsgfFile
-    - !ref RunProcess
+    - !ref DownloadData
+    - !ref RunDataProcessing
     - !ref RenderResult
 
-- id: DownloadEsgfFile
-  type: Node
-  properties:
-    actor: !ref ExecuteEsgfWPS
-    constants:
-      sys_path: ${sys_path}
-      service: ${service}
-      identifier: ${data_source}
-      openid: ${openid}
-      password: ${password}
-      file_url: ${file_url}
-    outflows:
-      status: /wps/esgf/download/status/
-      output: /wps/esgf/download/file_url/
-
-- id: RunProcess
+- id: DownloadData
   type: Node
   properties:
     actor: !ref ExecuteWPSProcess
     constants:
       sys_path: ${sys_path}
       service: ${service}
-      identifier: ${process}
-      input_params: ${params}
-    inflows:
-      file_url: /wps/esgf/download/file_url
+      identifier: ${download_process}
+      openid: ${openid}
+      password: ${password}
+      file_url: ${file_url}
+      input_params: ${download_params}
     outflows:
-      status: /wps/process/status/
-      output: /wps/process/output/  
+      status: /wps/download/status/
+      output: /wps/download/file_url/
+
+- id: RunDataProcessing
+  type: Node
+  properties:
+    actor: !ref ExecuteWPSProcess
+    constants:
+      sys_path: ${sys_path}
+      service: ${service}
+      identifier: ${work_process}
+      input_params: ${work_params}
+    inflows:
+      file_url: /wps/download/file_url
+    outflows:
+      status: /wps/work/status/
+      output: /wps/work/output/  
  
 - id: RenderResult
   type: Node
   properties:
     actor: !ref PrintStreamWriter
     inflows:
-      message: /wps/process/status/
+      message: /wps/work/status/
 
