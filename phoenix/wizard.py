@@ -123,14 +123,14 @@ class EsgFilesSchema(colander.MappingSchema):
 # opendap schema
 # --------------
 
-def remove_opendap_url(node, kw):
+def bind_opendap_schema(node, kw):
     if node.get('opendap_url', False):
         del node['opendap_url']
 
 # wps process schema
 # ------------------
 
-def after_bind_wps_schema(node, kw):
+def bind_wps_schema(node, kw):
     log.debug("remove netcdf, kw=%s" % (kw))
     request = kw.get('request', None)
     wizard_state = kw.get('wizard_state', None)
@@ -141,8 +141,8 @@ def after_bind_wps_schema(node, kw):
         wps = WebProcessingService(wps_url(request), verbose=False)
         process = wps.describeprocess(identifier)
         node.add_nodes(process)
-    if node.get('netcdf', False):
-        del node['netcdf']
+    if node.get('netcdf_url', False):
+        del node['netcdf_url']
 
 # summary schema
 # --------------
@@ -282,9 +282,9 @@ def wizard(request):
     #schema_wget = WPSInputSchemaNode(process=process)
 
     process = wps.describeprocess('de.dkrz.esgf.opendap')
-    schema_opendap = WPSSchema(after_bind=remove_opendap_url, process=process)
+    schema_opendap = WPSSchema(after_bind=bind_opendap_schema, process=process)
 
-    schema_process = WPSSchema(after_bind=after_bind_wps_schema)
+    schema_process = WPSSchema(after_bind=bind_wps_schema)
 
     wizard = FormWizard('Workflow', 
                         Done(), 

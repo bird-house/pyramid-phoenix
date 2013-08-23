@@ -18,7 +18,7 @@ components:
       sys.path.append(sys_path)
       from owslib.wps import WebProcessingService, monitorExecution
       wps = WebProcessingService(service, verbose=False)
-      inputs = [("netcdf", input)]
+      inputs = [("netcdf_url", netcdf_url)]
       outputs = [("output",True)]
       execution = wps.execute(identifier, inputs=inputs, output=outputs)
       monitorExecution(execution)
@@ -28,7 +28,7 @@ components:
       sys_path:
       identifier: 
       service:
-      input:
+      netcdf_url:
       params:
     outputs:
       status: 
@@ -85,8 +85,8 @@ components:
       password: ${password}
       opendap_url: ${opendap_url}
     outflows:
-      status: /wps/esgf/wget/status/
-      output: /wps/esgf/wget/file_url/
+      status: /wps/esgf/download/status/
+      output: /wps/esgf/download/netcdf_url/
 
 - id: RunProcess
   type: Node
@@ -98,7 +98,7 @@ components:
       identifier: ${process}
       params: ${params}
     inflows:
-      input: /wps/esgf/wget/file_url
+      netcdf_url: /wps/esgf/download/netcdf_url
     outflows:
       status: /wps/process/status/
       output: /wps/process/output/  
