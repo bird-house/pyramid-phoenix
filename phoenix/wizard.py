@@ -11,8 +11,10 @@ from pyramid.view import view_config, forbidden_view_config
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.security import authenticated_userid
 from pyramid_deform import FormView, FormWizard, FormWizardView
-from deform.form import Button
+
 import deform
+from deform.form import Button
+from deform import widget
 
 import colander
 
@@ -20,7 +22,6 @@ import owslib
 from owslib.wps import WebProcessingService
 
 from mako.template import Template
-import json
 
 from .models import add_job, esgf_search_context
 from .helpers import wps_url, esgsearch_url
@@ -49,7 +50,7 @@ def deferred_choose_workflow_widget(node, kw):
     for process in wps.processes:
         if '_workflow' in process.identifier:
             choices.append( (process.identifier, process.title) )
-    return deform.widget.SelectWidget(values = choices)
+    return widget.RadioChoiceWidget(values = choices)
 
 class SelectProcessSchema(colander.MappingSchema):
     description = "Select a workflow process for ESGF data"
@@ -58,6 +59,18 @@ class SelectProcessSchema(colander.MappingSchema):
     process = colander.SchemaNode(
         colander.String(),
         widget = deferred_choose_workflow_widget)
+
+# select data source schema
+# -------------------------
+
+class SelectDataSourceSchema(colander.MappingSchema):
+    description = "Select data source"
+    appstruct = {}
+    choices = [('esgf_opendap', "ESGF OpenDAP"), ('esgf_wget', "ESGF wget")]
+
+    data_source = colander.SchemaNode(
+        colander.String(),
+        widget = widget.RadioChoiceWidget(values = choices))
 
 # esg search schema
 # -----------------
@@ -78,16 +91,18 @@ class EsgSearchSchema(colander.MappingSchema):
         missing = '',
         widget = deferred_esgsearch_widget)
 
-# esg files schema
+# esg aggregation schema
 # ----------------
 
 @colander.deferred
-def deferred_esgfiles_widget(node, kw):
+def deferred_esg_files_widget(node, kw):
     request = kw.get('request', None)
     wizard_state = kw.get('wizard_state', None)
     states = wizard_state.get_step_states()
-    state = states.get(wizard_state.get_step_num() - 1)
-    selection = state['selection']
+    search_state = states.get(wizard_state.get_step_num() - 1)
+    selection = search_state['selection']
+    data_source_state = states.get(wizard_state.get_step_num() - 2)
+    data_source = data_source_state['data_source']
 
     ctx = esgf_search_context(request)
     constraints = {}
@@ -101,24 +116,26 @@ def deferred_esgfiles_widget(node, kw):
 
     if ctx.hit_count == 1:
         result = ctx.search()[0]
-        agg_ctx = result.aggregation_context()
-        for agg in agg_ctx.search():
-            choices.append( (agg.opendap_url, agg.opendap_url) )
+        if data_source == 'esgf_opendap':
+            agg_ctx = result.aggregation_context()
+            for agg in agg_ctx.search():
+                choices.append( (agg.opendap_url, agg.opendap_url) )
+        else:
+            file_ctx = result.file_context()
+            for f in file_ctx.search():
+                choices.append( (f.download_url, f.download_url) )
    
-    return deform.widget.RadioChoiceWidget(
-        values=choices)
+    return widget.RadioChoiceWidget(values=choices)
 
-    
 class EsgFilesSchema(colander.MappingSchema):
-    description = 'You need to choose a single file'
+    description = 'You need to choose a single file url'
     appstruct = {}
     
-    opendap_url = colander.SchemaNode(
+    file_url = colander.SchemaNode(
         colander.String(),
-        description = 'OpenDAP Access URL',
+        description = 'File URL',
         missing = '',
-        widget = deferred_esgfiles_widget)
-
+        widget = deferred_esg_files_widget)
 
 # opendap schema
 # --------------
@@ -131,7 +148,7 @@ def bind_opendap_schema(node, kw):
 # ------------------
 
 def bind_wps_schema(node, kw):
-    log.debug("remove netcdf, kw=%s" % (kw))
+    log.debug("bind wps schema, kw=%s" % (kw))
     request = kw.get('request', None)
     wizard_state = kw.get('wizard_state', None)
     if request != None and wizard_state != None:
@@ -235,12 +252,11 @@ class Done():
             sys_path = sys_path,
             service = wps.url,
             process = states[0].get('process'),
-            openid = states[3].get('openid'),
-            password = states[3].get('password'),
-            opendap_url = states[2].get('opendap_url'),
-            params = states[4].items()
+            openid = states[4].get('openid'),
+            password = states[4].get('password'),
+            opendap_url = states[3].get('file_url'),
+            params = states[5].items()
             )
-        #log.debug("workflow_description = %s", workflow_description)
         inputs = [("workflow_description", str(workflow_description))]
         outputs = [("output",True)]
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
@@ -268,32 +284,23 @@ class Done():
              permission='edit',
              )
 def wizard(request):
-    # choose process
-    schema_select_process = SelectProcessSchema(title='Select Process')
-
-    # select esgf dataset
-    schema_esgsearch = EsgSearchSchema(title='Select ESGF Dataset')
-
-    # select files
-    schema_esgfiles = EsgFilesSchema(title='Select ESGF File')
-
-    # wget process
     wps = WebProcessingService(wps_url(request), verbose=True)
-    #process = wps.describeprocess('de.dkrz.esgf.wget')
-    #schema_wget = WPSInputSchemaNode(process=process)
-
     process = wps.describeprocess('de.dkrz.esgf.opendap')
-    schema_opendap = WPSSchema(after_bind=bind_opendap_schema, process=process)
 
-    schema_process = WPSSchema(after_bind=bind_wps_schema)
+    schemas = []
+    schemas.append( SelectProcessSchema(title='Select Process') )
+    schemas.append( SelectDataSourceSchema(title='Select Data Source') )
+    schemas.append( EsgSearchSchema(title='Select ESGF Dataset') )
+    schemas.append( EsgFilesSchema(title='Select File URL') )
+    schemas.append( WPSSchema(title='OpenDAP Parameters', 
+                              after_bind=bind_opendap_schema, 
+                              process=process) )
+    schemas.append( WPSSchema(title='Process Parameters', 
+                              after_bind=bind_wps_schema) )
 
     wizard = FormWizard('Workflow', 
                         Done(), 
-                        schema_select_process, 
-                        schema_esgsearch,
-                        schema_esgfiles,
-                        schema_opendap,
-                        schema_process,
+                        *schemas 
                         )
     view = MyFormWizardView(wizard)
     return view(request)
