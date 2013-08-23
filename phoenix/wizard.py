@@ -223,6 +223,7 @@ class Done():
     
     def __call__(self, request, states):
         log.debug('opendap_url = %s' % (states[1].get('opendap_url')))
+        log.debug('process params = %s' % (states[4]))
 
         sys_path = os.path.abspath(os.path.join(os.path.dirname(owslib.__file__), '..'))
         
@@ -237,7 +238,7 @@ class Done():
             openid = states[3].get('openid'),
             password = states[3].get('password'),
             opendap_url = states[2].get('opendap_url'),
-            params = json.dumps(states[4])
+            params = states[4].items()
             )
         #log.debug("workflow_description = %s", workflow_description)
         inputs = [("workflow_description", str(workflow_description))]

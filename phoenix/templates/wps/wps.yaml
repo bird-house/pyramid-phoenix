@@ -20,6 +20,8 @@ components:
       wps = WebProcessingService(service, verbose=False)
       inputs = [("netcdf_url", netcdf_url)]
       outputs = [("output",True)]
+      inputs.extend(input_params)
+      inputs = map(lambda(val): (val[0], str(val[1])), inputs)
       execution = wps.execute(identifier, inputs=inputs, output=outputs)
       monitorExecution(execution)
       status = execution.status
@@ -29,7 +31,9 @@ components:
       identifier: 
       service:
       netcdf_url:
-      params:
+        type: String
+      input_params:
+        type: Collection
     outputs:
       status: 
       output:
@@ -96,7 +100,7 @@ components:
       sys_path: ${sys_path}
       service: ${service}
       identifier: ${process}
-      params: ${params}
+      input_params: ${params}
     inflows:
       netcdf_url: /wps/esgf/download/netcdf_url
     outflows:
