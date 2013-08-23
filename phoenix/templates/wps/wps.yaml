@@ -51,7 +51,7 @@ components:
       outputs = [("output",True)]
       execution = wps.execute(identifier, inputs=inputs, output=outputs)
       # TODO: fix delay of copying output file ...
-      monitorExecution(execution, sleepSecs=20)
+      monitorExecution(execution, sleepSecs=60)
       status = execution.status
       output = execution.processOutputs[0].reference
     inputs:
