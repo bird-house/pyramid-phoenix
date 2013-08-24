@@ -18,19 +18,21 @@ components:
       from owslib.wps import WebProcessingService, monitorExecution
       wps = WebProcessingService(service, verbose=False)
       inputs = []
-      if openid != null:
+      if openid != None:
         inputs.append( ("openid", openid) )
-      if password != null:
+      if password != None:
         inputs.append( ("password", password) )
-      if file_url != null:
+      if file_url != None:
         inputs.append( ("file_url", file_url) )
-      outputs = [("output",True)]
-      inputs.extend(input_params)
-      inputs = map(lambda(val): (val[0], str(val[1])), inputs)
+      outputs = [("output", True)]
+      if input_params != None and len(input_params) > 0:
+        input_params = map(lambda(val): (val[0], str(val[1])), input_params)
+        inputs.extend(input_params)
       execution = wps.execute(identifier, inputs=inputs, output=outputs)
       monitorExecution(execution)
       status = execution.status
-      output = execution.processOutputs[0].reference
+      if len(execution.processOutputs) > 0:
+        output = execution.processOutputs[0].reference
     inputs:
       sys_path:
       identifier: 
@@ -38,17 +40,15 @@ components:
       openid:
         type: String
         optional: true
-        nullable: true
       password:
         type: String
         optional: true
-        nullable: true
       file_url:
         type: String
         optional: true
-        nullable: true
       input_params:
         type: Collection
+        optional: true
     outputs:
       status: 
       output:
