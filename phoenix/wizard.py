@@ -70,6 +70,7 @@ class SelectDataSourceSchema(colander.MappingSchema):
 
     data_source = colander.SchemaNode(
         colander.String(),
+        missing = choices[0][0],
         widget = widget.RadioChoiceWidget(values = choices))
 
 # esg search schema
@@ -268,7 +269,7 @@ class Done():
         workflow_template = Template(filename=workflow_template_filename)
         workflow_description = workflow_template.render(**workflow_params)
 
-        identifier = 'org.malleefowl.restflow.run'
+        identifier = 'org.malleefowl.restflow'
         inputs = [("workflow_description", str(workflow_description))]
         outputs = [("output",True)]
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
