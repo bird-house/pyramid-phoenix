@@ -66,7 +66,7 @@ class SelectProcessSchema(colander.MappingSchema):
 class SelectDataSourceSchema(colander.MappingSchema):
     description = "Select data source"
     appstruct = {}
-    choices = [('de.dkrz.esgf.opendap', "ESGF OpenDAP"), ('de.dkrz.esgf.wget', "ESGF wget")]
+    choices = [('org.malleefowl.esgf.opendap', "ESGF OpenDAP"), ('org.malleefowl.esgf.wget', "ESGF wget")]
 
     data_source = colander.SchemaNode(
         colander.String(),
@@ -116,7 +116,7 @@ def deferred_esg_files_widget(node, kw):
 
     if ctx.hit_count == 1:
         result = ctx.search()[0]
-        if data_source == 'de.dkrz.esgf.opendap':
+        if data_source == 'org.malleefowl.esgf.opendap':
             agg_ctx = result.aggregation_context()
             for agg in agg_ctx.search():
                 choices.append( (agg.opendap_url, agg.opendap_url) )
@@ -268,7 +268,7 @@ class Done():
         workflow_template = Template(filename=workflow_template_filename)
         workflow_description = workflow_template.render(**workflow_params)
 
-        identifier = 'de.dkrz.restflow.run'
+        identifier = 'org.malleefowl.restflow.run'
         inputs = [("workflow_description", str(workflow_description))]
         outputs = [("output",True)]
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
