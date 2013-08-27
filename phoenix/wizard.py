@@ -122,11 +122,21 @@ def deferred_esg_files_widget(node, kw):
         if data_source == 'org.malleefowl.esgf.opendap':
             agg_ctx = result.aggregation_context()
             for agg in agg_ctx.search():
-                choices.append( (agg.opendap_url, agg.opendap_url) )
+                skip = False
+                for facet in ctx.facet_constraints.keys():
+                    if not ctx.facet_constraints[facet] in agg.json.get(facet, []):
+                        skip = True
+                    if not skip:
+                        choices.append( (agg.opendap_url, agg.opendap_url) )
         else:
             file_ctx = result.file_context()
             for f in file_ctx.search():
-                choices.append( (f.download_url, f.download_url) )
+                skip = False
+                for facet in ctx.facet_constraints.keys():
+                    if not ctx.facet_constraints[facet] in f.json.get(facet, []):
+                        skip = True
+                    if not skip:
+                        choices.append( (f.download_url, f.download_url) )
    
     return widget.CheckboxChoiceWidget(values=choices)
 
