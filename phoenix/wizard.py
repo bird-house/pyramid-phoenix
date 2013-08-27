@@ -128,7 +128,7 @@ def deferred_esg_files_widget(node, kw):
             for f in file_ctx.search():
                 choices.append( (f.download_url, f.download_url) )
    
-    return widget.RadioChoiceWidget(values=choices)
+    return widget.CheckboxChoiceWidget(values=choices)
 
 class EsgFilesSchema(colander.MappingSchema):
     description = 'You need to choose a single file url'
