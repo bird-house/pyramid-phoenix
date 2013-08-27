@@ -66,11 +66,13 @@ class SelectProcessSchema(colander.MappingSchema):
 class SelectDataSourceSchema(colander.MappingSchema):
     description = "Select data source"
     appstruct = {}
-    choices = [('org.malleefowl.esgf.opendap', "ESGF OpenDAP"), ('org.malleefowl.esgf.wget', "ESGF wget")]
+    choices = [
+        ('org.malleefowl.esgf.opendap', "ESGF OpenDAP"), 
+        ('org.malleefowl.esgf.wget', "ESGF wget"),
+        ('org.malleefowl.source.filesystem', 'Filesystem')]
 
     data_source = colander.SchemaNode(
         colander.String(),
-        missing = choices[0][0],
         widget = widget.RadioChoiceWidget(values = choices))
 
 # esg search schema
@@ -135,7 +137,6 @@ class EsgFilesSchema(colander.MappingSchema):
     file_url = colander.SchemaNode(
         colander.String(),
         description = 'File URL',
-        missing = '',
         widget = deferred_esg_files_widget)
 
 # opendap schema
