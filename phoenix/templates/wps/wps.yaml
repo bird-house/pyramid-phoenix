@@ -29,7 +29,7 @@ components:
         input_params = map(lambda(val): (val[0], str(val[1])), input_params)
         inputs.extend(input_params)
       execution = wps.execute(identifier, inputs=inputs, output=outputs)
-      monitorExecution(execution)
+      monitorExecution(execution, sleepSecs=20)
       status = execution.status
       output = execution.processOutputs[0].reference
     inputs:
