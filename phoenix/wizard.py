@@ -91,7 +91,7 @@ class EsgSearchSchema(colander.MappingSchema):
     selection = colander.SchemaNode(
         colander.String(),
         title = 'Current Selection',
-        missing = '',
+        default = 'institute:MPI-M,experiment:esmHistorical,cf_standard_name:air_temperature,ensemble:r1i1p1,time_frequency:day',
         widget = deferred_esgsearch_widget)
 
 # esg aggregation schema
@@ -135,7 +135,7 @@ class EsgFilesSchema(colander.MappingSchema):
     appstruct = {}
     
     file_url = colander.SchemaNode(
-        colander.String(),
+        colander.Set(),
         description = 'File URL',
         widget = deferred_esg_files_widget)
 
@@ -260,7 +260,7 @@ class Done():
         workflow_params['download_process'] = str(states[1].get('data_source'))
         workflow_params['openid'] = str(states[4].get('openid'))
         workflow_params['password'] = str(states[4].get('password'))
-        workflow_params['file_url'] = str(states[3].get('file_url'))
+        workflow_params['file_urls'] = ','.join(states[3].get('file_url'))
         workflow_params['download_params'] = []
         if states[4].has_key('startindex'):
             workflow_params['download_params'].append( ('startindex', int(states[4].get('startindex'))) ) 

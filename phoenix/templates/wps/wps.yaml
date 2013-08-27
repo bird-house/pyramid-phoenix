@@ -22,7 +22,10 @@ components:
         inputs.append( ("openid", openid) )
       if password != None:
         inputs.append( ("password", password) )
-      if file_url != None:
+      if file_urls != None:
+        for url in file_urls.split(','):
+          inputs.append( ("file_url", url) )
+      elif file_url != None:
         inputs.append( ("file_url", file_url) )
       outputs = [("output", True)]
       if input_params != None:
@@ -44,8 +47,11 @@ components:
         type: String
         optional: true
         nullable: true
-      file_url:
+      file_urls:
         type: String
+        optional: true
+        nullable: true
+      file_url:
         optional: true
         nullable: true
       input_params:
@@ -79,7 +85,7 @@ components:
       identifier: ${download_process}
       openid: ${openid}
       password: ${password}
-      file_url: ${file_url}
+      file_urls: ${file_urls}
       input_params: ${download_params}
     outflows:
       status: /wps/download/status/
