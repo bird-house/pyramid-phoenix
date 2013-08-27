@@ -260,9 +260,10 @@ class Done():
         workflow_params['openid'] = str(states[4].get('openid'))
         workflow_params['password'] = str(states[4].get('password'))
         workflow_params['file_url'] = str(states[3].get('file_url'))
-        workflow_params['download_params'] = [
-            ('startindex', int(states[4].get('startindex'))), 
-            ('endindex', int(states[4].get('endindex')))]
+        workflow_params['download_params'] = []
+        if states[4].has_key('startindex'):
+            workflow_params['download_params'].append( ('startindex', int(states[4].get('startindex'))) ) 
+            workflow_params['download_params'].append( ('endindex', int(states[4].get('endindex'))) )
         workflow_params['work_process'] = str(states[0].get('process'))
         workflow_params['work_params'] = states[5].items()
         workflow_template_filename = os.path.join(os.path.dirname(__file__), 'templates/wps/wps.yaml')
