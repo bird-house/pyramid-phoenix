@@ -322,7 +322,7 @@ class Done():
         workflow_params['download_process'] = str(states[1].get('data_source'))
         workflow_params['openid'] = str(states[4].get('openid'))
         workflow_params['password'] = str(states[4].get('password'))
-        workflow_params['file_urls'] = ','.join(states[3].get('file_url'))
+        workflow_params['file_urls'] = states[3].get('file_url')
         workflow_params['download_params'] = []
         if states[4].has_key('startindex'):
             workflow_params['download_params'].append( ('startindex', int(states[4].get('startindex'))) ) 

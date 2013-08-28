@@ -112,8 +112,12 @@ components:
       identifier: ${download_process}
       openid: ${openid}
       password: ${password}
-      file_urls: ${file_urls}
       input_params: ${download_params}
+    sequences:
+      file_urls: 
+% for file_url in file_urls:
+        - ${file_url}
+% endfor
     outflows:
       status: /wps/download/status/
       output: /wps/download/file_url/
@@ -123,7 +127,7 @@ components:
   properties:
     actor: !ref CollectSources
     constants:
-      max: 1
+      max: ${len(file_urls)}
     inflows:
       source: /wps/download/file_url/
     outflows:
