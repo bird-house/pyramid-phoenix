@@ -91,7 +91,7 @@ class EsgSearchSchema(colander.MappingSchema):
     selection = colander.SchemaNode(
         colander.String(),
         title = 'Current Selection',
-        default = 'institute:MPI-M,experiment:esmHistorical,cf_standard_name:air_temperature,ensemble:r1i1p1,time_frequency:day',
+        default = 'institute:MPI-M,experiment:esmHistorical,variable:tas,ensemble:r1i1p1,time_frequency:day',
         widget = deferred_esgsearch_widget)
 
 # esg aggregation schema
@@ -112,7 +112,10 @@ def deferred_esg_files_widget(node, kw):
     for constraint in selection.split(','):
         if ':' in constraint:
             key,value = constraint.split(':')
-            constraints[key] = value
+            if constraints.has_key(key):
+                constraints[key].append(value)
+            else:
+                constraints[key] = [value]
     ctx = ctx.constrain(**constraints) 
     
     choices = []
@@ -122,21 +125,18 @@ def deferred_esg_files_widget(node, kw):
         if data_source == 'org.malleefowl.esgf.opendap':
             agg_ctx = result.aggregation_context()
             for agg in agg_ctx.search():
-                skip = False
-                for facet in ctx.facet_constraints.keys():
-                    if not ctx.facet_constraints[facet] in agg.json.get(facet, []):
-                        skip = True
-                    if not skip:
+                for var_name in ctx.facet_constraints.getall('variable'):
+                    if var_name in agg.json.get('variable', []):
                         choices.append( (agg.opendap_url, agg.opendap_url) )
+                        break
+            
         else:
             file_ctx = result.file_context()
             for f in file_ctx.search():
-                skip = False
-                for facet in ctx.facet_constraints.keys():
-                    if not ctx.facet_constraints[facet] in f.json.get(facet, []):
-                        skip = True
-                    if not skip:
+                for var_name in ctx.facet_constraints.getall('variable'):
+                    if var_name in f.json.get('variable', []):
                         choices.append( (f.download_url, f.download_url) )
+                        break
    
     return widget.CheckboxChoiceWidget(values=choices)
 
