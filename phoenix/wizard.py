@@ -6,6 +6,7 @@
 # the MIT License: http://www.opensource.org/licenses/mit-license.php
 
 import os
+import datetime
 
 from pyramid.view import view_config, forbidden_view_config
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
@@ -17,6 +18,7 @@ from deform.form import Button
 from deform import widget
 
 import colander
+from colander import Range
 
 import owslib
 from owslib.wps import WebProcessingService
@@ -94,6 +96,29 @@ class EsgSearchSchema(colander.MappingSchema):
         default = 'institute:MPI-M,experiment:esmHistorical,variable:tas,ensemble:r1i1p1,time_frequency:day',
         widget = deferred_esgsearch_widget)
 
+    start = colander.SchemaNode(
+        colander.Date(),
+        default = datetime.date(2000, 1, 1),
+        missing = datetime.date(2000, 1, 1),
+        widget = widget.DatePartsWidget(),
+        )
+
+    end = colander.SchemaNode(
+        colander.Date(),
+        default = datetime.date.today(),
+        missing = datetime.date.today(),
+        widget = deform.widget.DatePartsWidget(),
+        )
+
+    bbox = colander.SchemaNode(
+        colander.String(),
+        title = 'Bounding Box',
+        description = 'west,south,east,north',
+        default = '-180,-90,180,90',
+        missing = colander.null,
+        widget = widget.TextInputWidget(size=20))
+    
+
 # esg aggregation schema
 # ----------------
 
@@ -104,6 +129,10 @@ def deferred_esg_files_widget(node, kw):
     states = wizard_state.get_step_states()
     search_state = states.get(wizard_state.get_step_num() - 1)
     selection = search_state['selection']
+    start = search_state['start']
+    start_str = start.strftime('%Y%m%d')
+    end = search_state['end']
+    end_str = end.strftime('%Y%m%d')
     data_source_state = states.get(wizard_state.get_step_num() - 2)
     data_source = data_source_state['data_source']
 
@@ -125,18 +154,39 @@ def deferred_esg_files_widget(node, kw):
         if data_source == 'org.malleefowl.esgf.opendap':
             agg_ctx = result.aggregation_context()
             for agg in agg_ctx.search():
+                # filter with selected variables
+                ok = False
                 for var_name in ctx.facet_constraints.getall('variable'):
                     if var_name in agg.json.get('variable', []):
-                        choices.append( (agg.opendap_url, agg.opendap_url) )
+                        ok = True
                         break
-            
+
+                if not ok: continue
+                
+                # filter with time constraint
+                index = agg.filename.rindex('-')
+                agg_start = agg.filename[index-8:index]
+                agg_end = agg.filename[index+1:index+9]
+                if agg_start >= start_str and agg_end <= end_str:
+                    choices.append( (agg.opendap_url, agg.opendap_url) )
         else:
             file_ctx = result.file_context()
             for f in file_ctx.search():
+                # filter with selected variables
+                ok = False
                 for var_name in ctx.facet_constraints.getall('variable'):
                     if var_name in f.json.get('variable', []):
-                        choices.append( (f.download_url, f.download_url) )
+                        ok = True
                         break
+
+                if not ok: continue
+                
+                # filter with time constraint
+                index = f.filename.rindex('-')
+                f_start = f.filename[index-8:index]
+                f_end = f.filename[index+1:index+9]
+                if f_start >= start_str and f_end <= end_str:
+                    choices.append( (f.download_url, f.download_url) )
    
     return widget.CheckboxChoiceWidget(values=choices)
 
