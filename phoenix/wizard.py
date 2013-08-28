@@ -98,8 +98,8 @@ class EsgSearchSchema(colander.MappingSchema):
 
     start = colander.SchemaNode(
         colander.Date(),
-        default = datetime.date(2000, 1, 1),
-        missing = datetime.date(2000, 1, 1),
+        default = datetime.date(1800, 1, 1),
+        missing = datetime.date(1800, 1, 1),
         widget = widget.DatePartsWidget(),
         )
 
@@ -130,9 +130,9 @@ def deferred_esg_files_widget(node, kw):
     search_state = states.get(wizard_state.get_step_num() - 1)
     selection = search_state['selection']
     start = search_state['start']
-    start_str = start.strftime('%Y%m%d')
+    start_str = '%04d%02d%02d' % (start.year, start.month, start.day)
     end = search_state['end']
-    end_str = end.strftime('%Y%m%d')
+    end_str = '%04d%02d%02d' % (end.year, end.month, end.day)
     data_source_state = states.get(wizard_state.get_step_num() - 2)
     data_source = data_source_state['data_source']
 
@@ -164,9 +164,11 @@ def deferred_esg_files_widget(node, kw):
                 if not ok: continue
                 
                 # filter with time constraint
-                index = agg.filename.rindex('-')
-                agg_start = agg.filename[index-8:index]
-                agg_end = agg.filename[index+1:index+9]
+                agg_start = str(agg.json['datetime_start'].split('T')[0].replace('-',''))
+                agg_end = str(agg.json['datetime_stop'].split('T')[0].replace('-',''))
+                log.debug('agg_start = %s, start = %s' % (agg_start, start_str))
+                log.debug('agg_end = %s, end = %s' % (agg_end, end_str))
+
                 if agg_start >= start_str and agg_end <= end_str:
                     choices.append( (agg.opendap_url, agg.opendap_url) )
         else:
