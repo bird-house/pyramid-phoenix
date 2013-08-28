@@ -329,7 +329,7 @@ class Done():
             workflow_params['download_params'].append( ('endindex', int(states[4].get('endindex'))) )
         workflow_params['work_process'] = str(states[0].get('process'))
         workflow_params['work_params'] = states[5].items()
-        workflow_template_filename = os.path.join(os.path.dirname(__file__), 'templates/wps/wps.yaml')
+        workflow_template_filename = os.path.join(os.path.dirname(__file__), 'templates/wps/wps2.yaml')
         workflow_template = Template(filename=workflow_template_filename)
         workflow_description = workflow_template.render(**workflow_params)
 
