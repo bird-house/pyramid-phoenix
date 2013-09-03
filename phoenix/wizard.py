@@ -51,7 +51,7 @@ def deferred_choose_workflow_widget(node, kw):
     wps.getcapabilities()
     choices = []
     for process in wps.processes:
-        if '_workflow' in process.identifier:
+        if 'worker' in process.identifier:
             choices.append( (process.identifier, process.title) )
     return widget.RadioChoiceWidget(values = choices)
 
@@ -66,17 +66,24 @@ class SelectProcessSchema(colander.MappingSchema):
 # select data source schema
 # -------------------------
 
+@colander.deferred
+def deferred_choose_datasource_widget(node, kw):
+    request = kw.get('request')
+    wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
+    wps.getcapabilities()
+    choices = []
+    for process in wps.processes:
+        if 'source' in process.identifier:
+            choices.append( (process.identifier, process.title) )
+    return widget.RadioChoiceWidget(values = choices)
+
 class SelectDataSourceSchema(colander.MappingSchema):
     description = "Select data source"
     appstruct = {}
-    choices = [
-        ('org.malleefowl.esgf.opendap', "ESGF OpenDAP"), 
-        ('org.malleefowl.esgf.wget', "ESGF wget"),
-        ('org.malleefowl.source.filesystem', 'Filesystem')]
 
     data_source = colander.SchemaNode(
         colander.String(),
-        widget = widget.RadioChoiceWidget(values = choices))
+        widget = deferred_choose_datasource_widget)
 
 # esg search schema
 # -----------------
