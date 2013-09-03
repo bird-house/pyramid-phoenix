@@ -298,7 +298,7 @@ class MyFormWizardView(FormWizardView):
 
         prev_disabled = False
         next_disabled = False
-        cancel_disabled = False
+        cancel_disabled = True
 
         if hasattr(self.schema, 'prev_ok'):
             prev_disabled = not self.schema.prev_ok(request)
