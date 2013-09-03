@@ -7,6 +7,7 @@
 
 import os
 import datetime
+import json
 
 from pyramid.view import view_config, forbidden_view_config
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
@@ -21,7 +22,7 @@ import colander
 from colander import Range
 
 import owslib
-from owslib.wps import WebProcessingService
+from owslib.wps import WebProcessingService, monitorExecution
 
 from mako.template import Template
 
@@ -80,6 +81,32 @@ class SelectDataSourceSchema(colander.MappingSchema):
 # esg search schema
 # -----------------
 
+def bind_esgsearch_schema(node, kw):
+    log.debug("bind esg search schema, kw=%s" % (kw))
+    request = kw.get('request', None)
+    wizard_state = kw.get('wizard_state', None)
+    if request == None or wizard_state == None:
+        return
+    
+    states = wizard_state.get_step_states()
+    process_state = states.get(0)
+    processid = process_state['process']
+    identifier = 'org.malleefowl.metadata'
+    inputs = [("processid", str(processid))]
+    outputs = [("output",False)]
+    wps = WebProcessingService(wps_url(request), verbose=False)
+    execution = wps.execute(identifier, inputs=inputs, output=outputs)
+    monitorExecution(execution)
+    if len(execution.processOutputs) != 1:
+        return
+    output = execution.processOutputs[0]
+    log.debug('output %s, data=%s, ref=%s', output.identifier, output.data, output.reference)
+    if len(output.data) != 1:
+        return
+    metadata = json.loads(output.data[0])
+    log.debug('filter = %s', metadata.get('esgfilter') )
+    node.get('selection').default = metadata.get('esgfilter')
+
 @colander.deferred
 def deferred_esgsearch_widget(node, kw):
     request = kw.get('request')
@@ -93,7 +120,7 @@ class EsgSearchSchema(colander.MappingSchema):
     selection = colander.SchemaNode(
         colander.String(),
         title = 'Current Selection',
-        default = 'institute:MPI-M,experiment:esmHistorical,variable:tas,ensemble:r1i1p1,time_frequency:day',
+        #default = 'institute:MPI-M,experiment:esmHistorical,variable:tas,ensemble:r1i1p1,time_frequency:day',
         widget = deferred_esgsearch_widget)
 
     start = colander.SchemaNode(
@@ -271,6 +298,7 @@ class MyFormWizardView(FormWizardView):
 
         prev_disabled = False
         next_disabled = False
+        cancel_disabled = False
 
         if hasattr(self.schema, 'prev_ok'):
             prev_disabled = not self.schema.prev_ok(request)
@@ -284,12 +312,15 @@ class MyFormWizardView(FormWizardView):
                              disabled=next_disabled)
         done_button = Button(name='next', title='Done',
                              disabled=next_disabled)
+        cancel_button = Button(name='cancel', title='Cancel',
+                               disabled=cancel_disabled)
 
         if step > 0:
             buttons.append(prev_button)
 
         if step < len(self.wizard.schemas)-1:
             buttons.append(next_button)
+            buttons.append(cancel_button)
         else:
             buttons.append(done_button)
 
@@ -364,7 +395,9 @@ def wizard(request):
     schemas = []
     schemas.append( SelectProcessSchema(title='Select Process') )
     schemas.append( SelectDataSourceSchema(title='Select Data Source') )
-    schemas.append( EsgSearchSchema(title='Select ESGF Dataset') )
+    schemas.append( EsgSearchSchema(title='Select ESGF Dataset',
+                                    after_bind=bind_esgsearch_schema,
+                                    ))
     schemas.append( EsgFilesSchema(title='Select File URL') )
     schemas.append( WPSSchema(title='Access Parameters', 
                               after_bind=bind_esg_access_schema,
