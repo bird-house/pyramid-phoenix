@@ -118,7 +118,7 @@ def bind_esgsearch_schema(node, kw):
 def deferred_esgsearch_widget(node, kw):
     request = kw.get('request')
     url = esgsearch_url(request)
-    return EsgSearchWidget(url=url)
+    return EsgSearchWidget(url=url, query='variable:tas')
     
 class EsgSearchSchema(colander.MappingSchema):
     description = 'Choose a single Dataset'

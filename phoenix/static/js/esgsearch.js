@@ -4,6 +4,7 @@
       var defaults = {
         oid: null,
         url: null,
+        query: '*',
         distrib: 'false',
         constraints: null,
         type: 'Dataset',
@@ -91,6 +92,7 @@
         searchURL += '&limit=' + limit; 
         searchURL += '&distrib=' + searchOptions.distrib; 
         searchURL += '&format=' + format;
+        searchURL += '&query=' + searchOptions.query;
    
         $.getJSON(searchURL, function(json) {
           var facet_counts = json.facet_counts.facet_fields;

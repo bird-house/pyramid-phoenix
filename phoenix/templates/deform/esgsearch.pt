@@ -6,29 +6,37 @@
                   mask_placeholder mask_placeholder|field.widget.mask_placeholder;
                   style style|field.widget.style|None;
                   url url|field.widget.url;
+                  query query|field.widget.query;
 "
       tal:omit-tag="">
 
   <label id="search-label-counts">placeholder</label>
+
+  <h4>Query</h4>
+
+  <input type="text" value="${query}" name="query" readonly="true"
+         id="query">
+
+  <p/>
 
   <h4>Current Selection</h4>
 
   <input type="text" name="Current Selection" class="tm-selection" 
          id="tm-selection"/>
   <input type="hidden" value="${cstruct}" name="${name}"
-	 id="${oid}">
+         id="${oid}">
   <p/>
 
   <h4>Search Categories</h4>
   
   <input type="text" name="Search Categories" class="tm-facets"
-	 id="tm-facets"/>
+         id="tm-facets"/>
   <p/>
  
   <h4 id="search-label-category">Institute</h4>
     
   <input type="text" name="Categorie: xxx" class="tm-facet"
-	 id="tm-facet"/>
+         id="tm-facet"/>
   <p/>
   
   <script type="text/javascript">
@@ -37,7 +45,8 @@
       function (oid) {
         $.EsgSearch( {
            oid: oid,
-           url: '${url}', } );
+           url: '${url}',
+           query: '${query}'} );
     });
   </script>
 </span>
