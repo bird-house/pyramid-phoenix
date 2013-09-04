@@ -69,8 +69,5 @@ def esgf_search_conn(request):
     
 def esgf_search_context(request, query='*'):
     conn = esgf_search_conn(request)
-    ctx = conn.new_context(
-        project='CMIP5', product='output1', 
-        replica=False, latest=True,
-        query=query)
+    ctx = conn.new_context(distrib=False, query=query)
     return ctx

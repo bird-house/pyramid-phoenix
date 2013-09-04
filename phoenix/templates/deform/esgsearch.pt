@@ -14,10 +14,6 @@
   <label id="search-label-counts">placeholder</label>
   <p/>
    
-  <input type="hidden" value="${query}" name="${name}-query" readonly="true" size="200"
-         id="${oid}-query">
-  <p/>
-
   <label for="tm-selection">Current Selection</label>
   <input type="text" name="Current Selection" class="tm-selection" 
          id="tm-selection"/>

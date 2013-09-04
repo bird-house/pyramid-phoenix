@@ -126,6 +126,7 @@ def bind_esgsearch_schema(node, kw):
     url = esgsearch_url(request)
     
     node.get('query').default = query
+    node.get('query').missing = query
     node.get('selection').default = constraints
     node.get('selection').widget = EsgSearchWidget(url=url, query=query)
 
@@ -151,15 +152,15 @@ class EsgSearchSchema(colander.MappingSchema):
 
     start = colander.SchemaNode(
         colander.Date(),
-        default = datetime.date(1800, 1, 1),
-        missing = datetime.date(1800, 1, 1),
+        default = datetime.date(1600, 1, 1),
+        missing = datetime.date(1600, 1, 1),
         widget = widget.DatePartsWidget(),
         )
 
     end = colander.SchemaNode(
         colander.Date(),
-        default = datetime.date.today(),
-        missing = datetime.date.today(),
+        default = datetime.date(2500, 1, 1),
+        missing = datetime.date(2500, 1, 1),
         widget = deform.widget.DatePartsWidget(),
         )
 
@@ -218,13 +219,14 @@ def deferred_esg_files_widget(node, kw):
                 if not ok: continue
                 
                 # filter with time constraint
-                agg_start = str(agg.json['datetime_start'].split('T')[0].replace('-',''))
-                agg_end = str(agg.json['datetime_stop'].split('T')[0].replace('-',''))
-                log.debug('agg_start = %s, start = %s' % (agg_start, start_str))
-                log.debug('agg_end = %s, end = %s' % (agg_end, end_str))
+                ## agg_start = str(agg.json['datetime_start'].split('T')[0].replace('-',''))
+                ## agg_end = str(agg.json['datetime_stop'].split('T')[0].replace('-',''))
+                ## log.debug('agg_start = %s, start = %s' % (agg_start, start_str))
+                ## log.debug('agg_end = %s, end = %s' % (agg_end, end_str))
 
-                if agg_start >= start_str and agg_end <= end_str:
-                    choices.append( (agg.opendap_url, agg.opendap_url) )
+                ## if agg_start >= start_str and agg_end <= end_str:
+                ##    pass
+                choices.append( (agg.opendap_url, agg.opendap_url) )
         elif 'wget' in data_source:
             file_ctx = result.file_context()
             for f in file_ctx.search():
