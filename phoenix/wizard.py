@@ -185,7 +185,7 @@ def deferred_esg_files_widget(node, kw):
 
     if ctx.hit_count == 1:
         result = ctx.search()[0]
-        if data_source == 'org.malleefowl.esgf.opendap':
+        if 'opendap' in data_source:
             agg_ctx = result.aggregation_context()
             for agg in agg_ctx.search():
                 # filter with selected variables
@@ -205,7 +205,7 @@ def deferred_esg_files_widget(node, kw):
 
                 if agg_start >= start_str and agg_end <= end_str:
                     choices.append( (agg.opendap_url, agg.opendap_url) )
-        else:
+        elif 'wget' in data_source:
             file_ctx = result.file_context()
             for f in file_ctx.search():
                 # filter with selected variables
@@ -223,6 +223,8 @@ def deferred_esg_files_widget(node, kw):
                 f_end = f.filename[index+1:index+9]
                 if f_start >= start_str and f_end <= end_str:
                     choices.append( (f.download_url, f.download_url) )
+        else:
+            log.error('unknown datasource: %s', data_source)
    
     return widget.CheckboxChoiceWidget(values=choices)
 
@@ -327,9 +329,9 @@ class MyFormWizardView(FormWizardView):
 
         if step < len(self.wizard.schemas)-1:
             buttons.append(next_button)
-            buttons.append(cancel_button)
         else:
             buttons.append(done_button)
+        buttons.append(cancel_button)
 
         form_view.buttons = buttons
         form_view.next_success = self.next_success
