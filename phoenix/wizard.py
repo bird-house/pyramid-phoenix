@@ -88,12 +88,9 @@ class SelectDataSourceSchema(colander.MappingSchema):
 # esg search schema
 # -----------------
 
-def bind_esgsearch_schema(node, kw):
-    log.debug("bind esg search schema, kw=%s" % (kw))
-    request = kw.get('request', None)
-    wizard_state = kw.get('wizard_state', None)
-    if request == None or wizard_state == None:
-        return
+def esgsearch_metadata(url, wizard_state):
+    if url == None or wizard_state == None:
+        return {}
     
     states = wizard_state.get_step_states()
     process_state = states.get(0)
@@ -101,7 +98,7 @@ def bind_esgsearch_schema(node, kw):
     identifier = 'org.malleefowl.metadata'
     inputs = [("processid", str(processid))]
     outputs = [("output",False)]
-    wps = WebProcessingService(wps_url(request), verbose=False)
+    wps = WebProcessingService(url, verbose=False)
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     monitorExecution(execution)
     if len(execution.processOutputs) != 1:
@@ -109,26 +106,48 @@ def bind_esgsearch_schema(node, kw):
     output = execution.processOutputs[0]
     log.debug('output %s, data=%s, ref=%s', output.identifier, output.data, output.reference)
     if len(output.data) != 1:
-        return
+        return {}
     metadata = json.loads(output.data[0])
-    log.debug('filter = %s', metadata.get('esgfilter') )
-    node.get('selection').default = metadata.get('esgfilter')
+    return metadata
 
-@colander.deferred
-def deferred_esgsearch_widget(node, kw):
-    request = kw.get('request')
+def bind_esgsearch_schema(node, kw):
+    log.debug("bind esg search schema, kw=%s" % (kw))
+    request = kw.get('request', None)
+    wizard_state = kw.get('wizard_state', None)
+    if request == None or wizard_state == None:
+        return
+
+    metadata = esgsearch_metadata( wps_url(request), wizard_state)
+
+    constraints =  metadata.get('esgfilter')
+    log.debug('constraints = %s', constraints )
+    query = metadata.get('esgquery')
+    log.debug('query = %s', query )
     url = esgsearch_url(request)
-    return EsgSearchWidget(url=url, query='variable:tas')
     
+    node.get('query').default = query
+    node.get('selection').default = constraints
+    node.get('selection').widget = EsgSearchWidget(url=url, query=query)
+
 class EsgSearchSchema(colander.MappingSchema):
     description = 'Choose a single Dataset'
     appstruct = {}
 
+    query = colander.SchemaNode(
+        colander.String(),
+        title = 'Query',
+        default = '*',
+        missing = '*',
+        widget = widget.TextInputWidget(
+            readonly = True,
+            size = 200,
+            )
+        )
+
     selection = colander.SchemaNode(
         colander.String(),
         title = 'Current Selection',
-        #default = 'institute:MPI-M,experiment:esmHistorical,variable:tas,ensemble:r1i1p1,time_frequency:day',
-        widget = deferred_esgsearch_widget)
+        )
 
     start = colander.SchemaNode(
         colander.Date(),
@@ -163,6 +182,7 @@ def deferred_esg_files_widget(node, kw):
     states = wizard_state.get_step_states()
     search_state = states.get(wizard_state.get_step_num() - 1)
     selection = search_state['selection']
+    query = search_state['query']
     start = search_state['start']
     start_str = '%04d%02d%02d' % (start.year, start.month, start.day)
     end = search_state['end']
@@ -170,7 +190,7 @@ def deferred_esg_files_widget(node, kw):
     data_source_state = states.get(wizard_state.get_step_num() - 2)
     data_source = data_source_state['data_source']
 
-    ctx = esgf_search_context(request)
+    ctx = esgf_search_context(request, query)
     constraints = {}
     for constraint in selection.split(','):
         if ':' in constraint:

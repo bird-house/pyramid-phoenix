@@ -10,31 +10,27 @@
 "
       tal:omit-tag="">
 
+
   <label id="search-label-counts">placeholder</label>
-
-  <h4>Query</h4>
-
-  <input type="text" value="${query}" name="query" readonly="true"
-         id="query">
-
+  <p/>
+   
+  <input type="hidden" value="${query}" name="${name}-query" readonly="true" size="200"
+         id="${oid}-query">
   <p/>
 
-  <h4>Current Selection</h4>
-
+  <label for="tm-selection">Current Selection</label>
   <input type="text" name="Current Selection" class="tm-selection" 
          id="tm-selection"/>
   <input type="hidden" value="${cstruct}" name="${name}"
          id="${oid}">
   <p/>
 
-  <h4>Search Categories</h4>
-  
+  <label for="tm-facets">Search Categories</label>
   <input type="text" name="Search Categories" class="tm-facets"
          id="tm-facets"/>
   <p/>
  
-  <h4 id="search-label-category">Institute</h4>
-    
+  <label for="tm-facet" id="search-label-category">Institute</label>
   <input type="text" name="Categorie: xxx" class="tm-facet"
          id="tm-facet"/>
   <p/>

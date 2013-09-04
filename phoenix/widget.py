@@ -27,6 +27,7 @@ class EsgSearchWidget(Widget):
     template = 'esgsearch'
     size = None
     strip = True
+    query = '*'
     mask = None
     mask_placeholder = "_"
     style = None
@@ -35,6 +36,7 @@ class EsgSearchWidget(Widget):
     def serialize(self, field, cstruct, **kw):
         if cstruct in (null, None):
             cstruct = ''
+        kw.setdefault('query', self.query)
         values = self.get_template_values(field, cstruct, kw)
         return field.renderer(self.template, **values)
 
@@ -46,6 +48,8 @@ class EsgSearchWidget(Widget):
             pstruct = pstruct.strip()
         if not pstruct:
             return null
+        #query = pstruct.get('%s-query' % (field.name,)) or '*'
+        #setattr(field, '%s-query' % (field.name,), query)
         return pstruct
 
     def handle_error(self, field, error):

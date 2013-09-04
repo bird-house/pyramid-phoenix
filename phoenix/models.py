@@ -67,9 +67,10 @@ def jobs_by_userid(request, user_id):
 def esgf_search_conn(request):
     return SearchConnection(esgsearch_url(request), distrib=False)
     
-def esgf_search_context(request):
+def esgf_search_context(request, query='*'):
     conn = esgf_search_conn(request)
     ctx = conn.new_context(
         project='CMIP5', product='output1', 
-        replica=False, latest=True)
+        replica=False, latest=True,
+        query=query)
     return ctx
