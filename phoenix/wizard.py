@@ -208,7 +208,9 @@ def deferred_esg_files_widget(node, kw):
         result = ctx.search()[0]
         if 'opendap' in data_source:
             agg_ctx = result.aggregation_context()
-            for agg in agg_ctx.search():
+            agg_list = agg_ctx.search()
+            log.debug('opendap num files = %d', len(agg_list))
+            for agg in agg_list:
                 # filter with selected variables
                 ok = False
                 for var_name in ctx.facet_constraints.getall('variable'):
@@ -229,7 +231,12 @@ def deferred_esg_files_widget(node, kw):
                 choices.append( (agg.opendap_url, agg.opendap_url) )
         elif 'wget' in data_source:
             file_ctx = result.file_context()
-            for f in file_ctx.search():
+            num_files = file_ctx.hit_count
+            log.debug('wget num files = %d', num_files)
+            files = file_ctx.search()
+            limit = min(50, num_files)
+            for index in range(0,limit):
+                f = files[index]
                 # filter with selected variables
                 ok = False
                 for var_name in ctx.facet_constraints.getall('variable'):
@@ -245,6 +252,8 @@ def deferred_esg_files_widget(node, kw):
                 f_end = f.filename[index+1:index+9]
                 if f_start >= start_str and f_end <= end_str:
                     choices.append( (f.download_url, f.download_url) )
+                if len(choices) > 0:
+                    break
         else:
             log.error('unknown datasource: %s', data_source)
    

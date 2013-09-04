@@ -33,7 +33,7 @@ class EsgSearchWidget(Widget):
     style = None
     requirements = ( ('jquery.maskedinput', None), )
 
-    def serialize(self, field, cstruct, **kw):
+    def serialize(self, field, cstruct, readonly=False, **kw):
         if cstruct in (null, None):
             cstruct = ''
         kw.setdefault('query', self.query)

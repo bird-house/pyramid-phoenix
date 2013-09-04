@@ -6,6 +6,7 @@
         url: null,
         query: '*',
         distrib: 'false',
+        latest: 'true',
         constraints: null,
         type: 'Dataset',
       };
@@ -78,7 +79,7 @@
       var execute = function() {
         var limit = '0';
         var format = 'application%2Fsolr%2Bjson';
-        var constraints = '';
+        var constraints = '&project=CMIP5';
         var servlet = 'search';
         var tags = $("#" + searchOptions.oid).val().split(",");
         $.each(tags, function(i, tag) {
@@ -88,9 +89,11 @@
 
         var searchURL = searchOptions.url + '/' + servlet + '?';
         searchURL += 'type=' + searchOptions.type;
-        searchURL += '&facets=*' + constraints; 
+        searchURL += '&facets=*';
+        searchURL += constraints; 
         searchURL += '&limit=' + limit; 
         searchURL += '&distrib=' + searchOptions.distrib; 
+        searchURL += '&latest=' + searchOptions.latest; 
         searchURL += '&format=' + format;
         searchURL += '&query=' + searchOptions.query;
    
