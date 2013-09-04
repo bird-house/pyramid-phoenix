@@ -208,17 +208,17 @@ def deferred_esg_files_widget(node, kw):
         result = ctx.search()[0]
         if 'opendap' in data_source:
             agg_ctx = result.aggregation_context()
-            agg_list = agg_ctx.search()
+            agg_list = agg_ctx.search(**constraints)
             log.debug('opendap num files = %d', len(agg_list))
             for agg in agg_list:
                 # filter with selected variables
-                ok = False
-                for var_name in ctx.facet_constraints.getall('variable'):
-                    if var_name in agg.json.get('variable', []):
-                        ok = True
-                        break
+                #ok = False
+                #for var_name in ctx.facet_constraints.getall('variable'):
+                #    if var_name in agg.json.get('variable', []):
+                #        ok = True
+                #        break
 
-                if not ok: continue
+                #if not ok: continue
                 
                 # filter with time constraint
                 ## agg_start = str(agg.json['datetime_start'].split('T')[0].replace('-',''))
@@ -233,18 +233,18 @@ def deferred_esg_files_widget(node, kw):
             file_ctx = result.file_context()
             num_files = file_ctx.hit_count
             log.debug('wget num files = %d', num_files)
-            files = file_ctx.search()
-            limit = min(50, num_files)
+            files = file_ctx.search(**constraints)
+            limit = min(500, num_files)
             for index in range(0,limit):
                 f = files[index]
                 # filter with selected variables
-                ok = False
-                for var_name in ctx.facet_constraints.getall('variable'):
-                    if var_name in f.json.get('variable', []):
-                        ok = True
-                        break
+                #ok = False
+                #for var_name in ctx.facet_constraints.getall('variable'):
+                #    if var_name in f.json.get('variable', []):
+                #        ok = True
+                #        break
 
-                if not ok: continue
+                #if not ok: continue
                 
                 # filter with time constraint
                 index = f.filename.rindex('-')
@@ -252,8 +252,6 @@ def deferred_esg_files_widget(node, kw):
                 f_end = f.filename[index+1:index+9]
                 if f_start >= start_str and f_end <= end_str:
                     choices.append( (f.download_url, f.download_url) )
-                if len(choices) > 0:
-                    break
         else:
             log.error('unknown datasource: %s', data_source)
    
