@@ -11,6 +11,7 @@ import uuid
 import datetime
 
 from pyesgf.search import SearchConnection
+from pyesgf.multidict import MultiDict
 
 import logging
 
@@ -74,6 +75,8 @@ def esgf_search_context(request, query='*'):
 
 def esgf_aggregation_search(ctx):
     log.debug("datasets found = %d", ctx.hit_count)
+    if ctx.hit_count == 0:
+        return []
     result = ctx.search()[0]
     
     agg_ctx = result.aggregation_context()
@@ -102,11 +105,10 @@ def esgf_file_search(ctx, start, end):
     file_ctx = result.file_context()
     log.debug("files found = %d", file_ctx.hit_count)
 
-    query_dict = dict()
+    query_dict = MultiDict()
     query_dict['type'] = 'File'
-    query_dict['dataset_id'] = file_ctx.facet_constraints['dataset_id']
-    if ctx.facet_constraints.has_key('variable'):
-        query_dict['variable'] = ctx.facet_constraints['variable']
+    query_dict.extend(file_ctx.facet_constraints)
+    query_dict.extend(ctx.facet_constraints)
     
     response = ctx.connection.send_search(limit=file_ctx.hit_count, query_dict=query_dict)
     docs = response['response']['docs']
