@@ -5,6 +5,7 @@ from colander import (
 
 from deform.widget import (
     Widget, 
+    TextInputWidget,
     OptGroup, 
     _normalize_choices,
     )
@@ -12,6 +13,46 @@ from deform.widget import (
 import logging
 
 log = logging.getLogger(__name__)
+
+class WizardStatesWidget(TextInputWidget):
+    """
+    Renders a ``<textarea>`` widget.
+
+    **Attributes/Arguments**
+
+    cols
+        The size, in columns, of the text input field.  Defaults to
+        ``None``, meaning that the ``cols`` is not included in the
+        widget output (uses browser default cols).
+
+    rows
+        The size, in rows, of the text input field.  Defaults to
+        ``None``, meaning that the ``rows`` is not included in the
+        widget output (uses browser default cols).
+
+    style
+        A string that will be placed literally in a ``style`` attribute on
+        the textarea input tag.  For example, 'width:150px;'.  Default:
+        ``None``, meaning no style attribute will be added to the input tag.
+        
+    template
+        The template name used to render the widget.  Default:
+        ``textarea``.
+
+    readonly_template
+        The template name used to render the widget in read-only mode.
+        Default: ``readonly/textarea``.
+
+
+    strip
+        If true, during deserialization, strip the value of leading
+        and trailing whitespace (default ``True``).
+    """
+    template = 'wizard_states'
+    cols = None
+    rows = None
+    strip = True
+    style = None
 
 class EsgSearchWidget(Widget):
     """

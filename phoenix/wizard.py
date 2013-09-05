@@ -42,7 +42,7 @@ log = logging.getLogger(__name__)
 
 from owslib.wps import WebProcessingService
 from phoenix.helpers import wps_url
-from phoenix.widget import EsgSearchWidget, EsgFilesWidget
+from phoenix.widget import EsgSearchWidget, EsgFilesWidget, WizardStatesWidget
 
 from pyesgf.search import SearchConnection
 
@@ -269,7 +269,8 @@ class SummarySchema(colander.MappingSchema):
     states = colander.SchemaNode(
         colander.String(),
         title = 'States',
-        missing = '')
+        missing = '',
+        widget=WizardStatesWidget())
 
 # wizard
 # ------
