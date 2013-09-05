@@ -26,7 +26,7 @@ from owslib.wps import WebProcessingService, monitorExecution
 
 from mako.template import Template
 
-from .models import add_job, esgf_search_context
+from .models import add_job, esgf_search_context, esgf_file_search
 from .helpers import wps_url, esgsearch_url
 from .wps import WPSSchema
 
@@ -185,9 +185,7 @@ def deferred_esg_files_widget(node, kw):
     selection = search_state['selection']
     query = search_state['query']
     start = search_state['start']
-    start_str = '%04d%02d%02d' % (start.year, start.month, start.day)
     end = search_state['end']
-    end_str = '%04d%02d%02d' % (end.year, end.month, end.day)
     data_source_state = states.get(wizard_state.get_step_num() - 2)
     data_source = data_source_state['data_source']
 
@@ -217,41 +215,13 @@ def deferred_esg_files_widget(node, kw):
                     if var_name in agg.json.get('variable', []):
                         ok = True
                         break
-
                 if not ok: continue
-                
-                # filter with time constraint
-                ## agg_start = str(agg.json['datetime_start'].split('T')[0].replace('-',''))
-                ## agg_end = str(agg.json['datetime_stop'].split('T')[0].replace('-',''))
-                ## log.debug('agg_start = %s, start = %s' % (agg_start, start_str))
-                ## log.debug('agg_end = %s, end = %s' % (agg_end, end_str))
 
-                ## if agg_start >= start_str and agg_end <= end_str:
-                ##    pass
                 choices.append( (agg.opendap_url, agg.opendap_url) )
         elif 'wget' in data_source:
-            file_ctx = result.file_context()
-            num_files = file_ctx.hit_count
-            log.debug('wget num files = %d', num_files)
-            files = file_ctx.search(**constraints)
-            limit = min(500, num_files)
-            for index in range(0,limit):
-                f = files[index]
-                # filter with selected variables
-                #ok = False
-                #for var_name in ctx.facet_constraints.getall('variable'):
-                #    if var_name in f.json.get('variable', []):
-                #        ok = True
-                #        break
-
-                #if not ok: continue
-                
-                # filter with time constraint
-                index = f.filename.rindex('-')
-                f_start = f.filename[index-8:index]
-                f_end = f.filename[index+1:index+9]
-                if f_start >= start_str and f_end <= end_str:
-                    choices.append( (f.download_url, f.download_url) )
+            files = esgf_file_search(ctx, start, end)
+            for download_url,filename in files:
+                choices.append( (download_url, filename) )
         else:
             log.error('unknown datasource: %s', data_source)
    

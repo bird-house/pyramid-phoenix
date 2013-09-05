@@ -71,3 +71,42 @@ def esgf_search_context(request, query='*'):
     conn = esgf_search_conn(request)
     ctx = conn.new_context(project='CMIP5', latest=True, query=query)
     return ctx
+
+def esgf_file_search(ctx, start, end):
+    start_str = '%04d%02d%02d' % (start.year, start.month, start.day)
+    end_str = '%04d%02d%02d' % (end.year, end.month, end.day)
+
+    log.debug("filter from=%s, to=%s", start_str, end_str)
+    
+    log.debug("datasets found = %d", ctx.hit_count)
+    result = ctx.search()[0]
+    file_ctx = result.file_context()
+    log.debug("files found = %d", file_ctx.hit_count)
+
+    query_dict = dict()
+    query_dict['type'] = 'File'
+    query_dict['dataset_id'] = file_ctx.facet_constraints['dataset_id']
+    if ctx.facet_constraints.has_key('variable'):
+        query_dict['variable'] = ctx.facet_constraints['variable']
+    
+    response = ctx.connection.send_search(limit=file_ctx.hit_count, query_dict=query_dict)
+    docs = response['response']['docs']
+    files = []
+    for doc in docs:
+        download_url = None
+        for encoded in doc['url']:
+            url, mime_type, service = encoded.split('|')
+            if 'HTTPServer' in service:
+                download_url = url
+                break
+        if download_url == None:
+            continue
+        filename = doc['title']
+
+        # filter with time constraint
+        index = filename.rindex('-')
+        f_start = filename[index-8:index]
+        f_end = filename[index+1:index+9]
+        if f_start >= start_str and f_end <= end_str:
+            files.append( (download_url, filename) )
+    return files
