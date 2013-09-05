@@ -296,7 +296,7 @@ class MyFormWizardView(FormWizardView):
 
         prev_disabled = False
         next_disabled = False
-        cancel_disabled = True
+        cancel_disabled = False
 
         if hasattr(self.schema, 'prev_ok'):
             prev_disabled = not self.schema.prev_ok(request)
@@ -326,11 +326,17 @@ class MyFormWizardView(FormWizardView):
         form_view.next_success = self.next_success
         form_view.previous_success = self.previous_success
         form_view.previous_failure = self.previous_failure
+        form_view.cancel_success = self.cancel
+        form_view.cancel_failure = self.cancel
         form_view.show = self.show
         form_view.appstruct = getattr(self.schema, 'appstruct', None)
         log.debug("before form_view, schema = %s" % (self.schema))
         result = form_view()
         return result
+
+    def cancel(self, validated):
+        self.wizard_state.clear()
+        return HTTPFound(location = self.request.path_url)
 
 
 class Done():
