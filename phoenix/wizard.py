@@ -26,7 +26,12 @@ from owslib.wps import WebProcessingService, monitorExecution
 
 from mako.template import Template
 
-from .models import add_job, esgf_search_context, esgf_file_search
+from .models import (
+    add_job, 
+    esgf_search_context, 
+    esgf_file_search,
+    esgf_aggregation_search,
+    )
 from .helpers import wps_url, esgsearch_url
 from .wps import WPSSchema
 
@@ -202,28 +207,12 @@ def deferred_esg_files_widget(node, kw):
     
     choices = []
 
-    if ctx.hit_count == 1:
-        result = ctx.search()[0]
-        if 'opendap' in data_source:
-            agg_ctx = result.aggregation_context()
-            agg_list = agg_ctx.search()
-            log.debug('opendap num files = %d', len(agg_list))
-            for agg in agg_list:
-                # filter with selected variables
-                ok = False
-                for var_name in ctx.facet_constraints.getall('variable'):
-                    if var_name in agg.json.get('variable', []):
-                        ok = True
-                        break
-                if not ok: continue
-
-                choices.append( (agg.opendap_url, agg.opendap_url) )
-        elif 'wget' in data_source:
-            files = esgf_file_search(ctx, start, end)
-            for download_url,filename in files:
-                choices.append( (download_url, filename) )
-        else:
-            log.error('unknown datasource: %s', data_source)
+    if 'opendap' in data_source:
+        choices = esgf_aggregation_search(ctx)
+    elif 'wget' in data_source:
+        choices = esgf_file_search(ctx, start, end)
+    else:
+        log.error('unknown datasource: %s', data_source)
    
     return widget.CheckboxChoiceWidget(values=choices)
 

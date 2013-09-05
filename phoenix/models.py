@@ -72,6 +72,25 @@ def esgf_search_context(request, query='*'):
     ctx = conn.new_context(project='CMIP5', latest=True, query=query)
     return ctx
 
+def esgf_aggregation_search(ctx):
+    log.debug("datasets found = %d", ctx.hit_count)
+    result = ctx.search()[0]
+    
+    agg_ctx = result.aggregation_context()
+    log.debug('opendap num files = %d', agg_ctx.hit_count)
+    aggregations = []
+    for agg in agg_ctx.search():
+        # filter with selected variables
+        ok = False
+        for var_name in ctx.facet_constraints.getall('variable'):
+            if var_name in agg.json.get('variable', []):
+                ok = True
+                break
+        if not ok: continue
+
+        aggregations.append( (agg.opendap_url, agg.aggregation_id) )
+    return aggregations
+
 def esgf_file_search(ctx, start, end):
     start_str = '%04d%02d%02d' % (start.year, start.month, start.day)
     end_str = '%04d%02d%02d' % (end.year, end.month, end.day)
