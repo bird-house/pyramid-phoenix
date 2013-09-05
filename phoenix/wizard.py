@@ -208,17 +208,17 @@ def deferred_esg_files_widget(node, kw):
         result = ctx.search()[0]
         if 'opendap' in data_source:
             agg_ctx = result.aggregation_context()
-            agg_list = agg_ctx.search(**constraints)
+            agg_list = agg_ctx.search()
             log.debug('opendap num files = %d', len(agg_list))
             for agg in agg_list:
                 # filter with selected variables
-                #ok = False
-                #for var_name in ctx.facet_constraints.getall('variable'):
-                #    if var_name in agg.json.get('variable', []):
-                #        ok = True
-                #        break
+                ok = False
+                for var_name in ctx.facet_constraints.getall('variable'):
+                    if var_name in agg.json.get('variable', []):
+                        ok = True
+                        break
 
-                #if not ok: continue
+                if not ok: continue
                 
                 # filter with time constraint
                 ## agg_start = str(agg.json['datetime_start'].split('T')[0].replace('-',''))
