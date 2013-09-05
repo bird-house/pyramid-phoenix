@@ -360,6 +360,7 @@ class Done():
         workflow_template_filename = os.path.join(os.path.dirname(__file__), 'templates/wps/wps2.yaml')
         workflow_template = Template(filename=workflow_template_filename)
         workflow_description = workflow_template.render(**workflow_params)
+        log.debug('wf description = %s', workflow_description)
 
         identifier = 'org.malleefowl.restflow'
         inputs = [("workflow_description", str(workflow_description))]
