@@ -122,6 +122,10 @@ def bind_search_schema(node, kw):
     if request == None or wizard_state == None:
         return
 
+    states = wizard_state.get_step_states()
+    data_source_state = states.get(1)
+    data_source = data_source_state['data_source']
+
     metadata = search_metadata( wps_url(request), wizard_state)
 
     constraints =  metadata.get('esgfilter')
@@ -132,11 +136,15 @@ def bind_search_schema(node, kw):
     
     node.get('query').default = query
     node.get('query').missing = query
-    node.get('selection').default = constraints
-    node.get('selection').widget = EsgSearchWidget(url=url, query=query)
+
+    if 'esgf' in data_source:
+        node.get('selection').default = constraints
+        node.get('selection').widget = EsgSearchWidget(url=url, query=query)
+    else:
+        node.get('selection').widget = widget.TextInputWidget()
 
 class SearchSchema(colander.MappingSchema):
-    description = 'Choose a single Dataset'
+    description = 'Search Input Files'
     appstruct = {}
 
     query = colander.SchemaNode(
@@ -178,52 +186,62 @@ class SearchSchema(colander.MappingSchema):
         widget = widget.TextInputWidget(size=20))
     
 
-# esg aggregation schema
-# ----------------
+# select files schema
+# -------------------
 
-@colander.deferred
-def deferred_esg_files_widget(node, kw):
+def bind_files_schema(node, kw):
     request = kw.get('request', None)
     wizard_state = kw.get('wizard_state', None)
+
+    if request == None or wizard_state == None:
+        return
+
     states = wizard_state.get_step_states()
-    search_state = states.get(wizard_state.get_step_num() - 1)
+    data_source_state = states.get(1)
+    data_source = data_source_state['data_source']
+
+    search_state = states.get(2)
     selection = search_state['selection']
+    
     query = search_state['query']
     start = search_state['start']
     end = search_state['end']
-    data_source_state = states.get(wizard_state.get_step_num() - 2)
-    data_source = data_source_state['data_source']
 
-    ctx = esgf_search_context(request, query)
-    constraints = {}
-    for constraint in selection.split(','):
-        if ':' in constraint:
-            key,value = constraint.split(':')
-            if constraints.has_key(key):
-                constraints[key].append(value)
-            else:
-                constraints[key] = [value]
-    ctx = ctx.constrain(**constraints) 
+    
     
     choices = []
 
-    if 'opendap' in data_source:
-        choices = esgf_aggregation_search(ctx)
-    elif 'wget' in data_source:
-        choices = esgf_file_search(ctx, start, end)
+    if 'esgf' in data_source:
+        ctx = esgf_search_context(request, query)
+        constraints = {}
+        for constraint in selection.split(','):
+            if ':' in constraint:
+                key,value = constraint.split(':')
+                if constraints.has_key(key):
+                    constraints[key].append(value)
+                else:
+                    constraints[key] = [value]
+        ctx = ctx.constrain(**constraints) 
+
+        if 'opendap' in data_source:
+            choices = esgf_aggregation_search(ctx)
+        elif 'wget' in data_source:
+            choices = esgf_file_search(ctx, start, end)
+    elif 'getfile' in data_source:
+        choices = [('1.nc', '1.nc'), ('2.nc', '2.nc')]
     else:
         log.error('unknown datasource: %s', data_source)
-   
-    return widget.CheckboxChoiceWidget(values=choices)
 
-class EsgFilesSchema(colander.MappingSchema):
-    description = 'You need to choose a single file url'
+    node.get('file_url').widget = widget.CheckboxChoiceWidget(values=choices)
+   
+class SelectFilesSchema(colander.MappingSchema):
+    description = 'Choose input files'
     appstruct = {}
     
     file_url = colander.SchemaNode(
         colander.Set(),
-        description = 'File URL',
-        widget = deferred_esg_files_widget)
+        description = 'Filename',
+        )
 
 # opendap schema
 # --------------
@@ -400,16 +418,21 @@ def wizard(request):
     schemas = []
     schemas.append( SelectProcessSchema(title='Select Process') )
     schemas.append( SelectDataSourceSchema(title='Select Data Source') )
-    schemas.append( SearchSchema(title='Search Input Files',
-                                    after_bind=bind_search_schema,
-                                    ))
-    schemas.append( EsgFilesSchema(title='Select File URL') )
-    schemas.append( WPSSchema(title='Access Parameters', 
-                              after_bind=bind_esg_access_schema,
-                              ))
-    schemas.append( WPSSchema(title='Process Parameters', 
-                              after_bind=bind_wps_schema,
-                              ))
+    schemas.append( SearchSchema(
+        title='Search Input Files',
+        after_bind=bind_search_schema,
+        ))
+    schemas.append( SelectFilesSchema(
+        title='Select Files',
+        after_bind=bind_files_schema,) )
+    schemas.append( WPSSchema(
+        title='Access Parameters', 
+        after_bind=bind_esg_access_schema,
+        ))
+    schemas.append( WPSSchema(
+        title='Process Parameters', 
+        after_bind=bind_wps_schema,
+        ))
 
     wizard = FormWizard('Workflow', 
                         Done(), 
