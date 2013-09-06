@@ -109,10 +109,10 @@ components:
     constants:
       sys_path: ${sys_path}
       service: ${service}
-      identifier: ${download_process}
+      identifier: ${source_process}
       openid: ${openid}
       password: ${password}
-      input_params: ${download_params}
+      input_params: ${source_params}
     sequences:
       file_urls: 
 % for file_url in file_urls:
