@@ -189,6 +189,25 @@ class SearchSchema(colander.MappingSchema):
 # select files schema
 # -------------------
 
+def search_local_files(url, filter):
+    if url == None:
+        return {}
+    
+    identifier = 'org.malleefowl.listfiles'
+    inputs = [("filter", str(filter))]
+    outputs = [("output",False)]
+    wps = WebProcessingService(url, verbose=False)
+    execution = wps.execute(identifier, inputs=inputs, output=outputs)
+    monitorExecution(execution)
+    if len(execution.processOutputs) != 1:
+        return
+    output = execution.processOutputs[0]
+    log.debug('output %s, data=%s, ref=%s', output.identifier, output.data, output.reference)
+    if len(output.data) != 1:
+        return {}
+    files = json.loads(output.data[0])
+    return files
+
 def bind_files_schema(node, kw):
     request = kw.get('request', None)
     wizard_state = kw.get('wizard_state', None)
@@ -207,8 +226,6 @@ def bind_files_schema(node, kw):
     start = search_state['start']
     end = search_state['end']
 
-    
-    
     choices = []
 
     if 'esgf' in data_source:
@@ -228,7 +245,7 @@ def bind_files_schema(node, kw):
         elif 'wget' in data_source:
             choices = esgf_file_search(ctx, start, end)
     elif 'getfile' in data_source:
-        choices = [('1.nc', '1.nc'), ('2.nc', '2.nc')]
+        choices = [(f, f) for f in search_local_files( wps_url(request), selection)]
     else:
         log.error('unknown datasource: %s', data_source)
 
