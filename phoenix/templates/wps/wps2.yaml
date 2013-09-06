@@ -53,9 +53,9 @@ components:
         inputs.append( ("openid", openid) )
       if password != None:
         inputs.append( ("password", password) )
-      if file_urls != None:
-        for url in file_urls.split(','):
-          inputs.append( ("file_url", url) )
+      if file_identifiers != None:
+        for file_identifier in file_identifiers.split(','):
+          inputs.append( ("file_identifier", file_identifier) )
       outputs = [("output", True)]
       if input_params != None:
         input_params = map(lambda(val): (val[0], str(val[1])), input_params)
@@ -76,7 +76,7 @@ components:
         type: String
         optional: true
         nullable: true
-      file_urls:
+      file_identifiers:
         type: String
         optional: true
         nullable: true
@@ -114,24 +114,24 @@ components:
       password: ${password}
       input_params: ${source_params}
     sequences:
-      file_urls: 
-% for file_url in file_urls:
-        - ${file_url}
+      file_identifiers: 
+% for file_identifier in file_identifiers:
+        - ${file_identifier}
 % endfor
     outflows:
       status: /wps/download/status/
-      output: /wps/download/file_url/
+      output: /wps/download/file_identifier/
 
 - id: WaitForDownloads
   type: Node
   properties:
     actor: !ref CollectSources
     constants:
-      max: ${len(file_urls)}
+      max: ${len(file_identifiers)}
     inflows:
-      source: /wps/download/file_url/
+      source: /wps/download/file_identifier/
     outflows:
-      allSources: /wps/download/file_urls/
+      allSources: /wps/download/file_identifiers/
 
 - id: RunDataProcessing
   type: Node
@@ -143,7 +143,7 @@ components:
       identifier: ${work_process}
       input_params: ${work_params}
     inflows:
-      file_urls: /wps/download/file_urls
+      file_identifiers: /wps/download/file_identifiers
     outflows:
       status: /wps/work/status/
       output: /wps/work/output/  

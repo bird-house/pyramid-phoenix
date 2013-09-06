@@ -244,20 +244,20 @@ def bind_files_schema(node, kw):
             choices = esgf_aggregation_search(ctx)
         elif 'wget' in data_source:
             choices = esgf_file_search(ctx, start, end)
-    elif 'getfile' in data_source:
+    elif 'filesystem' in data_source:
         choices = [(f, f) for f in search_local_files( wps_url(request), selection)]
     else:
         log.error('unknown datasource: %s', data_source)
 
-    node.get('file_url').widget = widget.CheckboxChoiceWidget(values=choices)
+    node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
    
 class SelectFilesSchema(colander.MappingSchema):
     description = 'Choose input files'
     appstruct = {}
     
-    file_url = colander.SchemaNode(
+    file_identifier = colander.SchemaNode(
         colander.Set(),
-        description = 'Filename',
+        description = 'File Identifier',
         )
 
 # opendap schema
@@ -274,8 +274,8 @@ def bind_esg_access_schema(node, kw):
         wps = WebProcessingService(wps_url(request), verbose=False)
         process = wps.describeprocess(identifier)
         node.add_nodes(process)
-    if node.get('file_url', False):
-        del node['file_url']
+    if node.get('file_identifier', False):
+        del node['file_identifier']
 
 # wps process schema
 # ------------------
@@ -291,8 +291,8 @@ def bind_wps_schema(node, kw):
         wps = WebProcessingService(wps_url(request), verbose=False)
         process = wps.describeprocess(identifier)
         node.add_nodes(process)
-    if node.get('file_url', False):
-        del node['file_url']
+    if node.get('file_identifier', False):
+        del node['file_identifier']
 
 # summary schema
 # --------------
@@ -392,7 +392,7 @@ class Done():
         workflow_params['source_process'] = str(states[1].get('data_source'))
         workflow_params['openid'] = str(states[4].get('openid'))
         workflow_params['password'] = str(states[4].get('password'))
-        workflow_params['file_urls'] = states[3].get('file_url')
+        workflow_params['file_identifiers'] = states[3].get('file_identifier')
         workflow_params['source_params'] = []
         if states[4].has_key('startindex'):
             workflow_params['source_params'].append( ('startindex', int(states[4].get('startindex'))) ) 
