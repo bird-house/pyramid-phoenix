@@ -90,10 +90,10 @@ class SelectDataSourceSchema(colander.MappingSchema):
         colander.String(),
         widget = deferred_choose_datasource_widget)
 
-# esg search schema
+# search schema
 # -----------------
 
-def esgsearch_metadata(url, wizard_state):
+def search_metadata(url, wizard_state):
     if url == None or wizard_state == None:
         return {}
     
@@ -115,14 +115,14 @@ def esgsearch_metadata(url, wizard_state):
     metadata = json.loads(output.data[0])
     return metadata
 
-def bind_esgsearch_schema(node, kw):
+def bind_search_schema(node, kw):
     log.debug("bind esg search schema, kw=%s" % (kw))
     request = kw.get('request', None)
     wizard_state = kw.get('wizard_state', None)
     if request == None or wizard_state == None:
         return
 
-    metadata = esgsearch_metadata( wps_url(request), wizard_state)
+    metadata = search_metadata( wps_url(request), wizard_state)
 
     constraints =  metadata.get('esgfilter')
     log.debug('constraints = %s', constraints )
@@ -135,7 +135,7 @@ def bind_esgsearch_schema(node, kw):
     node.get('selection').default = constraints
     node.get('selection').widget = EsgSearchWidget(url=url, query=query)
 
-class EsgSearchSchema(colander.MappingSchema):
+class SearchSchema(colander.MappingSchema):
     description = 'Choose a single Dataset'
     appstruct = {}
 
@@ -400,8 +400,8 @@ def wizard(request):
     schemas = []
     schemas.append( SelectProcessSchema(title='Select Process') )
     schemas.append( SelectDataSourceSchema(title='Select Data Source') )
-    schemas.append( EsgSearchSchema(title='Select ESGF Dataset',
-                                    after_bind=bind_esgsearch_schema,
+    schemas.append( SearchSchema(title='Search Input Files',
+                                    after_bind=bind_search_schema,
                                     ))
     schemas.append( EsgFilesSchema(title='Select File URL') )
     schemas.append( WPSSchema(title='Access Parameters', 
