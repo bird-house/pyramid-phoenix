@@ -172,8 +172,8 @@ class SearchSchema(colander.MappingSchema):
 
     end = colander.SchemaNode(
         colander.Date(),
-        default = datetime.date(2500, 1, 1),
-        missing = datetime.date(2500, 1, 1),
+        default = datetime.date(2500, 12, 31),
+        missing = datetime.date(2500, 12, 31),
         widget = deform.widget.DatePartsWidget(),
         )
 
@@ -406,7 +406,7 @@ class Done():
 
         identifier = 'org.malleefowl.restflow'
         inputs = [("workflow_description", str(workflow_description))]
-        outputs = [("output",True)]
+        outputs = [("output",True), ("work_output", False), ("work_status", False)]
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
         
         add_job(
