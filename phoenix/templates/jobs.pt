@@ -17,7 +17,7 @@
                         <td>${job.starttime}</td>
                         <td>${job.duration}</td>
                         <td tal:condition="job.status in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']">
-			    <a href="#" class="label label-info" data-toggle="popover" data-placement="left" data-content="${job.status_message}" data-original-title="Status Message">${job.status}</a>
+                            <a href="#" class="label label-info" data-toggle="popover" data-placement="left" data-content="${job.status_message}" data-original-title="Status Message">${job.status}</a>
                             <div class="progress progress-info">
                                 <div class="bar" style="width: ${job.percent_completed}%;">${job.percent_completed}%</div>
                             </div>
@@ -26,7 +26,7 @@
                             <a href="/output_details?uuid=${job.uuid}" class="label label-success">${job.status}</a>
                         </td>
                         <td tal:condition="job.status == 'ProcessFailed'">
-			    <a href="#" class="label label-warning" data-toggle="popover" data-placement="left" data-content="${job.error_message}" data-original-title="Error Message">${job.status}</a>
+                            <a href="#" class="label label-warning" data-toggle="popover" data-placement="left" data-content="${job.error_message}" data-original-title="Error Message">${job.status}</a>
                         </td>
                         <td tal:condition="job.status == 'Exception'">
                             <a href="#" class="label label-important" data-toggle="popover" data-placement="left" data-content="${job.error_message}" data-original-title="Error Message">${job.status}</a>
@@ -48,9 +48,9 @@
                 });
             });
 
-	    $(function() {
-	        setTimeout("location.reload(true);",20000);
-	    });
+            $(function() {
+                setTimeout("location.reload(true);",10000);
+            });
 
         </script>
     </div>
