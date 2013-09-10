@@ -175,7 +175,7 @@ class WPSSchema(colander.SchemaNode):
             return colander.String()
 
     def colander_literal_widget(self, node, data_input):
-        if len(data_input.allowedValues) > 1:
+        if len(data_input.allowedValues) > 0:
             if not 'AnyValue' in data_input.allowedValues:
                 choices = []
                 for value in data_input.allowedValues:
