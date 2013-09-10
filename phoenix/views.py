@@ -214,14 +214,16 @@ class ExecuteView(FormView):
             identifier = self.request.params.get('identifier')
             self.wps = WebProcessingService(wps_url(self.request), verbose=False)
             process = self.wps.describeprocess(identifier)
-            self.schema = self.schema_factory(process)
+            self.schema = self.schema_factory(
+                title=process.title,
+                process=process)
         except:
             raise
        
         return super(ExecuteView, self).__call__()
 
     def appstruct(self):
-        return {}
+        return None
 
     def submit_success(self, appstruct):
         identifier = self.request.params.get("identifier")
@@ -274,7 +276,7 @@ class CatalogAddWPSView(FormView):
         if self.schema is None:
             if self.schema_factory is None:
                 self.schema_factory = CatalogAddWPSSchema
-            self.schema = self.schema_factory().bind(
+            self.schema = self.schema_factory(title='Catalog').bind(
                 wps_list = wps_list,
                 readonly = True)
 
@@ -319,7 +321,7 @@ class CatalogSelectWPSView(FormView):
         if self.schema is None:
             if self.schema_factory is None:
                 self.schema_factory = CatalogSelectWPSSchema
-            self.schema = self.schema_factory().bind(wps_list = wps_list)
+            self.schema = self.schema_factory(title='Catalog').bind(wps_list = wps_list)
 
         return super(CatalogSelectWPSView, self).__call__()
 
@@ -344,7 +346,7 @@ class AdminView(FormView):
 
     log.debug('rendering admin view')
     #form_info = "Hover your mouse over the widgets for description."
-    schema = AdminSchema()
+    schema = AdminSchema(title="Administration")
     buttons = ('clear_database',)
     title = u"Administration"
 

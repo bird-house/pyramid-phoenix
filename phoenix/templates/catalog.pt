@@ -1,13 +1,8 @@
 <metal:block use-macro="main_template">
-	
-	<div metal:fill-slot="content">
-		${panel('catalog_navbar')}
-
-        <legend>
-            <h3>title</h3>
-            <small>form_info</small>
-        </legend>
         
+        <div metal:fill-slot="content">
+                ${panel('catalog_navbar')}
+
         <tal:form replace="structure form">The form will render here</tal:form>
     </div>
    
