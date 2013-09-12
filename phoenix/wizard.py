@@ -143,6 +143,9 @@ def bind_search_schema(node, kw):
     else:
         node.get('selection').widget = widget.TextInputWidget()
 
+    request.session['phoenix.wizard.files'] = None
+    request.session.changed()
+
 class SearchSchema(colander.MappingSchema):
     description = 'Search Input Files'
     appstruct = {}
@@ -209,13 +212,19 @@ def search_local_files(url, filter):
     return files
 
 def bind_files_schema(node, kw):
+    log.debug('bind_files_schema called')
+    
     request = kw.get('request', None)
     wizard_state = kw.get('wizard_state', None)
 
     if request == None or wizard_state == None:
+        log.debug('not fetching files')
         return
 
+    log.debug('step num = %s', wizard_state.get_step_num())
+
     states = wizard_state.get_step_states()
+    
     data_source_state = states.get(1)
     data_source = data_source_state['data_source']
 
@@ -226,28 +235,36 @@ def bind_files_schema(node, kw):
     start = search_state['start']
     end = search_state['end']
 
-    choices = []
+    choices = request.session.get('phoenix.wizard.files', None)
 
-    if 'esgf' in data_source:
-        ctx = esgf_search_context(request, query)
-        constraints = {}
-        for constraint in selection.split(','):
-            if ':' in constraint:
-                key,value = constraint.split(':')
-                if constraints.has_key(key):
-                    constraints[key].append(value)
-                else:
-                    constraints[key] = [value]
-        ctx = ctx.constrain(**constraints) 
+    if choices == None:
+        log.debug('fetching files')
+        choices = []
+        if 'esgf' in data_source:
+            ctx = esgf_search_context(request, query)
+            constraints = {}
+            for constraint in selection.split(','):
+                if ':' in constraint:
+                    key,value = constraint.split(':')
+                    if constraints.has_key(key):
+                        constraints[key].append(value)
+                    else:
+                        constraints[key] = [value]
+            ctx = ctx.constrain(**constraints) 
 
-        if 'opendap' in data_source:
-            choices = esgf_aggregation_search(ctx)
-        elif 'wget' in data_source:
-            choices = esgf_file_search(ctx, start, end)
-    elif 'filesystem' in data_source:
-        choices = [(f, f) for f in search_local_files( wps_url(request), selection)]
+            if 'opendap' in data_source:
+                choices = esgf_aggregation_search(ctx)
+            elif 'wget' in data_source:
+                choices = esgf_file_search(ctx, start, end)
+        elif 'filesystem' in data_source:
+            choices = [(f, f) for f in search_local_files( wps_url(request), selection)]
+        else:
+            log.error('unknown datasource: %s', data_source)
+
+        request.session['phoenix.wizard.files'] = choices
+        request.session.changed()
     else:
-        log.error('unknown datasource: %s', data_source)
+        log.debug('not fetching files')
 
     node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
    
