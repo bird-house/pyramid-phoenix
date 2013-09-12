@@ -261,8 +261,9 @@ def bind_files_schema(node, kw):
         else:
             log.error('unknown datasource: %s', data_source)
 
-        request.session['phoenix.wizard.files'] = choices
-        request.session.changed()
+        # TODO: using session for result cache does not work
+        #request.session['phoenix.wizard.files'] = choices
+        #request.session.changed()
     else:
         log.debug('not fetching files')
 
