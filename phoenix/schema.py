@@ -8,6 +8,7 @@
 
 import colander
 import deform
+from deform.widget import OptGroup
 
 import logging
 
@@ -17,6 +18,54 @@ log = logging.getLogger(__name__)
 from owslib.wps import WebProcessingService
 from .helpers import wps_url
 
+
+# process list
+# ------------
+
+@colander.deferred
+def deferred_select_process_widget(node, kw):
+    request = kw.get('request')
+    wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
+    wps.getcapabilities()
+
+    csc_group = []
+    dkrz_group = []
+    base_group = []
+    c3grid_group = []
+    other_group = []
+    for process in wps.processes:
+        if 'de.csc' in process.identifier:
+            csc_group.append( (process.identifier, process.title) )
+        elif 'de.dkrz' in process.identifier:
+            dkrz_group.append( (process.identifier, process.title) )
+        elif 'org.malleefowl' in process.identifier:
+            base_group.append( (process.identifier, process.title) )
+        elif 'de.c3grid' in process.identifier:
+            c3grid_group.append( (process.identifier, process.title) )
+        else:
+            other_group.append( (process.identifier, process.title) )
+    choices = [ ('', 'Select Proceess') ]
+    if len(base_group) > 0:
+        choices.append( OptGroup('Base', *base_group) )
+    if len(c3grid_group) > 0:
+        choices.append( OptGroup('C3Grid', *c3grid_group) )
+    if len(csc_group) > 0:
+        choices.append( OptGroup('CSC', *csc_group) )
+    if len(dkrz_group) > 0:
+        choices.append( OptGroup('DKRZ', *dkrz_group) )
+    if len(other_group) > 0:
+        choices.append( OptGroup('Other', *other_group) )
+    
+    return deform.widget.SelectWidget(
+        values = choices,
+        long_label_generator = lambda group, label: ' - '.join((group, label))
+        )
+
+class ProcessSchema(colander.MappingSchema):
+    process = colander.SchemaNode(
+        colander.String(),
+        title = "WPS Process",
+        widget = deferred_select_process_widget)
 
 # admin
 # -----

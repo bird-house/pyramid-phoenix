@@ -69,7 +69,7 @@ def main(global_config, **settings):
     config.add_route('processes', '/processes')
     config.add_route('jobs', '/jobs')
     config.add_route('output_details', '/output_details')
-    config.add_route('form', '/form')
+    config.add_route('execute', '/execute')
     config.add_route('monitor', '/monitor')
     config.add_route('admin', '/admin')
     config.add_route('wizard', '/wizard')

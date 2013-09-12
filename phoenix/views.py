@@ -103,14 +103,25 @@ def home(request):
 # ---------
 
 @view_config(route_name='processes',
-             renderer='templates/processes.pt',
+             renderer='templates/form.pt',
              layout='default',
              permission='view'
              )
-def processes(request):
-    wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
-    wps.getcapabilities()
-    return dict( wps=wps, logged_in=authenticated_userid(request))
+class ProcessView(FormView):
+    from .schema import ProcessSchema
+
+    schema = ProcessSchema(title="Select process you wish to run")
+    buttons = ('submit',)
+
+    def submit_success(self, appstruct):
+        params = self.schema.serialize(appstruct)
+        identifier = params.get('process')
+        
+        session = self.request.session
+        session['phoenix.process.identifier'] = identifier
+        session.changed()
+        
+        return HTTPFound(location=self.request.route_url('execute'))
    
 # jobs
 # -------
@@ -191,16 +202,14 @@ def output_details(request):
 # form
 # -----
 
-@view_config(route_name='form',
+@view_config(route_name='execute',
              renderer='templates/form.pt',
              layout='default',
-             permission='edit'
+             permission='view'
              )
 class ExecuteView(FormView):
     log.debug('rendering execute')
-    #form_info = "Hover your mouse over the widgets for description."
     buttons = ('submit',)
-    title = u"Process Output"
     schema_factory = None
     wps = None
    
@@ -211,7 +220,8 @@ class ExecuteView(FormView):
                 self.schema_factory = WPSSchema
             
         try:
-            identifier = self.request.params.get('identifier')
+            session = self.request.session
+            identifier = session['phoenix.process.identifier']
             self.wps = WebProcessingService(wps_url(self.request), verbose=False)
             process = self.wps.describeprocess(identifier)
             self.schema = self.schema_factory(
@@ -226,7 +236,8 @@ class ExecuteView(FormView):
         return None
 
     def submit_success(self, appstruct):
-        identifier = self.request.params.get("identifier")
+        session = self.request.session
+        identifier = session['phoenix.process.identifier']
         serialized = self.schema.serialize(appstruct)
       
         execution = execute_wps(self.wps, identifier, serialized)
