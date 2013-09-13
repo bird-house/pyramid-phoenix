@@ -71,6 +71,12 @@ def execute_wps(wps, identifier, params):
     inputs = []
     # TODO: dont append value if default
     for (key, value) in params.iteritems():
+        # ignore info params
+        if 'info_tags' in key:
+            continue
+        if 'info_notes' in key:
+            continue
+        
         values = []
         # TODO: how do i handle serveral values in wps?
         if type(value) == types.ListType:

@@ -44,10 +44,15 @@ class WPSSchema(colander.SchemaNode):
 
     appstruct = {}
 
-    def __init__(self, process=None, unknown='ignore', **kw):
+    def __init__(self, info=False, process=None, unknown='ignore', **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
+
+        info:
+           Add info fields for notes and tags (boolean).
+
+           Default: False
 
         process
            An ``WPS`` process description that you want a ``Colander`` schema
@@ -78,11 +83,35 @@ class WPSSchema(colander.SchemaNode):
 
         # The default type of this SchemaNode is Mapping.
         colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
+        self.info = info
         self.process = process
         self.unknown = unknown
         self.kwargs = kwargs or {}   
 
-        self.add_nodes(process)    
+        if info:
+            self.add_info_nodes()
+        self.add_nodes(process)
+
+    def add_info_nodes(self):
+        log.debug("adding info nodes")
+        
+        node = colander.SchemaNode(
+            colander.String(),
+            name = 'info_notes',
+            title = 'Notes',
+            description = 'Enter some notes for your process',
+            widget = deform.widget.RichTextWidget()
+            )
+        self.add(node)
+
+        node = colander.SchemaNode(
+            colander.String(),
+            name = 'info_tags',
+            title = 'Tags',
+            description = 'Enter some tags',
+            widget = deform.widget.TextInputWidget()
+            )
+        self.add(node)
         
     def add_nodes(self, process):
         if process is None:
@@ -280,9 +309,11 @@ class WPSSchema(colander.SchemaNode):
         return cloned
 
     def clone(self):
-        cloned = self.__class__(self.process,
-                                self.unknown,
-                                **self.kwargs)
+        cloned = self.__class__(
+            self.info,
+            self.process,
+            self.unknown,
+            **self.kwargs)
         cloned.__dict__.update(self.__dict__)
         cloned.children = [node.clone() for node in self.children]
         return cloned

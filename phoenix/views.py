@@ -225,8 +225,9 @@ class ExecuteView(FormView):
             self.wps = WebProcessingService(wps_url(self.request), verbose=False)
             process = self.wps.describeprocess(identifier)
             self.schema = self.schema_factory(
-                title=process.title,
-                process=process)
+                info = True,
+                title = process.title,
+                process = process)
         except:
             raise
        

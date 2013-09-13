@@ -302,13 +302,18 @@ def bind_wps_schema(node, kw):
     log.debug("bind wps schema, kw=%s" % (kw))
     request = kw.get('request', None)
     wizard_state = kw.get('wizard_state', None)
-    if request != None and wizard_state != None:
-        states = wizard_state.get_step_states()
-        state = states.get(0)
-        identifier = state['process']
-        wps = WebProcessingService(wps_url(request), verbose=False)
-        process = wps.describeprocess(identifier)
-        node.add_nodes(process)
+    
+    if request == None or wizard_state == None:
+        return
+  
+    states = wizard_state.get_step_states()
+    state = states.get(0)
+    identifier = state['process']
+    wps = WebProcessingService(wps_url(request), verbose=False)
+    process = wps.describeprocess(identifier)
+   
+    node.add_nodes(process)
+
     if node.get('file_identifier', False):
         del node['file_identifier']
 
@@ -465,6 +470,7 @@ def wizard(request):
         after_bind=bind_esg_access_schema,
         ))
     schemas.append( WPSSchema(
+        info=True,
         title='Process Parameters', 
         after_bind=bind_wps_schema,
         ))
