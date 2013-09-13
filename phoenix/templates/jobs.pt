@@ -7,6 +7,8 @@
                     <th>Identifier</th>
                     <th>Start Time</th>
                     <th>Duration</th>
+                    <th>Notes</th>
+                    <th>Tags</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -16,6 +18,8 @@
                         <td><a rel="tooltip" data-placement="right" title="ID: ${job.uuid}">${job.identifier}</a></td>
                         <td>${job.starttime}</td>
                         <td>${job.duration}</td>
+                        <td>${job.notes}</td>
+                        <td>${job.tags}</td>
                         <td tal:condition="job.status in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']">
                             <a href="#" class="label label-info" data-toggle="popover" data-placement="left" data-content="${job.status_message}" data-original-title="Status Message">${job.status}</a>
                             <div class="progress progress-info">
