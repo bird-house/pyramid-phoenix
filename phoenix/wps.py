@@ -7,10 +7,13 @@
 
 import colander
 import deform
+import deform_bootstrap_extra
 import logging
 
 import dateutil
 import re
+
+from .widget import TagsWidget
 
 __all__ = ['WPSSchema']
 
@@ -109,7 +112,7 @@ class WPSSchema(colander.SchemaNode):
             name = 'info_tags',
             title = 'Tags',
             description = 'Enter some tags',
-            widget = deform.widget.TextInputWidget()
+            widget = TagsWidget()
             )
         self.add(node)
         

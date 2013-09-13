@@ -41,8 +41,8 @@ log = logging.getLogger(__name__)
 
 
 from owslib.wps import WebProcessingService
-from phoenix.helpers import wps_url
-from phoenix.widget import EsgSearchWidget, EsgFilesWidget, WizardStatesWidget
+from .helpers import wps_url
+from .widget import EsgSearchWidget, EsgFilesWidget, WizardStatesWidget
 
 from pyesgf.search import SearchConnection
 
