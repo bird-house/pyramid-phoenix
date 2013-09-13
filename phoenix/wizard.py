@@ -437,7 +437,9 @@ class Done():
             user_id = authenticated_userid(request), 
             identifier = identifier, 
             wps_url = wps.url, 
-            execution = execution)
+            execution = execution,
+            notes = states[5].get('info_notes', ''),
+            tags = states[5].get('info_tags', ''))
         
         form_view = self.form_view_class(request)
         form_view.schema = self.schema.bind()

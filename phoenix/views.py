@@ -239,16 +239,18 @@ class ExecuteView(FormView):
     def submit_success(self, appstruct):
         session = self.request.session
         identifier = session['phoenix.process.identifier']
-        serialized = self.schema.serialize(appstruct)
+        params = self.schema.serialize(appstruct)
       
-        execution = execute_wps(self.wps, identifier, serialized)
+        execution = execute_wps(self.wps, identifier, params)
 
         add_job(
             request = self.request, 
             user_id = authenticated_userid(self.request), 
             identifier = identifier, 
             wps_url = self.wps.url, 
-            execution = execution)
+            execution = execution,
+            notes = params.get('info_notes', ''),
+            tags = params.get('info_tags', ''))
 
         return HTTPFound(location=self.request.route_url('jobs'))
 

@@ -26,17 +26,25 @@ def database(request):
     conn = mongodb_conn(request)
     return conn.phoenix_db
 
-def add_job(request, user_id, identifier, wps_url, execution):
+def add_job(request,
+            identifier,
+            wps_url,
+            execution,
+            user_id='anonymous',
+            notes='',
+            tags=''):
     db = database(request)
     db.jobs.save(dict(
-        user_id= user_id, 
-        uuid=uuid.uuid4().get_hex(),
-        identifier=identifier,
-        service_url=wps_url,
-        status_location=execution.statusLocation,
+        user_id = user_id, 
+        uuid = uuid.uuid4().get_hex(),
+        identifier = identifier,
+        service_url = wps_url,
+        status_location = execution.statusLocation,
         status = execution.status,
         start_time = datetime.datetime.now(),
         end_time = datetime.datetime.now(),
+        notes = notes,
+        tags = tags,
     ))
     log.debug('count jobs = %s', db.jobs.count())
 
