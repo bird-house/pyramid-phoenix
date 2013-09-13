@@ -21,6 +21,7 @@
       };
 
       var deleted_constraint_handler = function(constraint) {
+        jQuery(".tm-selection").tagsManager('limitPopTags');
         execute();
       };
 
@@ -32,6 +33,7 @@
 
       var selected_facet_value_handler = function (facet_value) {
         value = selectedFacet  + ':' + facet_value;
+        jQuery(".tm-selection").tagsManager('limitPushTags');
         $(".tm-selection").tagsManager('pushTag', value);
         execute();
       };
@@ -96,7 +98,7 @@
         searchURL += '&latest=' + searchOptions.latest; 
         searchURL += '&format=' + format;
         searchURL += '&query=' + searchOptions.query;
-   
+        
         $.getJSON(searchURL, function(json) {
           var facet_counts = json.facet_counts.facet_fields;
           var facets = [];
@@ -107,6 +109,7 @@
           });
           $(".tm-facets").tagsManager('empty');
           $.each(facets.sort(), function(i, tag) {
+            jQuery(".tm-facets").tagsManager('limitPushTags');
             jQuery(".tm-facets").tagsManager('pushTag', tag);
           });
           var counts = json.facet_counts.facet_fields[selectedFacet];
@@ -118,8 +121,10 @@
             }
           });
           $.each(facet_values.sort(), function(i,value) {
+            jQuery(".tm-facet").tagsManager('limitPushTags');
             jQuery(".tm-facet").tagsManager('pushTag', value);
           });
+          
           update_counts(json.response.numFound);
         });
       };
