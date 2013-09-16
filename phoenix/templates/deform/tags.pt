@@ -15,7 +15,7 @@
  
   <script type="text/javascript">
     jQuery(".tm-tags").tagsManager({
-          prefilled: ["hello"],
+          //prefilled: ["hello"],
           preventSubmitOnEnter: true,
           delimiters: [9, 13, 44],
           tagClass: 'tm-tag tm-tag-info',

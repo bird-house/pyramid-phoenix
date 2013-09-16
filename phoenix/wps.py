@@ -103,6 +103,8 @@ class WPSSchema(colander.SchemaNode):
             name = 'info_notes',
             title = 'Notes',
             description = 'Enter some notes for your process',
+            default = 'test',
+            missing = 'test',
             widget = deform.widget.RichTextWidget()
             )
         self.add(node)
@@ -112,6 +114,8 @@ class WPSSchema(colander.SchemaNode):
             name = 'info_tags',
             title = 'Tags',
             description = 'Enter some tags',
+            default = 'test',
+            missing = 'test',
             widget = TagsWidget()
             )
         self.add(node)
