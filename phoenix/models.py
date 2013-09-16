@@ -65,7 +65,7 @@ def drop_jobs(request):
     db = database(request)
     db.jobs.drop()
 
-def jobs_by_userid(request, user_id):
+def jobs_by_userid(request, user_id='anonymous'):
     db = database(request)
     return db.jobs.find( dict(user_id=user_id) )
 

@@ -454,7 +454,7 @@ class Done():
 @view_config(route_name='wizard',
              renderer='templates/wizard.pt',
              layout='default',
-             permission='edit',
+             permission='view',
              )
 def wizard(request):
     schemas = []

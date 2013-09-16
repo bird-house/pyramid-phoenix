@@ -129,10 +129,12 @@ class ProcessView(FormView):
 @view_config(route_name='jobs',
              renderer='templates/jobs.pt',
              layout='default',
-             permission='edit'
+             permission='view'
              )
 def jobs(request):
     jobs = []
+
+    log.debug('user id = %s', authenticated_userid(request) )
 
     for job in jobs_by_userid(request, user_id=authenticated_userid(request)):
         log.debug(job)
@@ -183,7 +185,7 @@ def jobs(request):
      route_name='output_details',
      renderer='templates/output_details.pt',
      layout='default',
-     permission='edit')
+     permission='view')
 def output_details(request):
     title = u"Process Outputs"
 
@@ -267,7 +269,7 @@ def monitor(request):
 @view_config(route_name='catalog_wps_add',
              renderer='templates/catalog.pt',
              layout='default',
-             permission='edit',
+             permission='view',
              )
 class CatalogAddWPSView(FormView):
     #form_info = "Hover your mouse over the widgets for description."
@@ -311,7 +313,7 @@ class CatalogAddWPSView(FormView):
 @view_config(route_name='catalog_wps_select',
              renderer='templates/catalog.pt',
              layout='default',
-             permission='edit',
+             permission='view',
              )
 class CatalogSelectWPSView(FormView):
     log.debug('rendering catalog select wps')
