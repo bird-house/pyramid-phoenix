@@ -265,6 +265,13 @@ def monitor(request):
     log.debug('rendering monitor view')
     return dict(external_url='http://localhost:9001')
 
+@view_config(route_name='thredds',
+             renderer='templates/embedded.pt',
+             layout='default',
+             permission='view'
+             )
+def thredds(request):
+    return dict(external_url='http://localhost:8080/thredds')
 
 @view_config(route_name='catalog_wps_add',
              renderer='templates/catalog.pt',
