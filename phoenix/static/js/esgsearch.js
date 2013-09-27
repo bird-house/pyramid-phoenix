@@ -5,7 +5,7 @@
         oid: null,
         url: null,
         query: '*',
-        distrib: 'false',
+        distrib: 'true',
         latest: 'true',
         constraints: null,
         type: 'Dataset',
@@ -81,7 +81,7 @@
       var execute = function() {
         var limit = '0';
         var format = 'application%2Fsolr%2Bjson';
-        var constraints = '&project=CMIP5';
+        var constraints = ''; //&project=CMIP5
         var servlet = 'search';
         var tags = $("#" + searchOptions.oid).val().split(",");
         $.each(tags, function(i, tag) {
@@ -98,7 +98,8 @@
         searchURL += '&latest=' + searchOptions.latest; 
         searchURL += '&format=' + format;
         searchURL += '&query=' + searchOptions.query;
-        
+
+        // alert(searchURL);
         $.getJSON(searchURL, function(json) {
           var facet_counts = json.facet_counts.facet_fields;
           var facets = [];
