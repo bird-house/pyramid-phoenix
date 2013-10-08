@@ -78,28 +78,27 @@ def esgf_search_conn(request):
     
 def esgf_search_context(request, query='*'):
     conn = esgf_search_conn(request)
-    ctx = conn.new_context( latest=True, query=query) #project='CMIP5',
+    ctx = conn.new_context( replica=False, latest=True, query=query) #project='CMIP5',
     return ctx
 
 def esgf_aggregation_search(ctx):
     log.debug("datasets found = %d", ctx.hit_count)
     if ctx.hit_count == 0:
         return []
-    result = ctx.search()[0]
-    
-    agg_ctx = result.aggregation_context()
-    log.debug('opendap num files = %d', agg_ctx.hit_count)
     aggregations = []
-    for agg in agg_ctx.search():
-        # filter with selected variables
-        ok = False
-        for var_name in ctx.facet_constraints.getall('variable'):
-            if var_name in agg.json.get('variable', []):
-                ok = True
-                break
-        if not ok: continue
+    for result in ctx.search():
+        agg_ctx = result.aggregation_context()
+        log.debug('opendap num files = %d', agg_ctx.hit_count)
+        for agg in agg_ctx.search():
+            # filter with selected variables
+            ok = False
+            for var_name in ctx.facet_constraints.getall('variable'):
+                if var_name in agg.json.get('variable', []):
+                    ok = True
+                    break
+            if not ok: continue
 
-        aggregations.append( (agg.opendap_url, agg.aggregation_id) )
+            aggregations.append( (agg.opendap_url, agg.aggregation_id) )
     return aggregations
 
 def esgf_file_search(ctx, start, end):
@@ -109,33 +108,33 @@ def esgf_file_search(ctx, start, end):
     log.debug("filter from=%s, to=%s", start_str, end_str)
     
     log.debug("datasets found = %d", ctx.hit_count)
-    result = ctx.search()[0]
-    file_ctx = result.file_context()
-    log.debug("files found = %d", file_ctx.hit_count)
-
-    query_dict = MultiDict()
-    query_dict['type'] = 'File'
-    query_dict.extend(file_ctx.facet_constraints)
-    query_dict.extend(ctx.facet_constraints)
-    
-    response = ctx.connection.send_search(limit=file_ctx.hit_count, query_dict=query_dict)
-    docs = response['response']['docs']
     files = []
-    for doc in docs:
-        download_url = None
-        for encoded in doc['url']:
-            url, mime_type, service = encoded.split('|')
-            if 'HTTPServer' in service:
-                download_url = url
-                break
-        if download_url == None:
-            continue
-        filename = doc['title']
+    for result in ctx.search():
+        file_ctx = result.file_context()
+        log.debug("files found = %d", file_ctx.hit_count)
 
-        # filter with time constraint
-        index = filename.rindex('-')
-        f_start = filename[index-8:index]
-        f_end = filename[index+1:index+9]
-        if f_start >= start_str and f_end <= end_str:
-            files.append( (download_url, filename) )
+        query_dict = MultiDict()
+        query_dict['type'] = 'File'
+        query_dict.extend(file_ctx.facet_constraints)
+        query_dict.extend(ctx.facet_constraints)
+
+        response = ctx.connection.send_search(limit=file_ctx.hit_count, query_dict=query_dict)
+        docs = response['response']['docs']
+        for doc in docs:
+            download_url = None
+            for encoded in doc['url']:
+                url, mime_type, service = encoded.split('|')
+                if 'HTTPServer' in service:
+                    download_url = url
+                    break
+            if download_url == None:
+                continue
+            filename = doc['title']
+
+            # filter with time constraint
+            index = filename.rindex('-')
+            f_start = filename[index-8:index]
+            f_end = filename[index+1:index+9]
+            if f_start >= start_str and f_end <= end_str:
+                files.append( (download_url, filename) )
     return files

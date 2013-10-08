@@ -7,6 +7,7 @@
         query: '*',
         distrib: 'true',
         latest: 'true',
+        replica: 'false',
         constraints: null,
         type: 'Dataset',
       };
@@ -96,6 +97,7 @@
         searchURL += '&limit=' + limit; 
         searchURL += '&distrib=' + searchOptions.distrib; 
         searchURL += '&latest=' + searchOptions.latest; 
+        searchURL += '&replica=' + searchOptions.replica; 
         searchURL += '&format=' + format;
         searchURL += '&query=' + searchOptions.query;
 
