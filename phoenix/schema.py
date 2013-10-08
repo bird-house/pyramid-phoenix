@@ -55,6 +55,9 @@ def deferred_select_process_widget(node, kw):
         choices.append( OptGroup('DKRZ', *dkrz_group) )
     if len(other_group) > 0:
         choices.append( OptGroup('Other', *other_group) )
+
+    test_group=[('test','test')]
+    choices.append(OptGroup('Test', *test_group))
     
     return deform.widget.SelectWidget(
         values = choices,
