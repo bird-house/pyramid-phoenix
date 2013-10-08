@@ -44,7 +44,7 @@ def deferred_select_process_widget(node, kw):
             c3grid_group.append( (process.identifier, process.title) )
         else:
             other_group.append( (process.identifier, process.title) )
-    choices = [ ('', 'Select Proceess') ]
+    choices = [ ('', 'Select Process') ]
     if len(base_group) > 0:
         choices.append( OptGroup('Base', *base_group) )
     if len(c3grid_group) > 0:
