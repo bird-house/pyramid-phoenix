@@ -92,11 +92,14 @@ def esgf_aggregation_search(ctx):
         for agg in agg_ctx.search():
             # filter with selected variables
             ok = False
-            for var_name in ctx.facet_constraints.getall('variable'):
-                if var_name in agg.json.get('variable', []):
-                    ok = True
-                    break
-            if not ok: continue
+            variables = ctx.facet_constraints.getall('variable')
+            log.debug('variables in query: %s', variables)
+            if len(variables) > 0:
+                for var_name in variables:
+                    if var_name in agg.json.get('variable', []):
+                        ok = True
+                        break
+                if not ok: continue
 
             aggregations.append( (agg.opendap_url, agg.aggregation_id) )
     return aggregations
@@ -118,7 +121,9 @@ def esgf_file_search(ctx, start, end):
         query_dict.extend(file_ctx.facet_constraints)
         query_dict.extend(ctx.facet_constraints)
 
+        log.debug('before sending query ...')
         response = ctx.connection.send_search(limit=file_ctx.hit_count, query_dict=query_dict)
+        log.debug('got query response')
         docs = response['response']['docs']
         for doc in docs:
             download_url = None
