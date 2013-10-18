@@ -68,7 +68,7 @@
           delimiters: [9, 13, 44],
           //maxTags: 2,
           tagClass: 'tm-tag tm-tag-success',
-          hiddenTagListId: searchOptions.oid,
+          hiddenTagListId: searchOptions.oid + '-facets',
           deleteHandler: deleted_constraint_handler,
         });
       };
@@ -102,7 +102,7 @@
         var format = 'application%2Fsolr%2Bjson';
         var constraints = ''; //&project=CMIP5
         var servlet = 'search';
-        var tags = $("#" + searchOptions.oid).val().split(",");
+        var tags = $("#" + searchOptions.oid + '-facets').val().split(",");
         $.each(tags, function(i, tag) {
           var constraint = tag.split(":");
           constraints += '&' + constraint[0] + '=' + constraint[1];

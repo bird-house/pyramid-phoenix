@@ -5,12 +5,11 @@
                   mask mask|field.widget.mask;
                   mask_placeholder mask_placeholder|field.widget.mask_placeholder;
                   style style|field.widget.style|None;
-                  url url|field.widget.url;
-                  query query|field.widget.query;
-"
+                  url url|field.widget.url;"
+      i18n:domain="deform"
       tal:omit-tag="">
 
-
+${field.start_mapping()}
   <label id="search-label-counts">placeholder</label>
   <p/>
 
@@ -22,8 +21,8 @@
   <label for="tm-selection">Current Selection</label>
   <input type="text" name="Current Selection" class="tm-selection" 
          id="tm-selection"/>
-  <input type="hidden" name="${name}" value="${cstruct}" 
-         id="${oid}">
+  <input type="hidden" name="facets" value="${facets}" 
+         id="${oid}-facets">
   <p/>
 
   <label for="tm-facets">Search Categories</label>
@@ -35,7 +34,8 @@
   <input type="text" name="Categorie: xxx" class="tm-facet"
          id="tm-facet"/>
   <p/>
-  
+${field.end_mapping()}
+
   <script type="text/javascript">
     deform.addCallback(
       '${oid}',

@@ -134,12 +134,9 @@ def bind_search_schema(node, kw):
     log.debug('query = %s', query )
     url = esgsearch_url(request)
     
-    node.get('query').default = query
-    node.get('query').missing = query
-
     if 'esgf' in data_source:
-        node.get('selection').default = constraints
-        node.get('selection').widget = EsgSearchWidget(url=url, query=query)
+        node.get('selection').default = ';'.join( [constraints, query]) 
+        node.get('selection').widget = EsgSearchWidget(url=url)
     else:
         node.get('selection').widget = widget.TextInputWidget()
 
@@ -150,20 +147,9 @@ class SearchSchema(colander.MappingSchema):
     description = 'Search Input Files'
     appstruct = {}
 
-    query = colander.SchemaNode(
-        colander.String(),
-        title = 'Query',
-        default = '*',
-        missing = '*',
-        widget = widget.TextInputWidget(
-            readonly = True,
-            size = 200,
-            )
-        )
-
     selection = colander.SchemaNode(
         colander.String(),
-        title = 'Current Selection',
+        title = 'ESGF Search',
         )
 
     start = colander.SchemaNode(
@@ -230,8 +216,8 @@ def bind_files_schema(node, kw):
 
     search_state = states.get(2)
     selection = search_state['selection']
+    facets, query = selection.split(';', 1)
     
-    query = search_state['query']
     start = search_state['start']
     end = search_state['end']
 
@@ -243,7 +229,7 @@ def bind_files_schema(node, kw):
         if 'esgf' in data_source:
             ctx = esgf_search_context(request, query)
             constraints = {}
-            for constraint in selection.split(','):
+            for constraint in facets.split(','):
                 if ':' in constraint:
                     key,value = constraint.split(':')
                     if constraints.has_key(key):
@@ -257,7 +243,7 @@ def bind_files_schema(node, kw):
             elif 'wget' in data_source:
                 choices = esgf_file_search(ctx, start, end)
         elif 'filesystem' in data_source:
-            choices = [(f, f) for f in search_local_files( wps_url(request), selection)]
+            choices = [(f, f) for f in search_local_files( wps_url(request), facets)]
         else:
             log.error('unknown datasource: %s', data_source)
 
