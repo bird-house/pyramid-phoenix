@@ -13,11 +13,16 @@
 
   <label id="search-label-counts">placeholder</label>
   <p/>
+
+  <label for="tm-facets">Query</label>
+  <input type="text" name="query" value="${query}"
+         id="${oid}-query"/>
+  <p/>
    
   <label for="tm-selection">Current Selection</label>
   <input type="text" name="Current Selection" class="tm-selection" 
          id="tm-selection"/>
-  <input type="hidden" value="${cstruct}" name="${name}"
+  <input type="hidden" name="${name}" value="${cstruct}" 
          id="${oid}">
   <p/>
 

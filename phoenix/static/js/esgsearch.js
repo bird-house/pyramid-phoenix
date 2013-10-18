@@ -15,10 +15,18 @@
       var selectedFacet = 'institute';
       
       var init = function() {
+        init_query();
         init_constraints();
         init_facets();
         init_facet_values();
         execute();
+      };
+
+      var killEvent = function (e) {
+        e.cancelBubble = true;
+        e.returnValue = false;
+        e.stopPropagation();
+        e.preventDefault();
       };
 
       var deleted_constraint_handler = function(constraint) {
@@ -41,6 +49,16 @@
 
       var update_counts = function(counts) {
         $('#search-label-counts').text("Datasets: " + counts)
+      };
+
+      var init_query = function() {
+        $('#' + searchOptions.oid + '-query').keypress(function(e) {
+          // disable ENTER
+          if (e.which == 13) {
+            killEvent(e);
+            execute();
+          };
+        });
       };
 
       var init_constraints = function() {
@@ -99,7 +117,7 @@
         searchURL += '&latest=' + searchOptions.latest; 
         searchURL += '&replica=' + searchOptions.replica; 
         searchURL += '&format=' + format;
-        searchURL += '&query=' + searchOptions.query;
+        searchURL += '&query=' +  $('#' + searchOptions.oid + '-query').val();
 
         // alert(searchURL);
         $.getJSON(searchURL, function(json) {
