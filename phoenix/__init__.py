@@ -66,7 +66,7 @@ def main(global_config, **settings):
     config.add_route('home', '/')
     config.add_route('catalog_wps_add', '/catalog/wps/add')
     config.add_route('catalog_wps_select', '/catalog/wps/select')
-    config.add_route('thredds', '/thredds')
+    config.add_route('tds', '/tds')
     config.add_route('processes', '/processes')
     config.add_route('jobs', '/jobs')
     config.add_route('output_details', '/output_details')

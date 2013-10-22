@@ -18,7 +18,7 @@ def navbar(context, request):
 
     nav = [nav_item('Home', request.route_url('home'), 'icon-home'),
            nav_item('Catalog', request.route_url('catalog_wps_select'), 'icon-tasks'),
-           nav_item('Thredds', request.route_url('thredds'), 'icon-time'),
+           nav_item('Thredds', request.route_url('tds'), 'icon-time'),
            nav_item('Processes', request.route_url('processes'), 'icon-tasks'),
            nav_item('My Jobs', request.route_url('jobs'), 'icon-time'),
            nav_item('Monitor', request.route_url('monitor'), 'icon-time'),

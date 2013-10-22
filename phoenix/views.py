@@ -267,7 +267,7 @@ def monitor(request):
     log.debug('rendering monitor view')
     return dict(external_url=supervisor_url(request))
 
-@view_config(route_name='thredds',
+@view_config(route_name='tds',
              renderer='templates/embedded.pt',
              layout='default',
              permission='view'
