@@ -27,6 +27,7 @@ from .wps import WPSSchema
 
 from .helpers import wps_url
 from .helpers import csw_url
+from .helpers import supervisor_url
 from .helpers import update_wps_url
 from .helpers import execute_wps
 from .helpers import whitelist
@@ -263,7 +264,7 @@ class ExecuteView(FormView):
              )
 def monitor(request):
     log.debug('rendering monitor view')
-    return dict(external_url='http://localhost:9001')
+    return dict(external_url=supervisor_url(request))
 
 @view_config(route_name='thredds',
              renderer='templates/embedded.pt',

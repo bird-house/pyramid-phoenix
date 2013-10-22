@@ -20,6 +20,9 @@ def set_setting(request, key, value):
     settings = request.registry.settings
     settings[key] = value
 
+def supervisor_url(request):
+    return get_setting(request, 'phoenix.supervisor')
+
 def wps_url(request):
     return get_setting(request, 'phoenix.wps')
 
