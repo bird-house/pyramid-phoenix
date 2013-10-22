@@ -31,6 +31,9 @@ def update_wps_url(request, wps_url):
    
 def csw_url(request):
     return get_setting(request, 'phoenix.csw')
+
+def thredds_url(request):
+    return get_setting(request, 'phoenix.thredds')
    
 def esgsearch_url(request):
     return get_setting(request, 'esgf.search')

@@ -28,6 +28,7 @@ from .wps import WPSSchema
 from .helpers import wps_url
 from .helpers import csw_url
 from .helpers import supervisor_url
+from .helpers import thredds_url
 from .helpers import update_wps_url
 from .helpers import execute_wps
 from .helpers import whitelist
@@ -272,7 +273,7 @@ def monitor(request):
              permission='view'
              )
 def thredds(request):
-    return dict(external_url='http://localhost:8080/thredds')
+    return dict(external_url=thredds_url(request))
 
 @view_config(route_name='catalog_wps_add',
              renderer='templates/catalog.pt',
