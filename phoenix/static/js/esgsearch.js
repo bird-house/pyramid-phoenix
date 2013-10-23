@@ -22,6 +22,19 @@
         execute();
       };
 
+      // using ctrl for multiple selection of facets
+      var ctrlPressed = false;
+      $(window).keydown(function(e) {
+        if (e.which == 17) { // ctrl
+          ctrlPressed = true;
+        }
+      }).keyup(function(e) {
+        if (e.which == 17) { // ctrl
+          ctrlPressed = false;
+          execute();
+        }
+      });
+
       var killEvent = function (e) {
         e.cancelBubble = true;
         e.returnValue = false;
@@ -44,7 +57,9 @@
         value = selectedFacet  + ':' + facet_value;
         jQuery(".tm-selection").tagsManager('limitPushTags');
         $(".tm-selection").tagsManager('pushTag', value);
-        execute();
+        if (!ctrlPressed) {
+          execute();
+        }
       };
 
       var update_counts = function(counts) {
