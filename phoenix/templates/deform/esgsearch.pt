@@ -63,7 +63,7 @@ ${field.end_mapping()}
         if ($("#" + oid + '-cb-all-versions').is(":checked")) {
            latest = null;
         }
-        console.log('latest: ' + latest);
+        //console.log('latest: ' + latest);
 
         $.EsgSearch( {
            oid: oid,

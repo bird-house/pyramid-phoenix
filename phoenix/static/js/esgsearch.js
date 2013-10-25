@@ -15,6 +15,7 @@
       var selectedFacet = 'institute';
       
       var init = function() {
+        init_search_options();
         init_query();
         init_constraints();
         init_facets();
@@ -73,6 +74,32 @@
 
       var update_counts = function(counts) {
         $('#search-label-counts').text("Datasets found: " + counts)
+      };
+
+      var init_search_options = function() {
+        $('#' + searchOptions.oid + '-cb-distrib').click(function () {
+          var thisCheck = $(this);
+          searchOptions.distrib = '' + thisCheck.is(":checked");
+          execute();
+        });
+
+        $('#' + searchOptions.oid + '-cb-replica').click(function () {
+          var thisCheck = $(this);
+          searchOptions.replica = 'false';
+          if (thisCheck.is(":checked")) {
+            searchOptions.replica = null;
+          }
+          execute();
+        });
+
+        $('#' + searchOptions.oid + '-cb-all-versions').click(function () {
+          var thisCheck = $(this);
+          searchOptions.latest = 'true';
+          if (thisCheck.is(":checked")) {
+            searchOptions.latest = null;
+          }
+          execute();
+        });
       };
 
       var init_query = function() {
