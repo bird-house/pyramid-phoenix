@@ -35,6 +35,15 @@
         }
       });
 
+      // using delete to remove selections of current category
+      $(window).keydown(function(e) {
+        if (e.which == 46) { // delete
+          console.log('delete');
+          $(".tm-selection").tagsManager('empty');
+          execute();
+        }
+      });
+
       var killEvent = function (e) {
         e.cancelBubble = true;
         e.returnValue = false;
