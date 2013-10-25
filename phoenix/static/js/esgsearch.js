@@ -77,29 +77,35 @@
       };
 
       var init_search_options = function() {
+        check_search_options();
+
         $('#' + searchOptions.oid + '-cb-distrib').click(function () {
           var thisCheck = $(this);
-          searchOptions.distrib = '' + thisCheck.is(":checked");
+          check_search_options();
           execute();
         });
 
         $('#' + searchOptions.oid + '-cb-replica').click(function () {
-          var thisCheck = $(this);
-          searchOptions.replica = 'false';
-          if (thisCheck.is(":checked")) {
-            searchOptions.replica = null;
-          }
+          check_search_options();
           execute();
         });
 
         $('#' + searchOptions.oid + '-cb-all-versions').click(function () {
-          var thisCheck = $(this);
-          searchOptions.latest = 'true';
-          if (thisCheck.is(":checked")) {
-            searchOptions.latest = null;
-          }
+          check_search_options();
           execute();
         });
+      };
+
+      var check_search_options = function() {
+        searchOptions.distrib = '' + $('#' + searchOptions.oid + '-cb-distrib').is(":checked");
+        searchOptions.replica = 'false';
+        if ($('#' + searchOptions.oid + '-cb-replica').is(":checked")) {
+          searchOptions.replica = null;
+        }
+        searchOptions.latest = 'true';
+        if ($('#' + searchOptions.oid + '-cb-all-versions').is(":checked")) {
+          searchOptions.latest = null;
+        }
       };
 
       var init_query = function() {

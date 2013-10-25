@@ -54,24 +54,10 @@ ${field.end_mapping()}
     deform.addCallback(
       '${oid}',
       function (oid) {
-        var distrib = '' + $("#" + oid + '-cb-distrib').is(":checked");
-        var replica = 'false';
-        if ($("#" + oid + '-cb-replica').is(":checked")) {
-           replica = null;
-        }
-        var latest = 'true';
-        if ($("#" + oid + '-cb-all-versions').is(":checked")) {
-           latest = null;
-        }
-        //console.log('latest: ' + latest);
-
         $.EsgSearch( {
            oid: oid,
            url: '${url}',
-           query: '${query}',
-           distrib: distrib,
-           latest: latest,
-           replica: replica } );
+           query: '${query}' } );
     });
   </script>
 </span>
