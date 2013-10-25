@@ -72,7 +72,7 @@
       };
 
       var update_counts = function(counts) {
-        $('#search-label-counts').text("Datasets: " + counts)
+        $('#search-label-counts').text("Datasets found: " + counts)
       };
 
       var init_query = function() {
@@ -136,10 +136,16 @@
         searchURL += 'type=' + searchOptions.type;
         searchURL += '&facets=*';
         searchURL += constraints; 
-        searchURL += '&limit=' + limit; 
-        searchURL += '&distrib=' + searchOptions.distrib; 
-        searchURL += '&latest=' + searchOptions.latest; 
-        searchURL += '&replica=' + searchOptions.replica; 
+        searchURL += '&limit=' + limit;
+        if ( searchOptions.distrib != null ) {
+          searchURL += '&distrib=' + searchOptions.distrib;
+        }
+        if ( searchOptions.latest != null ) {
+          searchURL += '&latest=' + searchOptions.latest; 
+        }
+        if (searchOptions.replica != null ) {
+          searchURL += '&replica=' + searchOptions.replica; 
+        }
         searchURL += '&format=' + format;
         searchURL += '&query=' +  $('#' + searchOptions.oid + '-query').val();
 

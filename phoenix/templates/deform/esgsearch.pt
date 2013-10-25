@@ -10,7 +10,21 @@
       tal:omit-tag="">
 
 ${field.start_mapping()}
-  <label id="search-label-counts">placeholder</label>
+  <label id="search-label-counts">Searching ...</label>
+  <p/>
+
+  <input type="checkbox" name="cb-distrib" value="distrib" checked="checked"
+         id="${oid}-cb-distrib"/>
+  <span>Search All Sites</span>
+
+  <input type="checkbox" name="cb-replica" value="replica"
+         id="${oid}-cb-replica"/>
+  <span>Search All Replicas</span>
+
+  <input type="checkbox" name="cb-all-versions" value="all-versions"
+         id="${oid}-cb-all-versions"/>
+  <span>Search All Versions</span>
+
   <p/>
 
   <label for="tm-facets">Query</label>
@@ -40,10 +54,24 @@ ${field.end_mapping()}
     deform.addCallback(
       '${oid}',
       function (oid) {
+        var distrib = '' + $("#" + oid + '-cb-distrib').is(":checked");
+        var replica = 'false';
+        if ($("#" + oid + '-cb-replica').is(":checked")) {
+           replica = null;
+        }
+        var latest = 'true';
+        if ($("#" + oid + '-cb-all-versions').is(":checked")) {
+           latest = null;
+        }
+        console.log('latest: ' + latest);
+
         $.EsgSearch( {
            oid: oid,
            url: '${url}',
-           query: '${query}'} );
+           query: '${query}',
+           distrib: distrib,
+           latest: latest,
+           replica: replica } );
     });
   </script>
 </span>
