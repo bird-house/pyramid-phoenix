@@ -81,16 +81,16 @@
           $('#' + searchOptions.oid + '-distrib').attr('checked', true);
         }
 
-        if (searchOptions.replica === 'true') {
+        if (searchOptions.replica == 'true') {
           $('#' + searchOptions.oid + '-replica').attr('checked', true);
         }
 
-        if (searchOptions.latest === 'false') {
-          $('#' + searchOptions.oid + '-all-versions').attr('checked', true);
+        if (searchOptions.latest === 'true') {
+          $('#' + searchOptions.oid + '-latest').attr('checked', true);
         }
+        check_search_options();
 
         $('#' + searchOptions.oid + '-distrib').click(function () {
-          var thisCheck = $(this);
           check_search_options();
           execute();
         });
@@ -100,7 +100,7 @@
           execute();
         });
 
-        $('#' + searchOptions.oid + '-all-versions').click(function () {
+        $('#' + searchOptions.oid + '-latest').click(function () {
           check_search_options();
           execute();
         });
@@ -112,9 +112,9 @@
         if ($('#' + searchOptions.oid + '-replica').is(":checked")) {
           searchOptions.replica = null;
         }
-        searchOptions.latest = 'true';
-        if ($('#' + searchOptions.oid + '-all-versions').is(":checked")) {
-          searchOptions.latest = null;
+        searchOptions.latest = null;
+        if ($('#' + searchOptions.oid + '-latest').is(":checked")) {
+          searchOptions.latest = 'true';
         }
       };
 

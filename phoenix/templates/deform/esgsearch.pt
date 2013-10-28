@@ -13,17 +13,18 @@ ${field.start_mapping()}
   <label id="search-label-counts">Searching ...</label>
   <p/>
 
+  <span>Options:</span>
   <input type="checkbox" name="distrib" value="distrib"
          id="${oid}-distrib"/>
-  <span>Search All Sites</span>
+  <span>All Sites</span>
 
   <input type="checkbox" name="replica" value="replica"
          id="${oid}-replica"/>
-  <span>Search All Replicas</span>
+  <span>Including Replicas</span>
 
-  <input type="checkbox" name="all-versions" value="all-versions"
-         id="${oid}-all-versions"/>
-  <span>Search All Versions</span>
+  <input type="checkbox" name="latest" value="latest"
+         id="${oid}-latest"/>
+  <span>Only latest Version</span>
 
   <p/>
 
@@ -58,7 +59,9 @@ ${field.end_mapping()}
            oid: oid,
            url: '${url}',
            query: '${query}',
-           distrib: '${distrib}'});
+           distrib: '${distrib}',
+           replica: '${replica}',
+           latest: '${latest}' });
     });
   </script>
 </span>

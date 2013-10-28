@@ -229,7 +229,10 @@ def bind_files_schema(node, kw):
         log.debug('fetching files')
         choices = []
         if 'esgf' in data_source:
-            ctx = esgf_search_context(request, query, distrib=search['distrib'])
+            ctx = esgf_search_context(request, query,
+                                      distrib=search['distrib'],
+                                      replica=search['replica'],
+                                      latest=search['latest'])
             constraints = {}
             for constraint in facets.split(','):
                 if ':' in constraint:

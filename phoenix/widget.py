@@ -109,12 +109,22 @@ class EsgSearchWidget(Widget):
             search = json.loads(cstruct) 
         kw.setdefault('facets', search['facets'])
         kw.setdefault('query', search['query'])
-        if search.get('distrib'):
+        if search.get('distrib', True):
             kw.setdefault('distrib', 'true')
         else:
             kw.setdefault('distrib', 'false')
-        if search.get('replica'):
+
+        replica = search.get('replica', False)
+        if replica == None:
             kw.setdefault('replica', 'true')
+        else:
+            kw.setdefault('replica', 'false')
+
+        latest = search.get('latest', True)
+        if latest == True:
+            kw.setdefault('latest', 'true')
+        else:
+            kw.setdefault('latest', 'false')
         values = self.get_template_values(field, cstruct, kw)
         return field.renderer(self.template, **values)
 
@@ -127,8 +137,14 @@ class EsgSearchWidget(Widget):
             result['facets'] = pstruct['facets'].strip()
             result['query'] = pstruct['query'].strip()
             result['distrib'] = pstruct.has_key('distrib')
-            result['replica'] = pstruct.has_key('replica')
-            result['latest'] = not pstruct.has_key('all-versions')
+            if pstruct.has_key('replica'):
+                result['replica'] = None
+            else:
+                result['replica'] = False
+            if pstruct.has_key('latest'):
+                result['latest'] = True
+            else:
+                result['latest'] = None
 
             if (not result['facets'] and not result['query']):
                 return null
