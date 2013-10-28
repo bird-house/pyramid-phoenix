@@ -79,31 +79,31 @@
       var init_search_options = function() {
         check_search_options();
 
-        $('#' + searchOptions.oid + '-cb-distrib').click(function () {
+        $('#' + searchOptions.oid + '-distrib').click(function () {
           var thisCheck = $(this);
           check_search_options();
           execute();
         });
 
-        $('#' + searchOptions.oid + '-cb-replica').click(function () {
+        $('#' + searchOptions.oid + '-replica').click(function () {
           check_search_options();
           execute();
         });
 
-        $('#' + searchOptions.oid + '-cb-all-versions').click(function () {
+        $('#' + searchOptions.oid + '-all-versions').click(function () {
           check_search_options();
           execute();
         });
       };
 
       var check_search_options = function() {
-        searchOptions.distrib = '' + $('#' + searchOptions.oid + '-cb-distrib').is(":checked");
+        searchOptions.distrib = '' + $('#' + searchOptions.oid + '-distrib').is(":checked");
         searchOptions.replica = 'false';
-        if ($('#' + searchOptions.oid + '-cb-replica').is(":checked")) {
+        if ($('#' + searchOptions.oid + '-replica').is(":checked")) {
           searchOptions.replica = null;
         }
         searchOptions.latest = 'true';
-        if ($('#' + searchOptions.oid + '-cb-all-versions').is(":checked")) {
+        if ($('#' + searchOptions.oid + '-all-versions').is(":checked")) {
           searchOptions.latest = null;
         }
       };

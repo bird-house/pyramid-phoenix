@@ -14,15 +14,15 @@ ${field.start_mapping()}
   <p/>
 
   <input type="checkbox" name="cb-distrib" value="distrib" checked="checked"
-         id="${oid}-cb-distrib"/>
+         id="${oid}-distrib"/>
   <span>Search All Sites</span>
 
   <input type="checkbox" name="cb-replica" value="replica"
-         id="${oid}-cb-replica"/>
+         id="${oid}-replica"/>
   <span>Search All Replicas</span>
 
   <input type="checkbox" name="cb-all-versions" value="all-versions"
-         id="${oid}-cb-all-versions"/>
+         id="${oid}-all-versions"/>
   <span>Search All Versions</span>
 
   <p/>
