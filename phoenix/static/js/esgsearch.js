@@ -9,6 +9,8 @@
         latest: 'true',
         replica: 'false',
         constraints: null,
+        start: null,
+        end: null,
         type: 'Dataset',
       };
       var searchOptions = $.extend(defaults, options);
@@ -191,6 +193,12 @@
         }
         searchURL += '&format=' + format;
         searchURL += '&query=' +  $('#' + searchOptions.oid + '-query').val();
+        if ( searchOptions.start != null ) {
+          searchURL += '&start=' + searchOptions.start;
+        }
+        if ( searchOptions.end != null ) {
+          searchURL += '&end=' + searchOptions.end;
+        }
 
         // alert(searchURL);
         $.getJSON(searchURL, function(json) {

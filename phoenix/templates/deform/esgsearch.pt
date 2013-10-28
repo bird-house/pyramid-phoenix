@@ -24,7 +24,7 @@ ${field.start_mapping()}
 
   <input type="checkbox" name="latest" value="latest"
          id="${oid}-latest"/>
-  <span>Only latest Version</span>
+  <span>Latest Version</span>
 
   <p/>
 
