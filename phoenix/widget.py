@@ -11,6 +11,7 @@ from deform.widget import (
     )
 
 import logging
+import json
 
 log = logging.getLogger(__name__)
 
@@ -101,13 +102,19 @@ class EsgSearchWidget(Widget):
     requirements = ( ('jquery.maskedinput', None), )
 
     def serialize(self, field, cstruct, readonly=False, **kw):
+        search = None
         if cstruct in (null, None):
-            facets = ''
-            query = '*'
+            search = dict(facets='', query='*', distrib=True, replica=False, latest=True)
         else:
-            facets, query = cstruct.split(';', 1) 
-        kw.setdefault('facets', facets)
-        kw.setdefault('query', query)
+            search = json.loads(cstruct) 
+        kw.setdefault('facets', search['facets'])
+        kw.setdefault('query', search['query'])
+        if search.get('distrib'):
+            kw.setdefault('distrib', 'true')
+        else:
+            kw.setdefault('distrib', 'false')
+        if search.get('replica'):
+            kw.setdefault('replica', 'true')
         values = self.get_template_values(field, cstruct, kw)
         return field.renderer(self.template, **values)
 
@@ -116,15 +123,17 @@ class EsgSearchWidget(Widget):
         if pstruct is null:
             return null
         else:
-            facets = pstruct['facets'].strip()
-            query = pstruct['query'].strip()
+            result = {}
+            result['facets'] = pstruct['facets'].strip()
+            result['query'] = pstruct['query'].strip()
+            result['distrib'] = pstruct.has_key('distrib')
+            result['replica'] = pstruct.has_key('replica')
+            result['latest'] = not pstruct.has_key('all-versions')
 
-            if (not facets and not query):
+            if (not result['facets'] and not result['query']):
                 return null
 
-            result = ';'.join([facets, query])
-
-            return result
+            return json.dumps(result)
 
     def handle_error(self, field, error):
         if field.error is None:

@@ -73,12 +73,12 @@ def jobs_by_userid(request, user_id='anonymous'):
 # esgf search ....
 # ----------------
 
-def esgf_search_conn(request):
-    return SearchConnection(esgsearch_url(request), distrib=True)
+def esgf_search_conn(request, distrib=True):
+    return SearchConnection(esgsearch_url(request), distrib=distrib)
     
-def esgf_search_context(request, query='*'):
-    conn = esgf_search_conn(request)
-    ctx = conn.new_context( replica=False, latest=True, query=query) #project='CMIP5',
+def esgf_search_context(request, query='*', distrib=True, replica=False, latest=True):
+    conn = esgf_search_conn(request, distrib)
+    ctx = conn.new_context( replica=replica, latest=latest, query=query)
     return ctx
 
 def esgf_aggregation_search(ctx):

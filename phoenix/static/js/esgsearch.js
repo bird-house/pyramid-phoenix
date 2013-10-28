@@ -77,7 +77,17 @@
       };
 
       var init_search_options = function() {
-        check_search_options();
+        if (searchOptions.distrib === 'true') {
+          $('#' + searchOptions.oid + '-distrib').attr('checked', true);
+        }
+
+        if (searchOptions.replica === 'true') {
+          $('#' + searchOptions.oid + '-replica').attr('checked', true);
+        }
+
+        if (searchOptions.latest === 'false') {
+          $('#' + searchOptions.oid + '-all-versions').attr('checked', true);
+        }
 
         $('#' + searchOptions.oid + '-distrib').click(function () {
           var thisCheck = $(this);

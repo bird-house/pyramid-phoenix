@@ -133,9 +133,10 @@ def bind_search_schema(node, kw):
     query = metadata.get('esgquery')
     log.debug('query = %s', query )
     url = esgsearch_url(request)
+    search = dict(facets=constraints, query=query, distrib=True, replica=False, latest=True)
     
     if 'esgf' in data_source:
-        node.get('selection').default = ';'.join( [constraints, query]) 
+        node.get('selection').default = json.dumps(search) 
         node.get('selection').widget = EsgSearchWidget(url=url)
     else:
         node.get('selection').widget = widget.TextInputWidget()
@@ -215,8 +216,9 @@ def bind_files_schema(node, kw):
     data_source = data_source_state['data_source']
 
     search_state = states.get(2)
-    selection = search_state['selection']
-    facets, query = selection.split(';', 1)
+    search = json.loads(search_state['selection'])
+    facets = search['facets']
+    query = search['query']
     
     start = search_state['start']
     end = search_state['end']
@@ -227,7 +229,7 @@ def bind_files_schema(node, kw):
         log.debug('fetching files')
         choices = []
         if 'esgf' in data_source:
-            ctx = esgf_search_context(request, query)
+            ctx = esgf_search_context(request, query, distrib=search['distrib'])
             constraints = {}
             for constraint in facets.split(','):
                 if ':' in constraint:
