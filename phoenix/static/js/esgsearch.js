@@ -22,6 +22,7 @@
         init_constraints();
         init_facets();
         init_facet_values();
+        init_time_constraints();
         execute();
       };
 
@@ -122,6 +123,24 @@
 
       var init_query = function() {
         $('#' + searchOptions.oid + '-query').keypress(function(e) {
+          // disable ENTER
+          if (e.which == 13) {
+            killEvent(e);
+            execute();
+          };
+        });
+      };
+
+      var init_time_constraints = function() {
+        $('#' + searchOptions.oid + '-start').keypress(function(e) {
+          // disable ENTER
+          if (e.which == 13) {
+            killEvent(e);
+            execute();
+          };
+        });
+
+        $('#' + searchOptions.oid + '-end').keypress(function(e) {
           // disable ENTER
           if (e.which == 13) {
             killEvent(e);
