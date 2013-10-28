@@ -169,7 +169,7 @@
       var execute = function() {
         var limit = '0';
         var format = 'application%2Fsolr%2Bjson';
-        var constraints = ''; //&project=CMIP5
+        var constraints = ''; 
         var servlet = 'search';
         var tags = $("#" + searchOptions.oid + '-facets').val().split(",");
         $.each(tags, function(i, tag) {
@@ -193,12 +193,8 @@
         }
         searchURL += '&format=' + format;
         searchURL += '&query=' +  $('#' + searchOptions.oid + '-query').val();
-        if ( searchOptions.start != null ) {
-          searchURL += '&start=' + searchOptions.start;
-        }
-        if ( searchOptions.end != null ) {
-          searchURL += '&end=' + searchOptions.end;
-        }
+        searchURL += '&start=' +  $('#' + searchOptions.oid + '-start').val();
+        searchURL += '&end=' +  $('#' + searchOptions.oid + '-end').val();
 
         // alert(searchURL);
         $.getJSON(searchURL, function(json) {

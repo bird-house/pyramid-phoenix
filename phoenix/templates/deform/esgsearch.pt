@@ -49,6 +49,13 @@ ${field.start_mapping()}
   <input type="text" name="Categorie: xxx" class="tm-facet"
          id="tm-facet"/>
   <p/>
+
+  <span>Start</span>
+  <input type="text" name="start" value="2004-01-01T12:00:00Z"
+         id="${oid}-start"/>
+  <span>End</span>
+  <input type="text" name="end" value="2005-12-31T12:00:00Z"
+         id="${oid}-end"/>
 ${field.end_mapping()}
 
   <script type="text/javascript">
