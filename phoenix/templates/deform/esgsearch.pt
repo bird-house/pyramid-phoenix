@@ -24,6 +24,10 @@ ${field.start_mapping()}
          id="${oid}-latest"/>
   <span>Latest Version</span>
 
+  <input type="checkbox" name="advanced" value="advanced"
+         id="${oid}-advanced"/>
+  <span>Spatial & Temporal</span>
+
   <p/>
 
   <label for="tm-facets">Query</label>

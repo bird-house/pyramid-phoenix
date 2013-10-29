@@ -90,6 +90,8 @@
         if (searchOptions.latest === 'true') {
           $('#' + searchOptions.oid + '-latest').attr('checked', true);
         }
+
+        $('#' + searchOptions.oid + '-advanced').attr('checked', searchOptions.advanced);
         check_search_options();
 
         $('#' + searchOptions.oid + '-distrib').click(function () {
@@ -104,6 +106,10 @@
 
         $('#' + searchOptions.oid + '-latest').click(function () {
           check_search_options();
+          execute();
+        });
+
+        $('#' + searchOptions.oid + '-advanced').click(function () {
           execute();
         });
       };
@@ -236,7 +242,7 @@
         }
         searchURL += '&format=' + format;
         searchURL += '&query=' +  $('#' + searchOptions.oid + '-query').val();
-        if (searchOptions.advanced) {
+        if ($('#' + searchOptions.oid + '-advanced').is(":checked")) {
           searchURL += '&start=' +  $('#' + searchOptions.oid + '-start').val();
           searchURL += '&end=' +  $('#' + searchOptions.oid + '-end').val();
         }
