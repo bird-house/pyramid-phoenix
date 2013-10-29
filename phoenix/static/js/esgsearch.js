@@ -9,8 +9,7 @@
         latest: 'true',
         replica: 'false',
         constraints: null,
-        start: null,
-        end: null,
+        advanced: false,
         type: 'Dataset',
       };
       var searchOptions = $.extend(defaults, options);
@@ -212,8 +211,10 @@
         }
         searchURL += '&format=' + format;
         searchURL += '&query=' +  $('#' + searchOptions.oid + '-query').val();
-        searchURL += '&start=' +  $('#' + searchOptions.oid + '-start').val();
-        searchURL += '&end=' +  $('#' + searchOptions.oid + '-end').val();
+        if (searchOptions.advanced) {
+          searchURL += '&start=' +  $('#' + searchOptions.oid + '-start').val();
+          searchURL += '&end=' +  $('#' + searchOptions.oid + '-end').val();
+        }
 
         // alert(searchURL);
         $.getJSON(searchURL, function(json) {
