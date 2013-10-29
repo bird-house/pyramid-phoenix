@@ -97,7 +97,7 @@ class EsgSearchWidget(Widget):
     size = None
     strip = True
     style = None
-    requirements = ( ('jquery.maskedinput', None), )
+    requirements = ()
 
     def serialize(self, field, cstruct, readonly=False, **kw):
         search = None

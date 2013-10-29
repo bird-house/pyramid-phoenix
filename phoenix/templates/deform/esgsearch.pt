@@ -66,7 +66,8 @@ ${field.end_mapping()}
            query: '${query}',
            distrib: '${distrib}',
            replica: '${replica}',
-           latest: '${latest}' });
+           latest: '${latest}',
+           advanced: true });
     });
   </script>
 </span>

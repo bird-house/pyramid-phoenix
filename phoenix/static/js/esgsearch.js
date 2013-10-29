@@ -130,7 +130,31 @@
         });
       };
 
+      var date_format = function(date) {
+        // Format a Date into a string as specified by RFC 3339.
+        var month = (date.getMonth() + 1).toString();
+        var dom = date.getDate().toString();
+        if (month.length === 1) {
+          month = '0' + month;
+        }
+        if (dom.length === 1) {
+          dom = '0' + dom;
+        }
+        return date.getFullYear() + '-' + month + "-" + dom + "T12:00:00Z";
+      };
+
+      var parse_date = function(s) {
+        var m;
+        if ((m = s.match(/^(\d{4,4})-(\d{2,2})-(\d{2,2})T12:00:00Z$/))) {
+          return new Date(m[1], m[2] - 1, m[3]);
+        } else {
+          return null;
+        }
+      };
+
       var init_time_constraints = function() {
+        var options = { 'format': date_format, 'parse': parse_date };
+        $('#' + searchOptions.oid + '-start').datepicker(options);
         $('#' + searchOptions.oid + '-start').keypress(function(e) {
           // disable ENTER
           if (e.which == 13) {
@@ -139,6 +163,7 @@
           };
         });
 
+        $('#' + searchOptions.oid + '-end').datepicker(options);
         $('#' + searchOptions.oid + '-end').keypress(function(e) {
           // disable ENTER
           if (e.which == 13) {
