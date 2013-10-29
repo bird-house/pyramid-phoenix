@@ -96,8 +96,6 @@ class EsgSearchWidget(Widget):
     template = 'esgsearch'
     size = None
     strip = True
-    mask = None
-    mask_placeholder = "_"
     style = None
     requirements = ( ('jquery.maskedinput', None), )
 

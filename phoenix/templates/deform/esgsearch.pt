@@ -2,8 +2,6 @@
                   size size|field.widget.size;
                   css_class css_class|field.widget.css_class;
                   oid oid|field.oid;
-                  mask mask|field.widget.mask;
-                  mask_placeholder mask_placeholder|field.widget.mask_placeholder;
                   style style|field.widget.style|None;
                   url url|field.widget.url;"
       i18n:domain="deform"
