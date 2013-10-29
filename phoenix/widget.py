@@ -104,7 +104,7 @@ class EsgSearchWidget(Widget):
     def serialize(self, field, cstruct, readonly=False, **kw):
         search = None
         if cstruct in (null, None):
-            search = dict(facets='', query='*', distrib=True, replica=False, latest=True)
+            search = dict(facets='', query='*')
         else:
             search = json.loads(cstruct) 
         kw.setdefault('facets', search['facets'])
@@ -125,6 +125,8 @@ class EsgSearchWidget(Widget):
             kw.setdefault('latest', 'true')
         else:
             kw.setdefault('latest', 'false')
+        kw.setdefault('start', search.get('start', '2005-01-01T12:00:00Z'))
+        kw.setdefault('end', search.get('end', '2005-12-31T12:00:00Z'))
         values = self.get_template_values(field, cstruct, kw)
         return field.renderer(self.template, **values)
 
@@ -145,6 +147,8 @@ class EsgSearchWidget(Widget):
                 result['latest'] = True
             else:
                 result['latest'] = None
+            result['start'] = pstruct['start'].strip()
+            result['end'] = pstruct['end'].strip()
 
             if (not result['facets'] and not result['query']):
                 return null
