@@ -165,8 +165,10 @@
           // disable ENTER
           if (e.which == 13) {
             killEvent(e);
-            execute();
           };
+        });
+        $('#' + searchOptions.oid + '-start').on('change', function(){
+          execute();
         });
 
         $('#' + searchOptions.oid + '-end').datepicker(options);
@@ -174,8 +176,10 @@
           // disable ENTER
           if (e.which == 13) {
             killEvent(e);
-            execute();
           };
+        });
+        $('#' + searchOptions.oid + '-end').on('change', function(){
+          execute();
         });
       };
 
