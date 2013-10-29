@@ -153,20 +153,6 @@ class SearchSchema(colander.MappingSchema):
         title = 'ESGF Search',
         )
 
-    start = colander.SchemaNode(
-        colander.Date(),
-        default = datetime.date(1600, 1, 1),
-        missing = datetime.date(1600, 1, 1),
-        widget = widget.DatePartsWidget(),
-        )
-
-    end = colander.SchemaNode(
-        colander.Date(),
-        default = datetime.date(2500, 12, 31),
-        missing = datetime.date(2500, 12, 31),
-        widget = deform.widget.DatePartsWidget(),
-        )
-
     bbox = colander.SchemaNode(
         colander.String(),
         title = 'Bounding Box',
@@ -219,9 +205,8 @@ def bind_files_schema(node, kw):
     search = json.loads(search_state['selection'])
     facets = search['facets']
     query = search['query']
-    
-    start = search_state['start']
-    end = search_state['end']
+    start = search['start']
+    end = search['end']
 
     choices = request.session.get('phoenix.wizard.files', None)
 

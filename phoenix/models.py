@@ -105,8 +105,11 @@ def esgf_aggregation_search(ctx):
     return aggregations
 
 def esgf_file_search(ctx, start, end):
-    start_str = '%04d%02d%02d' % (start.year, start.month, start.day)
-    end_str = '%04d%02d%02d' % (end.year, end.month, end.day)
+    from dateutil import parser
+    start_date = parser.parse(start)
+    end_date = parser.parse(end)
+    start_str = '%04d%02d%02d' % (start_date.year, start_date.month, start_date.day)
+    end_str = '%04d%02d%02d' % (end_date.year, end_date.month, end_date.day)
 
     log.debug("filter from=%s, to=%s", start_str, end_str)
     
@@ -140,6 +143,7 @@ def esgf_file_search(ctx, start, end):
             index = filename.rindex('-')
             f_start = filename[index-8:index]
             f_end = filename[index+1:index+9]
-            if f_start >= start_str and f_end <= end_str:
+            # match overlapping time range
+            if f_end >= start_str and f_start <= end_str:
                 files.append( (download_url, filename) )
     return files
