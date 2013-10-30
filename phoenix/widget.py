@@ -101,6 +101,9 @@ class EsgSearchWidget(Widget):
     style = None
     requirements = ()
 
+    def _bool(self, value):
+        return self.true_val if value == True else self.false_val
+
     def serialize(self, field, cstruct, readonly=False, **kw):
         log.debug('esgsearch kw: %s', kw)
         search = None
@@ -126,10 +129,8 @@ class EsgSearchWidget(Widget):
             kw.setdefault('latest', 'true')
         else:
             kw.setdefault('latest', 'false')
-        if search.get('advanced', False):
-            kw.setdefault('advanced', self.true_val)
-        else:
-            kw.setdefault('advanced', self.false_val)
+        kw.setdefault('advanced', self._bool(search.get('advanced', False)))
+        
         kw.setdefault('start', search.get('start', '2005-01-01T12:00:00Z'))
         kw.setdefault('end', search.get('end', '2005-12-31T12:00:00Z'))
         values = self.get_template_values(field, cstruct, kw)
