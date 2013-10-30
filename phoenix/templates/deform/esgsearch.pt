@@ -13,7 +13,8 @@ ${field.start_mapping()}
   <p/>
 
   <span>Options:</span>
-  <input type="checkbox" name="distrib" value="distrib"
+  <input type="checkbox" name="distrib" value="${true_val}"
+         tal:attributes="checked distrib == true_val;"
          id="${oid}-distrib"/>
   <span>All Sites</span>
 
@@ -70,7 +71,6 @@ ${field.end_mapping()}
            oid: oid,
            url: '${url}',
            query: '${query}',
-           distrib: '${distrib}',
            replica: '${replica}',
            latest: '${latest}'}
            );

@@ -5,7 +5,6 @@
         oid: null,
         url: null,
         query: '*',
-        distrib: 'true',
         latest: 'true',
         replica: 'false',
         constraints: null,
@@ -78,10 +77,6 @@
       };
 
       var init_search_options = function() {
-        if (searchOptions.distrib === 'true') {
-          $('#' + searchOptions.oid + '-distrib').attr('checked', true);
-        }
-
         if (searchOptions.replica == 'true') {
           $('#' + searchOptions.oid + '-replica').attr('checked', true);
         }
@@ -113,7 +108,6 @@
       };
 
       var check_search_options = function() {
-        searchOptions.distrib = '' + $('#' + searchOptions.oid + '-distrib').is(":checked");
         searchOptions.replica = 'false';
         if ($('#' + searchOptions.oid + '-replica').is(":checked")) {
           searchOptions.replica = null;
@@ -233,8 +227,10 @@
         searchURL += '&facets=*';
         searchURL += constraints; 
         searchURL += '&limit=' + limit;
-        if ( searchOptions.distrib != null ) {
-          searchURL += '&distrib=' + searchOptions.distrib;
+        if ($('#' + searchOptions.oid + '-distrib').is(":checked")) {
+          searchURL += '&distrib=true';
+        } else {
+          searchURL += '&distrib=false';
         }
         if ( searchOptions.latest != null ) {
           searchURL += '&latest=' + searchOptions.latest; 
