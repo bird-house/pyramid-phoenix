@@ -92,6 +92,8 @@ class EsgSearchWidget(Widget):
        The template name used to render the widget.  Default:
         ``esgsearch``.
     """
+    true_val = 'true'
+    false_val = 'false'
 
     template = 'esgsearch'
     size = None
@@ -100,6 +102,7 @@ class EsgSearchWidget(Widget):
     requirements = ()
 
     def serialize(self, field, cstruct, readonly=False, **kw):
+        log.debug('esgsearch kw: %s', kw)
         search = None
         if cstruct in (null, None):
             search = dict(facets='', query='*')
@@ -123,13 +126,18 @@ class EsgSearchWidget(Widget):
             kw.setdefault('latest', 'true')
         else:
             kw.setdefault('latest', 'false')
+        if search.get('advanced', False):
+            kw.setdefault('advanced', self.true_val)
+        else:
+            kw.setdefault('advanced', self.false_val)
         kw.setdefault('start', search.get('start', '2005-01-01T12:00:00Z'))
         kw.setdefault('end', search.get('end', '2005-12-31T12:00:00Z'))
         values = self.get_template_values(field, cstruct, kw)
+        log.debug('esgsearch values: %s', values)
         return field.renderer(self.template, **values)
 
     def deserialize(self, field, pstruct):
-        log.debug('result pstruct=%s', pstruct)
+        log.debug('esgsearch result pstruct=%s', pstruct)
         if pstruct is null:
             return null
         else:
@@ -147,6 +155,9 @@ class EsgSearchWidget(Widget):
                 result['latest'] = None
             result['start'] = pstruct['start'].strip()
             result['end'] = pstruct['end'].strip()
+            result['advanced'] = pstruct.has_key('advanced')
+
+            log.debug('esgsearch json result: %s', json.dumps(result))
 
             if (not result['facets'] and not result['query']):
                 return null

@@ -1,5 +1,6 @@
 <span tal:define="name name|field.name;
                   size size|field.widget.size;
+                  true_val true_val|field.widget.true_val;
                   css_class css_class|field.widget.css_class;
                   oid oid|field.oid;
                   style style|field.widget.style|None;
@@ -24,7 +25,8 @@ ${field.start_mapping()}
          id="${oid}-latest"/>
   <span>Latest Version</span>
 
-  <input type="checkbox" name="advanced" value="advanced"
+  <input type="checkbox" name="advanced" value="${true_val}"
+         tal:attributes="checked advanced == true_val;"
          id="${oid}-advanced"/>
   <span>Spatial & Temporal</span>
 
@@ -70,8 +72,8 @@ ${field.end_mapping()}
            query: '${query}',
            distrib: '${distrib}',
            replica: '${replica}',
-           latest: '${latest}',
-           advanced: true });
+           latest: '${latest}'}
+           );
     });
   </script>
 </span>

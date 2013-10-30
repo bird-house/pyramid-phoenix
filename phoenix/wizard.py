@@ -133,7 +133,7 @@ def bind_search_schema(node, kw):
     query = metadata.get('esgquery')
     log.debug('query = %s', query )
     url = esgsearch_url(request)
-    search = dict(facets=constraints, query=query, distrib=True, replica=False, latest=True)
+    search = dict(facets=constraints, query=query)
     
     if 'esgf' in data_source:
         node.get('selection').default = json.dumps(search) 

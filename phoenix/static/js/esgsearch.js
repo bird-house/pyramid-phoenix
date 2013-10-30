@@ -9,7 +9,6 @@
         latest: 'true',
         replica: 'false',
         constraints: null,
-        advanced: false,
         type: 'Dataset',
       };
       var searchOptions = $.extend(defaults, options);
@@ -91,7 +90,6 @@
           $('#' + searchOptions.oid + '-latest').attr('checked', true);
         }
 
-        $('#' + searchOptions.oid + '-advanced').attr('checked', searchOptions.advanced);
         check_search_options();
 
         $('#' + searchOptions.oid + '-distrib').click(function () {
