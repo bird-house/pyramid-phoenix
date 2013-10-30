@@ -42,7 +42,7 @@ log = logging.getLogger(__name__)
 
 from owslib.wps import WebProcessingService
 from .helpers import wps_url
-from .widget import EsgSearchWidget, EsgFilesWidget, WizardStatesWidget
+from .widget import EsgSearchWidget, EsgFilesWidget, FileSearchWidget, WizardStatesWidget
 
 from pyesgf.search import SearchConnection
 
@@ -141,7 +141,7 @@ def bind_search_schema(node, kw):
         node.get('selection').widget = EsgSearchWidget(url=url)
     else:
         node.get('selection').title = 'Search Filter'
-        node.get('selection').widget = widget.TextInputWidget()
+        node.get('selection').widget = FileSearchWidget()
 
     request.session['phoenix.wizard.files'] = None
     request.session.changed()
@@ -194,14 +194,14 @@ def bind_files_schema(node, kw):
     data_source = data_source_state['data_source']
 
     search_state = states.get(2)
-    selection = search_state['selection']
+    search = json.loads( search_state['selection'])
     choices = request.session.get('phoenix.wizard.files', None)
 
     if choices == None:
         log.debug('fetching files')
         choices = []
         if 'esgf' in data_source:
-            search = json.loads(selection)
+            
             
             ctx = esgf_search_context(request, search['query'],
                                       distrib=search['distrib'],
@@ -222,7 +222,7 @@ def bind_files_schema(node, kw):
             elif 'wget' in data_source:
                 choices = esgf_file_search(ctx, search['start'], search['end'])
         elif 'filesystem' in data_source:
-            choices = [(f, f) for f in search_local_files( wps_url(request), selection)]
+            choices = [(f, f) for f in search_local_files( wps_url(request), search['filter'])]
         else:
             log.error('unknown datasource: %s', data_source)
 

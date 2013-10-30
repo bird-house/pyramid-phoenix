@@ -97,7 +97,6 @@ class EsgSearchWidget(Widget):
 
     template = 'esgsearch'
     size = None
-    strip = True
     style = None
     requirements = ()
 
@@ -108,11 +107,11 @@ class EsgSearchWidget(Widget):
         log.debug('esgsearch kw: %s', kw)
         search = None
         if cstruct in (null, None):
-            search = dict(facets='', query='*')
+            search = {}
         else:
             search = json.loads(cstruct) 
-        kw.setdefault('facets', search['facets'])
-        kw.setdefault('query', search['query'])
+        kw.setdefault('facets', search.get('facets', ''))
+        kw.setdefault('query', search.get('query', '*'))
         kw.setdefault('distrib', self._bool( search.get('distrib', True)))
         replica = search.get('replica', False)
         if replica == None:
@@ -138,30 +137,30 @@ class EsgSearchWidget(Widget):
         log.debug('esgsearch result pstruct=%s', pstruct)
         if pstruct is null:
             return null
+
+        result = {}
+        result['facets'] = pstruct['facets'].strip()
+        result['query'] = pstruct['query'].strip()
+        result['distrib'] = pstruct.has_key('distrib')
+        if pstruct.has_key('replica'):
+            result['replica'] = None
         else:
-            result = {}
-            result['facets'] = pstruct['facets'].strip()
-            result['query'] = pstruct['query'].strip()
-            result['distrib'] = pstruct.has_key('distrib')
-            if pstruct.has_key('replica'):
-                result['replica'] = None
-            else:
-                result['replica'] = False
-            if pstruct.has_key('latest'):
-                result['latest'] = True
-            else:
-                result['latest'] = None
-            result['start'] = pstruct['start'].strip()
-            result['end'] = pstruct['end'].strip()
-            result['advanced'] = pstruct.has_key('advanced')
-            result['bbox'] = pstruct['bbox'].strip()
+            result['replica'] = False
+        if pstruct.has_key('latest'):
+            result['latest'] = True
+        else:
+            result['latest'] = None
+        result['start'] = pstruct['start'].strip()
+        result['end'] = pstruct['end'].strip()
+        result['advanced'] = pstruct.has_key('advanced')
+        result['bbox'] = pstruct['bbox'].strip()
 
-            log.debug('esgsearch json result: %s', json.dumps(result))
+        log.debug('esgsearch json result: %s', json.dumps(result))
 
-            if (not result['facets'] and not result['query']):
-                return null
+        if (not result['facets'] and not result['query']):
+            return null
 
-            return json.dumps(result)
+        return json.dumps(result)
 
     def handle_error(self, field, error):
         if field.error is None:
@@ -205,3 +204,36 @@ class EsgFilesWidget(Widget):
             return null
         return pstruct
 
+
+class FileSearchWidget(Widget):
+    """
+    Renders an filter widget.
+    """
+    template = 'textinput'
+    size = None
+    style = None
+    mask = None
+    mask_placeholder = "_"
+    requirements = ()
+
+    def serialize(self, field, cstruct, **kw):
+        if cstruct in (null, None):
+            cstruct = ''
+        else:
+            search = json.loads(cstruct)
+            cstruct = search.get('filter', '')
+        values = self.get_template_values(field, cstruct, kw)
+        log.debug('filesearch values: %s', values)
+        return field.renderer(self.template, **values)
+
+    def deserialize(self, field, pstruct):
+        if pstruct is null:
+            return null
+        pstruct = pstruct.strip()
+        if not pstruct:
+            return null
+
+        result = {}
+        result['filter'] = pstruct
+        log.debug('filesearch: %s', result)
+        return json.dumps(result)
