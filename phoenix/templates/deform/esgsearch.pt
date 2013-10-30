@@ -63,6 +63,12 @@ ${field.start_mapping()}
   <span>End</span>
   <input type="text" name="end" value="${end}"
          id="${oid}-end"/>
+  
+  <p/>
+  <span>Bounding Box</span>
+  <input type="text" name="bbox" value="${bbox}"
+         id="${oid}-bbox"/>
+
 ${field.end_mapping()}
 
   <script type="text/javascript">

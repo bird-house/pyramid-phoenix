@@ -129,6 +129,7 @@ class EsgSearchWidget(Widget):
         
         kw.setdefault('start', search.get('start', '2005-01-01T12:00:00Z'))
         kw.setdefault('end', search.get('end', '2005-12-31T12:00:00Z'))
+        kw.setdefault('bbox', search.get('bbox', '-180,-90,180,90'))
         values = self.get_template_values(field, cstruct, kw)
         log.debug('esgsearch values: %s', values)
         return field.renderer(self.template, **values)
@@ -153,6 +154,7 @@ class EsgSearchWidget(Widget):
             result['start'] = pstruct['start'].strip()
             result['end'] = pstruct['end'].strip()
             result['advanced'] = pstruct.has_key('advanced')
+            result['bbox'] = pstruct['bbox'].strip()
 
             log.debug('esgsearch json result: %s', json.dumps(result))
 

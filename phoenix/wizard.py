@@ -153,15 +153,6 @@ class SearchSchema(colander.MappingSchema):
         title = 'ESGF Search',
         )
 
-    bbox = colander.SchemaNode(
-        colander.String(),
-        title = 'Bounding Box',
-        description = 'west,south,east,north',
-        default = '-180,-90,180,90',
-        missing = colander.null,
-        widget = widget.TextInputWidget(size=20))
-    
-
 # select files schema
 # -------------------
 
