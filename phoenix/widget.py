@@ -114,18 +114,17 @@ class EsgSearchWidget(Widget):
         kw.setdefault('facets', search['facets'])
         kw.setdefault('query', search['query'])
         kw.setdefault('distrib', self._bool( search.get('distrib', True)))
-
         replica = search.get('replica', False)
         if replica == None:
-            kw.setdefault('replica', 'true')
+            kw.setdefault('replica', self.true_val)
         else:
-            kw.setdefault('replica', 'false')
+            kw.setdefault('replica', self.false_val)
 
         latest = search.get('latest', True)
         if latest == True:
-            kw.setdefault('latest', 'true')
+            kw.setdefault('latest', self.true_val)
         else:
-            kw.setdefault('latest', 'false')
+            kw.setdefault('latest', self.false_val)
         kw.setdefault('advanced', self._bool(search.get('advanced', False)))
         
         kw.setdefault('start', search.get('start', '2005-01-01T12:00:00Z'))

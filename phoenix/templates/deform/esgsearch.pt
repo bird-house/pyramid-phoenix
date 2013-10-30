@@ -18,11 +18,13 @@ ${field.start_mapping()}
          id="${oid}-distrib"/>
   <span>All Sites</span>
 
-  <input type="checkbox" name="replica" value="replica"
+  <input type="checkbox" name="replica" value="${true_val}"
+         tal:attributes="checked replica == true_val;"
          id="${oid}-replica"/>
   <span>Including Replicas</span>
 
-  <input type="checkbox" name="latest" value="latest"
+  <input type="checkbox" name="latest" value="${true_val}"
+         tal:attributes="checked latest == true_val;"
          id="${oid}-latest"/>
   <span>Latest Version</span>
 
@@ -71,9 +73,7 @@ ${field.end_mapping()}
            oid: oid,
            url: '${url}',
            query: '${query}',
-           replica: '${replica}',
-           latest: '${latest}'}
-           );
+           });
     });
   </script>
 </span>

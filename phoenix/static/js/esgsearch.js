@@ -5,8 +5,6 @@
         oid: null,
         url: null,
         query: '*',
-        latest: 'true',
-        replica: 'false',
         constraints: null,
         type: 'Dataset',
       };
@@ -77,45 +75,21 @@
       };
 
       var init_search_options = function() {
-        if (searchOptions.replica == 'true') {
-          $('#' + searchOptions.oid + '-replica').attr('checked', true);
-        }
-
-        if (searchOptions.latest === 'true') {
-          $('#' + searchOptions.oid + '-latest').attr('checked', true);
-        }
-
-        check_search_options();
-
         $('#' + searchOptions.oid + '-distrib').click(function () {
-          check_search_options();
           execute();
         });
 
         $('#' + searchOptions.oid + '-replica').click(function () {
-          check_search_options();
           execute();
         });
 
         $('#' + searchOptions.oid + '-latest').click(function () {
-          check_search_options();
           execute();
         });
 
         $('#' + searchOptions.oid + '-advanced').click(function () {
           execute();
         });
-      };
-
-      var check_search_options = function() {
-        searchOptions.replica = 'false';
-        if ($('#' + searchOptions.oid + '-replica').is(":checked")) {
-          searchOptions.replica = null;
-        }
-        searchOptions.latest = null;
-        if ($('#' + searchOptions.oid + '-latest').is(":checked")) {
-          searchOptions.latest = 'true';
-        }
       };
 
       var init_query = function() {
@@ -232,11 +206,11 @@
         } else {
           searchURL += '&distrib=false';
         }
-        if ( searchOptions.latest != null ) {
-          searchURL += '&latest=' + searchOptions.latest; 
+        if ($('#' + searchOptions.oid + '-latest').is(":checked")) {
+          searchURL += '&latest=true';
         }
-        if (searchOptions.replica != null ) {
-          searchURL += '&replica=' + searchOptions.replica; 
+        if (!$('#' + searchOptions.oid + '-replica').is(":checked")) {
+          searchURL += '&replica=false';
         }
         searchURL += '&format=' + format;
         searchURL += '&query=' +  $('#' + searchOptions.oid + '-query').val();
