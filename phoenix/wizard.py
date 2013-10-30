@@ -136,9 +136,11 @@ def bind_search_schema(node, kw):
     search = dict(facets=constraints, query=query)
     
     if 'esgf' in data_source:
+        node.get('selection').title = 'ESGF Search'
         node.get('selection').default = json.dumps(search) 
         node.get('selection').widget = EsgSearchWidget(url=url)
     else:
+        node.get('selection').title = 'Search Filter'
         node.get('selection').widget = widget.TextInputWidget()
 
     request.session['phoenix.wizard.files'] = None
@@ -150,7 +152,6 @@ class SearchSchema(colander.MappingSchema):
 
     selection = colander.SchemaNode(
         colander.String(),
-        title = 'ESGF Search',
         )
 
 # select files schema
@@ -193,24 +194,21 @@ def bind_files_schema(node, kw):
     data_source = data_source_state['data_source']
 
     search_state = states.get(2)
-    search = json.loads(search_state['selection'])
-    facets = search['facets']
-    query = search['query']
-    start = search['start']
-    end = search['end']
-
+    selection = search_state['selection']
     choices = request.session.get('phoenix.wizard.files', None)
 
     if choices == None:
         log.debug('fetching files')
         choices = []
         if 'esgf' in data_source:
-            ctx = esgf_search_context(request, query,
+            search = json.loads(selection)
+            
+            ctx = esgf_search_context(request, search['query'],
                                       distrib=search['distrib'],
                                       replica=search['replica'],
                                       latest=search['latest'])
             constraints = {}
-            for constraint in facets.split(','):
+            for constraint in search['facets'].split(','):
                 if ':' in constraint:
                     key,value = constraint.split(':')
                     if constraints.has_key(key):
@@ -222,9 +220,9 @@ def bind_files_schema(node, kw):
             if 'opendap' in data_source:
                 choices = esgf_aggregation_search(ctx)
             elif 'wget' in data_source:
-                choices = esgf_file_search(ctx, start, end)
+                choices = esgf_file_search(ctx, search['start'], search['end'])
         elif 'filesystem' in data_source:
-            choices = [(f, f) for f in search_local_files( wps_url(request), facets)]
+            choices = [(f, f) for f in search_local_files( wps_url(request), selection)]
         else:
             log.error('unknown datasource: %s', data_source)
 
