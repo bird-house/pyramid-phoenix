@@ -91,6 +91,10 @@
         $('#' + searchOptions.oid + '-temporal').click(function () {
           execute();
         });
+
+        $('#' + searchOptions.oid + '-spatial').click(function () {
+          execute();
+        });
       };
 
       var init_query = function() {
@@ -231,6 +235,8 @@
         if ($('#' + searchOptions.oid + '-temporal').is(":checked")) {
           searchURL += '&start=' +  $('#' + searchOptions.oid + '-start').val();
           searchURL += '&end=' +  $('#' + searchOptions.oid + '-end').val();
+        }
+        if ($('#' + searchOptions.oid + '-spatial').is(":checked")) {
           searchURL += '&bbox=' +  $('#' + searchOptions.oid + '-bbox').val();
         }
 
