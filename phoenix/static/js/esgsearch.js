@@ -88,7 +88,7 @@
           execute();
         });
 
-        $('#' + searchOptions.oid + '-advanced').click(function () {
+        $('#' + searchOptions.oid + '-temporal').click(function () {
           execute();
         });
       };
@@ -228,7 +228,7 @@
         }
         searchURL += '&format=' + format;
         searchURL += '&query=' +  $('#' + searchOptions.oid + '-query').val();
-        if ($('#' + searchOptions.oid + '-advanced').is(":checked")) {
+        if ($('#' + searchOptions.oid + '-temporal').is(":checked")) {
           searchURL += '&start=' +  $('#' + searchOptions.oid + '-start').val();
           searchURL += '&end=' +  $('#' + searchOptions.oid + '-end').val();
           searchURL += '&bbox=' +  $('#' + searchOptions.oid + '-bbox').val();

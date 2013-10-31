@@ -124,7 +124,7 @@ class EsgSearchWidget(Widget):
             kw.setdefault('latest', self.true_val)
         else:
             kw.setdefault('latest', self.false_val)
-        kw.setdefault('advanced', self._bool(search.get('advanced', False)))
+        kw.setdefault('temporal', self._bool(search.get('temporal', False)))
         
         kw.setdefault('start', search.get('start', '2005-01-01T12:00:00Z'))
         kw.setdefault('end', search.get('end', '2005-12-31T12:00:00Z'))
@@ -152,7 +152,7 @@ class EsgSearchWidget(Widget):
             result['latest'] = None
         result['start'] = pstruct['start'].strip()
         result['end'] = pstruct['end'].strip()
-        result['advanced'] = pstruct.has_key('advanced')
+        result['temporal'] = pstruct.has_key('temporal')
         result['bbox'] = pstruct['bbox'].strip()
 
         log.debug('esgsearch json result: %s', json.dumps(result))

@@ -28,10 +28,10 @@ ${field.start_mapping()}
          id="${oid}-latest"/>
   <span>Latest Version</span>
 
-  <input type="checkbox" name="advanced" value="${true_val}"
-         tal:attributes="checked advanced == true_val;"
-         id="${oid}-advanced"/>
-  <span>Spatial & Temporal</span>
+  <input type="checkbox" name="temporal" value="${true_val}"
+         tal:attributes="checked temporal == true_val;"
+         id="${oid}-temporal"/>
+  <span>Temporal</span>
 
   <p/>
 
