@@ -18,6 +18,7 @@
         init_facets();
         init_facet_values();
         init_time_constraints();
+        init_spatial_constraints();
         execute();
       };
 
@@ -161,6 +162,19 @@
         });
       };
 
+      var init_spatial_constraints = function() {
+        $('#' + searchOptions.oid + '-bbox').keypress(function(e) {
+          // disable ENTER
+          if (e.which == 13) {
+            killEvent(e);
+            execute();
+          };
+        });
+        $('#' + searchOptions.oid + '-bbox').on('change', function(){
+          execute();
+        });
+      };
+
       var init_facets = function() {
         $(".tm-facets").tagsManager({
           //prefilled: ["hello"],
@@ -217,6 +231,7 @@
         if ($('#' + searchOptions.oid + '-advanced').is(":checked")) {
           searchURL += '&start=' +  $('#' + searchOptions.oid + '-start').val();
           searchURL += '&end=' +  $('#' + searchOptions.oid + '-end').val();
+          searchURL += '&bbox=' +  $('#' + searchOptions.oid + '-bbox').val();
         }
 
         // alert(searchURL);
