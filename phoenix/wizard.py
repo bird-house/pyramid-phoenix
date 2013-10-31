@@ -19,7 +19,7 @@ from deform.form import Button
 from deform import widget
 
 import colander
-from colander import Range
+from colander import Range, Invalid, null
 
 import owslib
 from owslib.wps import WebProcessingService, monitorExecution
@@ -146,13 +146,23 @@ def bind_search_schema(node, kw):
     request.session['phoenix.wizard.files'] = None
     request.session.changed()
 
+
+def esgsearch_validator(node, value):
+    search = json.loads(value)
+    if search.get('hit-count', 0) > 5:
+        raise Invalid(node, 'More than 5 datasets selected: %r.' %  search['hit-count'])
+
 class SearchSchema(colander.MappingSchema):
     description = 'Search Input Files'
     appstruct = {}
 
     selection = colander.SchemaNode(
         colander.String(),
+        validator = esgsearch_validator
         )
+
+    def next_ok(self, request):
+        return True
 
 # select files schema
 # -------------------

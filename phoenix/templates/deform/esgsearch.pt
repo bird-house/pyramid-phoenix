@@ -9,7 +9,9 @@
       tal:omit-tag="">
 
 ${field.start_mapping()}
-  <label id="search-label-counts">Searching ...</label>
+  <span id="tm-hit-count">Searching ...</span>
+  <input type="hidden" name="hit-count" value="0"
+         id="${oid}-hit-count"/>
   <p/>
 
   <span>Options:</span>

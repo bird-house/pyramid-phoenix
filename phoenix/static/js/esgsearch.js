@@ -72,7 +72,8 @@
       };
 
       var update_counts = function(counts) {
-        $('#search-label-counts').text("Datasets found: " + counts)
+        $('#tm-hit-count').text("Datesets found: " + counts);
+        $('#' + searchOptions.oid + '-hit-count').val(counts);
       };
 
       var init_search_options = function() {

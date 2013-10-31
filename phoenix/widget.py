@@ -156,6 +156,11 @@ class EsgSearchWidget(Widget):
         result['temporal'] = pstruct.has_key('temporal')
         result['spatial'] = pstruct.has_key('spatial')
         result['bbox'] = pstruct['bbox'].strip()
+        try:
+            log.debug('hit count: %s', pstruct['hit-count'])
+            result['hit-count'] = int(pstruct['hit-count'].strip())
+        except:
+            result['hit-count'] = 0
 
         log.debug('esgsearch json result: %s', json.dumps(result))
 
