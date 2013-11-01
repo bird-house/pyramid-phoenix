@@ -40,7 +40,6 @@
                   .text(title)
               ))
           count = count + 1;
-          console.log(title);
         });
       };
 
@@ -125,7 +124,7 @@
           var docs = json.response.docs;
           var values = {};
           $.each(docs, function(i, doc) {
-            console.log(doc.title);
+            //console.log(doc.title);
             var url = null;
             var serviceType = 'HTTPServer';
             if (searchOptions.type == 'Aggregation') {
@@ -136,11 +135,14 @@
               if (service[2] == serviceType) {
                 url = service[0];
               };
+              if (serviceType == 'OPENDAP') {
+                url = url.replace('.html', '');
+              }
             });
             console.log(url);
             values[url] = doc.title;
           });
-          console.log(values);
+          //console.log(values);
           updateChoices(values);
         });
       };

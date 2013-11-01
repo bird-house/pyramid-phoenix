@@ -205,49 +205,23 @@ def bind_files_schema(node, kw):
 
     search_state = states.get(2)
     search = json.loads( search_state['selection'])
-    choices = request.session.get('phoenix.wizard.files', None)
+    #choices = request.session.get('phoenix.wizard.files', None)
 
-    if choices == None:
-        log.debug('fetching files')
-        choices = []
-        if 'esgf' in data_source:
-            
-            
-            ctx = esgf_search_context(request, search['query'],
-                                      distrib=search['distrib'],
-                                      replica=search['replica'],
-                                      latest=search['latest'])
-            constraints = {}
-            for constraint in search['facets'].split(','):
-                if ':' in constraint:
-                    key,value = constraint.split(':')
-                    if constraints.has_key(key):
-                        constraints[key].append(value)
-                    else:
-                        constraints[key] = [value]
-            ctx = ctx.constrain(**constraints) 
-
-            if 'opendap' in data_source:
-                choices = esgf_aggregation_search(ctx)
-                node.get('file_identifier').widget = EsgFilesWidget(
-                    values=choices, url=esgsearch_url(request), search_type='Aggregation', search=search)
-            elif 'wget' in data_source:
-                choices = esgf_file_search(ctx, search['start'], search['end'])
-                node.get('file_identifier').widget = EsgFilesWidget(
-                    values=choices, url=esgsearch_url(request), search_type='File', search=search)
+    log.debug('fetching files')
+    # TODO: cache results
+    if 'esgf' in data_source:
+        if 'opendap' in data_source:
+            node.get('file_identifier').widget = EsgFilesWidget(
+                url=esgsearch_url(request), search_type='Aggregation', search=search)
+        elif 'wget' in data_source:
+            node.get('file_identifier').widget = EsgFilesWidget(
+                url=esgsearch_url(request), search_type='File', search=search)
         elif 'filesystem' in data_source:
             choices = [(f, f) for f in search_local_files( wps_url(request), search['filter'])]
             node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
         else:
             log.error('unknown datasource: %s', data_source)
 
-        # TODO: using session for result cache does not work
-        #request.session['phoenix.wizard.files'] = choices
-        #request.session.changed()
-    else:
-        log.debug('not fetching files')
-
-    
    
 class SelectFilesSchema(colander.MappingSchema):
     description = 'Choose input files'
