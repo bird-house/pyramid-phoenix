@@ -2,23 +2,12 @@
                  oid oid|field.oid;
                  url url|field.widget.url;"
      tal:omit-tag="">
-  ${field.start_sequence()}
-  <ul class="deformSet">
-    <tal:loop tal:repeat="choice values">
-      <tal:def tal:define="(value, title) choice">
-        <li class="deformSet-item">
-          <input tal:attributes="class css_class;
-                                 checked value in cstruct"
-                 type="checkbox"
-                 name="checkbox"
-                 value="${value}"
-                 id="${oid}-${repeat.choice.index}"/>
-          <label for="${oid}-${repeat.choice.index}">${title}</label>
-        </li>
-      </tal:def>
-    </tal:loop>
-  </ul>
-  ${field.end_sequence()}
+
+  <div> 
+    ${field.start_sequence()}
+    <ul id="${oid}-choices" style="list-style-type: none;"></ul> 
+    ${field.end_sequence()}
+  </div> 
 
   <script type="text/javascript">
     deform.addCallback(

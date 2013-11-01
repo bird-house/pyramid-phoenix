@@ -18,6 +18,32 @@
         execute();
       };
 
+      var updateChoices = function(values) {
+        var topicContainer = $('ul#' + searchOptions.oid + '-choices');
+        topicContainer.empty();
+        var count = 0;
+        $.each(values, function (value, title) {
+          topicContainer.append(
+            $(document.createElement("li"))
+              .append(
+                $(document.createElement("input")).attr({
+                  type: 'checkbox',
+                  id: searchOptions.oid + '-' + count,
+                  name: count,
+                  value: value
+                })
+              )
+              .append(
+                $(document.createElement('label')).attr({
+                  'for': searchOptions.oid + '-' + count
+                })
+                  .text(title)
+              ))
+          count = count + 1;
+          console.log(title);
+        });
+      };
+
       var execute = function() {
         var format = 'application%2Fsolr%2Bjson';
         var servlet = 'search';
@@ -53,6 +79,22 @@
               facets.push(tag);
             }
           });
+          var docs = json.response.docs;
+          var values = {};
+          $.each(docs, function(i, doc) {
+            console.log(doc.title);
+            var url = null;
+            $.each(doc.url, function(i, encoded) {
+              var service = encoded.split("|");
+              if (service[2] == 'HTTPServer') {
+                url = service[0];
+              };
+            });
+            console.log(url);
+            values[url] = doc.title;
+          });
+          console.log(values);
+          updateChoices(values);
         });
       };
 
