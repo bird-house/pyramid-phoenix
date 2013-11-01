@@ -21,6 +21,7 @@
            distrib: '${distrib}',
            latest: '${latest}',
            replica: '${replica}',
+           type: '${type}',
            });
     });
   </script>

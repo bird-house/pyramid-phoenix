@@ -192,6 +192,7 @@ class EsgFilesWidget(Widget):
     
     template = 'esgfiles'
     values = ()
+    search_type = 'File'
     url = ''
     search = {}
 
@@ -206,6 +207,7 @@ class EsgFilesWidget(Widget):
         kw['url'] = kw.get('url', self.url)
         search = kw.get('search', self.search)
         log.debug('search: %s', search)
+        kw['type'] = kw.get('search_type', self.search_type)
         kw.setdefault('facets', search.get('facets', ''))
         kw.setdefault('query', search.get('query', '*'))
         kw.setdefault('distrib', self._bool( search.get('distrib', True)))
