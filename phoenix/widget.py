@@ -10,6 +10,10 @@ from deform.widget import (
     _normalize_choices,
     )
 
+from deform.compat import (
+    string_types,
+    )
+
 import logging
 import json
 
@@ -179,39 +183,26 @@ class EsgSearchWidget(Widget):
 
 class EsgFilesWidget(Widget):
     """
-    Renders an esg files widget
-
-    **Attributes/Arguments**
-
-    template
-       The template name used to render the widget.  Default:
-        ``esgfiles``.
+    Widget to select esgf files.
     """
-
     template = 'esgfiles'
-    null_value = ''
     values = ()
-    size = None
-    multiple = False
-    optgroup_class = OptGroup
-    long_label_generator = None
 
     def serialize(self, field, cstruct, **kw):
         if cstruct in (null, None):
-            cstruct = self.null_value
-        readonly = kw.get('readonly', self.readonly)
+            cstruct = ()
         values = kw.get('values', self.values)
-        template = readonly and self.readonly_template or self.template
         kw['values'] = _normalize_choices(values)
         tmpl_values = self.get_template_values(field, cstruct, kw)
-        return field.renderer(template, **tmpl_values)
+        return field.renderer(self.template, **tmpl_values)
 
     def deserialize(self, field, pstruct):
-        if pstruct in (null, self.null_value):
+        if pstruct is null:
             return null
-        return pstruct
-
-
+        if isinstance(pstruct, string_types):
+            return (pstruct,)
+        return tuple(pstruct)
+    
 class FileSearchWidget(Widget):
     """
     Renders an filter widget.
