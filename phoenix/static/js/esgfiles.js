@@ -10,6 +10,9 @@
         query: '*',
         constraints: 'project:CMIP5,product:output1',
         limit: 1,
+        start: null,
+        end: null,
+        bbox: null,
         type: 'File',
       };
       var searchOptions = $.extend(defaults, options);
@@ -67,6 +70,15 @@
         }
         searchURL += '&format=' + format;
         searchURL += '&query=' +  searchOptions.query;
+        if (searchOptions.start != null) {
+          searchURL += '&start=' +  searchOptions.start;
+        }
+        if (searchOptions.end != null) {
+          searchURL += '&end=' + searchOptions.end;
+        }
+        if (searchOptions.bbox != null) {
+          searchURL += '&bbox=' +  searchOptions.bbox;
+        }
 
         console.log(searchURL);
         var ds_ids = [];
