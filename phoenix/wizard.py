@@ -231,8 +231,10 @@ def bind_files_schema(node, kw):
                 choices = esgf_aggregation_search(ctx)
             elif 'wget' in data_source:
                 choices = esgf_file_search(ctx, search['start'], search['end'])
+            node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
         elif 'filesystem' in data_source:
             choices = [(f, f) for f in search_local_files( wps_url(request), search['filter'])]
+            node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
         else:
             log.error('unknown datasource: %s', data_source)
 
@@ -242,7 +244,7 @@ def bind_files_schema(node, kw):
     else:
         log.debug('not fetching files')
 
-    node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
+    
    
 class SelectFilesSchema(colander.MappingSchema):
     description = 'Choose input files'
