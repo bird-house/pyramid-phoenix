@@ -103,6 +103,7 @@ class EsgSearchWidget(Widget):
     size = None
     style = None
     requirements = ()
+    url = ''
 
     def _bool(self, value):
         return self.true_val if value == True else self.false_val
@@ -113,7 +114,8 @@ class EsgSearchWidget(Widget):
         if cstruct in (null, None):
             search = {}
         else:
-            search = json.loads(cstruct) 
+            search = json.loads(cstruct)
+        kw['url'] = kw.get('url', self.url)
         kw.setdefault('facets', search.get('facets', ''))
         kw.setdefault('query', search.get('query', '*'))
         kw.setdefault('distrib', self._bool( search.get('distrib', True)))
@@ -185,14 +187,39 @@ class EsgFilesWidget(Widget):
     """
     Widget to select esgf files.
     """
+    true_val = 'true'
+    false_val = 'false'
+    
     template = 'esgfiles'
     values = ()
+    url = ''
+    search = {}
+
+    def _bool(self, value):
+        return self.true_val if value == True else self.false_val
 
     def serialize(self, field, cstruct, **kw):
         if cstruct in (null, None):
             cstruct = ()
         values = kw.get('values', self.values)
         kw['values'] = _normalize_choices(values)
+        kw['url'] = kw.get('url', self.url)
+        search = kw.get('search', self.search)
+        log.debug('search: %s', search)
+        kw.setdefault('facets', search.get('facets', ''))
+        kw.setdefault('query', search.get('query', '*'))
+        kw.setdefault('distrib', self._bool( search.get('distrib', True)))
+        replica = search.get('replica', False)
+        if replica == None:
+            kw.setdefault('replica', self.true_val)
+        else:
+            kw.setdefault('replica', self.false_val)
+
+        latest = search.get('latest', True)
+        if latest == True:
+            kw.setdefault('latest', self.true_val)
+        else:
+            kw.setdefault('latest', self.false_val)
         tmpl_values = self.get_template_values(field, cstruct, kw)
         return field.renderer(self.template, **tmpl_values)
 

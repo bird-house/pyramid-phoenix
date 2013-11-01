@@ -1,22 +1,39 @@
 <div tal:define="css_class css_class|field.widget.css_class;
-                 oid oid|field.oid;"
+                 oid oid|field.oid;
+                 url url|field.widget.url;"
      tal:omit-tag="">
-${field.start_sequence()}
-<ul class="deformSet">
-  <tal:loop tal:repeat="choice values">
-    <tal:def tal:define="(value, title) choice">
-      <li class="deformSet-item">
-        <input tal:attributes="class css_class;
-                               checked value in cstruct"
-               type="checkbox"
-               name="checkbox"
-               value="${value}"
-               id="${oid}-${repeat.choice.index}"/>
-        <label for="${oid}-${repeat.choice.index}">${title}</label>
-      </li>
-    </tal:def>
-  </tal:loop>
-</ul>
-${field.end_sequence()}
+  ${field.start_sequence()}
+  <ul class="deformSet">
+    <tal:loop tal:repeat="choice values">
+      <tal:def tal:define="(value, title) choice">
+        <li class="deformSet-item">
+          <input tal:attributes="class css_class;
+                                 checked value in cstruct"
+                 type="checkbox"
+                 name="checkbox"
+                 value="${value}"
+                 id="${oid}-${repeat.choice.index}"/>
+          <label for="${oid}-${repeat.choice.index}">${title}</label>
+        </li>
+      </tal:def>
+    </tal:loop>
+  </ul>
+  ${field.end_sequence()}
+
+  <script type="text/javascript">
+    deform.addCallback(
+      '${oid}',
+      function (oid) {
+        $.EsgFileSearch( {
+           oid: oid,
+           url: '${url}',
+           constraints: '${facets}',
+           query: '${query}',
+           distrib: '${distrib}',
+           latest: '${latest}',
+           replica: '${replica}',
+           });
+    });
+  </script>
 </div>
 
