@@ -9,7 +9,7 @@
         replica: 'false',
         query: '*',
         constraints: 'project:CMIP5,product:output1',
-        limit: 1,
+        limit: 5,
         start: null,
         end: null,
         bbox: null,
