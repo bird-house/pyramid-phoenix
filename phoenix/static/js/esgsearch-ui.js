@@ -258,7 +258,7 @@
         replica: false,
         query: '*',
         constraints: 'project:CMIP5,product:output1',
-        limit: 100,
+        limit: 5,
         start: null,
         end: null,
         bbox: null,
@@ -276,7 +276,7 @@
 
       var updateDataset = function(id) {
         topicContainer.append(
-          $(document.createElement('h4')).text(id)
+          $(document.createElement('h4')).text('Dateset ' + id)
         );
       };
 
@@ -306,7 +306,8 @@
         $.EsgSearch({
           url: searchOptions.url,
           type: 'Dataset',
-          facets: 'id',
+          facets: 'id,title,number_of_files,number_of_aggregations',
+          limit: searchOptions.limit,
           constraints: searchOptions.constraints,
           distrib: searchOptions.distrib,
           latest: searchOptions.latest,
@@ -320,18 +321,22 @@
       };
 
       var _execute = function(result) {
-        datasetIds = result.facetValues('id'); 
-        $.each(datasetIds, function(i, id) {
+        $.each(result.docs(), function(i, doc) {
+          console.log(doc.title);
+          var limit = doc.number_of_files;
+          if (searchOptions.type == 'Aggregation') {
+            limit = doc.number_of_aggregations;
+          }
           $.EsgSearch({
             url: searchOptions.url,
             type: searchOptions.type,
-            datasetId: id,
+            datasetId: doc.id,
             constraints: searchOptions.constraints,
-            limit: searchOptions.limit,
+            limit: limit,
             distrib: searchOptions.distrib,
             latest: searchOptions.latest,
             replica: searchOptions.replica,
-            callback: function(result) {  updateDataset(id); callback(result); },
+            callback: function(result) {  updateDataset(doc.title); callback(result); },
           });
         });
       };
