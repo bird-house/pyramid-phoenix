@@ -20,6 +20,11 @@
         init_time_constraints();
         init_spatial_constraints();
         execute();
+
+        $.EsgSearch({
+          url: searchOptions.url, 
+          constraints:  $("#" + searchOptions.oid + '-facets').val() 
+        });
       };
 
       // using ctrl for multiple selection of facets
