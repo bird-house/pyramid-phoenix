@@ -1,3 +1,67 @@
+var EsgSearchResult = function(json) {
+  this._json = json;
+  this._facets = null;
+};
+
+$.extend(EsgSearchResult.prototype, {
+  raw: function() {
+    return this._json;
+  },
+
+  numFound: function() {
+    return this._json.response.numFound;
+  },
+
+  facets: function() {
+    if (this._facets == null) {
+      var facets = [];
+      var facet_counts = this._json.facet_counts.facet_fields;
+      $.each(facet_counts, function(tag, values) {
+        if (values.length > 2) {
+          facets.push(tag);
+        }
+      });
+      this._facets = facets.sort();
+    }
+    return this._facets;
+  },
+
+  facetValues: function(facet) {
+    var counts = this._json.facet_counts.facet_fields[facet];
+    var facet_values = [];
+    $.each(counts, function(i,value) {
+      if (i % 2 == 0) {
+        facet_values.push(value);
+      }
+    });
+    return facet_values.sort();
+  },
+
+  docs: function() {
+    return this._json.response.docs;
+  },
+
+  url: function(doc, type) {
+    var url = null;
+    var serviceType = 'HTTPServer';
+    if (type == 'Aggregation') {
+      serviceType = 'OPENDAP';
+    }
+    $.each(doc.url, function(i, encoded) {
+      var service = encoded.split("|");
+      if (service[2] == serviceType) {
+        url = service[0];
+      };
+      if (serviceType == 'OPENDAP') {
+        url = url.replace('.html', '');
+      }
+    });
+
+    return url;
+  },
+});
+
+
 (function($) {  
   $.extend({
     EsgSearch: function(options) {
@@ -17,7 +81,7 @@
         spatial: false,
         bbox: '',
         type: 'Dataset',
-        callback: function(json) { console.log('no callback defined.')},
+        callback: function(result) { console.log('no callback defined.')},
       };
       var searchOptions = $.extend(defaults, options);
 
@@ -33,7 +97,8 @@
         searchURL += '&format=' + format;
 
         $.getJSON(searchURL, function(json) {
-          searchOptions.callback(json);
+          var result = new EsgSearchResult(json);
+          searchOptions.callback(result);
         });
       };
 

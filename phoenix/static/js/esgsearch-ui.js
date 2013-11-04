@@ -219,37 +219,24 @@
           end: $('#' + searchOptions.oid + '-end').val(),
           spatial: $('#' + searchOptions.oid + '-spatial').is(":checked"),
           bbox: $('#' + searchOptions.oid + '-bbox').val(),
-          callback: function(json) { callback(json); },
+          callback: function(result) { callback(result); },
         });
       };
 
-      var callback = function(json) {
-        var facet_counts = json.facet_counts.facet_fields;
-        var facets = [];
-        $.each(facet_counts, function(tag, values) {
-          if (values.length > 2) {
-            facets.push(tag);
-          }
-        });
+      var callback = function(result) {
         $(".tm-facets").tagsManager('empty');
-        $.each(facets.sort(), function(i, tag) {
+        $.each(result.facets(), function(i, tag) {
           jQuery(".tm-facets").tagsManager('limitPushTags');
           jQuery(".tm-facets").tagsManager('pushTag', tag);
         });
-        var counts = json.facet_counts.facet_fields[selectedFacet];
+
         $(".tm-facet").tagsManager('empty');
-        var facet_values = [];
-        $.each(counts, function(i,value) {
-          if (i % 2 == 0) {
-            facet_values.push(value);
-          }
-        });
-        $.each(facet_values.sort(), function(i,value) {
+        $.each(result.facetValues(selectedFacet), function(i,value) {
           jQuery(".tm-facet").tagsManager('limitPushTags');
           jQuery(".tm-facet").tagsManager('pushTag', value);
         });
           
-        update_counts(json.response.numFound);
+        update_counts(result.numFound());
       };
 
       init();
@@ -321,20 +308,8 @@
           start: searchOptions.start,
           end: searchOptions.end,
           bbox: searchOptions.bbox,
-          callback: function(json) { callbackIds(json) },
+          callback: function(result) {  _execute(result.facetValues('id')) },
         });
-      };
-
-      var callbackIds = function(json) {
-        var ds_ids = [];
-        var counts = json.facet_counts.facet_fields['id'];
-        $.each(counts, function(i, value) {
-          if (i % 2 == 0) {
-            ds_ids.push(value);
-          }
-        });
-        //console.log('ids1: ' + ds_ids);
-        _execute(ds_ids);
       };
 
       var _execute = function(ds_ids) {
@@ -347,38 +322,19 @@
           distrib: searchOptions.distrib,
           latest: searchOptions.latest,
           replica: searchOptions.replica,
-          callback: function(json) { callback(json) },
+          callback: function(result) { callback(result) },
         });
       };
 
-      var callback = function(json) {
-        var facet_counts = json.facet_counts.facet_fields;
-        var facets = [];
-        $.each(facet_counts, function(tag, values) {
-          if (values.length > 2) {
-            facets.push(tag);
-          }
-        });
-        var docs = json.response.docs;
+      var callback = function(result) {
         var values = {};
-        $.each(docs, function(i, doc) {
+        $.each(result.docs(), function(i, doc) {
           //console.log(doc.title);
-          var url = null;
-          var serviceType = 'HTTPServer';
-          if (searchOptions.type == 'Aggregation') {
-            serviceType = 'OPENDAP';
-          }
-          $.each(doc.url, function(i, encoded) {
-            var service = encoded.split("|");
-            if (service[2] == serviceType) {
-              url = service[0];
-            };
-            if (serviceType == 'OPENDAP') {
-              url = url.replace('.html', '');
-            }
-          });
+          var url = result.url(doc, searchOptions.type);
           //console.log(url);
-          values[url] = doc.title;
+          if (url != null) {
+            values[url] = doc.title;
+          }
         });
         //console.log(values);
         updateChoices(values);
