@@ -46,7 +46,6 @@
     <!-- script src="${request.static_url('phoenix:static/js/WPS.js')}"></script -->
     <script src="${request.static_url('phoenix:static/js/esgsearch.js')}"></script>
     <script src="${request.static_url('phoenix:static/js/esgsearch-ui.js')}"></script>
-    <script src="${request.static_url('phoenix:static/js/esgfiles.js')}"></script>
 
     <!-- Generated Resources -->
     <tal:resources repeat="js_path js_resources | []">
