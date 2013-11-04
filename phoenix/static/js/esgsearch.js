@@ -7,6 +7,7 @@
         datasetId: null,
         constraints: null,
         limit: 0,
+        facets: '*',
         distrib: true,
         latest: true,
         replica: false,
@@ -30,7 +31,7 @@
         var searchURL = searchOptions.url + '/' + servlet + '?';
 
         searchURL += 'type=' + searchOptions.type;
-        searchURL += '&facets=*';
+        searchURL += '&facets=' + searchOptions.facets;
         searchURL += '&limit=' + searchOptions.limit;
 
         if (searchOptions.datasetId != null) {

@@ -309,51 +309,32 @@
       };
 
       var execute = function() {
-        var format = 'application%2Fsolr%2Bjson';
-        var servlet = 'search';
-       
-        var searchURL = searchOptions.url + '/' + servlet + '?';
-        searchURL += 'type=Dataset';
-        searchURL += '&facets=id';
-        var tags = searchOptions.constraints.split(",");
-        var constraints = '';
-        $.each(tags, function(i, tag) {
-          var constraint = tag.split(":");
-          constraints += '&' + constraint[0] + '=' + constraint[1];
+        $.EsgSearch({
+          url: searchOptions.url,
+          type: 'Dataset',
+          facets: 'id',
+          constraints: searchOptions.constraints,
+          distrib: searchOptions.distrib,
+          latest: searchOptions.latest,
+          replica: searchOptions.replica,
+          query: searchOptions.query,
+          start: searchOptions.start,
+          end: searchOptions.end,
+          bbox: searchOptions.bbox,
+          callback: function(json) { callbackIds(json) },
         });
-        searchURL += constraints;
-        searchURL += '&limit=0';
-        searchURL += '&distrib=' + searchOptions.distrib;
-        if (searchOptions.latest == 'true') {
-          searchURL += '&latest=true';
-        }
-        if (searchOptions.replica == 'false') {
-          searchURL += '&replica=false';
-        }
-        searchURL += '&format=' + format;
-        searchURL += '&query=' +  searchOptions.query;
-        if (searchOptions.start != null) {
-          searchURL += '&start=' +  searchOptions.start;
-        }
-        if (searchOptions.end != null) {
-          searchURL += '&end=' + searchOptions.end;
-        }
-        if (searchOptions.bbox != null) {
-          searchURL += '&bbox=' +  searchOptions.bbox;
-        }
+      };
 
-        console.log(searchURL);
+      var callbackIds = function(json) {
         var ds_ids = [];
-        $.getJSON(searchURL, function(json) {
-          var counts = json.facet_counts.facet_fields['id'];
-          $.each(counts, function(i, value) {
-            if (i % 2 == 0) {
-              ds_ids.push(value);
-            }
-          });
-          //console.log('ids1: ' + ds_ids);
-          _execute(ds_ids);
+        var counts = json.facet_counts.facet_fields['id'];
+        $.each(counts, function(i, value) {
+          if (i % 2 == 0) {
+            ds_ids.push(value);
+          }
         });
+        //console.log('ids1: ' + ds_ids);
+        _execute(ds_ids);
       };
 
       var _execute = function(ds_ids) {
@@ -381,7 +362,7 @@
         var docs = json.response.docs;
         var values = {};
         $.each(docs, function(i, doc) {
-          console.log(doc.title);
+          //console.log(doc.title);
           var url = null;
           var serviceType = 'HTTPServer';
           if (searchOptions.type == 'Aggregation') {
@@ -396,7 +377,7 @@
               url = url.replace('.html', '');
             }
           });
-          console.log(url);
+          //console.log(url);
           values[url] = doc.title;
         });
         //console.log(values);
