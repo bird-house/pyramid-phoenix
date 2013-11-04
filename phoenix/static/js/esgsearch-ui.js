@@ -4,9 +4,7 @@
       var defaults = {
         oid: null,
         url: null,
-        query: '*',
         constraints: null,
-        type: 'Dataset',
       };
       var searchOptions = $.extend(defaults, options);
       var selectedFacet = 'institute';
@@ -20,11 +18,6 @@
         init_time_constraints();
         init_spatial_constraints();
         execute();
-
-        $.EsgSearch({
-          url: searchOptions.url, 
-          constraints:  $("#" + searchOptions.oid + '-facets').val() 
-        });
       };
 
       // using ctrl for multiple selection of facets
@@ -210,71 +203,51 @@
       };
     
       var execute = function() {
-        var limit = '0';
-        var format = 'application%2Fsolr%2Bjson';
-        var constraints = ''; 
-        var servlet = 'search';
-        var tags = $("#" + searchOptions.oid + '-facets').val().split(",");
-        $.each(tags, function(i, tag) {
-          var constraint = tag.split(":");
-          constraints += '&' + constraint[0] + '=' + constraint[1];
+        $.EsgSearch({
+          url: searchOptions.url, 
+          limit: 0,
+          distrib: $('#' + searchOptions.oid + '-distrib').is(":checked"),
+          latest: $('#' + searchOptions.oid + '-latest').is(":checked"),
+          replica: $('#' + searchOptions.oid + '-replica').is(":checked"),
+          query: $('#' + searchOptions.oid + '-query').val(),
+          constraints: $("#" + searchOptions.oid + '-facets').val(),
+          type: 'Dataset',
+          temporal: $('#' + searchOptions.oid + '-temporal').is(":checked"),
+          start: $('#' + searchOptions.oid + '-start').val(),
+          end: $('#' + searchOptions.oid + '-end').val(),
+          spatial: $('#' + searchOptions.oid + '-spatial').is(":checked"),
+          bbox: $('#' + searchOptions.oid + '-bbox').val(),
+          callback: function(json) { callback(json); },
         });
+      };
 
-        var searchURL = searchOptions.url + '/' + servlet + '?';
-        searchURL += 'type=' + searchOptions.type;
-        searchURL += '&facets=*';
-        searchURL += constraints; 
-        searchURL += '&limit=' + limit;
-        if ($('#' + searchOptions.oid + '-distrib').is(":checked")) {
-          searchURL += '&distrib=true';
-        } else {
-          searchURL += '&distrib=false';
-        }
-        if ($('#' + searchOptions.oid + '-latest').is(":checked")) {
-          searchURL += '&latest=true';
-        }
-        if (!$('#' + searchOptions.oid + '-replica').is(":checked")) {
-          searchURL += '&replica=false';
-        }
-        searchURL += '&format=' + format;
-        searchURL += '&query=' +  $('#' + searchOptions.oid + '-query').val();
-        if ($('#' + searchOptions.oid + '-temporal').is(":checked")) {
-          searchURL += '&start=' +  $('#' + searchOptions.oid + '-start').val();
-          searchURL += '&end=' +  $('#' + searchOptions.oid + '-end').val();
-        }
-        if ($('#' + searchOptions.oid + '-spatial').is(":checked")) {
-          searchURL += '&bbox=' +  $('#' + searchOptions.oid + '-bbox').val();
-        }
-
-        // alert(searchURL);
-        $.getJSON(searchURL, function(json) {
-          var facet_counts = json.facet_counts.facet_fields;
-          var facets = [];
-          $.each(facet_counts, function(tag, values) {
-            if (values.length > 2) {
-              facets.push(tag);
-            }
-          });
-          $(".tm-facets").tagsManager('empty');
-          $.each(facets.sort(), function(i, tag) {
-            jQuery(".tm-facets").tagsManager('limitPushTags');
-            jQuery(".tm-facets").tagsManager('pushTag', tag);
-          });
-          var counts = json.facet_counts.facet_fields[selectedFacet];
-          $(".tm-facet").tagsManager('empty');
-          var facet_values = [];
-          $.each(counts, function(i,value) {
-            if (i % 2 == 0) {
-              facet_values.push(value);
-            }
-          });
-          $.each(facet_values.sort(), function(i,value) {
-            jQuery(".tm-facet").tagsManager('limitPushTags');
-            jQuery(".tm-facet").tagsManager('pushTag', value);
-          });
+      var callback = function(json) {
+        var facet_counts = json.facet_counts.facet_fields;
+        var facets = [];
+        $.each(facet_counts, function(tag, values) {
+          if (values.length > 2) {
+            facets.push(tag);
+          }
+        });
+        $(".tm-facets").tagsManager('empty');
+        $.each(facets.sort(), function(i, tag) {
+          jQuery(".tm-facets").tagsManager('limitPushTags');
+          jQuery(".tm-facets").tagsManager('pushTag', tag);
+        });
+        var counts = json.facet_counts.facet_fields[selectedFacet];
+        $(".tm-facet").tagsManager('empty');
+        var facet_values = [];
+        $.each(counts, function(i,value) {
+          if (i % 2 == 0) {
+            facet_values.push(value);
+          }
+        });
+        $.each(facet_values.sort(), function(i,value) {
+          jQuery(".tm-facet").tagsManager('limitPushTags');
+          jQuery(".tm-facet").tagsManager('pushTag', value);
+        });
           
-          update_counts(json.response.numFound);
-        });
+        update_counts(json.response.numFound);
       };
 
       init();

@@ -5,6 +5,7 @@
         url: null,
         query: '*',
         constraints: null,
+        limit: 0,
         distrib: true,
         latest: true,
         replica: false,
@@ -14,7 +15,7 @@
         spatial: false,
         bbox: '',
         type: 'Dataset',
-        callback: function(json) {callback(json)},
+        callback: function(json) { console.log('no callback defined.')},
       };
       var searchOptions = $.extend(defaults, options);
 
@@ -22,12 +23,7 @@
         execute();
       };
 
-      var callback = function(json) {
-        console.log(json.facet_counts.facet_fields);
-      };
-      
       var execute = function() {
-        var limit = '0';
         var format = 'application%2Fsolr%2Bjson';
         var constraints = ''; 
         var servlet = 'search';
@@ -41,7 +37,7 @@
         searchURL += 'type=' + searchOptions.type;
         searchURL += '&facets=*';
         searchURL += constraints; 
-        searchURL += '&limit=' + limit;
+        searchURL += '&limit=' + searchOptions.limit;
         if (searchOptions.distrib == true) {
           searchURL += '&distrib=true';
         } else {
