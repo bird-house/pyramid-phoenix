@@ -1,6 +1,6 @@
 (function($) {  
   $.extend({
-    EsgSearch: function(options) {
+    EsgDatasetSearch: function(options) {
       var defaults = {
         oid: null,
         url: null,

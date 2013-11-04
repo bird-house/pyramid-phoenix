@@ -82,7 +82,7 @@ ${field.end_mapping()}
     deform.addCallback(
       '${oid}',
       function (oid) {
-        $.EsgSearch( {
+        $.EsgDatasetSearch( {
            oid: oid,
            url: '${url}',
            query: '${query}',
