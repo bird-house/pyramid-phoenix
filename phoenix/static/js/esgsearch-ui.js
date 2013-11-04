@@ -259,8 +259,10 @@
         query: '*',
         constraints: 'project:CMIP5,product:output1',
         limit: 5,
+        temporal: false,
         start: null,
         end: null,
+        spatial: false,
         bbox: null,
         type: 'File',
       };
@@ -313,8 +315,10 @@
           latest: searchOptions.latest,
           replica: searchOptions.replica,
           query: searchOptions.query,
+          temporal: searchOptions.temporal,
           start: searchOptions.start,
           end: searchOptions.end,
+          spatial: searchOptions.spatial,
           bbox: searchOptions.bbox,
           callback: function(result) {  _execute(result) },
         });

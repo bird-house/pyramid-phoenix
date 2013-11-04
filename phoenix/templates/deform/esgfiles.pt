@@ -22,6 +22,11 @@
            latest: '${latest}' == 'true',
            replica: '${replica}' == 'true',
            type: '${type}',
+           temporal: '${temporal}' == 'true',
+           spatial: '${spatial}' == 'true',
+           start: '${start}',
+           end: '${end}',
+           bbox: '${bbox}',
            });
     });
   </script>

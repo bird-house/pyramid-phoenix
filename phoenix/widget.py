@@ -222,11 +222,11 @@ class EsgFilesWidget(Widget):
             kw.setdefault('latest', self.true_val)
         else:
             kw.setdefault('latest', self.false_val)
-        if (search.get('temporal', False)):
-            kw.setdefault('start', search.get('start', '2005-01-01T12:00:00Z'))
-            kw.setdefault('end', search.get('end', '2005-12-31T12:00:00Z'))
-        if (search.get('spatial', False)):
-            kw.setdefault('bbox', search.get('bbox', '-180,-90,180,90'))
+        kw.setdefault('temporal', self._bool(search.get('temporal', False)))
+        kw.setdefault('spatial', self._bool(search.get('spatial', False)))
+        kw.setdefault('start', search.get('start', '2005-01-01T12:00:00Z'))
+        kw.setdefault('end', search.get('end', '2005-12-31T12:00:00Z'))
+        kw.setdefault('bbox', search.get('bbox', '-180,-90,180,90'))
         tmpl_values = self.get_template_values(field, cstruct, kw)
         return field.renderer(self.template, **tmpl_values)
 
