@@ -17,7 +17,7 @@
         init_facet_values();
         init_time_constraints();
         init_spatial_constraints();
-        execute();
+        search();
       };
 
       // using ctrl for multiple selection of facets
@@ -29,7 +29,7 @@
       }).keyup(function(e) {
         if (e.which == 17) { // ctrl
           ctrlPressed = false;
-          execute();
+          search();
         }
       });
 
@@ -38,7 +38,7 @@
         if (e.which == 46) { // delete
           console.log('delete');
           $(".tm-selection").tagsManager('empty');
-          execute();
+          search();
         }
       });
 
@@ -51,13 +51,13 @@
 
       var deleted_constraint_handler = function(constraint) {
         jQuery(".tm-selection").tagsManager('limitPopTags');
-        execute();
+        search();
       };
 
       var selected_facet_handler = function (facet) {
         selectedFacet = facet;
         $('#search-label-category').text("Category: " + selectedFacet)
-        execute();
+        search();
       };
 
       var selected_facet_value_handler = function (facet_value) {
@@ -65,7 +65,7 @@
         jQuery(".tm-selection").tagsManager('limitPushTags');
         $(".tm-selection").tagsManager('pushTag', value);
         if (!ctrlPressed) {
-          execute();
+          search();
         }
       };
 
@@ -76,23 +76,23 @@
 
       var init_search_options = function() {
         $('#' + searchOptions.oid + '-distrib').click(function () {
-          execute();
+          search();
         });
 
         $('#' + searchOptions.oid + '-replica').click(function () {
-          execute();
+          search();
         });
 
         $('#' + searchOptions.oid + '-latest').click(function () {
-          execute();
+          search();
         });
 
         $('#' + searchOptions.oid + '-temporal').click(function () {
-          execute();
+          search();
         });
 
         $('#' + searchOptions.oid + '-spatial').click(function () {
-          execute();
+          search();
         });
       };
 
@@ -101,7 +101,7 @@
           // disable ENTER
           if (e.which == 13) {
             killEvent(e);
-            execute();
+            search();
           };
         });
       };
@@ -138,7 +138,7 @@
           };
         });
         $('#' + searchOptions.oid + '-start').on('change', function(){
-          execute();
+          search();
         });
 
         $('#' + searchOptions.oid + '-end').datepicker(options);
@@ -149,7 +149,7 @@
           };
         });
         $('#' + searchOptions.oid + '-end').on('change', function(){
-          execute();
+          search();
         });
       };
 
@@ -170,11 +170,11 @@
           // disable ENTER
           if (e.which == 13) {
             killEvent(e);
-            execute();
+            search();
           };
         });
         $('#' + searchOptions.oid + '-bbox').on('change', function(){
-          execute();
+          search();
         });
       };
 
@@ -202,7 +202,7 @@
         });
       };
     
-      var execute = function() {
+      var search = function() {
         $.EsgSearch({
           url: searchOptions.url, 
           limit: 0,
