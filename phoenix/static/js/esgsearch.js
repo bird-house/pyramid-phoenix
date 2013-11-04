@@ -37,14 +37,15 @@
         if (searchOptions.datasetId != null) {
           searchURL += '&dataset_id=' + searchOptions.datasetId;
         }
-        else {
-          var tags = searchOptions.constraints.split(",");
-          $.each(tags, function(i, tag) {
-            var constraint = tag.split(":");
+        
+        var tags = searchOptions.constraints.split(",");
+        $.each(tags, function(i, tag) {
+          var constraint = tag.split(":");
+          if (searchOptions.type != 'Aggregation' || constraint[0] == 'variable') {
             searchURL += '&' + constraint[0] + '=' + constraint[1];
-          });
-        }
-
+          }
+        });
+        
         if (searchOptions.distrib == true) {
           searchURL += '&distrib=true';
         } else {
