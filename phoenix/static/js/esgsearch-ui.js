@@ -258,22 +258,29 @@
         replica: false,
         query: '*',
         constraints: 'project:CMIP5,product:output1',
-        limit: 5,
+        limit: 100,
         start: null,
         end: null,
         bbox: null,
         type: 'File',
       };
       var searchOptions = $.extend(defaults, options);
+      var count = 0;
+      var topicContainer = $('ul#' + searchOptions.oid + '-choices');
 
       var init = function() {
+        count = 0;
+        topicContainer.empty();
         execute();
       };
 
-      var updateChoices = function(values) {
-        var topicContainer = $('ul#' + searchOptions.oid + '-choices');
-        topicContainer.empty();
-        var count = 0;
+      var updateDataset = function(id) {
+        topicContainer.append(
+          $(document.createElement('h4')).text(id)
+        );
+      };
+
+      var updateFiles = function(values) {
         $.each(values, function (value, title) {
           topicContainer.append(
             $(document.createElement("li"))
@@ -286,10 +293,10 @@
                 })
               )
               .append(
-                $(document.createElement('label')).attr({
-                  'for': searchOptions.oid + '-' + count
-                })
-                  .text(title)
+                $(document.createElement('span')).text(title)
+              )
+              .append(
+                $(document.createElement('p'))
               ))
           count = count + 1;
         });
@@ -308,21 +315,24 @@
           start: searchOptions.start,
           end: searchOptions.end,
           bbox: searchOptions.bbox,
-          callback: function(result) {  _execute(result.facetValues('id')) },
+          callback: function(result) {  _execute(result) },
         });
       };
 
-      var _execute = function(ds_ids) {
-        $.EsgSearch({
-          url: searchOptions.url,
-          type: searchOptions.type,
-          datasetId: ds_ids[0],
-          constraints: searchOptions.constraints,
-          limit: searchOptions.limit,
-          distrib: searchOptions.distrib,
-          latest: searchOptions.latest,
-          replica: searchOptions.replica,
-          callback: function(result) { callback(result) },
+      var _execute = function(result) {
+        datasetIds = result.facetValues('id'); 
+        $.each(datasetIds, function(i, id) {
+          $.EsgSearch({
+            url: searchOptions.url,
+            type: searchOptions.type,
+            datasetId: id,
+            constraints: searchOptions.constraints,
+            limit: searchOptions.limit,
+            distrib: searchOptions.distrib,
+            latest: searchOptions.latest,
+            replica: searchOptions.replica,
+            callback: function(result) {  updateDataset(id); callback(result); },
+          });
         });
       };
 
@@ -336,8 +346,7 @@
             values[url] = doc.title;
           }
         });
-        //console.log(values);
-        updateChoices(values);
+        updateFiles(values);
       };
 
       init();
