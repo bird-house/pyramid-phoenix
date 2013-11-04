@@ -3,7 +3,7 @@
     EsgSearch: function(options) {
       var defaults = {
         url: null,
-        query: '*',
+        query: '*', // TODO: rename query to freetext
         datasetId: null,
         constraints: null,
         limit: 0,
@@ -21,59 +21,66 @@
       };
       var searchOptions = $.extend(defaults, options);
 
-      var init = function() {
-        execute();
+      var execute = function() {
+        search(buildQuery());
       };
 
-      var execute = function() {
+      var search = function(query) {
         var format = 'application%2Fsolr%2Bjson';
         var servlet = 'search';
         var searchURL = searchOptions.url + '/' + servlet + '?';
+        searchURL += query;
+        searchURL += '&format=' + format;
 
-        searchURL += 'type=' + searchOptions.type;
-        searchURL += '&facets=' + searchOptions.facets;
-        searchURL += '&limit=' + searchOptions.limit;
+        $.getJSON(searchURL, function(json) {
+          searchOptions.callback(json);
+        });
+      };
+
+      var buildQuery = function() {
+        var query = '';
+
+        query += 'type=' + searchOptions.type;
+        query += '&facets=' + searchOptions.facets;
+        query += '&limit=' + searchOptions.limit;
 
         if (searchOptions.datasetId != null) {
-          searchURL += '&dataset_id=' + searchOptions.datasetId;
+          query += '&dataset_id=' + searchOptions.datasetId;
         }
         
         var tags = searchOptions.constraints.split(",");
         $.each(tags, function(i, tag) {
           var constraint = tag.split(":");
           if (searchOptions.type != 'Aggregation' || constraint[0] == 'variable') {
-            searchURL += '&' + constraint[0] + '=' + constraint[1];
+            query += '&' + constraint[0] + '=' + constraint[1];
           }
         });
         
         if (searchOptions.distrib == true) {
-          searchURL += '&distrib=true';
+          query += '&distrib=true';
         } else {
-          searchURL += '&distrib=false';
+          query += '&distrib=false';
         }
         if (searchOptions.latest == true) {
-          searchURL += '&latest=true';
+          query += '&latest=true';
         }
         if (searchOptions.replica == false) {
-          searchURL += '&replica=false';
+          query += '&replica=false';
         }
-        searchURL += '&format=' + format;
-        searchURL += '&query=' +  searchOptions.query;
+        query += '&query=' + searchOptions.query;
         if (searchOptions.temporal == true) {
-          searchURL += '&start=' +  searchOptions.start;
-          searchURL += '&end=' +  searchOptions.end;
+          query += '&start=' + searchOptions.start;
+          query += '&end=' + searchOptions.end;
         }
         if (searchOptions.spatial == true) {
-          searchURL += '&bbox=' +  searchOptions.bbox;
+          query += '&bbox=' + searchOptions.bbox;
         }
 
-        console.log(searchURL);
-        $.getJSON(searchURL, function(json) {
-          searchOptions.callback(json);
-        });
+        console.log(query);
+        return query;
       };
 
-      init();
+      execute();
     },
   });
 })(jQuery);
