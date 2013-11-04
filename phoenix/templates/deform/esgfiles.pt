@@ -18,9 +18,9 @@
            url: '${url}',
            constraints: '${facets}',
            query: '${query}',
-           distrib: '${distrib}',
-           latest: '${latest}',
-           replica: '${replica}',
+           distrib: '${distrib}' == 'true',
+           latest: '${latest}' == 'true',
+           replica: '${replica}' == 'true',
            type: '${type}',
            });
     });

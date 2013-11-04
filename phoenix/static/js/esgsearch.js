@@ -4,6 +4,7 @@
       var defaults = {
         url: null,
         query: '*',
+        datasetId: null,
         constraints: null,
         limit: 0,
         distrib: true,
@@ -25,19 +26,24 @@
 
       var execute = function() {
         var format = 'application%2Fsolr%2Bjson';
-        var constraints = ''; 
         var servlet = 'search';
-        var tags = searchOptions.constraints.split(",");
-        $.each(tags, function(i, tag) {
-          var constraint = tag.split(":");
-          constraints += '&' + constraint[0] + '=' + constraint[1];
-        });
-
         var searchURL = searchOptions.url + '/' + servlet + '?';
+
         searchURL += 'type=' + searchOptions.type;
         searchURL += '&facets=*';
-        searchURL += constraints; 
         searchURL += '&limit=' + searchOptions.limit;
+
+        if (searchOptions.datasetId != null) {
+          searchURL += '&dataset_id=' + searchOptions.datasetId;
+        }
+        else {
+          var tags = searchOptions.constraints.split(",");
+          $.each(tags, function(i, tag) {
+            var constraint = tag.split(":");
+            searchURL += '&' + constraint[0] + '=' + constraint[1];
+          });
+        }
+
         if (searchOptions.distrib == true) {
           searchURL += '&distrib=true';
         } else {
