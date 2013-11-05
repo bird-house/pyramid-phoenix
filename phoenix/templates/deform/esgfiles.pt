@@ -5,6 +5,7 @@
 
   <div id="loading">
     <b>Loading ...</b>
+    <img src="/static/images/ajax-loader.gif" id="loading-indicator" />
   </div>
 
   <div id="content"> 
