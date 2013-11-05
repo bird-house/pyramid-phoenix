@@ -276,7 +276,7 @@
 
       var updateDataset = function(id) {
         topicContainer.append(
-          $(document.createElement('h4')).text('Dateset ' + id)
+          $(document.createElement('b')).text('Dateset ' + id)
         );
       };
 
