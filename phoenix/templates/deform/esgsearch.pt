@@ -85,7 +85,6 @@ ${field.end_mapping()}
         $.EsgDatasetSearch( {
            oid: oid,
            url: '${url}',
-           query: '${query}',
            });
     });
   </script>

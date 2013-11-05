@@ -6,7 +6,6 @@
       var defaults = {
         oid: null,
         url: null,
-        constraints: null,
       };
       var searchOptions = $.extend(defaults, options);
       var selectedFacet = 'institute';
@@ -157,7 +156,6 @@
 
       var init_constraints = function() {
         $(".tm-selection").tagsManager({
-          prefilled: searchOptions.constraints,
           preventSubmitOnEnter: true,
           delimiters: [9, 13, 44],
           //maxTags: 2,
