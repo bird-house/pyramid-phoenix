@@ -356,10 +356,51 @@
             title = title + ' (' + size + ' MB)';
           }
           if (url != null) {
-            values[url] = title;
+            var start = new Date(searchOptions.start);
+            var end = new Date(searchOptions.end);
+         
+            if (_withinDateRange(start, end, doc)) {
+              values[url] = title;
+            }
           }
         });
         updateFiles(values);
+      };
+
+      var _withinDateRange = function(start, end, doc) {
+        var fileDates = _dateFromId(doc.instance_id);
+        if (fileDates[0].getFullYear() <= start.getFullYear() && 
+            fileDates[0].getMonth() <= start.getMonth() && 
+            fileDates[0].getDate() <= start.getDate() && 
+            fileDates[1].getFullYear() >= end.getFullYear() && 
+            fileDates[1].getMonth() >= end.getMonth() && 
+            fileDates[1].getDate() >= end.getDate() ) {
+          return true;
+        }
+
+        return false;
+      };
+
+      var _dateFromId = function(id) {
+        var txt = id.split('_').pop();
+        txt = txt.split('.')[0];
+        var parts = txt.split('-');
+        var start = parts[0];
+        var end = parts[1];
+        //console.log(start + ' - ' + end);
+        var startDate = _strToDate(start);
+        var endDate = _strToDate(end);
+
+        return [startDate, endDate];
+      };
+
+      var _strToDate = function(str) {
+        var year = str.substring(0,4);
+        var month = str.substring(4,6);
+        var day = str.substring(6,8);
+        var date = new Date(year, month - 1, day);
+        //console.log(date);
+        return date;
       };
 
       init();
