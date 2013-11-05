@@ -359,8 +359,8 @@
             var start = new Date(searchOptions.start);
             var end = new Date(searchOptions.end);
 
-            console.log('start: ' + start);
-            console.log('end: ' + end);
+            //console.log('start: ' + start);
+            //console.log('end: ' + end);
          
             if (_withinDateRange(start, end, doc)) {
               values[url] = title;
@@ -373,7 +373,7 @@
       var _withinDateRange = function(start, end, doc) {
         // file_start <= end && file_end >= start
         var dates = _datesFromId(doc.instance_id);
-        console.log(dates);
+        //console.log(dates);
 
         if (dates.start.getFullYear() > end.getFullYear() || 
             dates.end.getFullYear() < start.getFullYear() ) {
@@ -429,7 +429,7 @@
           day = str.substring(6,8);
         }
         var date = new Date(year, month - 1, day);
-        console.log(date);
+        //console.log(date);
         return date;
       };
 
