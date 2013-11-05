@@ -358,6 +358,9 @@
           if (url != null) {
             var start = new Date(searchOptions.start);
             var end = new Date(searchOptions.end);
+
+            console.log('start: ' + start);
+            console.log('end: ' + end);
          
             if (_withinDateRange(start, end, doc)) {
               values[url] = title;
@@ -368,13 +371,16 @@
       };
 
       var _withinDateRange = function(start, end, doc) {
+        // file_start <= end && file_end >= start
         var fileDates = _dateFromId(doc.instance_id);
-        if (fileDates[0].getFullYear() <= start.getFullYear() && 
-            fileDates[0].getMonth() <= start.getMonth() && 
-            fileDates[0].getDate() <= start.getDate() && 
-            fileDates[1].getFullYear() >= end.getFullYear() && 
-            fileDates[1].getMonth() >= end.getMonth() && 
-            fileDates[1].getDate() >= end.getDate() ) {
+        console.log(fileDates);
+        if (fileDates[0].getFullYear() <= end.getFullYear() && 
+            fileDates[0].getMonth() <= end.getMonth() && 
+            fileDates[0].getDate() <= end.getDate() && 
+            fileDates[1].getFullYear() >= start.getFullYear() && 
+            fileDates[1].getMonth() >= start.getMonth() && 
+            fileDates[1].getDate() >= start.getDate() ) {
+          console.log()
           return true;
         }
 
