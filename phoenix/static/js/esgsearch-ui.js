@@ -349,8 +349,14 @@
           //console.log(doc.title);
           var url = result.url(doc, searchOptions.type);
           //console.log(url);
+          var title = doc.title
+          var size = parseInt(doc.size);
+          if ( !isNaN(size) ) {
+            size = Math.floor(doc.size/(1024*1024));
+            title = title + ' (' + size + ' MB)';
+          }
           if (url != null) {
-            values[url] = doc.title;
+            values[url] = title;
           }
         });
         updateFiles(values);
