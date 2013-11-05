@@ -306,7 +306,7 @@
         $.EsgSearch({
           url: searchOptions.url,
           type: 'Dataset',
-          facets: 'id,title,number_of_files,number_of_aggregations',
+          fields: 'id,title,number_of_files,number_of_aggregations',
           limit: searchOptions.limit,
           constraints: searchOptions.constraints,
           distrib: searchOptions.distrib,

@@ -72,6 +72,7 @@ $.extend(EsgSearchResult.prototype, {
         constraints: null,
         limit: 0,
         facets: '*',
+        fields: '*',
         distrib: true,
         latest: true,
         replica: false,
@@ -107,6 +108,7 @@ $.extend(EsgSearchResult.prototype, {
 
         query += 'type=' + searchOptions.type;
         query += '&facets=' + searchOptions.facets;
+        query += '&fields=' + searchOptions.fields;
         query += '&limit=' + searchOptions.limit;
 
         if (searchOptions.datasetId != null) {
