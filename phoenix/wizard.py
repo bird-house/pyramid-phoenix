@@ -205,7 +205,6 @@ def bind_files_schema(node, kw):
 
     search_state = states.get(2)
     search = json.loads( search_state['selection'])
-    #choices = request.session.get('phoenix.wizard.files', None)
 
     log.debug('fetching files')
     # TODO: cache results
@@ -213,14 +212,14 @@ def bind_files_schema(node, kw):
         if 'opendap' in data_source:
             node.get('file_identifier').widget = EsgFilesWidget(
                 url=esgsearch_url(request), search_type='Aggregation', search=search)
-        elif 'wget' in data_source:
+        else: # wget
             node.get('file_identifier').widget = EsgFilesWidget(
                 url=esgsearch_url(request), search_type='File', search=search)
-        elif 'filesystem' in data_source:
-            choices = [(f, f) for f in search_local_files( wps_url(request), search['filter'])]
-            node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
-        else:
-            log.error('unknown datasource: %s', data_source)
+    elif 'filesystem' in data_source:
+        choices = [(f, f) for f in search_local_files( wps_url(request), search['filter'])]
+        node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
+    else:
+        log.error('unknown datasource: %s', data_source)
 
    
 class SelectFilesSchema(colander.MappingSchema):
