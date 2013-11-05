@@ -362,7 +362,7 @@
             //console.log('start: ' + start);
             //console.log('end: ' + end);
          
-            if (_withinDateRange(start, end, doc)) {
+            if (searchOptions.type == 'Aggregation' || _withinDateRange(start, end, doc)) {
               values[url] = title;
             }
           }
@@ -399,7 +399,7 @@
 
       var _datesFromId = function(id) {
         var txt = id.split('_').pop();
-        txt = txt.split('.')[0];
+        txt = txt.replace('.nc', '');
         var parts = txt.split('-');
         var start = parts[0];
         var end = parts[1];

@@ -52,11 +52,12 @@ $.extend(EsgSearchResult.prototype, {
       if (service[2] == serviceType) {
         url = service[0];
       };
-      if (serviceType == 'OPENDAP') {
+      if (serviceType == 'OPENDAP' && url != null) {
         url = url.replace('.html', '');
       }
     });
 
+    //console.log('url: ' + url);
     return url;
   },
 });
