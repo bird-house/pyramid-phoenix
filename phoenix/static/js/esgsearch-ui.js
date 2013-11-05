@@ -271,7 +271,19 @@
       var init = function() {
         count = 0;
         topicContainer.empty();
+        loading(true);
         execute();
+      };
+
+      var loading = function(loading) {
+        if (loading == true) {
+          $('#loading').show();
+          $('#content').hide();
+        }
+        else {
+          $('#loading').hide();
+          $('#content').show();
+        }
       };
 
       var updateDataset = function(id) {
@@ -300,6 +312,8 @@
               ))
           count = count + 1;
         });
+
+        loading(false);
       };
 
       var execute = function() {

@@ -3,7 +3,11 @@
                  url url|field.widget.url;"
      tal:omit-tag="">
 
-  <div> 
+  <div id="loading">
+    <b>Loading ...</b>
+  </div>
+
+  <div id="content"> 
     ${field.start_sequence()}
     <ul id="${oid}-choices" style="list-style-type: none;"></ul> 
     ${field.end_sequence()}
