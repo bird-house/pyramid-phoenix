@@ -372,22 +372,32 @@
 
       var _withinDateRange = function(start, end, doc) {
         // file_start <= end && file_end >= start
-        var fileDates = _dateFromId(doc.instance_id);
-        console.log(fileDates);
-        if (fileDates[0].getFullYear() <= end.getFullYear() && 
-            fileDates[0].getMonth() <= end.getMonth() && 
-            fileDates[0].getDate() <= end.getDate() && 
-            fileDates[1].getFullYear() >= start.getFullYear() && 
-            fileDates[1].getMonth() >= start.getMonth() && 
-            fileDates[1].getDate() >= start.getDate() ) {
-          console.log()
-          return true;
+        var dates = _datesFromId(doc.instance_id);
+        console.log(dates);
+
+        if (dates.start.getFullYear() > end.getFullYear() || 
+            dates.end.getFullYear() < start.getFullYear() ) {
+          return false; 
         }
 
-        return false;
+        if (dates.precision == 'year') return true; 
+
+        if (dates.start.getMonth() > end.getMonth() || 
+            dates.end.getMonth() < start.getMonth() ) {
+          return false; 
+        }
+
+        if (dates.precision == 'month') return true;
+
+        if (dates.start.getDate() > end.getDate() || 
+            dates.end.getDate() < start.getDate() ) {
+          return false; 
+        }
+
+        return true;
       };
 
-      var _dateFromId = function(id) {
+      var _datesFromId = function(id) {
         var txt = id.split('_').pop();
         txt = txt.split('.')[0];
         var parts = txt.split('-');
@@ -396,16 +406,30 @@
         //console.log(start + ' - ' + end);
         var startDate = _strToDate(start);
         var endDate = _strToDate(end);
+        
+        var precision = 'year';
+        if (start.length >= 8 ) {
+          precision = 'day';
+        }
+        else if (start.length >= 6 ) {
+          precision = 'month';
+        }
 
-        return [startDate, endDate];
+        return {'start': startDate, 'end': endDate, 'precision': precision};
       };
 
       var _strToDate = function(str) {
         var year = str.substring(0,4);
-        var month = str.substring(4,6);
-        var day = str.substring(6,8);
+        var month = 1;
+        if (str.length >= 6) {
+          month = str.substring(4,6);
+        }
+        var day = 1;
+        if (str.lenght >= 8) {
+          day = str.substring(6,8);
+        }
         var date = new Date(year, month - 1, day);
-        //console.log(date);
+        console.log(date);
         return date;
       };
 
