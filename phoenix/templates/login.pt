@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Auth Page</title>
+  </head>
+  <body>
+
+    <form action="/login/openid">
+      <input type="text" name="id" value="https://esgf-data.dkrz.de/esgf-idp/openid/pingutest" />
+      <input type="submit" class="btn" value="Authenticate With OpenID">
+    </form>
+
+  </body>
+</html>

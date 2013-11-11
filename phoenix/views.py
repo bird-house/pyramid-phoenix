@@ -17,6 +17,9 @@ from pyramid_deform import FormView
 from pyramid_persona.views import verify_login 
 from deform import Form
 from deform.form import Button
+from authomatic import Authomatic
+from authomatic.adapters import WebObAdapter
+from config import CONFIG
 
 from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
@@ -36,6 +39,11 @@ from .helpers import whitelist
 import logging
 
 log = logging.getLogger(__name__)
+
+authomatic = Authomatic(config=CONFIG,
+                        secret='some random secret string',
+                        report_errors=True,
+                        logging_level=logging.DEBUG)
 
 @subscriber(BeforeRender)
 def add_global(event):
@@ -82,6 +90,65 @@ def login(request):
 def logout(request):
     request.response.headers.extend(forget(request))
     return {'redirect': request.POST['came_from']}
+
+
+# authomatic openid login
+# -----------------------
+
+@view_config(route_name='login2', renderer='templates/login.pt', permission='view')
+def login2(request):
+    return {}
+
+@view_config(
+    route_name='login_openid',
+    #renderer='templates/home.pt',
+    #layout='default',
+    permission='view'
+    )
+def login(request):
+    
+    # We will need the response to pass it to the WebObAdapter.
+    response = Response()
+    
+    # Get the internal provider name URL variable.
+    provider_name = request.matchdict.get('provider_name', 'openid')
+
+    log.debug('provider_name: %s', provider_name)
+    
+    # Start the login procedure.
+    result = authomatic.login(WebObAdapter(request, response), provider_name)
+    
+    # Do not write anything to the response if there is no result!
+    if result:
+        # If there is result, the login procedure is over and we can write to response.
+        response.write('<a href="..">Home</a>')
+        
+        if result.error:
+            # Login procedure finished with an error.
+            response.write(u'<h2>Damn that error: {}</h2>'.format(result.error.message))
+        
+        elif result.user:
+            # Hooray, we have the user!
+            
+            # OAuth 2.0 and OAuth 1.0a provide only limited user data on login,
+            # We need to update the user to get more info.
+            if not (result.user.name and result.user.id):
+                result.user.update()
+            
+            # Welcome the user.
+            response.write(u'<h1>Hi {}</h1>'.format(result.user.name))
+            response.write(u'<h2>Your id is: {}</h2>'.format(result.user.id))
+            response.write(u'<h2>Your email is: {}</h2>'.format(result.user.email))
+            
+            # Seems like we're done, but there's more we can do...
+            
+            # If there are credentials (only by AuthorizationProvider),
+            # we can _access user's protected resources.
+            #if result.user.credentials:
+            # Each provider has it's specific API.
+    
+    # It won't work if you don't return the response
+    return response
 
 
 # home view

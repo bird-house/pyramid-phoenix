@@ -18,7 +18,14 @@
               <ul class="nav pull-right">
                 <li>${request.persona_button}</li>
               </ul>
-            </div>            
+            </div>   
+            <div class="pull-right">
+              <ul class="nav pull-right">
+                <li>
+                  <a href="/login2">Login</a>
+                </li>
+              </ul>
+            </div>
           </div><!--/.nav-collapse -->
         </div>
       </div>
