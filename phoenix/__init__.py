@@ -75,7 +75,7 @@ def main(global_config, **settings):
     config.add_route('admin', '/admin')
     config.add_route('wizard', '/wizard')
     config.add_route('help', '/help')
-    config.add_route('login2', '/login2')
+    config.add_route('auth', '/auth')
     config.add_route('login_openid', '/login/openid')
 
     # MongoDB

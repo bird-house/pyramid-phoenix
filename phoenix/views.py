@@ -67,7 +67,7 @@ def add_global(event):
 # -----
 
 @view_config(route_name='login', check_csrf=True, renderer='json')
-def login(request):
+def login_persona(request):
     # TODO: update login to my needs
     # https://pyramid_persona.readthedocs.org/en/latest/customization.html#do-extra-work-or-verification-at-login
 
@@ -87,7 +87,7 @@ def login(request):
 
 
 @view_config(route_name='logout', check_csrf=True, renderer='json')
-def logout(request):
+def logout_persona(request):
     request.response.headers.extend(forget(request))
     return {'redirect': request.POST['came_from']}
 
@@ -95,8 +95,8 @@ def logout(request):
 # authomatic openid login
 # -----------------------
 
-@view_config(route_name='login2', renderer='templates/login.pt', permission='view')
-def login2(request):
+@view_config(route_name='auth', renderer='templates/login.pt', permission='view')
+def login(request):
     return {}
 
 @view_config(
@@ -105,7 +105,7 @@ def login2(request):
     #layout='default',
     permission='view'
     )
-def login(request):
+def login_openid(request):
     
     # We will need the response to pass it to the WebObAdapter.
     response = Response()
