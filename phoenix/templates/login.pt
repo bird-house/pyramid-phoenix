@@ -3,13 +3,19 @@
   <head>
     <meta charset="utf-8">
     <title>Auth Page</title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="http://rockhopper.d.dkrz.de:8090/static/js/authomatic.js"></script>
   </head>
   <body>
 
-    <form action="/login/openid">
+    <form class="authomatic" action="/login/openid">
       <input type="text" name="id" value="https://esgf-data.dkrz.de/esgf-idp/openid/pingutest" />
       <input type="submit" class="btn" value="Authenticate With OpenID">
     </form>
+
+    <script type="text/javascript">
+      authomatic.popupInit();
+    </script>
 
   </body>
 </html>

@@ -22,7 +22,7 @@
             <div class="pull-right">
               <ul class="nav pull-right">
                 <li>
-                  <a href="/login2">Login</a>
+                  <a class="authomatic" href="/login2">Login</a>
                 </li>
               </ul>
             </div>
