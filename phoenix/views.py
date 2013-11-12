@@ -19,7 +19,7 @@ from deform import Form
 from deform.form import Button
 from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
-from config import CONFIG
+import config_public as config
 
 from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
@@ -40,8 +40,8 @@ import logging
 
 log = logging.getLogger(__name__)
 
-authomatic = Authomatic(config=CONFIG,
-                        secret='some random secret string',
+authomatic = Authomatic(config=config.config,
+                        secret=config.SECRET,
                         report_errors=True,
                         logging_level=logging.DEBUG)
 
