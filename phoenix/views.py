@@ -68,9 +68,8 @@ def add_global(event):
 
 @view_config(route_name='login', layout='default', renderer='templates/login.pt')
 def login(request):
-    redirect_paramater = None
     came_from = '%s%s' % (request.host_url,
-                          request.GET.get(redirect_paramater, request.path_qs))
+                          request.GET.get('came_from', request.path_qs))
     return dict(came_from=came_from)
 
 # logout
