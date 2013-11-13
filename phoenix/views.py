@@ -110,7 +110,7 @@ def login_persona(request):
 # authomatic openid login
 # -----------------------
 
-@view_config(route_name='login_openid', renderer='json')
+@view_config(route_name='login_openid')
 def login_openid(request):
     # Get the internal provider name URL variable.
     provider_name = request.matchdict.get('provider_name', 'openid')
@@ -118,29 +118,28 @@ def login_openid(request):
     log.debug('provider_name: %s', provider_name)
     
     # Start the login procedure.
-    result = authomatic.login(WebObAdapter(request, request.response), provider_name)
+    response = Response()
+    result = authomatic.login(WebObAdapter(request, response), provider_name)
 
     log.debug('authomatic login result: %s', result)
     
     if result:
         if result.error:
             # Login procedure finished with an error.
-            request.session.flash('Sorry, login failed: %s' % (result.error.message))
-            return {'redirect': '/', 'success': False}
-        
+            #request.session.flash('Sorry, login failed: %s' % (result.error.message))
+            #return {'redirect': '/', 'success': False}
+            log.error('openid login failed: %s', result.error.message)
         elif result.user:
             # Hooray, we have the user!
-   
             log.debug("user=%s, id=%s, email=%s",
                       result.user.name, result.user.id, result.user.email)
                
             # Add the headers required to remember the user to the response
             request.response.headers.extend(remember(request, result.user.email))
             # Return a json message containing the address or path to redirect to.
-            return {'redirect': request.POST['came_from'], 'success': True}
+            #return {'redirect': request.POST['came_from'], 'success': True}
         
-    request.session.flash('Sorry, login failed!')
-    return {'redirect': '/', 'success': False}
+    return response
 
 # home view
 # ---------
