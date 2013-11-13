@@ -14,6 +14,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 import pymongo
 
 from .resources import Root
+from .helpers import button
 import logging
 
 log = logging.getLogger(__name__)
@@ -76,10 +77,12 @@ def main(global_config, **settings):
     config.add_route('admin', '/admin')
     config.add_route('wizard', '/wizard')
     config.add_route('help', '/help')
-    config.add_route('signin', '/signin')
+    config.add_route('login', '/login')
     config.add_route('login_persona', '/login/persona')
-    config.add_route('logout_persona', '/logout/persona')
     config.add_route('login_openid', '/login/openid')
+
+    # A quick access to the login button
+    config.add_request_method(button, 'login_button', reify=True)
 
     # MongoDB
     # TODO: move this to models.py

@@ -6,10 +6,21 @@
 # the MIT License: http://www.opensource.org/licenses/mit-license.php
 
 import types
-
+import markupsafe
+from pyramid.security import authenticated_userid
 import logging
 
 log = logging.getLogger(__name__)
+
+SIGNIN_HTML = '<a href="/login">Login</a>'
+SIGNOUT_HTML = '<a href="/logout" id="signout">Logout</a>'
+
+def button(request):
+    """If the user is logged in, returns the logout button, otherwise returns the login button"""
+    if not authenticated_userid(request):
+        return markupsafe.Markup(SIGNIN_HTML)
+    else:
+        return markupsafe.Markup(SIGNOUT_HTML)
 
 def get_setting(request, key):
     settings = request.registry.settings

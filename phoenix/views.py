@@ -63,16 +63,20 @@ def add_global(event):
 #     return response
 
 
-# sign in
+# login
 # -------
 
-@view_config(
-    route_name='signin',
-    layout='default',
-    renderer='templates/signin.pt',
-    permission='view')
+@view_config(route_name='login', layout='default', renderer='templates/login.pt')
 def login(request):
     return {}
+
+# logout
+# --------
+
+@view_config(route_name='logout', renderer='json')
+def logout(request):
+    request.response.headers.extend(forget(request))
+    return HTTPFound(location=request.route_url('login'))
 
 # forbidden view
 # --------------
@@ -82,7 +86,7 @@ def forbidden(request):
     if authenticated_userid(request):
         request.response.status = 403
         return {}
-    return HTTPFound(location=request.route_url('signin'))
+    return HTTPFound(location=request.route_url('login'))
 
 # persona login
 # -------------
@@ -103,23 +107,10 @@ def login_persona(request):
     # Return a json message containing the address or path to redirect to.
     return {'redirect': request.POST['came_from'], 'success': True}
 
-# persona logout
-# --------------
-
-@view_config(route_name='logout_persona', check_csrf=True, renderer='json')
-def logout_persona(request):
-    request.response.headers.extend(forget(request))
-    return {'redirect': request.POST['came_from']}
-
-
 # authomatic openid login
 # -----------------------
 
-
-@view_config(
-    route_name='login_openid',
-    renderer='json',
-    )
+@view_config(route_name='login_openid', renderer='json')
 def login_openid(request):
     # Get the internal provider name URL variable.
     provider_name = request.matchdict.get('provider_name', 'openid')
