@@ -130,14 +130,17 @@ def login_openid(request):
             # Login procedure finished with an error.
             #request.session.flash('Sorry, login failed: %s' % (result.error.message))
             log.error('openid login failed: %s', result.error.message)
+            response.write(u'<h2>Login failed: {}</h2>'.format(result.error.message))
         elif result.user:
             # Hooray, we have the user!
             log.debug("user=%s, id=%s, email=%s",
                       result.user.name, result.user.id, result.user.email)
                
+            response.write(u'<h1>Success<h1>')
+            response.write(u'<h2>Your email is: {}</h2>'.format(result.user.email))
+
             # Add the headers required to remember the user to the response
-            headers = remember(request, result.user.email)
-            return HTTPFound(location = request.route_url('home'), headers = headers)
+            response.headers.extend(remember(request, result.user.email))
         
     return response
 
