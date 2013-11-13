@@ -117,7 +117,8 @@ def login_openid(request):
     log.debug('provider_name: %s', provider_name)
     
     # Start the login procedure.
-    result = authomatic.login(WebObAdapter(request, request.response), provider_name)
+    response = Response()
+    result = authomatic.login(WebObAdapter(request, response), provider_name)
 
     log.debug('authomatic login result: %s', result)
     
