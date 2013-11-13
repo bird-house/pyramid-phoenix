@@ -16,13 +16,8 @@
             </ul>            
             <div class="pull-right">
               <ul class="nav pull-right">
-                <li>${request.persona_button}</li>
-              </ul>
-            </div>   
-            <div class="pull-right">
-              <ul class="nav pull-right">
                 <li>
-                  <a class="authomatic" href="/signin">Sign in</a>
+                  <a href="/signin">Sign in</a>
                 </li>
               </ul>
             </div>

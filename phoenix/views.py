@@ -68,7 +68,7 @@ def add_global(event):
 
 @view_config(
     route_name='signin',
-    layout='auth',
+    layout='default',
     renderer='templates/signin.pt',
     permission='view')
 def login(request):
