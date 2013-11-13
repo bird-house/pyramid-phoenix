@@ -7,8 +7,10 @@
       <input type="submit" class="btn" value="Authenticate">
     </form>
     
-    <h3>Mozilla Persona</h3>
-    <li>${request.persona_button}</li>
+    <div>
+      <span>Mozilla Persona</span>
+      ${request.persona_button}
+    </div>
 
   </div>
 </metal:block>

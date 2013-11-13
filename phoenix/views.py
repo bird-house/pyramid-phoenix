@@ -74,6 +74,16 @@ def add_global(event):
 def login(request):
     return {}
 
+# forbidden view
+# --------------
+
+@forbidden_view_config(renderer='templates/forbidden.pt')
+def forbidden(request):
+    if authenticated_userid(request):
+        request.response.status = 403
+        return {}
+    return HTTPFound(location=request.route_url('signin'))
+
 # persona login
 # -------------
 
@@ -117,8 +127,7 @@ def login_openid(request):
     log.debug('provider_name: %s', provider_name)
     
     # Start the login procedure.
-    response = Response()
-    result = authomatic.login(WebObAdapter(request, response), provider_name)
+    result = authomatic.login(WebObAdapter(request, request.response), provider_name)
 
     log.debug('authomatic login result: %s', result)
     
