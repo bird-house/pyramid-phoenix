@@ -108,55 +108,38 @@ def logout_persona(request):
 
 @view_config(
     route_name='login_openid',
-    #renderer='templates/home.pt',
-    #layout='default',
-    permission='view'
+    renderer='json',
     )
 def login_openid(request):
-    
-    # We will need the response to pass it to the WebObAdapter.
-    response = Response()
-    
     # Get the internal provider name URL variable.
     provider_name = request.matchdict.get('provider_name', 'openid')
 
     log.debug('provider_name: %s', provider_name)
     
     # Start the login procedure.
-    result = authomatic.login(WebObAdapter(request, response), provider_name)
+    result = authomatic.login(WebObAdapter(request, request.response), provider_name)
+
+    log.debug('authomatic login result: %s', result)
     
-    # Do not write anything to the response if there is no result!
     if result:
-        # If there is result, the login procedure is over and we can write to response.
-        response.write('<a href="..">Home</a>')
-        
         if result.error:
             # Login procedure finished with an error.
-            response.write(u'<h2>Damn that error: {}</h2>'.format(result.error.message))
+            request.session.flash('Sorry, login failed: %s' % (result.error.message))
+            return {'redirect': '/', 'success': False}
         
         elif result.user:
             # Hooray, we have the user!
-            
-            # OAuth 2.0 and OAuth 1.0a provide only limited user data on login,
-            # We need to update the user to get more info.
-            if not (result.user.name and result.user.id):
-                result.user.update()
-            
-            # Welcome the user.
-            response.write(u'<h1>Hi {}</h1>'.format(result.user.name))
-            response.write(u'<h2>Your id is: {}</h2>'.format(result.user.id))
-            response.write(u'<h2>Your email is: {}</h2>'.format(result.user.email))
-            
-            # Seems like we're done, but there's more we can do...
-            
-            # If there are credentials (only by AuthorizationProvider),
-            # we can _access user's protected resources.
-            #if result.user.credentials:
-            # Each provider has it's specific API.
-    
-    # It won't work if you don't return the response
-    return response
-
+   
+            log.debug("user=%s, id=%s, email=%s",
+                      result.user.name, result.user.id, result.user.email)
+               
+            # Add the headers required to remember the user to the response
+            request.response.headers.extend(remember(request, result.user.email))
+            # Return a json message containing the address or path to redirect to.
+            return {'redirect': request.POST['came_from'], 'success': True}
+        
+    request.session.flash('Sorry, login failed!')
+    return {'redirect': '/', 'success': False}
 
 # home view
 # ---------
