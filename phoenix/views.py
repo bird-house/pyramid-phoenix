@@ -135,11 +135,12 @@ def login_openid(request):
                       result.user.name, result.user.id, result.user.email)
                
             # Add the headers required to remember the user to the response
-            request.response.headers.extend(remember(request, result.user.email))
+            headers = remember(request, result.user.email)
             # Return a json message containing the address or path to redirect to.
             #return {'redirect': request.POST['came_from'], 'success': True}
+            return HTTPFound(location = request.route_url('home'), headers = headers)
         
-    return HTTPFound(location=request.route_url('home'))
+    return response
 
 # home view
 # ---------
