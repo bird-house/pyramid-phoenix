@@ -68,15 +68,20 @@ def add_global(event):
 
 @view_config(route_name='login', layout='default', renderer='templates/login.pt')
 def login(request):
-    return {}
+    redirect_paramater = None
+    came_from = '%s%s' % (request.host_url,
+                          request.GET.get(redirect_paramater, request.path_qs))
+    return dict(came_from=came_from)
 
 # logout
 # --------
 
-@view_config(route_name='logout', renderer='json')
+@view_config(route_name='logout')
 def logout(request):
-    request.response.headers.extend(forget(request))
-    return HTTPFound(location=request.route_url('login'))
+    log.debug("logout")
+    headers = forget(request)
+    return HTTPFound(location = request.route_url('home'),
+                     headers = headers)
 
 # forbidden view
 # --------------
@@ -112,6 +117,13 @@ def login_persona(request):
 
 @view_config(route_name='login_openid')
 def login_openid(request):
+    login_url = request.route_url('login')
+    referrer = request.url
+    if referrer == login_url:
+        referrer = '/' # never use the login form itself as came_from
+    came_from = request.params.get('came_from', referrer)
+    log.debug('came from: %s', came_from)
+    
     # Get the internal provider name URL variable.
     provider_name = request.matchdict.get('provider_name', 'openid')
 
@@ -138,7 +150,7 @@ def login_openid(request):
             headers = remember(request, result.user.email)
             # Return a json message containing the address or path to redirect to.
             #return {'redirect': request.POST['came_from'], 'success': True}
-            return HTTPFound(location = request.route_url('home'), headers = headers)
+            return HTTPFound(location = came_from, headers = headers, success = True)
         
     return response
 
