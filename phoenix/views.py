@@ -68,9 +68,7 @@ def add_global(event):
 
 @view_config(route_name='login', layout='default', renderer='templates/login.pt')
 def login(request):
-    came_from = '%s%s' % (request.host_url,
-                          request.GET.get('came_from', request.path_qs))
-    return dict(came_from=came_from)
+    return dict()
 
 # logout
 # --------
@@ -116,13 +114,6 @@ def login_persona(request):
 
 @view_config(route_name='login_openid')
 def login_openid(request):
-    login_url = request.route_url('login')
-    referrer = request.url
-    if referrer == login_url:
-        referrer = '/' # never use the login form itself as came_from
-    came_from = request.params.get('came_from', referrer)
-    log.debug('came from: %s', came_from)
-    
     # Get the internal provider name URL variable.
     provider_name = request.matchdict.get('provider_name', 'openid')
 
@@ -138,7 +129,6 @@ def login_openid(request):
         if result.error:
             # Login procedure finished with an error.
             #request.session.flash('Sorry, login failed: %s' % (result.error.message))
-            #return {'redirect': '/', 'success': False}
             log.error('openid login failed: %s', result.error.message)
         elif result.user:
             # Hooray, we have the user!
@@ -147,9 +137,7 @@ def login_openid(request):
                
             # Add the headers required to remember the user to the response
             headers = remember(request, result.user.email)
-            # Return a json message containing the address or path to redirect to.
-            #return {'redirect': request.POST['came_from'], 'success': True}
-            return HTTPFound(location = came_from, headers = headers)
+            return HTTPFound(location =  request.route_url('home'), headers = headers)
         
     return response
 
