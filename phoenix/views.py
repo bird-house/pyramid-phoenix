@@ -137,7 +137,7 @@ def login_openid(request):
                
             # Add the headers required to remember the user to the response
             headers = remember(request, result.user.email)
-            return HTTPFound(location =  request.route_url('home'), headers = headers)
+            return HTTPFound(location = request.route_url('home'), headers = headers)
         
     return response
 
