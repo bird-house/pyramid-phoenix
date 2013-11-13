@@ -63,10 +63,21 @@ def add_global(event):
 #     return response
 
 
-# login
-# -----
+# sign in
+# -------
 
-@view_config(route_name='login', check_csrf=True, renderer='json')
+@view_config(
+    route_name='signin',
+    layout='auth',
+    renderer='templates/signin.pt',
+    permission='view')
+def login(request):
+    return {}
+
+# persona login
+# -------------
+
+@view_config(route_name='login_persona', check_csrf=True, renderer='json')
 def login_persona(request):
     # TODO: update login to my needs
     # https://pyramid_persona.readthedocs.org/en/latest/customization.html#do-extra-work-or-verification-at-login
@@ -82,11 +93,10 @@ def login_persona(request):
     # Return a json message containing the address or path to redirect to.
     return {'redirect': request.POST['came_from'], 'success': True}
 
-# logout
-# ------
+# persona logout
+# --------------
 
-
-@view_config(route_name='logout', check_csrf=True, renderer='json')
+@view_config(route_name='logout_persona', check_csrf=True, renderer='json')
 def logout_persona(request):
     request.response.headers.extend(forget(request))
     return {'redirect': request.POST['came_from']}
@@ -95,9 +105,6 @@ def logout_persona(request):
 # authomatic openid login
 # -----------------------
 
-@view_config(route_name='auth', renderer='templates/login.pt', permission='view')
-def login(request):
-    return {}
 
 @view_config(
     route_name='login_openid',

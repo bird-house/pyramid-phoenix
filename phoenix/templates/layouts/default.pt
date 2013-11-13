@@ -42,7 +42,7 @@
 
     <script src="${request.static_url('phoenix:static/bootstrap-tagmanager/bootstrap-tagmanager.js')}"></script>
 
-     <script src="${request.static_url('phoenix:static/js/authomatic.js')}"></script>
+    <script src="${request.static_url('phoenix:static/js/authomatic.js')}"></script>
 
     <!-- script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script -->
     <!-- script src="${request.static_url('phoenix:static/js/WPS.js')}"></script -->
@@ -80,7 +80,7 @@
         <script type="text/javascript">${request.persona_js}</script>
 
         <script type="text/javascript">
-          authomatic.setup({logging: true, popupHeight: 200, popupWidth: 500});
+          //authomatic.setup({logging: true, popupHeight: 200, popupWidth: 500});
           authomatic.popupInit();
         </script>
 

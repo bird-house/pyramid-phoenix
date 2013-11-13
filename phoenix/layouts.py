@@ -18,3 +18,21 @@ class AppLayout(object):
 
     def add_heading(self, name, *args, **kw):
         self.headings.append((name, args, kw))
+
+@layout_config(name='auth',
+               template='templates/layouts/auth.pt'
+              )
+class AuthLayout(object):
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+        self.home_url = request.application_url
+        self.headings = []
+
+    @property
+    def project_title(self):
+        return 'Authorization'
+
+    def add_heading(self, name, *args, **kw):
+        self.headings.append((name, args, kw))
