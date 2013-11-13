@@ -139,7 +139,7 @@ def login_openid(request):
             # Return a json message containing the address or path to redirect to.
             #return {'redirect': request.POST['came_from'], 'success': True}
         
-    return response
+    return HTTPFound(location=request.route_url('home'))
 
 # home view
 # ---------
