@@ -149,7 +149,7 @@ def login_openid(request):
             headers = remember(request, result.user.email)
             # Return a json message containing the address or path to redirect to.
             #return {'redirect': request.POST['came_from'], 'success': True}
-            return HTTPFound(location = came_from, headers = headers, success = True)
+            return HTTPFound(location = came_from, headers = headers)
         
     return response
 
