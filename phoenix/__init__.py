@@ -10,10 +10,12 @@ from pyramid.events import subscriber
 from pyramid.events import NewRequest
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
+from .security import groupfinder
+from .resources import Root
 
 import pymongo
 
-from .resources import Root
+
 from .helpers import button
 import logging
 
@@ -36,7 +38,12 @@ def main(global_config, **settings):
     log.debug("init phoenix application")
     log.debug("settings: %s", settings)
 
+    # security
+    authn_policy = AuthTktAuthenticationPolicy('s3cReT', callback=groupfinder, hashalg='sha512')
+    authz_policy = ACLAuthorizationPolicy()
     config = Configurator(settings=settings, root_factory=Root)
+    config.set_authentication_policy(authn_policy)
+    config.set_authorization_policy(authz_policy)
 
     # using mozilla persona
     config.include('pyramid_persona')

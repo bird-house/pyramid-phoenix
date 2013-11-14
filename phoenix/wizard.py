@@ -407,7 +407,7 @@ class Done():
 @view_config(route_name='wizard',
              renderer='templates/wizard.pt',
              layout='default',
-             permission='view',
+             permission='edit',
              )
 def wizard(request):
     schemas = []

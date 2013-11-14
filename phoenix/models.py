@@ -7,6 +7,11 @@
 
 # TODO: refactor usage of mongodb etc ...
 
+from pyramid.security import (
+    Allow,
+    Everyone,
+    )
+
 import uuid
 import datetime
 

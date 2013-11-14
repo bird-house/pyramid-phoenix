@@ -67,14 +67,20 @@ def add_global(event):
 # login
 # -------
 
-@view_config(route_name='login', layout='default', renderer='templates/login.pt')
+@view_config(
+    route_name='login', 
+    layout='default', 
+    renderer='templates/login.pt',
+    permission='view')
 def login(request):
     return dict()
 
 # logout
 # --------
 
-@view_config(route_name='logout')
+@view_config(
+    route_name='logout',
+    permission='edit')
 def logout(request):
     log.debug("logout")
     headers = forget(request)
@@ -84,7 +90,9 @@ def logout(request):
 # forbidden view
 # --------------
 
-@forbidden_view_config(renderer='templates/forbidden.pt')
+@forbidden_view_config(
+    renderer='templates/forbidden.pt',
+    )
 def forbidden(request):
     request.response.status = 403
     return dict(message=None)
@@ -92,7 +100,11 @@ def forbidden(request):
 # persona login
 # -------------
 
-@view_config(route_name='login_persona', check_csrf=True, renderer='json')
+@view_config(
+    route_name='login_persona', 
+    check_csrf=True, 
+    renderer='json',
+    permission='view')
 def login_persona(request):
     # TODO: update login to my needs
     # https://pyramid_persona.readthedocs.org/en/latest/customization.html#do-extra-work-or-verification-at-login
@@ -114,7 +126,9 @@ def login_persona(request):
 # authomatic openid login
 # -----------------------
 
-@view_config(route_name='login_openid')
+@view_config(
+    route_name='login_openid',
+    permission='view')
 def login_openid(request):
     # Get the internal provider name URL variable.
     provider_name = request.matchdict.get('provider_name', 'openid')
@@ -156,11 +170,12 @@ def login_openid(request):
 # home view
 # ---------
 
-@view_config(route_name='home',
-             renderer='templates/home.pt',
-             layout='default',
-             permission='view'
-             )
+@view_config(
+    route_name='home',
+    renderer='templates/home.pt',
+    layout='default',
+    permission='view'
+    )
 def home(request):
     log.debug('rendering home view')
 
@@ -173,11 +188,12 @@ def home(request):
 # processes
 # ---------
 
-@view_config(route_name='processes',
-             renderer='templates/form.pt',
-             layout='default',
-             permission='view'
-             )
+@view_config(
+    route_name='processes',
+    renderer='templates/form.pt',
+    layout='default',
+    permission='edit'
+    )
 class ProcessView(FormView):
     from .schema import ProcessSchema
 
@@ -197,11 +213,12 @@ class ProcessView(FormView):
 # jobs
 # -------
 
-@view_config(route_name='jobs',
-             renderer='templates/jobs.pt',
-             layout='default',
-             permission='view'
-             )
+@view_config(
+    route_name='jobs',
+    renderer='templates/jobs.pt',
+    layout='default',
+    permission='edit'
+    )
 def jobs(request):
     jobs = []
 
@@ -256,7 +273,7 @@ def jobs(request):
      route_name='output_details',
      renderer='templates/output_details.pt',
      layout='default',
-     permission='view')
+     permission='edit')
 def output_details(request):
     title = u"Process Outputs"
 
@@ -275,11 +292,12 @@ def output_details(request):
 # form
 # -----
 
-@view_config(route_name='execute',
-             renderer='templates/form.pt',
-             layout='default',
-             permission='view'
-             )
+@view_config(
+    route_name='execute',
+    renderer='templates/form.pt',
+    layout='default',
+    permission='edit'
+    )
 class ExecuteView(FormView):
     log.debug('rendering execute')
     buttons = ('submit',)
@@ -327,28 +345,31 @@ class ExecuteView(FormView):
 
         return HTTPFound(location=self.request.route_url('jobs'))
 
-@view_config(route_name='monitor',
-             renderer='templates/embedded.pt',
-             layout='default',
-             permission='edit'
-             )
+@view_config(
+    route_name='monitor',
+    renderer='templates/embedded.pt',
+    layout='default',
+    permission='edit'
+    )
 def monitor(request):
     log.debug('rendering monitor view')
     return dict(external_url=supervisor_url(request))
 
-@view_config(route_name='tds',
-             renderer='templates/embedded.pt',
-             layout='default',
-             permission='view'
-             )
+@view_config(
+    route_name='tds',
+    renderer='templates/embedded.pt',
+    layout='default',
+    permission='edit'
+    )
 def thredds(request):
     return dict(external_url=thredds_url(request))
 
-@view_config(route_name='catalog_wps_add',
-             renderer='templates/catalog.pt',
-             layout='default',
-             permission='view',
-             )
+@view_config(
+    route_name='catalog_wps_add',
+    renderer='templates/catalog.pt',
+    layout='default',
+    permission='edit',
+    )
 class CatalogAddWPSView(FormView):
     #form_info = "Hover your mouse over the widgets for description."
     schema = None
@@ -388,11 +409,12 @@ class CatalogAddWPSView(FormView):
 
         return HTTPFound(location=self.request.route_url('catalog_wps_add'))
 
-@view_config(route_name='catalog_wps_select',
-             renderer='templates/catalog.pt',
-             layout='default',
-             permission='view',
-             )
+@view_config(
+    route_name='catalog_wps_select',
+    renderer='templates/catalog.pt',
+    layout='default',
+    permission='edit',
+    )
 class CatalogSelectWPSView(FormView):
     log.debug('rendering catalog select wps')
     #form_info = "Hover your mouse over the widgets for description."
@@ -430,11 +452,12 @@ class CatalogSelectWPSView(FormView):
 
         return HTTPFound(location=self.request.route_url('catalog_wps_select'))
 
-@view_config(route_name='admin',
-             renderer='templates/form.pt',
-             layout='default',
-             permission='edit',
-             )
+@view_config(
+    route_name='admin',
+    renderer='templates/form.pt',
+    layout='default',
+    permission='edit',
+    )
 class AdminView(FormView):
     from .schema import AdminSchema
 
@@ -453,11 +476,12 @@ class AdminView(FormView):
         return HTTPFound(location=self.request.route_url('admin'))
 
 
-@view_config(route_name='help',
-             renderer='templates/embedded.pt',
-             layout='default',
-             permission='view'
-             )
+@view_config(
+    route_name='help',
+    renderer='templates/embedded.pt',
+    layout='default',
+    permission='view'
+    )
 def help(request):
     log.debug('rendering help view')
     return dict(external_url='/docs')
