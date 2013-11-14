@@ -35,7 +35,6 @@ from .helpers import supervisor_url
 from .helpers import thredds_url
 from .helpers import update_wps_url
 from .helpers import execute_wps
-from .helpers import whitelist
 
 import logging
 

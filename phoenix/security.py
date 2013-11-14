@@ -1,13 +1,13 @@
+from .helpers import admin_users
+
 import logging
 
 log = logging.getLogger(__name__)
 
-ADMIN_USERS = ['ehbrecht@dkrz.de', 'carsten@linacs.org', 'nils.hempelmann@hzg.de', 'kipp@dkrz.de']
-
 def groupfinder(userid, request):
     log.debug('groupfinder: userid=%s', userid)
     
-    if userid in ADMIN_USERS:
+    if userid in admin_users(request):
         return ['group:admins']
     else:
         return ['group:editors']
