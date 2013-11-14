@@ -349,7 +349,7 @@ class ExecuteView(FormView):
     route_name='monitor',
     renderer='templates/embedded.pt',
     layout='default',
-    permission='edit'
+    permission='admin'
     )
 def monitor(request):
     log.debug('rendering monitor view')
@@ -456,7 +456,7 @@ class CatalogSelectWPSView(FormView):
     route_name='admin',
     renderer='templates/form.pt',
     layout='default',
-    permission='edit',
+    permission='admin',
     )
 class AdminView(FormView):
     from .schema import AdminSchema
