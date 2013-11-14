@@ -8,6 +8,7 @@ def groupfinder(userid, request):
     log.debug('groupfinder: userid=%s', userid)
     
     if userid in admin_users(request):
+        log.debug('admin permission')
         return ['group:admins']
     else:
         return ['group:editors']
