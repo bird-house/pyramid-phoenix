@@ -132,7 +132,9 @@ def login_openid(request):
             # Login procedure finished with an error.
             #request.session.flash('Sorry, login failed: %s' % (result.error.message))
             log.error('openid login failed: %s', result.error.message)
-            response.write(u'<h2>Login failed: {}</h2>'.format(result.error.message))
+            #response.write(u'<h2>Login failed: {}</h2>'.format(result.error.message))
+            response.text = render('phoenix:templates/forbidden.pt',
+                                   {'message': result.error.message}, request=request)
         elif result.user:
             # Hooray, we have the user!
             log.debug("user=%s, id=%s, email=%s",

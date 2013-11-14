@@ -1,2 +1,19 @@
-<h1>Success<h1>
-    <h2>Your email is: ${result.user.email}</h2>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Login was Successful</title>
+
+    <script src="${request.static_url('deform_bootstrap:static/jquery-1.7.1.min.js')}"></script>
+    <script>
+       $( document ).ready(function() {
+           console.log( "redirect after successful login" );
+           window.location.href = '/';
+       });
+    </script>
+  </head>
+  <body>
+  
+  </body>
+</html>
+

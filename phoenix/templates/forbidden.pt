@@ -3,7 +3,14 @@
     <title>403 Forbidden</title>
   </head>
   <body>
+    <a href="/login">Login</a>
+
     <h1>403 Forbidden</h1>
-    Access was denied to this resource.<br/><br/>
+    Access was denied to this resource.<br/>
+
+    <div tal:condition="message">
+      <h2>Error Message</h2>
+      ${message}.<br/>
+    </div>
   </body>
 </html>
