@@ -86,10 +86,8 @@ def logout(request):
 
 @forbidden_view_config(renderer='templates/forbidden.pt')
 def forbidden(request):
-    if authenticated_userid(request):
-        request.response.status = 403
-        return {}
-    return HTTPFound(location=request.route_url('login'))
+    request.response.status = 403
+    return dict(message=None)
 
 # persona login
 # -------------
