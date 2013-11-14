@@ -1,3 +1,7 @@
+import logging
+
+log = logging.getLogger(__name__)
+
 ADMIN_USERS = ['ehbrecht@dkrz.de', 'carsten@linacs.org', 'nils.hempelmann@hzg.de', 'kipp@dkrz.de']
 
 def groupfinder(userid, request):
@@ -10,21 +14,14 @@ def groupfinder(userid, request):
 
 
 from pyramid.security import (
-	Allow, 
-	Everyone, 
-	Authenticated, 
-	ALL_PERMISSIONS)
-from persistent.mapping import PersistentMapping
+        Allow, 
+        Everyone, 
+        Authenticated, 
+        ALL_PERMISSIONS)
 
 # Authentication and Authorization
 
-def root_factory(request):
-    log.debug('called root_factory')
-    return Phoenix(request)
-
-class Phoenix(PersistentMapping):
-    __name__ = None
-    __parent__ = None
+class Root():
     __acl__ = [
                 (Allow, Everyone, 'view'),
                 (Allow, Authenticated, 'edit'),
@@ -33,4 +30,7 @@ class Phoenix(PersistentMapping):
 
     def __init__(self, request):
         self.request = request
+
+def root_factory(request):
+    return Root(request)
 

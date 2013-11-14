@@ -453,7 +453,6 @@ class CatalogSelectWPSView(FormView):
         return HTTPFound(location=self.request.route_url('catalog_wps_select'))
 
 @view_config(
-    context=".models.Phoenix",
     route_name='admin',
     renderer='templates/form.pt',
     layout='default',
