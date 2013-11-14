@@ -6,8 +6,10 @@ log = logging.getLogger(__name__)
 
 def groupfinder(userid, request):
     log.debug('groupfinder: userid=%s', userid)
+    admins = admin_users(request)
+    log.debug('admins: %s', admins)
     
-    if userid in admin_users(request):
+    if userid in admins:
         log.debug('admin permission')
         return ['group:admins']
     else:
