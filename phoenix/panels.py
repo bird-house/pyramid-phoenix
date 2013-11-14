@@ -26,7 +26,9 @@ def navbar(context, request):
            nav_item('Wizard', request.route_url('wizard'), 'icon-time'),
            nav_item('Help', request.route_url('help'), 'icon-time')]
 
-    return dict(title='Phoenix', nav=nav, username=authenticated_userid(request))
+    login =  request.current_route_url() == request.route_url('login')
+
+    return dict(title='Phoenix', nav=nav, username=authenticated_userid(request), login=login)
 
 # catalog_navbar
 # ------

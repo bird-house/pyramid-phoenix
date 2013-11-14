@@ -16,7 +16,7 @@
             </ul>            
             <div class="pull-right">
               <ul class="nav pull-right">
-                <li>
+                <li class="${'active' if login else ''}">
                   ${request.login_button}
                 </li>
               </ul>
