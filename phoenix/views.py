@@ -99,16 +99,19 @@ def login_persona(request):
     # TODO: update login to my needs
     # https://pyramid_persona.readthedocs.org/en/latest/customization.html#do-extra-work-or-verification-at-login
 
+    log.debug('login with persona')
+
     # Verify the assertion and get the email of the user
     email = verify_login(request)
     # check whitelist
-    if email not in whitelist(request):
-        request.session.flash('Sorry, you are not on the list')
-        return {'redirect': '/', 'success': False}
+    #if email not in whitelist(request):
+    #    request.session.flash('Sorry, you are not on the list')
+    #    return {'redirect': '/', 'success': False}
     # Add the headers required to remember the user to the response
     request.response.headers.extend(remember(request, email))
     # Return a json message containing the address or path to redirect to.
-    return {'redirect': request.POST['came_from'], 'success': True}
+    #return {'redirect': request.POST['came_from'], 'success': True}
+    return {'redirect': '/', 'success': True}
 
 # authomatic openid login
 # -----------------------
