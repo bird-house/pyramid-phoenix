@@ -1,14 +1,19 @@
 <metal:block use-macro="main_template">
   <div metal:fill-slot="content">
   
-    <h3>OpenID</h3>
-    <form action="/login/openid">
-      <input type="text" name="id" placeholder="Your claimed ID"/>
-      <input type="submit" class="btn" value="Authenticate">
-    </form>
+    <div>
+      <h3>OpenID</h3>
+      <form action="/login/openid">
+	<input type="text" name="id" placeholder="Your claimed OpenID"/>
+	<button type="submit" class="btn btn-primary">Sign in</button>
+	<span class="help-block">
+	  Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname
+	</span>
+      </form>
+    </div>
     
     <div>
-      <span>Mozilla Persona</span>
+      <h3>Mozilla Persona</h3>
       ${request.persona_button}
     </div>
 
