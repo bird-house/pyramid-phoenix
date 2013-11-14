@@ -11,6 +11,7 @@ import datetime
 from pyramid.view import view_config, forbidden_view_config
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.response import Response
+from pyramid.renderers import render
 from pyramid.security import remember, forget, authenticated_userid
 from pyramid.events import subscriber, BeforeRender
 from pyramid_deform import FormView
@@ -121,6 +122,7 @@ def login_openid(request):
     
     # Start the login procedure.
     response = Response()
+    #response = request.response
     result = authomatic.login(WebObAdapter(request, response), provider_name)
 
     log.debug('authomatic login result: %s', result)
@@ -135,12 +137,16 @@ def login_openid(request):
             # Hooray, we have the user!
             log.debug("user=%s, id=%s, email=%s",
                       result.user.name, result.user.id, result.user.email)
-               
-            response.write(u'<h1>Success<h1>')
-            response.write(u'<h2>Your email is: {}</h2>'.format(result.user.email))
+
+            response.text = render('phoenix:templates/openid_success.pt',
+                                   {'result': result},
+                                   request=request)
+            #response.write(u'<h1>Success<h1>')
+            #response.write(u'<h2>Your email is: {}</h2>'.format(result.user.email))
 
             # Add the headers required to remember the user to the response
             response.headers.extend(remember(request, result.user.email))
+    log.debug('response: %s', response)
         
     return response
 

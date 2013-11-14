@@ -1,0 +1,2 @@
+<h1>Success<h1>
+    <h2>Your email is: ${result.user.email}</h2>
