@@ -149,8 +149,8 @@ def bind_search_schema(node, kw):
 
 def esgsearch_validator(node, value):
     search = json.loads(value)
-    if search.get('hit-count', 0) > 5:
-        raise Invalid(node, 'More than 5 datasets selected: %r.' %  search['hit-count'])
+    if search.get('hit-count', 0) > 20:
+        raise Invalid(node, 'More than 20 datasets selected: %r.' %  search['hit-count'])
 
 class SearchSchema(colander.MappingSchema):
     description = 'Search Input Files'
