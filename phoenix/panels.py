@@ -1,5 +1,5 @@
 from pyramid_layout.panel import panel_config
-from pyramid.security import authenticated_userid
+from pyramid.security import authenticated_userid, has_permission
 
 import logging
 
@@ -16,15 +16,18 @@ def navbar(context, request):
         active = request.current_route_url() == url
         return dict(name=name, url=url, active=active, icon=icon)
 
-    nav = [nav_item('Home', request.route_url('home'), 'icon-home'),
-           nav_item('Catalog', request.route_url('catalog_wps_select'), 'icon-tasks'),
-           nav_item('Thredds', request.route_url('tds'), 'icon-time'),
-           nav_item('Processes', request.route_url('processes'), 'icon-tasks'),
-           nav_item('My Jobs', request.route_url('jobs'), 'icon-time'),
-           nav_item('Monitor', request.route_url('monitor'), 'icon-time'),
-           nav_item('Admin', request.route_url('admin'), 'icon-time'),
-           nav_item('Wizard', request.route_url('wizard'), 'icon-time'),
-           nav_item('Help', request.route_url('help'), 'icon-time')]
+    nav = []
+    nav.append( nav_item('Home', request.route_url('home'), 'icon-home') )
+    if has_permission('edit', request.context, request):
+        nav.append( nav_item('Thredds', request.route_url('tds'), 'icon-time') )
+        nav.append( nav_item('Processes', request.route_url('processes'), 'icon-tasks') )
+        nav.append( nav_item('My Jobs', request.route_url('jobs'), 'icon-time') )
+        nav.append( nav_item('Wizard', request.route_url('wizard'), 'icon-time') )
+    if has_permission('admin', request.context, request):
+        nav.append( nav_item('Catalog', request.route_url('catalog_wps_select'), 'icon-tasks') )
+        nav.append( nav_item('Monitor', request.route_url('monitor'), 'icon-time') )
+        nav.append( nav_item('Admin', request.route_url('admin'), 'icon-time') )
+    nav.append( nav_item('Help', request.route_url('help'), 'icon-time') )
 
     login =  request.current_route_url() == request.route_url('login')
 
