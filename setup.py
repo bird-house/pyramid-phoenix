@@ -17,7 +17,7 @@ requires = [
     'deform_bootstrap',
     'deform_bootstrap_extra',
     'pyramid_persona',
-    #'authomatic',
+    'authomatic',
     'python-openid',
     #'WebHelpers',
     'Mako',
