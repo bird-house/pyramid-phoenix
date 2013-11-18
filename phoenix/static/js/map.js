@@ -1,5 +1,10 @@
 var map, ia_wms, tds_wms;
 
+var timesteps = ["2006-01-01T12:00:00", "2006-01-02T12:00:00", "2006-01-03T12:00:00", 
+                 "2006-01-04T12:00:00", "2006-01-05T12:00:00", "2006-01-06T12:00:00", 
+                 "2006-01-07T12:00:00", "2006-01-08T12:00:00", "2006-01-09T12:00:00", 
+                 "2006-01-10T12:00:00",];
+
 function init() {
   var mapOptions = { maxResolution: 256/512, numZoomLevels: 11, fractionalZoom: true};
   //map = new OpenLayers.Map('map',mapOptions);
@@ -37,21 +42,18 @@ function init() {
   map.zoomToMaxExtent();
 
   $("#slider").slider({
-    value: 100,
+    value: 0,
+    min: 0,
+    max: 9,
+    step: 1,
     slide: function(e, ui) {
-      tds_wms.setOpacity(ui.value / 100);
+      //tds_wms.setOpacity(ui.value / 10);
+      var step = parseInt(ui.value);
+      console.log("step: " + step);
+      console.log("time: " + timesteps[step]);
+      tds_wms.mergeNewParams({'time': timesteps[step]});
     }
   });
-}
-
-function update_date() {
-  var string = OpenLayers.Util.getElement('year').value + "-" +
-    OpenLayers.Util.getElement('month').value + "-" +
-    OpenLayers.Util.getElement('day').value + "T" +
-    OpenLayers.Util.getElement('hour').value + ":" +
-    OpenLayers.Util.getElement('minute').value + ":00";
-  //ia_wms.mergeNewParams({'time':string});
-  tds_wms.mergeNewParams({'time':string});
 }
 
 $(document).ready(function (e) {
