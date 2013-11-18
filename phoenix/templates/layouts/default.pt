@@ -17,6 +17,9 @@
     </tal:resources>
 
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
+          href="http://code.jquery.com/ui/1.8.18/themes/smoothness/jquery-ui.css" />
+
+    <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
           href="${request.static_url('deform_bootstrap:static/deform_bootstrap.css')}" />
 
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
@@ -35,6 +38,7 @@
 
     <!-- Le javascript, which unfortunately has to be at the top for Deform to work -->
     <script src="${request.static_url('deform_bootstrap:static/jquery-1.7.1.min.js')}"></script>
+    <script src="${request.static_url('deform_bootstrap:static/jquery-ui-1.8.18.custom.min.js')}"></script>
     <script src="${request.static_url('deform:static/scripts/deform.js')}"></script>
 
     <script src="${request.static_url('deform_bootstrap:static/jquery.maskedinput-1.3.js')}"></script>

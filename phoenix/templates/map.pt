@@ -9,16 +9,23 @@
       height: 400px;
       }
     </style>
+    <style>
+      #slider {
+      width: 492px;
+      margin: 10px;
+      }
+    </style>
   </div>
 
   <div metal:fill-slot="javascript">
     <script src="${request.static_url('phoenix:static/ol/OpenLayers.js')}"></script>
+    <script src="${request.static_url('phoenix:static/ol/animate.js')}"></script>
     <script src="${request.static_url('phoenix:static/js/map.js')}"></script>
   </div>
 
   <div metal:fill-slot="content">
-    <input size="4" type='text' id='year' value="2006" onchange="update_date()"/>-<input size="2" type="text" id="month" value="01" onchange="update_date()"/>-<input size="2" type="text" id="day" value="01" onchange="update_date()" />T<input type="text" size="2" id="hour" value="12" onchange="update_date()" />:<input type="text" size="2" id="minute" value="00" onchange="update_date()" />:00
     <div id="map"></div>
+    <div id="slider"></div>
   </div>
 
 </metal:block>

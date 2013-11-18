@@ -5,6 +5,7 @@ function init() {
   //map = new OpenLayers.Map('map',mapOptions);
   map = new OpenLayers.Map('map');
   map.addControl(new OpenLayers.Control.LayerSwitcher());
+  map.addControl(new OpenLayers.Control.Animate());
 
   var layer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
                                         "http://vmap0.tiles.osgeo.org/wms/vmap0", {layers: 'basic'} );
@@ -34,6 +35,13 @@ function init() {
  
   //map.zoomToExtent(new OpenLayers.Bounds(-100.898437,22.148438,-78.398437,39.726563));
   map.zoomToMaxExtent();
+
+  $("#slider").slider({
+    value: 100,
+    slide: function(e, ui) {
+      tds_wms.setOpacity(ui.value / 100);
+    }
+  });
 }
 
 function update_date() {
