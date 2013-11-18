@@ -83,6 +83,7 @@ def main(global_config, **settings):
     config.add_route('monitor', '/monitor')
     config.add_route('admin', '/admin')
     config.add_route('wizard', '/wizard')
+    config.add_route('map', '/map')
     config.add_route('help', '/help')
     config.add_route('login', '/login')
     config.add_route('login_persona', '/login/persona')

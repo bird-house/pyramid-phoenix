@@ -1,0 +1,23 @@
+<metal:block use-macro="main_template">
+
+  <div metal:fill-slot="javascript">
+    <script src="http://openlayers.org/api/OpenLayers.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        console.log("init map");
+        var map = new OpenLayers.Map('map-id');
+        var wms = new OpenLayers.Layer.WMS( "OpenLayers WMS",
+            "http://vmap0.tiles.osgeo.org/wms/vmap0", {layers: 'basic'} );
+        map.addLayer(wms);
+        map.zoomToMaxExtent();
+        console.log("map: " + map);
+        $('#map').html(map);
+      });
+    </script>
+  </div>
+
+  <div metal:fill-slot="content">
+    <div id="map-id"></div>
+  </div>
+
+</metal:block>

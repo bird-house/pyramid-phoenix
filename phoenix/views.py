@@ -476,6 +476,15 @@ class AdminView(FormView):
 
 
 @view_config(
+    route_name='map',
+    renderer='templates/map.pt',
+    layout='default',
+    permission='edit'
+    )
+def map(request):
+    return dict()
+
+@view_config(
     route_name='help',
     renderer='templates/embedded.pt',
     layout='default',
