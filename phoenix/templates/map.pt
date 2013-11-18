@@ -17,6 +17,7 @@
   </div>
 
   <div metal:fill-slot="content">
+    <input size="4" type='text' id='year' value="2005" onchange="update_date()"/>-<input size="2" type="text" id="month" value="08" onchange="update_date()"/>-<input size="2" type="text" id="day" value="29" onchange="update_date()" />T<input type="text" size="2" id="hour" value="13" onchange="update_date()" />:<input type="text" size="2" id="minute" value="00" onchange="update_date()" />:00
     <div id="map"></div>
   </div>
 
