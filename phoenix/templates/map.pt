@@ -11,7 +11,7 @@
     </style>
     <style>
       #slider {
-      width: 492px;
+      width: 300px;
       margin: 10px;
       }
     </style>
@@ -25,7 +25,18 @@
 
   <div metal:fill-slot="content">
     <div id="map"></div>
-    <div id="slider"></div>
+    <div id="animate">
+      <p>
+        <label for="date">Date:</label>
+        <span id="date">...</span>
+      </p>
+      <div id="slider"></div>
+      <p>
+        <button id="prev">prev</button>
+        <button id="next">next</button>
+        <button id="play">play</button>
+      </p>
+    </div>
   </div>
 
 </metal:block>

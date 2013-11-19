@@ -41,19 +41,60 @@ function init() {
   //map.zoomToExtent(new OpenLayers.Bounds(-100.898437,22.148438,-78.398437,39.726563));
   map.zoomToMaxExtent();
 
+  $("#prev").button({
+    icons: {
+      primary: "ui-icon-gear",
+      secondary: "ui-icon-triangle-1-s"
+    },
+    text: false,
+  }).click(function( event ) {
+    console.log('prev button clicked');
+    current = $("#slider").slider( "values", 0 );
+    if (current > 0 ) {
+      $("#slider").slider( "value", current - 1 );
+    }
+  });
   $("#slider").slider({
     value: 0,
     min: 0,
     max: 9,
     step: 1,
     slide: function(e, ui) {
+      var step = parseInt(ui.value);
+      console.log("sliding ...");
+      $("#date").text(timesteps[step]);
+    },
+    change: function(e, ui) {
       //tds_wms.setOpacity(ui.value / 10);
       var step = parseInt(ui.value);
-      console.log("step: " + step);
+      //console.log("step: " + step);
       console.log("time: " + timesteps[step]);
+      $("#date").text(timesteps[step]);
       tds_wms.mergeNewParams({'time': timesteps[step]});
     }
   });
+  $("#next").button({
+    icons: {
+      primary: "ui-icon-gear",
+      secondary: "ui-icon-triangle-1-s"
+    },
+    text: false,
+  }).click(function( event ) {
+    console.log('next button clicked');
+    current = $("#slider").slider( "values", 0 );
+    if (current < 9 ) {
+      $("#slider").slider( "value", current + 1 );
+    }
+  });;
+  $("#play").button({
+    icons: {
+      primary: "ui-icon-gear",
+      secondary: "ui-icon-triangle-1-s"
+    },
+    text: false,
+  }).click(function( event ) {
+    console.log('play button clicked');
+  });;
 }
 
 $(document).ready(function (e) {
