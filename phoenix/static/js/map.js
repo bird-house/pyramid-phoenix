@@ -4,7 +4,6 @@ var timesteps = ["2006-01-01T12:00:00", "2006-01-02T12:00:00", "2006-01-03T12:00
                  "2006-01-04T12:00:00", "2006-01-05T12:00:00", "2006-01-06T12:00:00", 
                  "2006-01-07T12:00:00", "2006-01-08T12:00:00", "2006-01-09T12:00:00", 
                  "2006-01-10T12:00:00",];
-var interval = null;
 
 function init() {
   var mapOptions = { maxResolution: 256/512, numZoomLevels: 11, fractionalZoom: true};
@@ -95,12 +94,7 @@ function init() {
     text: false,
   }).click(function( event ) {
     console.log('play button clicked');
-    clearInterval(interval);
-    for (var step=0; step < 10; step++) {
-      interval = setInterval(function() {
-        $("#slider").slider( "value", step )},
-        2000);
-    }
+    animate(0);
   });
   $("#stop").button({
     icons: {
@@ -110,8 +104,14 @@ function init() {
     text: false,
   }).click(function( event ) {
     console.log('stop button clicked');
-    clearInterval(interval);
-  });;
+  });
+}
+
+function animate(step) {
+  if (step < 10) {
+    $("#slider").slider( "value", step );
+    setTimeout(function() {animate(step+1);}, 500);
+  }
 }
 
 $(document).ready(function (e) {
