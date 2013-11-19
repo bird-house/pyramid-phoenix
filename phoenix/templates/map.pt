@@ -43,6 +43,7 @@
             <button id="prev">prev</button>
             <button id="next">next</button>
             <button id="play">play</button>
+            <button id="stop">stop</button>
           </td>
         </tr>
       </table>
