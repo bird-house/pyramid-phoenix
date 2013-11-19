@@ -62,14 +62,14 @@ function init() {
     slide: function(e, ui) {
       var step = parseInt(ui.value);
       console.log("sliding ...");
-      $("#date").text(timesteps[step]);
+      $("#time").text(timesteps[step]);
     },
     change: function(e, ui) {
       //tds_wms.setOpacity(ui.value / 10);
       var step = parseInt(ui.value);
       //console.log("step: " + step);
       console.log("time: " + timesteps[step]);
-      $("#date").text(timesteps[step]);
+      $("#time").text(timesteps[step]);
       tds_wms.mergeNewParams({'time': timesteps[step]});
     }
   });

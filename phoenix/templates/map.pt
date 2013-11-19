@@ -26,16 +26,26 @@
   <div metal:fill-slot="content">
     <div id="map"></div>
     <div id="animate">
-      <p>
-        <label for="date">Date:</label>
-        <span id="date">...</span>
-      </p>
-      <div id="slider"></div>
-      <p>
-        <button id="prev">prev</button>
-        <button id="next">next</button>
-        <button id="play">play</button>
-      </p>
+      <table>
+        <tr>
+          <td>
+            <span>Time:</span>
+            <span id="time">...</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div id="slider"></div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button id="prev">prev</button>
+            <button id="next">next</button>
+            <button id="play">play</button>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 
