@@ -5,7 +5,6 @@ var timesteps = ["2006-01-01T12:00:00", "2006-01-02T12:00:00", "2006-01-03T12:00
                  "2006-01-07T12:00:00", "2006-01-08T12:00:00", "2006-01-09T12:00:00", 
                  "2006-01-10T12:00:00",];
 
-
 function init() {
   var mapOptions = { maxResolution: 256/512, numZoomLevels: 11, fractionalZoom: true};
   //map = new OpenLayers.Map('map',mapOptions);
@@ -42,18 +41,13 @@ function init() {
   //map.zoomToExtent(new OpenLayers.Bounds(-100.898437,22.148438,-78.398437,39.726563));
   map.zoomToMaxExtent();
 
-  // wps call
-  var url = "http://rockhopper.d.dkrz.de:8090/wps";
-  var params =  {
-    Request: "Execute",
-    Service: "WPS",
-    version: "1.0.0",
-    identifier: "org.malleefowl.wms.layer",
-    RawDataOutput: "output",
-  };
-  $.get(url, params, function(result) {
-    console.log(result)
-  }, 'json');
+  // call wps
+  var wps = new SimpleWPS({
+    url: "http://rockhopper.d.dkrz.de:8090/wps",
+    onSuccess: function(result) {console.log(result)},
+  });
+  wps.execute();
+
 
   $("#prev").button({
     icons: {
