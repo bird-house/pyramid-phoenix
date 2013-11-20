@@ -58,6 +58,20 @@ function initUI(layer) {
       tds_wms.mergeNewParams({'time': layer.timesteps[step]});
     }
   });
+  $("#slider-range").slider({
+    range: true,
+    values: [0, max],
+    min: 0,
+    max: max,
+    step: 1,
+    slide: function(e, ui) {
+      var step0 = parseInt(ui.values[0]);
+      var step1 = parseInt(ui.values[1]);
+      
+      console.log("sliding range ...");
+      $( "#time-range" ).text( layer.timesteps[step0] + " - " + layer.timesteps[step1] );
+    },
+  });
   $("#next").button({
     icons: {
       primary: "ui-icon-gear",

@@ -41,6 +41,17 @@
         </tr>
         <tr>
           <td>
+            <span>Time:</span>
+            <span id="time-range">...</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div id="slider-range"></div>
+          </td>
+        </tr>
+        <tr>
+          <td>
             <button id="prev">prev</button>
             <button id="next">next</button>
             <button id="play">play</button>
