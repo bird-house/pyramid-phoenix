@@ -1,4 +1,4 @@
-var map, tds_wms
+var map, tds_wms, animate_layer
 
 function initMap() {
   var mapOptions = { maxResolution: 256/512, numZoomLevels: 11, fractionalZoom: true};
@@ -89,6 +89,9 @@ function initUI(layer) {
     text: false,
   }).click(function( event ) {
     console.log('stop button clicked');
+    if (animate_layer != null) {
+      map.removeLayer(animate_layer);
+    }
   });
 }
 
@@ -130,12 +133,12 @@ function animate(layer) {
       var url = $(xmlDoc).find("wps\\:Reference, Reference").first().attr('href');
       console.log(url);
 
-      var image = new OpenLayers.Layer.Image(
+      animate_layer = new OpenLayers.Layer.Image(
         "Animation", url, map.getExtent(), map.getSize(), {
         isBaseLayer: false,
         alwaysInRange: true // Necessary to always draw the image
         });
-      map.addLayer(image);
+      map.addLayer(animate_layer);
     },
   });
   wps.execute({
