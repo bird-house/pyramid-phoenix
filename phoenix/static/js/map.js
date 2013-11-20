@@ -1,8 +1,6 @@
-var map, ia_wms, tds_wms;
-var wps;
-var timesteps = [];
+var map, tds_wms
 
-function init() {
+function initMap() {
   var mapOptions = { maxResolution: 256/512, numZoomLevels: 11, fractionalZoom: true};
   //map = new OpenLayers.Map('map',mapOptions);
   map = new OpenLayers.Map('map');
@@ -24,8 +22,8 @@ function init() {
   map.zoomToMaxExtent();
 }
 
-function initUI() {
-  var max = timesteps.length - 1;
+function initUI(layer) {
+  var max = layer.timesteps.length - 1;
 
   $("#prev").button({
     icons: {
@@ -47,16 +45,15 @@ function initUI() {
     step: 1,
     slide: function(e, ui) {
       var step = parseInt(ui.value);
-      console.log("sliding ...");
-      $("#time").text(timesteps[step]);
+      //console.log("sliding ...");
+      $("#time").text(layer.timesteps[step]);
     },
     change: function(e, ui) {
       //tds_wms.setOpacity(ui.value / 10);
       var step = parseInt(ui.value);
       //console.log("step: " + step);
-      console.log("time: " + timesteps[step]);
-      $("#time").text(timesteps[step]);
-      tds_wms.mergeNewParams({'time': timesteps[step]});
+      $("#time").text(layer.timesteps[step]);
+      tds_wms.mergeNewParams({'time': layer.timesteps[step]});
     }
   });
   $("#next").button({
@@ -100,7 +97,6 @@ function initWPS() {
     onSuccess: function(result) {
       console.log(result);
       layer = result[0]
-      timesteps = layer.timesteps;
       // wms-t from tds
       tds_wms = new OpenLayers.Layer.WMS(layer.title,
                                          "http://rockhopper.d.dkrz.de:8090/thredds/wms/test/cordex-eur-tas-pywpsInputT1Zaki.nc?",
@@ -114,11 +110,11 @@ function initWPS() {
       map.addLayer(tds_wms);
  
       //map.zoomToExtent(new OpenLayers.Bounds(-100.898437,22.148438,-78.398437,39.726563));
-      map.zoomToMaxExtent();
 
-      initUI();
+      initUI(layer);
     },
   });
+  wps.execute();
 }
 
 function animate(step) {
@@ -129,8 +125,6 @@ function animate(step) {
 }
 
 $(document).ready(function (e) {
-  init();
-  //initUI();
+  initMap();
   initWPS();
-  wps.execute();
 });
