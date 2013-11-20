@@ -1,4 +1,5 @@
-var map, tds_wms, animate_layer
+var map, tds_wms, animate_layer;
+var start_time, end_time;
 
 function initMap() {
   var mapOptions = { maxResolution: 256/512, numZoomLevels: 11, fractionalZoom: true};
@@ -70,6 +71,8 @@ function initUI(layer) {
       
       console.log("sliding range ...");
       $( "#time-range" ).text( layer.timesteps[step0] + " - " + layer.timesteps[step1] );
+      start_time = layer.timesteps[step0];
+      end_time = layer.timesteps[step1];
     },
   });
   $("#next").button({
@@ -157,8 +160,8 @@ function animate(layer) {
   });
   wps.execute({
     layer: layer.name,
-    start: layer.timesteps[0],
-    end: layer.timesteps[50],
+    start: start_time,
+    end: end_time,
     width: map.getSize().w,
     height: map.getSize().h,
     bbox: map.getExtent().toBBOX(),
