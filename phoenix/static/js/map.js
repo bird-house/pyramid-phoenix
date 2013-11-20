@@ -20,6 +20,8 @@ function initMap() {
   layer.setVisibility(true)
   map.addLayer(layer);
   map.zoomToMaxExtent();
+
+ 
 }
 
 function initUI(layer) {
@@ -77,7 +79,7 @@ function initUI(layer) {
     text: false,
   }).click(function( event ) {
     console.log('play button clicked');
-    animate(0);
+    animate(layer);
   });
   $("#stop").button({
     icons: {
@@ -90,7 +92,7 @@ function initUI(layer) {
   });
 }
 
-function initWPS() {
+function initLayer() {
   wps = new SimpleWPS({
     url: "http://rockhopper.d.dkrz.de:8090/wps",
     process: "org.malleefowl.wms.layer",
@@ -117,7 +119,36 @@ function initWPS() {
   wps.execute();
 }
 
-function animate(step) {
+function animate(layer) {
+  wps = new SimpleWPS({
+    url: "http://rockhopper.d.dkrz.de:8090/wps",
+    process: "org.malleefowl.wms.animate",
+    raw: false,
+    format: 'xml',
+    onSuccess: function(xmlDoc) {
+      //console.log(xmlDoc);
+      var url = $(xmlDoc).find("wps\\:Reference, Reference").first().attr('href');
+      console.log(url);
+
+      var image = new OpenLayers.Layer.Image(
+        "Animation", url, map.getExtent(), map.getSize(), {
+        isBaseLayer: false,
+        alwaysInRange: true // Necessary to always draw the image
+        });
+      map.addLayer(image);
+    },
+  });
+  wps.execute({
+    layer: layer.name,
+    start: layer.timesteps[0],
+    end: layer.timesteps[50],
+    width: map.getSize().w,
+    height: map.getSize().h,
+    bbox: map.getExtent().toBBOX(),
+  });  
+}
+
+function animateSlow(step) {
   if (step < 10) {
     $("#slider").slider( "value", step );
     setTimeout(function() {animate(step+1);}, 500);
@@ -126,5 +157,5 @@ function animate(step) {
 
 $(document).ready(function (e) {
   initMap();
-  initWPS();
+  initLayer();
 });
