@@ -34,32 +34,17 @@
       <table>
         <tr>
           <td>
-            <span>Time:</span>
-            <span id="time">...</span>
+            <span id="time">2006-01-01T12:00:00.000Z</span>
           </td>
-        </tr>
-        <tr>
           <td>
             <div id="slider"></div>
           </td>
-        </tr>
-        <tr>
           <td>
-            <span>Time:</span>
-            <span id="time-range">...</span>
+            <button id="prev" class="icon-step-backward"/>
+            <button id="next" class="icon-step-forward"/>
           </td>
-        </tr>
-        <tr>
           <td>
-            <div id="slider-range"></div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button id="prev">prev</button>
-            <button id="next">next</button>
-            <button id="play">play</button>
-            <button id="stop">stop</button>
+            <select id="select"/>
           </td>
         </tr>
       </table>
