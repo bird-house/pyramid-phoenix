@@ -118,7 +118,7 @@ function initLayer() {
     onSuccess: function(result) {
       console.log(result);
       $.each(result, function(index, layer) {
-        wms_layer = new OpenLayers.Layer.WMS(layer.title,
+        wms_layer = new OpenLayers.Layer.WMS(layer.service_name + ":" + layer.title,
                                              layer.service,
                                              {layers: layer.name,
                                               transparent: true,
