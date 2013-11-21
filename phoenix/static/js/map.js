@@ -1,4 +1,4 @@
-var map, tds_wms, animate_layer;
+var map, animate_layer;
 var start_time, end_time;
 
 function initMap() {
@@ -56,7 +56,7 @@ function initUI(layer) {
       var step = parseInt(ui.value);
       //console.log("step: " + step);
       $("#time").text(layer.timesteps[step]);
-      tds_wms.mergeNewParams({'time': layer.timesteps[step]});
+      layer.wms_layer.mergeNewParams({'time': layer.timesteps[step]});
     }
   });
   $("#slider-range").slider({
@@ -117,22 +117,25 @@ function initLayer() {
     process: "org.malleefowl.wms.layer",
     onSuccess: function(result) {
       console.log(result);
-      layer = result[0]
-      // wms-t from tds
-      tds_wms = new OpenLayers.Layer.WMS(layer.title,
-                                         layer.service,
-                                         {layers: layer.name,
-                                          transparent: true,
-                                          format:'image/png',
-                                          time: layer.timesteps[0]});
+      $.each(result, function(index, layer) {
+        wms_layer = new OpenLayers.Layer.WMS(layer.title,
+                                             layer.service,
+                                             {layers: layer.name,
+                                              transparent: true,
+                                              format:'image/png',
+                                              time: layer.timesteps[0]});
       
  
   
-      map.addLayer(tds_wms);
- 
-      //map.zoomToExtent(new OpenLayers.Bounds(-100.898437,22.148438,-78.398437,39.726563));
-
-      initUI(layer);
+        wms_layer.setVisibility(false);
+        map.addLayer(wms_layer);
+        layer.wms_layer = wms_layer;
+        wms_layer.events.register("visibilitychanged", layer, function() {
+          if (layer.wms_layer.getVisibility()) {
+            initUI(this);
+          }
+        });
+      });
     },
   });
   wps.execute();
