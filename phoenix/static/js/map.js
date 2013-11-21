@@ -6,7 +6,7 @@ function initMap() {
   //map = new OpenLayers.Map('map',mapOptions);
   map = new OpenLayers.Map('map');
   map.addControl(new OpenLayers.Control.LayerSwitcher());
-  map.addControl(new OpenLayers.Control.Animate());
+  //map.addControl(new OpenLayers.Control.Animate());
 
   var layer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
                                         "http://vmap0.tiles.osgeo.org/wms/vmap0", {layers: 'basic'} );
@@ -20,9 +20,9 @@ function initMap() {
                                   );
   layer.setVisibility(true)
   map.addLayer(layer);
-  map.zoomToMaxExtent();
+  map.zoomToMaxExtent(); 
 
- 
+  initLayer();
 }
 
 function initUI(layer) {
@@ -114,7 +114,6 @@ function initUI(layer) {
 
 function initLayer() {
   wps = new SimpleWPS({
-    url: "http://rockhopper.d.dkrz.de:8090/wps",
     process: "org.malleefowl.wms.layer",
     onSuccess: function(result) {
       console.log(result);
@@ -141,7 +140,6 @@ function initLayer() {
 
 function animate(layer) {
   wps = new SimpleWPS({
-    url: "http://rockhopper.d.dkrz.de:8090/wps",
     process: "org.malleefowl.wms.animate",
     raw: false,
     format: 'xml',
@@ -175,7 +173,3 @@ function animateSlow(step) {
   }
 }
 
-$(document).ready(function (e) {
-  initMap();
-  initLayer();
-});

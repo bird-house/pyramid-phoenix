@@ -19,9 +19,13 @@
 
   <div metal:fill-slot="javascript">
     <script src="${request.static_url('phoenix:static/ol/OpenLayers.js')}"></script>
-    <script src="${request.static_url('phoenix:static/ol/animate.js')}"></script>
     <script src="${request.static_url('phoenix:static/js/wps.js')}"></script>
     <script src="${request.static_url('phoenix:static/js/map.js')}"></script>
+    <script type="text/javascript">
+      $(document).ready(function (e) {
+         initMap();
+      });
+    </script>
   </div>
 
   <div metal:fill-slot="content">

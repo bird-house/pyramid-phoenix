@@ -1,6 +1,6 @@
 var SimpleWPS = function(options) {
   var defaults = {
-    url: null,
+    url: "/wps",
     process: "org.malleefowl.wms.layer",
     output: "output",
     raw: true,
@@ -35,6 +35,7 @@ $.extend(SimpleWPS.prototype, {
     params.dataInputs = dataInputs;
     // call wps
     var me = this;
+    //console.log(this.options.url);
     $.get(this.options.url, params, function(result) {
       // inform about result
       me.options.onSuccess(result)
