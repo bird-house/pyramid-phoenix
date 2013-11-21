@@ -72,6 +72,10 @@ function showLayer(layer) {
   initTimeSlider(layer, wmsLayer);
 }
 
+function dateLabel(timestep) {
+  return timestep.substring(0,16);
+}
+
 function initTimeSlider(layer, wmsLayer) {
   var max = layer.timesteps.length - 1;
 
@@ -84,17 +88,17 @@ function initTimeSlider(layer, wmsLayer) {
     slide: function(e, ui) {
       var step = parseInt(ui.value);
       //console.log("sliding ...");
-      $("#time").text(layer.timesteps[step]);
+      $("#time").text(dateLabel(layer.timesteps[step]));
     },
     change: function(e, ui) {
       //tds_wms.setOpacity(ui.value / 10);
       var step = parseInt(ui.value);
       //console.log("step: " + step);
-      $("#time").text(layer.timesteps[step]);
+      $("#time").text(dateLabel(layer.timesteps[step]));
       wmsLayer.mergeNewParams({'time': layer.timesteps[step]});
     }
   });
-  $("#time").text(layer.timesteps[0]);
+  $("#time").text(dateLabel(layer.timesteps[0]));
 
   // prev button
   $("#prev").button({
