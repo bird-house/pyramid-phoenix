@@ -18,29 +18,16 @@ function initMap() {
                                    {layers: '*', format: 'image/png'},
                                    {singleTile: false}
                                   );
-  layer.setVisibility(true)
   map.addLayer(layer);
   map.zoomToMaxExtent(); 
 
   initLayer();
 }
 
-function initUI(layer) {
+function initTimeSlider(layer) {
   var max = layer.timesteps.length - 1;
 
-  $("#prev").button({
-    icons: {
-      primary: "ui-icon-gear",
-      secondary: "ui-icon-triangle-1-s"
-    },
-    text: false,
-  }).click(function( event ) {
-    console.log('prev button clicked');
-    current = $("#slider").slider( "values", 0 );
-    if (current > 0 ) {
-      $("#slider").slider( "value", current - 1 );
-    }
-  });
+  // slider
   $("#slider").slider({
     value: 0,
     min: 0,
@@ -59,6 +46,42 @@ function initUI(layer) {
       layer.wms_layer.mergeNewParams({'time': layer.timesteps[step]});
     }
   });
+
+  // prev button
+  $("#prev").button({
+    icons: {
+      primary: "ui-icon-gear",
+      secondary: "ui-icon-triangle-1-s"
+    },
+    text: false,
+  }).click(function( event ) {
+    console.log('prev button clicked');
+    current = $("#slider").slider( "values", 0 );
+    if (current > 0 ) {
+      $("#slider").slider( "value", current - 1 );
+    }
+  });
+
+  // next button
+  $("#next").button({
+    icons: {
+      primary: "ui-icon-gear",
+      secondary: "ui-icon-triangle-1-s"
+    },
+    text: false,
+  }).click(function( event ) {
+    console.log('next button clicked');
+    current = $("#slider").slider( "values", 0 );
+    if (current < max ) {
+      $("#slider").slider( "value", current + 1 );
+    }
+  });
+}
+
+function initRangeSlider(layer) {
+  var max = layer.timesteps.length - 1;
+
+  // slider range
   $("#slider-range").slider({
     range: true,
     values: [0, max],
@@ -75,19 +98,8 @@ function initUI(layer) {
       end_time = layer.timesteps[step1];
     },
   });
-  $("#next").button({
-    icons: {
-      primary: "ui-icon-gear",
-      secondary: "ui-icon-triangle-1-s"
-    },
-    text: false,
-  }).click(function( event ) {
-    console.log('next button clicked');
-    current = $("#slider").slider( "values", 0 );
-    if (current < max ) {
-      $("#slider").slider( "value", current + 1 );
-    }
-  });
+
+  // play button
   $("#play").button({
     icons: {
       primary: "ui-icon-gear",
@@ -98,6 +110,8 @@ function initUI(layer) {
     console.log('play button clicked');
     animate(layer);
   });
+
+  // stop button
   $("#stop").button({
     icons: {
       primary: "ui-icon-gear",
@@ -132,7 +146,8 @@ function initLayer() {
         layer.wms_layer = wms_layer;
         wms_layer.events.register("visibilitychanged", layer, function() {
           if (layer.wms_layer.getVisibility()) {
-            initUI(this);
+            initTimeSlider(this);
+            initRangeSlider(this);
           }
         });
       });
@@ -170,10 +185,12 @@ function animate(layer) {
   });  
 }
 
+
+/*
 function animateSlow(step) {
   if (step < 10) {
     $("#slider").slider( "value", step );
     setTimeout(function() {animate(step+1);}, 500);
   }
 }
-
+*/
