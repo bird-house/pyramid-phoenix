@@ -160,6 +160,7 @@ function animate(layer) {
     },
   });
   wps.execute({
+    service_url: layer.service,
     layer: layer.name,
     start: start_time,
     end: end_time,
