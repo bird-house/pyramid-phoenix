@@ -24,6 +24,36 @@ function initMap() {
   initLayer();
 }
 
+function initLayer() {
+  wps = new SimpleWPS({
+    process: "org.malleefowl.wms.layer",
+    onSuccess: function(result) {
+      console.log(result);
+      $.each(result, function(index, layer) {
+        wms_layer = new OpenLayers.Layer.WMS(layer.service_name + ":" + layer.title,
+                                             layer.service,
+                                             {layers: layer.name,
+                                              transparent: true,
+                                              format:'image/png',
+                                              time: layer.timesteps[0]});
+      
+ 
+  
+        wms_layer.setVisibility(false);
+        map.addLayer(wms_layer);
+        layer.wms_layer = wms_layer;
+        wms_layer.events.register("visibilitychanged", layer, function() {
+          if (layer.wms_layer.getVisibility()) {
+            initTimeSlider(this);
+            initRangeSlider(this);
+          }
+        });
+      });
+    },
+  });
+  wps.execute();
+}
+
 function initTimeSlider(layer) {
   var max = layer.timesteps.length - 1;
 
@@ -126,36 +156,6 @@ function initRangeSlider(layer) {
   });
 }
 
-function initLayer() {
-  wps = new SimpleWPS({
-    process: "org.malleefowl.wms.layer",
-    onSuccess: function(result) {
-      console.log(result);
-      $.each(result, function(index, layer) {
-        wms_layer = new OpenLayers.Layer.WMS(layer.service_name + ":" + layer.title,
-                                             layer.service,
-                                             {layers: layer.name,
-                                              transparent: true,
-                                              format:'image/png',
-                                              time: layer.timesteps[0]});
-      
- 
-  
-        wms_layer.setVisibility(false);
-        map.addLayer(wms_layer);
-        layer.wms_layer = wms_layer;
-        wms_layer.events.register("visibilitychanged", layer, function() {
-          if (layer.wms_layer.getVisibility()) {
-            initTimeSlider(this);
-            initRangeSlider(this);
-          }
-        });
-      });
-    },
-  });
-  wps.execute();
-}
-
 function animate(layer) {
   wps = new SimpleWPS({
     process: "org.malleefowl.wms.animate",
@@ -184,7 +184,6 @@ function animate(layer) {
     bbox: map.getExtent().toBBOX(),
   });  
 }
-
 
 /*
 function animateSlow(step) {
