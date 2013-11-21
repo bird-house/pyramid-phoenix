@@ -1,6 +1,7 @@
 var map,  wmsLayer, animateLayer;
 var start_time, end_time;
 var layerList;
+var selectedLayer;
 
 function initMap() {
   var mapOptions = { maxResolution: 256/512, numZoomLevels: 11, fractionalZoom: true};
@@ -44,11 +45,12 @@ function initLayerList() {
       $('select').html(output.join(''));
 
       $('select').change(function() {
-        var layer = layerList[this.selectedIndex];
-        showLayer(layer);
+        selectedLayer = layerList[this.selectedIndex];
+        showLayer(selectedLayer);
       });
 
-      showLayer(layerList[0]);
+      selectedLayer = layerList[0];
+      showLayer(selectedLayer);
     },
   });
   wps.execute();
@@ -104,7 +106,7 @@ function initTimeSlider(layer, wmsLayer) {
   $("#prev").button({
     text: false,
   }).click(function( event ) {
-    console.log('prev button clicked');
+    //console.log('prev button clicked');
     current = $("#slider").slider( "values", 0 );
     if (current > 0 ) {
       $("#slider").slider( "value", current - 1 );
@@ -115,16 +117,40 @@ function initTimeSlider(layer, wmsLayer) {
   $("#next").button({
     text: false,
   }).click(function( event ) {
-    console.log('next button clicked');
+    //console.log('next button clicked');
     current = $("#slider").slider( "values", 0 );
     if (current < max ) {
       $("#slider").slider( "value", current + 1 );
     }
   });
-}
 
-function initRangeSlider(layer) {
-  var max = layer.timesteps.length - 1;
+  // play button
+  $("#play").button({
+    text: false,
+  }).click(function( event ) {
+    $("#dialog-play").dialog({
+      resizable: false,
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $( this ).dialog( "close" );
+          animate(selectedLayer);
+        },
+        Cancel: function() {
+         $( this ).dialog( "close" );
+        }
+      }
+    });
+  });
+  
+  // stop button
+  $("#stop").button({
+    text: false,
+  }).click(function( event ) {
+    if (animateLayer != null) {
+      map.removeLayer(animateLayer);
+    }
+  });
 
   // slider range
   $("#slider-range").slider({
@@ -137,37 +163,10 @@ function initRangeSlider(layer) {
       var step0 = parseInt(ui.values[0]);
       var step1 = parseInt(ui.values[1]);
       
-      console.log("sliding range ...");
-      $( "#time-range" ).text( layer.timesteps[step0] + " - " + layer.timesteps[step1] );
+      $("#time-range").text( dateLabel(layer.timesteps[step0]) + " - " + dateLabel(layer.timesteps[step1]) );
       start_time = layer.timesteps[step0];
       end_time = layer.timesteps[step1];
     },
-  });
-
-  // play button
-  $("#play").button({
-    icons: {
-      primary: "ui-icon-gear",
-      secondary: "ui-icon-triangle-1-s"
-    },
-    text: false,
-  }).click(function( event ) {
-    console.log('play button clicked');
-    animate(layer);
-  });
-
-  // stop button
-  $("#stop").button({
-    icons: {
-      primary: "ui-icon-gear",
-      secondary: "ui-icon-triangle-1-s"
-    },
-    text: false,
-  }).click(function( event ) {
-    console.log('stop button clicked');
-    if (animateLayer != null) {
-      map.removeLayer(animateLayer);
-    }
   });
 }
 
@@ -181,12 +180,12 @@ function animate(layer) {
       var url = $(xmlDoc).find("wps\\:Reference, Reference").first().attr('href');
       console.log(url);
 
-      animate_layer = new OpenLayers.Layer.Image(
+      animateLayer = new OpenLayers.Layer.Image(
         "Animation", url, map.getExtent(), map.getSize(), {
         isBaseLayer: false,
         alwaysInRange: true // Necessary to always draw the image
         });
-      map.addLayer(animate_layer);
+      map.addLayer(animateLayer);
     },
   });
   wps.execute({
