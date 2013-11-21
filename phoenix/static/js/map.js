@@ -120,7 +120,7 @@ function initLayer() {
       layer = result[0]
       // wms-t from tds
       tds_wms = new OpenLayers.Layer.WMS(layer.title,
-                                         "http://rockhopper.d.dkrz.de:8090/thredds/wms/test/cordex-eur-tas-pywpsInputT1Zaki.nc?",
+                                         layer.service,
                                          {layers: layer.name,
                                           transparent: true,
                                           format:'image/png',

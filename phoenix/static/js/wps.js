@@ -1,7 +1,7 @@
 var SimpleWPS = function(options) {
   var defaults = {
     url: "/wps",
-    process: "org.malleefowl.wms.layer",
+    process: null,
     output: "output",
     raw: true,
     format: 'json',
