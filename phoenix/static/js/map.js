@@ -4,6 +4,10 @@ var layerList;
 var selectedLayer;
 
 function initMap() {
+  if (map != null) {
+    map.destroy();
+  }
+
   var mapOptions = { maxResolution: 256/512, numZoomLevels: 11, fractionalZoom: true};
   //map = new OpenLayers.Map('map',mapOptions);
   map = new OpenLayers.Map('map');
@@ -22,7 +26,12 @@ function initMap() {
                                    {layers: '*', format: 'image/png'},
                                    {singleTile: false}
                                   );
+  map.setupGlobe();
   map.addLayer(layer);
+  map.finishGlobe();
+  map.set3D(false);
+  map.show2D();
+ 
   map.zoomToMaxExtent(); 
 
   initLayerList();

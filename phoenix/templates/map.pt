@@ -5,8 +5,8 @@
           href="${request.static_url('phoenix:static/ol/theme/default/style.css')}" />
     <style>
       #map {
-      width: 800px;
-      height: 400px;
+      width: 900px;
+      height: 450px;
       }
     </style>
     <style>
@@ -19,6 +19,7 @@
 
   <div metal:fill-slot="javascript">
     <script src="${request.static_url('phoenix:static/ol/OpenLayers.js')}"></script>
+    <script src="${request.static_url('phoenix:static/readymap/readymap-debug.js')}"></script>
     <script src="${request.static_url('phoenix:static/js/wps.js')}"></script>
     <script src="${request.static_url('phoenix:static/js/map.js')}"></script>
     <script type="text/javascript">
