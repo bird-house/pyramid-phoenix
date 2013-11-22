@@ -74,6 +74,11 @@ def jobs_by_userid(request, user_id='anonymous'):
     db = database(request)
     return db.jobs.find( dict(user_id=user_id) )
 
+def drop_jobs_by_uuid(request, uuids=[]):
+    db = database(request)
+    for uuid in uuids:
+        db.jobs.remove({"uuid": uuid})
+
 
 # esgf search ....
 # ----------------
