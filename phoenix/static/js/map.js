@@ -139,6 +139,7 @@ function initTimeSlider(layer, wmsLayer) {
   }).click(function( event ) {
     $("#dialog-play").dialog({
       resizable: false,
+      height: 300,
       modal: true,
       buttons: {
         Ok: function() {
@@ -203,6 +204,7 @@ function animate(layer) {
     start: start_time,
     end: end_time,
     resolution: $("#select-resolution").val(),
+    delay: $("#delay").val(),
     width: map.getSize().w,
     height: map.getSize().h,
     bbox: map.getExtent().toBBOX(),
