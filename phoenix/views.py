@@ -25,7 +25,7 @@ import config_public as config
 from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
 
-from .models import add_job, get_job, drop_jobs, update_job, num_jobs, jobs_by_userid
+from .models import add_job, get_job, drop_jobs, update_job, num_jobs, jobs_by_userid, drop_jobs_by_uuid
 
 from .wps import WPSSchema  
 
@@ -262,6 +262,18 @@ def jobs(request):
         jobs.append(job)
         
         log.debug('leaving jobs')
+    #Button functionality
+    if "clear_all" in request.POST:
+        uuids = []
+        for job in jobs:
+            uuids.append(job["uuid"])
+        drop_jobs_by_uuid(request,uuids)
+        return HTTPFound(location=request.route_url('jobs'))
+
+    elif "clear_selected" in request.POST:
+        if("selected" in request.POST):
+            drop_jobs_by_uuid(request,request.POST.getall("selected"))
+        return HTTPFound(location=request.route_url('jobs'))
 
     return dict(jobs=jobs)
 
