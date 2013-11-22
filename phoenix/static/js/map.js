@@ -8,26 +8,28 @@ function initMap() {
     map.destroy();
   }
 
-  var mapOptions = { maxResolution: 256/512, numZoomLevels: 11, fractionalZoom: true};
+  //var mapOptions = { maxResolution: 256/512, numZoomLevels: 11, fractionalZoom: true};
   //map = new OpenLayers.Map('map',mapOptions);
   map = new OpenLayers.Map('map');
   map.addControl(new OpenLayers.Control.LayerSwitcher());
   //map.addControl(new OpenLayers.Control.Attribution());
   //map.addControl(new OpenLayers.Control.Animate());
 
-  var layer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
-                                        "http://vmap0.tiles.osgeo.org/wms/vmap0", 
-                                        {layers: 'basic'} );
-  map.addLayer(layer);
+  map.setupGlobe();
 
-  // WMS tiled
-  layer = new OpenLayers.Layer.WMS("World Map",
+  // base layers
+  var baseLayer = new OpenLayers.Layer.WMS("World Map",
                                    "http://www2.demis.nl/wms/wms.ashx?WMS=WorldMap",
                                    {layers: '*', format: 'image/png'},
                                    {singleTile: false}
                                   );
-  map.setupGlobe();
-  map.addLayer(layer);
+  map.addLayer(baseLayer);
+
+  baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
+                                       "http://vmap0.tiles.osgeo.org/wms/vmap0", 
+                                       {layers: 'basic'} );
+  map.addLayer(baseLayer);
+ 
   map.finishGlobe();
   map.set3D(false);
   map.show2D();
@@ -178,9 +180,14 @@ function initTimeSlider(layer, wmsLayer) {
       end_time = layer.timesteps[step1];
     },
   });
+  $("#time-range").text( dateLabel(layer.timesteps[step0]) + " - " + dateLabel(layer.timesteps[step1]) );
 }
 
 function animate(layer) {
+  if (animateLayer != null) {
+    map.removeLayer(animateLayer);
+  }
+
   wps = new SimpleWPS({
     process: "org.malleefowl.wms.animate",
     raw: false,

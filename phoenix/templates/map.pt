@@ -51,7 +51,7 @@
           </td>
         </tr>
       </table>
-      <div id="dialog-play" title="Run Animation?">
+      <div id="dialog-play" title="Run Animation?" style="display:none;">
         <label for="select-resolution">Time Resolution</label>
         <select id="select-resolution">
           <option label="yearly" value="yearly">yearly</option>
