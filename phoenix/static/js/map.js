@@ -51,9 +51,9 @@ function initLayerList() {
         //output.push('</optgroup>');
         layerList.push(layer);
       });
-      $('select').html(output.join(''));
+      $('#select').html(output.join(''));
 
-      $('select').change(function() {
+      $('#select').change(function() {
         selectedLayer = layerList[this.selectedIndex];
         showLayer(selectedLayer);
       });
@@ -202,6 +202,7 @@ function animate(layer) {
     layer: layer.name,
     start: start_time,
     end: end_time,
+    resolution: $("#select-resolution").val(),
     width: map.getSize().w,
     height: map.getSize().h,
     bbox: map.getExtent().toBBOX(),

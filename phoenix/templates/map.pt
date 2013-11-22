@@ -63,6 +63,17 @@
               <div id="slider-range"/>
             </td>
           </tr>
+          <tr>
+            <td>
+              <select id="select-resolution">
+                <option label="yearly" value="yearly">yearly</option>
+                <option label="monthly" value="monthly">monthly</option>
+                <option label="weekly" value="weekly">weekly</option>
+                <option label="daily" value="daily">daily</option>
+                <option label="all" value="all">all</option>
+              </select>
+            </td>
+          </tr>
         </table>
       </div>
     </div>
