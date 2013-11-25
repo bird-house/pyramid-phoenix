@@ -46,6 +46,7 @@
               <button class="btn" id="next"><i class="icon-step-forward"></i> </button>
               <button class="btn" id="play"><i class="icon-play"></i> </button>
               <button class="btn" id="stop"><i class="icon-stop"></i> </button>
+              <button class="btn" id="2d">2D</button>
               <button class="btn" id="3d">3D</button>
             </div>
           </td>

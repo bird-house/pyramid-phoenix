@@ -28,14 +28,15 @@ function initMap() {
   baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
                                        "http://vmap0.tiles.osgeo.org/wms/vmap0", 
                                        {layers: 'basic'} );
-  map.addLayer(baseLayer);
+  //map.addLayer(baseLayer);
  
   map.finishGlobe();
   map.set3D(true);
-  map.show3D();
+  map.show2D();
  
   map.zoomToMaxExtent(); 
 
+  initGlobeButtons();
   initLayerList();
 }
 
@@ -87,6 +88,24 @@ function showLayer(layer) {
 
 function dateLabel(timestep) {
   return timestep.substring(0,16);
+}
+
+function initGlobeButtons() {
+  // 2d button
+  $("#2d").button({
+    text: true,
+  }).click(function( event ) {
+    console.log('show 2d');
+    map.show2D();
+  });
+
+  // 3d button
+  $("#3d").button({
+    text: true,
+  }).click(function( event ) {
+    console.log('show 3d');
+    map.show3D();
+  });
 }
 
 function initTimeSlider(layer, wmsLayer) {
