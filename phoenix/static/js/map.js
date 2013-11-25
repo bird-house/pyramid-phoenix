@@ -32,7 +32,7 @@ function initMap() {
  
   map.finishGlobe();
   map.set3D(true);
-  map.show2D();
+  map.show3D();
  
   map.zoomToMaxExtent(); 
 
