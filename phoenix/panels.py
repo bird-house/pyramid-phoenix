@@ -19,11 +19,11 @@ def navbar(context, request):
     nav = []
     nav.append( nav_item('Home', request.route_url('home'), 'icon-home') )
     if has_permission('edit', request.context, request):
-        nav.append( nav_item('Thredds', request.route_url('tds'), 'icon-tasks') )
         nav.append( nav_item('Processes', request.route_url('processes'), 'icon-tasks') )
         nav.append( nav_item('My Jobs', request.route_url('jobs'), 'icon-tasks') )
         nav.append( nav_item('Wizard', request.route_url('wizard'), 'icon-tasks') )
         nav.append( nav_item('Map', request.route_url('map'), 'icon-tasks') )
+        nav.append( nav_item('Thredds', request.route_url('tds'), 'icon-tasks') )
     if has_permission('admin', request.context, request):
         nav.append( nav_item('Catalog', request.route_url('catalog_wps_select'), 'icon-tasks') )
         nav.append( nav_item('Monitor', request.route_url('monitor'), 'icon-tasks') )

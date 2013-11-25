@@ -161,6 +161,7 @@ function initTimeSlider(layer, wmsLayer) {
   }).click(function( event ) {
     if (animateLayer != null) {
       map.removeLayer(animateLayer);
+      animateLayer = null;
     }
   });
 
@@ -180,12 +181,14 @@ function initTimeSlider(layer, wmsLayer) {
       end_time = layer.timesteps[step1];
     },
   });
-  $("#time-range").text( dateLabel(layer.timesteps[step0]) + " - " + dateLabel(layer.timesteps[step1]) );
+  $("#time-range").text( dateLabel(layer.timesteps[0]) + " - " + 
+                         dateLabel(layer.timesteps[layer.timesteps.length-1]) );
 }
 
 function animate(layer) {
   if (animateLayer != null) {
     map.removeLayer(animateLayer);
+    animateLayer = null;
   }
 
   wps = new SimpleWPS({
