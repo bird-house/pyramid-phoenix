@@ -41,12 +41,13 @@
             <div id="slider"/>
           </td>
           <td>
-	    <div class="btn-group">
+            <div class="btn-group">
               <button class="btn" id="prev"><i class="icon-step-backward"></i> </button>
               <button class="btn" id="next"><i class="icon-step-forward"></i> </button>
               <button class="btn" id="play"><i class="icon-play"></i> </button>
               <button class="btn" id="stop"><i class="icon-stop"></i> </button>
-	    </div>
+              <button class="btn" id="3d">3D</button>
+            </div>
           </td>
           <td>
             <select id="select"/>
