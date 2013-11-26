@@ -1,43 +1,57 @@
-var map,  wmsLayer, animateLayer;
+var map = null;
+var wmsLayer = null;
+var animateLayer = null;
 var start_time, end_time;
 var layerList;
-var selectedLayer;
+var selectedLayer = null;
+var selectedTimeIndex = null;
 
 function initMap() {
+  initGlobe();
+  initGlobeButtons();
+  initLayerList();
+}
+
+function initBaseLayer() {
+  var baseLayer = new OpenLayers.Layer.WMS( 
+    "Demis BlueMarble",
+    "http://www2.demis.nl/wms/wms.ashx?WMS=BlueMarble" , 
+    {layers: 'Earth Image,Borders,Coastlines'});
+  map.addLayer(baseLayer);
+}
+
+function initGlobe(show3D) {
+  show3D = show3D || false;
+
   if (map != null) {
     map.destroy();
   }
 
   //var mapOptions = { maxResolution: 256/512, numZoomLevels: 11, fractionalZoom: true};
   //map = new OpenLayers.Map('map',mapOptions);
-  map = new OpenLayers.Map('map');
-  map.addControl(new OpenLayers.Control.LayerSwitcher());
-  //map.addControl(new OpenLayers.Control.Attribution());
-  //map.addControl(new OpenLayers.Control.Animate());
-
+  map = new OpenLayers.Map('map', { controls: [] });
   map.setupGlobe();
+  //map.addControl(new OpenLayers.Control.LayerSwitcher());
+  map.addControl(new OpenLayers.Control.Navigation());
+  map.addControl(new OpenLayers.Control.PanZoom());
+  //map.addControl(new OpenLayers.Control.Attribution());
+  initBaseLayer();
 
-  // base layers
-  var baseLayer = new OpenLayers.Layer.WMS("World Map",
-                                   "http://www2.demis.nl/wms/wms.ashx?WMS=WorldMap",
-                                   {layers: '*', format: 'image/png'},
-                                   {singleTile: false}
-                                  );
-  map.addLayer(baseLayer);
-
-  baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
-                                       "http://vmap0.tiles.osgeo.org/wms/vmap0", 
-                                       {layers: 'basic'} );
-  //map.addLayer(baseLayer);
- 
+  if (selectedLayer) {
+    wmsLayer = null;
+    initWMSLayer(selectedLayer, selectedTimeIndex);
+  } 
+  if (animateLayer) {
+    //map.addLayer(animateLayer)
+  }
   map.finishGlobe();
-  map.set3D(true);
-  map.show2D();
- 
-  map.zoomToMaxExtent(); 
 
-  initGlobeButtons();
-  initLayerList();
+  if (show3D) {
+    map.show3D();
+  }
+  else {
+    map.show2D();
+  }
 }
 
 function initLayerList() {
@@ -58,32 +72,36 @@ function initLayerList() {
 
       $('#select').change(function() {
         selectedLayer = layerList[this.selectedIndex];
-        showLayer(selectedLayer);
+        showWMSLayer(selectedLayer);
       });
 
       selectedLayer = layerList[0];
-      showLayer(selectedLayer);
+      showWMSLayer(selectedLayer);
     },
   });
   wps.execute();
 }
 
-function showLayer(layer) {
-  if (wmsLayer != null) {
-    map.removeLayer(wmsLayer);
-  }
+function initWMSLayer(layer, step) {
   wmsLayer = new OpenLayers.Layer.WMS(layer.title,
                                       layer.service,
                                       {layers: layer.name,
                                        transparent: true,
                                        format:'image/png',
-                                       time: layer.timesteps[0]});
+                                       time: layer.timesteps[step]});
   
   map.addLayer(wmsLayer);
+}
+
+function showWMSLayer(layer) {
+  if (wmsLayer != null) {
+    map.removeLayer(wmsLayer);
+  }
+  initWMSLayer(layer, 0);
   wmsLayer.events.register('loadend', wmsLayer, function(evt){
     //map.zoomToExtent(new OpenLayers.Bounds(wmsLayer.getExtent()));
   }); 
-  initTimeSlider(layer, wmsLayer);
+  initTimeSlider(layer);
 }
 
 function dateLabel(timestep) {
@@ -95,20 +113,30 @@ function initGlobeButtons() {
   $("#2d").button({
     text: true,
   }).click(function( event ) {
-    console.log('show 2d');
-    map.show2D();
+    show2D();
   });
 
   // 3d button
   $("#3d").button({
     text: true,
   }).click(function( event ) {
-    console.log('show 3d');
-    map.show3D();
+    show3D();
   });
 }
 
-function initTimeSlider(layer, wmsLayer) {
+function show2D() {
+  if (map.is3D) {
+    initGlobe();
+  }
+}
+
+function show3D() {
+  if (!map.is3D) {
+    initGlobe(true);
+  }
+}
+
+function initTimeSlider(layer) {
   var max = layer.timesteps.length - 1;
 
   // slider
@@ -123,11 +151,13 @@ function initTimeSlider(layer, wmsLayer) {
       $("#time").text(dateLabel(layer.timesteps[step]));
     },
     change: function(e, ui) {
+      show2D();
       //tds_wms.setOpacity(ui.value / 10);
       var step = parseInt(ui.value);
       //console.log("step: " + step);
       $("#time").text(dateLabel(layer.timesteps[step]));
       wmsLayer.mergeNewParams({'time': layer.timesteps[step]});
+      selectedTimeIndex = step;
     }
   });
   $("#time").text(dateLabel(layer.timesteps[0]));
