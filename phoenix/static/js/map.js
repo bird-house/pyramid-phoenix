@@ -126,7 +126,7 @@ function initGlobeButtons() {
 
 function show2D() {
   if (map.is3D) {
-    initGlobe();
+    map.show2D();
   }
 }
 
