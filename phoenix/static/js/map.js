@@ -75,8 +75,10 @@ function initLayerList() {
         showWMSLayer(selectedLayer);
       });
 
-      selectedLayer = layerList[0];
-      showWMSLayer(selectedLayer);
+      if (layerList.length > 0) {
+	selectedLayer = layerList[0];
+	showWMSLayer(selectedLayer);
+      }
     },
   });
   wps.execute();
