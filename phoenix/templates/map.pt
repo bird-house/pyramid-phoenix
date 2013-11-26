@@ -3,20 +3,10 @@
   <div metal:fill-slot="css">
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
           href="${request.static_url('phoenix:static/ol/theme/default/style.css')}" />
-     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
+    <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
           href="${request.static_url('phoenix:static/godzi-webgl/css/readymap.css')}" />
-    <style>
-      #map {
-      width: 900px;
-      height: 450px;
-      }
-    </style>
-    <style>
-      #slider {
-      width: 300px;
-      margin: 10px;
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
+          href="${request.static_url('phoenix:static/css/map.css')}" />
   </div>
 
   <div metal:fill-slot="javascript">
@@ -32,6 +22,7 @@
   </div>
 
   <div metal:fill-slot="content">
+    <img id="loading-indicator" alt="Loading ..." src="/static/images/ajax-loader.gif"/>
     <div id="map"></div>
     <div id="animate">
       <table>

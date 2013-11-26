@@ -1,9 +1,11 @@
 /* loading indicator */
 
 #loading-indicator {
-    position: absolute;
-    left: 10px;
-    top: 10px;
+    position: relative;
+    left: 470px;
+    top: 200px;
+    /*visibility: hidden;*/
+    z-index: 100; /* Must appear on top */ 
 }
 
 

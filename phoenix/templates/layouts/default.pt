@@ -29,7 +29,7 @@
           href="${request.static_url('phoenix:static/bootstrap-tagmanager/bootstrap-tagmanager.css')}" />
 
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
-          href="${request.static_url('phoenix:static/deform_phoenix.css')}" />
+          href="${request.static_url('phoenix:static/css/deform_phoenix.css')}" />
 
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
           href="${request.static_url('phoenix:static/bootglyph/css/icon.css')}" />

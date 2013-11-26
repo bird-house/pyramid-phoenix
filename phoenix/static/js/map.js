@@ -6,6 +6,7 @@ var start_time, end_time;
 var layerList;
 var selectedLayer = null;
 var selectedTimeIndex = null;
+var layersLoading = 0;
 
 function initMap() {
   initGlobe();
@@ -13,12 +14,38 @@ function initMap() {
   initLayerList();
 }
 
+function loadStarted() {
+  layersLoading++;
+  if (layersLoading > 0) {
+    $('#loading-indicator').show();
+  }
+}
+
+function loadFinished() {
+  if (layersLoading > 0) {
+    layersLoading--;
+  }
+  if (layersLoading == 0) {
+    $('#loading-indicator').hide();
+  }
+}
+
+function addLayer(layer) {
+  map.addLayer(layer);
+  layer.events.register('loadstart', layer, function(evt){
+    loadStarted();
+  }); 
+  layer.events.register('loadend', layer, function(evt){
+    loadFinished();
+  }); 
+}
+
 function initBaseLayer() {
   var baseLayer = new OpenLayers.Layer.WMS( 
     "Demis BlueMarble",
     "http://www2.demis.nl/wms/wms.ashx?WMS=BlueMarble" , 
     {layers: 'Earth Image,Borders,Coastlines'});
-  map.addLayer(baseLayer);
+  addLayer(baseLayer);
 }
 
 function initGlobe(show3D) {
@@ -91,8 +118,7 @@ function initWMSLayer(layer, step) {
                                        transparent: true,
                                        format:'image/png',
                                        time: layer.timesteps[step]});
-  
-  map.addLayer(wmsLayer);
+  addLayer(wmsLayer);
 }
 
 function showWMSLayer(layer) {
@@ -100,9 +126,6 @@ function showWMSLayer(layer) {
     map.removeLayer(wmsLayer);
   }
   initWMSLayer(layer, 0);
-  wmsLayer.events.register('loadend', wmsLayer, function(evt){
-    //map.zoomToExtent(new OpenLayers.Bounds(wmsLayer.getExtent()));
-  }); 
   initTimeSlider(layer);
 }
 
@@ -249,7 +272,7 @@ function initAnimateLayer(imageURL) {
       isBaseLayer: false,
       alwaysInRange: true // Necessary to always draw the image
     });
-  map.addLayer(animateLayer);
+  addLayer(animateLayer);
 }
 
 function animate(layer) {
@@ -258,6 +281,7 @@ function animate(layer) {
     animateLayer = null;
   }
 
+  loadStarted();
   wps = new SimpleWPS({
     process: "org.malleefowl.wms.animate",
     raw: false,
@@ -266,6 +290,7 @@ function animate(layer) {
       //console.log(xmlDoc);
       animateURL = $(xmlDoc).find("wps\\:Reference, Reference").first().attr('href');
       initAnimateLayer(animateURL);
+      loadFinished();
     },
   });
   wps.execute({
