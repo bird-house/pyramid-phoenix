@@ -1,6 +1,7 @@
 var map = null;
 var wmsLayer = null;
 var animateLayer = null;
+var animateURL = null;
 var start_time, end_time;
 var layerList;
 var selectedLayer = null;
@@ -38,11 +39,10 @@ function initGlobe(show3D) {
   initBaseLayer();
 
   if (selectedLayer) {
-    wmsLayer = null;
     initWMSLayer(selectedLayer, selectedTimeIndex);
   } 
-  if (animateLayer) {
-    //map.addLayer(animateLayer)
+  if (animateURL) {
+    //initAnimateLayer(animateURL);
   }
   map.finishGlobe();
 
@@ -234,6 +234,15 @@ function initTimeSlider(layer) {
                          dateLabel(layer.timesteps[layer.timesteps.length-1]) );
 }
 
+function initAnimateLayer(imageURL) {
+  animateLayer = new OpenLayers.Layer.Image(
+    "Animation", imageURL, map.getExtent(), map.getSize(), {
+      isBaseLayer: false,
+      alwaysInRange: true // Necessary to always draw the image
+    });
+  map.addLayer(animateLayer);
+}
+
 function animate(layer) {
   if (animateLayer != null) {
     map.removeLayer(animateLayer);
@@ -246,15 +255,8 @@ function animate(layer) {
     format: 'xml',
     onSuccess: function(xmlDoc) {
       //console.log(xmlDoc);
-      var url = $(xmlDoc).find("wps\\:Reference, Reference").first().attr('href');
-      console.log(url);
-
-      animateLayer = new OpenLayers.Layer.Image(
-        "Animation", url, map.getExtent(), map.getSize(), {
-        isBaseLayer: false,
-        alwaysInRange: true // Necessary to always draw the image
-        });
-      map.addLayer(animateLayer);
+      animateURL = $(xmlDoc).find("wps\\:Reference, Reference").first().attr('href');
+      initAnimateLayer(animateURL);
     },
   });
   wps.execute({
