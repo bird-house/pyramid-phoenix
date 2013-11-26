@@ -169,6 +169,7 @@ function initTimeSlider(layer) {
     //console.log('prev button clicked');
     current = $("#slider").slider( "values", 0 );
     if (current > 0 ) {
+      show2D();
       $("#slider").slider( "value", current - 1 );
     }
   });
@@ -178,6 +179,7 @@ function initTimeSlider(layer) {
     text: false,
   }).click(function( event ) {
     //console.log('next button clicked');
+    show2D();
     current = $("#slider").slider( "values", 0 );
     if (current < max ) {
       $("#slider").slider( "value", current + 1 );
@@ -195,6 +197,7 @@ function initTimeSlider(layer) {
       buttons: {
         Ok: function() {
           $( this ).dialog( "close" );
+	  show2D();
           animate(selectedLayer);
         },
         Cancel: function() {
@@ -225,14 +228,18 @@ function initTimeSlider(layer) {
       var step0 = parseInt(ui.values[0]);
       var step1 = parseInt(ui.values[1]);
       
-      $("#time-range").text( dateLabel(layer.timesteps[step0]) + " - " + dateLabel(layer.timesteps[step1]) );
-      start_time = layer.timesteps[step0];
-      end_time = layer.timesteps[step1];
+      setTimeRange(layer, step0, step1);
     },
   });
-  $("#time-range").text( dateLabel(layer.timesteps[0]) + " - " + 
-                         dateLabel(layer.timesteps[layer.timesteps.length-1]) );
+
+  setTimeRange(layer, 0, layer.timesteps.length-1);
 }
+
+function setTimeRange(layer, min, max) {
+  $("#time-range").text( dateLabel(layer.timesteps[min]) + " - " + dateLabel(layer.timesteps[max]) );
+  start_time = layer.timesteps[min];
+  end_time = layer.timesteps[max];
+} 
 
 function initAnimateLayer(imageURL) {
   animateLayer = new OpenLayers.Layer.Image(
