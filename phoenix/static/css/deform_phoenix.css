@@ -1,7 +1,7 @@
 /* loading indicator */
 
 #loading-indicator {
-    position: relative;
+    position: absolute;
     left: 470px;
     top: 200px;
     /*visibility: hidden;*/
