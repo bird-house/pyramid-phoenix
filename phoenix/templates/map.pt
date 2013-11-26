@@ -3,6 +3,8 @@
   <div metal:fill-slot="css">
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
           href="${request.static_url('phoenix:static/ol/theme/default/style.css')}" />
+     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
+          href="${request.static_url('phoenix:static/godzi-webgl/css/readymap.css')}" />
     <style>
       #map {
       width: 900px;
@@ -19,7 +21,7 @@
 
   <div metal:fill-slot="javascript">
     <script src="${request.static_url('phoenix:static/ol/OpenLayers.js')}"></script>
-    <script src="${request.static_url('phoenix:static/readymap/readymap-debug.js')}"></script>
+    <script src="${request.static_url('phoenix:static/godzi-webgl/build/readymap.js')}"></script>
     <script src="${request.static_url('phoenix:static/js/wps.js')}"></script>
     <script src="${request.static_url('phoenix:static/js/map.js')}"></script>
     <script type="text/javascript">
