@@ -133,8 +133,8 @@ class EsgSearchWidget(Widget):
         kw.setdefault('temporal', self._bool(search.get('temporal', False)))
         kw.setdefault('spatial', self._bool(search.get('spatial', False)))
         
-        kw.setdefault('start', search.get('start', '2005-01-01T12:00:00Z'))
-        kw.setdefault('end', search.get('end', '2005-12-31T12:00:00Z'))
+        kw.setdefault('start', search.get('start', '1600-01-01T12:00:00Z'))
+        kw.setdefault('end', search.get('end', '2100-12-31T12:00:00Z'))
         kw.setdefault('bbox', search.get('bbox', '-180,-90,180,90'))
         values = self.get_template_values(field, cstruct, kw)
         log.debug('esgsearch values: %s', values)
