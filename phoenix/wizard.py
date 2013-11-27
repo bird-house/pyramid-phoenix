@@ -402,7 +402,7 @@ class Done():
         return result
 
     def appstruct(self):
-        return {'states': str(self.states)}
+        return {'states': "Job submitted"}
 
 @view_config(route_name='wizard',
              renderer='templates/wizard.pt',
