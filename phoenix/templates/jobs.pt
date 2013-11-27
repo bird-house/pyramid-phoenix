@@ -43,8 +43,9 @@
                     </div>
                 </tbody>
             </table>
-            <input id="clear_all" type="submit" name="clear_all" value="remove all" />
-            <input id="clear_sel" type="submit" name="clear_selected" value="remove selected" />
+            <p/>
+            <input id="clear_all" class="btn btn-danger" type="submit" name="clear_all" value="remove all" />
+            <input id="clear_sel" class="btn" type="submit" name="clear_selected" value="remove selected" />
         </form>
         <script type="text/javascript">
             $(function(){
