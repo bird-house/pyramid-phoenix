@@ -12,7 +12,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-SIGNIN_HTML = '<a href="/login">Login</a>'
+SIGNIN_HTML = '<a href="/login"><i class="icon-user"></i> Login</a>'
 SIGNOUT_HTML = '<a href="/logout" id="signout" title="Logout %s"><i class="icon-off"></i> Logout</a>'
 
 def button(request):

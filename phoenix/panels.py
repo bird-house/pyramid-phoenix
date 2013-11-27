@@ -19,16 +19,16 @@ def navbar(context, request):
     nav = []
     nav.append( nav_item('Home', request.route_url('home'), 'icon-home') )
     if has_permission('edit', request.context, request):
-        nav.append( nav_item('Processes', request.route_url('processes'), 'icon-tasks') )
-        nav.append( nav_item('My Jobs', request.route_url('jobs'), 'icon-tasks') )
-        nav.append( nav_item('Wizard', request.route_url('wizard'), 'icon-tasks') )
-        nav.append( nav_item('Map', request.route_url('map'), 'icon-tasks') )
-        nav.append( nav_item('Thredds', request.route_url('tds'), 'icon-tasks') )
+        nav.append( nav_item('Processes', request.route_url('processes'), 'icon-star') )
+        nav.append( nav_item('My Jobs', request.route_url('jobs'), 'icon-list') )
+        nav.append( nav_item('Wizard', request.route_url('wizard'), 'icon-star') )
+        nav.append( nav_item('Map', request.route_url('map'), 'icon-picture') )
+        nav.append( nav_item('Thredds', request.route_url('tds'), 'icon-list') )
     if has_permission('admin', request.context, request):
         nav.append( nav_item('Catalog', request.route_url('catalog_wps_select'), 'icon-tasks') )
-        nav.append( nav_item('Monitor', request.route_url('monitor'), 'icon-tasks') )
-        nav.append( nav_item('Admin', request.route_url('admin'), 'icon-tasks') )
-    nav.append( nav_item('Help', request.route_url('help'), 'icon-tasks') )
+        nav.append( nav_item('Monitor', request.route_url('monitor'), 'icon-eye-open') )
+        nav.append( nav_item('Admin', request.route_url('admin'), 'icon-edit') )
+    nav.append( nav_item('Help', request.route_url('help'), 'icon-question-sign') )
 
     login = request.current_route_url() == request.route_url('login')
 
