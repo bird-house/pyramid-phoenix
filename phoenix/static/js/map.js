@@ -8,6 +8,7 @@ var selectedLayer = null;
 var selectedTimeIndex = null;
 var layersLoading = 0;
 var opacity = 0.7;
+var layerSwitcher = null;
 
 function initMap() {
   initGlobe();
@@ -61,7 +62,8 @@ function initGlobe(show3D) {
   //map = new OpenLayers.Map('map',mapOptions);
   map = new OpenLayers.Map('map', { controls: [] });
   map.setupGlobe();
-  //map.addControl(new OpenLayers.Control.LayerSwitcher());
+  layerSwitcher = new OpenLayers.Control.LayerSwitcher()
+  map.addControl(layerSwitcher);
   map.addControl(new OpenLayers.Control.Navigation());
   map.addControl(new OpenLayers.Control.PanZoom());
   //map.addControl(new OpenLayers.Control.Attribution());
@@ -113,6 +115,25 @@ function initLayerList() {
   wps.execute();
 }
 
+function setVisibility(animate) {
+  console.log("set visibility: " + animate);
+  if (wmsLayer != null) {
+    wmsLayer.setVisibility(true);
+    wmsLayer.displayInLayerSwitcher = false;
+  }
+  setLayerVisibility(animateLayer, animate);
+
+  layerSwitcher.layerStates = []; // forces redraw
+  layerSwitcher.redraw();
+}
+
+function setLayerVisibility(layer, visible) {
+  if (layer != null) {
+    layer.setVisibility(visible);
+    layer.displayInLayerSwitcher = visible;
+  }
+}
+
 function initWMSLayer(layer, step) {
   console.log("init wms layer: title=" + layer.name + ", time=" + layer.timesteps[step])
 
@@ -130,6 +151,7 @@ function initWMSLayer(layer, step) {
       opacity: opacity,
     });
   addLayer(wmsLayer);
+  setVisibility(false);
 }
 
 function showWMSLayer(layer) {
@@ -330,6 +352,7 @@ function initAnimateLayer(imageURL) {
       opacity: opacity,
     });
   addLayer(animateLayer);
+  setVisibility(true);
 }
 
 function animate(layer) {
