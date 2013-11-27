@@ -7,7 +7,7 @@
     z-index: 0; /* Ensure pop-ups appear above the map! */ 
 }
 
-#slider {
-    width: 300px;
+.slider {
+    width: 200px;
     margin: 10px;
 }

@@ -7,10 +7,12 @@ var layerList;
 var selectedLayer = null;
 var selectedTimeIndex = null;
 var layersLoading = 0;
+var opacity = 0.7;
 
 function initMap() {
   initGlobe();
   initGlobeButtons();
+  initOpacitySlider();
   initLayerList();
 }
 
@@ -103,8 +105,8 @@ function initLayerList() {
       });
 
       if (layerList.length > 0) {
-	selectedLayer = layerList[0];
-	showWMSLayer(selectedLayer);
+        selectedLayer = layerList[0];
+        showWMSLayer(selectedLayer);
       }
     },
   });
@@ -112,12 +114,19 @@ function initLayerList() {
 }
 
 function initWMSLayer(layer, step) {
-  wmsLayer = new OpenLayers.Layer.WMS(layer.title,
-                                      layer.service,
-                                      {layers: layer.name,
-                                       transparent: true,
-                                       format:'image/png',
-                                       time: layer.timesteps[step]});
+  wmsLayer = new OpenLayers.Layer.WMS(
+    layer.title,
+    layer.service,
+    {
+      layers: layer.name,
+      transparent: 'true',
+      format:'image/png',
+      time: layer.timesteps[step],
+    },
+    {
+      isBaseLayer: false,
+      opacity: opacity,
+    });
   addLayer(wmsLayer);
 }
 
@@ -159,6 +168,39 @@ function show3D() {
   if (!map.is3D) {
     initGlobe(true);
   }
+}
+
+function initOpacitySlider() {
+  $("#opacity-slider").slider({
+    value: opacity,
+    min: 0.1,
+    max: 1.0,
+    step: 0.1,
+    slide: function(e, ui) {
+      //console.log("sliding ...");
+      setOpacity(ui.value, false);
+    },
+    change: function(e, ui) {
+      //console.log("sliding ...");
+      setOpacity(ui.value, true);
+    }
+  });
+  setOpacity(opacity, false);
+}
+
+function setOpacity(newOpacity, redraw) {
+  opacity = newOpacity;
+  if (wmsLayer != null) {
+    console.log("ipdate layer");
+    wmsLayer.setOpacity(opacity);
+    if (redraw) wmsLayer.redraw();
+  }
+  if (animateLayer != null) {
+    animateLayer.setOpacity(opacity);
+    if (redraw) animateLayer.redraw();
+  }
+
+  $("#opacity-label").text("Overlay Opacity " + opacity*100 + "%");
 }
 
 function initTimeSlider(layer) {
@@ -222,7 +264,7 @@ function initTimeSlider(layer) {
       buttons: {
         Ok: function() {
           $( this ).dialog( "close" );
-	  show2D();
+          show2D();
           animate(selectedLayer);
         },
         Cancel: function() {
@@ -270,7 +312,8 @@ function initAnimateLayer(imageURL) {
   animateLayer = new OpenLayers.Layer.Image(
     "Animation", imageURL, map.getExtent(), map.getSize(), {
       isBaseLayer: false,
-      alwaysInRange: true // Necessary to always draw the image
+      alwaysInRange: true, // Necessary to always draw the image
+      opacity: opacity,
     });
   addLayer(animateLayer);
 }

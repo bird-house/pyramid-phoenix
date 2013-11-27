@@ -31,7 +31,7 @@
             <label id="time">2006-01-01T12:00</label>
           </td>
           <td>
-            <div id="slider"/>
+            <div id="slider" class="slider"/>
           </td>
           <td>
             <div class="btn-group">
@@ -45,6 +45,14 @@
           </td>
           <td>
             <select id="select"/>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label id="opacity-label">Opacity 100</label>
+          </td>
+          <td>
+            <div id="opacity-slider" class="slider"/>
           </td>
         </tr>
       </table>
