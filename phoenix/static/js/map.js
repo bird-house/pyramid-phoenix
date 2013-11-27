@@ -44,7 +44,24 @@ function addLayer(layer) {
 }
 
 function initBaseLayer() {
-  var baseLayer = new OpenLayers.Layer.WMS( 
+  var baseLayer = null;
+  /*
+  baseLayer = new OpenLayers.Layer.WMS( 
+    "Demis WMS",
+    "http://www2.demis.nl/wms/wms.ashx?WMS=WorldMap",
+    {layers:'Countries,Bathymetry,Topography,Hillshading,Coastlines,Builtup+areas,Waterbodies,Rivers,Streams,Railroads,Highways,Roads,Trails,Borders,Cities,Airports',
+     format: 'image/png'});
+  addLayer(baseLayer);
+  */
+
+  /*
+  baseLayer = new OpenLayers.Layer.WMS( 
+    "OpenLayers WMS",
+    "http://labs.metacarta.com/wms-c/Basic.py?", {layers: 'basic'});
+  addLayer(baseLayer);
+  */
+
+  baseLayer = new OpenLayers.Layer.WMS( 
     "Demis BlueMarble",
     "http://www2.demis.nl/wms/wms.ashx?WMS=BlueMarble" , 
     {layers: 'Earth Image,Borders,Coastlines'});
@@ -63,7 +80,7 @@ function initGlobe(show3D) {
   map = new OpenLayers.Map('map', { controls: [] });
   map.setupGlobe();
   layerSwitcher = new OpenLayers.Control.LayerSwitcher()
-  map.addControl(layerSwitcher);
+  //map.addControl(layerSwitcher);
   map.addControl(new OpenLayers.Control.Navigation());
   map.addControl(new OpenLayers.Control.PanZoom());
   //map.addControl(new OpenLayers.Control.Attribution());
@@ -151,7 +168,6 @@ function initWMSLayer(layer, step) {
       opacity: opacity,
     });
   addLayer(wmsLayer);
-  setVisibility(false);
 }
 
 function showWMSLayer(layer) {
@@ -212,14 +228,6 @@ function initOpacitySlider() {
     }
   });
   setOpacity(opacity, false);
-}
-
-function initButtons() {
-  $("#refresh").button({
-    text: true,
-  }).click(function( event ) {
-    initLayerList();
-  });
 }
 
 function setOpacity(newOpacity, redraw) {
@@ -293,21 +301,35 @@ function initTimeSlider(layer) {
   $("#play").button({
     text: false,
   }).click(function( event ) {
-    $("#dialog-play").dialog({
-      resizable: false,
-      height: 300,
-      modal: true,
-      buttons: {
-        Ok: function() {
-          $( this ).dialog( "close" );
-          show2D();
-          animate(selectedLayer);
-        },
-        Cancel: function() {
-         $( this ).dialog( "close" );
+    if (animateLayer != null) {
+      animateLayer.setVisibility(true);
+    }
+    else {
+      $("#dialog-play").dialog({
+        resizable: false,
+        height: 300,
+        modal: true,
+        buttons: {
+          Ok: function() {
+            $( this ).dialog( "close" );
+            show2D();
+            animate(selectedLayer);
+          },
+          Cancel: function() {
+            $( this ).dialog( "close" );
+          }
         }
-      }
-    });
+      });
+    }
+  });
+
+  // stop button
+  $("#pause").button({
+    text: false,
+  }).click(function( event ) {
+    if (animateLayer != null) {
+      animateLayer.setVisibility(false);
+    }
   });
   
   // stop button
@@ -352,7 +374,6 @@ function initAnimateLayer(imageURL) {
       opacity: opacity,
     });
   addLayer(animateLayer);
-  setVisibility(true);
 }
 
 function animate(layer) {
