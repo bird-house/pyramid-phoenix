@@ -114,6 +114,8 @@ function initLayerList() {
 }
 
 function initWMSLayer(layer, step) {
+  console.log("init wms layer: title=" + layer.name + ", time=" + layer.timesteps[step])
+
   wmsLayer = new OpenLayers.Layer.WMS(
     layer.title,
     layer.service,
@@ -132,7 +134,9 @@ function initWMSLayer(layer, step) {
 
 function showWMSLayer(layer) {
   if (wmsLayer != null) {
+    //console.log("remove wms layer");
     map.removeLayer(wmsLayer);
+    wmsLayer = null;
   }
   initWMSLayer(layer, 0);
   initTimeSlider(layer);
@@ -228,6 +232,8 @@ function initTimeSlider(layer) {
     }
   });
   $("#time").text(dateLabel(layer.timesteps[0]));
+  wmsLayer.mergeNewParams({'time': layer.timesteps[0]});
+  selectedTimeIndex = 0;
 
   // prev button
   $("#prev").button({
