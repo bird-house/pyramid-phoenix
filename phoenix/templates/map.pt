@@ -54,6 +54,9 @@
           <td>
             <div id="opacity-slider" class="slider"/>
           </td>
+          <td>
+            <button class="btn" id="refresh">Refresh</button>
+          </td>
         </tr>
       </table>
       <div id="dialog-play" title="Run Animation?" style="display:none;">

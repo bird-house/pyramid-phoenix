@@ -192,6 +192,14 @@ function initOpacitySlider() {
   setOpacity(opacity, false);
 }
 
+function initButtons() {
+  $("#refresh").button({
+    text: true,
+  }).click(function( event ) {
+    initLayerList();
+  });
+}
+
 function setOpacity(newOpacity, redraw) {
   opacity = newOpacity;
   if (wmsLayer != null) {
