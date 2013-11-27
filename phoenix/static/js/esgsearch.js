@@ -49,6 +49,7 @@ $.extend(EsgSearchResult.prototype, {
     }
     $.each(doc.url, function(i, encoded) {
       var service = encoded.split("|");
+      //console.log('service: ' + service[2]);
       if (service[2] == serviceType) {
         url = service[0];
       };
@@ -144,7 +145,7 @@ $.extend(EsgSearchResult.prototype, {
           query += '&bbox=' + searchOptions.bbox;
         }
 
-        console.log(query);
+        //console.log(query);
         return query;
       };
 

@@ -338,7 +338,7 @@
 
       var _execute = function(result) {
         $.each(result.docs(), function(i, doc) {
-          console.log(doc.title);
+          //console.log(doc.title);
           var limit = doc.number_of_files;
           if (searchOptions.type == 'Aggregation') {
             limit = doc.number_of_aggregations;
@@ -379,12 +379,20 @@
             if (searchOptions.type == 'Aggregation' || _withinDateRange(start, end, doc)) {
               values[url] = title;
             }
+            else {
+              //console.log("skip ");
+            }
           }
         });
         updateFiles(values);
       };
 
       var _withinDateRange = function(start, end, doc) {
+        // fixed fields are always in time range
+        if ($.inArray("fx", doc.time_frequency) >= 0) {
+          return true;
+        }
+
         // file_start <= end && file_end >= start
         var dates = _datesFromId(doc.instance_id);
         //console.log(dates);
