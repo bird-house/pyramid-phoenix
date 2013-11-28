@@ -1,0 +1,84 @@
+<metal:block use-macro="main_template">
+
+  <div metal:fill-slot="css">
+    <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
+          href="${request.static_url('phoenix:static/ol/theme/default/style.css')}" />
+    <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
+          href="${request.static_url('phoenix:static/godzi-webgl/css/readymap.css')}" />
+    <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
+          href="${request.static_url('phoenix:static/css/map.css')}" />
+  </div>
+
+  <div metal:fill-slot="javascript">
+    <script src="${request.static_url('phoenix:static/ol/OpenLayers.js')}"></script>
+    <script src="${request.static_url('phoenix:static/godzi-webgl/build/readymap.js')}"></script>
+    <script src="${request.static_url('phoenix:static/js/wps.js')}"></script>
+    <script src="${request.static_url('phoenix:static/js/map.js')}"></script>
+    <script type="text/javascript">
+      $(document).ready(function (e) {
+         initMap();
+      });
+    </script>
+  </div>
+
+  <div metal:fill-slot="content">
+    <img id="loading-indicator" alt="Loading ..." src="/static/images/ajax-loader.gif"/>
+    <div id="map"></div>
+    <div id="animate">
+      <table>
+        <tr>
+          <td>
+            <label id="time">2006-01-01T12:00</label>
+          </td>
+          <td>
+            <div id="slider" class="slider"/>
+          </td>
+          <td>
+            <div class="btn-group">
+              <button class="btn" id="prev"><i class="icon-step-backward"></i> </button>
+              <button class="btn" id="next"><i class="icon-step-forward"></i> </button>
+              <button class="btn" id="play"><i class="icon-play"></i> </button>
+              <button class="btn" id="pause"><i class="icon-pause"></i> </button>
+              <button class="btn" id="stop"><i class="icon-stop"></i> </button>
+              <button class="btn" id="2d">2D</button>
+              <button class="btn" id="3d">3D</button>
+            </div>
+          </td>
+          <td>
+            <select id="select"/>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label id="opacity-label">Opacity 100</label>
+          </td>
+          <td>
+            <div id="opacity-slider" class="slider"/>
+          </td>
+        </tr>
+      </table>
+      <div id="dialog-play" title="Run Animation?" style="display:none;">
+        <label for="select-resolution">Time Resolution</label>
+        <select id="select-resolution">
+          <option label="yearly" value="yearly">yearly</option>
+          <option label="monthly" value="monthly">monthly</option>
+          <option label="weekly" value="weekly">weekly</option>
+          <option label="daily" value="daily">daily</option>
+          <option label="all" value="all">all</option>
+        </select>
+        
+        <p/>
+        
+        <label for="delay">Delay (1/100 secs)</label>
+        <input id="delay" type="text" value="10" size="4"/>
+        
+        <p/>
+
+        <label id="time-range">2006-01-01T12:00 - 2006-01-01T12:00</label>
+        <div id="slider-range"/>
+
+      </div>
+    </div>
+  </div>
+
+</metal:block>
