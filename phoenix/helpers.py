@@ -7,6 +7,7 @@
 
 import types
 import markupsafe
+import urllib2
 from pyramid.security import authenticated_userid
 import logging
 
@@ -21,6 +22,9 @@ def button(request):
         return markupsafe.Markup(SIGNIN_HTML)
     else:
         return markupsafe.Markup(SIGNOUT_HTML) % (authenticated_userid(request))
+
+def quote_wps_params(params):
+    return map(lambda(item): (item[0], urllib2.quote(item(1)), params))
 
 def get_setting(request, key):
     settings = request.registry.settings
