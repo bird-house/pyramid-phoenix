@@ -105,7 +105,8 @@ class WPSSchema(colander.SchemaNode):
             description = 'Enter some notes for your process',
             default = 'test',
             missing = 'test',
-            widget = deform.widget.RichTextWidget()
+            validator = colander.Length(max=150),
+            widget = deform.widget.TextAreaWidget(rows=2, cols=80),
             )
         self.add(node)
 
