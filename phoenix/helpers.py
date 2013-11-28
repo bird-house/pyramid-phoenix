@@ -24,7 +24,10 @@ def button(request):
         return markupsafe.Markup(SIGNOUT_HTML) % (authenticated_userid(request))
 
 def quote_wps_params(params):
-    return map(lambda(item): (item[0], urllib2.quote(item(1)), params))
+    return map(lambda(item): ( item[0], urllib2.quote(str(item[1])).decode('utf8') ), params)
+
+def unquote_wps_params(params):
+    return map(lambda(item): ( item[0], urllib2.unquote(item[1]) ), params)
 
 def get_setting(request, key):
     settings = request.registry.settings

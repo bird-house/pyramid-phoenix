@@ -45,6 +45,7 @@ components:
   properties:
     step: |
       import sys
+      import urllib2
       sys.path.append(sys_path)
       from owslib.wps import WebProcessingService, monitorExecution
       wps = WebProcessingService(service, verbose=False)
@@ -58,7 +59,7 @@ components:
           inputs.append( ("file_identifier", file_identifier) )
       outputs = [("output", True)]
       if input_params != None:
-        input_params = map(lambda(val): (val[0], str(val[1])), input_params)
+        input_params = map(lambda(item): ( item[0], urllib2.unquote(str(item[1])) ), input_params)
         inputs.extend(input_params)
       execution = wps.execute(identifier, inputs=inputs, output=outputs)
       monitorExecution(execution, sleepSecs=20)
