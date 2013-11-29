@@ -96,7 +96,7 @@ class WPSSchema(colander.SchemaNode):
         self.add_nodes(process)
 
     def add_info_nodes(self):
-        log.debug("adding info nodes")
+        #log.debug("adding info nodes")
         
         node = colander.SchemaNode(
             colander.String(),
@@ -160,7 +160,7 @@ class WPSSchema(colander.SchemaNode):
         # TODO: fix init of default
         if hasattr(data_input, 'defaultValue'):
             if type(node.typ) == colander.DateTime:
-                log.debug('we have a datetime default value')
+                #log.debug('we have a datetime default value')
                 node.default = dateutil.parser.parse(data_input.defaultValue)
             else:
                 node.default = data_input.defaultValue
@@ -179,7 +179,7 @@ class WPSSchema(colander.SchemaNode):
         return node
 
     def colander_literal_type(self, data_input):
-        log.debug('data input type = %s', data_input.dataType)
+        #log.debug('data input type = %s', data_input.dataType)
         if 'boolean' in data_input.dataType:
             return colander.Boolean()
         elif 'integer' in data_input.dataType:
@@ -213,23 +213,23 @@ class WPSSchema(colander.SchemaNode):
 
     def colander_literal_widget(self, node, data_input):
         if len(data_input.allowedValues) > 0 and not 'AnyValue' in data_input.allowedValues:
-            log.debug('allowed values %s', data_input.allowedValues)
+            #log.debug('allowed values %s', data_input.allowedValues)
             choices = []
             for value in data_input.allowedValues:
                 choices.append([value, value])
-                log.debug('using select widget for %s', data_input.identifier)
+                #log.debug('using select widget for %s', data_input.identifier)
             node.widget = deform.widget.SelectWidget(values=choices)
         elif type(node.typ) == colander.DateTime:
-            log.debug('using datetime widget for %s', data_input.identifier)
+            #log.debug('using datetime widget for %s', data_input.identifier)
             node.widget = deform.widget.DateInputWidget()
         elif type(node.typ) == colander.Boolean:
-            log.debug('using checkbox widget for %s', data_input.identifier)
+            #log.debug('using checkbox widget for %s', data_input.identifier)
             node.widget = deform.widget.CheckboxWidget()
         elif 'password' in data_input.identifier:
-            log.debug('using password widget for %s', data_input.identifier)
+            #log.debug('using password widget for %s', data_input.identifier)
             node.widget = deform.widget.PasswordWidget(size=20)
         else:
-            log.debug('using text widget for %s', data_input.identifier)
+            #log.debug('using text widget for %s', data_input.identifier)
             node.widget = deform.widget.TextInputWidget()
 
         log.debug("choosen widget, identifier=%s, widget=%s", data_input.identifier, node.widget)
