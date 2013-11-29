@@ -256,7 +256,7 @@
         replica: false,
         query: '*',
         constraints: 'project:CMIP5,product:output1',
-        limit: 5,
+        limit: 20,
         temporal: false,
         start: null,
         end: null,
