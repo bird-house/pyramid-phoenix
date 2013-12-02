@@ -226,8 +226,10 @@ class JobsView(FormView):
 
     def __call__(self):
         call = super(JobsView,self).__call__()
-        #TODO: Find an alternative for the hack (form_options does not seem to work)
-        call["form"]=call["form"].replace('form-horizontal','form-vertical')
+        try:
+            call["form"]=call["form"].replace('form-horizontal','form-vertical')
+        except:
+            pass
         return call
 
     def remove_all_success(self,appstruct):
