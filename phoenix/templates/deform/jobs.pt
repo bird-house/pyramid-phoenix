@@ -54,7 +54,7 @@
             });
 
             $(function() {
-                setTimeout("location.reload(true);",10000);
+                setTimeout("location.reload();",10000);
             });
         </script>
 
