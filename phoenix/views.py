@@ -220,14 +220,22 @@ class ProcessView(FormView):
     )
 class JobsView(FormView):
     from .schema import JobsSchema
+    #form_options = ('bootstrap_form_style','form-vertical')
     schema = JobsSchema()
     buttons = ('remove all', 'remove selected')
+
+    def __call__(self):
+        call = super(JobsView,self).__call__()
+        #TODO: Find an alternative for the hack (form_options does not seem to work)
+        call["form"]=call["form"].replace('form-horizontal','form-vertical')
+        return call
 
     def remove_all_success(self,appstruct):
         uuids = []
         for job in self.jobs:
             uuids.append(job["uuid"])
         drop_jobs_by_uuid(self.request,uuids)
+        
         return HTTPFound(location=self.request.route_url('jobs'))
 
     def remove_selected_success(self,appstruct): 

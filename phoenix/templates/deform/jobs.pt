@@ -1,4 +1,3 @@
-        <form action="jobs" method=post>
             <table id="process_table" class="table table-condensed accordion-group" style="table-layout: fixed; word-wrap: break-word;">
                 <thead>
                     <tr>
@@ -12,8 +11,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <div tal:repeat="job jobs">
-                        <tr>
+                    <tr tal:repeat="job jobs">
                             <td><input type="checkbox" name="selected" value="${job.uuid}"></td>
                             <td><a rel="tooltip" data-placement="right" title="ID: ${job.uuid}">${job.identifier}</a></td>
                             <td>${job.starttime}</td>
@@ -36,12 +34,8 @@
                                 <a href="#" class="label label-important" data-toggle="popover" data-placement="left" data-content="${job.error_message}" data-original-title="Error Message">${job.status}</a>
                             </td>
                         </tr>
-                        <tr>                    
-                    </div>
                 </tbody>
             </table>
-            <p/>
-        </form>
         <script type="text/javascript">
             $(function(){
                 $('body').popover({
