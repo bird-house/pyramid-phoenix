@@ -80,6 +80,48 @@ def drop_jobs_by_uuid(request, uuids=[]):
         db.jobs.remove({"uuid": uuid})
 
 
+def jobs_information(request):
+    from pyramid.security import authenticated_userid
+    from owslib.wps import WebProcessingService, WPSExecution
+
+    jobs = []
+    for job in jobs_by_userid(request, user_id=authenticated_userid(request)):
+
+        job['starttime'] = job['start_time'].strftime('%a, %d %h %Y %I:%M:%S %p')
+
+        # TODO: handle different process status
+        if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
+            job['errors'] = []
+            try:
+                wps = WebProcessingService(job['service_url'], verbose=False)
+                execution = WPSExecution(url=wps.url)
+                execution.checkStatus(url=job['status_location'], sleepSecs=0)
+                job['status'] = execution.status
+                job['percent_completed'] = execution.percentCompleted
+                job['status_message'] = execution.statusMessage
+                job['error_message'] = ''
+                for err in execution.errors:
+                    job['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
+               
+            except:
+                msg = 'could not access wps %s' % (job['status_location'])
+                log.warn(msg)
+                job['status'] = 'Exception'
+                job['errors'].append( dict(code='', locator='', text=msg) )
+            
+            job['end_time'] = datetime.datetime.now()
+            for err in job['errors']:
+                job['error_message'] = err.get('text', '') + ';'
+
+            # TODO: configure output delete time
+            dd = 3
+            job['output_delete_time'] = datetime.datetime.now() + datetime.timedelta(days=dd)
+            job['duration'] = str(job['end_time'] - job['start_time'])
+            update_job(request, job)
+        jobs.append(job)
+        
+    return jobs
+
 # esgf search ....
 # ----------------
 

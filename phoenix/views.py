@@ -214,68 +214,28 @@ class ProcessView(FormView):
 
 @view_config(
     route_name='jobs',
-    renderer='templates/jobs.pt',
+    renderer='templates/form.pt',
     layout='default',
     permission='edit'
     )
-def jobs(request):
-    jobs = []
+class JobsView(FormView):
+    from .schema import JobsSchema
+    schema = JobsSchema()
+    buttons = ('remove all', 'remove selected')
 
-    log.debug('user id = %s', authenticated_userid(request) )
-
-    for job in jobs_by_userid(request, user_id=authenticated_userid(request)):
-        log.debug(job)
-        log.debug('status_location = %s', job['status_location'])
-
-        job['starttime'] = job['start_time'].strftime('%a, %d %h %Y %I:%M:%S %p')
-
-        # TODO: handle different process status
-        if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
-            job['errors'] = []
-            try:
-                wps = WebProcessingService(job['service_url'], verbose=False)
-                execution = WPSExecution(url=wps.url)
-                execution.checkStatus(url=job['status_location'], sleepSecs=0)
-                job['status'] = execution.status
-                job['percent_completed'] = execution.percentCompleted
-                job['status_message'] = execution.statusMessage
-                job['error_message'] = ''
-                for err in execution.errors:
-                    job['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
-               
-            except:
-                msg = 'could not access wps %s' % (job['status_location'])
-                log.warn(msg)
-                job['status'] = 'Exception'
-                job['errors'].append( dict(code='', locator='', text=msg) )
-            
-            job['end_time'] = datetime.datetime.now()
-            for err in job['errors']:
-                job['error_message'] = err.get('text', '') + ';'
-
-            # TODO: configure output delete time
-            dd = 3
-            job['output_delete_time'] = datetime.datetime.now() + datetime.timedelta(days=dd)
-            percent = 45  # TODO: poll percent
-            job['duration'] = str(job['end_time'] - job['start_time'])
-            update_job(request, job)
-        jobs.append(job)
-        
-        log.debug('leaving jobs')
-    #Button functionality
-    if "clear_all" in request.POST:
+    def remove_all_success(self,appstruct):
         uuids = []
-        for job in jobs:
+        for job in self.jobs:
             uuids.append(job["uuid"])
-        drop_jobs_by_uuid(request,uuids)
-        return HTTPFound(location=request.route_url('jobs'))
+        drop_jobs_by_uuid(self.request,uuids)
+        return HTTPFound(location=self.request.route_url('jobs'))
 
-    elif "clear_selected" in request.POST:
-        if("selected" in request.POST):
-            drop_jobs_by_uuid(request,request.POST.getall("selected"))
-        return HTTPFound(location=request.route_url('jobs'))
+    def remove_selected_success(self,appstruct): 
+        if("selected" in self.request.POST):
+            drop_jobs_by_uuid(self.request,self.request.POST.getall("selected"))
+        return HTTPFound(location=self.request.route_url('jobs'))
 
-    return dict(jobs=jobs)
+
 
 # output_details
 # --------------

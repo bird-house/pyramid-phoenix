@@ -269,3 +269,30 @@ class FileSearchWidget(Widget):
         result['filter'] = pstruct
         log.debug('filesearch: %s', result)
         return json.dumps(result)
+
+class JobsWidget(Widget):
+
+    """ 
+    Renders a job widget
+    """
+    template="jobs"
+    size = None
+    style = None
+    mask = None
+    mask_placeholder = "_"
+    requirements = ()
+
+    def serialize(self, field, cstruct, **kw):
+        kw["jobs"]=self.jobs
+        tmpl_values = self.get_template_values(field, cstruct, kw)
+        return field.renderer(self.template, **tmpl_values)
+
+    def deserialize(self, field, pstruct):
+        log.debug('result pstruct=%s', pstruct)
+        if pstruct is null:
+            return null
+        if self.strip:
+            pstruct = pstruct.strip()
+        if not pstruct:
+            return null
+        return pstruct

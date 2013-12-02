@@ -116,7 +116,21 @@ class CatalogSelectWPSSchema(colander.MappingSchema):
         widget = deferred_wps_list_widget
         )
 
-
-      
+@colander.deferred
+def deferred_job_widget(node, kw):
+    request = kw.get('request')
+    from .models import jobs_information 
+    jobs = jobs_information(request)
+    from .widget import JobsWidget
+    return JobsWidget(jobs = jobs)
 
     
+
+class JobsSchema(colander.MappingSchema):
+    process = colander.SchemaNode(
+        colander.String(),
+        title = "Jobs",
+        missing=unicode(''),
+        widget = deferred_job_widget
+        )
+
