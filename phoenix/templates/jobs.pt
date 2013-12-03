@@ -1,79 +1,60 @@
 <metal:block use-macro="main_template">
+  <div metal:fill-slot="content">
+    <form action="jobs" method=post>
+      <table id="process_table" class="table table-condensed accordion-group" style="table-layout: fixed; word-wrap: break-word;">
+        <thead>
+          <tr>
+            <th>Select</th>
+            <th>Identifier</th>
+            <th>Start Time</th>
+            <th>Duration</th>
+            <th>Notes</th>
+            <th>Tags</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr tal:repeat="job jobs">
+            <td><input type="checkbox" name="selected" value="${job.uuid}"></td>
+            <td><a rel="tooltip" data-placement="right" title="ID: ${job.uuid}">${job.identifier}</a></td>
+            <td>${job.starttime}</td>
+            <td>${job.duration}</td>
+            <td><tal:form replace="structure job.notes">${job.notes}</tal:form></td>
+            <td>${job.tags}</td>
+            <td tal:condition="job.status in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']">
+              <a href="#" class="label label-info" data-toggle="popover" data-placement="left" data-content="${job.status_message}" data-original-title="Status Message">${job.status}</a>
+              <div class="progress progress-info">
+                <div class="bar" style="width: ${job.percent_completed}%;">${job.percent_completed}%</div>
+            </td>
+            <td tal:condition="job.status == 'ProcessSucceeded'">
+              <a href="/output_details?uuid=${job.uuid}" class="label label-success">${job.status}</a>
+            </td>
+            <td tal:condition="job.status == 'ProcessFailed'">
+              <a href="#" class="label label-warning" data-toggle="popover" data-placement="left" data-content="${job.error_message}" data-original-title="Error Message">${job.status}</a>
+            </td>
+            <td tal:condition="job.status == 'Exception'">
+              <a href="#" class="label label-important" data-toggle="popover" data-placement="left" data-content="${job.error_message}" data-original-title="Error Message">${job.status}</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <input id="clear_all" class="btn btn-danger" type="submit" name="remove_all" value="remove all" />
+      <input id="clear_sel" class="btn" type="submit" name="remove_selected" value="remove selected" />
+    </form>
+    <script type="text/javascript">
+      $(function(){
+        $('body').popover({
+          selector: '[data-toggle="popover"]'
+      });
+        
+        $('body').tooltip({
+          selector: 'a[rel="tooltip"], [data-toggle="tooltip"]'
+          });
+      });
 
-    <div metal:fill-slot="content">
-        <form action="jobs" method=post>
-            <table id="process_table" class="table table-condensed accordion-group" style="table-layout: fixed; word-wrap: break-word;">
-                <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>Identifier</th>
-                        <th>Start Time</th>
-                        <th>Duration</th>
-                        <th>Notes</th>
-                        <th>Tags</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <div tal:repeat="job jobs">
-                        <tr>
-                            <td><input type="checkbox" name="selected" value="${job.uuid}"></td>
-                            <td><a rel="tooltip" data-placement="right" title="ID: ${job.uuid}">${job.identifier}</a></td>
-                            <td>${job.starttime}</td>
-                            <td>${job.duration}</td>
-                            <td><tal:form replace="structure job.notes">${job.notes}</tal:form></td>
-                            <td>${job.tags}</td>
-                            <td tal:condition="job.status in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']">
-                                <a href="#" class="label label-info" data-toggle="popover" data-placement="left" data-content="${job.status_message}" data-original-title="Status Message">${job.status}</a>
-                                <div class="progress progress-info">
-                                    <div class="bar" style="width: ${job.percent_completed}%;">${job.percent_completed}%</div>
-                                </div>
-                            </td>
-                            <td tal:condition="job.status == 'ProcessSucceeded'">
-                                <a href="/output_details?uuid=${job.uuid}" class="label label-success">${job.status}</a>
-                            </td>
-                            <td tal:condition="job.status == 'ProcessFailed'">
-                                <a href="#" class="label label-warning" data-toggle="popover" data-placement="left" data-content="${job.error_message}" data-original-title="Error Message">${job.status}</a>
-                            </td>
-                            <td tal:condition="job.status == 'Exception'">
-                                <a href="#" class="label label-important" data-toggle="popover" data-placement="left" data-content="${job.error_message}" data-original-title="Error Message">${job.status}</a>
-                            </td>
-                        </tr>
-                        <tr>                    
-                    </div>
-                </tbody>
-            </table>
-            <p/>
-            <input id="clear_all" class="btn btn-danger" type="submit" name="clear_all" value="remove all" />
-            <input id="clear_sel" class="btn" type="submit" name="clear_selected" value="remove selected" />
-        </form>
-        <script type="text/javascript">
-            $(function(){
-                $('body').popover({
-                    selector: '[data-toggle="popover"]'
-                });
-                
-                $('body').tooltip({
-                    selector: 'a[rel="tooltip"], [data-toggle="tooltip"]'
-                });
-            });
-
-            reloadOk = function(){
-                allClear = true;
-                selected = document.getElementsByName("selected");
-                for(i=0;i < selected.length;i++){
-                    if(selected[i].checked){
-                        allClear=false;}}
-                if(allClear){
-                   location.reload(true);}
-                else{
-                    setTimeout("reloadOk();",20000);}
-            };
-
-            $(function() {
-                setTimeout("reloadOk();",20000);
-            });
-        </script>
-    </div>
-
+      $(function() {
+        setTimeout("location.reload();",20000);
+      });
+    </script>
+  </div>
 </metal:block>

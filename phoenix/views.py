@@ -214,36 +214,29 @@ class ProcessView(FormView):
 
 @view_config(
     route_name='jobs',
-    renderer='templates/form.pt',
+    renderer='templates/jobs.pt',
     layout='default',
     permission='edit'
     )
-class JobsView(FormView):
-    from .schema import JobsSchema
-    #form_options = ('bootstrap_form_style','form-vertical')
-    schema = JobsSchema()
-    buttons = ('remove all', 'remove selected')
+def jobs(request):
+    from .models import jobs_information
 
-    def __call__(self):
-        call = super(JobsView,self).__call__()
-        try:
-            call["form"]=call["form"].replace('form-horizontal','form-vertical')
-        except:
-            pass
-        return call
+    jobs = jobs_information(request)
 
-    def remove_all_success(self,appstruct):
+    if "remove_all" in request.POST:
         uuids = []
-        for job in self.jobs:
+        for job in jobs:
             uuids.append(job["uuid"])
-        drop_jobs_by_uuid(self.request,uuids)
+        drop_jobs_by_uuid(request,uuids)
         
-        return HTTPFound(location=self.request.route_url('jobs'))
+        return HTTPFound(location=request.route_url('jobs'))
 
-    def remove_selected_success(self,appstruct): 
-        if("selected" in self.request.POST):
-            drop_jobs_by_uuid(self.request,self.request.POST.getall("selected"))
-        return HTTPFound(location=self.request.route_url('jobs'))
+    elif "remove_selected" in request.POST:
+        if("selected" in request.POST):
+            drop_jobs_by_uuid(request,request.POST.getall("selected"))
+        return HTTPFound(location=request.route_url('jobs'))
+
+    return {"jobs":jobs}
 
 
 
