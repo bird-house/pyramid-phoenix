@@ -28,7 +28,6 @@
                     selected = document.getElementsByName("selected");
                     for(j=0; j < selectedValues.length;j++){
                         for(i=0; i < selected.length;i++){
-                            console.log(i+" "+j)
                             if(selected[i].value==selectedValues[j]){
                                 selected[i].checked = true;
                                 break
