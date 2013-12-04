@@ -236,9 +236,18 @@ def jobs(request):
             drop_jobs_by_uuid(request,request.POST.getall("selected"))
         return HTTPFound(location=request.route_url('jobs'))
 
+    return {}
+
+@view_config(
+    route_name="jobsupdate",
+    renderer ="templates/jobsupdate.pt",
+    layout='default',
+    permission='edit'
+    )
+def jobsupdate(request):
+    from .models import jobs_information
+    jobs = jobs_information(request)
     return {"jobs":jobs}
-
-
 
 # output_details
 # --------------
