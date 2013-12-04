@@ -29,13 +29,16 @@ def deferred_select_process_widget(node, kw):
     wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
     wps.getcapabilities()
 
+    test_group = []
     csc_group = []
     dkrz_group = []
     base_group = []
     c3grid_group = []
     other_group = []
     for process in wps.processes:
-        if 'de.csc' in process.identifier:
+        if 'test' in process.identifier:
+            test_group.append( (process.identifier, process.title) )
+        elif 'de.csc' in process.identifier:
             csc_group.append( (process.identifier, process.title) )
         elif 'de.dkrz' in process.identifier:
             dkrz_group.append( (process.identifier, process.title) )
@@ -48,6 +51,8 @@ def deferred_select_process_widget(node, kw):
     choices = [ ('', 'Select Process') ]
     if has_permission('admin', request.context, request) and len(base_group) > 0:
         choices.append( OptGroup('Base', *base_group) )
+    if len(test_group) > 0:
+        choices.append( OptGroup('Test', *test_group) )
     if len(c3grid_group) > 0:
         choices.append( OptGroup('C3Grid', *c3grid_group) )
     if len(csc_group) > 0:
