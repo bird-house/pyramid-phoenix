@@ -1,6 +1,9 @@
 <metal:block use-macro="main_template">
   <span  metal:fill-slot="content">
   <div id="content"></div>
+<noscript>
+<metal:block use-macro="load: jobsupdate.pt">
+</noscript>
 <script type="text/javascript">
   var request = new XMLHttpRequest();
   function reload(){

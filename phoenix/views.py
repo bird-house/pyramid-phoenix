@@ -236,7 +236,7 @@ def jobs(request):
             drop_jobs_by_uuid(request,request.POST.getall("selected"))
         return HTTPFound(location=request.route_url('jobs'))
 
-    return {}
+    return {"jobs":jobs}
 
 @view_config(
     route_name="jobsupdate",
