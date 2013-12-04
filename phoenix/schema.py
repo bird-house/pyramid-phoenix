@@ -17,6 +17,7 @@ log = logging.getLogger(__name__)
 
 from owslib.wps import WebProcessingService
 from .helpers import wps_url
+from pyramid.security import has_permission
 
 
 # process list
@@ -45,7 +46,7 @@ def deferred_select_process_widget(node, kw):
         else:
             other_group.append( (process.identifier, process.title) )
     choices = [ ('', 'Select Process') ]
-    if len(base_group) > 0:
+    if has_permission('admin', request.context, request) and len(base_group) > 0:
         choices.append( OptGroup('Base', *base_group) )
     if len(c3grid_group) > 0:
         choices.append( OptGroup('C3Grid', *c3grid_group) )
