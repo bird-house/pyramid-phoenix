@@ -346,7 +346,7 @@ function animate(layer) {
 
   loadStarted();
   wps = new SimpleWPS({
-    process: "org.malleefowl.wms.animate",
+    process: "org.malleefowl.wms.animate.gif",
     raw: false,
     format: 'xml',
     onSuccess: function(xmlDoc) {
