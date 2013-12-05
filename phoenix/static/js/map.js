@@ -260,6 +260,27 @@ function initTimeSlider(layer) {
     }
   });
 
+  // googleearth button
+  $("#googleearth").button({
+    text: false,
+  }).click(function( event ) {
+      $("#dialog-play").dialog({
+        title: 'Run Animation on GoogleEarth?',
+        resizable: false,
+        height: 300,
+        modal: true,
+        buttons: {
+          Ok: function() {
+            $( this ).dialog( "close" );
+            animateOnGoogleEarth(selectedLayer);
+          },
+          Cancel: function() {
+            $( this ).dialog( "close" );
+          }
+        }
+      });
+  });
+
   // slider range
   $("#slider-range").slider({
     range: true,
@@ -346,6 +367,42 @@ function animate(layer) {
     height: map.getSize().h,
     bbox: map.getExtent().toBBOX(),
   });  
+}
+
+function animateOnGoogleEarth(layer) {
+  loadStarted();
+  wps = new SimpleWPS({
+    process: "org.malleefowl.wms.animate.kml",
+    raw: false,
+    format: 'xml',
+    onSuccess: function(xmlDoc) {
+      //console.log(xmlDoc);
+      kmlURL = $(xmlDoc).find("wps\\:Reference, Reference").first().attr('href');
+      //console.log(kmlURL);
+      loadFinished();
+      downloadURL(kmlURL);
+    },
+  });
+  wps.execute({
+    service_url: layer.service,
+    layer: layer.name,
+    start: start_time,
+    end: end_time,
+    resolution: $("#select-resolution").val(),
+    delay: $("#delay").val(),
+    width: map.getSize().w,
+    height: map.getSize().h,
+    bbox: map.getExtent().toBBOX(),
+  });  
+}
+
+var $idown;  // Keep it outside of the function, so it's initialized once.
+function downloadURL(url) {
+  if ($idown) {
+    $idown.attr('src',url);
+  } else {
+    $idown = $('<iframe>', { id:'idown', src:url }).hide().appendTo('body');
+  }
 }
 
 /*
