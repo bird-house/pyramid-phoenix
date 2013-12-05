@@ -20,6 +20,19 @@ function initMap() {
   map.addControl(new OpenLayers.Control.PanZoom());
   //map.addControl(new OpenLayers.Control.Attribution());
 
+  // Set up the throbber (acts as progress indicator)
+  // Adapted from LoadingPanel.js
+  map.events.register('preaddlayer', map, function(evt) {
+    if (evt.layer) {
+      evt.layer.events.register('loadstart', this, function() {
+        loadStarted();
+      });
+      evt.layer.events.register('loadend', this, function() {
+        loadFinished();
+      });
+    }
+  });
+
   // base layer
   var baseLayer = null;
 
@@ -27,7 +40,7 @@ function initMap() {
     "Demis BlueMarble",
     "http://www2.demis.nl/wms/wms.ashx?WMS=BlueMarble" , 
     {layers: 'Earth Image,Borders,Coastlines'});
-  addLayer(baseLayer);
+  map.addLayer(baseLayer);
 
   /*
   baseLayer = new OpenLayers.Layer.WMS( 
@@ -41,7 +54,7 @@ function initMap() {
     "http://www2.demis.nl/wms/wms.ashx?WMS=WorldMap",
     {layers:'Countries,Bathymetry,Topography,Hillshading,Coastlines,Builtup+areas,Waterbodies,Rivers,Streams,Railroads,Highways,Roads,Trails,Borders,Cities,Airports',
      format: 'image/png'});
-  addLayer(baseLayer);
+  map.addLayer(baseLayer);
  
   map.zoomToMaxExtent();
 
@@ -49,16 +62,6 @@ function initMap() {
   initOpacitySlider();
   initLayerList();
 }
-
-function addLayer(layer) {
-  map.addLayer(layer);
-  layer.events.register('loadstart', layer, function(evt){
-    loadStarted();
-  }); 
-  layer.events.register('loadend', layer, function(evt){
-    loadFinished();
-  });
-} 
 
 function loadStarted() {
   layersLoading++;
@@ -165,7 +168,7 @@ function initWMSLayer(layer, step) {
       isBaseLayer: false,
       opacity: opacity,
     });
-  addLayer(wmsLayer);
+  map.addLayer(wmsLayer);
 }
 
 function initTimeSlider(layer) {
@@ -344,7 +347,7 @@ function initAnimateLayer(layer, timesteps) {
       isBaseLayer: false,
       opacity: opacity,
     });
-  addLayer(animateLayer);
+  map.addLayer(animateLayer);
 }
 
 function animate(layer) {
@@ -358,8 +361,8 @@ function animate(layer) {
     process: "org.malleefowl.wms.animate.timesteps",
     onSuccess: function(timesteps) {
       //console.log(result);
-      loadFinished();
       initAnimateLayer(layer, timesteps);
+      loadFinished();
     },
   });
   wps.execute({
