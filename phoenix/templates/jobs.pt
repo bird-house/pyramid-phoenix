@@ -5,19 +5,22 @@
 <metal:block use-macro="load: jobsupdate.pt">
 </noscript>
 <script type="text/javascript">
+  $(function(){
+    $('body').popover({
+      selector: '[data-toggle="popover"]'});
+    $('body').tooltip({
+      selector: 'a[rel="tooltip"], [data-toggle="tooltip"]'});
+  }); 
   var request = new XMLHttpRequest();
   function reload(){
      request.open('post','jobsupdate',true);
      request.send(null);
      request.onreadystatechange = update};
 
-   function update(){
-       switch (request.readyState){
-          case 4:
-             if (request.status != 200) {
-               alert("Der Request wurde abgeschlossen, ist aber nicht OK\nFehler:"+request.status);
-                           }
-             else {
+    function update(){
+        switch (request.readyState){
+            case 4:
+                if (request.status == 200) {
                     var content = request.responseText;
                     // den Inhalt des Requests in das <div> schreiben
                     var selected = document.getElementsByName("selected");
@@ -27,24 +30,21 @@
                         if(selected[i].checked){
                         selectedValues[j] = selected[i].value;
                         j++;}}
+                    $("*").tooltip('hide')
+                    $("*").popover('hide')
                     document.getElementById('content').innerHTML = content;
                     selected = document.getElementsByName("selected");
                     for(j=0; j < selectedValues.length;j++){
                         for(i=0; i < selected.length;i++){
                             if(selected[i].value==selectedValues[j]){
                                 selected[i].checked = true;
-                                break
-                            }}
-                    }
-                    setTimeout("reload()",2000)
-                   }
-             break;
-           default:
-             break;
-     }};
+                                break;}}}
+                    setTimeout("reload()",2000);}
+                break;
+            default:
+                break;}};
+  reload();
 
-
-  reload()
 </script>
 </span>
 </metal:block>
