@@ -64,11 +64,6 @@
         </select>
         
         <p/>
-        
-        <label for="delay">Delay (1/100 secs)</label>
-        <input id="delay" type="text" value="10" size="4"/>
-        
-        <p/>
 
         <label id="time-range">2006-01-01T12:00 - 2006-01-01T12:00</label>
         <div id="slider-range"/>

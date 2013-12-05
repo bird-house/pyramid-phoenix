@@ -328,11 +328,20 @@ function dateLabel(timestep) {
   return timestep.substring(0,16);
 }
 
-function initAnimateLayer(imageURL) {
-  animateLayer = new OpenLayers.Layer.Image(
-    "Animation", imageURL, map.getExtent(), map.getSize(), {
+function initAnimateLayer(layer, timesteps) {
+  animateLayer = new OpenLayers.Layer.WMS(
+    "Animation",
+    layer.service,
+    {
+      layers: layer.name,
+      transparent: 'true',
+      format:'image/gif',
+      time: timesteps,
+    },
+    {
+      singleTile: true, 
+      ratio: 1,
       isBaseLayer: false,
-      alwaysInRange: true, // Necessary to always draw the image
       opacity: opacity,
     });
   addLayer(animateLayer);
@@ -346,14 +355,11 @@ function animate(layer) {
 
   loadStarted();
   wps = new SimpleWPS({
-    process: "org.malleefowl.wms.animate.gif",
-    raw: false,
-    format: 'xml',
-    onSuccess: function(xmlDoc) {
-      //console.log(xmlDoc);
-      animateURL = $(xmlDoc).find("wps\\:Reference, Reference").first().attr('href');
-      initAnimateLayer(animateURL);
+    process: "org.malleefowl.wms.animate.timesteps",
+    onSuccess: function(timesteps) {
+      //console.log(result);
       loadFinished();
+      initAnimateLayer(layer, timesteps);
     },
   });
   wps.execute({
@@ -362,11 +368,7 @@ function animate(layer) {
     start: start_time,
     end: end_time,
     resolution: $("#select-resolution").val(),
-    delay: $("#delay").val(),
-    width: map.getSize().w,
-    height: map.getSize().h,
-    bbox: map.getExtent().toBBOX(),
-  });  
+  });
 }
 
 function animateOnGoogleEarth(layer) {
@@ -389,7 +391,6 @@ function animateOnGoogleEarth(layer) {
     start: start_time,
     end: end_time,
     resolution: $("#select-resolution").val(),
-    delay: $("#delay").val(),
     width: map.getSize().w,
     height: map.getSize().h,
     bbox: map.getExtent().toBBOX(),
