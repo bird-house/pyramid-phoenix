@@ -20,6 +20,19 @@ function initMap() {
   map.addControl(new OpenLayers.Control.PanZoom());
   //map.addControl(new OpenLayers.Control.Attribution());
 
+  // Set up the throbber (acts as progress indicator)
+  // Adapted from LoadingPanel.js
+  map.events.register('preaddlayer', map, function(evt) {
+    if (evt.layer) {
+      evt.layer.events.register('loadstart', this, function() {
+        loadStarted();
+      });
+      evt.layer.events.register('loadend', this, function() {
+        loadFinished();
+      });
+    }
+  });
+
   // base layer
   var baseLayer = null;
 
@@ -27,7 +40,7 @@ function initMap() {
     "Demis BlueMarble",
     "http://www2.demis.nl/wms/wms.ashx?WMS=BlueMarble" , 
     {layers: 'Earth Image,Borders,Coastlines'});
-  addLayer(baseLayer);
+  map.addLayer(baseLayer);
 
   /*
   baseLayer = new OpenLayers.Layer.WMS( 
@@ -41,7 +54,7 @@ function initMap() {
     "http://www2.demis.nl/wms/wms.ashx?WMS=WorldMap",
     {layers:'Countries,Bathymetry,Topography,Hillshading,Coastlines,Builtup+areas,Waterbodies,Rivers,Streams,Railroads,Highways,Roads,Trails,Borders,Cities,Airports',
      format: 'image/png'});
-  addLayer(baseLayer);
+  map.addLayer(baseLayer);
  
   map.zoomToMaxExtent();
 
@@ -49,16 +62,6 @@ function initMap() {
   initOpacitySlider();
   initLayerList();
 }
-
-function addLayer(layer) {
-  map.addLayer(layer);
-  layer.events.register('loadstart', layer, function(evt){
-    loadStarted();
-  }); 
-  layer.events.register('loadend', layer, function(evt){
-    loadFinished();
-  });
-} 
 
 function loadStarted() {
   layersLoading++;
@@ -165,7 +168,7 @@ function initWMSLayer(layer, step) {
       isBaseLayer: false,
       opacity: opacity,
     });
-  addLayer(wmsLayer);
+  map.addLayer(wmsLayer);
 }
 
 function initTimeSlider(layer) {
@@ -260,6 +263,27 @@ function initTimeSlider(layer) {
     }
   });
 
+  // googleearth button
+  $("#googleearth").button({
+    text: false,
+  }).click(function( event ) {
+      $("#dialog-play").dialog({
+        title: 'Run Animation on GoogleEarth?',
+        resizable: false,
+        height: 250,
+        modal: true,
+        buttons: {
+          Ok: function() {
+            $( this ).dialog( "close" );
+            animateOnGoogleEarth(selectedLayer);
+          },
+          Cancel: function() {
+            $( this ).dialog( "close" );
+          }
+        }
+      });
+  });
+
   // slider range
   $("#slider-range").slider({
     range: true,
@@ -307,14 +331,23 @@ function dateLabel(timestep) {
   return timestep.substring(0,16);
 }
 
-function initAnimateLayer(imageURL) {
-  animateLayer = new OpenLayers.Layer.Image(
-    "Animation", imageURL, map.getExtent(), map.getSize(), {
+function initAnimateLayer(layer, timesteps) {
+  animateLayer = new OpenLayers.Layer.WMS(
+    "Animation",
+    layer.service,
+    {
+      layers: layer.name,
+      transparent: 'true',
+      format:'image/gif',
+      time: timesteps,
+    },
+    {
+      singleTile: true, 
+      ratio: 1,
       isBaseLayer: false,
-      alwaysInRange: true, // Necessary to always draw the image
       opacity: opacity,
     });
-  addLayer(animateLayer);
+  map.addLayer(animateLayer);
 }
 
 function animate(layer) {
@@ -325,13 +358,10 @@ function animate(layer) {
 
   loadStarted();
   wps = new SimpleWPS({
-    process: "org.malleefowl.wms.animate",
-    raw: false,
-    format: 'xml',
-    onSuccess: function(xmlDoc) {
-      //console.log(xmlDoc);
-      animateURL = $(xmlDoc).find("wps\\:Reference, Reference").first().attr('href');
-      initAnimateLayer(animateURL);
+    process: "org.malleefowl.wms.animate.timesteps",
+    onSuccess: function(timesteps) {
+      //console.log(result);
+      initAnimateLayer(layer, timesteps);
       loadFinished();
     },
   });
@@ -341,11 +371,42 @@ function animate(layer) {
     start: start_time,
     end: end_time,
     resolution: $("#select-resolution").val(),
-    delay: $("#delay").val(),
+  });
+}
+
+function animateOnGoogleEarth(layer) {
+  loadStarted();
+  wps = new SimpleWPS({
+    process: "org.malleefowl.wms.animate.kml",
+    raw: false,
+    format: 'xml',
+    onSuccess: function(xmlDoc) {
+      //console.log(xmlDoc);
+      kmlURL = $(xmlDoc).find("wps\\:Reference, Reference").first().attr('href');
+      //console.log(kmlURL);
+      loadFinished();
+      downloadURL(kmlURL);
+    },
+  });
+  wps.execute({
+    service_url: layer.service,
+    layer: layer.name,
+    start: start_time,
+    end: end_time,
+    resolution: $("#select-resolution").val(),
     width: map.getSize().w,
     height: map.getSize().h,
     bbox: map.getExtent().toBBOX(),
   });  
+}
+
+var $idown;  // Keep it outside of the function, so it's initialized once.
+function downloadURL(url) {
+  if ($idown) {
+    $idown.attr('src',url);
+  } else {
+    $idown = $('<iframe>', { id:'idown', src:url }).hide().appendTo('body');
+  }
 }
 
 /*

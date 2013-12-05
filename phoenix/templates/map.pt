@@ -37,6 +37,7 @@
               <button class="btn" id="play"><i class="icon-play"></i> </button>
               <button class="btn" id="pause"><i class="icon-pause"></i> </button>
               <button class="btn" id="stop"><i class="icon-stop"></i> </button>
+              <button class="btn" id="googleearth"><i class="icon-globe"></i> </button>
             </div>
           </td>
           <td>
@@ -61,11 +62,6 @@
           <option label="daily" value="daily">daily</option>
           <option label="all" value="all">all</option>
         </select>
-        
-        <p/>
-        
-        <label for="delay">Delay (1/100 secs)</label>
-        <input id="delay" type="text" value="10" size="4"/>
         
         <p/>
 
