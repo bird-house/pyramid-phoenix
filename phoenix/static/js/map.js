@@ -270,7 +270,7 @@ function initTimeSlider(layer) {
       $("#dialog-play").dialog({
         title: 'Run Animation on GoogleEarth?',
         resizable: false,
-        height: 300,
+        height: 250,
         modal: true,
         buttons: {
           Ok: function() {
