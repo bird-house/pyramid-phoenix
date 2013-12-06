@@ -25,7 +25,7 @@ import config_public as config
 from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
 
-from .models import add_job, get_job, drop_jobs, update_job, num_jobs, jobs_by_userid, drop_jobs_by_uuid
+from .models import add_job, get_job, drop_jobs, update_job, num_jobs, jobs_by_userid, drop_jobs_by_uuid, drop_user_jobs
 
 from .wps import WPSSchema  
 
@@ -233,10 +233,7 @@ class JobsView(FormView):
         return call
 
     def remove_all_success(self,appstruct):
-        uuids = []
-        for job in self.jobs:
-            uuids.append(job["uuid"])
-        drop_jobs_by_uuid(self.request,uuids)
+        drop_user_jobs(self.request)
         
         return HTTPFound(location=self.request.route_url('jobs'))
 

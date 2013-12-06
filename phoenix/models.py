@@ -7,6 +7,8 @@
 
 # TODO: refactor usage of mongodb etc ...
 
+from pyramid.security import authenticated_userid
+
 from pyramid.security import (
     Allow,
     Everyone,
@@ -74,6 +76,11 @@ def jobs_by_userid(request, user_id='anonymous'):
     db = database(request)
     return db.jobs.find( dict(user_id=user_id) )
 
+def drop_user_jobs(request):
+    db = database(request)
+    for job in jobs_by_userid(request, user_id=authenticated_userid(request)):
+        db.jobs.remove({"uuid": job['uuid']})
+
 def drop_jobs_by_uuid(request, uuids=[]):
     db = database(request)
     for uuid in uuids:
@@ -81,7 +88,6 @@ def drop_jobs_by_uuid(request, uuids=[]):
 
 
 def jobs_information(request):
-    from pyramid.security import authenticated_userid
     from owslib.wps import WebProcessingService, WPSExecution
 
     jobs = []
