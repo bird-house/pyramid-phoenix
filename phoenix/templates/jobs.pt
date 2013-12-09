@@ -4,6 +4,12 @@
 <noscript>
 <metal:block use-macro="load: jobsupdate.pt">
 </noscript>
+<div id="scriptOnly" style="display: none;">
+Refresh period:
+<input id="reloadTime" type="range" min="1" max="50" value="5" step="1" onchange="showValue(this.value)"/>
+<span id="range">5</span>
+</div>
+
 <script type="text/javascript">
   $(function(){
     $('body').popover({
@@ -12,6 +18,7 @@
       selector: 'a[rel="tooltip"], [data-toggle="tooltip"]'});
   }); 
   var request = new XMLHttpRequest();
+  var timer = null;
   function reload(){
      request.open('post','jobsupdate',true);
      request.send(null);
@@ -39,12 +46,22 @@
                             if(selected[i].value==selectedValues[j]){
                                 selected[i].checked = true;
                                 break;}}}
-                    setTimeout("reload()",20000);}
+                    var reloadTime =  document.getElementById("reloadTime").value;
+                    timer = setTimeout("reload()",reloadTime*1000);}
                 break;
             default:
                 break;}};
-  reload();
-
+  
+  function showValue(newValue){
+      document.getElementById("range").innerHTML=newValue;
+      clearTimeout(timer);
+      reload();}
+  function pageLoaded(){    
+      var hiddendiv = document.getElementById('scriptOnly')
+      hiddendiv.style="display:block;";
+      reload();}
+  document.addEventListener("DOMContentLoaded", pageLoaded, false);
 </script>
+
 </span>
 </metal:block>
