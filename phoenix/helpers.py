@@ -42,10 +42,13 @@ def supervisor_url(request):
     return get_setting(request, 'phoenix.supervisor')
 
 def wps_url(request):
-    return get_setting(request, 'phoenix.wps')
+    return request.session.get('phoenix.wps', 
+                               get_setting(request, 'phoenix.wps'))
 
 def update_wps_url(request, wps_url):
-    set_setting(request, 'phoenix.wps', wps_url)
+    request.session['phoenix.wps'] = wps_url
+    request.session.changed()
+    #set_setting(request, 'phoenix.wps', wps_url)
    
 def csw_url(request):
     return get_setting(request, 'phoenix.csw')

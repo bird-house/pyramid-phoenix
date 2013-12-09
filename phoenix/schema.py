@@ -26,6 +26,7 @@ from pyramid.security import has_permission
 @colander.deferred
 def deferred_select_process_widget(node, kw):
     request = kw.get('request')
+    log.debug('current wps for proccess: %s' % (wps_url(request)))
     wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
     wps.getcapabilities()
 
@@ -104,7 +105,7 @@ class CatalogAddWPSSchema(colander.MappingSchema):
         missing = '',
         widget=deferred_wps_list_widget)
 
-    wps_url = colander.SchemaNode(
+    new_wps = colander.SchemaNode(
         colander.String(),
         title = 'WPS URL',
         description = 'Add new WPS URL',
