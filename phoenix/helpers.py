@@ -42,10 +42,25 @@ def supervisor_url(request):
     return get_setting(request, 'phoenix.supervisor')
 
 def wps_url(request):
-    return get_setting(request, 'phoenix.wps')
+    url = None
+    if (request.session.has_key('phoenix.wps')):
+        url = request.session.get('phoenix.wps')
+    else: 
+        from owslib.csw import CatalogueServiceWeb
+        url = get_setting(request, 'phoenix.wps')
+        csw = CatalogueServiceWeb(csw_url(request))
+        try:
+            csw.harvest(url, 'http://www.opengis.net/wps/1.0.0')
+            update_wps_url(request, url)
+        except:
+            log.error("Could not add wps service to catalog: %s" % (url))
+            #raise
+    return url
 
 def update_wps_url(request, wps_url):
-    set_setting(request, 'phoenix.wps', wps_url)
+    request.session['phoenix.wps'] = wps_url
+    request.session.changed()
+    #set_setting(request, 'phoenix.wps', wps_url)
    
 def csw_url(request):
     return get_setting(request, 'phoenix.csw')

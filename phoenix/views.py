@@ -25,7 +25,7 @@ import config_public as config
 from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
 
-from .models import add_job, get_job, drop_jobs, update_job, num_jobs, jobs_by_userid, drop_jobs_by_uuid
+from .models import add_job, get_job, drop_jobs, update_job, num_jobs, jobs_by_userid, drop_jobs_by_uuid, drop_user_jobs
 
 from .wps import WPSSchema  
 
@@ -224,10 +224,7 @@ def jobs(request):
     jobs = jobs_information(request)
 
     if "remove_all" in request.POST:
-        uuids = []
-        for job in jobs:
-            uuids.append(job["uuid"])
-        drop_jobs_by_uuid(request,uuids)
+        drop_user_jobs(request)
         
         return HTTPFound(location=request.route_url('jobs'))
 
@@ -370,7 +367,7 @@ class CatalogAddWPSView(FormView):
                 wps_list.append((rec.references[0]['url'], rec.title))
 
         from .schema import CatalogAddWPSSchema
-        # build the schema if it not exist
+        # build the schema if it does not exist
         if self.schema is None:
             if self.schema_factory is None:
                 self.schema_factory = CatalogAddWPSSchema
@@ -385,10 +382,14 @@ class CatalogAddWPSView(FormView):
 
     def add_success(self, appstruct):
         serialized = self.schema.serialize(appstruct)
-        url = serialized['wps_url']
+        url = serialized['new_wps']
 
         csw = CatalogueServiceWeb(csw_url(self.request))
-        csw.harvest(url, 'http://www.opengis.net/wps/1.0.0')
+        try:
+            csw.harvest(url, 'http://www.opengis.net/wps/1.0.0')
+        except:
+            log.error("Could not add wps service to catalog: %s" % (url))
+            #raise
 
         return HTTPFound(location=self.request.route_url('catalog_wps_add'))
 
@@ -433,7 +434,7 @@ class CatalogSelectWPSView(FormView):
         log.debug('wps_id = %s', wps_id)
         update_wps_url(self.request, wps_id)        
 
-        return HTTPFound(location=self.request.route_url('catalog_wps_select'))
+        return HTTPFound(location=self.request.route_url('processes'))
 
 @view_config(
     route_name='admin',

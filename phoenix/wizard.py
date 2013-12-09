@@ -45,7 +45,6 @@ log = logging.getLogger(__name__)
 
 
 from owslib.wps import WebProcessingService
-from .helpers import wps_url
 from .widget import EsgSearchWidget, EsgFilesWidget, FileSearchWidget, WizardStatesWidget
 
 from pyesgf.search import SearchConnection
