@@ -39,7 +39,7 @@
                             if(selected[i].value==selectedValues[j]){
                                 selected[i].checked = true;
                                 break;}}}
-                    setTimeout("reload()",2000);}
+                    setTimeout("reload()",20000);}
                 break;
             default:
                 break;}};
