@@ -96,6 +96,28 @@ def forbidden(request):
     request.response.status = 403
     return dict(message=None)
 
+# local login for admin and demo user
+# -----------------------------------
+@view_config(
+    route_name='login_local',
+    #check_csrf=True, 
+    permission='view')
+def login_local(request):
+    password = request.params.get('password')
+    if (password == 'Hamburg'):
+        email = "demo@climdaps.org"
+        request.response.text = render('phoenix:templates/openid_success.pt',
+                                       {'result': email},
+                                       request=request)
+        # Add the headers required to remember the user to the response
+        request.response.headers.extend(remember(request, email))
+    else:
+        request.response.text = render('phoenix:templates/forbidden.pt',
+                                       {'message': 'Wrong Password'},
+                                       request=request)
+
+    return request.response
+
 # persona login
 # -------------
 

@@ -4,17 +4,30 @@
     <div>
       <h3>OpenID</h3>
       <form action="/login/openid">
-	<input type="text" name="id" placeholder="Your claimed OpenID"/>
-	<button type="submit" class="btn btn-primary">Sign in</button>
-	<span class="help-block">
-	  Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname
-	</span>
+        <input type="text" name="id" placeholder="Your claimed OpenID"/>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+        <span class="help-block">
+          Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname
+        </span>
       </form>
     </div>
     
     <div>
       <h3>Mozilla Persona</h3>
       ${request.persona_button}
+    </div>
+
+    <p/>
+
+    <div>
+      <h3>Demo Login</h3>
+      <form action="/login/local">
+        <input type="password" name="password"/>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+        <span class="help-block">
+          Enter Password of Demo Account
+        </span>
+      </form>
     </div>
 
   </div>
