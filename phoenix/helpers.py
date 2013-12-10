@@ -42,10 +42,8 @@ def supervisor_url(request):
     return get_setting(request, 'phoenix.supervisor')
 
 def wps_url(request):
-    url = None
-    if (request.session.has_key('phoenix.wps')):
-        url = request.session.get('phoenix.wps')
-    else: 
+    url = request.session.get('phoenix.wps')
+    if (url == None):
         from owslib.csw import CatalogueServiceWeb
         url = get_setting(request, 'phoenix.wps')
         csw = CatalogueServiceWeb(csw_url(request))
