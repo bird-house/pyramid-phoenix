@@ -21,16 +21,14 @@ Refresh period:
   var orderType = "inverted";
   var request = new XMLHttpRequest();
   var timer = null;
-  var toggleCounter = 0
   function sort(value){
       if(orderBy==value){
-          toggleCounter=(toggleCounter+1)%2;}
-      if(toggleCounter==1){
-          orderType="inverted";}
-      else{
-          orderType="normal";}
+          if(orderType=="normal"){
+              orderType="inverted";}
+          else{
+              orderType="normal";}}
       orderBy = value;
-      //to update all data
+      //reuse the code to clear timer and reload
       showValue()};
 
   function reload(){
