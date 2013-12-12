@@ -60,7 +60,7 @@ Refresh period:
       reload();}
   function pageLoaded(){    
       var hiddendiv = document.getElementById('scriptOnly')
-      hiddendiv.style="display:block;";
+      hiddendiv.style.display="";
       reload();}
   document.addEventListener("DOMContentLoaded", pageLoaded, false);
 </script>
