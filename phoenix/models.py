@@ -128,9 +128,9 @@ def jobs_information(request,sortkey="starttime",inverted=True):
         jobs.append(job)
     #sort the jobs by starttime
     if (sortkey == "starttime"):
-        jobs = sorted(jobs, key=lambda k: datetime.datetime.strptime(k['starttime'], dateformat))
+        jobs = sorted(jobs, key=lambda job: datetime.datetime.strptime(job['starttime'], dateformat))
     else:
-        jobs = sorted(jobs, key=lambda k: k[sortkey])
+        jobs = sorted(jobs, key=lambda job: job[sortkey])
     #reverse the sorting
     if(inverted):
         jobs = jobs[::-1]
