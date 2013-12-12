@@ -243,7 +243,7 @@ def jobs(request):
     )
 def jobsupdate(request):
     from .models import jobs_information
-    jobs = jobs_information(request)
+    jobs = jobs_information(request,"starttime",True)#sort by Start Time in inverse order
     return {"jobs":jobs}
 
 # output_details

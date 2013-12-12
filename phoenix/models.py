@@ -87,7 +87,7 @@ def drop_jobs_by_uuid(request, uuids=[]):
         db.jobs.remove({"uuid": uuid})
 
 
-def jobs_information(request):
+def jobs_information(request,sortkey="starttime",inverted=True):
     from owslib.wps import WebProcessingService, WPSExecution
 
     jobs = []
@@ -125,6 +125,11 @@ def jobs_information(request):
             job['duration'] = str(job['end_time'] - job['start_time'])
             update_job(request, job)
         jobs.append(job)
+    #sort the jobs by starttime
+    jobs = sorted(jobs, key=lambda k: k[sortkey])
+    #reverse the sorting
+    if(inverted):
+        jobs = jobs[::-1]
         
     return jobs
 
