@@ -3,7 +3,7 @@
         <thead>
           <tr>
             <th>Select</th>
-            <th>Identifier</th>
+            <th onclick="alert('HELLO WORLD')">Identifier</th>
             <th>Start Time</th>
             <th>Duration</th>
             <th>Notes</th>
@@ -39,3 +39,4 @@
       <input id="clear_all" class="btn btn-danger" type="submit" name="remove_all" value="remove all" />
       <input id="clear_sel" class="btn" type="submit" name="remove_selected" value="remove selected" />
     </form>
+    

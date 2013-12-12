@@ -17,10 +17,12 @@ Refresh period:
     $('body').tooltip({
       selector: 'a[rel="tooltip"], [data-toggle="tooltip"]'});
   }); 
+  var orderBy = "starttime";
+  var orderType = "inverted";
   var request = new XMLHttpRequest();
   var timer = null;
   function reload(){
-     request.open('post','jobsupdate',true);
+     request.open('post','jobsupdate/'+orderBy+'/'+orderType,true);
      request.send(null);
      request.onreadystatechange = update};
 

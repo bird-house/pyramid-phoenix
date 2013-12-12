@@ -243,7 +243,12 @@ def jobs(request):
     )
 def jobsupdate(request):
     from .models import jobs_information
-    jobs = jobs_information(request,"starttime",True)#sort by Start Time in inverse order
+    data = request.matchdict
+    #Sort the table with the given key, matching to the template name
+    key = data["sortkey"]
+    #If inverted is found as type then the ordering is inverted.
+    inverted = (data["type"]=="inverted")
+    jobs = jobs_information(request,key,inverted)
     return {"jobs":jobs}
 
 # output_details
