@@ -6,7 +6,7 @@
 </noscript>
 <div id="scriptOnly" style="display: none;">
 Refresh period:
-<input id="reloadTime" type="range" min="1" max="50" value="5" step="1" onchange="showValue(this.value)"/>
+<input id="reloadTime" type="range" min="1" max="50" value="5" step="1" onchange="showValue()"/>
 <span id="range">5</span>
 </div>
 
@@ -21,6 +21,18 @@ Refresh period:
   var orderType = "inverted";
   var request = new XMLHttpRequest();
   var timer = null;
+  var toggleCounter = 0
+  function sort(value){
+      if(orderBy==value){
+          toggleCounter=(toggleCounter+1)%2;}
+      if(toggleCounter==1){
+          orderType="inverted";}
+      else{
+          orderType="normal";}
+      orderBy = value;
+      //to update all data
+      showValue()};
+
   function reload(){
      request.open('post','jobsupdate/'+orderBy+'/'+orderType,true);
      request.send(null);
@@ -54,8 +66,8 @@ Refresh period:
             default:
                 break;}};
   
-  function showValue(newValue){
-      document.getElementById("range").innerHTML=newValue;
+  function showValue(){
+      document.getElementById("range").innerHTML=document.getElementById("reloadTime").value;
       clearTimeout(timer);
       reload();}
   function pageLoaded(){    
