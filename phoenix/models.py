@@ -87,13 +87,14 @@ def drop_jobs_by_uuid(request, uuids=[]):
         db.jobs.remove({"uuid": uuid})
 
 
-def jobs_information(request):
+def jobs_information(request,sortkey="starttime",inverted=True):
     from owslib.wps import WebProcessingService, WPSExecution
 
+    dateformat = '%a, %d %b %Y %I:%M:%S %p'
     jobs = []
     for job in jobs_by_userid(request, user_id=authenticated_userid(request)):
 
-        job['starttime'] = job['start_time'].strftime('%a, %d %h %Y %I:%M:%S %p')
+        job['starttime'] = job['start_time'].strftime(dateformat)
 
         # TODO: handle different process status
         if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
@@ -125,6 +126,14 @@ def jobs_information(request):
             job['duration'] = str(job['end_time'] - job['start_time'])
             update_job(request, job)
         jobs.append(job)
+    #sort the jobs by starttime
+    if (sortkey == "starttime"):
+        jobs = sorted(jobs, key=lambda job: datetime.datetime.strptime(job['starttime'], dateformat))
+    else:
+        jobs = sorted(jobs, key=lambda job: job[sortkey])
+    #reverse the sorting
+    if(inverted):
+        jobs = jobs[::-1]
         
     return jobs
 

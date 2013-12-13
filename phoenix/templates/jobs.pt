@@ -1,79 +1,88 @@
 <metal:block use-macro="main_template">
+  <span  metal:fill-slot="content">
+  <div id="content"></div>
+<noscript>
+<metal:block use-macro="load: jobsupdate.pt">
+</noscript>
+<div id="scriptOnly" style="display: none;">
+Refresh period:
+<input id="reloadTime" type="range" min="1" max="50" value="5" step="1" onchange="showValue()"/>
+<span id="range">5</span>
+</div>
 
-    <div metal:fill-slot="content">
-        <form action="jobs" method=post>
-            <table id="process_table" class="table table-condensed accordion-group" style="table-layout: fixed; word-wrap: break-word;">
-                <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>Identifier</th>
-                        <th>Start Time</th>
-                        <th>Duration</th>
-                        <th>Notes</th>
-                        <th>Tags</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <div tal:repeat="job jobs">
-                        <tr>
-                            <td><input type="checkbox" name="selected" value="${job.uuid}"></td>
-                            <td><a rel="tooltip" data-placement="right" title="ID: ${job.uuid}">${job.identifier}</a></td>
-                            <td>${job.starttime}</td>
-                            <td>${job.duration}</td>
-                            <td><tal:form replace="structure job.notes">${job.notes}</tal:form></td>
-                            <td>${job.tags}</td>
-                            <td tal:condition="job.status in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']">
-                                <a href="#" class="label label-info" data-toggle="popover" data-placement="left" data-content="${job.status_message}" data-original-title="Status Message">${job.status}</a>
-                                <div class="progress progress-info">
-                                    <div class="bar" style="width: ${job.percent_completed}%;">${job.percent_completed}%</div>
-                                </div>
-                            </td>
-                            <td tal:condition="job.status == 'ProcessSucceeded'">
-                                <a href="/output_details?uuid=${job.uuid}" class="label label-success">${job.status}</a>
-                            </td>
-                            <td tal:condition="job.status == 'ProcessFailed'">
-                                <a href="#" class="label label-warning" data-toggle="popover" data-placement="left" data-content="${job.error_message}" data-original-title="Error Message">${job.status}</a>
-                            </td>
-                            <td tal:condition="job.status == 'Exception'">
-                                <a href="#" class="label label-important" data-toggle="popover" data-placement="left" data-content="${job.error_message}" data-original-title="Error Message">${job.status}</a>
-                            </td>
-                        </tr>
-                        <tr>                    
-                    </div>
-                </tbody>
-            </table>
-            <p/>
-            <input id="clear_all" class="btn btn-danger" type="submit" name="clear_all" value="remove all" />
-            <input id="clear_sel" class="btn" type="submit" name="clear_selected" value="remove selected" />
-        </form>
-        <script type="text/javascript">
-            $(function(){
-                $('body').popover({
-                    selector: '[data-toggle="popover"]'
-                });
-                
-                $('body').tooltip({
-                    selector: 'a[rel="tooltip"], [data-toggle="tooltip"]'
-                });
-            });
+<script type="text/javascript">
+  $(function(){
+    $('body').popover({
+      selector: '[data-toggle="popover"]'});
+    $('body').tooltip({
+      selector: 'a[rel="tooltip"], [data-toggle="tooltip"]'});
+  }); 
+  var orderBy = "starttime";
+  var orderType = "inverted";
+  var request = new XMLHttpRequest();
+  var timer = null;
+  function sort(value){
+      if(orderBy==value){
+          if(orderType=="normal"){
+              orderType="inverted";}
+          else{
+              orderType="normal";}}
+      orderBy = value;
 
-            reloadOk = function(){
-                allClear = true;
-                selected = document.getElementsByName("selected");
-                for(i=0;i < selected.length;i++){
-                    if(selected[i].checked){
-                        allClear=false;}}
-                if(allClear){
-                   location.reload(true);}
-                else{
-                    setTimeout("reloadOk();",20000);}
-            };
+      //reuse the code to clear timer and reload
+      showValue()
+      };
 
-            $(function() {
-                setTimeout("reloadOk();",20000);
-            });
-        </script>
-    </div>
+  function reload(){
+     request.open('post','jobsupdate/'+orderBy+'/'+orderType,true);
+     request.send(null);
+     request.onreadystatechange = update};
 
+    function update(){
+        switch (request.readyState){
+            case 4:
+                if (request.status == 200) {
+                    var content = request.responseText;
+                    // den Inhalt des Requests in das <div> schreiben
+                    var selected = document.getElementsByName("selected");
+                    var selectedValues = new Array();
+                    j=0;
+                    for(i=0; i < selected.length;i++){
+                        if(selected[i].checked){
+                        selectedValues[j] = selected[i].value;
+                        j++;}}
+                    $("*").tooltip('hide')
+                    $("*").popover('hide')
+                    document.getElementById('content').innerHTML = content;
+                    selected = document.getElementsByName("selected");
+                    for(j=0; j < selectedValues.length;j++){
+                        for(i=0; i < selected.length;i++){
+                            if(selected[i].value==selectedValues[j]){
+                                selected[i].checked = true;
+                                break;}}}
+                    var reloadTime =  document.getElementById("reloadTime").value;
+                    timer = setTimeout("reload()",reloadTime*1000);
+                    //Add an arrow for the sort direction
+                    text = document.getElementById(orderBy);
+                    if(orderType=="normal"){
+                        text.innerHTML+="&#x25B2;";}
+                    else{
+                        text.innerHTML+="&#x25BC;";}
+                    }
+                break;
+            default:
+                break;}};
+  
+  function showValue(){
+      document.getElementById("range").innerHTML=document.getElementById("reloadTime").value;
+      clearTimeout(timer);
+      reload();}
+  function pageLoaded(){    
+      var hiddendiv = document.getElementById('scriptOnly')
+      hiddendiv.style.display="";
+      reload();}
+  document.addEventListener("DOMContentLoaded", pageLoaded, false);
+</script>
+
+</span>
 </metal:block>

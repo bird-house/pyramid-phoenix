@@ -236,35 +236,42 @@ class ProcessView(FormView):
 
 @view_config(
     route_name='jobs',
-    renderer='templates/form.pt',
+    renderer='templates/jobs.pt',
     layout='default',
     permission='edit'
     )
-class JobsView(FormView):
-    from .schema import JobsSchema
-    #form_options = ('bootstrap_form_style','form-vertical')
-    schema = JobsSchema()
-    buttons = ('remove all', 'remove selected')
+def jobs(request):
+    from .models import jobs_information
 
-    def __call__(self):
-        call = super(JobsView,self).__call__()
-        try:
-            call["form"]=call["form"].replace('form-horizontal','form-vertical')
-        except:
-            pass
-        return call
+    jobs = jobs_information(request)
 
-    def remove_all_success(self,appstruct):
-        drop_user_jobs(self.request)
+    if "remove_all" in request.POST:
+        drop_user_jobs(request)
         
-        return HTTPFound(location=self.request.route_url('jobs'))
+        return HTTPFound(location=request.route_url('jobs'))
 
-    def remove_selected_success(self,appstruct): 
-        if("selected" in self.request.POST):
-            drop_jobs_by_uuid(self.request,self.request.POST.getall("selected"))
-        return HTTPFound(location=self.request.route_url('jobs'))
+    elif "remove_selected" in request.POST:
+        if("selected" in request.POST):
+            drop_jobs_by_uuid(request,request.POST.getall("selected"))
+        return HTTPFound(location=request.route_url('jobs'))
 
+    return {"jobs":jobs}
 
+@view_config(
+    route_name="jobsupdate",
+    renderer ="templates/jobsupdate.pt",
+    layout='default',
+    permission='edit'
+    )
+def jobsupdate(request):
+    from .models import jobs_information
+    data = request.matchdict
+    #Sort the table with the given key, matching to the template name
+    key = data["sortkey"]
+    #If inverted is found as type then the ordering is inverted.
+    inverted = (data["type"]=="inverted")
+    jobs = jobs_information(request,key,inverted)
+    return {"jobs":jobs}
 
 # output_details
 # --------------
