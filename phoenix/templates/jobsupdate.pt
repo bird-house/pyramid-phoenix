@@ -3,12 +3,12 @@
         <thead>
           <tr>
             <th>Select</th>
-            <th onclick="sort('identifier')">Identifier</th>
-            <th onclick="sort('starttime')">Start Time</th>
-            <th onclick="sort('duration')">Duration</th>
-            <th onclick="sort('notes')">Notes</th>
-            <th onclick="sort('tags')">Tags</th>
-            <th onclick="sort('status')">Status</th>
+            <th id='identifier' onclick="sort('identifier')">Identifier</th>
+            <th id='starttime' onclick="sort('starttime')">Start Time</th>
+            <th id='duration' onclick="sort('duration')">Duration</th>
+            <th id='notes' onclick="sort('notes')">Notes</th>
+            <th id='tags' onclick="sort('tags')">Tags</th>
+            <th id='status' onclick="sort('status')">Status</th>
           </tr>
         </thead>
         <tbody>

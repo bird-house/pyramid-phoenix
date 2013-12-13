@@ -28,8 +28,10 @@ Refresh period:
           else{
               orderType="normal";}}
       orderBy = value;
+
       //reuse the code to clear timer and reload
-      showValue()};
+      showValue()
+      };
 
   function reload(){
      request.open('post','jobsupdate/'+orderBy+'/'+orderType,true);
@@ -59,7 +61,14 @@ Refresh period:
                                 selected[i].checked = true;
                                 break;}}}
                     var reloadTime =  document.getElementById("reloadTime").value;
-                    timer = setTimeout("reload()",reloadTime*1000);}
+                    timer = setTimeout("reload()",reloadTime*1000);
+                    //Add an arrow for the sort direction
+                    text = document.getElementById(orderBy);
+                    if(orderType=="normal"){
+                        text.innerHTML+="&#x25B2;";}
+                    else{
+                        text.innerHTML+="&#x25BC;";}
+                    }
                 break;
             default:
                 break;}};
