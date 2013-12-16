@@ -33,6 +33,33 @@ def database(request):
     conn = mongodb_conn(request)
     return conn.phoenix_db
 
+# registered users (whitelist)
+
+def register_user(request, user_id, name, notes, activated=False):
+    db = database(request)
+    db.users.save(dict(
+        user_id = user_id,
+        name = name,
+        notes = notes,
+        activated = activated,
+        ))
+
+def update_user(request, user_id, activated=False):
+    db = database(request)
+    user = db.users.find(dict(user_id = user_id))
+    user.activated = activated
+    db.users.update(dict(user_id = user_id), user)
+
+def activated_users(request):
+    db = database(request)
+    return db.users.find(dict(activated = True))
+
+def deactivated_users(request):
+    db = database(request)
+    return db.users.find(dict(activated = False))
+
+# jobs ...
+
 def add_job(request,
             identifier,
             wps_url,
@@ -52,8 +79,8 @@ def add_job(request,
         end_time = datetime.datetime.now(),
         notes = notes,
         tags = tags,
-    ))
-    log.debug('count jobs = %s', db.jobs.count())
+        ))
+    #log.debug('count jobs = %s', db.jobs.count())
 
 def get_job(request, uuid):
     db = database(request)

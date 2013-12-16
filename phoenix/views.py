@@ -479,7 +479,12 @@ class AdminUserRegisterView(FormView):
         return {}
 
     def register_success(self, appstruct):
-        serialized = self.schema.serialize(appstruct)
+        from .models import register_user
+        user = self.schema.serialize(appstruct)
+        register_user(self.request,
+                      user_id=user.get('email'),
+                      name=user.get('name'),
+                      notes= user.get('notes'))
 
         return HTTPFound(location=self.request.route_url('admin_users_activate'))
 
