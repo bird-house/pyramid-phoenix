@@ -191,7 +191,7 @@ def login_openid(request):
             log.debug("user=%s, id=%s, email=%s",
                       result.user.name, result.user.id, result.user.email)
 
-            if is_valid_user(request, result.user.id):
+            if is_valid_user(request, result.user.email):
                 response.text = render('phoenix:templates/openid_success.pt',
                                        {'result': result},
                                        request=request)
