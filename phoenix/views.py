@@ -99,9 +99,10 @@ def forbidden(request):
 # -------------
 @view_config(
     route_name='register',
+    renderer='templates/register.pt',
     permission='view')
 def register(request):
-    return dict()
+    return dict(email=None)
 
 
 # local login for admin and demo user
