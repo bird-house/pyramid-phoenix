@@ -95,6 +95,15 @@ def forbidden(request):
     request.response.status = 403
     return dict(message=None)
 
+# register view
+# -------------
+@view_config(
+    route_name='register',
+    permission='view')
+def register(request):
+    return dict()
+
+
 # local login for admin and demo user
 # -----------------------------------
 @view_config(

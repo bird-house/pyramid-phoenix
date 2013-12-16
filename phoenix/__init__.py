@@ -93,6 +93,7 @@ def main(global_config, **settings):
     config.add_route('login_persona', '/login/persona')
     config.add_route('login_openid', '/login/openid')
     config.add_route('login_local', '/login/local')
+    config.add_route('register', '/register')
 
     # A quick access to the login button
     config.add_request_method(button, 'login_button', reify=True)
