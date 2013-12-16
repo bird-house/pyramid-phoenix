@@ -217,8 +217,9 @@ def home(request):
     log.debug('rendering home view')
 
     lm = request.layout_manager
-    lm.layout.add_heading('heading_processes')
-    lm.layout.add_heading('heading_jobs')
+    #lm.layout.add_heading('heading_processes')
+    #lm.layout.add_heading('heading_jobs')
+    lm.layout.add_heading('heading_info')
     lm.layout.add_heading('heading_stats')
     return dict()
 

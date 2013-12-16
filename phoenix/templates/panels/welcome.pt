@@ -8,7 +8,7 @@
         ${title} allows you to run and to monitor your WPS processes and to manage the process outputs.
     </p>
     <p>
-        ${title} is part of the <a href="/docs">ClimDaPs</a> Project for Climate Data Processing.
+        ${title} is part of the <a href="/help">ClimDaPs</a> Project for Climate Data Processing.
     </p>
     <p>
         <a class="btn btn-success btn-large" href="/register">Register</a>

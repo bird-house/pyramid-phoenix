@@ -122,6 +122,15 @@ def heading_history(context, request):
     return dict(title='Monitor processes')
 
 #==============================================================================
+# heading_demo
+#==============================================================================
+
+@panel_config(name='heading_info',
+              renderer='templates/panels/heading_info.pt')
+def heading_info(context, request):
+    return dict(title='Info')
+
+#==============================================================================
 # heading_users
 #==============================================================================
 
