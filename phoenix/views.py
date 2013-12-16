@@ -24,6 +24,8 @@ import config_public as config
 from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
 
+from .security import is_valid_user
+
 from .wps import WPSSchema  
 
 from .helpers import wps_url
@@ -103,11 +105,16 @@ def login_local(request):
     password = request.params.get('password')
     if (password == 'Hamburg'):
         email = "demo@climdaps.org"
-        request.response.text = render('phoenix:templates/openid_success.pt',
-                                       {'result': email},
-                                       request=request)
-        # Add the headers required to remember the user to the response
-        request.response.headers.extend(remember(request, email))
+
+        if is_valid_user(request, email):
+            request.response.text = render('phoenix:templates/openid_success.pt',
+                                           {'result': email},
+                                           request=request)
+            # Add the headers required to remember the user to the response
+            request.response.headers.extend(remember(request, email))
+        else:
+            request.response.text = render('phoenix:templates/register.pt',
+                                           {'email': email}, request=request)
     else:
         request.response.text = render('phoenix:templates/forbidden.pt',
                                        {'message': 'Wrong Password'},
@@ -133,9 +140,9 @@ def login_persona(request):
     from pyramid_persona.views import verify_login 
     email = verify_login(request)
     # check whitelist
-    #if email not in whitelist(request):
-    #    request.session.flash('Sorry, you are not on the list')
-    #    return {'redirect': '/', 'success': False}
+    if not is_valid_user(request, email):
+        #    request.session.flash('Sorry, you are not on the list')
+        return {'redirect': '/', 'success': False}
     # Add the headers required to remember the user to the response
     request.response.headers.extend(remember(request, email))
     # Return a json message containing the address or path to redirect to.
@@ -174,14 +181,15 @@ def login_openid(request):
             log.debug("user=%s, id=%s, email=%s",
                       result.user.name, result.user.id, result.user.email)
 
-            response.text = render('phoenix:templates/openid_success.pt',
-                                   {'result': result},
-                                   request=request)
-            #response.write(u'<h1>Success<h1>')
-            #response.write(u'<h2>Your email is: {}</h2>'.format(result.user.email))
-
-            # Add the headers required to remember the user to the response
-            response.headers.extend(remember(request, result.user.email))
+            if is_valid_user(request, result.user.id):
+                response.text = render('phoenix:templates/openid_success.pt',
+                                       {'result': result},
+                                       request=request)
+                # Add the headers required to remember the user to the response
+                response.headers.extend(remember(request, result.user.email))
+            else:
+                response.text = render('phoenix:templates/register.pt',
+                                       {'email': result.user.email}, request=request)
     log.debug('response: %s', response)
         
     return response

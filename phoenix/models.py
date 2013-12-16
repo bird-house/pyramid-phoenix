@@ -78,6 +78,10 @@ def deactivated_users(request):
     db = database(request)
     return db.users.find(dict(activated = False))
 
+def is_user_activated(request, user_id):
+    db = database(request)
+    return None != db.users.find_one(dict(user_id = user_id, activated = True))
+
 # jobs ...
 
 def add_job(request,

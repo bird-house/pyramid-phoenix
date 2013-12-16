@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <title>Register</title>
+  </head>
+  <body>
+    <a href="/login">Login</a>
+
+    <h1>Please ask for registration</h1>
+    Access was denied to this resource.<br/>
+
+    <div tal:condition="email">
+      <h2>Your email Address</h2>
+      ${email}.<br/>
+    </div>
+  </body>
+</html>

@@ -1,18 +1,25 @@
 from .helpers import admin_users
+from .models import is_user_activated
 
 import logging
 
 log = logging.getLogger(__name__)
 
-def groupfinder(userid, request):
-    #log.debug('groupfinder: userid=%s', userid)
+def is_valid_user(request, user_id):
+    if user_id in admin_users(request):
+        return True
+    return is_user_activated(request, user_id)
+
+def groupfinder(user_id, request):
+    #log.debug('groupfinder: user_id=%s', user_id)
     admins = admin_users(request)
     
-    if userid in admins:
-        #log.debug('admin permission')
+    if user_id in admins:
         return ['group:admins']
-    else:
+    elif is_user_activated(request, user_id):
         return ['group:editors']
+    else:
+        return ['group:views']
 
 
 from pyramid.security import (
@@ -26,7 +33,8 @@ from pyramid.security import (
 class Root():
     __acl__ = [
                 (Allow, Everyone, 'view'),
-                (Allow, Authenticated, 'edit'),
+                #(Allow, Authenticated, 'edit'),
+                (Allow, 'group:editors', 'edit'),
                 (Allow, 'group:admins', ALL_PERMISSIONS)
                ]
 
