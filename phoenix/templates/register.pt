@@ -21,14 +21,19 @@
         group registration once.
       </li>
       <li>
-        Finally to get registered for this demo application, 
-        please send <a href="mailto:nils.hempelmann@hzg.de">Nils Hempelmann</a> 
-        from Climate Service Center (CSC) a short eMail with the following information:
+        Please send an eMail to Nils Hempelmann (<em>nils.hempelmann at hzg.de</em>)
+        from Climate Service Center (CSC) with the following information:
         <ul>
           <li>The eMail address of your ESGF OpenID Account</li>
           <li>Some words why you would like to use this ClimDaPs Demo</li>
           <li>Where did you hear from this ClimDaPs Demo?</li>
         </ul>
+      </li>
+      <li>
+        We will inform you when you are added to the allowed users of this Demo.
+      </li>
+      <li>
+        Finally login with your OpenID Account on the <a href="/login">login</a> page.
       </li>
     </ol>
 
