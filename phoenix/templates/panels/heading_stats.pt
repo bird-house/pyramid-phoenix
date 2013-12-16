@@ -1,0 +1,6 @@
+<div class="span4">
+    <h3>${title}</h3>
+    <p>
+      Number of Users: ${num_users}
+    </p>
+</div>

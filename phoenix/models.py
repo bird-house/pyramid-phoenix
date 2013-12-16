@@ -82,6 +82,10 @@ def is_user_activated(request, user_id):
     db = database(request)
     return None != db.users.find_one(dict(user_id = user_id, activated = True))
 
+def count_users(request):
+    db = database(request)
+    return db.users.count()
+
 # jobs ...
 
 def add_job(request,

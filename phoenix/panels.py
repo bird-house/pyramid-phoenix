@@ -121,6 +121,16 @@ def heading_processes(context, request):
 def heading_history(context, request):
     return dict(title='Monitor processes')
 
+#==============================================================================
+# heading_users
+#==============================================================================
+
+@panel_config(name='heading_stats',
+              renderer='templates/panels/heading_stats.pt')
+def heading_statistics(context, request):
+    from .models import count_users
+    return dict(title='Statistics', num_users=count_users(request))
+
 
 #==============================================================================
 # headings
