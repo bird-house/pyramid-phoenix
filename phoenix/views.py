@@ -427,7 +427,6 @@ class CatalogAddWPSView(FormView):
     permission='edit',
     )
 class CatalogSelectWPSView(FormView):
-    log.debug('rendering catalog select wps')
     #form_info = "Hover your mouse over the widgets for description."
     schema = None
     schema_factory = None
@@ -469,17 +468,20 @@ class CatalogSelectWPSView(FormView):
     layout='default',
     permission='edit',
     )
-def admin_user_register(request):
-    return dict()
+class AdminUserRegisterView(FormView):
+    from .schema import AdminUserRegisterSchema
+    
+    schema = AdminUserRegisterSchema()
+    buttons = ('register',)
+    title = u"Register User"
 
-@view_config(
-    route_name='admin_user_unregister',
-    renderer='templates/admin.pt',
-    layout='default',
-    permission='edit',
-    )
-def admin_user_unregister(request):
-    return dict()
+    def appstruct(self):
+        return {}
+
+    def register_success(self, appstruct):
+        serialized = self.schema.serialize(appstruct)
+
+        return HTTPFound(location=self.request.route_url('admin_users_activate'))
 
 @view_config(
     route_name='admin_users_activate',
@@ -487,8 +489,20 @@ def admin_user_unregister(request):
     layout='default',
     permission='edit',
     )
-def admin_users_activate(request):
-    return dict()
+class AdminUsersActivateView(FormView):
+    from .schema import AdminUsersActivateSchema
+    
+    schema = AdminUsersActivateSchema()
+    buttons = ('activate',)
+    title = u"Activate Users"
+
+    def appstruct(self):
+        return {}
+
+    def activate_success(self, appstruct):
+        serialized = self.schema.serialize(appstruct)
+
+        return HTTPFound(location=self.request.route_url('admin_users_activate'))
 
 @view_config(
     route_name='admin_users_deactivate',
@@ -496,8 +510,20 @@ def admin_users_activate(request):
     layout='default',
     permission='edit',
     )
-def admin_users_deactivate(request):
-    return dict()
+class AdminUsersDeactivateView(FormView):
+    from .schema import AdminUsersDeactivateSchema
+    
+    schema = AdminUsersDeactivateSchema()
+    buttons = ('deactivate',)
+    title = u"Deactivate Users"
+
+    def appstruct(self):
+        return {}
+
+    def activate_success(self, appstruct):
+        serialized = self.schema.serialize(appstruct)
+
+        return HTTPFound(location=self.request.route_url('admin_users_deactivate'))
 
 @view_config(
     route_name='map',

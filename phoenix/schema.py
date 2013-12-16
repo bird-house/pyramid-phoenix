@@ -74,18 +74,6 @@ class ProcessSchema(colander.MappingSchema):
         title = "WPS Process",
         widget = deferred_select_process_widget)
 
-# admin
-# -----
-
-class AdminSchema(colander.MappingSchema):
-    jobs_count = colander.SchemaNode(
-        colander.Int(),
-        name = 'jobs_count',
-        title = "Number of Jobs",
-        missing = 0,
-        widget = deform.widget.TextInputWidget(readonly=True)
-        )
-
 # catalog
 # -------
 
@@ -122,6 +110,44 @@ class CatalogSelectWPSSchema(colander.MappingSchema):
         description = "Select active WPS",
         widget = deferred_wps_list_widget
         )
+
+# Admin
+# -----
+
+class AdminUserRegisterSchema(colander.MappingSchema):
+    name = colander.SchemaNode(
+        colander.String(),
+        title = "User Name",
+        description = "Enter User Name",
+        missing = '',
+        default = '',
+        )
+    email = colander.SchemaNode(
+        colander.String(),
+        title = "EMail",
+        description = "Enter eMail used for login",
+        validator = colander.Email(),
+        )
+    notes = colander.SchemaNode(
+        colander.String(),
+        title = "Notes",
+        description = "Some Notes about this User",
+        missing = '',
+        default = '',
+        widget = deform.widget.TextAreaWidget(rows=2, cols=80)
+        )
+
+class AdminUsersActivateSchema(colander.MappingSchema):
+    users = colander.SchemaNode(
+        colander.String(),
+        title = "User eMails",
+        widget = deform.widget.CheckboxWidget())
+
+class AdminUsersDeactivateSchema(colander.MappingSchema):
+    users = colander.SchemaNode(
+        colander.String(),
+        title = "User eMails",
+        widget = deform.widget.CheckboxWidget())
 
 @colander.deferred
 def deferred_job_widget(node, kw):

@@ -61,7 +61,6 @@ def admin_navbar(context, request):
 
     nav = [
         nav_item('Register User', request.route_url('admin_user_register'), 'icon-edit'),
-        nav_item('Unregister User', request.route_url('admin_user_unregister'), 'icon-edit'),
         nav_item('Activate Users', request.route_url('admin_users_activate'), 'icon-edit'),
         nav_item('Deactive Users', request.route_url('admin_users_deactivate'), 'icon-edit'),
         ]
