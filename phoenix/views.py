@@ -481,22 +481,23 @@ class AdminUserRegisterView(FormView):
         from .models import register_user
         user = self.schema.serialize(appstruct)
         register_user(self.request,
-                      user_id=user.get('email'),
-                      name=user.get('name'),
-                      notes= user.get('notes'))
+                      user_id = user.get('email'),
+                      name = user.get('name'),
+                      organisation = user.get('organisation'),
+                      notes = user.get('notes'))
 
-        return HTTPFound(location=self.request.route_url('admin_users_activate'))
+        return HTTPFound(location=self.request.route_url('admin_user_activate'))
 
 @view_config(
-    route_name='admin_users_activate',
+    route_name='admin_user_activate',
     renderer='templates/admin.pt',
     layout='default',
     permission='edit',
     )
-class AdminUsersActivateView(FormView):
-    from .schema import AdminUsersActivateSchema
+class AdminUserActivateView(FormView):
+    from .schema import AdminUserActivateSchema
     
-    schema = AdminUsersActivateSchema()
+    schema = AdminUserActivateSchema()
     buttons = ('activate',)
     title = u"Activate Users"
     
@@ -505,18 +506,18 @@ class AdminUsersActivateView(FormView):
         user = self.schema.serialize(appstruct)
         activate_user(self.request, user_id=user.get('user_id'))
 
-        return HTTPFound(location=self.request.route_url('admin_users_activate'))
+        return HTTPFound(location=self.request.route_url('admin_user_activate'))
 
 @view_config(
-    route_name='admin_users_deactivate',
+    route_name='admin_user_deactivate',
     renderer='templates/admin.pt',
     layout='default',
     permission='edit',
     )
-class AdminUsersDeactivateView(FormView):
-    from .schema import AdminUsersDeactivateSchema
+class AdminUserDeactivateView(FormView):
+    from .schema import AdminUserDeactivateSchema
     
-    schema = AdminUsersDeactivateSchema()
+    schema = AdminUserDeactivateSchema()
     buttons = ('deactivate',)
     title = u"Deactivate Users"
 
@@ -525,7 +526,7 @@ class AdminUsersDeactivateView(FormView):
         user = self.schema.serialize(appstruct)
         deactivate_user(self.request, user_id=user.get('user_id'))
 
-        return HTTPFound(location=self.request.route_url('admin_users_deactivate'))
+        return HTTPFound(location=self.request.route_url('admin_user_deactivate'))
 
 @view_config(
     route_name='map',

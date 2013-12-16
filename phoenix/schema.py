@@ -128,13 +128,19 @@ class AdminUserRegisterSchema(colander.MappingSchema):
         description = "Enter eMail used for login",
         validator = colander.Email(),
         )
+    organisation = colander.SchemaNode(
+        colander.String(),
+        title = "Organisation",
+        description = "The Organisation the User is working for",
+        missing = '',
+        default = '',
+        )
     notes = colander.SchemaNode(
         colander.String(),
         title = "Notes",
         description = "Some Notes about this User",
         missing = '',
         default = '',
-        widget = deform.widget.TextAreaWidget(rows=2, cols=80)
         )
 
 @colander.deferred
@@ -146,7 +152,7 @@ def deferred_deactivated_users_widget(node, kw):
         choices.append( (user.get('user_id'), user.get('user_id')) )
     return deform.widget.SelectWidget(values=choices)
     
-class AdminUsersActivateSchema(colander.MappingSchema):
+class AdminUserActivateSchema(colander.MappingSchema):
     user_id = colander.SchemaNode(
         colander.String(),
         title = "User eMails",
@@ -161,7 +167,7 @@ def deferred_activated_users_widget(node, kw):
         choices.append( (user.get('user_id'), user.get('user_id')) )
     return deform.widget.SelectWidget(values=choices)
 
-class AdminUsersDeactivateSchema(colander.MappingSchema):
+class AdminUserDeactivateSchema(colander.MappingSchema):
     user_id = colander.SchemaNode(
         colander.String(),
         title = "User eMails",

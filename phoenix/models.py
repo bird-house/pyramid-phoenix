@@ -35,11 +35,16 @@ def database(request):
 
 # registered users (whitelist)
 
-def register_user(request, user_id, name, notes, activated=False):
+def register_user(request, user_id,
+                  name=None,
+                  organisation=None,
+                  notes=None,
+                  activated=False):
     db = database(request)
     db.users.save(dict(
         user_id = user_id,
         name = name,
+        organisation = organisation,
         notes = notes,
         activated = activated,
         ))
