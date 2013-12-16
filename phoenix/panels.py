@@ -43,9 +43,10 @@ def catalog_navbar(context, request):
         active = request.current_route_url() == url
         return dict(name=name, url=url, active=active, icon=icon)
 
-    nav = [nav_item('Select WPS', request.route_url('catalog_wps_select'), 'icon-tasks'),
-           nav_item('Add WPS', request.route_url('catalog_wps_add'), 'icon-tasks'),
-          ]
+    nav = [
+        nav_item('Select WPS', request.route_url('catalog_wps_select'), 'icon-tasks'),
+        nav_item('Add WPS', request.route_url('catalog_wps_add'), 'icon-tasks'),
+        ]
 
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request))
 
