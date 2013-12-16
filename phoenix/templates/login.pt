@@ -19,6 +19,7 @@
 
     <p/>
 
+    <!--
     <div>
       <h3>Demo Login</h3>
       <form action="/login/local">
@@ -29,6 +30,7 @@
         </span>
       </form>
     </div>
+    -->
 
   </div>
 
