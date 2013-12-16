@@ -15,7 +15,6 @@ from pyramid.renderers import render
 from pyramid.security import remember, forget, authenticated_userid
 from pyramid.events import subscriber, BeforeRender
 from pyramid_deform import FormView
-from pyramid_persona.views import verify_login 
 from deform import Form
 from deform.form import Button
 from authomatic import Authomatic
@@ -24,8 +23,6 @@ import config_public as config
 
 from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WebProcessingService, WPSExecution, ComplexData
-
-from .models import add_job, get_job, drop_jobs, update_job, num_jobs, jobs_by_userid, drop_jobs_by_uuid, drop_user_jobs
 
 from .wps import WPSSchema  
 
@@ -133,6 +130,7 @@ def login_persona(request):
     log.debug('login with persona')
 
     # Verify the assertion and get the email of the user
+    from pyramid_persona.views import verify_login 
     email = verify_login(request)
     # check whitelist
     #if email not in whitelist(request):
@@ -246,12 +244,14 @@ def jobs(request):
     jobs = jobs_information(request)
 
     if "remove_all" in request.POST:
+        from .models import drop_user_jobs
         drop_user_jobs(request)
         
         return HTTPFound(location=request.route_url('jobs'))
 
     elif "remove_selected" in request.POST:
         if("selected" in request.POST):
+            from .models import drop_jobs_by_uuid
             drop_jobs_by_uuid(request,request.POST.getall("selected"))
         return HTTPFound(location=request.route_url('jobs'))
 
@@ -284,6 +284,7 @@ def jobsupdate(request):
 def output_details(request):
     title = u"Process Outputs"
 
+    from .models import get_job
     job = get_job(request, uuid=request.params.get('uuid'))
     wps = WebProcessingService(job['service_url'], verbose=False)
     execution = WPSExecution(url=wps.url)
@@ -341,6 +342,7 @@ class ExecuteView(FormView):
       
         execution = execute_wps(self.wps, identifier, params)
 
+        from .models import add_job
         add_job(
             request = self.request, 
             user_id = authenticated_userid(self.request), 
