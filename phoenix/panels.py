@@ -25,9 +25,9 @@ def navbar(context, request):
         nav.append( nav_item('Map', request.route_url('map'), 'icon-picture') )
     if has_permission('admin', request.context, request):
         nav.append( nav_item('Thredds', request.route_url('tds'), 'icon-list') )
-        nav.append( nav_item('Catalog', request.route_url('catalog_wps_select'), 'icon-tasks') )
+        nav.append( nav_item('Catalog', request.route_url('catalog_wps_select'), 'icon-edit') )
         nav.append( nav_item('Monitor', request.route_url('monitor'), 'icon-eye-open') )
-        nav.append( nav_item('Admin', request.route_url('admin'), 'icon-edit') )
+        nav.append( nav_item('Admin', request.route_url('admin_user_register'), 'icon-edit') )
     nav.append( nav_item('Help', request.route_url('help'), 'icon-question-sign') )
 
     login = request.current_route_url() == request.route_url('login')
@@ -46,6 +46,24 @@ def catalog_navbar(context, request):
     nav = [
         nav_item('Select WPS', request.route_url('catalog_wps_select'), 'icon-tasks'),
         nav_item('Add WPS', request.route_url('catalog_wps_add'), 'icon-tasks'),
+        ]
+
+    return dict(title='Phoenix', nav=nav, username=authenticated_userid(request))
+
+# admin_navbar
+# ------
+@panel_config(name='admin_navbar',
+              renderer='templates/panels/subnavbar.pt')
+def admin_navbar(context, request):
+    def nav_item(name, url, icon):
+        active = request.current_route_url() == url
+        return dict(name=name, url=url, active=active, icon=icon)
+
+    nav = [
+        nav_item('Register User', request.route_url('admin_user_register'), 'icon-edit'),
+        nav_item('Unregister User', request.route_url('admin_user_unregister'), 'icon-edit'),
+        nav_item('Activate Users', request.route_url('admin_users_activate'), 'icon-edit'),
+        nav_item('Deactive Users', request.route_url('admin_users_deactivate'), 'icon-edit'),
         ]
 
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request))

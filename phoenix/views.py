@@ -464,28 +464,40 @@ class CatalogSelectWPSView(FormView):
         return HTTPFound(location=self.request.route_url('processes'))
 
 @view_config(
-    route_name='admin',
-    renderer='templates/form.pt',
+    route_name='admin_user_register',
+    renderer='templates/admin.pt',
     layout='default',
-    permission='admin',
+    permission='edit',
     )
-class AdminView(FormView):
-    from .schema import AdminSchema
+def admin_user_register(request):
+    return dict()
 
-    log.debug('rendering admin view')
-    #form_info = "Hover your mouse over the widgets for description."
-    schema = AdminSchema(title="Administration")
-    buttons = ('clear_database',)
-    title = u"Administration"
+@view_config(
+    route_name='admin_user_unregister',
+    renderer='templates/admin.pt',
+    layout='default',
+    permission='edit',
+    )
+def admin_user_unregister(request):
+    return dict()
 
-    def appstruct(self):
-        return {'jobs_count' : num_jobs(self.request)}
+@view_config(
+    route_name='admin_users_activate',
+    renderer='templates/admin.pt',
+    layout='default',
+    permission='edit',
+    )
+def admin_users_activate(request):
+    return dict()
 
-    def clear_database_success(self, appstruct):
-        drop_jobs(self.request)
-               
-        return HTTPFound(location=self.request.route_url('admin'))
-
+@view_config(
+    route_name='admin_users_deactivate',
+    renderer='templates/admin.pt',
+    layout='default',
+    permission='edit',
+    )
+def admin_users_deactivate(request):
+    return dict()
 
 @view_config(
     route_name='map',
