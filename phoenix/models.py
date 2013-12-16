@@ -39,7 +39,7 @@ def register_user(request, user_id,
                   name=None,
                   organisation=None,
                   notes=None,
-                  activated=False):
+                  activated=True):
     db = database(request)
     db.users.save(dict(
         user_id = user_id,
@@ -48,6 +48,11 @@ def register_user(request, user_id,
         notes = notes,
         activated = activated,
         ))
+
+
+def unregister_user(request, user_id):
+    db = database(request)
+    db.users.remove(dict(user_id = user_id))
 
 def activate_user(request, user_id):
     update_user(request, user_id, activated=True)
@@ -60,6 +65,10 @@ def update_user(request, user_id, activated=False):
     user = db.users.find_one(dict(user_id = user_id))
     user['activated'] = activated
     db.users.update(dict(user_id = user_id), user)
+
+def all_users(request):
+    db = database(request)
+    return db.users.find()
 
 def activated_users(request):
     db = database(request)

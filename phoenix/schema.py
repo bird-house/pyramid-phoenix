@@ -144,6 +144,21 @@ class AdminUserRegisterSchema(colander.MappingSchema):
         )
 
 @colander.deferred
+def deferred_all_users_widget(node, kw):
+    request = kw.get('request')
+    from .models import all_users
+    choices = []
+    for user in all_users(request):
+        choices.append( (user.get('user_id'), user.get('user_id')) )
+    return deform.widget.SelectWidget(values=choices)
+    
+class AdminUserUnregisterSchema(colander.MappingSchema):
+    user_id = colander.SchemaNode(
+        colander.String(),
+        title = "User eMails",
+        widget = deferred_all_users_widget)
+
+@colander.deferred
 def deferred_deactivated_users_widget(node, kw):
     request = kw.get('request')
     from .models import deactivated_users

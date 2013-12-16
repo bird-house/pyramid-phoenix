@@ -486,7 +486,27 @@ class AdminUserRegisterView(FormView):
                       organisation = user.get('organisation'),
                       notes = user.get('notes'))
 
-        return HTTPFound(location=self.request.route_url('admin_user_activate'))
+        return HTTPFound(location=self.request.route_url('admin_user_register'))
+
+@view_config(
+    route_name='admin_user_unregister',
+    renderer='templates/admin.pt',
+    layout='default',
+    permission='edit',
+    )
+class AdminUserUnregisterView(FormView):
+    from .schema import AdminUserUnregisterSchema
+    
+    schema = AdminUserUnregisterSchema()
+    buttons = ('unregister',)
+    title = u"Unregister User"
+
+    def unregister_success(self, appstruct):
+        from .models import unregister_user
+        user = self.schema.serialize(appstruct)
+        unregister_user(self.request, user_id=user.get('user_id'))
+        
+        return HTTPFound(location=self.request.route_url('admin_user_unregister'))
 
 @view_config(
     route_name='admin_user_activate',
