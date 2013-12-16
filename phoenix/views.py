@@ -427,7 +427,6 @@ class CatalogAddWPSView(FormView):
     permission='edit',
     )
 class CatalogSelectWPSView(FormView):
-    #form_info = "Hover your mouse over the widgets for description."
     schema = None
     schema_factory = None
     buttons = ('submit',)
@@ -500,12 +499,9 @@ class AdminUsersActivateView(FormView):
     schema = AdminUsersActivateSchema()
     buttons = ('activate',)
     title = u"Activate Users"
-
-    def appstruct(self):
-        return {}
-
+    
     def activate_success(self, appstruct):
-        serialized = self.schema.serialize(appstruct)
+        user_ids = self.schema.serialize(appstruct)
 
         return HTTPFound(location=self.request.route_url('admin_users_activate'))
 
@@ -521,9 +517,6 @@ class AdminUsersDeactivateView(FormView):
     schema = AdminUsersDeactivateSchema()
     buttons = ('deactivate',)
     title = u"Deactivate Users"
-
-    def appstruct(self):
-        return {}
 
     def activate_success(self, appstruct):
         serialized = self.schema.serialize(appstruct)

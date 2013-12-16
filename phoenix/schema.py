@@ -137,17 +137,41 @@ class AdminUserRegisterSchema(colander.MappingSchema):
         widget = deform.widget.TextAreaWidget(rows=2, cols=80)
         )
 
+@colander.deferred
+def deferred_deactivated_users_widget(node, kw):
+    request = kw.get('request')
+    from .models import deactivated_users
+    choices = []
+    for user in deactivated_users(request):
+        choices.append( (user.get('user_id'), user.get('user_id')) )
+    log.info(choices)
+    return deform.widget.SelectWidget(values=choices)
+    
 class AdminUsersActivateSchema(colander.MappingSchema):
     users = colander.SchemaNode(
         colander.String(),
         title = "User eMails",
-        widget = deform.widget.CheckboxWidget())
+        widget = deferred_deactivated_users_widget)
+
+@colander.deferred
+def deferred_activated_users_widget(node, kw):
+    request = kw.get('request')
+    from .models import deactivated_users
+    choices = []
+    for user in deactivated_users(request):
+        log.info(user)
+        choices.append( (user.get('user_id'), user.get('user_id')) )
+    return deform.widget.SelectWidget(values=choices)
 
 class AdminUsersDeactivateSchema(colander.MappingSchema):
     users = colander.SchemaNode(
         colander.String(),
         title = "User eMails",
-        widget = deform.widget.CheckboxWidget())
+        widget = deferred_activated_users_widget)
+
+# jobs
+# ----
+
 
 @colander.deferred
 def deferred_job_widget(node, kw):
