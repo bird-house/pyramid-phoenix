@@ -143,14 +143,21 @@ class AdminUserRegisterSchema(colander.MappingSchema):
         default = '',
         )
 
+def user_choices(user_list):
+    choices = []
+    for user in user_list:
+        label = "%s (%s %s) [%s]" % (user.get('user_id'),
+                                     user.get('name', ''),
+                                     user.get('organisation', ''),
+                                     user.get('notes', ''))
+        choices.append( (user.get('user_id'), label) )
+    return choices
+
 @colander.deferred
 def deferred_all_users_widget(node, kw):
     request = kw.get('request')
     from .models import all_users
-    choices = []
-    for user in all_users(request):
-        choices.append( (user.get('user_id'), user.get('user_id')) )
-    return deform.widget.SelectWidget(values=choices)
+    return deform.widget.SelectWidget(values=user_choices(all_users(request)))
     
 class AdminUserUnregisterSchema(colander.MappingSchema):
     user_id = colander.SchemaNode(
@@ -162,10 +169,7 @@ class AdminUserUnregisterSchema(colander.MappingSchema):
 def deferred_deactivated_users_widget(node, kw):
     request = kw.get('request')
     from .models import deactivated_users
-    choices = []
-    for user in deactivated_users(request):
-        choices.append( (user.get('user_id'), user.get('user_id')) )
-    return deform.widget.SelectWidget(values=choices)
+    return deform.widget.SelectWidget(values=user_choices(deactivated_users(request)))
     
 class AdminUserActivateSchema(colander.MappingSchema):
     user_id = colander.SchemaNode(
@@ -177,10 +181,7 @@ class AdminUserActivateSchema(colander.MappingSchema):
 def deferred_activated_users_widget(node, kw):
     request = kw.get('request')
     from .models import activated_users
-    choices = []
-    for user in activated_users(request):
-        choices.append( (user.get('user_id'), user.get('user_id')) )
-    return deform.widget.SelectWidget(values=choices)
+    return deform.widget.SelectWidget(values=user_choices(activated_users(request)))
 
 class AdminUserDeactivateSchema(colander.MappingSchema):
     user_id = colander.SchemaNode(
