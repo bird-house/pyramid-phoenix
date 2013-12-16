@@ -501,7 +501,9 @@ class AdminUsersActivateView(FormView):
     title = u"Activate Users"
     
     def activate_success(self, appstruct):
-        user_ids = self.schema.serialize(appstruct)
+        from .models import activate_user
+        user = self.schema.serialize(appstruct)
+        activate_user(self.request, user_id=user.get('user_id'))
 
         return HTTPFound(location=self.request.route_url('admin_users_activate'))
 
@@ -518,8 +520,10 @@ class AdminUsersDeactivateView(FormView):
     buttons = ('deactivate',)
     title = u"Deactivate Users"
 
-    def activate_success(self, appstruct):
-        serialized = self.schema.serialize(appstruct)
+    def deactivate_success(self, appstruct):
+        from .models import deactivate_user
+        user = self.schema.serialize(appstruct)
+        deactivate_user(self.request, user_id=user.get('user_id'))
 
         return HTTPFound(location=self.request.route_url('admin_users_deactivate'))
 

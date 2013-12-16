@@ -144,11 +144,10 @@ def deferred_deactivated_users_widget(node, kw):
     choices = []
     for user in deactivated_users(request):
         choices.append( (user.get('user_id'), user.get('user_id')) )
-    log.info(choices)
     return deform.widget.SelectWidget(values=choices)
     
 class AdminUsersActivateSchema(colander.MappingSchema):
-    users = colander.SchemaNode(
+    user_id = colander.SchemaNode(
         colander.String(),
         title = "User eMails",
         widget = deferred_deactivated_users_widget)
@@ -156,15 +155,14 @@ class AdminUsersActivateSchema(colander.MappingSchema):
 @colander.deferred
 def deferred_activated_users_widget(node, kw):
     request = kw.get('request')
-    from .models import deactivated_users
+    from .models import activated_users
     choices = []
-    for user in deactivated_users(request):
-        log.info(user)
+    for user in activated_users(request):
         choices.append( (user.get('user_id'), user.get('user_id')) )
     return deform.widget.SelectWidget(values=choices)
 
 class AdminUsersDeactivateSchema(colander.MappingSchema):
-    users = colander.SchemaNode(
+    user_id = colander.SchemaNode(
         colander.String(),
         title = "User eMails",
         widget = deferred_activated_users_widget)

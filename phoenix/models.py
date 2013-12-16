@@ -44,10 +44,16 @@ def register_user(request, user_id, name, notes, activated=False):
         activated = activated,
         ))
 
+def activate_user(request, user_id):
+    update_user(request, user_id, activated=True)
+
+def deactivate_user(request, user_id):
+    update_user(request, user_id, activated=False)
+
 def update_user(request, user_id, activated=False):
     db = database(request)
-    user = db.users.find(dict(user_id = user_id))
-    user.activated = activated
+    user = db.users.find_one(dict(user_id = user_id))
+    user['activated'] = activated
     db.users.update(dict(user_id = user_id), user)
 
 def activated_users(request):
