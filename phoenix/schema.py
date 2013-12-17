@@ -128,6 +128,14 @@ class AdminUserRegisterSchema(colander.MappingSchema):
         description = "Enter eMail used for login",
         validator = colander.Email(),
         )
+    openid = colander.SchemaNode(
+        colander.String(),
+        title = "OpenID",
+        description = "Enter OpenID for data access",
+        validator = colander.url,
+        missing = '',
+        default = '',
+        )
     organisation = colander.SchemaNode(
         colander.String(),
         title = "Organisation",

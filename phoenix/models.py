@@ -35,7 +35,9 @@ def database(request):
 
 # registered users (whitelist)
 
-def register_user(request, user_id,
+def register_user(request,
+                  user_id,
+                  openid=None,
                   name=None,
                   organisation=None,
                   notes=None,
@@ -43,6 +45,7 @@ def register_user(request, user_id,
     db = database(request)
     db.users.save(dict(
         user_id = user_id,
+        openid = openid,
         name = name,
         organisation = organisation,
         notes = notes,
@@ -60,10 +63,17 @@ def activate_user(request, user_id):
 def deactivate_user(request, user_id):
     update_user(request, user_id, activated=False)
 
-def update_user(request, user_id, activated=False):
+def update_user(request, user_id, activated=None, openid=None):
     db = database(request)
     user = db.users.find_one(dict(user_id = user_id))
-    user['activated'] = activated
+    log.debug("update user: %s", user)
+    if user == None:
+        user = dict(user_id = user_id, activated = False)
+        db.users.save(user)
+    if activated != None:
+        user['activated'] = activated
+    if openid:
+        user['openid'] = openid
     db.users.update(dict(user_id = user_id), user)
 
 def all_users(request):
@@ -85,6 +95,11 @@ def is_user_activated(request, user_id):
 def count_users(request):
     db = database(request)
     return db.users.count()
+
+def user_openid(request, user_id):
+    db = database(request)
+    user = db.users.find_one(dict(user_id = user_id))
+    return user.get('openid')
 
 # jobs ...
 

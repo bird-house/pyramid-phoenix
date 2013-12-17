@@ -170,12 +170,12 @@ class SearchSchema(colander.MappingSchema):
 # select files schema
 # -------------------
 
-def search_local_files(url, filter):
+def search_local_files(url, openid, filter):
     if url == None:
         return {}
     
     identifier = 'org.malleefowl.listfiles'
-    inputs = [("filter", str(filter))]
+    inputs = [("openid", str(openid)), ("filter", str(filter))]
     outputs = [("output",False)]
     wps = WebProcessingService(url, verbose=False)
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
@@ -190,7 +190,7 @@ def search_local_files(url, filter):
     return files
 
 def bind_files_schema(node, kw):
-    log.debug('bind_files_schema called')
+    from .models import user_openid
     
     request = kw.get('request', None)
     wizard_state = kw.get('wizard_state', None)
@@ -198,6 +198,8 @@ def bind_files_schema(node, kw):
     if request == None or wizard_state == None:
         log.debug('not fetching files')
         return
+
+    openid = user_openid(request, authenticated_userid(request))
 
     log.debug('step num = %s', wizard_state.get_step_num())
 
@@ -219,7 +221,7 @@ def bind_files_schema(node, kw):
             node.get('file_identifier').widget = EsgFilesWidget(
                 url=esgsearch_url(request), search_type='File', search=search)
     elif 'filesystem' in data_source:
-        choices = [(f, f) for f in search_local_files( wps_url(request), search['filter'])]
+        choices = [(f, f) for f in search_local_files( wps_url(request), openid, search['filter'])]
         node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
     else:
         log.error('unknown datasource: %s', data_source)

@@ -153,6 +153,9 @@ def login_persona(request):
     if not is_valid_user(request, email):
         #    request.session.flash('Sorry, you are not on the list')
         return {'redirect': '/', 'success': False}
+    log.debug("person login successful")
+    from .models import update_user
+    update_user(user_id=email)
     # Add the headers required to remember the user to the response
     request.response.headers.extend(remember(request, email))
     # Return a json message containing the address or path to redirect to.
@@ -192,6 +195,8 @@ def login_openid(request):
                       result.user.name, result.user.id, result.user.email)
 
             if is_valid_user(request, result.user.email):
+                from .models import update_user
+                update_user(user_id=result.user.email, openid=result.user.id)
                 response.text = render('phoenix:templates/openid_success.pt',
                                        {'result': result},
                                        request=request)
@@ -504,6 +509,7 @@ class AdminUserRegisterView(FormView):
         user = self.schema.serialize(appstruct)
         register_user(self.request,
                       user_id = user.get('email'),
+                      openid = user.get('openid'),
                       name = user.get('name'),
                       organisation = user.get('organisation'),
                       notes = user.get('notes'))
