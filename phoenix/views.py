@@ -219,11 +219,7 @@ def login_openid(request):
     permission='view'
     )
 def home(request):
-    log.debug('rendering home view')
-
     lm = request.layout_manager
-    #lm.layout.add_heading('heading_processes')
-    #lm.layout.add_heading('heading_jobs')
     lm.layout.add_heading('heading_info')
     lm.layout.add_heading('heading_stats')
     return dict()
@@ -332,7 +328,6 @@ def output_details(request):
     permission='edit'
     )
 class ExecuteView(FormView):
-    log.debug('rendering execute')
     buttons = ('submit',)
     schema_factory = None
     wps = None
@@ -386,7 +381,6 @@ class ExecuteView(FormView):
     permission='admin'
     )
 def monitor(request):
-    log.debug('rendering monitor view')
     return dict(external_url=supervisor_url(request))
 
 @view_config(
@@ -483,7 +477,7 @@ class CatalogSelectWPSView(FormView):
     def submit_success(self, appstruct):
         serialized = self.schema.serialize(appstruct)
         wps_id = serialized['active_wps']
-        log.debug('wps_id = %s', wps_id)
+        #log.debug('wps_id = %s', wps_id)
         update_wps_url(self.request, wps_id)        
 
         return HTTPFound(location=self.request.route_url('processes'))
@@ -594,6 +588,5 @@ def map(request):
     permission='view'
     )
 def help(request):
-    log.debug('rendering help view')
     return dict(external_url='/docs')
 

@@ -96,7 +96,6 @@ def admin_navbar(context, request):
 @panel_config(name='welcome',
               renderer='templates/panels/welcome.pt')
 def welcome(context, request, title):
-    log.debug('rendering welcome panel')
     return dict(title=title,
                 logged_in=authenticated_userid(request),
                 wps_service_url=wps_url(request))

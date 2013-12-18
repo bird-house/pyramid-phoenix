@@ -35,7 +35,7 @@ def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     log.debug("init phoenix application")
-    log.debug("settings: %s", settings)
+    #log.debug("settings: %s", settings)
 
     # security
     authn_policy = AuthTktAuthenticationPolicy(
@@ -57,7 +57,7 @@ def main(global_config, **settings):
     # see also: http://docs.pylonsproject.org/projects/deform/en/latest/templates.html#overriding-for-all-forms
     # register template search path
     add_search_path()
-    log.debug('search path= %s', Form.default_renderer.loader.search_path)
+    #log.debug('search path= %s', Form.default_renderer.loader.search_path)
 
     # static views (stylesheets etc)
     config.add_static_view('static', 'static', cache_max_age=3600)
