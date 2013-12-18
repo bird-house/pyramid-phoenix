@@ -160,7 +160,7 @@ def login(request):
         update_user(request, user_id=email, activated=False)
         #    request.session.flash('Sorry, you are not on the list')
         return {'redirect': '/register', 'success': False}
-    log.info("persona login successful for %s", email)
+    log.info("persona login successful for user %s", email)
     update_user(request, user_id=email, activated=True)
     # Add the headers required to remember the user to the response
     request.response.headers.extend(remember(request, email))
@@ -201,14 +201,16 @@ def login_openid(request):
                       result.user.name, result.user.id, result.user.email)
 
             if is_valid_user(request, result.user.email):
-                from .models import update_user
-                update_user(user_id=result.user.email, openid=result.user.id)
+                log.info("openid login successful for user %s", result.user.email)
+                update_user(request, user_id=result.user.email, openid=result.user.id, activated=True)
                 response.text = render('phoenix:templates/openid_success.pt',
                                        {'result': result},
                                        request=request)
                 # Add the headers required to remember the user to the response
                 response.headers.extend(remember(request, result.user.email))
             else:
+                log.info("openid login: user %s is not registered", result.user.email)
+                update_user(request, user_id=result.user.email, openid=result.user.id, activated=False)
                 response.text = render('phoenix:templates/register.pt',
                                        {'email': result.user.email}, request=request)
     log.debug('response: %s', response)
