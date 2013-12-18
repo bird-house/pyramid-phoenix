@@ -64,15 +64,16 @@ def add_global(event):
 #     return response
 
 
-# login
+# sign-in
 # -------
 
 @view_config(
-    route_name='login', 
+    route_name='signin', 
     layout='default', 
-    renderer='templates/login.pt',
+    renderer='templates/signin.pt',
     permission='view')
-def login(request):
+def signin(request):
+    log.debug("sign-in view")
     return dict()
 
 # logout
@@ -139,12 +140,8 @@ def login_local(request):
 # persona login
 # -------------
 
-@view_config(
-    route_name='login_persona', 
-    check_csrf=True, 
-    renderer='json',
-    permission='view')
-def login_persona(request):
+@view_config(route_name='login', check_csrf=True, renderer='json', permission='view')
+def login(request):
     # TODO: update login to my needs
     # https://pyramid_persona.readthedocs.org/en/latest/customization.html#do-extra-work-or-verification-at-login
 
@@ -153,13 +150,18 @@ def login_persona(request):
     # Verify the assertion and get the email of the user
     from pyramid_persona.views import verify_login 
     email = verify_login(request)
+
+    # update user list
+    update_user(request, user_id=email)
+    
     # check whitelist
     if not is_valid_user(request, email):
+        log.info("persona login: user %s is not registered", email)
+        update_user(request, user_id=email, activated=False)
         #    request.session.flash('Sorry, you are not on the list')
-        return {'redirect': '/', 'success': False}
-    log.debug("person login successful")
-    from .models import update_user
-    update_user(user_id=email)
+        return {'redirect': '/register', 'success': False}
+    log.info("persona login successful for %s", email)
+    update_user(request, user_id=email, activated=True)
     # Add the headers required to remember the user to the response
     request.response.headers.extend(remember(request, email))
     # Return a json message containing the address or path to redirect to.

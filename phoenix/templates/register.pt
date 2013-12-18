@@ -3,7 +3,7 @@
     <title>Register</title>
   </head>
   <body>
-    <a href="/login">Login</a>
+    <a href="/signin">Sign in</a>
 
     <h1>Please ask for registration</h1>
     This is a demo installation of ClimDaPs. If you want to try it out please do the following steps:
@@ -33,7 +33,7 @@
         We will inform you when you are added to the allowed users of this Demo.
       </li>
       <li>
-        Finally login with your OpenID Account on the <a href="/login">login</a> page.
+        Finally sign in with your OpenID Account on the <a href="/signin">sign in</a> page.
       </li>
     </ol>
 

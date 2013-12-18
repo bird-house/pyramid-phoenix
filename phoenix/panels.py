@@ -30,7 +30,7 @@ def navbar(context, request):
         nav.append( nav_item('Admin', request.route_url('admin_user_register'), 'icon-edit') )
     nav.append( nav_item('Help', request.route_url('help'), 'icon-question-sign') )
 
-    login = request.current_route_url() == request.route_url('login')
+    login = request.current_route_url() == request.route_url('signin')
 
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request), login=login)
 
