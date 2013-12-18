@@ -508,6 +508,10 @@ class AdminUserView(FormView):
         return {}
 
     def edit_success(self, appstruct):
+        params = self.schema.serialize(appstruct)
+        user_ids = params.get('user_id')
+        for user_id in user_ids:
+            log.debug("edit users %s", users_id)
         return HTTPFound(location=self.request.route_url('admin_user'))
 
 @view_config(
@@ -554,8 +558,9 @@ class AdminUserUnregisterView(FormView):
 
     def unregister_success(self, appstruct):
         from .models import unregister_user
-        user = self.schema.serialize(appstruct)
-        unregister_user(self.request, user_id=user.get('user_id'))
+        params = self.schema.serialize(appstruct)
+        for user_id in params.get('user_id', []):
+            unregister_user(self.request, user_id=user_id)
         
         return HTTPFound(location=self.request.route_url('admin_user_unregister'))
 
@@ -574,8 +579,9 @@ class AdminUserActivateView(FormView):
     
     def activate_success(self, appstruct):
         from .models import activate_user
-        user = self.schema.serialize(appstruct)
-        activate_user(self.request, user_id=user.get('user_id'))
+        params = self.schema.serialize(appstruct)
+        for user_id in params.get('user_id', []):
+            activate_user(self.request, user_id=user_id)
 
         return HTTPFound(location=self.request.route_url('admin_user_activate'))
 
@@ -594,8 +600,10 @@ class AdminUserDeactivateView(FormView):
 
     def deactivate_success(self, appstruct):
         from .models import deactivate_user
-        user = self.schema.serialize(appstruct)
-        deactivate_user(self.request, user_id=user.get('user_id'))
+        params = self.schema.serialize(appstruct)
+        for user_id in params.get('user_id', []):
+            log.debug('deactivate user %s', user_id)
+            deactivate_user(self.request, user_id=user_id)
 
         return HTTPFound(location=self.request.route_url('admin_user_deactivate'))
 

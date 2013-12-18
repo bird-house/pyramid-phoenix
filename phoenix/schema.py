@@ -114,17 +114,44 @@ class CatalogSelectWPSSchema(colander.MappingSchema):
 # Admin
 # -----
 
+def user_choices(user_list):
+    choices = []
+    for user in user_list:
+        label = "%s (%s, %s, %s, %s)" % (user.get('user_id'),
+                                     user.get('name', ''),
+                                     user.get('openid', ''),
+                                     user.get('organisation', ''),
+                                     user.get('notes', ''))
+        choices.append( (user.get('user_id'), label) )
+    return choices
+
 @colander.deferred
 def deferred_all_users_widget(node, kw):
     request = kw.get('request')
     from .models import all_users
-    return deform.widget.SelectWidget(values=user_choices(all_users(request)))
+    return deform.widget.CheckboxChoiceWidget(values=user_choices(all_users(request)))
+
+@colander.deferred
+def deferred_deactivated_users_widget(node, kw):
+    request = kw.get('request')
+    from .models import deactivated_users
+    return deform.widget.CheckboxChoiceWidget(values=user_choices(deactivated_users(request)))
+
+@colander.deferred
+def deferred_activated_users_widget(node, kw):
+    request = kw.get('request')
+    from .models import activated_users
+    return deform.widget.CheckboxChoiceWidget(values=user_choices(activated_users(request)))
 
 class AdminUserSchema(colander.MappingSchema):
+    choices = (('habanero', 'Habanero'),
+               ('jalapeno', 'Jalapeno'),
+               ('chipotle', 'Chipotle'))
     user_id = colander.SchemaNode(
-        colander.String(),
-        title = "User eMails",
-        widget = deferred_all_users_widget)
+        colander.Set(),
+        title = "Users",
+        widget=deform.widget.CheckboxChoiceWidget(values=choices),
+        )
 
 class AdminUserRegisterSchema(colander.MappingSchema):
     name = colander.SchemaNode(
@@ -163,44 +190,22 @@ class AdminUserRegisterSchema(colander.MappingSchema):
         default = '',
         )
 
-def user_choices(user_list):
-    choices = []
-    for user in user_list:
-        label = "%s (%s %s) [%s]" % (user.get('user_id'),
-                                     user.get('name', ''),
-                                     user.get('organisation', ''),
-                                     user.get('notes', ''))
-        choices.append( (user.get('user_id'), label) )
-    return choices
-    
 class AdminUserUnregisterSchema(colander.MappingSchema):
     user_id = colander.SchemaNode(
-        colander.String(),
-        title = "User eMails",
+        colander.Set(),
+        title = "Users",
         widget = deferred_all_users_widget)
 
-@colander.deferred
-def deferred_deactivated_users_widget(node, kw):
-    request = kw.get('request')
-    from .models import deactivated_users
-    return deform.widget.SelectWidget(values=user_choices(deactivated_users(request)))
-    
 class AdminUserActivateSchema(colander.MappingSchema):
     user_id = colander.SchemaNode(
-        colander.String(),
-        title = "User eMails",
+        colander.Set(),
+        title = "Users",
         widget = deferred_deactivated_users_widget)
-
-@colander.deferred
-def deferred_activated_users_widget(node, kw):
-    request = kw.get('request')
-    from .models import activated_users
-    return deform.widget.SelectWidget(values=user_choices(activated_users(request)))
 
 class AdminUserDeactivateSchema(colander.MappingSchema):
     user_id = colander.SchemaNode(
-        colander.String(),
-        title = "User eMails",
+        colander.Set(),
+        title = "Users",
         widget = deferred_activated_users_widget)
 
 # jobs
