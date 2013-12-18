@@ -117,7 +117,8 @@ def register(request):
 def login_local(request):
     log.debug("login with local account")
     password = request.params.get('password')
-    if (password == 'Hamburg'):
+    # TODO: need some work work on local accounts
+    if (False):
         email = "demo@climdaps.org"
         update_user(request, user_id=email)
 

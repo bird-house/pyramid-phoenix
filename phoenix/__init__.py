@@ -92,7 +92,8 @@ def main(global_config, **settings):
     config.add_route('signin', '/signin')
     config.add_route('login', '/login')
     config.add_route('login_openid', '/login/openid')
-    config.add_route('login_local', '/login/local')
+    # TODO: need some work work on local accounts
+    #config.add_route('login_local', '/login/local')
     config.add_route('register', '/register')
 
     # A quick access to the login button
