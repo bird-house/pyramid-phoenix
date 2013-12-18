@@ -1,6 +1,6 @@
 <div class="span4">
     <h3>${title}</h3>
     <p>
-      Number of Users: ${num_users}
+      Number of Users: <span class="badge badge-success">${num_users}</span>
     </p>
 </div>
