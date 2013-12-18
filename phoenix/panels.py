@@ -61,10 +61,10 @@ def admin_navbar(context, request):
 
     nav = [
         nav_item('Register User', request.route_url('admin_user_register'), 'icon-edit'),
-        nav_item('Manage Users', request.route_url('admin_user'), 'icon-edit'),
-        nav_item('Unregister User', request.route_url('admin_user_unregister'), 'icon-edit'),
+        nav_item('Unregister Users', request.route_url('admin_user_unregister'), 'icon-edit'),
         nav_item('Activate Users', request.route_url('admin_user_activate'), 'icon-edit'),
         nav_item('Deactivate Users', request.route_url('admin_user_deactivate'), 'icon-edit'),
+        nav_item('Edit User', request.route_url('admin_user_edit'), 'icon-edit'),
         ]
 
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request))

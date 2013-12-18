@@ -492,15 +492,15 @@ class CatalogSelectWPSView(FormView):
         return HTTPFound(location=self.request.route_url('processes'))
 
 @view_config(
-    route_name='admin_user',
+    route_name='admin_user_edit',
     renderer='templates/admin.pt',
     layout='default',
     permission='edit',
     )
-class AdminUserView(FormView):
-    from .schema import AdminUserSchema
+class AdminUserEditView(FormView):
+    from .schema import AdminUserEditSchema
     
-    schema = AdminUserSchema()
+    schema = AdminUserEditSchema()
     buttons = ('edit',)
     title = u"Manage Users"
 
@@ -509,10 +509,9 @@ class AdminUserView(FormView):
 
     def edit_success(self, appstruct):
         params = self.schema.serialize(appstruct)
-        user_ids = params.get('user_id')
-        for user_id in user_ids:
-            log.debug("edit users %s", users_id)
-        return HTTPFound(location=self.request.route_url('admin_user'))
+        for user_id in params.get('user_id', []):
+            log.debug("edit users %s", user_id)
+        return HTTPFound(location=self.request.route_url('admin_user_edit'))
 
 @view_config(
     route_name='admin_user_register',

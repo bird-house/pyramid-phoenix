@@ -143,14 +143,12 @@ def deferred_activated_users_widget(node, kw):
     from .models import activated_users
     return deform.widget.CheckboxChoiceWidget(values=user_choices(activated_users(request)))
 
-class AdminUserSchema(colander.MappingSchema):
-    choices = (('habanero', 'Habanero'),
-               ('jalapeno', 'Jalapeno'),
-               ('chipotle', 'Chipotle'))
+class AdminUserEditSchema(colander.MappingSchema):
     user_id = colander.SchemaNode(
         colander.Set(),
         title = "Users",
-        widget=deform.widget.CheckboxChoiceWidget(values=choices),
+        widget = deferred_all_users_widget,
+        validator=colander.Length(min=1),
         )
 
 class AdminUserRegisterSchema(colander.MappingSchema):
