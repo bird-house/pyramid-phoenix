@@ -26,6 +26,8 @@ from owslib.wps import WebProcessingService, WPSExecution, ComplexData
 
 from .security import is_valid_user
 
+from .models import update_user
+
 from .wps import WPSSchema  
 
 from .helpers import wps_url
@@ -112,9 +114,11 @@ def register(request):
     #check_csrf=True, 
     permission='view')
 def login_local(request):
+    log.debug("login with local account")
     password = request.params.get('password')
     if (password == 'Hamburg'):
         email = "demo@climdaps.org"
+        update_user(request, user_id=email)
 
         if is_valid_user(request, email):
             request.response.text = render('phoenix:templates/openid_success.pt',

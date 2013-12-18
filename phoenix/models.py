@@ -70,6 +70,7 @@ def deactivate_user(request, user_id):
     update_user(request, user_id, activated=False)
 
 def update_user(request, user_id, activated=None, openid=None):
+    log.debug("update user %s", user_id)
     db = database(request)
     user = db.users.find_one(dict(user_id = user_id))
     log.debug("update user: %s", user)
