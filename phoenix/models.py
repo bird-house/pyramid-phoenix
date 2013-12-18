@@ -41,17 +41,23 @@ def register_user(request,
                   name=None,
                   organisation=None,
                   notes=None,
-                  activated=True):
+                  activated=False):
     db = database(request)
-    db.users.save(dict(
+    user = db.users.find_one(dict(user_id = user_id))
+    if user != None:
+        unregister_user(request, user_id = user_id)
+    user = dict(
         user_id = user_id,
         openid = openid,
         name = name,
         organisation = organisation,
         notes = notes,
         activated = activated,
-        ))
-
+        creation_time = datetime.datetime.now(),
+        last_login = datetime.datetime.now(),
+        )
+    db.users.save(user)
+    return user
 
 def unregister_user(request, user_id):
     db = database(request)
@@ -68,12 +74,12 @@ def update_user(request, user_id, activated=None, openid=None):
     user = db.users.find_one(dict(user_id = user_id))
     log.debug("update user: %s", user)
     if user == None:
-        user = dict(user_id = user_id, activated = False)
-        db.users.save(user)
+        user = register_user(request, user_id=user_id, activated=False)
     if activated != None:
         user['activated'] = activated
     if openid:
         user['openid'] = openid
+    user['last_login'] = datetime.datetime.now()
     db.users.update(dict(user_id = user_id), user)
 
 def all_users(request):

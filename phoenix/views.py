@@ -512,7 +512,8 @@ class AdminUserRegisterView(FormView):
                       openid = user.get('openid'),
                       name = user.get('name'),
                       organisation = user.get('organisation'),
-                      notes = user.get('notes'))
+                      notes = user.get('notes'),
+                      activated = True)
 
         return HTTPFound(location=self.request.route_url('admin_user_register'))
 
