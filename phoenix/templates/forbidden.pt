@@ -3,7 +3,7 @@
     <title>403 Forbidden</title>
   </head>
   <body>
-    <a href="/login">Login</a>
+    <a href="/signin">Sign in</a>
 
     <h1>403 Forbidden</h1>
     Access was denied to this resource.<br/>
