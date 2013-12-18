@@ -27,7 +27,7 @@ def navbar(context, request):
         nav.append( nav_item('Thredds', request.route_url('tds'), 'icon-list') )
         nav.append( nav_item('Catalog', request.route_url('catalog_wps_select'), 'icon-edit') )
         nav.append( nav_item('Monitor', request.route_url('monitor'), 'icon-eye-open') )
-        nav.append( nav_item('Admin', request.route_url('admin_user_register'), 'icon-edit') )
+        nav.append( nav_item('Admin', request.route_url('admin_user_edit'), 'icon-edit') )
     nav.append( nav_item('Help', request.route_url('help'), 'icon-question-sign') )
 
     login = request.current_route_url() == request.route_url('signin')

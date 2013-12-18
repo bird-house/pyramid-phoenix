@@ -509,8 +509,14 @@ class AdminUserEditView(FormView):
 
     def edit_success(self, appstruct):
         params = self.schema.serialize(appstruct)
-        for user_id in params.get('user_id', []):
-            log.debug("edit users %s", user_id)
+        user_id = params.get('user_id').pop()
+
+        log.debug("edit users %s", user_id)
+
+        session = self.request.session
+        session['phoenix.admin.edit.user_id'] = user_id
+        session.changed()
+
         return HTTPFound(location=self.request.route_url('admin_user_edit_task'))
 
 @view_config(
@@ -528,9 +534,11 @@ class AdminUserEditTaskView(FormView):
 
     def appstruct(self):
         from .models import user_with_id
-        user = user_with_id(self.request, user_id='carsten@linacs.org')
+        session = self.request.session
+        user_id = session['phoenix.admin.edit.user_id']
+        user = user_with_id(self.request, user_id=user_id)
         return dict(
-            email = user.get('user_id'),
+            email = user_id,
             openid = user.get('openid'),
             name = user.get('name'),
             organisation = user.get('organisation'),
@@ -541,9 +549,11 @@ class AdminUserEditTaskView(FormView):
     def update_success(self, appstruct):
         from .models import update_user
         user = self.schema.serialize(appstruct)
-        log.debug("user activated: %s", user.get('activated') == 'true')
+        session = self.request.session
+        user_id = session['phoenix.admin.edit.user_id']
+        #log.debug("user activated: %s", user.get('activated') == 'true')
         update_user(self.request,
-                      user_id = user.get('email'),
+                      user_id = user_id,
                       openid = user.get('openid'),
                       name = user.get('name'),
                       organisation = user.get('organisation'),

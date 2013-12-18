@@ -117,11 +117,12 @@ class CatalogSelectWPSSchema(colander.MappingSchema):
 def user_choices(user_list):
     choices = []
     for user in user_list:
-        label = "%s (%s, %s, %s, %s)" % (user.get('user_id'),
+        label = "%s (%s, %s, %s, %s, %s)" % (user.get('user_id'),
                                      user.get('name', ''),
                                      user.get('openid', ''),
                                      user.get('organisation', ''),
-                                     user.get('notes', ''))
+                                     user.get('notes', ''),
+                                     user.get('activated', ''))
         choices.append( (user.get('user_id'), label) )
     return choices
 
@@ -164,6 +165,8 @@ class AdminUserEditTaskSchema(colander.MappingSchema):
         title = "EMail",
         description = "Enter eMail used for login",
         validator = colander.Email(),
+        missing = '',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
     openid = colander.SchemaNode(
         colander.String(),
