@@ -511,7 +511,50 @@ class AdminUserEditView(FormView):
         params = self.schema.serialize(appstruct)
         for user_id in params.get('user_id', []):
             log.debug("edit users %s", user_id)
+        return HTTPFound(location=self.request.route_url('admin_user_edit_task'))
+
+@view_config(
+    route_name='admin_user_edit_task',
+    renderer='templates/admin.pt',
+    layout='default',
+    permission='edit',
+    )
+class AdminUserEditTaskView(FormView):
+    from .schema import AdminUserEditTaskSchema
+    
+    schema = AdminUserEditTaskSchema()
+    buttons = ('update', 'cancel',)
+    title = u"Edit User"
+
+    def appstruct(self):
+        from .models import user_with_id
+        user = user_with_id(self.request, user_id='carsten@linacs.org')
+        return dict(
+            email = user.get('user_id'),
+            openid = user.get('openid'),
+            name = user.get('name'),
+            organisation = user.get('organisation'),
+            notes = user.get('notes'),
+            activated = user.get('activated'),
+            )
+
+    def update_success(self, appstruct):
+        from .models import update_user
+        user = self.schema.serialize(appstruct)
+        log.debug("user activated: %s", user.get('activated') == 'true')
+        update_user(self.request,
+                      user_id = user.get('email'),
+                      openid = user.get('openid'),
+                      name = user.get('name'),
+                      organisation = user.get('organisation'),
+                      notes = user.get('notes'),
+                      activated = user.get('activated') == 'true')
+
         return HTTPFound(location=self.request.route_url('admin_user_edit'))
+    
+    def cancel_success(self, appstruct):
+        return HTTPFound(location=self.request.route_url('admin_user_edit'))
+
 
 @view_config(
     route_name='admin_user_register',

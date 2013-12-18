@@ -151,6 +151,51 @@ class AdminUserEditSchema(colander.MappingSchema):
         validator=colander.Length(min=1),
         )
 
+class AdminUserEditTaskSchema(colander.MappingSchema):
+    name = colander.SchemaNode(
+        colander.String(),
+        title = "User Name",
+        description = "Enter User Name",
+        missing = '',
+        default = '',
+        )
+    email = colander.SchemaNode(
+        colander.String(),
+        title = "EMail",
+        description = "Enter eMail used for login",
+        validator = colander.Email(),
+        )
+    openid = colander.SchemaNode(
+        colander.String(),
+        title = "OpenID",
+        description = "Enter OpenID for data access",
+        validator = colander.url,
+        missing = '',
+        default = '',
+        )
+    organisation = colander.SchemaNode(
+        colander.String(),
+        title = "Organisation",
+        description = "The Organisation the User is working for",
+        missing = '',
+        default = '',
+        )
+    notes = colander.SchemaNode(
+        colander.String(),
+        title = "Notes",
+        description = "Some Notes about this User",
+        missing = '',
+        default = '',
+        )
+    activated = colander.SchemaNode(
+        colander.Boolean(),
+        title = "Activated",
+        description = "Check if user is allowed to use system",
+        missing = False,
+        default = False,
+        )
+
+
 class AdminUserRegisterSchema(colander.MappingSchema):
     name = colander.SchemaNode(
         colander.String(),

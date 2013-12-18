@@ -69,7 +69,13 @@ def activate_user(request, user_id):
 def deactivate_user(request, user_id):
     update_user(request, user_id, activated=False)
 
-def update_user(request, user_id, activated=None, openid=None):
+def update_user(request,
+                user_id,
+                openid=None,
+                name=None,
+                organisation=None,
+                notes=None,
+                activated=None,):
     log.debug("update user %s", user_id)
     db = database(request)
     user = db.users.find_one(dict(user_id = user_id))
@@ -79,6 +85,12 @@ def update_user(request, user_id, activated=None, openid=None):
         user['activated'] = activated
     if openid:
         user['openid'] = openid
+    if name:
+        user['name'] = name
+    if organisation:
+        user['organisation'] = organisation
+    if notes:
+        user['notes'] = notes
     user['last_login'] = datetime.datetime.now()
     db.users.update(dict(user_id = user_id), user)
 
@@ -101,6 +113,10 @@ def is_user_activated(request, user_id):
 def count_users(request):
     db = database(request)
     return db.users.count()
+
+def user_with_id(request, user_id):
+    db = database(request)
+    return db.users.find_one(dict(user_id = user_id))
 
 def user_openid(request, user_id):
     db = database(request)
