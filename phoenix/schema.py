@@ -114,6 +114,18 @@ class CatalogSelectWPSSchema(colander.MappingSchema):
 # Admin
 # -----
 
+@colander.deferred
+def deferred_all_users_widget(node, kw):
+    request = kw.get('request')
+    from .models import all_users
+    return deform.widget.SelectWidget(values=user_choices(all_users(request)))
+
+class AdminUserSchema(colander.MappingSchema):
+    user_id = colander.SchemaNode(
+        colander.String(),
+        title = "User eMails",
+        widget = deferred_all_users_widget)
+
 class AdminUserRegisterSchema(colander.MappingSchema):
     name = colander.SchemaNode(
         colander.String(),
@@ -160,12 +172,6 @@ def user_choices(user_list):
                                      user.get('notes', ''))
         choices.append( (user.get('user_id'), label) )
     return choices
-
-@colander.deferred
-def deferred_all_users_widget(node, kw):
-    request = kw.get('request')
-    from .models import all_users
-    return deform.widget.SelectWidget(values=user_choices(all_users(request)))
     
 class AdminUserUnregisterSchema(colander.MappingSchema):
     user_id = colander.SchemaNode(

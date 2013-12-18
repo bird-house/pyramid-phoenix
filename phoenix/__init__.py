@@ -82,6 +82,7 @@ def main(global_config, **settings):
     config.add_route('output_details', '/output_details')
     config.add_route('execute', '/execute')
     config.add_route('monitor', '/monitor')
+    config.add_route('admin_user', '/admin/user')
     config.add_route('admin_user_register', '/admin/user/register')
     config.add_route('admin_user_unregister', '/admin/user/unregister')
     config.add_route('admin_user_activate', '/admin/user/activate')

@@ -492,6 +492,25 @@ class CatalogSelectWPSView(FormView):
         return HTTPFound(location=self.request.route_url('processes'))
 
 @view_config(
+    route_name='admin_user',
+    renderer='templates/admin.pt',
+    layout='default',
+    permission='edit',
+    )
+class AdminUserView(FormView):
+    from .schema import AdminUserSchema
+    
+    schema = AdminUserSchema()
+    buttons = ('edit',)
+    title = u"Manage Users"
+
+    def appstruct(self):
+        return {}
+
+    def edit_success(self, appstruct):
+        return HTTPFound(location=self.request.route_url('admin_user'))
+
+@view_config(
     route_name='admin_user_register',
     renderer='templates/admin.pt',
     layout='default',
