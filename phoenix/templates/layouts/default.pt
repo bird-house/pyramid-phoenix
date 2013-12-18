@@ -16,10 +16,8 @@
             tal:attributes="href python: request.static_url(css_path)" />
     </tal:resources>
 
-    <!--
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
           href="http://code.jquery.com/ui/1.8.18/themes/smoothness/jquery-ui.css" />
-    -->
 
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
           href="${request.static_url('deform_bootstrap:static/deform_bootstrap.css')}" />
