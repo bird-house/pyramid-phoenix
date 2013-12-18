@@ -73,10 +73,8 @@ def update_user(request, user_id, activated=None, openid=None):
     log.debug("update user %s", user_id)
     db = database(request)
     user = db.users.find_one(dict(user_id = user_id))
-    log.debug("update user: %s", user)
     if user == None:
         user = register_user(request, user_id=user_id, activated=False)
-        log.debug(user)
     if activated != None:
         user['activated'] = activated
     if openid:

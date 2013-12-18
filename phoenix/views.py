@@ -185,7 +185,7 @@ def login_openid(request):
     #response = request.response
     result = authomatic.login(WebObAdapter(request, response), provider_name)
 
-    log.debug('authomatic login result: %s', result)
+    #log.debug('authomatic login result: %s', result)
     
     if result:
         if result.error:
@@ -213,7 +213,7 @@ def login_openid(request):
                 update_user(request, user_id=result.user.email, openid=result.user.id, activated=False)
                 response.text = render('phoenix:templates/register.pt',
                                        {'email': result.user.email}, request=request)
-    log.debug('response: %s', response)
+    #log.debug('response: %s', response)
         
     return response
 
