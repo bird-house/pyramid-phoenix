@@ -100,7 +100,7 @@ function initOpacitySlider() {
 function setOpacity(newOpacity, redraw) {
   opacity = newOpacity;
   if (wmsLayer != null) {
-    console.log("ipdate layer");
+    console.log("update layer");
     wmsLayer.setOpacity(opacity);
     if (redraw) wmsLayer.redraw();
   }
