@@ -1,0 +1,1 @@
+<tal:form replace="structure form">The form will render here</tal:form>

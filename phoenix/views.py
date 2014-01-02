@@ -289,19 +289,62 @@ def jobs(request):
 
 @view_config(
     route_name="jobsupdate",
-    renderer ="templates/jobsupdate.pt",
+    renderer ="templates/replace.pt",
     layout='default',
     permission='edit'
     )
 def jobsupdate(request):
     from .models import jobs_information
+    from .schema import TableSchema
     data = request.matchdict
     #Sort the table with the given key, matching to the template name
     key = data["sortkey"]
     #If inverted is found as type then the ordering is inverted.
     inverted = (data["type"]=="inverted")
     jobs = jobs_information(request,key,inverted)
-    return {"jobs":jobs}
+    #Add HTML data for the table
+    def tpd(key,value):
+        return (key,{key:"<div id=\""+key+"\" onclick=\"sort(\'"+key+"\')\">"+value+"</div>"})
+    table_options = 'id="process_table" class="table table-condensed accordion-group" style="table-layout: fixed; word-wrap: break-word;"'
+    tableheader= [tpd('select','Select'),tpd('identifier','Identifier'),
+                  tpd('starttime','Start Time'),tpd('duration','Duration'),
+                  tpd('notes','Notes'),tpd('tags','Tags'),tpd('status','Status')]
+    tablerows = []
+    for job in jobs:
+        tablerow = []
+        job["select"] = '<input type="checkbox" name="selected" value="'+job['uuid']+'">'
+        for tuplepair in tableheader:
+            key = tuplepair[0]
+            tablerow.append(job[key])
+        #overwrite the Status column
+        running = ('<a href="#" class="label label-info" data-toggle="popover"'+
+                   'data-placement="left" data-content="'+ job["status_message"]+
+                   '" data-original-title="Status Message">'+job["status"]+'</a>\n'+
+                   '<div class="bar" style="width:'+str(job["percent_completed"])+
+                   '%;">'+str(job["percent_completed"])+'%</div>')
+        succeed = (' <a href="/output_details?uuid='+job["uuid"]+'" class="label label-success">'+
+                   job["status"]+'</a>')
+        failed = ('<a href="#" class="label label-warning" data-toggle="popover" data-placement="left"'+
+                  'data-content="'+job["error_message"]+'" data-original-title="Error Message">'+
+                  job["status"]+'</a>')
+        exception = ('<a href="#" class="label label-important" data-toggle="popover"'+
+                    ' data-placement="left" data-content="'+job["error_message"]+
+                    '" data-original-title="Error Message">'+job["status"]+'</a>')
+        #The last element is status
+        tablerow[-1] = (job['status'],{
+            'ProcessAccepted':running, 'ProcessStarted':running, 'ProcessPaused':running,
+            'ProcessSucceeded': succeed, 'ProcessFailed':failed, 'Exception': exception })
+        tablerows.append(tablerow)
+    #Create a form using the HTML data above and using the TableSchema
+    appstruct = {'table':{'tableheader':tableheader, 'tablerows':tablerows,
+        'table_options':table_options}}
+    schema = TableSchema().bind()
+    schema.set_title("My Jobs")
+    myForm = Form(schema)
+    form = myForm.render(appstruct=appstruct)
+    #Change the layout from horizontal to vertical to allow the table take the full width.
+    form = form.replace('deform form-horizontal','deform form-vertical')
+    return {'form':form}
 
 # output_details
 # --------------

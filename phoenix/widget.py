@@ -296,3 +296,83 @@ class JobsWidget(Widget):
         if not pstruct:
             return null
         return pstruct
+
+class GenericTableWidget(Widget):
+   
+    def serialize(self,field,cstruct,readonly=False):
+        """
+        Convert the cstruct to a dictionary and handle colander.null and missing data
+
+        cstruct must contain 'tableheader' and 'tablerows'.
+        'table_options' is optional and will be emtpy if not given. It allows to add html parameters
+        to the table tag.
+
+        :param cstruct: An unicode representation of the provided data
+        :returns: HTML table with filled data
+        """
+        data = {'tableheader':[],'tablerows':[],'table_options':""}
+        if cstruct is not null:
+            from ast import literal_eval
+            struct = literal_eval(cstruct)
+            if 'table_options' not in struct:
+                struct['table_options']=""
+            if ('tableheader' in struct and 'tablerows' in struct):
+                data = {'tableheader' : struct['tableheader'],'tablerows' : struct['tablerows'],
+                        'table_options': struct['table_options']}
+        return self.render_table(**data)
+    
+
+    def render_table(self,tableheader,tablerows,table_options=""):
+        """
+        Renders an HTML table.
+
+        """
+        if(len(tablerows) <1):
+            return u"No table data given."
+        if(len(tableheader) != len(tablerows[0])):
+            return (u"Mismatch in table header and table data size.<br>"+str(tableheader)+"<br>"+
+                  str(tablerows[0]))
+
+        outlines = []
+        outlines.append("<table "+table_options+">")
+        outlines.append("<tr>")
+        for i in range(len(tableheader)):
+            outlines.append("<th>"+self._cell_to_html(tableheader[i])+"</th>")
+        outlines.append("</tr>")
+        for i in range(len(tablerows)):
+            outlines.append("<tr>")
+            for j in range(len(tableheader)):
+                outlines.append("<td>"+self._cell_to_html(tablerows[i][j])+"</td>")
+            outlines.append("</tr>")
+        outlines.append("</table>")
+        return "\n".join(outlines)
+        
+    def _cell_to_html(self,celldata):
+        """
+        Convert the given data to an html string. 
+
+        :param celldata: The cell data is either a string containing HTML or
+            a tuple with (key,string with HMTL dict dependent on key). 
+        :returns: A string in HTML format or an error message (that is HTML compatible as well)
+        """
+        handled = False
+        out = ""
+        celltype = type(celldata)
+        if (celltype==tuple):
+            if(len(celldata) == 2):
+                key = celldata[0]
+                choices = celldata[1]
+                try:
+                    out = choices[key]
+                    handled = True
+                except:#handled will stay False in an exception
+                    pass
+        elif(celltype==str or celltype==unicode):
+            out = celldata
+            handled = True
+        if not handled:
+            out = "Please check the inputs for their type."
+        return out
+
+    def deserialize(self,filed, pstruct):
+        return pstruct   

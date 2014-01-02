@@ -276,3 +276,16 @@ class JobsSchema(colander.MappingSchema):
         widget = deferred_job_widget
         )
 
+class TableSchema(colander.MappingSchema):
+
+    from widget import GenericTableWidget
+    table = colander.SchemaNode(
+        colander.String(),
+        missing='',#do not show the required *
+        widget = GenericTableWidget(),
+
+    )
+
+    def set_title(self,title="Table"):
+        self.children[0].title=title
+
