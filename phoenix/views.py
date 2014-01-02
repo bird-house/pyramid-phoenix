@@ -327,6 +327,9 @@ def jobsupdate(request):
     for job in jobs:
         tablerow = []
         job["select"] = '<input type="checkbox" name="selected" value="'+job['uuid']+'">'
+        identifier = job["identifier"]
+        uuid = job['uuid']
+        job["identifier"] ='<a rel="tooltip" data-placement="right" title="ID:'+uuid+'">'+identifier+'</a>'
         for tuplepair in tableheader:
             key = tuplepair[0]
             tablerow.append(job[key])
