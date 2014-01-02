@@ -323,8 +323,7 @@ def jobsupdate(request):
         running = ('<a href="#" class="label label-info" data-toggle="popover"'+
                    ' data-placement="left" data-content="'+ job["status_message"]+
                    '" data-original-title="Status Message">'+job["status"]+'</a>\n'+
-                   '<div class="bar" style="width:'+str(perc)+
-                   '%;"></div><div><progress style="width:'+str(barwidth)+'px;"  max="'+str(barwidth)+
+                   '<div><progress style="height:20px;width:'+str(barwidth)+'px;"  max="'+str(barwidth)+
                    '" value="'+str(barfill)+'"></progress>'+str(perc)+'%</div>')
         succeed = (' <a href="/output_details?uuid='+job["uuid"]+'" class="label label-success">'+
                    job["status"]+'</a>')
