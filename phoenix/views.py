@@ -340,7 +340,7 @@ def jobsupdate(request):
         'table_options':table_options}}
     schema = TableSchema().bind()
     schema.set_title("My Jobs")
-    myForm = Form(schema)
+    myForm = Form(schema,buttons=("remove all","remove selected"))
     form = myForm.render(appstruct=appstruct)
     #Change the layout from horizontal to vertical to allow the table take the full width.
     form = form.replace('deform form-horizontal','deform form-vertical')
