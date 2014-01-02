@@ -2,7 +2,7 @@
   <span  metal:fill-slot="content">
   <div id="content"></div>
 <noscript>
-<metal:block use-macro="load: jobsupdate.pt">
+<tal:form replace="structure noscriptform">The noscript form will render here</tal:form>
 </noscript>
 <div id="scriptOnly" style="display: none;">
 Refresh period:

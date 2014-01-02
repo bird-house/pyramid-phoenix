@@ -273,6 +273,19 @@ def jobs(request):
 
     jobs = jobs_information(request)
 
+    #This block is used to allow viewing the data if javascript is deactivated
+    from pyramid.request import Request
+    #create a new request to jobsupdate
+    subreq = Request.blank('/jobsupdate/starttime/inverted')
+    #copy the cookie for authenication (else 403 error)
+    subreq.cookies = request.cookies
+    #Make the request
+    response = request.invoke_subrequest(subreq)
+    #Get the HTML part of the response
+    noscriptform = response.body
+    f = open("/home/tk/sandbox/log","w")
+    f.write(str(response.headers))
+
     if "remove_all" in request.POST:
         from .models import drop_user_jobs
         drop_user_jobs(request)
@@ -285,7 +298,8 @@ def jobs(request):
             drop_jobs_by_uuid(request,request.POST.getall("selected"))
         return HTTPFound(location=request.route_url('jobs'))
 
-    return {"jobs":jobs}
+ 
+    return {"jobs":jobs,"noscriptform":noscriptform}
 
 @view_config(
     route_name="jobsupdate",
