@@ -317,11 +317,15 @@ def jobsupdate(request):
             key = tuplepair[0]
             tablerow.append(job[key])
         #overwrite the Status column
+        perc = job["percent_completed"]
+        barwidth = 80
+        barfill = perc*barwidth/100
         running = ('<a href="#" class="label label-info" data-toggle="popover"'+
-                   'data-placement="left" data-content="'+ job["status_message"]+
+                   ' data-placement="left" data-content="'+ job["status_message"]+
                    '" data-original-title="Status Message">'+job["status"]+'</a>\n'+
-                   '<div class="bar" style="width:'+str(job["percent_completed"])+
-                   '%;">'+str(job["percent_completed"])+'%</div>')
+                   '<div class="bar" style="width:'+str(perc)+
+                   '%;"></div><div><progress style="width:'+str(barwidth)+'px;"  max="'+str(barwidth)+
+                   '" value="'+str(barfill)+'"></progress>'+str(perc)+'%</div>')
         succeed = (' <a href="/output_details?uuid='+job["uuid"]+'" class="label label-success">'+
                    job["status"]+'</a>')
         failed = ('<a href="#" class="label label-warning" data-toggle="popover" data-placement="left"'+
@@ -340,7 +344,7 @@ def jobsupdate(request):
         'table_options':table_options}}
     schema = TableSchema().bind()
     schema.set_title("My Jobs")
-    myForm = Form(schema,buttons=("remove all","remove selected"))
+    myForm = Form(schema,buttons=("remove selected","remove all"))
     form = myForm.render(appstruct=appstruct)
     #Change the layout from horizontal to vertical to allow the table take the full width.
     form = form.replace('deform form-horizontal','deform form-vertical')
