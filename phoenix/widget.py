@@ -298,13 +298,20 @@ class JobsWidget(Widget):
         return pstruct
 
 class GenericTableWidget(Widget):
+    """
+    The GenericTableWidget is a skelleton for a HTML table. By using lists containing 
+    HTML (which includes plain text) the table can be set up. 
+    
+    Due to being generic it lacks features. They have to be implemented using HTML.
+    Using onclick and other tag options, allows to add javascript calls. 
+    """
    
     def serialize(self,field,cstruct,readonly=False):
         """
         Convert the cstruct to a dictionary and handle colander.null and missing data
 
         cstruct must contain 'tableheader' and 'tablerows'.
-        'table_options' is optional and will be emtpy if not given. It allows to add html parameters
+        'table_options' is optional and will be emtpy if not given. It allows to add HTML parameters
         to the table tag.
 
         :param cstruct: An unicode representation of the provided data
@@ -325,6 +332,11 @@ class GenericTableWidget(Widget):
     def render_table(self,tableheader,tablerows,table_options=""):
         """
         Renders an HTML table.
+
+        :param tableheader: The list of values in the header. May contain any HTML.
+        :param tablerows: A list of lists containing the table row data. May contain any HTML.
+        :param table_options: Allows to add HTML into the <table> tag.
+        :returns: An HTML table as string.
 
         """
         if(len(tablerows) <1):

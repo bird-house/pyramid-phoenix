@@ -283,8 +283,6 @@ def jobs(request):
     response = request.invoke_subrequest(subreq)
     #Get the HTML part of the response
     noscriptform = response.body
-    f = open("/home/tk/sandbox/log","w")
-    f.write(str(response.headers))
 
     if "remove_all" in request.POST:
         from .models import drop_user_jobs
