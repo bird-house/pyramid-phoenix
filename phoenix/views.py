@@ -301,7 +301,6 @@ def jobs(request):
 
 @view_config(
     route_name="jobsupdate",
-    renderer ="templates/replace.pt",
     layout='default',
     permission='edit'
     )
@@ -362,7 +361,7 @@ def jobsupdate(request):
     form = myForm.render(appstruct=appstruct)
     #Change the layout from horizontal to vertical to allow the table take the full width.
     form = form.replace('deform form-horizontal','deform form-vertical')
-    return {'form':form}
+    return Response(form,content_type='text/html')
 
 # output_details
 # --------------
