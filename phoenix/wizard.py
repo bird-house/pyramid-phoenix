@@ -28,9 +28,6 @@ from mako.template import Template
 
 from .models import (
     add_job, 
-    esgf_search_context, 
-    esgf_file_search,
-    esgf_aggregation_search,
     )
 from .helpers import (
     wps_url, 
@@ -46,8 +43,6 @@ log = logging.getLogger(__name__)
 
 from owslib.wps import WebProcessingService
 from .widget import EsgSearchWidget, EsgFilesWidget, FileSearchWidget, WizardStatesWidget
-
-from pyesgf.search import SearchConnection
 
 # select process schema
 # ---------------------

@@ -17,9 +17,6 @@ from pyramid.security import (
 import uuid
 import datetime
 
-from pyesgf.search import SearchConnection
-from pyesgf.multidict import MultiDict
-
 import logging
 
 log = logging.getLogger(__name__)
@@ -229,80 +226,3 @@ def jobs_information(request,sortkey="starttime",inverted=True):
         
     return jobs
 
-# esgf search ....
-# ----------------
-
-def esgf_search_conn(request, distrib=True):
-    return SearchConnection(esgsearch_url(request), distrib=distrib)
-    
-def esgf_search_context(request, query='*', distrib=True, replica=False, latest=True):
-    conn = esgf_search_conn(request, distrib)
-    ctx = conn.new_context( replica=replica, latest=latest, query=query)
-    return ctx
-
-def esgf_aggregation_search(ctx):
-    log.debug("datasets found = %d", ctx.hit_count)
-    if ctx.hit_count == 0:
-        return []
-    aggregations = []
-    for result in ctx.search():
-        agg_ctx = result.aggregation_context()
-        log.debug('opendap num files = %d', agg_ctx.hit_count)
-        for agg in agg_ctx.search():
-            # filter with selected variables
-            ok = False
-            variables = ctx.facet_constraints.getall('variable')
-            log.debug('variables in query: %s', variables)
-            if len(variables) > 0:
-                for var_name in variables:
-                    if var_name in agg.json.get('variable', []):
-                        ok = True
-                        break
-                if not ok: continue
-
-            aggregations.append( (agg.opendap_url, agg.aggregation_id) )
-    return aggregations
-
-def esgf_file_search(ctx, start, end):
-    from dateutil import parser
-    start_date = parser.parse(start)
-    end_date = parser.parse(end)
-    start_str = '%04d%02d%02d' % (start_date.year, start_date.month, start_date.day)
-    end_str = '%04d%02d%02d' % (end_date.year, end_date.month, end_date.day)
-
-    log.debug("filter from=%s, to=%s", start_str, end_str)
-    
-    log.debug("datasets found = %d", ctx.hit_count)
-    files = []
-    for result in ctx.search():
-        file_ctx = result.file_context()
-        log.debug("files found = %d", file_ctx.hit_count)
-
-        query_dict = MultiDict()
-        query_dict['type'] = 'File'
-        query_dict.extend(file_ctx.facet_constraints)
-        query_dict.extend(ctx.facet_constraints)
-
-        log.debug('before sending query ...')
-        response = ctx.connection.send_search(limit=file_ctx.hit_count, query_dict=query_dict)
-        log.debug('got query response')
-        docs = response['response']['docs']
-        for doc in docs:
-            download_url = None
-            for encoded in doc['url']:
-                url, mime_type, service = encoded.split('|')
-                if 'HTTPServer' in service:
-                    download_url = url
-                    break
-            if download_url == None:
-                continue
-            filename = doc['title']
-
-            # filter with time constraint
-            index = filename.rindex('-')
-            f_start = filename[index-8:index]
-            f_end = filename[index+1:index+9]
-            # match overlapping time range
-            if f_end >= start_str and f_start <= end_str:
-                files.append( (download_url, filename) )
-    return files
