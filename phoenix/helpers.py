@@ -46,8 +46,8 @@ def wps_url(request):
     if (url == None):
         from owslib.csw import CatalogueServiceWeb
         url = get_setting(request, 'phoenix.wps')
-        csw = CatalogueServiceWeb(csw_url(request))
         try:
+            csw = CatalogueServiceWeb(csw_url(request))
             csw.harvest(url, 'http://www.opengis.net/wps/1.0.0')
             update_wps_url(request, url)
         except:
