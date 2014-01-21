@@ -51,7 +51,7 @@ def wps_url(request):
             csw.harvest(url, 'http://www.opengis.net/wps/1.0.0')
             update_wps_url(request, url)
         except:
-            log.debug("Could not add wps service to catalog: %s" % (url))
+            log.error("Could not add wps service to catalog: %s" % (url))
             #raise
     return url
 
