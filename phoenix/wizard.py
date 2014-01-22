@@ -101,6 +101,7 @@ def search_metadata(url, wizard_state):
     identifier = 'org.malleefowl.metadata'
     inputs = [("processid", str(processid))]
     outputs = [("output",False)]
+    log.debug("wps url=%s", url)
     wps = WebProcessingService(url, verbose=False)
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     monitorExecution(execution)
