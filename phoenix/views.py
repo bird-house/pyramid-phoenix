@@ -331,11 +331,16 @@ def jobsupdate(request):
             key = tuplepair[0]
             tablerow.append(job[key])
         #overwrite the Status column
-        perc = job["percent_completed"]
+        perc = job.get("percent_completed")
+        ##A job once somehow had some undefined behaviour. The following code solved it. Now the
+        ##job is removed it is running without it. If the error occurs again find the reason for it.
+        ##and fix it.
+        #if perc == None:#the following value does not realy matter als long as it is an integer.
+        #   perc = 0
         barwidth = 80
         barfill = perc*barwidth/100
         running = ('<a href="#" class="label label-info" data-toggle="popover"'+
-                   ' data-placement="left" data-content="'+ job["status_message"]+
+                   ' data-placement="left" data-content="'+ str(job.get("status_message"))+
                    '" data-original-title="Status Message">'+job["status"]+'</a>\n'+
                    '<div><progress style="height:20px;width:'+str(barwidth)+'px;"  max="'+str(barwidth)+
                    '" value="'+str(barfill)+'"></progress>'+str(perc)+'%</div>')
