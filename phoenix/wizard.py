@@ -21,9 +21,6 @@ from deform import widget
 import colander
 from colander import Range, Invalid, null
 
-import owslib
-from owslib.wps import WebProcessingService, monitorExecution
-
 from mako.template import Template
 
 from .models import (
@@ -36,13 +33,18 @@ from .helpers import (
     )
 from .wps import WPSSchema
 
+from .widget import (
+    EsgSearchWidget,
+    EsgFilesWidget,
+    FileSearchWidget,
+    WizardStatesWidget
+    )
+
+from owslib.wps import WebProcessingService, monitorExecution
+
 import logging
 
 log = logging.getLogger(__name__)
-
-
-from owslib.wps import WebProcessingService
-from .widget import EsgSearchWidget, EsgFilesWidget, FileSearchWidget, WizardStatesWidget
 
 # select process schema
 # ---------------------
@@ -361,10 +363,12 @@ class Done():
     
     def __call__(self, request, states):
         wps = WebProcessingService(wps_url(request), verbose=True)
-        
-        sys_path = os.path.abspath(os.path.join(os.path.dirname(owslib.__file__), '..'))
 
-        workflow_params = dict(sys_path = sys_path, service = wps.url)
+        # TODO: dirty hack to get path to owslib in wps template
+        import owslib
+        owslib_path = os.path.abspath(os.path.join(os.path.dirname(owslib.__file__), '..'))
+        workflow_params = dict(owslib_path = owslib_path, service = wps.url)
+
         log.debug('states 1 = %s' % (states[1]))
         workflow_params['source_process'] = str(states[1].get('data_source'))
         workflow_params['openid'] = str(states[4].get('openid'))

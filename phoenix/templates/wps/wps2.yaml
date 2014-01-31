@@ -45,8 +45,8 @@ components:
   properties:
     step: |
       import sys
+      sys.path.append("${owslib_path}")
       import urllib2
-      sys.path.append(sys_path)
       from owslib.wps import WebProcessingService, monitorExecution
       wps = WebProcessingService(service, verbose=False)
       inputs = []
@@ -62,11 +62,10 @@ components:
         input_params = map(lambda(item): ( item[0], urllib2.unquote(str(item[1])) ), input_params)
         inputs.extend(input_params)
       execution = wps.execute(identifier, inputs=inputs, output=outputs)
-      monitorExecution(execution, sleepSecs=20)
+      monitorExecution(execution, sleepSecs=5)
       status = execution.status
       output = execution.processOutputs[0].reference
     inputs:
-      sys_path:
       identifier: 
       service:
       openid:
@@ -108,7 +107,6 @@ components:
   properties:
     actor: !ref ExecuteWPSProcess
     constants:
-      sys_path: ${sys_path}
       service: ${service}
       identifier: ${source_process}
       openid: ${openid}
@@ -139,7 +137,6 @@ components:
   properties:
     actor: !ref ExecuteWPSProcess
     constants:
-      sys_path: ${sys_path}
       service: ${service}
       identifier: ${work_process}
       input_params: ${work_params}
