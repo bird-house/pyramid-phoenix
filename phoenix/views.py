@@ -330,32 +330,32 @@ def jobsupdate(request):
         for tuplepair in tableheader:
             key = tuplepair[0]
             tablerow.append(job[key])
-        #overwrite the Status column
-        perc = job.get("percent_completed")
-        #A job once somehow had some undefined behaviour. The following code solved it. Now the
-        #job is removed it is running without it. If the error occurs again find the reason for it.
-        #and fix it.
-        if perc == None:#the following value does not realy matter als long as it is an integer.
-           perc = 0
-        barwidth = 80
-        barfill = perc*barwidth/100
-        running = ('<a href="#" class="label label-info" data-toggle="popover"'+
-                   ' data-placement="left" data-content="'+ str(job.get("status_message"))+
-                   '" data-original-title="Status Message">'+job["status"]+'</a>\n'+
-                   '<div><progress style="height:20px;width:'+str(barwidth)+'px;"  max="'+str(barwidth)+
-                   '" value="'+str(barfill)+'"></progress>'+str(perc)+'%</div>')
-        succeed = (' <a href="/output_details?uuid='+job["uuid"]+'" class="label label-success">'+
-                   job["status"]+'</a>')
-        failed = ('<a href="#" class="label label-warning" data-toggle="popover" data-placement="left"'+
-                  'data-content="'+job["error_message"]+'" data-original-title="Error Message">'+
-                  job["status"]+'</a>')
-        exception = ('<a href="#" class="label label-important" data-toggle="popover"'+
-                    ' data-placement="left" data-content="'+job["error_message"]+
-                    '" data-original-title="Error Message">'+job["status"]+'</a>')
+
+        status = job["status"]
+        tr1 = "Unknown status:"+str(status)
+        if status in ["ProcessAccepted","ProcessStarted","ProcessPaused"]:
+            perc = job.get("percent_completed")
+            barwidth = 80
+            barfill = perc*barwidth/100
+            tr1 = ('<a href="#" class="label label-info" data-toggle="popover"' +
+                       ' data-placement="left" data-content="' + str(job.get("status_message")) +
+                       '" data-original-title="Status Message">' + job["status"] + '</a>\n' +
+                       '<div><progress style="height:20px;width:' + str(barwidth) + 'px;"  max="' + 
+                       str(barwidth) + '" value="' + str(barfill) + '"></progress>' + 
+                       str(perc) + '%</div>')
+        elif status == "ProcessSucceeded":
+            tr1 = (' <a href="/output_details?uuid=' + job["uuid"] + '" class="label label-success">' +
+                   status + '</a>')
+        elif status == "ProcessFailed":
+            tr1 = ('<a href="#" class="label label-warning" data-toggle="popover"' + 
+                  ' data-placement="left" data-content="' + job["error_message"] + 
+                  '" data-original-title="Error Message">' + status + '</a>')
+        elif status == "Exception":
+            tr1 = ('<a href="#" class="label label-important" data-toggle="popover"' +
+                  ' data-placement="left" data-content="' + job["error_message"] +
+                  '" data-original-title="Error Message">'+ status +'</a>')
         #The last element is status
-        tablerow[-1] = (job['status'],{
-            'ProcessAccepted':running, 'ProcessStarted':running, 'ProcessPaused':running,
-            'ProcessSucceeded': succeed, 'ProcessFailed':failed, 'Exception': exception })
+        tablerow[-1] = tr1
         tablerows.append(tablerow)
     #Create a form using the HTML data above and using the TableSchema
     appstruct = {'table':{'tableheader':tableheader, 'tablerows':tablerows,
