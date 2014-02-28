@@ -8,6 +8,7 @@
 import os
 import datetime
 import json
+import yaml
 
 from pyramid.view import view_config, forbidden_view_config
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
@@ -29,7 +30,6 @@ from .models import (
 from .helpers import (
     wps_url, 
     esgsearch_url,
-    quote_wps_params,
     )
 from .wps import WPSSchema
 
@@ -362,32 +362,34 @@ class Done():
         pass
     
     def __call__(self, request, states):
-        wps = WebProcessingService(wps_url(request), verbose=True)
-
-        # TODO: dirty hack to get path to owslib in wps template
-        import owslib
-        owslib_path = os.path.abspath(os.path.join(os.path.dirname(owslib.__file__), '..'))
-        workflow_params = dict(owslib_path = owslib_path, service = wps.url)
-
-        log.debug('states 1 = %s' % (states[1]))
-        workflow_params['source_process'] = str(states[1].get('data_source'))
-        workflow_params['openid'] = str(states[4].get('openid'))
-        workflow_params['password'] = str(states[4].get('password'))
-        workflow_params['file_identifiers'] = states[3].get('file_identifier')
-        workflow_params['source_params'] = []
+        service = wps_url(request)
+        source = dict(
+            service = service,
+            identifier = str(states[1].get('data_source')),
+            input = [],
+            output = ['output'],
+            sources = map(lambda x: [str(x)], states[3].get('file_identifier')),
+            )
+        if states[4].has_key('openid'):
+            source['input'].append('openid=' + str(states[4].get('openid', '')))
+            source['input'].append('password=' + str(states[4].get('password', '')))
         if states[4].has_key('startindex'):
-            workflow_params['source_params'].append( ('startindex', int(states[4].get('startindex'))) ) 
-            workflow_params['source_params'].append( ('endindex', int(states[4].get('endindex'))) )
-        workflow_params['work_process'] = str(states[0].get('process'))
-        workflow_params['work_params'] = quote_wps_params(states[5].items())
-        workflow_template_filename = os.path.join(os.path.dirname(__file__), 'templates/wps/wps.yaml')
-        workflow_template = Template(filename=workflow_template_filename)
-        workflow_description = workflow_template.render(**workflow_params)
-        #log.debug('wf description = %s', workflow_description)
+            source['input'].append('startindex=' + str(states[4].get('startindex', '')))
+            source['input'].append('endindex=' + str(states[4].get('endindex', '')))
+        worker = dict(
+            service = service,
+            identifier = str(states[0].get('process')),
+            input = map(lambda x: str(x[0]) + '=' + str(x[1]), states[5].items()),
+            output = ['output'])
+        nodes = dict(source=source, worker=worker)
+        log.debug( json.dumps(nodes) )
 
-        identifier = 'org.malleefowl.restflow'
-        inputs = [("workflow_description", str(workflow_description))]
-        outputs = [("output",True), ("work_output", False), ("work_status", False)]
+        # run workflow
+        wps = WebProcessingService(service, verbose=True)
+
+        identifier = 'org.malleefowl.restflow.genrun'
+        inputs = [("name", "simpleWorkflow"), ("nodes", json.dumps(nodes))]
+        outputs = [("output",True)]
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
         
         add_job(
