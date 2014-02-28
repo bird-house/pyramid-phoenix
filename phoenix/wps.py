@@ -190,6 +190,8 @@ class WPSSchema(colander.SchemaNode):
             return colander.Float()
         elif 'decimal' in data_input.dataType:
             return colander.Decimal()
+        elif 'string' in data_input.dataType:
+            return colander.String()
         elif 'dateTime' in data_input.dataType:
             return colander.DateTime()
         elif 'date' in data_input.dataType:
