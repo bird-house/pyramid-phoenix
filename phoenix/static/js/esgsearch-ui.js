@@ -420,12 +420,15 @@
       };
 
       var _datesFromId = function(id) {
-        var txt = id.split('_').pop();
-        txt = txt.replace('.nc', '');
+        "cmip5.output1.MPI-M.MPI-ESM-LR.rcp26.mon.atmos.Amon.r1i1p1.v20120315.tas_Amon_MPI-ESM-LR_rcp26_r1i1p1_200601-210012.nc_1"
+        var txt = id.split('.')[10]
+        txt = txt.split('_').pop();
         var parts = txt.split('-');
         var start = parts[0];
         var end = parts[1];
+
         console.log(start + ' - ' + end);
+
         var startDate = _strToDate(start);
         var endDate = _strToDate(end);
         
