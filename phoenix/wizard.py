@@ -391,10 +391,25 @@ class Done():
         # run workflow
         wps = WebProcessingService(service, verbose=True)
 
-        identifier = 'org.malleefowl.restflow.genrun'
+        # TODO: chain processes
+
+        # get wf description
+        identifier = 'org.malleefowl.restflow.generate'
         inputs = [("name", "simpleWorkflow"), ("nodes", json.dumps(nodes))]
         outputs = [("output",True)]
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
+        monitorExecution(execution, sleepSecs=1)
+        wf_url = execution.processOutputs[0].reference
+
+        log.debug('wf generated %s', wf_url)
+
+        # run workflow
+        identifier = 'org.malleefowl.restflow.run'
+        inputs = [("workflow_description", wf_url)]
+        outputs = [("output",True)]
+        execution = wps.execute(identifier, inputs=inputs, output=outputs)
+
+        log.debug('starting wf')
         
         add_job(
             request = request,
