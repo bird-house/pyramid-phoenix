@@ -425,7 +425,7 @@
         var parts = txt.split('-');
         var start = parts[0];
         var end = parts[1];
-        //console.log(start + ' - ' + end);
+        console.log(start + ' - ' + end);
         var startDate = _strToDate(start);
         var endDate = _strToDate(end);
         
@@ -441,6 +441,11 @@
       };
 
       var _strToDate = function(str) {
+        if (str == undefined) {
+          console.log("date is not defined!")
+          return new Date();
+        }
+
         var year = str.substring(0,4);
         var month = 1;
         if (str.length >= 6) {
