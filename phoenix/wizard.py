@@ -376,6 +376,10 @@ class Done():
         if states[4].has_key('startindex'):
             source['input'].append('startindex=' + str(states[4].get('startindex', '')))
             source['input'].append('endindex=' + str(states[4].get('endindex', '')))
+        if states[5].has_key('info_notes'):
+            del(states[5]['info_notes'])
+        if states[5].has_key('info_tags'):
+            del(states[5]['info_tags'])
         worker = dict(
             service = service,
             identifier = str(states[0].get('process')),
