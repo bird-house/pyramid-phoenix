@@ -395,11 +395,11 @@ class Done():
 
         # get wf description
         identifier = 'org.malleefowl.restflow.generate'
-        inputs = [("name", "simpleWorkflow"), ("nodes", json.dumps(nodes))]
+        inputs = [("name", "simpleWorkflow"), ("nodes", yaml.dump(nodes))]
         outputs = [("output",True)]
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
         monitorExecution(execution, sleepSecs=1)
-        wf_url = execution.processOutputs[0].reference
+        wf_url = execution.processOutputs[0].reference.encode('ascii', 'ignore')
 
         log.debug('wf generated %s', wf_url)
 
