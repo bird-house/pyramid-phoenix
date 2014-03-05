@@ -368,10 +368,8 @@ def convert_states_to_nodes(service, states):
     if states[4].has_key('startindex'):
         source['input'].append('startindex=' + str(states[4].get('startindex', '')))
         source['input'].append('endindex=' + str(states[4].get('endindex', '')))
-    notes = states[5].get('info_notes', '')
     if states[5].has_key('info_notes'):
-        del(states[5]['info_notes'])
-    tags = states[5].get('info_tags', '')
+        del(states[5]['info_notes'])   
     if states[5].has_key('info_tags'):
         del(states[5]['info_tags'])
     worker = dict(
@@ -391,6 +389,9 @@ class Done():
         pass
     
     def __call__(self, request, states):
+        notes = states[5].get('info_notes', '')
+        tags = states[5].get('info_tags', '')
+        
         # convert states to workflow desc and run workflow
         wps = WebProcessingService(wps_url(request), verbose=True)
         nodes = convert_states_to_nodes(wps.url, states)
