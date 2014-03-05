@@ -30,6 +30,7 @@ from .models import (
 from .helpers import (
     wps_url, 
     esgsearch_url,
+    execute_restflow,
     )
 from .wps import WPSSchema
 
@@ -376,8 +377,10 @@ class Done():
         if states[4].has_key('startindex'):
             source['input'].append('startindex=' + str(states[4].get('startindex', '')))
             source['input'].append('endindex=' + str(states[4].get('endindex', '')))
+        notes = states[5].get('info_notes', '')
         if states[5].has_key('info_notes'):
             del(states[5]['info_notes'])
+        tags = states[5].get('info_tags', '')
         if states[5].has_key('info_tags'):
             del(states[5]['info_tags'])
         worker = dict(
@@ -386,39 +389,19 @@ class Done():
             input = map(lambda x: str(x[0]) + '=' + str(x[1]), states[5].items()),
             output = ['output'])
         nodes = dict(source=source, worker=worker)
-        log.debug( json.dumps(nodes) )
 
         # run workflow
         wps = WebProcessingService(service, verbose=True)
-
-        # TODO: chain processes
-
-        # get wf description
-        identifier = 'org.malleefowl.restflow.generate'
-        inputs = [("name", "simpleWorkflow"), ("nodes", yaml.dump(nodes))]
-        outputs = [("output",True)]
-        execution = wps.execute(identifier, inputs=inputs, output=outputs)
-        monitorExecution(execution, sleepSecs=1)
-        wf_url = execution.processOutputs[0].reference.encode('ascii', 'ignore')
-
-        log.debug('wf generated %s', wf_url)
-
-        # run workflow
-        identifier = 'org.malleefowl.restflow.run'
-        inputs = [("workflow_description", wf_url)]
-        outputs = [("output",True)]
-        execution = wps.execute(identifier, inputs=inputs, output=outputs)
-
-        log.debug('starting wf')
+        execution = execute_restflow(wps, nodes)
         
         add_job(
             request = request,
             user_id = authenticated_userid(request), 
-            identifier = identifier, 
+            identifier = nodes['worker']['identifier'], 
             wps_url = wps.url, 
             execution = execution,
-            notes = states[5].get('info_notes', ''),
-            tags = states[5].get('info_tags', ''))
+            notes = notes,
+            tags = tags)
         
         form_view = self.form_view_class(request)
         form_view.schema = self.schema.bind()
