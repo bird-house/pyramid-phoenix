@@ -354,6 +354,34 @@ class MyFormWizardView(FormWizardView):
         return HTTPFound(location = self.request.path_url)
 
 
+def convert_states_to_nodes(service, states):
+    source = dict(
+        service = service,
+        identifier = str(states[1].get('data_source')),
+        input = [],
+        output = ['output'],
+        sources = map(lambda x: [str(x)], states[3].get('file_identifier')),
+        )
+    if states[4].has_key('openid'):
+        source['input'].append('openid=' + str(states[4].get('openid', '')))
+        source['input'].append('password=' + str(states[4].get('password', '')))
+    if states[4].has_key('startindex'):
+        source['input'].append('startindex=' + str(states[4].get('startindex', '')))
+        source['input'].append('endindex=' + str(states[4].get('endindex', '')))
+    notes = states[5].get('info_notes', '')
+    if states[5].has_key('info_notes'):
+        del(states[5]['info_notes'])
+    tags = states[5].get('info_tags', '')
+    if states[5].has_key('info_tags'):
+        del(states[5]['info_tags'])
+    worker = dict(
+        service = service,
+        identifier = str(states[0].get('process')),
+        input = map(lambda x: str(x[0]) + '=' + str(x[1]), states[5].items()),
+        output = ['output'])
+    nodes = dict(source=source, worker=worker)
+    return nodes
+
 class Done():
     form_view_class = FormView
     schema = SummarySchema(title="Summary")
@@ -363,35 +391,9 @@ class Done():
         pass
     
     def __call__(self, request, states):
-        service = wps_url(request)
-        source = dict(
-            service = service,
-            identifier = str(states[1].get('data_source')),
-            input = [],
-            output = ['output'],
-            sources = map(lambda x: [str(x)], states[3].get('file_identifier')),
-            )
-        if states[4].has_key('openid'):
-            source['input'].append('openid=' + str(states[4].get('openid', '')))
-            source['input'].append('password=' + str(states[4].get('password', '')))
-        if states[4].has_key('startindex'):
-            source['input'].append('startindex=' + str(states[4].get('startindex', '')))
-            source['input'].append('endindex=' + str(states[4].get('endindex', '')))
-        notes = states[5].get('info_notes', '')
-        if states[5].has_key('info_notes'):
-            del(states[5]['info_notes'])
-        tags = states[5].get('info_tags', '')
-        if states[5].has_key('info_tags'):
-            del(states[5]['info_tags'])
-        worker = dict(
-            service = service,
-            identifier = str(states[0].get('process')),
-            input = map(lambda x: str(x[0]) + '=' + str(x[1]), states[5].items()),
-            output = ['output'])
-        nodes = dict(source=source, worker=worker)
-
-        # run workflow
-        wps = WebProcessingService(service, verbose=True)
+        # convert states to workflow desc and run workflow
+        wps = WebProcessingService(wps_url(request), verbose=True)
+        nodes = convert_states_to_nodes(wps.url, states)
         execution = execute_restflow(wps, nodes)
         
         add_job(
