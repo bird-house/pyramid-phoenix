@@ -27,7 +27,7 @@ wps_registry = {}
 
 def get_wps(url):
     """
-    get wps instance for url
+    Get wps instance with url. Using wps registry to cache wps instances.
     """
     global wps_registry
     logger.debug("get wps: %s", url)
