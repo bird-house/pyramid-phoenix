@@ -40,7 +40,7 @@ def test_build_request_url():
     ok_('pingu' in url, url)
 
 @attr('online')
-def test_execute():
+def test_execute_with_url():
     url = wps.build_request_url(
         base.SERVICE,
         identifier="org.malleefowl.test.whoareyou",
@@ -48,7 +48,16 @@ def test_execute():
         output = 'output')
     ok_('pingu' in url, url)
 
-    result = wps.execute(url)
+    result = wps.execute_with_url(url)
+    ok_('Hello pingu' in result, result)
+
+@attr('online')
+def test_execute():
+    result = wps.execute(
+        base.SERVICE,
+        identifier="org.malleefowl.test.whoareyou",
+        inputs = [('username', 'pingu')],
+        output = 'output')
     ok_('Hello pingu' in result, result)
     
 @attr('online')

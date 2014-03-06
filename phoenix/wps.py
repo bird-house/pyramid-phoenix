@@ -100,10 +100,10 @@ def execute_restflow(wps, nodes):
     nodes_json = json.dumps(nodes)
 
     # generate url for workflow description
-    wf_url = wps.url
-    wf_url += "?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.restflow.generate"
-    wf_url += "&DataInputs=nodes=%s&rawdataoutput=output" % (nodes_json)
-    wf_url = wf_url.encode('ascii', 'ignore')
+    wf_url = build_request_url(
+        wps.url,
+        identifier='org.malleefowl.restflow.generate',
+        inputs=[('nodes', nodes_json)])
     logger.debug('wf url: %s', wf_url)
 
     # run workflow
