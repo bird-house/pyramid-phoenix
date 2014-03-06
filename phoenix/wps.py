@@ -12,12 +12,13 @@ import logging
 
 import dateutil
 import re
+import urllib
+import json
 
 from owslib.wps import WebProcessingService
 
 from .widget import TagsWidget
 from .helpers import wps_url
-
 
 __all__ = ['WPSSchema']
 
@@ -43,6 +44,40 @@ def get_wps(url):
     logger.debug("number of registered wps: %d", len(wps_registry))
     logger.debug("get wps ... done")
     return wps
+
+def execute_restflow(wps, nodes):
+    import json
+    nodes_json = json.dumps(nodes)
+
+    # generate url for workflow description
+    wf_url = wps.url
+    wf_url += "?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.restflow.generate"
+    wf_url += "&DataInputs=nodes=%s&rawdataoutput=output" % (nodes_json)
+    wf_url = wf_url.encode('ascii', 'ignore')
+    logger.debug('wf url: %s', wf_url)
+
+    # run workflow
+    identifier = 'org.malleefowl.restflow.run'
+    inputs = [("workflow_description", wf_url)]
+    outputs = [("output",True)]
+    execution = wps.execute(identifier, inputs=inputs, output=outputs)
+
+    return execution
+
+def search_local_files(wps, openid, filter):
+    req_url = wps.url
+    req_url += "?service=WPS&request=Execute&version=1.0.0"
+    req_url += "&identifier=org.malleefowl.listfiles" 
+    req_url += "&DataInputs=openid=%s;filter=%s" % (openid, filter)
+    req_url += "&rawdataoutput=output"
+    req_url = req_url.encode('ascii', 'ignore')
+    logger.debug('req url: %s', req_url)
+    files = {}
+    try:
+        files = json.load(urllib.urlopen(req_url))
+    except Exception as e:
+        logger.error('retrieving files failed! openid=%s, filter=%s, error msg=%s' % (openid, filter, e.message))
+    return files
 
 # Memory tempstore for file uploads
 # ---------------------------------

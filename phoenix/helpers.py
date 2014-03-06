@@ -95,26 +95,6 @@ def is_url(text):
     except:
         return False
 
-
-def execute_restflow(wps, nodes):
-    import json
-    nodes_json = json.dumps(nodes)
-
-    # generate url for workflow description
-    wf_url = wps.url
-    wf_url += "?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.restflow.generate"
-    wf_url += "&DataInputs=nodes=%s&rawdataoutput=output" % (nodes_json)
-    wf_url = wf_url.encode('ascii', 'ignore')
-    log.debug('wf url: %s', wf_url)
-
-    # run workflow
-    identifier = 'org.malleefowl.restflow.run'
-    inputs = [("workflow_description", wf_url)]
-    outputs = [("output",True)]
-    execution = wps.execute(identifier, inputs=inputs, output=outputs)
-
-    return execution
-
 def execute_wps(wps, identifier, params):
     # TODO: handle sync/async case, 
     # TODO: fix wps-client (parsing response)
