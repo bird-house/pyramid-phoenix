@@ -67,7 +67,7 @@ def build_request_url(service_url, identifier, inputs=[], output='output'):
     logger.debug('req url: %s', req_url)
     return req_url
 
-def execute(url, format=RAW):
+def execute_with_url(url, format=RAW):
     result = None
     try:
         response = urllib.urlopen(url)
@@ -77,6 +77,22 @@ def execute(url, format=RAW):
             result = response.readlines()
     except Exception as e:
         log.error('wps execute failed! url=%s, err msg=%s' % (url, e.message()))
+    return result
+
+def execute(service_url, identifier, inputs=[], output='output', format=RAW):
+    result = None
+    
+    try:
+        logger.debug("execute wps ... ")
+        req_url = build_request_url(service_url,
+                                    identifier=identifier,
+                                    inputs=inputs,
+                                    output=output)
+        result = execute_with_url(req_url, format=format)
+        logger.debug("execute wps ... done")
+    except Exception as e:
+        logger.error('execute wps ... failed, error msg=%s' % (e.message))
+        raise
     return result
 
 def execute_restflow(wps, nodes):
@@ -101,13 +117,13 @@ def execute_restflow(wps, nodes):
 def search_local_files(wps, openid, filter):
     files = {}
     try:
-        req_url = build_request_url(wps.url,
-                                    identifier='org.malleefowl.listfiles',
-                                    inputs=[('openid', openid), ('filter', filter)])
-        files = execute(req_url, format=JSON)
+        files = execute(wps.url,
+                        identifier='org.malleefowl.listfiles',
+                        inputs=[('openid', openid), ('filter', filter)],
+                        format=JSON)
         logger.debug("num found local files: %d", len(files))
     except Exception as e:
-        logger.error('retrieving files failed! openid=%s, filter=%s, error msg=%s' % (openid, filter, e.message))
+        logger.error('retrieving files failed! filter=%s, error msg=%s' % (filter, e.message))
     return files
 
 # Memory tempstore for file uploads
