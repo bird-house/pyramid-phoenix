@@ -31,6 +31,26 @@ def test_get_wps():
     my_wps = wps.get_wps(base.SERVICE)
     ok_(my_wps != None, base.SERVICE)
 
+def test_build_request_url():
+    url = wps.build_request_url(
+        base.SERVICE,
+        identifier="org.malleefowl.test.whoareyou",
+        inputs = [('username', 'pingu')],
+        output = 'output')
+    ok_('pingu' in url, url)
+
+@attr('online')
+def test_execute():
+    url = wps.build_request_url(
+        base.SERVICE,
+        identifier="org.malleefowl.test.whoareyou",
+        inputs = [('username', 'pingu')],
+        output = 'output')
+    ok_('pingu' in url, url)
+
+    result = wps.execute(url)
+    ok_('Hello pingu' in result, result)
+    
 @attr('online')
 @with_setup(setup_nodes)
 def test_execute_restflow():

@@ -26,6 +26,14 @@ logger = logging.getLogger(__name__)
 
 wps_registry = {}
 
+@property
+def RAW():
+    return 'raw'
+
+@property
+def JSON():
+    return 'json'
+
 def get_wps(url):
     """
     Get wps instance with url. Using wps registry to cache wps instances.
@@ -44,6 +52,32 @@ def get_wps(url):
     logger.debug("number of registered wps: %d", len(wps_registry))
     logger.debug("get wps ... done")
     return wps
+
+def build_request_url(service_url, identifier, inputs=[], output='output'):
+    """
+    Builds wps request url for direct raw output. Just one output parameter allowed.
+    """
+    req_url = service_url
+    req_url += "?service=WPS&request=Execute&version=1.0.0"
+    req_url += "&identifier=%s" % (identifier)
+    data_inputs = ';'.join( map(lambda (key,value): "%s=%s" % (key, value), inputs ))
+    req_url += "&DataInputs=%s" % (data_inputs)
+    req_url += "&rawdataoutput=%s" % (output)
+    req_url = req_url.encode('ascii', 'ignore')
+    logger.debug('req url: %s', req_url)
+    return req_url
+
+def execute(url, format=RAW):
+    result = None
+    try:
+        response = urllib.urlopen(url)
+        if format == JSON:
+            result = json.load(response)
+        else:
+            result = response.readlines()
+    except Exception as e:
+        log.error('wps execute failed! url=%s, err msg=%s' % (url, e.message()))
+    return result
 
 def execute_restflow(wps, nodes):
     import json
