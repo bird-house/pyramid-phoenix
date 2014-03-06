@@ -99,16 +99,13 @@ def execute_restflow(wps, nodes):
     return execution
 
 def search_local_files(wps, openid, filter):
-    req_url = wps.url
-    req_url += "?service=WPS&request=Execute&version=1.0.0"
-    req_url += "&identifier=org.malleefowl.listfiles" 
-    req_url += "&DataInputs=openid=%s;filter=%s" % (openid, filter)
-    req_url += "&rawdataoutput=output"
-    req_url = req_url.encode('ascii', 'ignore')
-    logger.debug('req url: %s', req_url)
     files = {}
     try:
-        files = json.load(urllib.urlopen(req_url))
+        req_url = build_request_url(wps.url,
+                                    identifier='org.malleefowl.listfiles',
+                                    inputs=[('openid', openid), ('filter', filter)])
+        files = execute(req_url, format=JSON)
+        logger.debug("num found local files: %d", len(files))
     except Exception as e:
         logger.error('retrieving files failed! openid=%s, filter=%s, error msg=%s' % (openid, filter, e.message))
     return files
