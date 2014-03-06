@@ -27,12 +27,13 @@ from mako.template import Template
 from .models import (
     add_job, 
     )
+
 from .helpers import (
     wps_url, 
     esgsearch_url,
     execute_restflow,
     )
-from .wps import WPSSchema
+from .wps import WPSSchema, get_wps
 
 from .widget import (
     EsgSearchWidget,
@@ -41,11 +42,10 @@ from .widget import (
     WizardStatesWidget
     )
 
-from owslib.wps import WebProcessingService, monitorExecution
+from owslib.wps import monitorExecution
 
 import logging
-
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 # select process schema
 # ---------------------
@@ -53,8 +53,8 @@ log = logging.getLogger(__name__)
 @colander.deferred
 def deferred_choose_workflow_widget(node, kw):
     request = kw.get('request')
-    wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
-    wps.getcapabilities()
+    wps = get_wps(wps_url(request))
+
     choices = []
     for process in wps.processes:
         if 'worker' in process.identifier:
@@ -75,8 +75,8 @@ class SelectProcessSchema(colander.MappingSchema):
 @colander.deferred
 def deferred_choose_datasource_widget(node, kw):
     request = kw.get('request')
-    wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
-    wps.getcapabilities()
+    wps = get_wps(wps_url(request))
+
     choices = []
     for process in wps.processes:
         if 'source' in process.identifier:
@@ -104,21 +104,21 @@ def search_metadata(url, wizard_state):
     identifier = 'org.malleefowl.metadata'
     inputs = [("processid", str(processid))]
     outputs = [("output",False)]
-    log.debug("wps url=%s", url)
-    wps = WebProcessingService(url, verbose=False)
+    logger.debug("wps url=%s", url)
+    wps = get_wps(url)
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     monitorExecution(execution)
     if len(execution.processOutputs) != 1:
         return
     output = execution.processOutputs[0]
-    log.debug('output %s, data=%s, ref=%s', output.identifier, output.data, output.reference)
+    logger.debug('output %s, data=%s, ref=%s', output.identifier, output.data, output.reference)
     if len(output.data) != 1:
         return {}
     metadata = json.loads(output.data[0])
     return metadata
 
 def bind_search_schema(node, kw):
-    log.debug("bind esg search schema, kw=%s" % (kw))
+    logger.debug("bind esg search schema, kw=%s" % (kw))
     request = kw.get('request', None)
     wizard_state = kw.get('wizard_state', None)
     if request == None or wizard_state == None:
@@ -131,9 +131,9 @@ def bind_search_schema(node, kw):
     metadata = search_metadata( wps_url(request), wizard_state)
 
     constraints =  metadata.get('esgfilter')
-    log.debug('constraints = %s', constraints )
+    logger.debug('constraints = %s', constraints )
     query = metadata.get('esgquery')
-    log.debug('query = %s', query )
+    logger.debug('query = %s', query )
     url = esgsearch_url(request)
     search = dict(facets=constraints, query=query)
     
@@ -176,13 +176,13 @@ def search_local_files(url, openid, filter):
     identifier = 'org.malleefowl.listfiles'
     inputs = [("openid", str(openid)), ("filter", str(filter))]
     outputs = [("output",False)]
-    wps = WebProcessingService(url, verbose=False)
+    wps = get_wps(url)
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     monitorExecution(execution)
     if len(execution.processOutputs) != 1:
         return
     output = execution.processOutputs[0]
-    log.debug('output %s, data=%s, ref=%s', output.identifier, output.data, output.reference)
+    logger.debug('output %s, data=%s, ref=%s', output.identifier, output.data, output.reference)
     if len(output.data) != 1:
         return {}
     files = json.loads(output.data[0])
@@ -195,12 +195,12 @@ def bind_files_schema(node, kw):
     wizard_state = kw.get('wizard_state', None)
 
     if request == None or wizard_state == None:
-        log.debug('not fetching files')
+        logger.debug('not fetching files')
         return
 
     openid = user_openid(request, authenticated_userid(request))
 
-    log.debug('step num = %s', wizard_state.get_step_num())
+    logger.debug('step num = %s', wizard_state.get_step_num())
 
     states = wizard_state.get_step_states()
     
@@ -210,7 +210,7 @@ def bind_files_schema(node, kw):
     search_state = states.get(2)
     search = json.loads( search_state['selection'])
 
-    log.debug('fetching files')
+    logger.debug('fetching files')
     # TODO: cache results
     if 'esgf' in data_source:
         if 'opendap' in data_source:
@@ -223,7 +223,7 @@ def bind_files_schema(node, kw):
         choices = [(f, f) for f in search_local_files( wps_url(request), openid, search['filter'])]
         node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
     else:
-        log.error('unknown datasource: %s', data_source)
+        logger.error('unknown datasource: %s', data_source)
 
    
 class SelectFilesSchema(colander.MappingSchema):
@@ -239,14 +239,14 @@ class SelectFilesSchema(colander.MappingSchema):
 # --------------
 
 def bind_esg_access_schema(node, kw):
-    log.debug("bind access schema, kw=%s" % (kw))
+    logger.debug("bind access schema, kw=%s" % (kw))
     request = kw.get('request', None)
     wizard_state = kw.get('wizard_state', None)
     if request != None and wizard_state != None:
         states = wizard_state.get_step_states()
         data_source_state = states.get(wizard_state.get_step_num() - 3)
         identifier = data_source_state['data_source']
-        wps = WebProcessingService(wps_url(request), verbose=False)
+        wps = get_wps(wps_url(request))
         process = wps.describeprocess(identifier)
         node.add_nodes(process)
     if node.get('file_identifier', False):
@@ -256,7 +256,7 @@ def bind_esg_access_schema(node, kw):
 # ------------------
 
 def bind_wps_schema(node, kw):
-    log.debug("bind wps schema, kw=%s" % (kw))
+    logger.debug("bind wps schema, kw=%s" % (kw))
     request = kw.get('request', None)
     wizard_state = kw.get('wizard_state', None)
     
@@ -266,7 +266,7 @@ def bind_wps_schema(node, kw):
     states = wizard_state.get_step_states()
     state = states.get(0)
     identifier = state['process']
-    wps = WebProcessingService(wps_url(request), verbose=False)
+    wps = get_wps(wps_url(request))
     process = wps.describeprocess(identifier)
    
     node.add_nodes(process)
@@ -303,9 +303,9 @@ class MyFormWizardView(FormWizardView):
             return result
         form_view = self.form_view_class(request)
         schema = self.wizard.schemas[step]
-        log.debug('calling schema.bind on schema=%s' % (schema))
+        logger.debug('calling schema.bind on schema=%s' % (schema))
         self.schema = schema.bind(request=request, wizard_state=self.wizard_state)
-        log.debug('after wizard bind, schema = %s' % (self.schema))
+        logger.debug('after wizard bind, schema = %s' % (self.schema))
         form_view.schema = self.schema
         buttons = []
 
@@ -345,7 +345,7 @@ class MyFormWizardView(FormWizardView):
         form_view.cancel_failure = self.cancel
         form_view.show = self.show
         form_view.appstruct = getattr(self.schema, 'appstruct', None)
-        log.debug("before form_view, schema = %s" % (self.schema))
+        logger.debug("before form_view, schema = %s" % (self.schema))
         result = form_view()
         return result
 
@@ -393,7 +393,7 @@ class Done():
         tags = states[5].get('info_tags', '')
         
         # convert states to workflow desc and run workflow
-        wps = WebProcessingService(wps_url(request), verbose=True)
+        wps = get_wps(wps_url(request))
         nodes = convert_states_to_nodes(wps.url, states)
         execution = execute_restflow(wps, nodes)
         

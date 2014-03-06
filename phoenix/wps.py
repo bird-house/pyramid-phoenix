@@ -13,11 +13,36 @@ import logging
 import dateutil
 import re
 
+from owslib.wps import WebProcessingService
+
 from .widget import TagsWidget
+from .helpers import wps_url
+
 
 __all__ = ['WPSSchema']
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
+
+wps_registry = {}
+
+def get_wps(url):
+    """
+    get wps instance for url
+    """
+    global wps_registry
+    logger.debug("get wps: %s", url)
+    wps = wps_registry.get(url)
+    if wps is None:
+        logger.info('register new wps: %s', url)
+        verbose = logger.isEnabledFor(logging.DEBUG)
+        wps = WebProcessingService(url, verbose=verbose, skip_caps=True)
+        logger.debug("loading wps caps ...")
+        wps.getcapabilities()
+        logger.debug("loading wps caps ... done")
+        wps_registry[url] = wps
+    logger.debug("number of registered wps: %d", len(wps_registry))
+    logger.debug("get wps ... done")
+    return wps
 
 # Memory tempstore for file uploads
 # ---------------------------------
@@ -96,7 +121,7 @@ class WPSSchema(colander.SchemaNode):
         self.add_nodes(process)
 
     def add_info_nodes(self):
-        #log.debug("adding info nodes")
+        #logger.debug("adding info nodes")
         
         node = colander.SchemaNode(
             colander.String(),
@@ -125,7 +150,7 @@ class WPSSchema(colander.SchemaNode):
         if process is None:
             return
 
-        log.debug("adding nodes for process inputs, num inputs = %s", len(process.dataInputs))
+        logger.debug("adding nodes for process inputs, num inputs = %s", len(process.dataInputs))
 
         for data_input in process.dataInputs:
             node = None
@@ -160,7 +185,7 @@ class WPSSchema(colander.SchemaNode):
         # TODO: fix init of default
         if hasattr(data_input, 'defaultValue'):
             if type(node.typ) == colander.DateTime:
-                #log.debug('we have a datetime default value')
+                #logger.debug('we have a datetime default value')
                 node.default = dateutil.parser.parse(data_input.defaultValue)
             else:
                 node.default = data_input.defaultValue
@@ -179,7 +204,7 @@ class WPSSchema(colander.SchemaNode):
         return node
 
     def colander_literal_type(self, data_input):
-        #log.debug('data input type = %s', data_input.dataType)
+        #logger.debug('data input type = %s', data_input.dataType)
         if 'boolean' in data_input.dataType:
             return colander.Boolean()
         elif 'integer' in data_input.dataType:
@@ -215,26 +240,26 @@ class WPSSchema(colander.SchemaNode):
 
     def colander_literal_widget(self, node, data_input):
         if len(data_input.allowedValues) > 0 and not 'AnyValue' in data_input.allowedValues:
-            #log.debug('allowed values %s', data_input.allowedValues)
+            #logger.debug('allowed values %s', data_input.allowedValues)
             choices = []
             for value in data_input.allowedValues:
                 choices.append([value, value])
-                #log.debug('using select widget for %s', data_input.identifier)
+                #logger.debug('using select widget for %s', data_input.identifier)
             node.widget = deform.widget.SelectWidget(values=choices)
         elif type(node.typ) == colander.DateTime:
-            #log.debug('using datetime widget for %s', data_input.identifier)
+            #logger.debug('using datetime widget for %s', data_input.identifier)
             node.widget = deform.widget.DateInputWidget()
         elif type(node.typ) == colander.Boolean:
-            #log.debug('using checkbox widget for %s', data_input.identifier)
+            #logger.debug('using checkbox widget for %s', data_input.identifier)
             node.widget = deform.widget.CheckboxWidget()
         elif 'password' in data_input.identifier:
-            #log.debug('using password widget for %s', data_input.identifier)
+            #logger.debug('using password widget for %s', data_input.identifier)
             node.widget = deform.widget.PasswordWidget(size=20)
         else:
-            #log.debug('using text widget for %s', data_input.identifier)
+            #logger.debug('using text widget for %s', data_input.identifier)
             node.widget = deform.widget.TextInputWidget()
 
-        log.debug("choosen widget, identifier=%s, widget=%s", data_input.identifier, node.widget)
+        logger.debug("choosen widget, identifier=%s, widget=%s", data_input.identifier, node.widget)
 
     def complex_data(self, data_input):
         # TODO: handle upload, url, direct input for complex data
@@ -315,7 +340,7 @@ class WPSSchema(colander.SchemaNode):
         cloned = self.clone()
         cloned._bind(kw)
 
-        log.debug('after bind: num schema children = %s', len(cloned.children))
+        logger.debug('after bind: num schema children = %s', len(cloned.children))
         return cloned
 
     def clone(self):
