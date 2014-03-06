@@ -14,6 +14,7 @@ import dateutil
 import re
 import urllib
 import json
+import types
 
 from owslib.wps import WebProcessingService
 
@@ -34,7 +35,7 @@ def RAW():
 def JSON():
     return 'json'
 
-def get_wps(url):
+def get_wps(url, reload=False):
     """
     Get wps instance with url. Using wps registry to cache wps instances.
     """
@@ -42,13 +43,15 @@ def get_wps(url):
     logger.debug("get wps: %s", url)
     wps = wps_registry.get(url)
     if wps is None:
-        logger.info('register new wps: %s', url)
+        logger.info('register wps: %s', url)
         verbose = logger.isEnabledFor(logging.DEBUG)
-        wps = WebProcessingService(url, verbose=verbose, skip_caps=True)
+        wps = WebProcessingService(url, verbose=verbose, skip_caps=False)
+        wps_registry[url] = wps
+        logger.debug("register wps ... done")
+    elif reload:
         logger.debug("loading wps caps ...")
         wps.getcapabilities()
         logger.debug("loading wps caps ... done")
-        wps_registry[url] = wps
     logger.debug("number of registered wps: %d", len(wps_registry))
     logger.debug("get wps ... done")
     return wps
@@ -76,7 +79,7 @@ def execute_with_url(url, format=RAW):
         else:
             result = response.readlines()
     except Exception as e:
-        log.error('wps execute failed! url=%s, err msg=%s' % (url, e.message()))
+        logger.error('wps execute failed! url=%s, err msg=%s' % (url, e.message))
     return result
 
 def execute(service_url, identifier, inputs=[], output='output', format=RAW):
@@ -94,6 +97,18 @@ def execute(service_url, identifier, inputs=[], output='output', format=RAW):
         logger.error('execute wps ... failed, error msg=%s' % (e.message))
         raise
     return result
+
+def get_token(wps, userid):
+    # TODO: need token exception if not avail
+    token = None
+    try:
+        response = execute(wps.url,
+                        identifier='org.malleefowl.token.get',
+                        inputs=[('userid', userid.replace('@', '_'))])
+        token = response[0]
+    except Exception as e:
+        logger.error('get token failed! userid=%s, error msg=%s' % (userid, e.message))
+    return token
 
 def execute_restflow(wps, nodes):
     import json
@@ -114,16 +129,18 @@ def execute_restflow(wps, nodes):
 
     return execution
 
-def search_local_files(wps, openid, filter):
-    files = {}
+def search_local_files(wps, token, filter):
+    files = []
     try:
         files = execute(wps.url,
                         identifier='org.malleefowl.listfiles',
-                        inputs=[('openid', openid), ('filter', filter)],
+                        inputs=[('token', token), ('filter', filter)],
                         format=JSON)
+        assert type(files) == types.ListType
         logger.debug("num found local files: %d", len(files))
     except Exception as e:
-        logger.error('retrieving files failed! filter=%s, error msg=%s' % (filter, e.message))
+        files = []
+        logger.error('retrieving files failed! token=%s, filter=%s, error msg=%s' % (token, filter, e.message))
     return files
 
 # Memory tempstore for file uploads

@@ -59,6 +59,12 @@ def test_execute():
         inputs = [('username', 'pingu')],
         output = 'output')
     ok_('Hello pingu' in result, result)
+
+@attr('online')
+def test_get_token():
+    my_wps = wps.get_wps(base.SERVICE)
+    token = wps.get_token(my_wps, userid="alex@nowhere.org")
+    ok_('alex' in token, token)
     
 @attr('online')
 @with_setup(setup_nodes)

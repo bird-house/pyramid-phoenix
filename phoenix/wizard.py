@@ -33,7 +33,7 @@ from .helpers import (
     esgsearch_url,   
     )
 
-from .wps import WPSSchema, get_wps, execute_restflow, search_local_files
+from .wps import WPSSchema, get_wps, get_token, execute_restflow, search_local_files
 
 from .widget import (
     EsgSearchWidget,
@@ -173,13 +173,16 @@ def bind_files_schema(node, kw):
     from .models import user_openid
     
     request = kw.get('request', None)
+    wps = get_wps(wps_url(request))
+    
     wizard_state = kw.get('wizard_state', None)
 
     if request == None or wizard_state == None:
         logger.debug('not fetching files')
         return
 
-    openid = user_openid(request, authenticated_userid(request))
+    token = get_token(wps, authenticated_userid(request))
+    logger.debug('user token = %s' % (token))
 
     logger.debug('step num = %s', wizard_state.get_step_num())
 
@@ -201,7 +204,7 @@ def bind_files_schema(node, kw):
             node.get('file_identifier').widget = EsgFilesWidget(
                 url=esgsearch_url(request), search_type='File', search=search)
     elif 'filesystem' in data_source:
-        choices = [(f, f) for f in search_local_files( get_wps(wps_url(request)), openid, search['filter'])]
+        choices = [(f, f) for f in search_local_files( wps, token, search['filter'])]
         node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
     else:
         logger.error('unknown datasource: %s', data_source)
