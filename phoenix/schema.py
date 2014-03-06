@@ -11,14 +11,11 @@ import deform
 from deform.widget import OptGroup
 
 import logging
+logger = logging.getLogger(__name__)
 
-log = logging.getLogger(__name__)
-
-
-from owslib.wps import WebProcessingService
+from .wps import get_wps
 from .helpers import wps_url
 from pyramid.security import has_permission
-
 
 # process list
 # ------------
@@ -26,9 +23,7 @@ from pyramid.security import has_permission
 @colander.deferred
 def deferred_select_process_widget(node, kw):
     request = kw.get('request')
-    log.debug('current wps for proccess: %s' % (wps_url(request)))
-    wps = WebProcessingService(wps_url(request), verbose=False, skip_caps=True)
-    wps.getcapabilities()
+    wps = get_wps(wps_url(request))
 
     test_group = []
     csc_group = []

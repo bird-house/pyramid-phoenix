@@ -22,13 +22,13 @@ from authomatic.adapters import WebObAdapter
 import config_public as config
 
 from owslib.csw import CatalogueServiceWeb
-from owslib.wps import WebProcessingService, WPSExecution, ComplexData
+from owslib.wps import WPSExecution, ComplexData
 
 from .security import is_valid_user
 
 from .models import update_user
 
-from .wps import WPSSchema  
+from .wps import WPSSchema, get_wps  
 
 from .helpers import wps_url
 from .helpers import csw_url
@@ -38,8 +38,7 @@ from .helpers import update_wps_url
 from .helpers import execute_wps
 
 import logging
-
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 authomatic = Authomatic(config=config.config,
                         secret=config.SECRET,
@@ -73,7 +72,7 @@ def add_global(event):
     renderer='templates/signin.pt',
     permission='view')
 def signin(request):
-    log.debug("sign-in view")
+    logger.debug("sign-in view")
     return dict()
 
 # logout
@@ -83,7 +82,7 @@ def signin(request):
     route_name='logout',
     permission='edit')
 def logout(request):
-    log.debug("logout")
+    logger.debug("logout")
     headers = forget(request)
     return HTTPFound(location = request.route_url('home'),
                      headers = headers)
@@ -115,7 +114,7 @@ def register(request):
     #check_csrf=True, 
     permission='view')
 def login_local(request):
-    log.debug("login with local account")
+    logger.debug("login with local account")
     password = request.params.get('password')
     # TODO: need some work work on local accounts
     if (False):
@@ -146,7 +145,7 @@ def login(request):
     # TODO: update login to my needs
     # https://pyramid_persona.readthedocs.org/en/latest/customization.html#do-extra-work-or-verification-at-login
 
-    log.debug('login with persona')
+    logger.debug('login with persona')
 
     # Verify the assertion and get the email of the user
     from pyramid_persona.views import verify_login 
@@ -157,11 +156,11 @@ def login(request):
     
     # check whitelist
     if not is_valid_user(request, email):
-        log.info("persona login: user %s is not registered", email)
+        logger.info("persona login: user %s is not registered", email)
         update_user(request, user_id=email, activated=False)
         #    request.session.flash('Sorry, you are not on the list')
         return {'redirect': '/register', 'success': False}
-    log.info("persona login successful for user %s", email)
+    logger.info("persona login successful for user %s", email)
     update_user(request, user_id=email, activated=True)
     # Add the headers required to remember the user to the response
     request.response.headers.extend(remember(request, email))
@@ -179,30 +178,30 @@ def login_openid(request):
     # Get the internal provider name URL variable.
     provider_name = request.matchdict.get('provider_name', 'openid')
 
-    log.debug('provider_name: %s', provider_name)
+    logger.debug('provider_name: %s', provider_name)
     
     # Start the login procedure.
     response = Response()
     #response = request.response
     result = authomatic.login(WebObAdapter(request, response), provider_name)
 
-    #log.debug('authomatic login result: %s', result)
+    #logger.debug('authomatic login result: %s', result)
     
     if result:
         if result.error:
             # Login procedure finished with an error.
             #request.session.flash('Sorry, login failed: %s' % (result.error.message))
-            log.error('openid login failed: %s', result.error.message)
+            logger.error('openid login failed: %s', result.error.message)
             #response.write(u'<h2>Login failed: {}</h2>'.format(result.error.message))
             response.text = render('phoenix:templates/forbidden.pt',
                                    {'message': result.error.message}, request=request)
         elif result.user:
             # Hooray, we have the user!
-            log.debug("user=%s, id=%s, email=%s",
+            logger.debug("user=%s, id=%s, email=%s",
                       result.user.name, result.user.id, result.user.email)
 
             if is_valid_user(request, result.user.email):
-                log.info("openid login successful for user %s", result.user.email)
+                logger.info("openid login successful for user %s", result.user.email)
                 update_user(request, user_id=result.user.email, openid=result.user.id, activated=True)
                 response.text = render('phoenix:templates/openid_success.pt',
                                        {'result': result},
@@ -210,11 +209,11 @@ def login_openid(request):
                 # Add the headers required to remember the user to the response
                 response.headers.extend(remember(request, result.user.email))
             else:
-                log.info("openid login: user %s is not registered", result.user.email)
+                logger.info("openid login: user %s is not registered", result.user.email)
                 update_user(request, user_id=result.user.email, openid=result.user.id, activated=False)
                 response.text = render('phoenix:templates/register.pt',
                                        {'email': result.user.email}, request=request)
-    #log.debug('response: %s', response)
+    #logger.debug('response: %s', response)
         
     return response
 
@@ -381,7 +380,7 @@ def output_details(request):
 
     from .models import get_job
     job = get_job(request, uuid=request.params.get('uuid'))
-    wps = WebProcessingService(job['service_url'], verbose=False)
+    wps = get_wps(job['service_url'])
     execution = WPSExecution(url=wps.url)
     execution.checkStatus(url=job['status_location'], sleepSecs=0)
 
@@ -415,7 +414,7 @@ class ExecuteView(FormView):
         try:
             session = self.request.session
             identifier = session['phoenix.process.identifier']
-            self.wps = WebProcessingService(wps_url(self.request), verbose=False)
+            self.wps = get_wps(wps_url(self.request))
             process = self.wps.describeprocess(identifier)
             self.schema = self.schema_factory(
                 info = True,
@@ -510,7 +509,7 @@ class CatalogAddWPSView(FormView):
         try:
             csw.harvest(url, 'http://www.opengis.net/wps/1.0.0')
         except:
-            log.error("Could not add wps service to catalog: %s" % (url))
+            logger.error("Could not add wps service to catalog: %s" % (url))
             #raise
 
         return HTTPFound(location=self.request.route_url('catalog_wps_add'))
@@ -551,7 +550,7 @@ class CatalogSelectWPSView(FormView):
     def submit_success(self, appstruct):
         serialized = self.schema.serialize(appstruct)
         wps_id = serialized['active_wps']
-        #log.debug('wps_id = %s', wps_id)
+        #logger.debug('wps_id = %s', wps_id)
         update_wps_url(self.request, wps_id)        
 
         return HTTPFound(location=self.request.route_url('processes'))
@@ -576,7 +575,7 @@ class AdminUserEditView(FormView):
         params = self.schema.serialize(appstruct)
         user_id = params.get('user_id').pop()
 
-        log.debug("edit users %s", user_id)
+        logger.debug("edit users %s", user_id)
 
         session = self.request.session
         session['phoenix.admin.edit.user_id'] = user_id
@@ -616,7 +615,7 @@ class AdminUserEditTaskView(FormView):
         user = self.schema.serialize(appstruct)
         session = self.request.session
         user_id = session['phoenix.admin.edit.user_id']
-        #log.debug("user activated: %s", user.get('activated') == 'true')
+        #logger.debug("user activated: %s", user.get('activated') == 'true')
         update_user(self.request,
                       user_id = user_id,
                       openid = user.get('openid'),
@@ -719,7 +718,7 @@ class AdminUserDeactivateView(FormView):
         from .models import deactivate_user
         params = self.schema.serialize(appstruct)
         for user_id in params.get('user_id', []):
-            log.debug('deactivate user %s', user_id)
+            logger.debug('deactivate user %s', user_id)
             deactivate_user(self.request, user_id=user_id)
 
         return HTTPFound(location=self.request.route_url('admin_user_deactivate'))

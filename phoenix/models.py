@@ -17,11 +17,11 @@ from pyramid.security import (
 import uuid
 import datetime
 
-import logging
-
-log = logging.getLogger(__name__)
-
 from .helpers import mongodb_conn, esgsearch_url
+from .wps import get_wps
+
+import logging
+logger = logging.getLogger(__name__)
 
 # mongodb ...
 # -----------
@@ -73,7 +73,7 @@ def update_user(request,
                 organisation=None,
                 notes=None,
                 activated=None,):
-    log.debug("update user %s", user_id)
+    logger.debug("update user %s", user_id)
     db = database(request)
     user = db.users.find_one(dict(user_id = user_id))
     if user == None:
@@ -142,7 +142,7 @@ def add_job(request,
         notes = notes,
         tags = tags,
         ))
-    #log.debug('count jobs = %s', db.jobs.count())
+    #logger.debug('count jobs = %s', db.jobs.count())
 
 def get_job(request, uuid):
     db = database(request)
@@ -177,7 +177,7 @@ def drop_jobs_by_uuid(request, uuids=[]):
 
 
 def jobs_information(request,sortkey="starttime",inverted=True):
-    from owslib.wps import WebProcessingService, WPSExecution
+    from owslib.wps import WPSExecution
 
     dateformat = '%a, %d %b %Y %I:%M:%S %p'
     jobs = []
@@ -189,7 +189,7 @@ def jobs_information(request,sortkey="starttime",inverted=True):
         if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
             job['errors'] = []
             try:
-                wps = WebProcessingService(job['service_url'], verbose=False)
+                wps = get_wps(job['service_url'])
                 execution = WPSExecution(url=wps.url)
                 execution.checkStatus(url=job['status_location'], sleepSecs=0)
                 job['status'] = execution.status
@@ -201,7 +201,7 @@ def jobs_information(request,sortkey="starttime",inverted=True):
                
             except:
                 msg = 'could not access wps %s' % (job['status_location'])
-                log.warn(msg)
+                logger.warn(msg)
                 job['status'] = 'Exception'
                 job['errors'].append( dict(code='', locator='', text=msg) )
             
