@@ -98,18 +98,6 @@ def execute(service_url, identifier, inputs=[], output='output', format=RAW):
         raise
     return result
 
-def get_token(wps, userid):
-    # TODO: need token exception if not avail
-    token = None
-    try:
-        response = execute(wps.url,
-                        identifier='org.malleefowl.token.get',
-                        inputs=[('userid', userid.replace('@', '_'))])
-        token = response[0]
-    except Exception as e:
-        logger.error('get token failed! userid=%s, error msg=%s' % (userid, e.message))
-    return token
-
 def gen_token(wps, sys_token, userid):
     # TODO: need token exception if not avail
     token = None
