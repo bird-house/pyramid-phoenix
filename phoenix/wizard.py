@@ -25,7 +25,8 @@ from colander import Range, Invalid, null
 from mako.template import Template
 
 from .models import (
-    add_job, 
+    add_job,
+    user_token,
     )
 
 from .helpers import (
@@ -33,7 +34,7 @@ from .helpers import (
     esgsearch_url,   
     )
 
-from .wps import WPSSchema, get_wps, get_token, execute_restflow, search_local_files
+from .wps import WPSSchema, get_wps, execute_restflow, search_local_files
 
 from .widget import (
     EsgSearchWidget,
@@ -181,7 +182,7 @@ def bind_files_schema(node, kw):
         logger.debug('not fetching files')
         return
 
-    token = get_token(wps, authenticated_userid(request))
+    token = user_token(request, authenticated_userid(request))
     logger.debug('user token = %s' % (token))
 
     logger.debug('step num = %s', wizard_state.get_step_num())
@@ -233,6 +234,8 @@ def bind_esg_access_schema(node, kw):
         wps = get_wps(wps_url(request))
         process = wps.describeprocess(identifier)
         node.add_nodes(process)
+    if node.get('token', False):
+        del node['token']
     if node.get('file_identifier', False):
         del node['file_identifier']
 
@@ -254,6 +257,9 @@ def bind_wps_schema(node, kw):
     process = wps.describeprocess(identifier)
    
     node.add_nodes(process)
+
+    if node.get('token', False):
+        del node['token']
 
     if node.get('file_identifier', False):
         del node['file_identifier']
@@ -338,11 +344,11 @@ class MyFormWizardView(FormWizardView):
         return HTTPFound(location = self.request.path_url)
 
 
-def convert_states_to_nodes(service, states):
+def convert_states_to_nodes(service, token, states):
     source = dict(
         service = service,
         identifier = str(states[1].get('data_source')),
-        input = [],
+        input = ['token=%s' % (token)],
         output = ['output'],
         sources = map(lambda x: [str(x)], states[3].get('file_identifier')),
         )
@@ -378,7 +384,8 @@ class Done():
         
         # convert states to workflow desc and run workflow
         wps = get_wps(wps_url(request))
-        nodes = convert_states_to_nodes(wps.url, states)
+        token = user_token(request, authenticated_userid(request))
+        nodes = convert_states_to_nodes(wps.url, token, states)
         execution = execute_restflow(wps, nodes)
         
         add_job(

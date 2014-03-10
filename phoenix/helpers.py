@@ -79,6 +79,9 @@ def admin_users(request):
 def mongodb_conn(request):
     return get_setting(request, 'mongodb_conn')
 
+def sys_token(request):
+    return get_setting(request, 'malleefowl.sys_token')
+
 def is_url(text):
     """Check wheather given text is url or not
 

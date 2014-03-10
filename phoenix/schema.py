@@ -112,12 +112,13 @@ class CatalogSelectWPSSchema(colander.MappingSchema):
 def user_choices(user_list):
     choices = []
     for user in user_list:
-        label = "%s (%s, %s, %s, %s, %s)" % (user.get('user_id'),
-                                     user.get('name', ''),
-                                     user.get('openid', ''),
-                                     user.get('organisation', ''),
-                                     user.get('notes', ''),
-                                     user.get('activated', ''))
+        label = "%s (%s, %s, %s, %s, %s, %s)" % (user.get('user_id'),
+                                                 user.get('name', ''),
+                                                 user.get('openid', ''),
+                                                 user.get('organisation', ''),
+                                                 user.get('notes', ''),
+                                                 user.get('activated', ''),
+                                                 user.get('token', ''))
         choices.append( (user.get('user_id'), label) )
     return choices
 

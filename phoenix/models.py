@@ -17,8 +17,9 @@ from pyramid.security import (
 import uuid
 import datetime
 
+from phoenix import helpers
 from .helpers import mongodb_conn, esgsearch_url
-from .wps import get_wps
+from .wps import get_wps, wps_url, gen_token
 
 import logging
 logger = logging.getLogger(__name__)
@@ -74,6 +75,9 @@ def update_user(request,
                 notes=None,
                 activated=None,):
     logger.debug("update user %s", user_id)
+    wps = get_wps(wps_url(request))
+    token = gen_token(wps, helpers.sys_token(request), user_id)
+    
     db = database(request)
     user = db.users.find_one(dict(user_id = user_id))
     if user == None:
@@ -88,6 +92,7 @@ def update_user(request,
         user['organisation'] = organisation
     if notes:
         user['notes'] = notes
+    user['token'] = token
     user['last_login'] = datetime.datetime.now()
     db.users.update(dict(user_id = user_id), user)
 
@@ -119,6 +124,11 @@ def user_openid(request, user_id):
     db = database(request)
     user = db.users.find_one(dict(user_id = user_id))
     return user.get('openid')
+
+def user_token(request, user_id):
+    db = database(request)
+    user = db.users.find_one(dict(user_id = user_id))
+    return user.get('token')
 
 # jobs ...
 

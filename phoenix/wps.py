@@ -110,6 +110,18 @@ def get_token(wps, userid):
         logger.error('get token failed! userid=%s, error msg=%s' % (userid, e.message))
     return token
 
+def gen_token(wps, sys_token, userid):
+    # TODO: need token exception if not avail
+    token = None
+    try:
+        response = execute(wps.url,
+                        identifier='org.malleefowl.token.generate',
+                        inputs=[('sys_token', sys_token), ('userid', userid.replace('@', '_'))])
+        token = response[0]
+    except Exception as e:
+        logger.error('generate token failed! userid=%s, error msg=%s' % (userid, e.message))
+    return token
+
 def execute_restflow(wps, nodes):
     import json
     nodes_json = json.dumps(nodes)
