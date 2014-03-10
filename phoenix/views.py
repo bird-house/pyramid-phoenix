@@ -30,12 +30,13 @@ from .models import update_user
 
 from .wps import WPSSchema, get_wps  
 
-from .helpers import wps_url
-from .helpers import csw_url
-from .helpers import supervisor_url
-from .helpers import thredds_url
-from .helpers import update_wps_url
-from .helpers import execute_wps
+from .helpers import (
+    wps_url,
+    csw_url,
+    supervisor_url,
+    thredds_url,
+    execute_wps
+    )
 
 import logging
 logger = logging.getLogger(__name__)
@@ -551,7 +552,7 @@ class CatalogSelectWPSView(FormView):
         serialized = self.schema.serialize(appstruct)
         wps_id = serialized['active_wps']
         #logger.debug('wps_id = %s', wps_id)
-        update_wps_url(self.request, wps_id)        
+        #update_wps_url(self.request, wps_id)        
 
         return HTTPFound(location=self.request.route_url('processes'))
 

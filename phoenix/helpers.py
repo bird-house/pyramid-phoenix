@@ -9,9 +9,9 @@ import types
 import markupsafe
 import urllib2
 from pyramid.security import authenticated_userid
-import logging
 
-log = logging.getLogger(__name__)
+import logging
+logger = logging.getLogger(__name__)
 
 SIGNIN_HTML = '<a href="/signin"><i class="icon-user"></i> Sign in</a>'
 SIGNOUT_HTML = '<a href="/logout" id="signout" title="Logout %s"><i class="icon-off"></i> Sign out</a>'
@@ -32,6 +32,7 @@ def unquote_wps_params(params):
 def get_setting(request, key):
     settings = request.registry.settings
     value = settings.get(key, None)
+    logger.debug('get_setting(): key=%s, value=%s' % (key, value))
     return value
 
 def set_setting(request, key, value):
@@ -42,24 +43,9 @@ def supervisor_url(request):
     return get_setting(request, 'phoenix.supervisor')
 
 def wps_url(request):
-    url = request.session.get('phoenix.wps')
-    if (url == None):
-        from owslib.csw import CatalogueServiceWeb
-        url = get_setting(request, 'phoenix.wps')
-        try:
-            csw = CatalogueServiceWeb(csw_url(request))
-            csw.harvest(url, 'http://www.opengis.net/wps/1.0.0')
-            update_wps_url(request, url)
-        except:
-            log.error("Could not add wps service to catalog: %s" % (url))
-            #raise
+    url = get_setting(request, 'malleefowl.wps')
     return url
 
-def update_wps_url(request, wps_url):
-    request.session['phoenix.wps'] = wps_url
-    request.session.changed()
-    #set_setting(request, 'phoenix.wps', wps_url)
-   
 def csw_url(request):
     return get_setting(request, 'phoenix.csw')
 
@@ -103,7 +89,7 @@ def execute_wps(wps, identifier, params):
     # TODO: fix wps-client (parsing response)
     # TODO: fix wps-client for store/status setting or use own xml template
 
-    log.debug('execute wps process')
+    logger.debug('execute wps process')
 
     process = wps.describeprocess(identifier)
 
@@ -132,7 +118,7 @@ def execute_wps(wps, identifier, params):
             # bbox
             if input_types[key] == None:
                 # TODO: handle bounding box
-                log.debug('bbox value: %s' % value)
+                logger.debug('bbox value: %s' % value)
                 inputs.append( (key, str(value)) )
                 # if len(value) > 0:
                 #     (minx, miny, maxx, maxy) = value[0].split(',')
@@ -143,7 +129,7 @@ def execute_wps(wps, identifier, params):
             # complex data
             elif input_types[key] == 'ComplexData':
                 # TODO: handle complex data
-                log.debug('complex value: %s' % value)
+                logger.debug('complex value: %s' % value)
                 if is_url(value):
                     inputs.append( (key, value) )
                 elif type(value) == type({}):
@@ -155,7 +141,7 @@ def execute_wps(wps, identifier, params):
             else:
                 inputs.append( (key, str(value)) )
 
-    log.debug('inputs =  %s', inputs)
+    logger.debug('inputs =  %s', inputs)
 
     outputs = []
     for output in process.processOutputs:
@@ -163,7 +149,7 @@ def execute_wps(wps, identifier, params):
 
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
  
-    log.debug('status_location = %s', execution.statusLocation)
+    logger.debug('status_location = %s', execution.statusLocation)
 
     return execution
 
