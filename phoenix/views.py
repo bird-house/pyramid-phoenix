@@ -289,7 +289,11 @@ def processes(request):
     elif 'select' in request.POST:
         return eval_processes_wps_form(request, form_wps)
 
-    url = request.session.get('phoenix.wps.url', wps_url(request))
+    url = request.session.get('phoenix.wps.url')
+    if url is None:
+        url = wps_url(request)
+        request.session['phoenix.wps.url'] = url
+        request.session.changed()
     wps = get_wps(url)
     
     appstruct = dict()
