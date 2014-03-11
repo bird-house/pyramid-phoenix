@@ -235,6 +235,39 @@ def home(request):
 # ---------
 
 @view_config(
+    route_name='select_wps',
+    renderer='templates/form.pt',
+    layout='default',
+    permission='edit'
+    )
+class SelectWPSView(FormView):
+    schema = None
+    schema_factory = None
+    buttons = ('submit',)
+
+    def __call__(self):
+        wps_list = catalog.get_wps_list_as_tuple(self.request)
+
+        from .schema import CatalogSelectWPSSchema
+        # build the schema if it not exist
+        if self.schema is None:
+            if self.schema_factory is None:
+                self.schema_factory = CatalogSelectWPSSchema
+            self.schema = self.schema_factory(title='Catalog').bind(wps_list = wps_list)
+
+        return super(SelectWPSView, self).__call__()
+
+    def submit_success(self, appstruct):
+        params = self.schema.serialize(appstruct)
+        url = params.get('url')
+        
+        session = self.request.session
+        session['phoenix.wps'] = url
+        session.changed()
+        
+        return HTTPFound(location=self.request.route_url('processes'))
+
+@view_config(
     route_name='processes',
     renderer='templates/form.pt',
     layout='default',
@@ -463,81 +496,57 @@ def monitor(request):
 def thredds(request):
     return dict(external_url=thredds_url(request))
 
+def generate_catalog_form(request, formid="deform"):
+    """This helper code generates the form that will be used to add
+    and edit wps based on the schema of the form.
+    """
+    from .schema import AddWPSSchema
+    schema = AddWPSSchema().bind()
+    options = """
+    {success:
+       function (rText, sText, xhr, form) {
+         deform.processCallbacks();
+         deform.focusFirstInput();
+         var loc = xhr.getResponseHeader('X-Relocate');
+            if (loc) {
+              document.location = loc;
+            };
+         }
+    }
+    """
+    return Form(
+        schema,
+        buttons=('submit',),
+        formid=formid,
+        use_ajax=True,
+        ajax_options=options,
+        )
+
+def process_catalog_form(request, form):
+    try:
+        controls = request.POST.items()
+        captured = form.validate(controls)
+        url = captured.get('url', '')
+        notes = captured.get('notes', '')
+        catalog.add_wps(request, url, notes)
+    except ValidationFailure as e:
+        logger.error('validation of catalog form failed: message=%s' % (e.message))
+    return HTTPFound(location=request.route_url('catalog'))
+
 @view_config(
-    route_name='catalog_wps_add',
+    route_name="catalog",
     renderer='templates/catalog.pt',
     layout='default',
     permission='edit',
     )
-class CatalogAddWPSView(FormView):
-    #form_info = "Hover your mouse over the widgets for description."
-    schema = None
-    schema_factory = None
-    buttons = ('add',)
-    title = u"Catalog"
-
-    def __call__(self):
-        wps_list = catalog.get_wps_list_as_tuple(self.request)
-
-        from .schema import CatalogAddWPSSchema
-        # build the schema if it does not exist
-        if self.schema is None:
-            if self.schema_factory is None:
-                self.schema_factory = CatalogAddWPSSchema
-            self.schema = self.schema_factory(title='Catalog').bind(
-                wps_list = wps_list,
-                readonly = True)
-
-        return super(CatalogAddWPSView, self).__call__()
-
-    def appstruct(self):
-        return {'current_wps' : wps_url(self.request)}
-
-    def add_success(self, appstruct):
-        serialized = self.schema.serialize(appstruct)
-        url = serialized['new_wps']
-        notes = serialized['notes']
-
-        try:
-            catalog.add_wps(self.request, url, notes)
-        except Exception as e:
-            logger.error("Could not add wps service to catalog: %s, message=%s" % (url, e.message))
-
-        return HTTPFound(location=self.request.route_url('catalog_wps_add'))
-
-@view_config(
-    route_name='catalog_wps_select',
-    renderer='templates/catalog.pt',
-    layout='default',
-    permission='edit',
-    )
-class CatalogSelectWPSView(FormView):
-    schema = None
-    schema_factory = None
-    buttons = ('submit',)
-    title = u"Catalog"
-
-    def __call__(self):
-        wps_list = catalog.get_wps_list_as_tuple(self.request)
-
-        from .schema import CatalogSelectWPSSchema
-        # build the schema if it not exist
-        if self.schema is None:
-            if self.schema_factory is None:
-                self.schema_factory = CatalogSelectWPSSchema
-            self.schema = self.schema_factory(title='Catalog').bind(wps_list = wps_list)
-
-        return super(CatalogSelectWPSView, self).__call__()
-
-    def appstruct(self):
-        return {'active_wps' : wps_url(self.request)}
-
-    def submit_success(self, appstruct):
-        serialized = self.schema.serialize(appstruct)
-        wps_id = serialized['active_wps']
-        logger.debug('added wps_id = %s', wps_id)
-
-        return HTTPFound(location=self.request.route_url('processes'))
+def show_catalog(request):
+    form = generate_catalog_form(request)
+    if 'submit' in request.POST:
+        return process_catalog_form(request, form)
+    appstruct = dict(url=wps_url(request))
+    return dict(
+        wps_list=catalog.get_wps_list(request),
+        form = form.render(appstruct))
 
 @view_config(
     route_name='admin_user_edit',

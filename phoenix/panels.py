@@ -19,13 +19,13 @@ def navbar(context, request):
     nav = []
     nav.append( nav_item('Home', request.route_url('home'), 'icon-home') )
     if has_permission('edit', request.context, request):
-        nav.append( nav_item('Processes', request.route_url('processes'), 'icon-star') )
+        nav.append( nav_item('Processes', request.route_url('select_wps'), 'icon-star') )
         nav.append( nav_item('My Jobs', request.route_url('jobs'), 'icon-list') )
         nav.append( nav_item('Wizard', request.route_url('wizard'), 'icon-star') )
         nav.append( nav_item('Map', request.route_url('map'), 'icon-picture') )
     if has_permission('admin', request.context, request):
         nav.append( nav_item('Thredds', request.route_url('tds'), 'icon-list') )
-        nav.append( nav_item('Catalog', request.route_url('catalog_wps_select'), 'icon-edit') )
+        nav.append( nav_item('Catalog', request.route_url('catalog'), 'icon-edit') )
         nav.append( nav_item('Monitor', request.route_url('monitor'), 'icon-eye-open') )
         nav.append( nav_item('Admin', request.route_url('admin_user_edit'), 'icon-edit') )
     nav.append( nav_item('Help', request.route_url('help'), 'icon-question-sign') )
@@ -33,22 +33,6 @@ def navbar(context, request):
     login = request.current_route_url() == request.route_url('signin')
 
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request), login=login)
-
-# catalog_navbar
-# ------
-@panel_config(name='catalog_navbar',
-              renderer='templates/panels/subnavbar.pt')
-def catalog_navbar(context, request):
-    def nav_item(name, url, icon):
-        active = request.current_route_url() == url
-        return dict(name=name, url=url, active=active, icon=icon)
-
-    nav = [
-        nav_item('Select WPS', request.route_url('catalog_wps_select'), 'icon-tasks'),
-        nav_item('Add WPS', request.route_url('catalog_wps_add'), 'icon-tasks'),
-        ]
-
-    return dict(title='Phoenix', nav=nav, username=authenticated_userid(request))
 
 # admin_navbar
 # ------

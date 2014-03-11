@@ -80,18 +80,11 @@ def deferred_wps_list_widget(node, kw):
         values=wps_list,
         readonly=readonly)
 
-class CatalogAddWPSSchema(colander.MappingSchema):
-    current_wps = colander.SchemaNode(
+class AddWPSSchema(colander.MappingSchema):
+    url = colander.SchemaNode(
         colander.String(),
-        title = "WPS List",
-        description = 'List of known WPS',
-        missing = '',
-        widget=deferred_wps_list_widget)
-
-    new_wps = colander.SchemaNode(
-        colander.String(),
-        title = 'WPS URL',
-        description = 'Add new WPS URL',
+        title = 'URL',
+        description = 'Add WPS URL',
         missing = '',
         default = '',
         validator = colander.url,
