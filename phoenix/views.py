@@ -21,18 +21,15 @@ from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
 import config_public as config
 
-from owslib.csw import CatalogueServiceWeb
 from owslib.wps import WPSExecution, ComplexData
 
 from .security import is_valid_user
-
 from .models import update_user
-
-from .wps import WPSSchema, get_wps  
+from .wps import WPSSchema, get_wps
+from phoenix import catalog
 
 from .helpers import (
     wps_url,
-    csw_url,
     supervisor_url,
     thredds_url,
     execute_wps
@@ -480,13 +477,7 @@ class CatalogAddWPSView(FormView):
     title = u"Catalog"
 
     def __call__(self):
-        csw = CatalogueServiceWeb(csw_url(self.request))
-        csw.getrecords2(maxrecords=100)
-        wps_list = []
-        for rec_id in csw.records:
-            rec = csw.records[rec_id]
-            if rec.format == 'WPS':
-                wps_list.append((rec.references[0]['url'], rec.title))
+        wps_list = catalog.get_wps_list_as_tuple(self.request)
 
         from .schema import CatalogAddWPSSchema
         # build the schema if it does not exist
@@ -505,13 +496,12 @@ class CatalogAddWPSView(FormView):
     def add_success(self, appstruct):
         serialized = self.schema.serialize(appstruct)
         url = serialized['new_wps']
+        notes = 'test'
 
-        csw = CatalogueServiceWeb(csw_url(self.request))
         try:
-            csw.harvest(url, 'http://www.opengis.net/wps/1.0.0')
-        except:
-            logger.error("Could not add wps service to catalog: %s" % (url))
-            #raise
+            catalog.add_wps(self.request, url, notes)
+        except Exception as e:
+            logger.error("Could not add wps service to catalog: %s, message=%s" % (url, e.message))
 
         return HTTPFound(location=self.request.route_url('catalog_wps_add'))
 
@@ -528,13 +518,7 @@ class CatalogSelectWPSView(FormView):
     title = u"Catalog"
 
     def __call__(self):
-        csw = CatalogueServiceWeb(csw_url(self.request))
-        csw.getrecords2(maxrecords=100)
-        wps_list = []
-        for rec_id in csw.records:
-            rec = csw.records[rec_id]
-            if rec.format == 'WPS':
-                wps_list.append((rec.references[0]['url'], rec.title))
+        wps_list = catalog.get_wps_list_as_tuple(self.request)
 
         from .schema import CatalogSelectWPSSchema
         # build the schema if it not exist
@@ -551,8 +535,7 @@ class CatalogSelectWPSView(FormView):
     def submit_success(self, appstruct):
         serialized = self.schema.serialize(appstruct)
         wps_id = serialized['active_wps']
-        #logger.debug('wps_id = %s', wps_id)
-        #update_wps_url(self.request, wps_id)        
+        logger.debug('added wps_id = %s', wps_id)
 
         return HTTPFound(location=self.request.route_url('processes'))
 

@@ -47,13 +47,10 @@ def get_wps(url, reload=False):
         verbose = logger.isEnabledFor(logging.DEBUG)
         wps = WebProcessingService(url, verbose=verbose, skip_caps=False)
         wps_registry[url] = wps
-        logger.debug("register wps ... done")
     elif reload:
         logger.debug("loading wps caps ...")
         wps.getcapabilities()
-        logger.debug("loading wps caps ... done")
     logger.debug("number of registered wps: %d", len(wps_registry))
-    logger.debug("get wps ... done")
     return wps
 
 def build_request_url(service_url, identifier, inputs=[], output='output'):

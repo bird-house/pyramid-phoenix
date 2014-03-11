@@ -46,9 +46,6 @@ def wps_url(request):
     url = get_setting(request, 'malleefowl.wps')
     return url
 
-def csw_url(request):
-    return get_setting(request, 'phoenix.csw')
-
 def thredds_url(request):
     return get_setting(request, 'phoenix.thredds')
    
