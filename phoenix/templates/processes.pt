@@ -2,12 +2,27 @@
         
   <div metal:fill-slot="content">
     <!-- Button to trigger modal dialog for wps addition -->
-    <a href="#add-wps" role="button" class="btn btn-success" data-toggle="modal">
-      Add WPS
+    <a href="#select-wps" role="button" class="btn btn-success" data-toggle="modal">
+      Select WPS
     </a>
-    <br/><br/>
+    <br/>
+    <br/>
+     ${current_wps.identification.title} (${current_wps.url})
+    <br/>
+    <br/>
 
     <tal:form replace="structure form">The form will render here</tal:form>
+
+    <!--! Add form for WPS -->
+    <div id="select-wps" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="task-form-label" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="task-form-label">Select WPS</h3>
+      </div>
+      <div class="modal-body">
+        <tal:form replace="structure form_wps" />
+      </div>
+    </div>
     
   </div>
    

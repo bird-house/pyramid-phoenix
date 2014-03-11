@@ -76,7 +76,6 @@ def main(global_config, **settings):
     config.add_route('catalog', '/catalog')
     config.add_route('tds', '/tds')
     config.add_route('processes', '/processes')
-    config.add_route('select_wps', '/select_wps')
     config.add_route('jobs', '/jobs')
     config.add_route('jobsupdate', '/jobsupdate/{sortkey}/{type}')
     config.add_route('output_details', '/output_details')

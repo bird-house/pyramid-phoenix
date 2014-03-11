@@ -67,16 +67,24 @@ class ProcessSchema(colander.MappingSchema):
         title = "WPS Process",
         widget = deferred_select_process_widget)
 
-# catalog
-# -------
-
 @colander.deferred
 def deferred_wps_list_widget(node, kw):
     wps_list = kw.get('wps_list', [])
-    readonly = kw.get('readonly', False)
     return deform.widget.RadioChoiceWidget(
-        values=wps_list,
-        readonly=readonly)
+        values =wps_list,
+        )
+
+class SelectWPSSchema(colander.MappingSchema):
+   
+    url = colander.SchemaNode(
+        colander.String(),
+        title = 'WPS',
+        description = "Select WPS",
+        widget = deferred_wps_list_widget
+        )
+
+# catalog
+# -------
 
 class AddWPSSchema(colander.MappingSchema):
     url = colander.SchemaNode(
@@ -96,14 +104,6 @@ class AddWPSSchema(colander.MappingSchema):
         default = '',
         widget = deform.widget.TextInputWidget())
 
-class CatalogSelectWPSSchema(colander.MappingSchema):
-   
-    active_wps = colander.SchemaNode(
-        colander.String(),
-        title = 'WPS',
-        description = "Select active WPS",
-        widget = deferred_wps_list_widget
-        )
 
 # Admin
 # -----

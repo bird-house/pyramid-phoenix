@@ -16,6 +16,7 @@ from pyramid.security import remember, forget, authenticated_userid
 from pyramid.events import subscriber, BeforeRender
 from pyramid_deform import FormView
 from deform import Form
+from deform import ValidationFailure
 from deform.form import Button
 from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
@@ -234,47 +235,21 @@ def home(request):
 # processes
 # ---------
 
-@view_config(
-    route_name='select_wps',
-    renderer='templates/form.pt',
-    layout='default',
-    permission='edit'
-    )
-class SelectWPSView(FormView):
-    schema = None
-    schema_factory = None
-    buttons = ('submit',)
-
-    def __call__(self):
-        wps_list = catalog.get_wps_list_as_tuple(self.request)
-
-        from .schema import CatalogSelectWPSSchema
-        # build the schema if it not exist
-        if self.schema is None:
-            if self.schema_factory is None:
-                self.schema_factory = CatalogSelectWPSSchema
-            self.schema = self.schema_factory(title='Catalog').bind(wps_list = wps_list)
-
-        return super(SelectWPSView, self).__call__()
-
-    def submit_success(self, appstruct):
-        params = self.schema.serialize(appstruct)
-        url = params.get('url')
-        
-        session = self.request.session
-        session['phoenix.wps'] = url
-        session.changed()
-        
-        return HTTPFound(location=self.request.route_url('processes'))
-
 def build_processes_form(request, formid='deform'):
     from pyramid.security import has_permission
     from .schema import ProcessSchema
+    url = request.session.get('phoenix.wps.url', wps_url(request))
     schema = ProcessSchema().bind(
-        title="Select process you wish to run",
-        wps_url = wps_url(request),
+        wps_url = url,
         allow_admin = has_permission('admin', request.context, request))
     return Form(schema, buttons=('submit',), formid=formid)
+
+def build_processes_wps_form(request, formid='deform'):
+    from .schema import SelectWPSSchema
+    schema = SelectWPSSchema().bind(
+        wps_list = catalog.get_wps_list_as_tuple(request),
+        )
+    return Form(schema, buttons=('select',), formid=formid)
 
 def eval_processes_form(request, form):
     controls = request.POST.items()
@@ -285,8 +260,20 @@ def eval_processes_form(request, form):
         session['phoenix.process.identifier'] = process
         session.changed()
     except ValidationFailure as e:
-        pass
+        logger.error('validation of process view failed: message=%s' % (e.message))
     return HTTPFound(location=request.route_url('execute'))
+
+def eval_processes_wps_form(request, form):
+    controls = request.POST.items()
+    try:
+        captured = form.validate(controls)
+        url = captured.get('url', '')
+        session = request.session
+        session['phoenix.wps.url'] = url
+        session.changed()
+    except ValidationFailure as e:
+        logger.error('validation of process view failed: message=%s' % (e.message))
+    return HTTPFound(location=request.route_url('processes'))
 
 @view_config(
     route_name='processes',
@@ -296,11 +283,20 @@ def eval_processes_form(request, form):
     )
 def processes(request):
     form = build_processes_form(request)
+    form_wps = build_processes_wps_form(request)
     if 'submit' in request.POST:
         return eval_processes_form(request, form)
+    elif 'select' in request.POST:
+        return eval_processes_wps_form(request, form_wps)
+
+    url = request.session.get('phoenix.wps.url', wps_url(request))
+    wps = get_wps(url)
+    
     appstruct = dict()
     return dict(
-        form = form.render(),
+        form = form.render(appstruct),
+        form_wps = form_wps.render(),
+        current_wps = wps, 
         )
    
 # jobs
@@ -459,7 +455,7 @@ class ExecuteView(FormView):
         try:
             session = self.request.session
             identifier = session['phoenix.process.identifier']
-            self.wps = get_wps(wps_url(self.request))
+            self.wps = get_wps(session['phoenix.wps.url'])
             process = self.wps.describeprocess(identifier)
             self.schema = self.schema_factory(
                 info = True,
