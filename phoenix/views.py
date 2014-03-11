@@ -269,25 +269,36 @@ class SelectWPSView(FormView):
 
 @view_config(
     route_name='processes',
-    renderer='templates/form.pt',
+    renderer='templates/processes.pt',
     layout='default',
     permission='edit'
     )
-class ProcessView(FormView):
+def processes(request):
+    from pyramid.security import has_permission
     from .schema import ProcessSchema
+    schema = ProcessSchema().bind(
+        title="Select process you wish to run",
+        wps_url = wps_url(request),
+        allow_admin = has_permission('admin', request.context, request))
+    form = Form(schema, buttons=('submit',), formid='deform')
 
-    schema = ProcessSchema(title="Select process you wish to run")
-    buttons = ('submit',)
+    if 'submit' in request.POST:
+        controls = request.POST.items()
+        try:
+            captured = form.validate(controls)
+            process = captured.get('process', '')
+            session = request.session
+            session['phoenix.process.identifier'] = process
+            session.changed()
+        except ValidationFailure as e:
+            pass
+        return HTTPFound(location=request.route_url('execute'))
 
-    def submit_success(self, appstruct):
-        params = self.schema.serialize(appstruct)
-        identifier = params.get('process')
-        
-        session = self.request.session
-        session['phoenix.process.identifier'] = identifier
-        session.changed()
-        
-        return HTTPFound(location=self.request.route_url('execute'))
+    appstruct = dict()
+    return dict(
+        form = form.render(),
+        wps_list = catalog.get_wps_list(request),
+        )
    
 # jobs
 # -------

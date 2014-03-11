@@ -14,16 +14,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 from .wps import get_wps
-from .helpers import wps_url
-from pyramid.security import has_permission
 
 # process list
 # ------------
 
 @colander.deferred
 def deferred_select_process_widget(node, kw):
-    request = kw.get('request')
-    wps = get_wps(wps_url(request))
+    wps = get_wps(kw.get('wps_url'))
+    allow_admin = kw.get('allow_admin')
 
     test_group = []
     csc_group = []
@@ -45,7 +43,7 @@ def deferred_select_process_widget(node, kw):
         else:
             other_group.append( (process.identifier, process.title) )
     choices = [ ('', 'Select Process') ]
-    if has_permission('admin', request.context, request) and len(base_group) > 0:
+    if allow_admin and len(base_group) > 0:
         choices.append( OptGroup('Base', *base_group) )
     if len(test_group) > 0:
         choices.append( OptGroup('Test', *test_group) )

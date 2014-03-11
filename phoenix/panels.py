@@ -19,7 +19,7 @@ def navbar(context, request):
     nav = []
     nav.append( nav_item('Home', request.route_url('home'), 'icon-home') )
     if has_permission('edit', request.context, request):
-        nav.append( nav_item('Processes', request.route_url('select_wps'), 'icon-star') )
+        nav.append( nav_item('Processes', request.route_url('processes'), 'icon-star') )
         nav.append( nav_item('My Jobs', request.route_url('jobs'), 'icon-list') )
         nav.append( nav_item('Wizard', request.route_url('wizard'), 'icon-star') )
         nav.append( nav_item('Map', request.route_url('map'), 'icon-picture') )
