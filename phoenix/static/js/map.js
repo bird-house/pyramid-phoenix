@@ -10,7 +10,7 @@ var layersLoading = 0;
 var opacity = 0.7;
 var layerSwitcher = null;
 
-function initMap(openid) {
+function initMap(userid) {
   //var mapOptions = { maxResolution: 256/512, numZoomLevels: 11, fractionalZoom: true};
   //map = new OpenLayers.Map('map',mapOptions);
   map = new OpenLayers.Map('map', { controls: [] });
@@ -60,7 +60,7 @@ function initMap(openid) {
 
   // more controls
   initOpacitySlider();
-  initLayerList(openid);
+  initLayerList(userid);
 }
 
 function loadStarted() {
@@ -112,7 +112,7 @@ function setOpacity(newOpacity, redraw) {
   $("#opacity-label").text("Overlay Opacity " + opacity*100 + "%");
 }
 
-function initLayerList(openid) {
+function initLayerList(userid) {
   wps = new SimpleWPS({
     process: "org.malleefowl.wms.layer",
     onSuccess: function(result) {
@@ -140,7 +140,7 @@ function initLayerList(openid) {
     },
   });
   wps.execute({
-    openid: openid,
+    userid: userid,
   });
 }
 
