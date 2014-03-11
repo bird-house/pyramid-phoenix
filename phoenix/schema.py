@@ -97,6 +97,14 @@ class CatalogAddWPSSchema(colander.MappingSchema):
         validator = colander.url,
         widget = deform.widget.TextInputWidget())
 
+    notes = colander.SchemaNode(
+        colander.String(),
+        title = 'Notes',
+        description = 'Add some notes for this WPS',
+        missing = '',
+        default = '',
+        widget = deform.widget.TextInputWidget())
+
 class CatalogSelectWPSSchema(colander.MappingSchema):
    
     active_wps = colander.SchemaNode(

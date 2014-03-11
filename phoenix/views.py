@@ -496,7 +496,7 @@ class CatalogAddWPSView(FormView):
     def add_success(self, appstruct):
         serialized = self.schema.serialize(appstruct)
         url = serialized['new_wps']
-        notes = 'test'
+        notes = serialized['notes']
 
         try:
             catalog.add_wps(self.request, url, notes)

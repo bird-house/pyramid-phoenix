@@ -32,5 +32,5 @@ def get_wps_list(request):
     return db.catalog.find(dict(format='WPS'))
 
 def get_wps_list_as_tuple(request):
-    return map(lambda entry: (entry['url'], entry['title']), get_wps_list(request))
+    return map(lambda entry: (entry['url'], '%s (%s)' % (entry.get('title', 'unknown'), entry.get('notes', ''))), get_wps_list(request))
 
