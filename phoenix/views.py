@@ -290,6 +290,8 @@ def processes(request):
         return eval_processes_wps_form(request, form_wps)
 
     url = request.session.get('phoenix.wps.url', wps_url(request))
+    request.session['phoenix.wps.url'] = url
+    request.session.changed()
     wps = get_wps(url)
     
     appstruct = dict()
