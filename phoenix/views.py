@@ -267,6 +267,27 @@ class SelectWPSView(FormView):
         
         return HTTPFound(location=self.request.route_url('processes'))
 
+def build_processes_form(request, formid='deform'):
+    from pyramid.security import has_permission
+    from .schema import ProcessSchema
+    schema = ProcessSchema().bind(
+        title="Select process you wish to run",
+        wps_url = wps_url(request),
+        allow_admin = has_permission('admin', request.context, request))
+    return Form(schema, buttons=('submit',), formid=formid)
+
+def eval_processes_form(request, form):
+    controls = request.POST.items()
+    try:
+        captured = form.validate(controls)
+        process = captured.get('process', '')
+        session = request.session
+        session['phoenix.process.identifier'] = process
+        session.changed()
+    except ValidationFailure as e:
+        pass
+    return HTTPFound(location=request.route_url('execute'))
+
 @view_config(
     route_name='processes',
     renderer='templates/processes.pt',
@@ -274,30 +295,12 @@ class SelectWPSView(FormView):
     permission='edit'
     )
 def processes(request):
-    from pyramid.security import has_permission
-    from .schema import ProcessSchema
-    schema = ProcessSchema().bind(
-        title="Select process you wish to run",
-        wps_url = wps_url(request),
-        allow_admin = has_permission('admin', request.context, request))
-    form = Form(schema, buttons=('submit',), formid='deform')
-
+    form = build_processes_form(request)
     if 'submit' in request.POST:
-        controls = request.POST.items()
-        try:
-            captured = form.validate(controls)
-            process = captured.get('process', '')
-            session = request.session
-            session['phoenix.process.identifier'] = process
-            session.changed()
-        except ValidationFailure as e:
-            pass
-        return HTTPFound(location=request.route_url('execute'))
-
+        return eval_processes_form(request, form)
     appstruct = dict()
     return dict(
         form = form.render(),
-        wps_list = catalog.get_wps_list(request),
         )
    
 # jobs
