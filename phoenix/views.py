@@ -289,11 +289,7 @@ def processes(request):
     elif 'select' in request.POST:
         return eval_processes_wps_form(request, form_wps)
 
-    url = request.session.get('phoenix.wps.url')
-    if url is None:
-        url = wps_url(request)
-        request.session['phoenix.wps.url'] = url
-        request.session.changed()
+    url = request.session.get('phoenix.wps.url', wps_url(request))
     wps = get_wps(url)
     
     appstruct = dict()
@@ -459,7 +455,7 @@ class ExecuteView(FormView):
         try:
             session = self.request.session
             identifier = session['phoenix.process.identifier']
-            self.wps = get_wps(session['phoenix.wps.url'])
+            self.wps = get_wps(session.get('phoenix.wps.url'), wps_url(self.request))
             process = self.wps.describeprocess(identifier)
             self.schema = self.schema_factory(
                 info = True,
