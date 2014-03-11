@@ -51,6 +51,7 @@ def get_wps(url, reload=False):
         logger.debug("loading wps caps ...")
         wps.getcapabilities()
     logger.debug("number of registered wps: %d", len(wps_registry))
+    logger.debug("number of processes: %d", len(wps.processes))
     return wps
 
 def build_request_url(service_url, identifier, inputs=[], output='output'):
