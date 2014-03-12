@@ -47,6 +47,16 @@ from .widget import (
 import logging
 logger = logging.getLogger(__name__)
 
+# constants for workflow steps
+# TODO: need a better and dynamic way for this
+SELECT_WPS = 0
+SELECT_PROCESS = 1
+SELECT_SOURCE = 2
+SEARCH_INPUT = 3
+SELECT_INPUT = 4
+DEFINE_ACCESS = 5
+DEFINE_PROCESS = 6
+
 # select process schema
 # ---------------------
 
@@ -99,7 +109,7 @@ def search_metadata(url, wizard_state):
         return {}
     
     states = wizard_state.get_step_states()
-    process_state = states.get(0)
+    process_state = states.get(SELECT_PROCESS)
     processid = process_state['process']
     identifier = 'org.malleefowl.metadata'
     inputs = [("processid", str(processid))]
@@ -127,7 +137,7 @@ def bind_search_schema(node, kw):
         return
 
     states = wizard_state.get_step_states()
-    data_source_state = states.get(1)
+    data_source_state = states.get(SELECT_SOURCE)
     data_source = data_source_state['data_source']
 
     metadata = search_metadata( wps_url(request), wizard_state)
@@ -172,8 +182,6 @@ class SearchSchema(colander.MappingSchema):
 # -------------------
 
 def bind_files_schema(node, kw):
-    from .models import user_openid
-    
     request = kw.get('request', None)
     wps = get_wps(wps_url(request))
     
@@ -190,10 +198,10 @@ def bind_files_schema(node, kw):
 
     states = wizard_state.get_step_states()
     
-    data_source_state = states.get(1)
+    data_source_state = states.get(SELECT_SOURCE)
     data_source = data_source_state['data_source']
 
-    search_state = states.get(2)
+    search_state = states.get(SEARCH_INPUT)
     search = json.loads( search_state['selection'])
 
     logger.debug('fetching files')
@@ -230,7 +238,7 @@ def bind_esg_access_schema(node, kw):
     wizard_state = kw.get('wizard_state', None)
     if request != None and wizard_state != None:
         states = wizard_state.get_step_states()
-        data_source_state = states.get(wizard_state.get_step_num() - 3)
+        data_source_state = states.get(SELECT_SOURCE)
         identifier = data_source_state['data_source']
         wps = get_wps(wps_url(request))
         process = wps.describeprocess(identifier)
@@ -252,7 +260,7 @@ def bind_wps_schema(node, kw):
         return
   
     states = wizard_state.get_step_states()
-    state = states.get(0)
+    state = states.get(SELECT_PROCESS)
     identifier = state['process']
     wps = get_wps(wps_url(request))
     process = wps.describeprocess(identifier)
@@ -348,25 +356,25 @@ class MyFormWizardView(FormWizardView):
 def convert_states_to_nodes(service, token, states):
     source = dict(
         service = service,
-        identifier = str(states[1].get('data_source')),
+        identifier = str(states[SELECT_SOURCE].get('data_source')),
         input = ['token=%s' % (token)],
         output = ['output'],
-        sources = map(lambda x: [str(x)], states[3].get('file_identifier')),
+        sources = map(lambda x: [str(x)], states[SELECT_INPUT].get('file_identifier')),
         )
-    if states[4].has_key('openid'):
-        source['input'].append('openid=' + str(states[4].get('openid', '')))
-        source['input'].append('password=' + str(states[4].get('password', '')))
-    if states[4].has_key('startindex'):
-        source['input'].append('startindex=' + str(states[4].get('startindex', '')))
-        source['input'].append('endindex=' + str(states[4].get('endindex', '')))
-    if states[5].has_key('info_notes'):
-        del(states[5]['info_notes'])   
-    if states[5].has_key('info_tags'):
-        del(states[5]['info_tags'])
+    if states[DEFINE_ACCESS].has_key('openid'):
+        source['input'].append('openid=' + str(states[DEFINE_ACCESS].get('openid', '')))
+        source['input'].append('password=' + str(states[DEFINE_ACCESS].get('password', '')))
+    if states[DEFINE_ACCESS].has_key('startindex'):
+        source['input'].append('startindex=' + str(states[DEFINE_ACCESS].get('startindex', '')))
+        source['input'].append('endindex=' + str(states[DEFINE_ACCESS].get('endindex', '')))
+    if states[DEFINE_PROCESS].has_key('info_notes'):
+        del(states[DEFINE_PROCESS]['info_notes'])   
+    if states[DEFINE_PROCESS].has_key('info_tags'):
+        del(states[DEFINE_PROCESS]['info_tags'])
     worker = dict(
         service = service,
-        identifier = str(states[0].get('process')),
-        input = map(lambda x: str(x[0]) + '=' + str(x[1]), states[5].items()),
+        identifier = str(states[SELECT_PROCESS].get('process')),
+        input = map(lambda x: str(x[0]) + '=' + str(x[1]), states[DEFINE_PROCESS].items()),
         output = ['output'])
     nodes = dict(source=source, worker=worker)
     return nodes
@@ -380,8 +388,8 @@ class Done():
         pass
     
     def __call__(self, request, states):
-        notes = states[5].get('info_notes', '')
-        tags = states[5].get('info_tags', '')
+        notes = states[DEFINE_PROCESS].get('info_notes', '')
+        tags = states[DEFINE_PROCESS].get('info_tags', '')
         
         # convert states to workflow desc and run workflow
         wps = get_wps(wps_url(request))
@@ -415,6 +423,10 @@ class Done():
              )
 def wizard(request):
     schemas = []
+    from phoenix import catalog
+    from schema import SelectWPSSchema
+    schemas.append( SelectWPSSchema().bind(
+        wps_list=catalog.get_wps_list_as_tuple(request)))
     schemas.append( SelectProcessSchema(title='Select Process') )
     schemas.append( SelectDataSourceSchema(title='Select Data Source') )
     schemas.append( SearchSchema(
