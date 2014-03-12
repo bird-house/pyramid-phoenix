@@ -63,7 +63,12 @@ DEFINE_PROCESS = 6
 @colander.deferred
 def deferred_choose_process_widget(node, kw):
     request = kw.get('request')
-    wps = get_wps(wps_url(request))
+    wizard_state = kw.get('wizard_state', None)
+
+    states = wizard_state.get_step_states()
+    url = states.get(SELECT_WPS).get('url')
+    wps = get_wps(url)
+    logger.debug('using wps url=%s' % (wps.url))
 
     choices = []
     for process in wps.processes:
@@ -353,9 +358,9 @@ class MyFormWizardView(FormWizardView):
         return HTTPFound(location = self.request.path_url)
 
 
-def convert_states_to_nodes(service, token, states):
+def convert_states_to_nodes(request, token, states):
     source = dict(
-        service = service,
+        service = wps_url(request),
         identifier = str(states[SELECT_SOURCE].get('data_source')),
         input = ['token=%s' % (token)],
         output = ['output'],
@@ -372,7 +377,7 @@ def convert_states_to_nodes(service, token, states):
     if states[DEFINE_PROCESS].has_key('info_tags'):
         del(states[DEFINE_PROCESS]['info_tags'])
     worker = dict(
-        service = service,
+        service = states[SELECT_WPS].get('url'),
         identifier = str(states[SELECT_PROCESS].get('process')),
         input = map(lambda x: str(x[0]) + '=' + str(x[1]), states[DEFINE_PROCESS].items()),
         output = ['output'])
@@ -392,9 +397,9 @@ class Done():
         tags = states[DEFINE_PROCESS].get('info_tags', '')
         
         # convert states to workflow desc and run workflow
-        wps = get_wps(wps_url(request))
         token = user_token(request, authenticated_userid(request))
-        nodes = convert_states_to_nodes(wps.url, token, states)
+        nodes = convert_states_to_nodes(request, token, states)
+        wps = get_wps(wps_url(request))
         execution = execute_restflow(wps, nodes)
         
         add_job(
