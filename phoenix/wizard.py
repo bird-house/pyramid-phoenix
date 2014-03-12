@@ -43,7 +43,6 @@ from .widget import (
     WizardStatesWidget
     )
 
-from owslib.wps import monitorExecution
 
 import logging
 logger = logging.getLogger(__name__)
@@ -52,7 +51,7 @@ logger = logging.getLogger(__name__)
 # ---------------------
 
 @colander.deferred
-def deferred_choose_workflow_widget(node, kw):
+def deferred_choose_process_widget(node, kw):
     request = kw.get('request')
     wps = get_wps(wps_url(request))
 
@@ -63,12 +62,12 @@ def deferred_choose_workflow_widget(node, kw):
     return widget.RadioChoiceWidget(values = choices)
 
 class SelectProcessSchema(colander.MappingSchema):
-    description = "Select a workflow process for ESGF data"
+    description = "Select a process for ESGF data"
     appstruct = {}
 
     process = colander.SchemaNode(
         colander.String(),
-        widget = deferred_choose_workflow_widget)
+        widget = deferred_choose_process_widget)
 
 # select data source schema
 # -------------------------
@@ -107,6 +106,8 @@ def search_metadata(url, wizard_state):
     outputs = [("output",False)]
     logger.debug("wps url=%s", url)
     wps = get_wps(url)
+    # TODO: use simple wps call
+    from owslib.wps import monitorExecution
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     monitorExecution(execution)
     if len(execution.processOutputs) != 1:
