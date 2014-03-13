@@ -1,0 +1,36 @@
+<metal:block use-macro="main_template">
+	
+  <div metal:fill-slot="content">
+    <form id="deform"
+          class="deform form-horizontal
+                 deform"
+          action=""
+          method="POST"
+          enctype="multipart/form-data"
+          accept-charset="utf-8">
+      <legend>${title}</legend>
+      <div class= "control-group" tal:repeat="field html_fields">
+        <label for="${field.id}" class="control-label">
+          ${field.text}
+        </label>
+        <div class="controls">
+          <tal:form replace="structure field.input_html">The input form should be here</tal:form>
+          <span tal:condition="exists:field.help" class ="help-block">
+            <tal:form replace="structure field.help">The help should be here</tal:form>
+          </span>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button
+            id="deformsubmit"
+            name="submit"
+            type="submit"
+            class="btn btn-primary "
+            value="submit">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+   
+</metal:block>

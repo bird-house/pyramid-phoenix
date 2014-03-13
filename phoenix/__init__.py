@@ -88,6 +88,7 @@ def main(global_config, **settings):
     config.add_route('admin_user_activate', '/admin/user/activate')
     config.add_route('admin_user_deactivate', '/admin/user/deactivate')
     config.add_route('wizard', '/wizard')
+    config.add_route('qc_wizard', '/qc_wizard')
     config.add_route('map', '/map')
     config.add_route('help', '/help')
     config.add_route('signin', '/signin')
