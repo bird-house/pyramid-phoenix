@@ -1,0 +1,10 @@
+${log_file} {
+  copytruncate
+  weekly
+  rotate 8
+  compress
+  missingok
+  notifempty
+  size 10M
+  create 0640 www-data adm
+}

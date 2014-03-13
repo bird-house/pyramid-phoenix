@@ -1,0 +1,10 @@
+[program:${program}]
+command=${command}
+directory=${directory}
+priority=${priority}
+user=${install:user}
+group=${install:group}
+autostart=true
+autorestart=true
+redirect_stderr=true
+environment=${environment} 

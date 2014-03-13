@@ -1,0 +1,104 @@
+###
+# app configuration
+# http://docs.pylonsproject.org/projects/pyramid/en/latest/narr/environment.html
+###
+
+[app:main]
+use = egg:Phoenix
+
+pyramid.reload_templates = false
+pyramid.debug_authorization = false
+pyramid.debug_notfound = false
+pyramid.debug_routematch = false
+pyramid.default_locale_name = en
+pyramid.includes =
+#    pyramid_debugtoolbar
+    pyramid_layout
+    pyramid_deform
+
+# By default, the toolbar only appears for clients from IP addresses
+# '127.0.0.1' and '::1'.
+#debugtoolbar.hosts = 127.0.0.1 ::1 
+
+# mongodb
+mongodb.url = mongodb://localhost
+mongodb.db_name = Phoenix
+
+# deform
+#pyramid_deform.template_search_path = phoenix:templates/deform
+
+# mozilla persona browserid
+persona.secret = 's3cReT++'
+persona.audiences = http://${server:hostname}:${ports:http}
+persona.siteName = Phoenix
+# TODO: custom routes do not work
+#persona.login_route='login_persona'
+#persona.login_path = '/login/persona'
+#persona.logout_route = 'logout'
+#persona.logout_path = '/logout'
+
+# users with admin permission
+phoenix.admin_users = carsten@linacs.org nils.hempelmann@hzg.de kipp@dkrz.de
+
+# supervisor service
+phoenix.supervisor = http://${server:hostname}:${ports:supervisor}
+
+# malleefowl wps service used
+malleefowl.wps = http://${server:hostname}:${ports:http}/wps
+malleefowl.sys_token = ${security:sys_token} 
+
+# esgf search service
+esgf.search = /esg-search
+
+# thredds service
+phoenix.thredds = http://${server:hostname}:${ports:tomcat}/thredds
+
+###
+# wsgi server configuration
+###
+
+[server:main]
+use = egg:gunicorn#main
+bind = ${phoenix:server}
+workers = 1
+timeout = 240
+
+###
+# logging configuration
+# http://docs.pylonsproject.org/projects/pyramid/en/latest/narr/logging.html
+###
+
+[loggers]
+keys = root, phoenix
+
+[handlers]
+keys = filelog
+
+[formatters]
+keys = generic
+
+[logger_root]
+level = INFO
+handlers = filelog
+
+[logger_phoenix]
+level =  ${logging:log_level}
+handlers = filelog
+qualname = phoenix
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = INFO
+formatter = generic
+
+[handler_filelog]
+class = FileHandler
+args = ('${phoenix:log_file}', 'a')
+level = DEBUG
+formatter = generic
+
+[formatter_generic]
+format = %(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s
+
+

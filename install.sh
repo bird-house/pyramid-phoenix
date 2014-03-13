@@ -17,6 +17,7 @@ function pre_build() {
 
 # upgrade stuff which can not be done by buildout
 function upgrade() {
+    echo "Upgrading Phoenix ..."
 }
 
 # set configurion file for buildout

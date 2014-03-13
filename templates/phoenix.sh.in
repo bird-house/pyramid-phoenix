@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+USER="${install:user}"
+GROUP="${install:group}"
+
+export PATH=/opt/anaconda/bin:"${buildout:bin-directory}":$PATH
+
+exec gunicorn_phoenix --user=$USER --group=$GROUP "${phoenix:cfg}"
+
+
