@@ -1,4 +1,5 @@
 var SimpleWPS = function(options) {
+ 
   var defaults = {
     url: "/wps",
     process: null,
@@ -35,7 +36,7 @@ $.extend(SimpleWPS.prototype, {
     params.dataInputs = dataInputs;
     // call wps
     var me = this;
-    //console.log(this.options.url);
+    console.log(this.options.url);
     $.get(this.options.url, params, function(result) {
       // inform about result
       me.options.onSuccess(result)

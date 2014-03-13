@@ -11,6 +11,7 @@ var opacity = 0.7;
 var layerSwitcher = null;
 
 function initMap(userid) {
+  //OpenLayers.ProxyHost = "/proxy.php?url=";
   //var mapOptions = { maxResolution: 256/512, numZoomLevels: 11, fractionalZoom: true};
   //map = new OpenLayers.Map('map',mapOptions);
   map = new OpenLayers.Map('map', { controls: [] });
