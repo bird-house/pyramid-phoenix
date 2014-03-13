@@ -1,0 +1,36 @@
+[buildout]
+
+extends = buildout.cfg
+
+[install]
+prefix = 
+user = root
+group = root
+
+[server]
+host = 127.0.0.1
+hostname = localhost
+
+[ports]
+http = 8090
+tomcat = 8080
+supervisor = 9001
+
+[logging]
+log_level = DEBUG
+
+[service]
+# 15 mins (in secs)
+timeout = 900
+
+[security]
+sys_token = change_me_in_custom.cfg
+sys_userid = sys_malleefowl.org
+
+[tests]
+user =
+password =
+
+#[sources]
+#pyramid-phoenix = git git://redmine.dkrz.de/pyramid-phoenix.git branch=develop
+#pyramid-phoenix = git gitolite@redmine.dkrz.de:pyramid-phoenix branch=develop
