@@ -51,11 +51,11 @@ logger = logging.getLogger(__name__)
 # TODO: need a better and dynamic way for this
 SELECT_WPS = 0
 SELECT_PROCESS = 1
-SELECT_SOURCE = 2
-SEARCH_INPUT = 3
-SELECT_INPUT = 4
-DEFINE_ACCESS = 5
-DEFINE_PROCESS = 6
+DEFINE_PROCESS = 2
+SELECT_SOURCE = 3
+SEARCH_INPUT = 4
+SELECT_INPUT = 5
+DEFINE_ACCESS = 6
 
 # select process schema
 # ---------------------
@@ -433,6 +433,11 @@ def wizard(request):
     schemas.append( SelectWPSSchema().bind(
         wps_list=catalog.get_wps_list_as_tuple(request)))
     schemas.append( SelectProcessSchema(title='Select Process') )
+    schemas.append( WPSSchema(
+        info=True,
+        title='Process Parameters', 
+        after_bind=bind_wps_schema,
+        ))
     schemas.append( SelectDataSourceSchema(title='Select Data Source') )
     schemas.append( SearchSchema(
         title='Search Input Files',
@@ -445,12 +450,7 @@ def wizard(request):
         title='Access Parameters', 
         after_bind=bind_esg_access_schema,
         ))
-    schemas.append( WPSSchema(
-        info=True,
-        title='Process Parameters', 
-        after_bind=bind_wps_schema,
-        ))
-
+   
     wizard = FormWizard('Workflow', 
                         Done(), 
                         *schemas 
