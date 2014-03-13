@@ -9,16 +9,12 @@
           enctype="multipart/form-data"
           accept-charset="utf-8">
       <legend>${title}</legend>
-      <div class= "control-group" tal:repeat="field fields">
+      <div class= "control-group" tal:repeat="field html_fields">
         <label for="${field.id}" class="control-label">
           ${field.text}
         </label>
         <div class="controls">
-          <input tal:condition="not:exists:field.options" name="${field.id}" value="${field.value}"
-                 id="${field.id}" type="text"/>
-          <select tal:condition="exists:field.options" name="${field.id}" value="${field.value}">
-            <option tal:repeat="option field.options" >${option}</option>
-          </select>
+          <tal:form replace="structure field.input_html">The input form should be here</tal:form>
           <span tal:condition="exists:field.help" class ="help-block">
             <tal:form replace="structure field.help">The help should be here</tal:form>
           </span>
