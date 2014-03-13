@@ -44,14 +44,14 @@ phoenix.admin_users = carsten@linacs.org nils.hempelmann@hzg.de kipp@dkrz.de
 phoenix.supervisor = http://${server:hostname}:${ports:supervisor}
 
 # malleefowl wps service used
-malleefowl.wps = http://${server:hostname}:${ports:http}/wps
+malleefowl.wps = ${malleefowl:wps}
 malleefowl.sys_token = ${security:sys_token} 
 
 # esgf search service
 esgf.search = /esg-search
 
 # thredds service
-phoenix.thredds = http://${server:hostname}:${ports:tomcat}/thredds
+phoenix.thredds = ${malleefowl:thredds}
 
 ###
 # wsgi server configuration
