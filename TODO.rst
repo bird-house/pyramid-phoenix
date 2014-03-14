@@ -4,6 +4,8 @@ Todo list for Phoenix
 Common
 ------
 
+* use https:
+  http://nginx.org/en/docs/http/configuring_https_servers.html
 * fix nginx config for wps
 * show wps service in result table
 * allow login also when wps is not available
@@ -22,7 +24,7 @@ Common
 * phoenix: use stored openid as default value in wizard and process
 * phoenix: update to latests pyramid
 * rename phoenix to pyramid_phoenix
-* REJECTED: refresh button on job list
+* SKIPPED: refresh button on job list
 * wizard: add process name to notes
 * opendap with date selection
 * start/end selection for esgf files
