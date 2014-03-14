@@ -3,12 +3,14 @@ import logging
 logger = logging.getLogger(__name__)
 from pyramid.view import view_config
 from pyramid.security import authenticated_userid
-from .models import user_token
+from .models import user_token, add_job
 from pyramid.httpexceptions import HTTPFound
+import wps
 import os
 #TODO: Put constants into a config file
 QCDIR = "/home/tk/sandbox/climdaps/var/qc_cache"
 EXAMPLEDATADIR = "/home/tk/sandbox/climdaps/examples/data/CORDEX"
+WPS_SERVICE = "http://localhost:8090/wps"
 @view_config(route_name='qc_wizard',
              renderer='templates/qc_wizard.pt',
              layout='default',
@@ -17,7 +19,7 @@ EXAMPLEDATADIR = "/home/tk/sandbox/climdaps/examples/data/CORDEX"
 def qc_wizard(request):
     title = "Quality Control Wizard"
     user_id = authenticated_userid(request)
-    #token = user_token(request, user_id)
+    token = user_token(request, user_id)
     
     parallel_id_help = ("An identifier used to avoid processes running on the same directory." + 
                         " Using an existing one will remove all data inside its work directory.")
@@ -66,22 +68,21 @@ def qc_wizard(request):
         DATA = request.POST
         #Create a restflow workflow (without writing it to a file).
         #The values are gathered in the yaml workflow_description generation method
-        workflow_description = _create_qc_workflow(DATA)
-        
-        #Create a wps call for org.malleefowl.restflow
-        ###identifier = 'org.malleefowl.restflow'
-        ###inputs = [("workflow_description", str(workflow_description))]
-        ###outputs = [("output",True), ("work_output", False), ("work_status", False)]
-        ###execution = wps.execute(identifier, inputs=inputs, output=outputs)
-        ###add_job(
-        ###    request = request,
-        ###    user_id = authenticated_userid(request),
-        ###    identifier = identifier,
-        ###    wps_url = wps.url,
-        ###    execution = execution,
-        ###    notes = states[5].get('info_notes', ''),
-        ###    tags = states[5].get('info_tags', ''))
+        workflow_description = _create_qc_workflow(DATA, user_id, token)
 
+        identifier = 'org.malleefowl.restflow.run'
+        inputs = [("workflow_description", str(workflow_description))]
+        outputs = [("output",True), ("work_output", False), ("work_status", False)]
+        execution = wps.execute(WPS_SERVICE, identifier, inputs=inputs, output=outputs)
+
+        #add_job(
+        #    request = request,
+        #    user_id = authenticated_userid(request),
+        #    identifier = identifier,
+        #    wps_url = WPS_SERVICE,
+        #    execution = execution,
+        #    notes = "",
+        #    tags = "")
 
         return HTTPFound(location=request.route_url('jobs'))
     
@@ -139,7 +140,9 @@ def get_html_fields(fields):
         html_fields.append(html_field)
     return html_fields
         
-def _create_qc_workflow(DATA):
+def _create_qc_workflow(DATA, user_id, token):
+    user_id = user_id.replace("@","_")
+    token = token
     parallel_id = DATA["parallel_id"]
     data_path = DATA["data_path"]
     project =  DATA["project"]
@@ -150,5 +153,96 @@ def _create_qc_workflow(DATA):
     publish_metadata = "publish_metadata" in DATA
     publish_quality = "publish_quality" in DATA
     clean = "clean" in DATA
-    yaml_document = ["---"]
 
+    wps_address = "http://localhost:8090/wps"
+    #generated variables
+    init_inputs = ('["parallel_id=' + parallel_id + '", "username=' + user_id +
+                   '", "token=' + token + '"]') 
+    #document
+    yaml_document = [
+        "---",
+        "",
+        "imports:",
+        "- classpath:/common/directors.yaml",
+        "- classpath:/common/groovy/actors.yaml",
+        "components:",
+        "- id: QCProcesses",
+        "  type: Workflow",
+        "  properties:",
+        "    director: !ref MTDataDrivenDirector",
+        "    nodes:",
+        "    - !ref QC_Initialize",
+        "- id: WpsExecute",
+        "  type: GroovyActor",
+        "  properties:",
+        "    step: |",
+        "      tempFile = File.createTempFile('wps-result-', '.json', new File('.'))",
+        "      outfile = tempFile.absolutePath",
+        "      cmd = ['wpsclient', 'execute', ",
+        "                    '-s', service,",
+        "                    '-i', identifier,",
+        "                    '-o', outfile]",
+        "      if (verbose) {",
+        "          cmd.add('-v')",
+        "      }",
+        "      for (item in sources) {",
+        "          cmd.add('--input')",
+        "          cmd.add('file_identifier=' + item.value)",
+        "      }",
+        "      for (item in input) {",
+        "          cmd.add('--input')",
+        "          cmd.add('' + item.value)",
+        "      }",
+        "      for (item in output) {",
+        "          cmd.add('--output')",
+        "          cmd.add('' + item.value)",
+        "      }",
+        "     ",
+        "      proc = cmd.execute()",
+        "      proc.waitFor()",
+        "      result = identifier + ' ... failed'",
+        "      status = result",
+        "      import org.yaml.snakeyaml.Yaml",
+        "      resultFile = new File(outfile)",
+        "      if (resultFile.exists()) {",
+        "         yaml = new Yaml()",
+        "         wpsResult = yaml.load(new FileInputStream(resultFile))",
+        "     ",
+        "         for (item in wpsResult) {",
+        "            result = item.reference",
+        "            status = identifier + ' ... done'",
+        "         }",
+        "      }",
+        "    inputs:",
+        "      identifier: ",
+        "      service:",
+        "      input:",
+        "        type: Collection",
+        "        optional: true",
+        "        nullable: true",
+        "      output:",
+        "        type: Collection",
+        "        optional: true",
+        "        nullable: true",
+        "      sources:",
+        "        type: Collection",
+        "        optional: true",
+        "        nullable: true",
+        "      verbose:",
+        "        type: Bool",
+        "    outputs:",
+        "      result:",
+        "      status:",
+        "",
+        "- id: QC_Initialize",
+        "  type: Node",
+        "  properties:",
+        "    actor: !ref WpsExecute",
+        "    constants:",
+        "      service: "+wps_address,
+        "      identifier: QC_Initialization_User",
+        "      input: " + init_inputs ,
+        "      output: ['output']",
+        ]
+
+    return "\n".join(yaml_document)+"\n"
