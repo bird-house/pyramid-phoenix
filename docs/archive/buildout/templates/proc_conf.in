@@ -1,0 +1,38 @@
+###############################################################################
+# ConfigOb based configuration file.                                          #
+# For details see: http://www.voidspace.org.uk/python/configobj.html          #
+#                                                                             #
+# For allowed values for sections [init], [inputs] and [outputs] see:         #
+# http://pywps.wald.intevation.org/documentation/process.html or DEFAULT.ini  #
+# Other sections are process specific.                                        #
+###############################################################################
+
+#-----------------------------------------------------------------------------#
+# Process initialization and configuration                                    #
+#-----------------------------------------------------------------------------#
+
+[init]
+    identifier   = {identifier}
+    title        = My new process
+
+#-----------------------------------------------------------------------------#
+# Data Inputs                                                                 #
+#-----------------------------------------------------------------------------#
+
+[inputs]
+#    [[literal]]
+    
+#    [[complex]]
+    
+#    [[boundingbox]]
+
+#-----------------------------------------------------------------------------#
+# Data outputs                                                                #
+#-----------------------------------------------------------------------------#
+
+[outputs]
+#    [[literal]]
+    
+#    [[complex]]
+    
+#    [[boundingbox]]

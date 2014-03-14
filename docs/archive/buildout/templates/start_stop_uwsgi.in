@@ -1,0 +1,56 @@
+#!/bin/sh
+
+export PATH=${buildout:bin-directory}:$PATH
+export PYTHONPATH=$(${buildout:bin-directory}/python -c "import sys; print ':'.join([p for p in sys.path if not p.startswith('/usr')])")
+
+UWSGI="${uwsgi}"
+UWSGI_CONF="${uwsgi-conf}"
+UWSGI_PID="${uwsgi-pid}"
+
+start_uwsgi() {
+
+    echo -n "Starting uwsgi: "
+
+    $UWSGI --ini-paste-logged $UWSGI_CONF   
+    
+    sleep 3;
+
+    if [ $? -eq 0 ]
+        then echo "OK"
+        else echo "FAILED"
+    fi
+}
+
+stop_uwsgi() {
+
+    echo -n "Stopping uwsgi: "
+
+    $UWSGI --stop $UWSGI_PID
+    
+    sleep 5;
+
+    if [ $? -eq 0 ]
+        then echo "OK" && rm -f $UWSGI_PID
+        else echo "FAILED"
+    fi
+}
+
+
+case "$1" in
+    start)
+        find ${buildout:directory}/src -name '*.pyc' -delete
+        start_uwsgi
+        ;;
+    stop)
+        stop_uwsgi
+        ;;
+    restart)
+        stop_uwsgi
+        start_uwsgi
+        ;;
+    *)
+        echo $"Usage: $prog {start|stop|restart}"
+        RETVAL=2
+esac
+
+exit $RETVAL
