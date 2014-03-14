@@ -4,6 +4,7 @@ Todo list for Phoenix
 Common
 ------
 
+* Commit something from climdaps sub directory
 * check usage of thredds url in phoenix (incl. js) and malleefowl
 * phoenix: thredds only avail as link in admin view 
 * phoenix: get thredds url etc from malleefowl process
