@@ -150,5 +150,5 @@ def _create_qc_workflow(DATA):
     publish_metadata = "publish_metadata" in DATA
     publish_quality = "publish_quality" in DATA
     clean = "clean" in DATA
-
+    yaml_document = ["---"]
 
