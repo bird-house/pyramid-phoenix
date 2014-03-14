@@ -4,6 +4,8 @@ Todo list for Phoenix
 Common
 ------
 
+* integrate settings panel:
+  http://www.ourtuts.com/34-outstanding-admin-panels-for-your-web-applications/
 * see todopyramid as an example for table and json requests to wps without proxy
 * configure defaults for custom.cfg
 * use https:
