@@ -4,6 +4,7 @@ Todo list for Phoenix
 Common
 ------
 
+* see todopyramid as an example for table and json requests to wps without proxy
 * configure defaults for custom.cfg
 * use https:
   http://nginx.org/en/docs/http/configuring_https_servers.html

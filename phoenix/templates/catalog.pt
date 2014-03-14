@@ -26,6 +26,18 @@
               </a>
             </td>
             <td>${wps.get('notes', '')}</td>
+            <td>
+              <div class="btn-group">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                  Action
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" id="${repeat.wps.number}">
+                  <li><a class="todo-edit" href="#">Edit</a></li>
+                  <li><a class="todo-delete" href="#">Delete</a></li>
+                </ul>
+              </div>
+            </td>
           </tr>
         </div>
       </tbody>
