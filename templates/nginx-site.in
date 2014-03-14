@@ -1,17 +1,7 @@
-{% if parts.nginx_sites.phoenix == 'enabled' %}
 # Phoenix: a pyramid web frontend for WPS 
 upstream phoenix {
     server ${parts.phoenix.server} fail_timeout=0;
 }
-{% end %}
-
-{% if parts.nginx_sites.pywps == 'enabled' %}
-# pywps web processing service
-upstream pywps_server {
-    # socket connection
-    server ${parts.pywps.server} fail_timeout=0;
-}
-{% end %}
 
 # caching
 proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=microcache:30m max_size=1000m;
@@ -24,7 +14,6 @@ server
     root /usr/share/nginx/www;      
     index index.php index.html index.htm;
 
-    {% if parts.nginx_sites.phoenix == 'enabled' %}
     # Phoenix ...
     # -----------
 
@@ -56,39 +45,18 @@ server
     {
         proxy_pass              http://phoenix;
     }
-    {% end %}
-
-    {% if parts.nginx_sites.pywps == 'enabled' %}
-    # PyWPS ...
-    # ---------
 
     # pywps avail at /wps
     location /wps 
     {
-        proxy_pass              http://pywps_server;
+        proxy_pass              ${parts.malleefowl.wps};
     }
 
-    # WPS Outputs
-    location /wpsoutputs
-    {
-        alias ${parts.pywps_config.output_path};
-    }
-
-    # published data
-    location /files
-    {
-        alias ${parts.pywps_config.files_path};
-        autoindex on;
-    }
-    {% end %}
-
-    {% if parts.nginx_sites.php_fpm == 'enabled' %}
     # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
     location ~ .php$ {
         fastcgi_pass 127.0.0.1:${parts.ports.php_fpm};
         fastcgi_index index.php;
         include fastcgi_params;
     }
-    {% end %}
 
 }

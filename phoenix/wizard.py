@@ -376,10 +376,13 @@ def convert_states_to_nodes(request, token, states):
         del(states[DEFINE_PROCESS]['info_notes'])   
     if states[DEFINE_PROCESS].has_key('info_tags'):
         del(states[DEFINE_PROCESS]['info_tags'])
+    worker_input = map(lambda x: str(x[0]) + '=' + str(x[1]), states[DEFINE_PROCESS].items())
+    # TODO: handle token for publisher ...
+    worker_input.append('token=%s' % (token))
     worker = dict(
         service = states[SELECT_WPS].get('url'),
         identifier = str(states[SELECT_PROCESS].get('process')),
-        input = map(lambda x: str(x[0]) + '=' + str(x[1]), states[DEFINE_PROCESS].items()),
+        input = worker_input,
         output = ['output'])
     nodes = dict(source=source, worker=worker)
     return nodes
