@@ -544,7 +544,7 @@ def process_catalog_form(request, form):
         captured = form.validate(controls)
         url = captured.get('url', '')
         notes = captured.get('notes', '')
-        catalog.add_wps(request, url, notes)
+        catalog.add_wps_entry(request, url, notes)
     except ValidationFailure as e:
         logger.error('validation of catalog form failed: message=%s' % (e.message))
     return HTTPFound(location=request.route_url('catalog'))
@@ -569,12 +569,23 @@ def delete_catalog_entry(context, request):
     """
     Delete a catalog entry, e.a. wps url
     """
-    wps_url = request.params.get('id', None)
+    wps_url = request.params.get('url', None)
     logger.debug('delete entry %s' %(wps_url))
     if wps_url is not None:
-        catalog.delete_wps(request, wps_url)
+        catalog.delete_wps_entry(request, wps_url)
 
     return True
+
+@view_config(renderer='json', name='edit.entry', permission='edit')
+def edit_catalog_entry(context, request):
+    notes = ''
+    wps_url = request.params.get('url', None)
+    logger.debug('delete entry %s' %(wps_url))
+    if wps_url is not None:
+        entry = catalog.get_wps_entry(request, wps_url)
+        if entry is not None:
+            notes = entry.get('notes', '') 
+    return dict(url=wps_url, notes=notes)
 
 @view_config(
     route_name='admin_user_edit',

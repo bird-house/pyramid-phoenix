@@ -5,7 +5,7 @@ from .models import database
 from .wps import get_wps
 
 # catalog for wps
-def add_wps(request, url, notes):
+def add_wps_entry(request, url, notes):
     entry = None
     try:
         wps = get_wps(url)
@@ -27,12 +27,21 @@ def add_wps(request, url, notes):
     
     return entry
 
-def delete_wps(request, url):
+def delete_wps_entry(request, url):
     try:
         db = database(request)
         db.catalog.remove(dict(url=url))
     except Exception as e:
-        logger.warn('could not delete wps %s in catalog, message=%s' % (url. e.message))
+        logger.warn('could not delete wps %s in catalog, message=%s' % (url, e.message))
+
+def get_wps_entry(request, url):
+    entry = None
+    try:
+        db = database(request)
+        entry = db.catalog.find_one(dict(url = url))
+    except Exception as e:
+        logger.warn('could not find wps %s in catalog, message=%s' % (url, e.message))
+    return entry
 
 def get_wps_list(request):
     db = database(request)

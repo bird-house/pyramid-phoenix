@@ -6,7 +6,7 @@
         
   <div metal:fill-slot="content">
     <!-- Button to trigger modal dialog for wps addition -->
-    <a href="#add-wps" role="button" class="btn btn-success" data-toggle="modal">
+    <a href="#catalog-form" role="button" class="btn btn-success" data-toggle="modal">
       Add WPS
     </a>
     <br/><br/>
@@ -48,7 +48,7 @@
     </table>
 
     <!--! Add form for WPS -->
-    <div id="add-wps" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="task-form-label" aria-hidden="true">
+    <div id="catalog-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="task-form-label" aria-hidden="true">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="task-form-label">Add WPS</h3>
