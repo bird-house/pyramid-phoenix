@@ -67,17 +67,14 @@ def qc_wizard(request):
 
     if "submit" in request.POST:
         DATA = request.POST
-        #Create a restflow workflow (without writing it to a file).
-        #The values are gathered in the yaml workflow_description generation method
-        workflow_description = _create_qc_workflow(DATA, user_id, token)
-        yaml_fn = os.path.join(QCDIR,"test.yaml") 
-        with open(yaml_fn, "w") as f:
-            f.write(workflow_description)
 
-        identifier = 'RestflowLocalFile'
-        inputs = [("filename", yaml_fn )]
-        outputs = []#("output",True), ("work_output", False), ("work_status", False)]
+        workflow_description = _create_qc_workflow(DATA, user_id, token)
+
+        identifier = 'org.malleefowl.restflow.run'
+        inputs = [("workflow_description", str(workflow_description) )]
+        outputs = [("output",True), ("work_output", False), ("work_status", False)]
         wps = get_wps(wps_url(request))
+
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
         add_job(
