@@ -68,12 +68,12 @@ def qc_wizard(request):
     if "submit" in request.POST:
         DATA = request.POST
 
-        workflow_description = _create_qc_workflow(DATA, user_id, token)
+        wps = get_wps(wps_url(request))
+        workflow_description = _create_qc_workflow(DATA, user_id, token, wps)
 
         identifier = 'org.malleefowl.restflow.run'
         inputs = [("workflow_description", str(workflow_description) )]
         outputs = [("output",True), ("work_output", False), ("work_status", False)]
-        wps = get_wps(wps_url(request))
 
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
@@ -142,24 +142,28 @@ def get_html_fields(fields):
         html_fields.append(html_field)
     return html_fields
         
-def _create_qc_workflow(DATA, user_id, token):
-    user_id = user_id.replace("@","_")
+def _create_qc_workflow(DATA, user_id, token, wps):
+    #substitute the @ to avoid complications. 
+    user_id = user_id.replace("@","(at)")
     token = token
     parallel_id = DATA["parallel_id"]
     data_path = DATA["data_path"]
     project =  DATA["project"]
+    #ensure lock and select are valid values.
     select = DATA["select"]
+    if select == '<colander.null>' or select == None:
+        select =  ""
     lock = DATA["lock"]
+    if lock == '<colander.null>' or lock == None:
+        lock =  ""
     replica = "replica" in DATA
     latest = "latest" in DATA
     publish_metadata = "publish_metadata" in DATA
     publish_quality = "publish_quality" in DATA
     clean = "clean" in DATA
 
-    wps_address = "http://localhost:8090/wps"
+    wps_address = wps.url
     #generated variables
-    init_inputs = ('["parallel_id=' + parallel_id + '", "username=' + user_id +
-                   '", "token=' + token + '"]') 
     #document
     yaml_document = [
         "---",
@@ -173,7 +177,18 @@ def _create_qc_workflow(DATA, user_id, token):
         "  properties:",
         "    director: !ref MTDataDrivenDirector",
         "    nodes:",
-        "    - !ref QC_Initialize",
+        "    - !ref InputGenerator",
+        "    - !ref QC_Init",
+        "    - !ref QC_Check",
+        "",
+        "- id: InputGenerator",
+        "  type: GroovyActorNode",
+        "  properties:",
+        "    actor.step: | ",
+        '      run = "run"',
+        "    outflows:",
+        "      run: /variable/init_run/",
+        "",
         "- id: WpsExecute",
         "  type: GroovyActor",
         "  properties:",
@@ -215,7 +230,9 @@ def _create_qc_workflow(DATA, user_id, token):
         "            status = identifier + ' ... done'",
         "         }",
         "      }",
+        "      finished = run",
         "    inputs:",
+        "      run:",
         "      identifier: ",
         "      service:",
         "      input:",
@@ -235,16 +252,45 @@ def _create_qc_workflow(DATA, user_id, token):
         "    outputs:",
         "      result:",
         "      status:",
+        "      finished:",
         "",
-        "- id: QC_Initialize",
+        "- id: QC_Init",
         "  type: Node",
         "  properties:",
         "    actor: !ref WpsExecute",
         "    constants:",
-        "      service: "+wps_address,
-        "      identifier: QC_Initialization_User",
-        "      input: " + init_inputs ,
-        "      output: ['output']",
-        ]
-
-    return "\n".join(yaml_document)+"\n"
+        "      service: " + wps_address,
+        "      identifier: QC_Init_User",
+        "      input: " + ('["parallel_id=' + parallel_id + '", "username=' + user_id +
+                           '", "token=' + token + '", "data_path=' + data_path + '"]'),
+        "      output: [('output',True)]",
+        "    inflows:",
+        "      run: /variable/init_run/",
+        "    outflows:",
+        "      finished: /variable/init_finished/",
+        "",
+        "- id: QC_Check",
+        "  type: Node",
+        "  properties:",
+        "    actor: !ref WpsExecute",
+        "    constants:",
+        "      service: " + wps_address,
+        "      identifier: QC_Check_User",
+        "      input: " + ('["parallel_id=' + parallel_id + '", "username=' + user_id + 
+                           '", "token=' + token + '", "project=' + project)]
+    if select != "":
+        yaml_document[-1] += '", "select=' + select 
+    if lock != "":
+        yaml_document[-1] += '", "lock=' + lock 
+    yaml_document[-1] += '"]'
+    yaml_document += [
+        "      output: []",
+        "    inflows:",
+        "      run : /variable/init_finished/",
+        "    outflows:",
+        "      finished: /variable/check_finished/",
+       ]
+    document = "\n".join(yaml_document)+"\n"
+    with open("/home/tk/sandbox/log","w") as f:
+        f.write(document)
+    return document
