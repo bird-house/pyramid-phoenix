@@ -16,6 +16,8 @@
         <tr>
           <th>Title</th>
           <th>URL</th>
+          <th>Username</th>
+          <th>Abstract</th>
           <th>Notes</th>
         </tr>
       </thead>
@@ -29,6 +31,8 @@
                 ${wps.get('url', '')}
               </a>
             </td>
+            <td>${wps.get('username', '')}</td>
+            <td>${wps.get('abstract', '')}</td>
             <td>${wps.get('notes', '')}</td>
             <td>
               <div class="btn-group">

@@ -516,8 +516,8 @@ def generate_catalog_form(request, formid="deform"):
     """This helper code generates the form that will be used to add
     and edit wps based on the schema of the form.
     """
-    from .schema import AddWPSSchema
-    schema = AddWPSSchema().bind()
+    from .schema import CatalogSchema
+    schema = CatalogSchema().bind()
     options = """
     {success:
        function (rText, sText, xhr, form) {
@@ -544,7 +544,9 @@ def process_catalog_form(request, form):
         captured = form.validate(controls)
         url = captured.get('url', '')
         notes = captured.get('notes', '')
-        catalog.add_wps_entry(request, url, notes)
+        username = captured.get('username', '')
+        password = captured.get('password', '')
+        catalog.add_wps_entry(request, url, username, password, notes)
     except ValidationFailure as e:
         logger.error('validation of catalog form failed: message=%s' % (e.message))
     return HTTPFound(location=request.route_url('catalog'))
@@ -578,14 +580,15 @@ def delete_catalog_entry(context, request):
 
 @view_config(renderer='json', name='edit.entry', permission='edit')
 def edit_catalog_entry(context, request):
-    notes = ''
     wps_url = request.params.get('url', None)
+    result = dict(url=wps_url)
     logger.debug('delete entry %s' %(wps_url))
     if wps_url is not None:
         entry = catalog.get_wps_entry(request, wps_url)
-        if entry is not None:
-            notes = entry.get('notes', '') 
-    return dict(url=wps_url, notes=notes)
+        result = dict(url=wps_url, notes=entry.get('notes'),
+                      username=entry.get('username'),
+                      password=entry.get('password'))
+    return result
 
 @view_config(
     route_name='admin_user_edit',

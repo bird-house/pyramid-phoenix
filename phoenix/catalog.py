@@ -5,7 +5,7 @@ from .models import database
 from .wps import get_wps
 
 # catalog for wps
-def add_wps_entry(request, url, notes):
+def add_wps_entry(request, url, username=None, password=None, notes=None):
     entry = None
     try:
         wps = get_wps(url)
@@ -19,6 +19,8 @@ def add_wps_entry(request, url, notes):
             url = wps.url,
             title = wps.identification.title,
             abstract = wps.identification.abstract,
+            username = username,
+            password = password,
             notes = notes,
             )
         db.catalog.save(entry)

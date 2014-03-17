@@ -86,7 +86,7 @@ class SelectWPSSchema(colander.MappingSchema):
 # catalog
 # -------
 
-class AddWPSSchema(colander.MappingSchema):
+class CatalogSchema(colander.MappingSchema):
     url = colander.SchemaNode(
         colander.String(),
         title = 'URL',
@@ -96,6 +96,22 @@ class AddWPSSchema(colander.MappingSchema):
         validator = colander.url,
         widget = deform.widget.TextInputWidget())
 
+    username = colander.SchemaNode(
+        colander.String(),
+        title = 'Username',
+        description = 'Username to access WPS (optional)',
+        missing = '',
+        default = '',
+        widget = deform.widget.TextInputWidget())
+
+    password = colander.SchemaNode(
+        colander.String(),
+        title = 'Password',
+        description = 'Password to access WPS (optional)',
+        missing = '',
+        default = '',
+        widget = deform.widget.PasswordWidget(size=20))
+    
     notes = colander.SchemaNode(
         colander.String(),
         title = 'Notes',
