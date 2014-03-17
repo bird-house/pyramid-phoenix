@@ -35,7 +35,7 @@ def RAW():
 def JSON():
     return 'json'
 
-def get_wps(url, reload=False):
+def get_wps(url, username=None, password=None, reload=False):
     """
     Get wps instance with url. Using wps registry to cache wps instances.
     """
@@ -45,7 +45,7 @@ def get_wps(url, reload=False):
     if wps is None:
         logger.info('register wps: %s', url)
         verbose = logger.isEnabledFor(logging.DEBUG)
-        wps = WebProcessingService(url, verbose=verbose, skip_caps=False)
+        wps = WebProcessingService(url, username=username, password=password, verbose=verbose, skip_caps=False)
         wps_registry[url] = wps
     elif reload:
         logger.debug("loading wps caps ...")

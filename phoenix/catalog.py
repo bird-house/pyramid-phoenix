@@ -1,8 +1,16 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from .models import database
-from .wps import get_wps
+from phoenix.models import database
+from phoenix.wps import get_wps
+
+def get_wps_with_auth(request, url):
+    entry = get_wps_entry(request, url)
+    if entry is None:
+        wps = get_wps(url)
+    else:
+        wps = get_wps(url, username=entry.get('username'), password=entry.get('password'))
+    return wps
 
 # catalog for wps
 def add_wps_entry(request, url, username=None, password=None, notes=None):
