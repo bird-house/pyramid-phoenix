@@ -5,11 +5,12 @@ from pyramid.view import view_config
 from pyramid.security import authenticated_userid
 from .models import user_token, add_job
 from pyramid.httpexceptions import HTTPFound
-import wps
+from wps import get_wps
+from .helpers import wps_url
 import os
 #TODO: Put constants into a config file
-QCDIR = "/home/tk/sandbox/climdaps/var/qc_cache"
-EXAMPLEDATADIR = "/home/tk/sandbox/climdaps/examples/data/CORDEX"
+QCDIR = "/home/tk/sandbox/test/climdapssplit/malleefowl/var/qc_cache"
+EXAMPLEDATADIR = "/home/tk/sandbox/test/climdapssplit/malleefowl/examples/data/CORDEX"
 WPS_SERVICE = "http://localhost:8090/wps"
 @view_config(route_name='qc_wizard',
              renderer='templates/qc_wizard.pt',
@@ -69,20 +70,24 @@ def qc_wizard(request):
         #Create a restflow workflow (without writing it to a file).
         #The values are gathered in the yaml workflow_description generation method
         workflow_description = _create_qc_workflow(DATA, user_id, token)
+        yaml_fn = os.path.join(QCDIR,"test.yaml") 
+        with open(yaml_fn, "w") as f:
+            f.write(workflow_description)
 
-        identifier = 'org.malleefowl.restflow.run'
-        inputs = [("workflow_description", str(workflow_description))]
-        outputs = [("output",True), ("work_output", False), ("work_status", False)]
-        execution = wps.execute(WPS_SERVICE, identifier, inputs=inputs, output=outputs)
+        identifier = 'RestflowLocalFile'
+        inputs = [("filename", yaml_fn )]
+        outputs = []#("output",True), ("work_output", False), ("work_status", False)]
+        wps = get_wps(wps_url(request))
+        execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
-        #add_job(
-        #    request = request,
-        #    user_id = authenticated_userid(request),
-        #    identifier = identifier,
-        #    wps_url = WPS_SERVICE,
-        #    execution = execution,
-        #    notes = "",
-        #    tags = "")
+        add_job(
+            request = request,
+            user_id = authenticated_userid(request),
+            identifier = identifier,
+            wps_url = wps.url,
+            execution = execution,
+            notes = "test",
+            tags = "test")
 
         return HTTPFound(location=request.route_url('jobs'))
     
