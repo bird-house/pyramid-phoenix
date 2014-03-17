@@ -12,7 +12,7 @@ Common
   http://nginx.org/en/docs/http/configuring_https_servers.html
 * fix nginx config for wps
 * show wps service in result table
-* allow login also when wps is not available
+* DONE: allow login also when wps is not available
 * check usage of thredds url in phoenix (incl. js) and malleefowl
 * phoenix: thredds only avail as link in admin view 
 * phoenix: get thredds url etc from malleefowl process

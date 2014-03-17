@@ -75,8 +75,12 @@ def update_user(request,
                 notes=None,
                 activated=None,):
     logger.debug("update user %s", user_id)
-    wps = get_wps(wps_url(request))
-    token = gen_token(wps, helpers.sys_token(request), user_id)
+    token = ''
+    try:
+        wps = get_wps(wps_url(request))
+        token = gen_token(wps, helpers.sys_token(request), user_id)
+    except Exeption as e:
+        logger.error('Could not generate token for user %s, err msg=%s' % (user_id, e.message))
     
     db = database(request)
     user = db.users.find_one(dict(user_id = user_id))
