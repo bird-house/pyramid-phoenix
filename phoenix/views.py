@@ -564,6 +564,18 @@ def show_catalog(request):
         wps_list=catalog.get_wps_list(request),
         form = form.render(appstruct))
 
+@view_config(renderer='json', name='delete.entry', permission='edit')
+def delete_catalog_entry(context, request):
+    """
+    Delete a catalog entry, e.a. wps url
+    """
+    wps_url = request.params.get('id', None)
+    logger.debug('delete entry %s' %(wps_url))
+    if wps_url is not None:
+        catalog.delete_wps(request, wps_url)
+
+    return True
+
 @view_config(
     route_name='admin_user_edit',
     renderer='templates/admin.pt',

@@ -27,6 +27,13 @@ def add_wps(request, url, notes):
     
     return entry
 
+def delete_wps(request, url):
+    try:
+        db = database(request)
+        db.catalog.remove(dict(url=url))
+    except Exception as e:
+        logger.warn('could not delete wps %s in catalog, message=%s' % (url. e.message))
+
 def get_wps_list(request):
     db = database(request)
     return db.catalog.find(dict(format='WPS'))
