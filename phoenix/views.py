@@ -26,7 +26,7 @@ from owslib.wps import WPSExecution, ComplexData
 
 from .security import is_valid_user
 from .models import update_user
-from .wps import WPSSchema
+from .wps import WPSSchema, get_wps
 from phoenix import catalog
 
 from .helpers import (
@@ -293,7 +293,7 @@ def processes(request):
     session = request.session
     if 'phoenix.wps.url' in session:
         url = session['phoenix.wps.url']
-    wps = catalog.get_wps_with_auth(request, url)
+    wps = get_wps(url)
     
     appstruct = dict()
     return dict(
@@ -424,7 +424,7 @@ def output_details(request):
 
     from .models import get_job
     job = get_job(request, uuid=request.params.get('uuid'))
-    wps = catalog.get_wps_with_auth(request, job['service_url'])
+    wps = get_wps(job['service_url'])
     execution = WPSExecution(url=wps.url)
     execution.checkStatus(url=job['status_location'], sleepSecs=0)
 
@@ -461,7 +461,7 @@ class ExecuteView(FormView):
             url = wps_url(self.request)
             if 'phoenix.wps.url' in session:
                 url = session['phoenix.wps.url']
-            self.wps = catalog.get_wps(url)
+            self.wps = get_wps(url)
             process = self.wps.describeprocess(identifier)
             self.schema = self.schema_factory(
                 info = True,
