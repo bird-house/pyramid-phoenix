@@ -156,14 +156,37 @@ def _create_qc_workflow(DATA, user_id, token, wps):
     lock = DATA["lock"]
     if lock == '<colander.null>' or lock == None:
         lock =  ""
+    #html checkboxes are true if and only if they are in the POST (DATA variable)
     replica = "replica" in DATA
     latest = "latest" in DATA
     publish_metadata = "publish_metadata" in DATA
     publish_quality = "publish_quality" in DATA
     clean = "clean" in DATA
 
+    #Generate the long input lines here to make the yaml_document section easier to read 
+    parallel_id_user_token = ('"parallel_id=' + parallel_id + '", "username=' + user_id + 
+                           '", "token=' + token + '"')
+    #init
+    qc_init_input = '[' + parallel_id_user_token + ', "data_path=' + data_path + '"]'
+    #check
+    qc_check_input = ('[' + parallel_id_user_token + ', "project=' + project)
+    if select != "":
+        qc_check_input += '", "select=' + select 
+    if lock != "":
+        qc_check_input += '", "lock=' + lock 
+    qc_check_input += '"]'
+    #eval
+    qc_eval_input = ('[' + parallel_id_user_token + ', "replica=' + str(replica).lower() +
+                     '", "latest=' + str(latest).lower() + '"]')
     wps_address = wps.url
-    #generated variables
+    #publish meta
+    publish_meta_input = '[' + parallel_id_user_token + ']'
+    #publish quality 
+    publish_quality_input = '[' + parallel_id_user_token + ']'
+    #clean
+    clean_input = ('["parallel_ids=' + parallel_id + '", "username=' + user_id +
+                   '", "token=' + token + '"]')
+
     #document
     yaml_document = [
         "---",
@@ -180,6 +203,14 @@ def _create_qc_workflow(DATA, user_id, token, wps):
         "    - !ref InputGenerator",
         "    - !ref QC_Init",
         "    - !ref QC_Check",
+        "    - !ref QC_Eval",]
+    if publish_metadata:
+        yaml_document.append("    - !ref QC_Publish_Meta")
+    if publish_quality:
+        yaml_document.append("    - !ref QC_Publish_Quality")
+    if clean:
+        yaml_document.append("    - !ref QC_Clean")
+    yaml_document += [
         "",
         "- id: InputGenerator",
         "  type: GroovyActorNode",
@@ -250,8 +281,8 @@ def _create_qc_workflow(DATA, user_id, token, wps):
         "      verbose:",
         "        type: Bool",
         "    outputs:",
-        "      result:",
-        "      status:",
+        #"      result:",
+        #"      status:",
         "      finished:",
         "",
         "- id: QC_Init",
@@ -261,8 +292,7 @@ def _create_qc_workflow(DATA, user_id, token, wps):
         "    constants:",
         "      service: " + wps_address,
         "      identifier: QC_Init_User",
-        "      input: " + ('["parallel_id=' + parallel_id + '", "username=' + user_id +
-                           '", "token=' + token + '", "data_path=' + data_path + '"]'),
+        "      input: " + qc_init_input, 
         "      output: [('output',True)]",
         "    inflows:",
         "      run: /variable/init_run/",
@@ -276,21 +306,80 @@ def _create_qc_workflow(DATA, user_id, token, wps):
         "    constants:",
         "      service: " + wps_address,
         "      identifier: QC_Check_User",
-        "      input: " + ('["parallel_id=' + parallel_id + '", "username=' + user_id + 
-                           '", "token=' + token + '", "project=' + project)]
-    if select != "":
-        yaml_document[-1] += '", "select=' + select 
-    if lock != "":
-        yaml_document[-1] += '", "lock=' + lock 
-    yaml_document[-1] += '"]'
-    yaml_document += [
+        "      input: " + qc_check_input, 
         "      output: []",
         "    inflows:",
         "      run : /variable/init_finished/",
         "    outflows:",
         "      finished: /variable/check_finished/",
+        "",
+        "- id: QC_Eval",
+        "  type: Node",
+        "  properties:",
+        "    actor: !ref WpsExecute",
+        "    constants:",
+        "      service: " + wps_address,
+        "      identifier: QC_Eval_User",
+        "      input: " + qc_eval_input,
+        "      output: []",
+        "    inflows:",
+        "      run : /variable/check_finished/",
+        "    outflows:",
+        "      finished: /variable/eval_finished/",
        ]
+    if publish_metadata:
+        yaml_document += [
+        "",
+        "- id: QC_Publish_Meta",
+        "  type: Node",
+        "  properties:",
+        "    actor: !ref WpsExecute",
+        "    constants:",
+        "      service: " + wps_address,
+        "      identifier: QC_MetaPublisher_User", 
+        "      input: " + publish_meta_input,
+        "      output: []",
+        "    inflows:",
+        "      run : /variable/eval_finished/",
+        "    outflows:",
+        "      finished: /variable/publish_meta_finished/",
+        ]
+
+    if publish_quality:
+        yaml_document += [
+        "",
+        "- id: QC_Publish_Quality",
+        "  type: Node",
+        "  properties:",
+        "    actor: !ref WpsExecute",
+        "    constants:",
+        "      service: " + wps_address,
+        "      identifier: QC_QualityPublisher_User", 
+        "      input: " + publish_quality_input,
+        "      output: []",
+        "    inflows:",
+        "      run : /variable/eval_finished/",
+        "    outflows:",
+        "      finished: /variable/publish_quality_finished/",
+        ]
+    if clean:
+        yaml_document += [
+        "",
+        "- id: QC_Clean",
+        "  type: Node",
+        "  properties:",
+        "    actor: !ref WpsExecute",
+        "    constants:",
+        "      service: " + wps_address,
+        "      identifier: QC_RemoveData_User", 
+        "      input: " + clean_input,
+        "      output: []",
+        "    inflows:",
+        "      run : /variable/publish_quality_finished/",
+        "    outflows:",
+        "      finished: /variable/clean_finished/",
+        ]
     document = "\n".join(yaml_document)+"\n"
-    with open("/home/tk/sandbox/log","w") as f:
+    with open("/home/tk/sandbox/log", "w") as f:
         f.write(document)
     return document
