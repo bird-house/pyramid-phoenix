@@ -461,7 +461,7 @@ class ExecuteView(FormView):
             url = wps_url(self.request)
             if 'phoenix.wps.url' in session:
                 url = session['phoenix.wps.url']
-            self.wps = catalog.get_wps_with_auth(request, url)
+            self.wps = catalog.get_wps_with_auth(self.request, url)
             process = self.wps.describeprocess(identifier)
             self.schema = self.schema_factory(
                 info = True,
