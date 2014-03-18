@@ -1,6 +1,15 @@
 Todo list for Phoenix
 =====================
 
+Bugs
+----
+
+* wizard: cookie too long (need to use database)
+* catalog: get_wps_with_auth fails
+* time selection does not filter mon cordex files in esg file search
+
+
+
 Common
 ------
 

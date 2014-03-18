@@ -54,7 +54,7 @@ def get_wps(url, username=None, password=None, reload=False):
     logger.debug("number of processes: %d", len(wps.processes))
     return wps
 
-def build_request_url(service_url, identifier, inputs=[], output=[]):
+def build_request_url(service_url, identifier, inputs=[], output='output'):
     """
     Builds wps request url for direct raw output. Just one output parameter allowed.
     """
@@ -63,7 +63,7 @@ def build_request_url(service_url, identifier, inputs=[], output=[]):
     req_url += "&identifier=%s" % (identifier)
     data_inputs = ';'.join( map(lambda (key,value): "%s=%s" % (key, value), inputs ))
     req_url += "&DataInputs=%s" % (data_inputs)
-    if output != []:
+    if output is not None:
         req_url += "&rawdataoutput=%s" % (output)
     req_url = req_url.encode('ascii', 'ignore')
     logger.debug('req url: %s', req_url)
