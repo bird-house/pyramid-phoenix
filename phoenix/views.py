@@ -8,7 +8,7 @@
 import os
 import datetime
 
-from pyramid.view import view_config, forbidden_view_config
+from pyramid.view import view_config, forbidden_view_config, notfound_view_config
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.response import Response
 from pyramid.renderers import render
@@ -61,6 +61,15 @@ def add_global(event):
 #     response.content_type = 'text/xml'
 #     return response
 
+
+@notfound_view_config(
+    layout='default',
+    renderer='templates/404.pt')
+def notfound(self):
+    """This special view just renders a custom 404 page. We do this
+    so that the 404 page fits nicely into our global layout.
+    """
+    return {}
 
 # sign-in
 # -------
