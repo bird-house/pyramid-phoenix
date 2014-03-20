@@ -421,9 +421,16 @@
 
       var _datesFromId = function(id) {
         "cmip5.output1.MPI-M.MPI-ESM-LR.rcp26.mon.atmos.Amon.r1i1p1.v20120315.tas_Amon_MPI-ESM-LR_rcp26_r1i1p1_200601-210012.nc_1"
-        var txt = id.split('.')[10]
-        txt = txt.split('_').pop();
-        var parts = txt.split('-');
+        "cordex.output.EUR-44i.SMHI.ICHEC-EC-EARTH.rcp26.r12i1p1.RCA4.v1.mon.tas.v20130927.tas_EUR-44i_ICHEC-EC-EARTH_rcp26_r12i1p1_SMHI-RCA4_v1_mon_209101-210012.nc"
+        console.log('dates from id: ' + id)
+
+        var parts = id.split('.')
+        parts.pop()
+        parts = parts.pop()
+        parts = parts.split('_').pop()
+        console.log('parts=' + parts)
+  
+        parts = parts.split('-');
         var start = parts[0];
         var end = parts[1];
 

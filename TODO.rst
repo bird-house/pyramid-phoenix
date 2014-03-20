@@ -4,15 +4,17 @@ Todo list for Phoenix
 Bugs
 ----
 
+* init of wps fails (e.a when wps is registered but not avail)
 * wizard: cookie too long (need to use database)
 * catalog: get_wps_with_auth fails
-* time selection does not filter mon cordex files in esg file search
+* DONE: time selection does not filter mon cordex files in esg file search
 * get-wms files: use token (check map)
 
 
 Common
 ------
 
+* configure caching for esg search
 * integrate settings panel:
   http://www.ourtuts.com/34-outstanding-admin-panels-for-your-web-applications/
 * see todopyramid as an example for table and json requests to wps without proxy
