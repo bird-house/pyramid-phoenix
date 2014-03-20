@@ -4,7 +4,7 @@ Todo list for Phoenix
 Bugs
 ----
 
-* init of wps fails (e.a when wps is registered but not avail)
+* DONE: init of wps fails (e.a when wps is registered but not avail)
 * wizard: cookie too long (need to use database)
 * catalog: get_wps_with_auth fails
 * DONE: time selection does not filter mon cordex files in esg file search
@@ -14,6 +14,7 @@ Bugs
 Common
 ------
 
+* use comman methods for flashing messages
 * check avail of wps in catalog
 * configure esg-search url
 * testing with curl, http (script): see fossgis geo python

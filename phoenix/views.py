@@ -307,6 +307,11 @@ def processes(request):
     if wps is None:
         logger.warn('selected wps (url=%s) is not avail. using default.' % (url))
         wps = get_wps(wps_url(request), force=True)
+        msg = "WPS <b><i>%s</i></b> selection failed" % (url)
+        session.flash(msg, queue='error')
+
+    msg = "WPS <b><i>%s</i></b> selected successfully" % (wps.url)
+    session.flash(msg, queue='info')
 
     appstruct = dict()
     return dict(

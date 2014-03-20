@@ -33,7 +33,9 @@ def add_wps_entry(request, url, username=None, password=None, notes=None):
             )
         db.catalog.save(entry)
     except Exception as e:
-        logger.warn('could not add wps %s, message=%s' % (url, e.message))
+        msg='Could not add wps %s, message=%s' % (url, e.message)
+        logger.warn(msg)
+        request.session.flash(msg, queue='error')
     
     return entry
 
