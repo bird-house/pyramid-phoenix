@@ -53,13 +53,14 @@ def add_global(event):
 # Exception view
 # --------------
 
-# @view_config(context=Exception)
-# def error_view(exc, request):
-#     msg = exc.args[0] if exc.args else ''
-#     response = Response(str(msg))
-#     response.status_int = 500
-#     response.content_type = 'text/xml'
-#     return response
+@view_config(context=Exception)
+def unknown_failure(exc, request):
+    # If the view has two formal arguments, the first is the context.
+    # The context is always available as ``request.context`` too.
+    msg = exc.args[0] if exc.args else ""
+    response =  Response('Ooops, something went wrong: %s' % (msg))
+    response.status_int = 500
+    return response
 
 
 @notfound_view_config(
@@ -306,7 +307,7 @@ def processes(request):
     if wps is None:
         logger.warn('selected wps (url=%s) is not avail. using default.' % (url))
         wps = get_wps(wps_url(request), force=True)
-    
+
     appstruct = dict()
     return dict(
         form = form.render(appstruct),
