@@ -16,6 +16,7 @@ def get_wps_with_auth(request, url):
 def add_wps_entry(request, url, username=None, password=None, notes=None):
     entry = None
     try:
+        url = url.split('?')[0]
         wps = get_wps(url)
 
         db = database(request)
@@ -32,6 +33,10 @@ def add_wps_entry(request, url, username=None, password=None, notes=None):
             notes = notes,
             )
         db.catalog.save(entry)
+
+        msg='Added wps %s succesfully' % (url)
+        logger.info(msg)
+        request.session.flash(msg, queue='info')
     except Exception as e:
         msg='Could not add wps %s, message=%s' % (url, e.message)
         logger.warn(msg)
@@ -43,6 +48,9 @@ def delete_wps_entry(request, url):
     try:
         db = database(request)
         db.catalog.remove(dict(url=url))
+        msg='Removed wps %s succesfully' % (url)
+        logger.info(msg)
+        request.session.flash(msg, queue='info')
     except Exception as e:
         logger.warn('could not delete wps %s in catalog, message=%s' % (url, e.message))
 
