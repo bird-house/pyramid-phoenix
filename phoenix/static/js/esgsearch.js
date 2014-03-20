@@ -118,7 +118,7 @@ $.extend(EsgSearchResult.prototype, {
         }
         
         var tags = searchOptions.constraints.split(",");
-        $.each(tags, function(i, tag) {
+        $.each(tags.sort(), function(i, tag) {
           var constraint = tag.split(":");
           if (searchOptions.type != 'Aggregation' || constraint[0] == 'variable') {
             query += '&' + constraint[0] + '=' + constraint[1];

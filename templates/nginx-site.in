@@ -4,7 +4,7 @@ upstream phoenix {
 }
 
 # caching
-proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=microcache:30m max_size=1000m;
+proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=phoenix:20m inactive=7d max_size=4g;
 
 server 
 {
@@ -34,10 +34,10 @@ server
     location /esg-search 
     {
         proxy_pass              http://136.172.30.96/esg-search/;
-        proxy_cache             microcache;
-        proxy_cache_valid       200 24h;
-        proxy_cache_use_stale   updating;
-        proxy_ignore_headers    Cache-Control Expires;
+        proxy_cache             phoenix;
+        proxy_cache_valid any   3d;       
+        proxy_cache_use_stale   error timeout invalid_header updating http_500 http_502 http_503 http_504;
+        #proxy_ignore_headers    Cache-Control Expires;
     }
 
     # phoenix pyramid app

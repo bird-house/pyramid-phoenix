@@ -14,7 +14,11 @@ Bugs
 Common
 ------
 
-* configure caching for esg search
+* configure esg-search url
+* testing with curl, http (script): see fossgis geo python
+* try python request module 
+* configure buildout download
+* DONE: configure caching for esg search
 * integrate settings panel:
   http://www.ourtuts.com/34-outstanding-admin-panels-for-your-web-applications/
 * see todopyramid as an example for table and json requests to wps without proxy
@@ -38,7 +42,7 @@ Common
 * phoenix: refactorid admin/settings page (similar to macosx) 
 * phoenix: use stored openid as default value in wizard and process
 * phoenix: update to latests pyramid
-* rename phoenix to pyramid_phoenix
+* DONE: rename phoenix to pyramid_phoenix
 * SKIPPED: refresh button on job list
 * wizard: add process name to notes
 * opendap with date selection
