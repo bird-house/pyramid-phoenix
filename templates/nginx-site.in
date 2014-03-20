@@ -35,9 +35,8 @@ server
     {
         proxy_pass              http://136.172.30.96/esg-search/;
         proxy_cache             phoenix;
-        proxy_cache_valid any   3d;       
+        proxy_cache_valid any   7d;       
         proxy_cache_use_stale   error timeout invalid_header updating http_500 http_502 http_503 http_504;
-        #proxy_ignore_headers    Cache-Control Expires;
     }
 
     # phoenix pyramid app
