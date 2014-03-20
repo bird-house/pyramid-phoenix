@@ -500,6 +500,7 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '    - !ref QC_Publish_Meta',
         '    - !ref QC_Publish_Quality',
         '    - !ref QC_Clean',
+        '    - !ref Merge_Results',
         '    - !ref WriteResult',
         '    - !ref WriteStatus',
         '',
@@ -822,6 +823,19 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '      finished: /variable/clean_finished/',
         '      result: /variable/clean_result/',
         '',
+        '- id: Merge_Results',
+        '  type: GroovyActorNode',
+        '  properties:',
+        '    actor.step: |',
+        '      output = ""',
+        '      for (item in init_result) { ',
+        '        output += item ',
+        '      }',
+        '    inflows:',
+        '      init_result: /variable/init_result/',
+        '    outflows:',
+        '      output: /variable/merge_result/',
+        '',
         '- id: FileWriter',
         '  type: GroovyActor',
         '  properties:',
@@ -841,7 +855,7 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '    constants:',
         '      filename: restflow_output.txt',
         '    inflows:',
-        '      message: /variable/eval_result/',
+        '      message: /variable/merge_result/',
         '',
         '- id: WriteStatus',
         '  type: Node',
@@ -853,4 +867,6 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '      message: /variable/clean_finished/',
         ]
     document = "\n".join(yaml_document)+"\n"
+    with open("/home/tk/sandbox/restflow/log.yaml","w") as f:
+        f.write(document)
     return document
