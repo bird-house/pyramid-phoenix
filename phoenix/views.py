@@ -293,7 +293,10 @@ def processes(request):
     session = request.session
     if 'phoenix.wps.url' in session:
         url = session['phoenix.wps.url']
-    wps = get_wps(url)
+    wps = get_wps(url, force=True)
+    if wps is None:
+        logger.warn('selected wps (url=%s) is not avail. using default.' % (url))
+        wps = get_wps(wps_url(request), force=True)
     
     appstruct = dict()
     return dict(

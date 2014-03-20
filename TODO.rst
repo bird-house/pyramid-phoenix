@@ -14,6 +14,7 @@ Bugs
 Common
 ------
 
+* check avail of wps in catalog
 * configure esg-search url
 * testing with curl, http (script): see fossgis geo python
 * try python request module 

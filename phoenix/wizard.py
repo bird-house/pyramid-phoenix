@@ -57,8 +57,8 @@ SEARCH_INPUT = 4
 SELECT_INPUT = 5
 DEFINE_ACCESS = 6
 
-# select process schema
-# ---------------------
+# select wps process
+# ------------------
 
 @colander.deferred
 def deferred_choose_process_widget(node, kw):
@@ -67,17 +67,18 @@ def deferred_choose_process_widget(node, kw):
 
     states = wizard_state.get_step_states()
     url = states.get(SELECT_WPS).get('url')
-    wps = get_wps(url)
-    logger.debug('using wps url=%s' % (wps.url))
+    wps = get_wps(url, force=True)
 
     choices = []
-    for process in wps.processes:
-        if 'worker' in process.identifier:
-            choices.append( (process.identifier, process.title) )
+    if wps is not None:
+        logger.debug('using wps url=%s' % (wps.url))
+        for process in wps.processes:
+            if 'worker' in process.identifier:
+                choices.append( (process.identifier, process.title) )
     return widget.RadioChoiceWidget(values = choices)
 
 class SelectProcessSchema(colander.MappingSchema):
-    description = "Select a process for ESGF data"
+    description = "Select WPS Process"
     appstruct = {}
 
     process = colander.SchemaNode(
