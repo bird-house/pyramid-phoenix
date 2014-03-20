@@ -541,7 +541,7 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '        if (resultFile.exists()) {',
         '           yaml = new Yaml()',
         '           wpsResult = yaml.load(new FileInputStream(resultFile))',
-        '           result = "Results for process" + identifier + ":\\n"',
+        '           result = "Results for process " + identifier + ":\\n"',
         '',
         '           for (item in wpsResult) {',
         '             result += item.reference + "\\n"',
