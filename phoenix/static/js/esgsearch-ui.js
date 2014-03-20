@@ -428,7 +428,7 @@
         parts.pop()
         parts = parts.pop()
         parts = parts.split('_').pop()
-        console.log('parts=' + parts)
+        //console.log('parts=' + parts)
   
         parts = parts.split('-');
         var start = parts[0];
