@@ -74,6 +74,7 @@ def update_user(request,
                 organisation=None,
                 notes=None,
                 activated=None,
+                credentials=None,
                 update_token=True,
                 update_login=True):
     logger.debug("update user %s", user_id)
@@ -92,6 +93,8 @@ def update_user(request,
         user['organisation'] = organisation
     if notes is not None:
         user['notes'] = notes
+    if credentials is not None:
+        user['credentials'] = credentials
     if update_token:
          try:
              wps = get_wps(wps_url(request))

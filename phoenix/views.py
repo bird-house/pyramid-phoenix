@@ -810,9 +810,27 @@ def account(request):
     logger.debug('account: user=%s', user)
     
     from schema import AccountSchema
-    schema = AccountSchema()
-    form = Form(schema, buttons=('submit',))
+    form = Form(schema=AccountSchema(), buttons=('submit',))
 
+    from schema import CredentialsSchema
+    form_credentials = Form(schema=CredentialsSchema(), buttons=('update',))
+
+    if 'update' in request.POST:
+        try:
+            controls = request.POST.items()
+            captured = form_credentials.validate(controls)
+            openid = captured.get('openid', '')
+            password = captured.get('password', '')
+            logger.debug('update credentials with openid=%s', openid)
+        except ValidationFailure as e:
+            msg = 'validation of credentials form failed: message=%s' % (e.message)
+            logger.error(msg)
+            request.session.flash(msg, queue='error')
+        request.session.flash(
+            'Credentials updated successfully',
+            queue='success',
+            )
+        return HTTPFound(location=request.route_url('account'))
     if 'submit' in request.POST:
         controls = request.POST.items()
         try:
@@ -852,4 +870,6 @@ def account(request):
             notes = user.get('notes'),
             token = user.get('token'),
             )
-    return dict(form=form.render(appstruct))
+    return dict(
+        form=form.render(appstruct),
+        form_credentials=form_credentials.render(appstruct))

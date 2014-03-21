@@ -15,10 +15,32 @@ logger = logging.getLogger(__name__)
 
 from .wps import get_wps
 
-# user account schema
-# -------------------
+
+class CredentialsSchema(colander.MappingSchema):
+    """
+    ESGF user credentials schema
+    """
+    openid = colander.SchemaNode(
+        colander.String(),
+        title = "OpenID",
+        description = "OpenID from your ESGF provider",
+        validator = colander.url,
+        missing = '',
+        default = '',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
+    password = colander.SchemaNode(
+        colander.String(),
+        title = 'Password',
+        description = 'Password for this OpenID',
+        missing = '',
+        default = '',
+        widget = deform.widget.PasswordWidget(size=20))
 
 class AccountSchema(colander.MappingSchema):
+    """
+    User account schema
+    """
     name = colander.SchemaNode(
         colander.String(),
         title = "Name",
@@ -60,6 +82,13 @@ class AccountSchema(colander.MappingSchema):
         colander.String(),
         title = "Token",
         description = "Access Token",
+        missing = '',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
+    credentials = colander.SchemaNode(
+        colander.String(),
+        title = "Credentials",
+        description = "URL to ESGF Proxy Certificate",
         missing = '',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
