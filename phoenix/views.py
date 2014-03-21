@@ -194,7 +194,7 @@ def login_openid(request):
     #response = request.response
     result = authomatic.login(WebObAdapter(request, response), provider_name)
 
-    #logger.debug('authomatic login result: %s', result)
+    logger.debug('authomatic login result: %s', result)
     
     if result:
         if result.error:
@@ -206,8 +206,9 @@ def login_openid(request):
                                    {'message': result.error.message}, request=request)
         elif result.user:
             # Hooray, we have the user!
-            logger.debug("user=%s, id=%s, email=%s",
-                      result.user.name, result.user.id, result.user.email)
+            logger.debug("user=%s, id=%s, email=%s, credentials=%s",
+                      result.user.name, result.user.id, result.user.email, result.user.credentials)
+            logger.debug("provider=%s", result.provider.name )
 
             if is_valid_user(request, result.user.email):
                 logger.info("openid login successful for user %s", result.user.email)
