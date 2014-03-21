@@ -18,6 +18,7 @@ from pyramid_deform import FormView
 from deform import Form
 from deform import ValidationFailure
 from deform.form import Button
+from peppercorn import parse
 from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
 import config_public as config
@@ -801,8 +802,54 @@ def help(request):
 @view_config(route_name='account', renderer='templates/account.pt',
              layout='default', permission='edit')
 def account(request):
+    user_id=authenticated_userid(request)
+    logger.debug('account: user_id=%s', user_id)
+    
+    from .models import user_with_id
+    user = user_with_id(request, user_id=user_id)
+    logger.debug('account: user=%s', user)
+    
     from schema import AccountSchema
     schema = AccountSchema()
     form = Form(schema, buttons=('submit',))
+
+    if 'submit' in request.POST:
+        controls = request.POST.items()
+        try:
+            form.validate(controls)
+        except ValidationFailure as e:
+            msg = 'There was an error saving your settings.'
+            request.session.flash(msg, queue='error')
+            return {
+                'form': e.render(),
+                }
+        values = parse(request.params.items())
+        # Update the user
+        update_user(
+            request = request,
+            user_id = user_id,
+            name = values.get('name', u''),
+            openid = values.get('openid', u''),
+            organisation = values.get('organisation', u''),
+            notes = values.get('notes', u''),
+            update_login=False,
+            update_token=False
+            )
+        request.session.flash(
+            'Settings updated successfully',
+            queue='success',
+            )
+        return HTTPFound('/account')
+    # Get existing values
     appstruct = {}
+    if user is not None:
+        logger.debug('account: openid=%s', user.get('openid'))
+        appstruct = dict(
+            email = user_id,
+            openid = user.get('openid'),
+            name = user.get('name'),
+            organisation = user.get('organisation'),
+            notes = user.get('notes'),
+            token = user.get('token'),
+            )
     return dict(form=form.render(appstruct))

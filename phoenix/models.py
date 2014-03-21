@@ -73,31 +73,33 @@ def update_user(request,
                 name=None,
                 organisation=None,
                 notes=None,
-                activated=None,):
+                activated=None,
+                update_token=True,
+                update_login=True):
     logger.debug("update user %s", user_id)
-    token = ''
-    try:
-        wps = get_wps(wps_url(request))
-        token = gen_token(wps, helpers.sys_token(request), user_id)
-    except Exeption as e:
-        logger.error('Could not generate token for user %s, err msg=%s' % (user_id, e.message))
-    
+       
     db = database(request)
     user = db.users.find_one(dict(user_id = user_id))
     if user == None:
         user = register_user(request, user_id=user_id, activated=False)
-    if activated != None:
+    if activated is not None:
         user['activated'] = activated
-    if openid:
+    if openid is not None:
         user['openid'] = openid
-    if name:
+    if name is not None:
         user['name'] = name
-    if organisation:
+    if organisation is not None:
         user['organisation'] = organisation
-    if notes:
+    if notes is not None:
         user['notes'] = notes
-    user['token'] = token
-    user['last_login'] = datetime.datetime.now()
+    if update_token:
+         try:
+             wps = get_wps(wps_url(request))
+             user['token'] = gen_token(wps, helpers.sys_token(request), user_id)
+         except Exeption as e:
+             logger.error('Could not generate token for user %s, err msg=%s' % (user_id, e.message))
+    if update_login:
+        user['last_login'] = datetime.datetime.now()
     db.users.update(dict(user_id = user_id), user)
 
 def all_users(request):

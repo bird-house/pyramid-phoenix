@@ -22,14 +22,14 @@ class AccountSchema(colander.MappingSchema):
     name = colander.SchemaNode(
         colander.String(),
         title = "Name",
-        description = "Enter your Name",
+        description = "Your Name",
         missing = '',
         default = '',
         )
     email = colander.SchemaNode(
         colander.String(),
         title = "EMail",
-        description = "Enter eMail used for login",
+        description = "eMail used for login",
         validator = colander.Email(),
         missing = '',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
@@ -37,7 +37,7 @@ class AccountSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
         colander.String(),
         title = "OpenID",
-        description = "Enter OpenID for data access",
+        description = "OpenID to access ESGF data",
         validator = colander.url,
         missing = '',
         default = '',
@@ -45,7 +45,7 @@ class AccountSchema(colander.MappingSchema):
     organisation = colander.SchemaNode(
         colander.String(),
         title = "Organisation",
-        description = "The Organisation you are working for",
+        description = "Your Organisation",
         missing = '',
         default = '',
         )
@@ -55,6 +55,13 @@ class AccountSchema(colander.MappingSchema):
         description = "Some Notes about you",
         missing = '',
         default = '',
+        )
+    token = colander.SchemaNode(
+        colander.String(),
+        title = "Token",
+        description = "Access Token",
+        missing = '',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
 
 # process list
