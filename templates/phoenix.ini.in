@@ -44,7 +44,7 @@ phoenix.admin_users = carsten@linacs.org nils.hempelmann@hzg.de kipp@dkrz.de
 phoenix.supervisor = http://${server:hostname}:${ports:supervisor}
 
 # malleefowl wps service used
-malleefowl.wps = ${malleefowl:wps}
+malleefowl.wps = http://${server:hostname}:${ports:http}/wps
 malleefowl.sys_token = ${security:sys_token} 
 
 # esgf search service
