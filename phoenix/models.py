@@ -139,6 +139,11 @@ def user_token(request, user_id):
     user = db.users.find_one(dict(user_id = user_id))
     return user.get('token')
 
+def user_credentials(request, user_id):
+    db = database(request)
+    user = db.users.find_one(dict(user_id = user_id))
+    return user.get('credentials')
+
 # jobs ...
 
 def add_job(request,

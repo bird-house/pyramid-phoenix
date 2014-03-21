@@ -27,6 +27,7 @@ from mako.template import Template
 from .models import (
     add_job,
     user_token,
+    user_credentials,
     )
 
 from .helpers import (
@@ -251,6 +252,8 @@ def bind_esg_access_schema(node, kw):
         node.add_nodes(process)
     if node.get('token', False):
         del node['token']
+    if node.get('credentials', False):
+        del node['credentials']
     if node.get('file_identifier', False):
         del node['file_identifier']
 
@@ -275,7 +278,6 @@ def bind_wps_schema(node, kw):
 
     if node.get('token', False):
         del node['token']
-
     if node.get('file_identifier', False):
         del node['file_identifier']
 
@@ -359,17 +361,18 @@ class MyFormWizardView(FormWizardView):
         return HTTPFound(location = self.request.path_url)
 
 
-def convert_states_to_nodes(request, token, states):
+def convert_states_to_nodes(request, states):
+    token = user_token(request, authenticated_userid(request))
+    credentials = user_credentials(request, authenticated_userid(request))
+    
     source = dict(
         service = wps_url(request),
         identifier = str(states[SELECT_SOURCE].get('data_source')),
-        input = ['token=%s' % (token)],
+        input = ['token=%s' % (token), 'credentials=%s' % (credentials)],
         output = ['output'],
         sources = map(lambda x: [str(x)], states[SELECT_INPUT].get('file_identifier')),
         )
-    if states[DEFINE_ACCESS].has_key('openid'):
-        source['input'].append('openid=' + str(states[DEFINE_ACCESS].get('openid', '')))
-        source['input'].append('password=' + str(states[DEFINE_ACCESS].get('password', '')))
+    # TODO: remove define access step
     if states[DEFINE_ACCESS].has_key('startindex'):
         source['input'].append('startindex=' + str(states[DEFINE_ACCESS].get('startindex', '')))
         source['input'].append('endindex=' + str(states[DEFINE_ACCESS].get('endindex', '')))
@@ -401,8 +404,7 @@ class Done():
         tags = states[DEFINE_PROCESS].get('info_tags', '')
         
         # convert states to workflow desc and run workflow
-        token = user_token(request, authenticated_userid(request))
-        nodes = convert_states_to_nodes(request, token, states)
+        nodes = convert_states_to_nodes(request, states)
         wps = get_wps(wps_url(request))
         execution = execute_restflow(wps, nodes)
         

@@ -15,6 +15,7 @@ Bugs
 Common
 ------
 
+* use common wpsmgr module: need common project for this
 * maybe order processes by module name
 * use comman methods for flashing messages
 * check avail of wps in catalog
