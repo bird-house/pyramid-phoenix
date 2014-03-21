@@ -97,6 +97,12 @@ data servers. [..]
 Python library for climate indices calculation. 
 Documentation at http://icclim.readthedocs.org/
 
+===============================
+Python Web Frameworks and Utils
+===============================
+
+* Authomatic - http://peterhudec.github.io/authomatic/
+
 ====================
 Example WPS Requests
 ====================
