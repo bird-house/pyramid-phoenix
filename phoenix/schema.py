@@ -15,6 +15,48 @@ logger = logging.getLogger(__name__)
 
 from .wps import get_wps
 
+# user account schema
+# -------------------
+
+class AccountSchema(colander.MappingSchema):
+    name = colander.SchemaNode(
+        colander.String(),
+        title = "Name",
+        description = "Enter your Name",
+        missing = '',
+        default = '',
+        )
+    email = colander.SchemaNode(
+        colander.String(),
+        title = "EMail",
+        description = "Enter eMail used for login",
+        validator = colander.Email(),
+        missing = '',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
+    openid = colander.SchemaNode(
+        colander.String(),
+        title = "OpenID",
+        description = "Enter OpenID for data access",
+        validator = colander.url,
+        missing = '',
+        default = '',
+        )
+    organisation = colander.SchemaNode(
+        colander.String(),
+        title = "Organisation",
+        description = "The Organisation you are working for",
+        missing = '',
+        default = '',
+        )
+    notes = colander.SchemaNode(
+        colander.String(),
+        title = "Notes",
+        description = "Some Notes about you",
+        missing = '',
+        default = '',
+        )
+
 # process list
 # ------------
 

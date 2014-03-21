@@ -22,7 +22,8 @@ def navbar(context, request):
         nav.append( nav_item('Processes', request.route_url('processes'), 'icon-star') )
         nav.append( nav_item('My Jobs', request.route_url('jobs'), 'icon-list') )
         nav.append( nav_item('Wizard', request.route_url('wizard'), 'icon-star') )
-        nav.append( nav_item('Map', request.route_url('map'), 'icon-picture') )
+        nav.append( nav_item('Map', request.route_url('map'), 'icon-globe') )
+        nav.append( nav_item('My Account', request.route_url('account'), 'icon-user') )
     if has_permission('admin', request.context, request):
         nav.append( nav_item('Thredds', request.route_url('tds'), 'icon-list') )
         nav.append( nav_item('Catalog', request.route_url('catalog'), 'icon-edit') )

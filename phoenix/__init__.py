@@ -90,6 +90,7 @@ def main(global_config, **settings):
     config.add_route('wizard', '/wizard')
     config.add_route('qc_wizard', '/qc_wizard')
     config.add_route('map', '/map')
+    config.add_route('account', '/account')
     config.add_route('help', '/help')
     config.add_route('signin', '/signin')
     config.add_route('login', '/login')

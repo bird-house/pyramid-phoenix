@@ -798,3 +798,11 @@ def map(request):
 def help(request):
     return dict(external_url='/docs')
 
+@view_config(route_name='account', renderer='templates/account.pt',
+             layout='default', permission='edit')
+def account(request):
+    from schema import AccountSchema
+    schema = AccountSchema()
+    form = Form(schema, buttons=('submit',))
+    appstruct = {}
+    return dict(form=form.render(appstruct))
