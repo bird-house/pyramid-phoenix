@@ -819,17 +819,40 @@ def account(request):
         try:
             controls = request.POST.items()
             captured = form_credentials.validate(controls)
-            openid = captured.get('openid', '')
-            password = captured.get('password', '')
+
+            inputs = []
+            openid =  user.get('openid').encode('ascii', 'ignore')
+            inputs.append( ('openid', openid) )
+            password = captured.get('password', '').encode('ascii', 'ignore')
+            inputs.append( ('password', password) )
             logger.debug('update credentials with openid=%s', openid)
+            wps = get_wps(wps_url(request))
+            execution = wps.execute(identifier='org.malleefowl.esgf.logon', inputs=inputs, output='output')
+            from owslib.wps import monitorExecution
+            monitorExecution(execution)
+            if execution.processOutputs is not None and len(execution.processOutputs) > 0:
+                credentials = execution.processOutputs[0].reference
+                # Update user credentials
+                update_user(
+                    request = request,
+                    user_id = user_id,
+                    credentials = credentials,
+                    update_login=False,
+                    update_token=False
+                    )
+                logger.debug('update credentials successful, credentials=%s', credentials)
+                request.session.flash(
+                    'Credentials updated successfully',
+                    queue='success',
+                    )
         except ValidationFailure as e:
-            msg = 'validation of credentials form failed: message=%s' % (e.message)
+            msg = 'Validation of credentials form failed: message=%s' % (e.message)
             logger.error(msg)
             request.session.flash(msg, queue='error')
-        request.session.flash(
-            'Credentials updated successfully',
-            queue='success',
-            )
+        except Exception as e:
+            msg = 'Update of credentials failed: message=%s' % (e.message)
+            logger.error(msg)
+            request.session.flash(msg, queue='error')
         return HTTPFound(location=request.route_url('account'))
     if 'submit' in request.POST:
         controls = request.POST.items()
@@ -869,6 +892,7 @@ def account(request):
             organisation = user.get('organisation'),
             notes = user.get('notes'),
             token = user.get('token'),
+            credentials = user.get('credentials')
             )
     return dict(
         form=form.render(appstruct),

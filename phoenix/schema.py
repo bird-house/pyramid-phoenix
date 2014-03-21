@@ -89,6 +89,7 @@ class AccountSchema(colander.MappingSchema):
         colander.String(),
         title = "Credentials",
         description = "URL to ESGF Proxy Certificate",
+        validator = colander.url,
         missing = '',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
