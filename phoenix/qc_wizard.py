@@ -602,7 +602,7 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '        eval_identifier = "QC_Eval_User"',
        ('        eval_output = ["found_tags", "fail_count", "pass_count", "omit_count", "fixed_count"' +
                                ', "has_issues", "process_log", "to_publish_qc_files",' + 
-                               '"to_publish_metadata_files" ]'),
+                               '"to_publish_metadata_files", "found_pids" ]'),
         '        publish_meta_enable = ' + str(publish_metadata).lower(),
         '        publish_meta_identifier = "QC_MetaPublisher_User"',
         '        publish_meta_output = ["process_log"]',
