@@ -155,12 +155,20 @@ function showWMSLayer(layer) {
   initTimeSlider(layer);
 }
 
-function initWMSLayer(layer, step) {
-  console.log("init wms layer: title=" + layer.name + ", time=" + layer.timesteps[step])
+function fixWMSService(service) {
+  console.log('orig service=' + service)
+  var index = service.indexOf('/thredds')
+  service = service.substring(index, service.length)
+  console.log('proxy service=' + service)
+  return service
+}
 
+function initWMSLayer(layer, step) {
+  console.log("init wms layer: title=" + layer.name + ", time=" + layer.timesteps[step], ", service=" + layer.service)
+  
   wmsLayer = new OpenLayers.Layer.WMS(
     layer.title,
-    layer.service,
+    fixWMSService(layer.service),
     {
       layers: layer.name,
       transparent: 'true',
@@ -337,7 +345,7 @@ function dateLabel(timestep) {
 function initAnimateLayer(layer, timesteps) {
   animateLayer = new OpenLayers.Layer.WMS(
     "Animation",
-    layer.service,
+    fixWMSService(layer.service),
     {
       layers: layer.name,
       transparent: 'true',

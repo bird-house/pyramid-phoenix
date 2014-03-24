@@ -51,7 +51,7 @@ malleefowl.sys_token = ${security:sys_token}
 esgf.search = /esg-search
 
 # thredds service
-phoenix.thredds = ${malleefowl:thredds}
+phoenix.thredds = http://${server:hostname}:${ports:http}/thredds
 
 ###
 # wsgi server configuration

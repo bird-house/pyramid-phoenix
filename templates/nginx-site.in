@@ -51,6 +51,12 @@ server
         proxy_pass              ${parts.malleefowl.wps};
     }
 
+    # thredds avail at /thredds
+    location /thredds 
+    {
+        proxy_pass              ${parts.malleefowl.thredds};
+    }
+
     # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
     location ~ .php$ {
         fastcgi_pass 127.0.0.1:${parts.ports.php_fpm};

@@ -4,6 +4,7 @@ Todo list for Phoenix
 Bugs
 ----
 
+* need to proxy ports for tomcat, wps, ...
 * phoenix fails sometimes with: can't find command '../pyramid-phoenix/bin/phoenix.sh'
 * DONE: init of wps fails (e.a when wps is registered but not avail)
 * wizard: cookie too long (need to use database)
