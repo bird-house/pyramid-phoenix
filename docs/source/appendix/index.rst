@@ -114,27 +114,27 @@ http://geoprocessing.info/wpsdoc/1x0GetCapabilities
 
 Get WPS Capabilities:
 
-http://mouflon.dkrz.de:8090/wps?Request=GetCapabilities&Service=WPS
+http://mouflon.dkrz.de/wps?Request=GetCapabilities&Service=WPS
 
 Describe Process:
 
-http://mouflon.dkrz.de:8090/wps?service=WPS&request=DescribeProcess&version=1.0.0&identifier=org.malleefowl.test.add
+http://mouflon.dkrz.de/wps?service=WPS&request=DescribeProcess&version=1.0.0&identifier=org.malleefowl.test.add
 
 Execute Process:
 
-http://mouflon.dkrz.de:8090/wps?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.test.add&DataInputs=num_a=1.0;num_b=2.0
+http://mouflon.dkrz.de/wps?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.test.add&DataInputs=num_a=1.0;num_b=2.0
 
 Execute Process, Result XML containing output (asReference=false):
 
-http://mouflon.dkrz.de:8090/wps?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.test.add&DataInputs=num_a=1.0;num_b=2.0&responsedocument=output=@asreference=false 
+http://mouflon.dkrz.de/wps?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.test.add&DataInputs=num_a=1.0;num_b=2.0&responsedocument=output=@asreference=false 
 
 Execute Process Async:
 
-http://mouflon.dkrz.de:8090/wps?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.test.add&DataInputs=num_a=1.0;num_b=2.0&storeExecuteResponse=true&status=true
+http://mouflon.dkrz.de/wps?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.test.add&DataInputs=num_a=1.0;num_b=2.0&storeExecuteResponse=true&status=true
 
 Execute Process, Raw output:
 
-http://mouflon.dkrz.de:8090/wps?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.test.add&DataInputs=num_a=1.0;num_b=2.0&rawdataoutput=output
+http://mouflon.dkrz.de/wps?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.test.add&DataInputs=num_a=1.0;num_b=2.0&rawdataoutput=output
 
 ====================
 Example WPS Services
