@@ -32,7 +32,7 @@ def unquote_wps_params(params):
 def get_setting(request, key):
     settings = request.registry.settings
     value = settings.get(key, None)
-    logger.debug('get_setting(): key=%s, value=%s' % (key, value))
+    #logger.debug('get_setting(): key=%s, value=%s' % (key, value))
     return value
 
 def set_setting(request, key, value):

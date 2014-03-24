@@ -4,6 +4,7 @@ Todo list for Phoenix
 Bugs
 ----
 
+* need index.html page on mouflon for redirect to port 80
 * need to proxy ports for tomcat, wps, ...
 * phoenix fails sometimes with: can't find command '../pyramid-phoenix/bin/phoenix.sh'
 * DONE: init of wps fails (e.a when wps is registered but not avail)
@@ -16,6 +17,8 @@ Bugs
 Common
 ------
 
+* split phoenix logging for info, debug, ...
+* using port 80 by default
 * use common wpsmgr module: need common project for this
 * maybe order processes by module name
 * use comman methods for flashing messages
