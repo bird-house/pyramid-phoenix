@@ -12,12 +12,12 @@ import os
 QCDIR = "/home/tk/sandbox/test/climdapssplit/malleefowl/var/qc_cache"
 EXAMPLEDATADIR = "/home/tk/sandbox/test/climdapssplit/malleefowl/examples/data/CORDEX"
 WPS_SERVICE = "http://localhost:8090/wps"
-@view_config(route_name='qc_wizard',
+@view_config(route_name='qc_wizard_check',
              renderer='templates/qc_wizard.pt',
              layout='default',
              permission='edit',
              )
-def qc_wizard(request):
+def qc_wizard_check(request):
     title = "Quality Control Wizard"
     user_id = authenticated_userid(request)
     token = user_token(request, user_id)
@@ -94,6 +94,74 @@ def qc_wizard(request):
             "html_fields" : html_fields,
             }
 
+@view_config(route_name='qc_wizard_yaml',
+             renderer='templates/qc_wizard.pt',
+             layout='default',
+             permission='edit',
+             )
+def qc_wizard_yaml(request):
+    title = "Quality Control Wizard"
+    user_id = authenticated_userid(request)
+    token = user_token(request, user_id)
+    
+    parallel_id_help = ("An identifier used to avoid processes running on the same directory." + 
+                        " Using an existing one will remove all data inside its work directory.")
+    parallel_ids = get_parallel_ids(user_id)
+    if parallel_ids == []:
+        parallel_id_help += " There are currently no existing Parallel IDs."
+    else:
+        parallel_id_help += " The existing Parallel IDs are:<br>" +", ".join(parallel_ids)
+
+    #a field in fields must contain text, id and value. The entry help is optional.
+    #allowed_values can be used if a limited number of possibile values should be available.
+    #In that case value will be used as default if it is in allowed_values.
+    #For type "checkbox" the existence of the "checked" key will lead to the checkbox being True.
+    fields = [
+        {"id": "parallel_id", "type": "text", "text": "Parallel ID", "help":parallel_id_help,
+            "value": "web1"},
+        {"id": "data_path", "type": "text", "text": "Root path to the of check data",
+            "value": EXAMPLEDATADIR},
+        {"id": "project", "type": "select", "text": "Project", 
+            "value": "CORDEX", "allowed_values": ["CORDEX"] },
+        {"id": "replica", "type": "checkbox", "text": "Replica", "value": ""},
+        {"id": "latest", "type": "checkbox", "text": "Latest", "value": "", "checked": "checked"},
+        {"id": "publish_metadata", "type": "checkbox", "text": "Publish meta-data",  "value": "",
+            "checked": "checked"},
+        {"id": "publish_quality", "type": "checkbox", "text": "Publish quality-data", 
+            "value": "", "checked": "checked"},
+        {"id": "clean", "type": "checkbox", "text": "Clean afterwards", 
+            "value": "", "help": "Removes the work data after the steps have finished"},
+        ]
+    html_fields = get_html_fields(fields)
+
+    if "submit" in request.POST:
+        DATA = request.POST
+
+        wps = get_wps(wps_url(request))
+        workflow_description = _create_qc_workflow_v2(DATA, user_id, token, wps)
+        #workflow_description = _create_qc_workflow(DATA, user_id, token, wps)
+
+        identifier = 'org.malleefowl.restflow.run'
+        inputs = [("workflow_description", str(workflow_description) )]
+        outputs = [("output",True)]
+
+        execution = wps.execute(identifier, inputs=inputs, output=outputs)
+
+        add_job(
+            request = request,
+            user_id = authenticated_userid(request),
+            identifier = identifier,
+            wps_url = wps.url,
+            execution = execution,
+            notes = "test",
+            tags = "test")
+
+        return HTTPFound(location=request.route_url('jobs'))
+    
+    return {
+            "title": title,
+            "html_fields" : html_fields,
+            }
 def get_parallel_ids(user_id): 
     #If the file path is invalid an empty list is returned.
     path = os.path.join(QCDIR, user_id)
