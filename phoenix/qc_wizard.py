@@ -9,9 +9,9 @@ from wps import get_wps
 from .helpers import wps_url
 import os
 #TODO: Put constants into a config file
-QCDIR = "/home/tk/sandbox/test/climdapssplit/malleefowl/var/qc_cache"
-EXAMPLEDATADIR = "/home/tk/sandbox/test/climdapssplit/malleefowl/examples/data/CORDEX"
-WPS_SERVICE = "http://localhost:8090/wps"
+malleefowldir = os.path.abspath(os.path.join(os.path.dirname(__file__),"..","..","malleefowl"))
+QCDIR = os.path.join(malleefowldir,"var/qc_cache")
+EXAMPLEDATADIR = os.path.join(malleefowldir,"examples/data/CORDEX")
 @view_config(route_name='qc_wizard_check',
              renderer='templates/qc_wizard.pt',
              layout='default',
@@ -1325,6 +1325,4 @@ def _create_qc_workflow_yaml(DATA, user_id, token, wps):
         '      message: /variable/clean_finished/',
         ]
     document = "\n".join(yaml_document)+"\n"
-    with open("/home/tk/sandbox/restflow/rf_yaml.yaml", "w") as f:
-        f.write(document)
     return document
