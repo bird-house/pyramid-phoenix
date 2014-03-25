@@ -9,9 +9,15 @@ from wps import get_wps
 from .helpers import wps_url
 import os
 #TODO: Put constants into a config file
-malleefowldir = os.path.abspath(os.path.join(os.path.dirname(__file__),"..","..","malleefowl"))
-QCDIR = os.path.join(malleefowldir,"var/qc_cache")
-EXAMPLEDATADIR = os.path.join(malleefowldir,"examples/data/CORDEX")
+#malleefowldir = os.path.abspath(os.path.join(os.path.dirname(__file__),"..","..","malleefowl"))
+#QCDIR = os.path.join(malleefowldir,"var/qc_cache")
+#EXAMPLEDATADIR = os.path.join(malleefowldir,"examples/data/CORDEX")
+DATA = {}
+fn = os.path.join(os.path.dirname(__file__),"qc_wizard.conf")
+execfile(fn,DATA)
+QCDIR = os.path.abspath(DATA["QC_CACHE"])
+EXAMPLEDATADIR = os.path.abspath(DATA["EXAMPLEDATA"])
+
 @view_config(route_name='qc_wizard_check',
              renderer='templates/qc_wizard.pt',
              layout='default',

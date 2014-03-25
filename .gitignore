@@ -37,6 +37,7 @@ downloads
 # generated files/folders
 var/
 etc/
+phoenix/qc_wizard.conf
 
 # sphinx
 docs/Makefile
