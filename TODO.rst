@@ -17,6 +17,7 @@ Bugs
 Common
 ------
 
+* refactor wps schema, add token default value
 * split phoenix logging for info, debug, ...
 * using port 80 by default
 * use common wpsmgr module: need common project for this
