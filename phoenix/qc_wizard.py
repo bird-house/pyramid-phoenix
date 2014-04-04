@@ -6,17 +6,9 @@ from pyramid.security import authenticated_userid
 from .models import user_token, add_job
 from pyramid.httpexceptions import HTTPFound
 from wps import get_wps
-from .helpers import wps_url
+from .helpers import wps_url, get_setting
 import os
-#TODO: Put constants into a config file
-#malleefowldir = os.path.abspath(os.path.join(os.path.dirname(__file__),"..","..","malleefowl"))
-#QCDIR = os.path.join(malleefowldir,"var/qc_cache")
-#EXAMPLEDATADIR = os.path.join(malleefowldir,"examples/data/CORDEX")
-DATA = {}
-fn = os.path.join(os.path.dirname(__file__),"qc_wizard.conf")
-execfile(fn,DATA)
-QCDIR = os.path.abspath(DATA["QC_CACHE"])
-EXAMPLEDATADIR = os.path.abspath(DATA["EXAMPLEDATA"])
+
 
 @view_config(route_name='qc_wizard_check',
              renderer='templates/qc_wizard.pt',
@@ -30,7 +22,7 @@ def qc_wizard_check(request):
     
     parallel_id_help = ("An identifier used to avoid processes running on the same directory." + 
                         " Using an existing one will remove all data inside its work directory.")
-    parallel_ids = get_parallel_ids(user_id)
+    parallel_ids = get_parallel_ids(user_id, request)
     if parallel_ids == []:
         parallel_id_help += " There are currently no existing Parallel IDs."
     else:
@@ -51,6 +43,7 @@ def qc_wizard_check(request):
     #allowed_values can be used if a limited number of possibile values should be available.
     #In that case value will be used as default if it is in allowed_values.
     #For type "checkbox" the existence of the "checked" key will lead to the checkbox being True.
+    EXAMPLEDATADIR = os.path.abspath(get_setting(request, "qc.EXAMPLEDATA"))
     fields = [
         {"id": "parallel_id", "type": "text", "text": "Parallel ID", "help":parallel_id_help,
             "value": "web1"},
@@ -100,8 +93,10 @@ def qc_wizard_check(request):
             "html_fields" : html_fields,
             }
 
-def get_parallel_ids(user_id): 
+def get_parallel_ids(user_id, request): 
     #If the file path is invalid an empty list is returned.
+    qc_cache = get_setting(request,"qc.QC_CACHE")
+    QCDIR = os.path.abspath(qc_cache)
     path = os.path.join(QCDIR, user_id)
     history_fn = os.path.join(path, "parallel_id.history")
     history = []
@@ -900,7 +895,7 @@ def qc_wizard_yaml(request):
     
     parallel_id_help = ("An identifier used to avoid processes running on the same directory." + 
                         " Using an existing one will remove all data inside its work directory.")
-    parallel_ids = get_parallel_ids(user_id)
+    parallel_ids = get_parallel_ids(user_id, request)
     if parallel_ids == []:
         parallel_id_help += " There are currently no existing Parallel IDs."
     else:
