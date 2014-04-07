@@ -39,15 +39,23 @@ def qc_wizard_check(request):
                     "Lock is stronger than select. (e.g. select tas and lock AFR-44 checks all "+
                     "tas that are not in AFR-44.)")
 
+    #get the example data directory
+    service_url = get_wps(wps_url(request)).url
+    identifier = 'Get_Example_Directory'
+    inputs = []
+    outputs = "example_directory"
+    from wps import execute
+    wpscall_result = execute(service_url, identifier, inputs=inputs, output=outputs)
+    EXAMPLEDATADIR = wpscall_result[0]
+
     #a field in fields must contain text, id and value. The entry help is optional.
     #allowed_values can be used if a limited number of possibile values should be available.
     #In that case value will be used as default if it is in allowed_values.
     #For type "checkbox" the existence of the "checked" key will lead to the checkbox being True.
-    EXAMPLEDATADIR = os.path.abspath(get_setting(request, "qc.EXAMPLEDATA"))
     fields = [
         {"id": "parallel_id", "type": "text", "text": "Parallel ID", "help":parallel_id_help,
             "value": "web1"},
-        {"id": "data_path", "type": "text", "text": "Root path to the of check data",
+        {"id": "data_path", "type": "text", "text": "Root path of the to check data",
             "value": EXAMPLEDATADIR},
         {"id": "project", "type": "select", "text": "Project", 
             "value": "CORDEX", "allowed_values": ["CORDEX"] },
@@ -94,19 +102,16 @@ def qc_wizard_check(request):
             }
 
 def get_parallel_ids(user_id, request): 
-    #If the file path is invalid an empty list is returned.
-    qc_cache = get_setting(request,"qc.QC_CACHE")
-    QCDIR = os.path.abspath(qc_cache)
-    path = os.path.join(QCDIR, user_id)
-    history_fn = os.path.join(path, "parallel_id.history")
-    history = []
-    if os.path.isfile(history_fn):
-        with open(history_fn, "r") as hist:
-            lines = hist.readlines()
-            for line in lines:
-                history.append(line.rstrip("\n"))  
-    existing_history = [x for x in history if os.path.isdir(os.path.join(path, x))] 
-    return existing_history
+    service_url = get_wps(wps_url(request)).url
+    token = user_token(request, user_id)
+    identifier = 'Get_Parallel_IDs'
+    inputs = [("username",user_id.replace("@","(at)")),("token",token)]
+    outputs = "parallel_ids"
+    from wps import execute
+    wpscall_result = execute(service_url, identifier, inputs=inputs, output=outputs)
+    #there is only 1 output therefore index 0 is used for parallel_ids
+    parallel_ids = wpscall_result[0].split("/")
+    return parallel_ids
 
 def get_html_fields(fields):
     """
@@ -958,7 +963,11 @@ def _create_qc_workflow_yaml(DATA, user_id, token, wps):
     token = token
     yamllogs = [str(x.strip()) for x in DATA["yamllogs"].split(',')]
     prefix_old = DATA["prefix_old"]
+    if prefix_old == "":
+        prefix_old = "/"
     prefix_new = DATA["prefix_new"]
+    if prefix_new == "":
+        prefix_new = "/"
     parallel_id = DATA["parallel_id"]
     #html checkboxes are true if and only if they are in the POST (DATA variable)
     replica = "replica" in DATA
