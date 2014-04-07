@@ -94,19 +94,16 @@ def qc_wizard_check(request):
             }
 
 def get_parallel_ids(user_id, request): 
-    #If the file path is invalid an empty list is returned.
-    qc_cache = get_setting(request,"qc.QC_CACHE")
-    QCDIR = os.path.abspath(qc_cache)
-    path = os.path.join(QCDIR, user_id)
-    history_fn = os.path.join(path, "parallel_id.history")
-    history = []
-    if os.path.isfile(history_fn):
-        with open(history_fn, "r") as hist:
-            lines = hist.readlines()
-            for line in lines:
-                history.append(line.rstrip("\n"))  
-    existing_history = [x for x in history if os.path.isdir(os.path.join(path, x))] 
-    return existing_history
+    service_url = get_wps(wps_url(request)).url
+    token = user_token(request, user_id)
+    identifier = 'Get_Parallel_IDs'
+    inputs = [("username",user_id.replace("@","(at)")),("token",token)]
+    outputs = "parallel_ids"
+    from wps import execute
+    wpscall_result = execute(service_url, identifier, inputs=inputs, output=outputs)
+    #there is only 1 output therefore index 0 is used for parallel_ids
+    parallel_ids = wpscall_result[0].split("/")
+    return parallel_ids
 
 def get_html_fields(fields):
     """
