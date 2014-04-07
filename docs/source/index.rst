@@ -18,6 +18,7 @@ Contents:
    malleefowl/index
    development/index
    appendix/index
+   processes/index   
 
 Indices and tables
 ==================
