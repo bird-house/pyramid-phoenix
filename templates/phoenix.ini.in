@@ -53,9 +53,6 @@ esgf.search = /esg-search
 # thredds service
 phoenix.thredds = http://${server:hostname}:${ports:http}/thredds
 
-#QC variables
-qc.EXAMPLEDATA=/home/tk/sandbox/climdaps/malleefowl/examples/data/CORDEX
-
 ###
 # wsgi server configuration
 ###
