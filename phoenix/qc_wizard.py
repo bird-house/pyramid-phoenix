@@ -958,7 +958,11 @@ def _create_qc_workflow_yaml(DATA, user_id, token, wps):
     token = token
     yamllogs = [str(x.strip()) for x in DATA["yamllogs"].split(',')]
     prefix_old = DATA["prefix_old"]
+    if prefix_old == "":
+        prefix_old = "/"
     prefix_new = DATA["prefix_new"]
+    if prefix_new == "":
+        prefix_new = "/"
     parallel_id = DATA["parallel_id"]
     #html checkboxes are true if and only if they are in the POST (DATA variable)
     replica = "replica" in DATA
