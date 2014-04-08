@@ -6,17 +6,9 @@ from pyramid.security import authenticated_userid
 from .models import user_token, add_job
 from pyramid.httpexceptions import HTTPFound
 from wps import get_wps
-from .helpers import wps_url
+from .helpers import wps_url, get_setting
 import os
-#TODO: Put constants into a config file
-#malleefowldir = os.path.abspath(os.path.join(os.path.dirname(__file__),"..","..","malleefowl"))
-#QCDIR = os.path.join(malleefowldir,"var/qc_cache")
-#EXAMPLEDATADIR = os.path.join(malleefowldir,"examples/data/CORDEX")
-DATA = {}
-fn = os.path.join(os.path.dirname(__file__),"qc_wizard.conf")
-execfile(fn,DATA)
-QCDIR = os.path.abspath(DATA["QC_CACHE"])
-EXAMPLEDATADIR = os.path.abspath(DATA["EXAMPLEDATA"])
+
 
 @view_config(route_name='qc_wizard_check',
              renderer='templates/qc_wizard.pt',
@@ -30,7 +22,7 @@ def qc_wizard_check(request):
     
     parallel_id_help = ("An identifier used to avoid processes running on the same directory." + 
                         " Using an existing one will remove all data inside its work directory.")
-    parallel_ids = get_parallel_ids(user_id)
+    parallel_ids = get_parallel_ids(user_id, request)
     if parallel_ids == []:
         parallel_id_help += " There are currently no existing Parallel IDs."
     else:
@@ -47,6 +39,15 @@ def qc_wizard_check(request):
                     "Lock is stronger than select. (e.g. select tas and lock AFR-44 checks all "+
                     "tas that are not in AFR-44.)")
 
+    #get the example data directory
+    service_url = get_wps(wps_url(request)).url
+    identifier = 'Get_Example_Directory'
+    inputs = []
+    outputs = "example_directory"
+    from wps import execute
+    wpscall_result = execute(service_url, identifier, inputs=inputs, output=outputs)
+    EXAMPLEDATADIR = wpscall_result[0]
+
     #a field in fields must contain text, id and value. The entry help is optional.
     #allowed_values can be used if a limited number of possibile values should be available.
     #In that case value will be used as default if it is in allowed_values.
@@ -54,7 +55,7 @@ def qc_wizard_check(request):
     fields = [
         {"id": "parallel_id", "type": "text", "text": "Parallel ID", "help":parallel_id_help,
             "value": "web1"},
-        {"id": "data_path", "type": "text", "text": "Root path to the of check data",
+        {"id": "data_path", "type": "text", "text": "Root path of the to check data",
             "value": EXAMPLEDATADIR},
         {"id": "project", "type": "select", "text": "Project", 
             "value": "CORDEX", "allowed_values": ["CORDEX"] },
@@ -100,18 +101,20 @@ def qc_wizard_check(request):
             "html_fields" : html_fields,
             }
 
-def get_parallel_ids(user_id): 
-    #If the file path is invalid an empty list is returned.
-    path = os.path.join(QCDIR, user_id)
-    history_fn = os.path.join(path, "parallel_id.history")
-    history = []
-    if os.path.isfile(history_fn):
-        with open(history_fn, "r") as hist:
-            lines = hist.readlines()
-            for line in lines:
-                history.append(line.rstrip("\n"))  
-    existing_history = [x for x in history if os.path.isdir(os.path.join(path, x))] 
-    return existing_history
+def get_parallel_ids(user_id, request): 
+    service_url = get_wps(wps_url(request)).url
+    token = user_token(request, user_id)
+    identifier = 'Get_Parallel_IDs'
+    inputs = [("username",user_id.replace("@","(at)")),("token",token)]
+    outputs = "parallel_ids"
+    from wps import execute
+    wpscall_result = execute(service_url, identifier, inputs=inputs, output=outputs)
+    #there is only 1 output therefore index 0 is used for parallel_ids
+    if len(wpscall_result) > 0:
+        parallel_ids = wpscall_result[0].split("/")
+    else:
+        parallel_ids = []
+    return parallel_ids
 
 def get_html_fields(fields):
     """
@@ -900,7 +903,7 @@ def qc_wizard_yaml(request):
     
     parallel_id_help = ("An identifier used to avoid processes running on the same directory." + 
                         " Using an existing one will remove all data inside its work directory.")
-    parallel_ids = get_parallel_ids(user_id)
+    parallel_ids = get_parallel_ids(user_id, request)
     if parallel_ids == []:
         parallel_id_help += " There are currently no existing Parallel IDs."
     else:
@@ -963,7 +966,11 @@ def _create_qc_workflow_yaml(DATA, user_id, token, wps):
     token = token
     yamllogs = [str(x.strip()) for x in DATA["yamllogs"].split(',')]
     prefix_old = DATA["prefix_old"]
+    if prefix_old == "":
+        prefix_old = "/"
     prefix_new = DATA["prefix_new"]
+    if prefix_new == "":
+        prefix_new = "/"
     parallel_id = DATA["parallel_id"]
     #html checkboxes are true if and only if they are in the POST (DATA variable)
     replica = "replica" in DATA
