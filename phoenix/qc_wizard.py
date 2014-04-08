@@ -46,7 +46,6 @@ def qc_wizard_check(request):
     outputs = "example_directory"
     from wps import execute
     wpscall_result = execute(service_url, identifier, inputs=inputs, output=outputs)
-    logger.debug(str(len(wpscall_result)) + ": " + str(wpscall_result)) 
     EXAMPLEDATADIR = wpscall_result[0]
 
     #a field in fields must contain text, id and value. The entry help is optional.
@@ -111,7 +110,10 @@ def get_parallel_ids(user_id, request):
     from wps import execute
     wpscall_result = execute(service_url, identifier, inputs=inputs, output=outputs)
     #there is only 1 output therefore index 0 is used for parallel_ids
-    parallel_ids = wpscall_result[0].split("/")
+    if len(wpscall_result) > 0:
+        parallel_ids = wpscall_result[0].split("/")
+    else:
+        parallel_ids = []
     return parallel_ids
 
 def get_html_fields(fields):
