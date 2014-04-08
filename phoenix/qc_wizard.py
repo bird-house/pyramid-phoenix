@@ -46,6 +46,7 @@ def qc_wizard_check(request):
     outputs = "example_directory"
     from wps import execute
     wpscall_result = execute(service_url, identifier, inputs=inputs, output=outputs)
+    logger.debug(str(len(wpscall_result)) + ": " + str(wpscall_result)) 
     EXAMPLEDATADIR = wpscall_result[0]
 
     #a field in fields must contain text, id and value. The entry help is optional.
