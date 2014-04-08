@@ -4,6 +4,7 @@ Todo list for Phoenix
 Bugs
 ----
 
+* DONE: fix port 80 config (browserid ...)
 * need index.html page on mouflon for redirect to port 80
 * need to proxy ports for tomcat, wps, ...
 * phoenix fails sometimes with: can't find command '../pyramid-phoenix/bin/phoenix.sh'
@@ -17,6 +18,12 @@ Bugs
 Common
 ------
 
+* configure browserid, openid:
+  * http://www.rfk.id.au/blog/entry/painless-auth-pyramid-browserid/
+  * http://quantumcore.org/docs/repoze.who.plugins.openid/
+* show how long esgf certificate is valid
+* run test-suite from ui (check common processes with nose)
+* refactor wps schema, add token default value
 * split phoenix logging for info, debug, ...
 * using port 80 by default
 * use common wpsmgr module: need common project for this

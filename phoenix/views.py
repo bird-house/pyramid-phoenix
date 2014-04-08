@@ -827,16 +827,21 @@ def account(request):
             inputs.append( ('password', password) )
             logger.debug('update credentials with openid=%s', openid)
             wps = get_wps(wps_url(request))
-            execution = wps.execute(identifier='org.malleefowl.esgf.logon', inputs=inputs, output='output')
+            execution = wps.execute(identifier='org.malleefowl.esgf.logon',
+                                    inputs=inputs,
+                                    output=[('output',True),('expires',False)])
             from owslib.wps import monitorExecution
             monitorExecution(execution)
-            if execution.processOutputs is not None and len(execution.processOutputs) > 0:
+            if execution.processOutputs is not None and len(execution.processOutputs) > 1:
                 credentials = execution.processOutputs[0].reference
+                cert_expires = execution.processOutputs[1].data[0]
+                logger.debug('cert expires %s', cert_expires)
                 # Update user credentials
                 update_user(
                     request = request,
                     user_id = user_id,
                     credentials = credentials,
+                    cert_expires = cert_expires,
                     update_login=False,
                     update_token=False
                     )
@@ -892,7 +897,8 @@ def account(request):
             organisation = user.get('organisation'),
             notes = user.get('notes'),
             token = user.get('token'),
-            credentials = user.get('credentials')
+            credentials = user.get('credentials'),
+            cert_expires = user.get('cert_expires')
             )
     return dict(
         form=form.render(appstruct),

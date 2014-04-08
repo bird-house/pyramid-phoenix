@@ -93,6 +93,13 @@ class AccountSchema(colander.MappingSchema):
         missing = '',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
+    cert_expires = colander.SchemaNode(
+        colander.String(),
+        title = "Expires",
+        description = "When your Proxy Certificate expires",
+        missing = '',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
 
 # process list
 # ------------
