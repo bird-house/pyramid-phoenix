@@ -6,7 +6,9 @@ Helsinki
 
 * upload files in wps ui
 * ipython notebook
-* tutorial
+* tutorial for phoenix
+* using glob search for local files
+* ipython examples for wps client (also chaining processes)
 
 Bugs
 ----
