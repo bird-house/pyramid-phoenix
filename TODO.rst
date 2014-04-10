@@ -1,6 +1,13 @@
 Todo list for Phoenix
 =====================
 
+Helsinki
+--------
+
+* upload files in wps ui
+* ipython notebook
+* tutorial
+
 Bugs
 ----
 
