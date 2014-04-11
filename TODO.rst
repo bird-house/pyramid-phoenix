@@ -4,23 +4,26 @@ Todo list for Phoenix
 Helsinki
 --------
 
+* wizard: check if credential and token are valid
 * upload files in wps ui
 * ipython notebook
 * tutorial for phoenix
 * using glob search for local files
 * ipython examples for wps client (also chaining processes)
+* configure admin users
+* enable local admin user
+* run test-suite in phoenix from ui
+* esgf cache should stay longer (1 week?)
 
 Bugs
 ----
 
-* DONE: fix port 80 config (browserid ...)
+* no token when wps not avail at login: need update token button
 * need index.html page on mouflon for redirect to port 80
 * need to proxy ports for tomcat, wps, ...
 * phoenix fails sometimes with: can't find command '../pyramid-phoenix/bin/phoenix.sh'
-* DONE: init of wps fails (e.a when wps is registered but not avail)
 * wizard: cookie too long (need to use database)
 * catalog: get_wps_with_auth fails
-* DONE: time selection does not filter mon cordex files in esg file search
 * get-wms files: use token (check map)
 
 

@@ -24,6 +24,9 @@ Tasks Done
 Bugs Solved
 -----------
 
+* DONE: time selection does not filter mon cordex files in esg file search
+* DONE: init of wps fails (e.a when wps is registered but not avail)
+* DONE: fix port 80 config (browserid ...)
 * DONE: phoenix: notes and tags missing in job list
 
 
