@@ -14,6 +14,7 @@ Contents:
    :maxdepth: 1
 
    installation/index
+   tutorial/index
    phoenix/index
    malleefowl/index
    development/index
