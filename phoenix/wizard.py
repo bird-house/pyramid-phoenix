@@ -300,6 +300,14 @@ class SummarySchema(colander.MappingSchema):
 class MyFormWizardView(FormWizardView):
     def __call__(self, request):
         self.request = request
+
+        from pyramid.security import authenticated_userid
+        user_id=authenticated_userid(request)
+        from .models import user_with_id
+        user = user_with_id(request, user_id=user_id)
+        msg = "Credential expires at <b>%s</b>. Please update your <a href='/account'>Credentials</a>." % (user.get('cert_expires'))
+        self.request.session.flash(msg, queue='error')
+
         self.wizard_state = self.wizard_state_class(request, self.wizard.name)
         step = self.wizard_state.get_step_num()
 
