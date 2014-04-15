@@ -785,9 +785,7 @@ class AdminUserDeactivateView(FormView):
     permission='edit'
     )
 def map(request):
-    # TODO: fix userid with @
     userid=authenticated_userid(request)
-    userid = userid.replace('@', '_')
     return dict(userid=userid)
 
 @view_config(
