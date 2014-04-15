@@ -14,10 +14,12 @@ Contents:
    :maxdepth: 1
 
    installation/index
+   tutorial/index
    phoenix/index
    malleefowl/index
    development/index
    appendix/index
+   processes/index   
 
 Indices and tables
 ==================
