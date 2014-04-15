@@ -292,7 +292,8 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '        init_run = "run"',
         '        check_enable = true',
         '        check_identifier = "QC_Check"',
-        '        check_output = ["qc_call", "qc_call_exit_code", "qc_svn_version", "error_messages"]',
+       ('        check_output = ["qc_call", "qc_call_exit_code", "qc_svn_version", "error_messages"' +
+                                ', "process_log"]'),
         '        eval_enable = true',
         '        eval_identifier = "QC_Evaluate"',
        ('        eval_output = ["found_tags", "fail_count", "pass_count", "omit_count", "fixed_count"' +
