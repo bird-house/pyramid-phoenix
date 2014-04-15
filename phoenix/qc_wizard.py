@@ -19,25 +19,23 @@ def qc_wizard_check(request):
     title = "Quality Control Wizard"
     user_id = authenticated_userid(request)
     token = user_token(request, user_id)
+    if not token:
+        raise Exception("Can not find token")
     
     session_id_help = ("An identifier used to avoid processes running on the same directory." + 
-                        " Using an existing one will remove all data inside its work directory.")
+                        " Using an existing one will remove all data inside its directory.")
     session_ids = get_session_ids(user_id, request)
     if session_ids == []:
         session_id_help += " There are currently no existing Session IDs."
     else:
         session_id_help += " The existing Session IDs are:<br>" +", ".join(session_ids)
-    qc_select_help = ("Comma separated list of parts of the path. If at least one of the elements " +
-                      "in the list matches with a path in the data directory, its nc files are " + 
-                      "added to the check. It is recommended to put variables into '/' to avoid " +
-                      "accidental matches with other path elements. The first element of the path " + 
-                      "does not start with a '/' and the last element does not end with a '/'. The " +
-                      "wildcard '.*' should be used with care, as the handling of '/' is " + 
-                      "considered undefined. (Assuming the paths exist a valid example is: " +
+    qc_select_help = ("Comma separated list of parts of the path descriptions." +
+                      "If at least one description in the list matches the path is included." + 
+                      " In the path description '.*' is for any character sequence. (e.g. " +
                       "AFR-44/.*/tas, EUR.*, /fx/)")
     qc_lock_help = ("Works similar to select, but prevents the given paths being added. " +
                     "Lock is stronger than select. (e.g. select tas and lock AFR-44 checks all "+
-                    "tas that are not in AFR-44.)")
+                    "tas that do not contain AFR-44.)")
 
     #get the example data directory
     service_url = get_wps(wps_url(request)).url
