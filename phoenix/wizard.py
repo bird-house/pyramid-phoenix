@@ -298,16 +298,35 @@ class SummarySchema(colander.MappingSchema):
 # ------
 
 class MyFormWizardView(FormWizardView):
+    def check_credentials(self):
+        from pyramid.security import authenticated_userid
+        user_id=authenticated_userid(self.request)
+        from .models import user_with_id
+        user = user_with_id(self.request, user_id=user_id)
+        cert_expires = user.get('cert_expires')
+
+        valid_hours = 0
+        
+        try:
+            from datetime import datetime
+            from dateutil import parser as date_parser, relativedelta
+            expires = date_parser.parse(cert_expires)
+            now = datetime.utcnow()
+            now = now.replace(tzinfo=expires.tzinfo)
+            delta = relativedelta.relativedelta(expires, now)
+            valid_hours = delta.hours
+        except:
+            logger.warn('could not get creds_expire')
+
+        if valid_hours < 4:
+            msg = "Credentials expire at <b>%s</b> UTC. Please update your <a href='/account'>Credentials</a>." % (cert_expires)
+            self.request.session.flash(msg, queue='error')
+    
     def __call__(self, request):
         self.request = request
 
-        from pyramid.security import authenticated_userid
-        user_id=authenticated_userid(request)
-        from .models import user_with_id
-        user = user_with_id(request, user_id=user_id)
-        msg = "Credential expires at <b>%s</b>. Please update your <a href='/account'>Credentials</a>." % (user.get('cert_expires'))
-        self.request.session.flash(msg, queue='error')
-
+        self.check_credentials()
+        
         self.wizard_state = self.wizard_state_class(request, self.wizard.name)
         step = self.wizard_state.get_step_num()
 
