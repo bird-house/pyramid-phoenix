@@ -142,6 +142,12 @@ def user_token(request, user_id):
     user = db.users.find_one(dict(user_id = user_id))
     return user.get('token')
 
+def is_token_valid(request, user_id):
+    token = user_token(request, user_id)
+    if token is None or len(token) < 22:
+        return False
+    return True
+
 def user_credentials(request, user_id):
     db = database(request)
     user = db.users.find_one(dict(user_id = user_id))

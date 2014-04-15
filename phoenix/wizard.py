@@ -298,8 +298,18 @@ class SummarySchema(colander.MappingSchema):
 # ------
 
 class MyFormWizardView(FormWizardView):
+    from pyramid.security import authenticated_userid
+     
+    def check_token(self):
+        from .models import update_user, is_token_valid
+        user_id=authenticated_userid(self.request)
+        
+        if not is_token_valid(self.request, user_id):
+            update_user(self.request, user_id, update_token=True, update_login=False)
+            msg = "Your token was updated"
+            self.request.session.flash(msg, queue='info')
+    
     def check_credentials(self):
-        from pyramid.security import authenticated_userid
         user_id=authenticated_userid(self.request)
         from .models import user_with_id
         user = user_with_id(self.request, user_id=user_id)
@@ -326,6 +336,7 @@ class MyFormWizardView(FormWizardView):
         self.request = request
 
         self.check_credentials()
+        self.check_token()
         
         self.wizard_state = self.wizard_state_class(request, self.wizard.name)
         step = self.wizard_state.get_step_num()
