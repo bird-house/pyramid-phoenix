@@ -24,6 +24,8 @@ from colander import Range, Invalid, null
 
 from mako.template import Template
 
+from .exceptions import TokenError
+
 from .models import (
     add_job,
     user_token,
@@ -305,9 +307,12 @@ class MyFormWizardView(FormWizardView):
         user_id=authenticated_userid(self.request)
         
         if not is_token_valid(self.request, user_id):
-            update_user(self.request, user_id, update_token=True, update_login=False)
-            msg = "Your token was updated"
-            self.request.session.flash(msg, queue='info')
+            try:
+                update_user(self.request, user_id, update_token=True, update_login=False)
+                msg = "Your token was successfully updated"
+                self.request.session.flash(msg, queue='info')
+            except TokenError as e:
+                self.request.session.flash(e.message, queue='error')
     
     def check_credentials(self):
         user_id=authenticated_userid(self.request)

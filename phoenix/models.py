@@ -20,6 +20,7 @@ import datetime
 from phoenix import helpers
 from .helpers import mongodb_conn, esgsearch_url
 from .wps import get_wps, wps_url, gen_token
+from .exceptions import TokenError
 
 import logging
 logger = logging.getLogger(__name__)
@@ -102,8 +103,10 @@ def update_user(request,
          try:
              wps = get_wps(wps_url(request))
              user['token'] = gen_token(wps, helpers.sys_token(request), user_id)
-         except Exeption as e:
-             logger.error('Could not generate token for user %s, err msg=%s' % (user_id, e.message))
+         except Exception as e:
+             msg = 'Could not generate token for user %s, err msg=%s' % (user_id, e.message)
+             logger.error(msg)
+             raise TokenError(msg)
     if update_login:
         user['last_login'] = datetime.datetime.now()
     db.users.update(dict(user_id = user_id), user)
