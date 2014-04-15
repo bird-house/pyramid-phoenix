@@ -174,7 +174,7 @@ def login(request):
     try:
         update_user(request, user_id=email, update_token=True, activated=True)
     except TokenError as e:
-        request.session.flash(e.message, queue='error')
+        pass
     # Add the headers required to remember the user to the response
     request.response.headers.extend(remember(request, email))
     # Return a json message containing the address or path to redirect to.
@@ -222,7 +222,7 @@ def login_openid(request):
                                 update_token=True,
                                 activated=True)
                 except TokenError as e:
-                    request.session.flash(e.message, queue='error')
+                    pass
                 response.text = render('phoenix:templates/openid_success.pt',
                                        {'result': result},
                                        request=request)

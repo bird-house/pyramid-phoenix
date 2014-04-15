@@ -309,10 +309,8 @@ class MyFormWizardView(FormWizardView):
         if not is_token_valid(self.request, user_id):
             try:
                 update_user(self.request, user_id, update_token=True, update_login=False)
-                msg = "Your token was successfully updated"
-                self.request.session.flash(msg, queue='info')
             except TokenError as e:
-                self.request.session.flash(e.message, queue='error')
+                pass
     
     def check_credentials(self):
         user_id=authenticated_userid(self.request)

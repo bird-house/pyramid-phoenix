@@ -103,9 +103,13 @@ def update_user(request,
          try:
              wps = get_wps(wps_url(request))
              user['token'] = gen_token(wps, helpers.sys_token(request), user_id)
+             msg = "Your access token was successfully updated. See <a href='/account'>My Account</a>"
+             logger.info(msg)
+             request.session.flash(msg, queue='info')
          except Exception as e:
              msg = 'Could not generate token for user %s, err msg=%s' % (user_id, e.message)
              logger.error(msg)
+             request.session.flash(msg, queue='error')
              raise TokenError(msg)
     if update_login:
         user['last_login'] = datetime.datetime.now()
