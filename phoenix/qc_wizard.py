@@ -19,25 +19,23 @@ def qc_wizard_check(request):
     title = "Quality Control Wizard"
     user_id = authenticated_userid(request)
     token = user_token(request, user_id)
+    if not token:
+        raise Exception("Can not find token")
     
-    parallel_id_help = ("An identifier used to avoid processes running on the same directory." + 
-                        " Using an existing one will remove all data inside its work directory.")
-    parallel_ids = get_parallel_ids(user_id, request)
-    if parallel_ids == []:
-        parallel_id_help += " There are currently no existing Parallel IDs."
+    session_id_help = ("An identifier used to avoid processes running on the same directory." + 
+                        " Using an existing one will remove all data inside its directory.")
+    session_ids = get_session_ids(user_id, request)
+    if session_ids == []:
+        session_id_help += " There are currently no existing Session IDs."
     else:
-        parallel_id_help += " The existing Parallel IDs are:<br>" +", ".join(parallel_ids)
-    qc_select_help = ("Comma separated list of parts of the path. If at least one of the elements " +
-                      "in the list matches with a path in the data directory, its nc files are " + 
-                      "added to the check. It is recommended to put variables into '/' to avoid " +
-                      "accidental matches with other path elements. The first element of the path " + 
-                      "does not start with a '/' and the last element does not end with a '/'. The " +
-                      "wildcard '.*' should be used with care, as the handling of '/' is " + 
-                      "considered undefined. (Assuming the paths exist a valid example is: " +
+        session_id_help += " The existing Session IDs are:<br>" +", ".join(session_ids)
+    qc_select_help = ("Comma separated list of parts of the path descriptions." +
+                      "If at least one description in the list matches the path is included." + 
+                      " In the path description '.*' is for any character sequence. (e.g. " +
                       "AFR-44/.*/tas, EUR.*, /fx/)")
     qc_lock_help = ("Works similar to select, but prevents the given paths being added. " +
                     "Lock is stronger than select. (e.g. select tas and lock AFR-44 checks all "+
-                    "tas that are not in AFR-44.)")
+                    "tas that do not contain AFR-44.)")
 
     #get the example data directory
     service_url = get_wps(wps_url(request)).url
@@ -53,7 +51,7 @@ def qc_wizard_check(request):
     #In that case value will be used as default if it is in allowed_values.
     #For type "checkbox" the existence of the "checked" key will lead to the checkbox being True.
     fields = [
-        {"id": "parallel_id", "type": "text", "text": "Parallel ID", "help":parallel_id_help,
+        {"id": "session_id", "type": "text", "text": "Session ID", "help":session_id_help,
             "value": "web1"},
         {"id": "data_path", "type": "text", "text": "Root path of the to check data",
             "value": EXAMPLEDATADIR},
@@ -100,20 +98,20 @@ def qc_wizard_check(request):
             "html_fields" : html_fields,
             }
 
-def get_parallel_ids(user_id, request): 
+def get_session_ids(user_id, request): 
     service_url = get_wps(wps_url(request)).url
     token = user_token(request, user_id)
-    identifier = 'Get_Parallel_IDs'
+    identifier = 'Get_Session_IDs'
     inputs = [("username",user_id.replace("@","(at)")),("token",token)]
-    outputs = "parallel_ids"
+    outputs = "session_ids"
     from wps import execute
     wpscall_result = execute(service_url, identifier, inputs=inputs, output=outputs)
-    #there is only 1 output therefore index 0 is used for parallel_ids
+    #there is only 1 output therefore index 0 is used for session_ids
     if len(wpscall_result) > 0:
-        parallel_ids = wpscall_result[0].split("/")
+        session_ids = wpscall_result[0].split("/")
     else:
-        parallel_ids = []
-    return parallel_ids
+        session_ids = []
+    return session_ids
 
 def get_html_fields(fields):
     """
@@ -155,7 +153,7 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
     #substitute the @ to avoid complications. 
     user_id = user_id.replace("@","(at)")
     token = token
-    parallel_id = DATA["parallel_id"]
+    session_id = DATA["session_id"]
     data_path = DATA["data_path"]
     project =  DATA["project"]
     #ensure lock and select are valid values.
@@ -279,7 +277,7 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '  properties:',
         '    actor.step: |',
         '        username = "' + user_id + '"',
-        '        parallel_id = "' + parallel_id + '"',
+        '        session_id = "' + session_id + '"',
         '        token = "' + token + '"',
         '        service = "' + wps.url + '"',
         '        data_path = "' + data_path + '"',
@@ -294,7 +292,8 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '        init_run = "run"',
         '        check_enable = true',
         '        check_identifier = "QC_Check"',
-        '        check_output = ["qc_call", "qc_call_exit_code", "qc_svn_version", "error_messages"]',
+       ('        check_output = ["qc_call", "qc_call_exit_code", "qc_svn_version", "error_messages"' +
+                                ', "process_log"]'),
         '        eval_enable = true',
         '        eval_identifier = "QC_Evaluate"',
        ('        eval_output = ["found_tags", "fail_count", "pass_count", "omit_count", "fixed_count"' +
@@ -311,7 +310,7 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '        clean_output = []',
         '    outflows:',
         '        username: /variable/username/',
-        '        parallel_id: /variable/parallel_id/',
+        '        session_id: /variable/session_id/',
         '        token: /variable/token/',
         '        service: /variable/service/',
         '        data_path: /variable/data_path/',
@@ -345,10 +344,10 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '  type: GroovyActorNode',
         '  properties:',
         '    actor.step: | ',
-        '      inputs = ["parallel_id=" + parallel_id, "username=" + username, "token=" + token] ',
+        '      inputs = ["session_id=" + session_id, "username=" + username, "token=" + token] ',
         '      inputs.add("data_path=" + data_path)',
         '    inflows:',
-        '      parallel_id: /variable/parallel_id/',
+        '      session_id: /variable/session_id/',
         '      username: /variable/username/',
         '      token: /variable/token/',
         '      data_path: /variable/data_path/',
@@ -360,7 +359,7 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '  type: GroovyActorNode',
         '  properties:',
         '    actor.step: | ',
-        '      inputs = ["parallel_id=" + parallel_id, "username=" + username, "token=" + token] ',
+        '      inputs = ["session_id=" + session_id, "username=" + username, "token=" + token] ',
         '      inputs.add("project=" + project)',
         '      if (select != "") {',
         '        inputs.add("select=" + select)',
@@ -369,7 +368,7 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '        inputs.add("lock=" + lock)',
         '      }',
         '    inflows:',
-        '      parallel_id: /variable/parallel_id/',
+        '      session_id: /variable/session_id/',
         '      username: /variable/username/',
         '      token: /variable/token/',
         '      project: /variable/project/ ',
@@ -382,11 +381,11 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '  type: GroovyActorNode',
         '  properties:',
         '    actor.step: | ',
-        '      inputs = ["parallel_id=" + parallel_id, "username=" + username, "token=" + token] ',
+        '      inputs = ["session_id=" + session_id, "username=" + username, "token=" + token] ',
         '      inputs.add("latest=" + latest)',
         '      inputs.add("replica=" + replica)',
         '    inflows:',
-        '      parallel_id: /variable/parallel_id/',
+        '      session_id: /variable/session_id/',
         '      username: /variable/username/',
         '      token: /variable/token/',
         '      latest: /variable/latest/ ',
@@ -398,9 +397,9 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '  type: GroovyActorNode',
         '  properties:',
         '    actor.step: | ',
-        '      inputs = ["parallel_id=" + parallel_id, "username=" + username, "token=" + token] ',
+        '      inputs = ["session_id=" + session_id, "username=" + username, "token=" + token] ',
         '    inflows:',
-        '      parallel_id: /variable/parallel_id/',
+        '      session_id: /variable/session_id/',
         '      username: /variable/username/',
         '      token: /variable/token/',
         '    outflows:',
@@ -410,9 +409,9 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '  type: GroovyActorNode',
         '  properties:',
         '    actor.step: | ',
-        '      inputs = ["parallel_id=" + parallel_id, "username=" + username, "token=" + token] ',
+        '      inputs = ["session_id=" + session_id, "username=" + username, "token=" + token] ',
         '    inflows:',
-        '      parallel_id: /variable/parallel_id/',
+        '      session_id: /variable/session_id/',
         '      username: /variable/username/',
         '      token: /variable/token/',
         '    outflows:',
@@ -423,11 +422,11 @@ def _create_qc_workflow_v2(DATA, user_id, token, wps):
         '  properties: ',
         '    actor.step: |',
         '      run = "run"',
-        '      inputs = ["parallel_ids=" + parallel_id, "username=" + username, "token=" + token] ',
+        '      inputs = ["session_ids=" + session_id, "username=" + username, "token=" + token] ',
         '    inflows:',
         '      c1: /variable/publish_quality_finished/',
         '      c2: /variable/publish_meta_finished/',
-        '      parallel_id: /variable/parallel_id/',
+        '      session_id: /variable/session_id/',
         '      username: /variable/username/',
         '      token: /variable/token/',
         '    outflows:',
@@ -589,13 +588,13 @@ def qc_wizard_yaml(request):
     user_id = authenticated_userid(request)
     token = user_token(request, user_id)
     
-    parallel_id_help = ("An identifier used to avoid processes running on the same directory." + 
+    session_id_help = ("An identifier used to avoid processes running on the same directory." + 
                         " Using an existing one will remove all data inside its work directory.")
-    parallel_ids = get_parallel_ids(user_id, request)
-    if parallel_ids == []:
-        parallel_id_help += " There are currently no existing Parallel IDs."
+    session_ids = get_session_ids(user_id, request)
+    if session_ids == []:
+        session_id_help += " There are currently no existing Session IDs."
     else:
-        parallel_id_help += " The existing Parallel IDs are:<br>" +", ".join(parallel_ids)
+        session_id_help += " The existing Session IDs are:<br>" +", ".join(session_ids)
     yamllogs_help = "The comma separated list of logfile locations"
     oldprefix_help = "The data path in the provided logfiles"
     newprefix_help = "The data path on the machine"
@@ -605,7 +604,7 @@ def qc_wizard_yaml(request):
     #In that case value will be used as default if it is in allowed_values.
     #For type "checkbox" the existence of the "checked" key will lead to the checkbox being True.
     fields = [
-        {"id": "parallel_id", "type": "text", "text": "Parallel ID", "help":parallel_id_help,
+        {"id": "session_id", "type": "text", "text": "Session ID", "help":session_id_help,
             "value": "checkdone"},
         {"id": "yamllogs", "type": "text", "text": "YAML logs", "help": yamllogs_help, "value": ""},
         {"id": "prefix_old", "type": "text", "text": "Old prefix", "help": oldprefix_help, "value": ""},
@@ -659,7 +658,7 @@ def _create_qc_workflow_yaml(DATA, user_id, token, wps):
     prefix_new = DATA["prefix_new"]
     if prefix_new == "":
         prefix_new = "/"
-    parallel_id = DATA["parallel_id"]
+    session_id = DATA["session_id"]
     #html checkboxes are true if and only if they are in the POST (DATA variable)
     replica = "replica" in DATA
     latest = "latest" in DATA
@@ -771,7 +770,7 @@ def _create_qc_workflow_yaml(DATA, user_id, token, wps):
         '  properties:',
         '    actor.step: |',
         '        username = "' + user_id + '"',
-        '        parallel_id = "' + parallel_id + '"',
+        '        session_id = "' + session_id + '"',
         '        token = "' + token + '"',
         '        service = "' + wps.url + '"',
         '        replica = ' + str(replica).lower(),
@@ -799,7 +798,7 @@ def _create_qc_workflow_yaml(DATA, user_id, token, wps):
         '        clean_output = []',
         '    outflows:',
         '        username: /variable/username/',
-        '        parallel_id: /variable/parallel_id/',
+        '        session_id: /variable/session_id/',
         '        token: /variable/token/',
         '        service: /variable/service/',
         '        replica: /variable/replica/',
@@ -828,7 +827,7 @@ def _create_qc_workflow_yaml(DATA, user_id, token, wps):
         '  type: GroovyActorNode',
         '  properties:',
         '    actor.step: | ',
-        '      inputs = ["parallel_id=" + parallel_id, "username=" + username, "token=" + token] ',
+        '      inputs = ["session_id=" + session_id, "username=" + username, "token=" + token] ',
         #'      yaml_logs = "yamllogs="',
         '      for (item in yamllogs){',
         '          inputs.add("yamllogs=" + item)',       
@@ -836,7 +835,7 @@ def _create_qc_workflow_yaml(DATA, user_id, token, wps):
         '      inputs.add("prefix_old=" + prefix_old)', 
         '      inputs.add("prefix_new=" + prefix_new)',
         '    inflows:',
-        '      parallel_id: /variable/parallel_id/',
+        '      session_id: /variable/session_id/',
         '      username: /variable/username/',
         '      token: /variable/token/',
         '      yamllogs: /variable/yamllogs/',
@@ -849,11 +848,11 @@ def _create_qc_workflow_yaml(DATA, user_id, token, wps):
         '  type: GroovyActorNode',
         '  properties:',
         '    actor.step: | ',
-        '      inputs = ["parallel_id=" + parallel_id, "username=" + username, "token=" + token] ',
+        '      inputs = ["session_id=" + session_id, "username=" + username, "token=" + token] ',
         '      inputs.add("latest=" + latest)',
         '      inputs.add("replica=" + replica)',
         '    inflows:',
-        '      parallel_id: /variable/parallel_id/',
+        '      session_id: /variable/session_id/',
         '      username: /variable/username/',
         '      token: /variable/token/',
         '      latest: /variable/latest/ ',
@@ -865,9 +864,9 @@ def _create_qc_workflow_yaml(DATA, user_id, token, wps):
         '  type: GroovyActorNode',
         '  properties:',
         '    actor.step: | ',
-        '      inputs = ["parallel_id=" + parallel_id, "username=" + username, "token=" + token] ',
+        '      inputs = ["session_id=" + session_id, "username=" + username, "token=" + token] ',
         '    inflows:',
-        '      parallel_id: /variable/parallel_id/',
+        '      session_id: /variable/session_id/',
         '      username: /variable/username/',
         '      token: /variable/token/',
         '    outflows:',
@@ -877,9 +876,9 @@ def _create_qc_workflow_yaml(DATA, user_id, token, wps):
         '  type: GroovyActorNode',
         '  properties:',
         '    actor.step: | ',
-        '      inputs = ["parallel_id=" + parallel_id, "username=" + username, "token=" + token] ',
+        '      inputs = ["session_id=" + session_id, "username=" + username, "token=" + token] ',
         '    inflows:',
-        '      parallel_id: /variable/parallel_id/',
+        '      session_id: /variable/session_id/',
         '      username: /variable/username/',
         '      token: /variable/token/',
         '    outflows:',
@@ -890,11 +889,11 @@ def _create_qc_workflow_yaml(DATA, user_id, token, wps):
         '  properties: ',
         '    actor.step: |',
         '      run = "run"',
-        '      inputs = ["parallel_ids=" + parallel_id, "username=" + username, "token=" + token] ',
+        '      inputs = ["session_ids=" + session_id, "username=" + username, "token=" + token] ',
         '    inflows:',
         '      c1: /variable/publish_quality_finished/',
         '      c2: /variable/publish_meta_finished/',
-        '      parallel_id: /variable/parallel_id/',
+        '      session_id: /variable/session_id/',
         '      username: /variable/username/',
         '      token: /variable/token/',
         '    outflows:',
