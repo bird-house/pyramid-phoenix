@@ -25,6 +25,7 @@ import config_public as config
 
 from owslib.wps import WPSExecution, ComplexData
 
+from .exceptions import TokenError
 from .security import is_valid_user
 from .models import update_user
 from .wps import WPSSchema, get_wps
@@ -162,7 +163,6 @@ def login(request):
     email = verify_login(request)
 
     # update user list
-    update_user(request, user_id=email)
     
     # check whitelist
     if not is_valid_user(request, email):
@@ -171,7 +171,10 @@ def login(request):
         #    request.session.flash('Sorry, you are not on the list')
         return {'redirect': '/register', 'success': False}
     logger.info("persona login successful for user %s", email)
-    update_user(request, user_id=email, activated=True)
+    try:
+        update_user(request, user_id=email, update_token=True, activated=True)
+    except TokenError as e:
+        request.session.flash(e.message, queue='error')
     # Add the headers required to remember the user to the response
     request.response.headers.extend(remember(request, email))
     # Return a json message containing the address or path to redirect to.
@@ -213,7 +216,13 @@ def login_openid(request):
 
             if is_valid_user(request, result.user.email):
                 logger.info("openid login successful for user %s", result.user.email)
-                update_user(request, user_id=result.user.email, openid=result.user.id, activated=True)
+                try:
+                    update_user(request, user_id=result.user.email,
+                                openid=result.user.id,
+                                update_token=True,
+                                activated=True)
+                except TokenError as e:
+                    request.session.flash(e.message, queue='error')
                 response.text = render('phoenix:templates/openid_success.pt',
                                        {'result': result},
                                        request=request)
@@ -221,7 +230,10 @@ def login_openid(request):
                 response.headers.extend(remember(request, result.user.email))
             else:
                 logger.info("openid login: user %s is not registered", result.user.email)
-                update_user(request, user_id=result.user.email, openid=result.user.id, activated=False)
+                update_user(request, user_id=result.user.email,
+                            openid=result.user.id,
+                            update_token=False,
+                            activated=False)
                 response.text = render('phoenix:templates/register.pt',
                                        {'email': result.user.email}, request=request)
     #logger.debug('response: %s', response)

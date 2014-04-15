@@ -77,7 +77,7 @@ def update_user(request,
                 activated=None,
                 credentials=None,
                 cert_expires=None,
-                update_token=True,
+                update_token=False,
                 update_login=True):
     logger.debug("update user %s", user_id)
        
