@@ -4,7 +4,9 @@ Todo list for Phoenix
 Helsinki
 --------
 
-* wizard: check if credential and token are valid
+* configure esgf search node
+* DONE: wizard: check if credential is valid
+* check if token is valid
 * upload files in wps ui
 * ipython notebook
 * tutorial for phoenix
@@ -13,7 +15,7 @@ Helsinki
 * configure admin users
 * enable local admin user
 * run test-suite in phoenix from ui
-* esgf cache should stay longer (1 week?)
+* DONE: esgf cache should stay longer (1 week?)
 
 Bugs
 ----
