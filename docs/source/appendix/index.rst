@@ -104,6 +104,7 @@ Python Web Frameworks and Utils
 
 * Authomatic - http://peterhudec.github.io/authomatic/
 * Bootstrap - http://getbootstrap.com/
+* Bootstrap 2.x - http://getbootstrap.com/2.3.2/index.html
 
 ====================
 Example WPS Requests

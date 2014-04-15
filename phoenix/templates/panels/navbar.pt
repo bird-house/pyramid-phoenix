@@ -9,11 +9,20 @@
           </a>
           <a class="brand" href="/">${title}</a>
           <div class="nav-collapse collapse">
-            <ul class="nav">
+            <ul class="nav dropdown">
               <li tal:repeat="item nav" class="${'active' if item['active'] else ''}">
                 <a href="${item['url']}"><i class="${item['icon']}"></i> ${item['name']}</a>
               </li>
-            </ul>            
+              <!--
+              <li>
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Dropdown trigger</a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                  <li><a tabindex="-1" href="#">Action</a></li>
+                  <li><a tabindex="-1" href="#">Another action</a></li>
+                </ul>
+              </li>
+              -->
+            </ul>
             <div class="pull-right">
               <ul class="nav pull-right">
                 <li class="${'active' if login else ''}">
