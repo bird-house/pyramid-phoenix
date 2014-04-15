@@ -33,6 +33,7 @@ Workflow Engines:
 * Taverna - http://www.taverna.org.uk/
 * VisTrails - http://www.vistrails.org/index.php/Main_Page
 * Kepler - https://kepler-project.org/
+* KNIME - http://www.knime.org/
 
 Taverna with WPS:
 
