@@ -30,12 +30,12 @@ def qc_wizard_check(request):
     else:
         session_id_help += " The existing Session IDs are:<br>" +", ".join(session_ids)
     qc_select_help = ("Comma separated list of parts of the path descriptions." +
-                      "If at least one description in the list matches the path is included." + 
+                      " If at least one description in the list matches the path is included." + 
                       " In the path description '.*' is for any character sequence. (e.g. " +
                       "AFR-44/.*/tas, EUR.*, /fx/)")
     qc_lock_help = ("Works similar to select, but prevents the given paths being added. " +
                     "Lock is stronger than select. (e.g. select tas and lock AFR-44 checks all "+
-                    "tas that do not contain AFR-44.)")
+                    "paths with tas that do not contain AFR-44.)")
 
     #get the example data directory
     service_url = get_wps(wps_url(request)).url
