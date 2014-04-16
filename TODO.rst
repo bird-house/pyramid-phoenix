@@ -7,7 +7,7 @@ Helsinki
 * configure esgf search node
 * DONE: wizard: check if credential is valid
 * DONE: check if token is valid
-* upload files in wps ui
+* upload files function in wps ui
 * ipython notebook
 * tutorial for phoenix
 * using glob search for local files
