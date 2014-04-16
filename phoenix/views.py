@@ -527,6 +527,15 @@ class ExecuteView(FormView):
         return HTTPFound(location=self.request.route_url('jobs'))
 
 @view_config(
+    route_name='settings',
+    renderer='templates/settings.pt',
+    layout='default',
+    permission='admin'
+    )
+def settings(request):
+    return dict()
+
+@view_config(
     route_name='monitor',
     renderer='templates/embedded.pt',
     layout='default',
@@ -624,7 +633,7 @@ def edit_catalog_entry(context, request):
 
 @view_config(
     route_name='admin_user_edit',
-    renderer='templates/admin.pt',
+    renderer='templates/form.pt',
     layout='default',
     permission='edit',
     )
@@ -652,7 +661,7 @@ class AdminUserEditView(FormView):
 
 @view_config(
     route_name='admin_user_edit_task',
-    renderer='templates/admin.pt',
+    renderer='templates/form.pt',
     layout='default',
     permission='edit',
     )
@@ -699,7 +708,7 @@ class AdminUserEditTaskView(FormView):
 
 @view_config(
     route_name='admin_user_register',
-    renderer='templates/admin.pt',
+    renderer='templates/form.pt',
     layout='default',
     permission='edit',
     )
@@ -728,7 +737,7 @@ class AdminUserRegisterView(FormView):
 
 @view_config(
     route_name='admin_user_unregister',
-    renderer='templates/admin.pt',
+    renderer='templates/form.pt',
     layout='default',
     permission='edit',
     )
@@ -749,7 +758,7 @@ class AdminUserUnregisterView(FormView):
 
 @view_config(
     route_name='admin_user_activate',
-    renderer='templates/admin.pt',
+    renderer='templates/form.pt',
     layout='default',
     permission='edit',
     )
@@ -770,7 +779,7 @@ class AdminUserActivateView(FormView):
 
 @view_config(
     route_name='admin_user_deactivate',
-    renderer='templates/admin.pt',
+    renderer='templates/form.pt',
     layout='default',
     permission='edit',
     )

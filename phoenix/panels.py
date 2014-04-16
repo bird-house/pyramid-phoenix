@@ -28,34 +28,12 @@ def navbar(context, request):
         nav.append( nav_item('Map', request.route_url('map'), 'icon-globe') )
         nav.append( nav_item('My Account', request.route_url('account'), 'icon-user') )
     if has_permission('admin', request.context, request):
-        nav.append( nav_item('Thredds', request.route_url('tds'), 'icon-list') )
-        nav.append( nav_item('Catalog', request.route_url('catalog'), 'icon-edit') )
-        nav.append( nav_item('Monitor', request.route_url('monitor'), 'icon-eye-open') )
-        nav.append( nav_item('Admin', request.route_url('admin_user_edit'), 'icon-edit') )
+        nav.append( nav_item('Settings', request.route_url('settings'), 'icon-edit') )
     nav.append( nav_item('Help', request.route_url('help'), 'icon-question-sign') )
 
     login = request.current_route_url() == request.route_url('signin')
 
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request), login=login)
-
-# admin_navbar
-# ------
-@panel_config(name='admin_navbar',
-              renderer='templates/panels/subnavbar.pt')
-def admin_navbar(context, request):
-    def nav_item(name, url, icon):
-        active = request.current_route_url() == url
-        return dict(name=name, url=url, active=active, icon=icon)
-
-    nav = [
-        nav_item('Register User', request.route_url('admin_user_register'), 'icon-edit'),
-        nav_item('Unregister Users', request.route_url('admin_user_unregister'), 'icon-edit'),
-        nav_item('Activate Users', request.route_url('admin_user_activate'), 'icon-edit'),
-        nav_item('Deactivate Users', request.route_url('admin_user_deactivate'), 'icon-edit'),
-        nav_item('Edit User', request.route_url('admin_user_edit'), 'icon-edit'),
-        ]
-
-    return dict(title='Phoenix', nav=nav, username=authenticated_userid(request))
 
 
 #==============================================================================

@@ -92,6 +92,7 @@ def main(global_config, **settings):
     config.add_route('qc_wizard_yaml', '/qc_wizard_yaml')
     config.add_route('map', '/map')
     config.add_route('account', '/account')
+    config.add_route('settings', '/settings')
     config.add_route('help', '/help')
     config.add_route('signin', '/signin')
     config.add_route('login', '/login')

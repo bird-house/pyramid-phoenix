@@ -1,0 +1,79 @@
+<metal:block use-macro="main_template">
+        
+  <div metal:fill-slot="content">
+
+    <!-- User -->
+    
+    <h2>User</h2>
+    <div class="hero-unit">
+      <ul class="thumbnails">
+     
+        <li class="span2">
+          <a href="/admin/user/register" class="thumbnail">
+            <img data-src="" alt="">
+            <h3>Register</h3>
+            <p>Register User ...</p>
+          </a>
+        </li>
+        <li class="span2">
+          <a href="/admin/user/unregister" class="thumbnail">
+            <img data-src="" alt="">
+            <h3>Unregister</h3>
+            <p>...</p>
+          </a>
+        </li>
+        <li class="span2">
+          <a href="/admin/user/activate" class="thumbnail">
+            <img data-src="" alt="">
+            <h3>Activate</h3>
+            <p>...</p>
+          </a>
+        </li>
+        <li class="span2">
+          <a href="/admin/user/deactivate" class="thumbnail">
+            <img data-src="" alt="">
+            <h3>Deactivate</h3>
+            <p>...</p>
+          </a>
+        </li>
+        <li class="span2">
+          <a href="/admin/user/edit" class="thumbnail">
+            <img data-src="" alt="">
+            <h3>Edit</h3>
+            <p>...</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Other -->
+   
+    <h2>Other</h2>
+    <div class="hero-unit">
+      <ul class="thumbnails">  
+        <li class="span2">
+          <a href="/monitor" class="thumbnail">
+            <img data-src="" alt="">
+            <h3>Monitor</h3>
+            <p>...</p>
+          </a>
+        </li>
+        <li class="span2">
+          <a href="/tds" class="thumbnail">
+            <img data-src="" alt="">
+            <h3>Thredds</h3>
+            <p>...</p>
+          </a>
+        </li>
+        <li class="span2">
+          <a href="/catalog" class="thumbnail">
+            <img data-src="" alt="">
+            <h3>Catalog</h3>
+            <p>...</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+   
+</metal:block>
