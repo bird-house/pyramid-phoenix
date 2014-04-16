@@ -12,16 +12,19 @@ from .helpers import wps_url
 @panel_config(name='navbar',
               renderer='templates/panels/navbar.pt')
 def navbar(context, request):
-    def nav_item(name, url, icon):
+    def nav_item(name, url, icon, dropdowns=[]):
         active = request.current_route_url() == url
-        return dict(name=name, url=url, active=active, icon=icon)
+        return dict(name=name, url=url, active=active, icon=icon, dropdowns=dropdowns)
 
     nav = []
     nav.append( nav_item('Home', request.route_url('home'), 'icon-home') )
     if has_permission('edit', request.context, request):
         nav.append( nav_item('Processes', request.route_url('processes'), 'icon-star') )
         nav.append( nav_item('My Jobs', request.route_url('jobs'), 'icon-list') )
-        nav.append( nav_item('Wizard', request.route_url('wizard'), 'icon-star') )
+        dropdowns = []
+        dropdowns.append(nav_item('Simple', request.route_url('wizard'), 'icon-star'))
+        dropdowns.append(nav_item('QC', request.route_url('qc_wizard_check'), 'icon-star'))
+        nav.append( nav_item('Wizard', None, 'icon-star', dropdowns) )
         nav.append( nav_item('Map', request.route_url('map'), 'icon-globe') )
         nav.append( nav_item('My Account', request.route_url('account'), 'icon-user') )
     if has_permission('admin', request.context, request):

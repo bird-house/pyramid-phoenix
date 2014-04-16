@@ -1,37 +1,43 @@
 <div class="container">
-    <div class="navbar">
+    <div class="navbar navbar-static-top">
       <div class="navbar-inner">
-        <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="/">${title}</a>
-          <div class="nav-collapse collapse">
-            <ul class="nav dropdown">
-              <li tal:repeat="item nav" class="${'active' if item['active'] else ''}">
+        
+        <!-- title -->
+        <a class="brand" href="/">${title}</a>
+        
+        <!-- links -->
+        <ul class="nav">
+          <div tal:repeat="item nav" class="nav"> <!-- loop over navigation items -->
+            <!-- no dropdowns -->
+            <div tal:condition="python:len(item['dropdowns']) == 0">
+              <li class="${'active' if item['active'] else ''}">
                 <a href="${item['url']}"><i class="${item['icon']}"></i> ${item['name']}</a>
-              </li>
-              <!--
               <li>
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Dropdown trigger</a>
+            </div>
+            <!-- with dropdowns -->
+            <div tal:condition="python:len(item['dropdowns']) > 0">
+              <li class="nav dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" data-target="#"><i class="${item['icon']}"></i> ${item['name']}</a>
+                <b class="caret"></b>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                  <li><a tabindex="-1" href="#">Action</a></li>
-                  <li><a tabindex="-1" href="#">Another action</a></li>
+                  <li tal:repeat="subitem item['dropdowns']">
+                    <a href="${subitem['url']}"><i class="${subitem['icon']}"></i> ${subitem['name']}</a>
+                  </li>
                 </ul>
               </li>
-              -->
-            </ul>
-            <div class="pull-right">
-              <ul class="nav pull-right">
-                <li class="${'active' if login else ''}">
-                  ${request.login_button}
-                </li>
-              </ul>
-            </div>
-          </div><!--/.nav-collapse -->
+            </div> <!-- dropdowns end -->
+          </div> <!-- loop end -->
+        </ul>
+        
+        <!-- sign-in -->
+        <div class="pull-right">
+          <ul class="nav pull-right">
+            <li class="${'active' if login else ''}">
+              ${request.login_button}
+            </li>
+          </ul>
         </div>
+       
       </div>
     </div>
 </div>
