@@ -797,8 +797,10 @@ class AdminUserDeactivateView(FormView):
     permission='edit'
     )
 def map(request):
-    userid=authenticated_userid(request)
-    return dict(userid=userid)
+    userid = authenticated_userid(request)
+    from .models import user_token
+    token = user_token(request, userid)
+    return dict(token=token)
 
 @view_config(
     route_name='help',
