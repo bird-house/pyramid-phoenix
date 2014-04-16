@@ -56,60 +56,31 @@ def navbar(context, request):
 #     return dict(lastlogin=lastlogin, processes=processes)
 
 
-#==============================================================================
-# welcome
-#==============================================================================
-
-@panel_config(name='welcome',
-              renderer='templates/panels/welcome.pt')
+@panel_config(name='welcome', renderer='templates/panels/welcome.pt')
 def welcome(context, request, title):
     return dict(title=title,
                 logged_in=authenticated_userid(request),
                 wps_service_url=wps_url(request))
 
-
-#==============================================================================
-# heading_processes
-#==============================================================================
-
-@panel_config(name='heading_processes',
-              renderer='templates/panels/heading_processes.pt')
+@panel_config(name='heading_processes', renderer='templates/panels/heading_processes.pt')
 def heading_processes(context, request):
     return dict(title='Run a process')
-
-
-#==============================================================================
-# heading_history
-#==============================================================================
 
 @panel_config(name='heading_jobs',
               renderer='templates/panels/heading_jobs.pt')
 def heading_history(context, request):
     return dict(title='Monitor processes')
 
-#==============================================================================
-# heading_demo
-#==============================================================================
-
 @panel_config(name='heading_info',
               renderer='templates/panels/heading_info.pt')
 def heading_info(context, request):
     return dict(title='Info')
 
-#==============================================================================
-# heading_users
-#==============================================================================
-
 @panel_config(name='heading_stats',
               renderer='templates/panels/heading_stats.pt')
 def heading_statistics(context, request):
     from .models import count_users
-    return dict(title='Statistics', num_users=count_users(request))
-
-
-#==============================================================================
-# headings
-#==============================================================================
+    return count_users(request)
 
 @panel_config(name='headings')
 def headings(context, request):
@@ -119,11 +90,6 @@ def headings(context, request):
         return '\n'.join([lm.render_panel(name, *args, **kw)
              for name, args, kw in layout.headings])
     return ''
-
-
-#==============================================================================
-# footer
-#==============================================================================
 
 @panel_config(name='footer')
 def footer(context, request):

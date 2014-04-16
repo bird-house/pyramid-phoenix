@@ -133,7 +133,16 @@ def is_user_activated(request, user_id):
 
 def count_users(request):
     db = database(request)
-    return db.users.count()
+
+    d = datetime.datetime.now() - datetime.timedelta(hours=3)
+    num_logins_3h = db.users.find({"last_login": {"$gt": d}}).count()
+
+    d = datetime.datetime.now() - datetime.timedelta(days=7)
+    num_logins_7d = db.users.find({"last_login": {"$gt": d}}).count()
+
+    return dict(num_users=db.users.count(),
+                num_logins_3h=num_logins_3h,
+                num_logins_7d=num_logins_7d)
 
 def user_with_id(request, user_id):
     db = database(request)

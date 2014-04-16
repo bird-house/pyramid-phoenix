@@ -4,6 +4,7 @@ Todo list for Phoenix
 Helsinki
 --------
 
+* openid login box for dkrz etc
 * configure esgf search node
 * DONE: wizard: check if credential is valid
 * DONE: check if token is valid
@@ -21,12 +22,12 @@ Bugs
 ----
 
 * no token when wps not avail at login: need update token button
-* need index.html page on mouflon for redirect to port 80
+* REJECTED: need index.html page on mouflon for redirect to port 80
 * need to proxy ports for tomcat, wps, ...
-* phoenix fails sometimes with: can't find command '../pyramid-phoenix/bin/phoenix.sh'
+* REJECTED: phoenix fails sometimes with: can't find command '../pyramid-phoenix/bin/phoenix.sh'
 * wizard: cookie too long (need to use database)
 * catalog: get_wps_with_auth fails
-* get-wms files: use token (check map)
+* DONE: get-wms files: use token (check map)
 
 
 Common
