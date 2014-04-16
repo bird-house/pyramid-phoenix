@@ -9,35 +9,35 @@
       <ul class="thumbnails">
      
         <li class="span2">
-          <a href="/admin/user/register" class="thumbnail">
+          <a href="/settings/user/register" class="thumbnail">
             <img data-src="" alt="">
             <h3>Register</h3>
             <p>Register User ...</p>
           </a>
         </li>
         <li class="span2">
-          <a href="/admin/user/unregister" class="thumbnail">
+          <a href="/settings/user/unregister" class="thumbnail">
             <img data-src="" alt="">
             <h3>Unregister</h3>
             <p>...</p>
           </a>
         </li>
         <li class="span2">
-          <a href="/admin/user/activate" class="thumbnail">
+          <a href="/settings/user/activate" class="thumbnail">
             <img data-src="" alt="">
             <h3>Activate</h3>
             <p>...</p>
           </a>
         </li>
         <li class="span2">
-          <a href="/admin/user/deactivate" class="thumbnail">
+          <a href="/settings/user/deactivate" class="thumbnail">
             <img data-src="" alt="">
             <h3>Deactivate</h3>
             <p>...</p>
           </a>
         </li>
         <li class="span2">
-          <a href="/admin/user/edit" class="thumbnail">
+          <a href="/settings/user/edit" class="thumbnail">
             <img data-src="" alt="">
             <h3>Edit</h3>
             <p>...</p>
@@ -52,21 +52,21 @@
     <div class="hero-unit">
       <ul class="thumbnails">  
         <li class="span2">
-          <a href="/monitor" class="thumbnail">
+          <a href="/settings/monitor" class="thumbnail">
             <img data-src="" alt="">
             <h3>Monitor</h3>
             <p>...</p>
           </a>
         </li>
         <li class="span2">
-          <a href="/tds" class="thumbnail">
+          <a href="/settings/thredds" class="thumbnail">
             <img data-src="" alt="">
             <h3>Thredds</h3>
             <p>...</p>
           </a>
         </li>
         <li class="span2">
-          <a href="/catalog" class="thumbnail">
+          <a href="/settings/catalog" class="thumbnail">
             <img data-src="" alt="">
             <h3>Catalog</h3>
             <p>...</p>
