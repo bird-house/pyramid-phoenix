@@ -112,6 +112,7 @@ def execute_wps(wps, identifier, params):
 
         # there might be more than one value (maxOccurs > 1)
         for value in values:
+            logger.debug('handling value %s, type=%s', value, type(value))
             # bbox
             if input_types[key] == None:
                 # TODO: handle bounding box
@@ -126,19 +127,23 @@ def execute_wps(wps, identifier, params):
             # complex data
             elif input_types[key] == 'ComplexData':
                 # TODO: handle complex data
-                logger.debug('complex value: %s' % value)
+                logger.debug('complex value')
                 if is_url(value):
-                    inputs.append( (key, value) )
-                elif type(value) == type({}):
-                    if value.has_key('fp'):
-                        str_value = value.get('fp').read()
-                        inputs.append( (key, str_value) )
+                    logger.debug('is url')
+                    inputs.append( (key, str(value)) )
                 else:
-                    inputs.append( (key, str(value) ))
+                    logger.debug('is upload')
+                    try:
+                        if value.has_key('fp'):
+                            logger.debug('reading content')
+                            content = value.get('fp').read()
+                            inputs.append( (key, content) )
+                    except:
+                        logger.error('could not add complex value')
             else:
                 inputs.append( (key, str(value)) )
 
-    logger.debug('inputs =  %s', inputs)
+    logger.debug('num inputs =  %s', len(inputs))
 
     outputs = []
     for output in process.processOutputs:

@@ -9,6 +9,8 @@ Helsinki
 * DONE: wizard: check if credential is valid
 * DONE: check if token is valid
 * upload files function in wps ui
+http://docs.pylonsproject.org/projects/pyramid-deform/en/latest/
+http://deform.readthedocs.org/en/latest/interfaces.html
 * ipython notebook
 * tutorial for phoenix
 * using glob search for local files
