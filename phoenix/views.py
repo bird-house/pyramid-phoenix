@@ -57,8 +57,10 @@ def add_global(event):
 
 @view_config(context=Exception)
 def unknown_failure(exc, request):
+    import traceback
     # If the view has two formal arguments, the first is the context.
     # The context is always available as ``request.context`` too.
+    logger.error('unknown failure %s', traceback.format_exc())
     msg = exc.args[0] if exc.args else ""
     response =  Response('Ooops, something went wrong: %s' % (msg))
     response.status_int = 500
