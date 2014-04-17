@@ -623,7 +623,7 @@ def delete_catalog_entry(context, request):
 def edit_catalog_entry(context, request):
     wps_url = request.params.get('url', None)
     result = dict(url=wps_url)
-    logger.debug('delete entry %s' %(wps_url))
+    logger.debug('edit entry %s' %(wps_url))
     if wps_url is not None:
         entry = catalog.get_wps_entry(request, wps_url)
         result = dict(url=wps_url, notes=entry.get('notes'),
@@ -820,8 +820,22 @@ def map(request):
 def help(request):
     return dict(external_url='/docs')
 
-@view_config(route_name='account', renderer='templates/account.pt',
-             layout='default', permission='edit')
+@view_config(renderer='json', name='update.token', permission='edit')
+def update_token(context, request):
+    """
+    update user token
+    """
+    user_id=authenticated_userid(request)
+    logger.debug('update token: user_id=%s', user_id)
+    
+    update_user(
+        request = request,
+        user_id = user_id,
+        update_token=True
+        )
+    return True
+
+@view_config(route_name='account', renderer='templates/account.pt', layout='default', permission='edit')
 def account(request):
     user_id=authenticated_userid(request)
     logger.debug('account: user_id=%s', user_id)
