@@ -37,15 +37,6 @@ def qc_wizard_check(request):
                     "Lock is stronger than select. (e.g. select tas and lock AFR-44 checks all "+
                     "paths with tas that do not contain AFR-44.)")
 
-    #get the example data directory
-    service_url = get_wps(wps_url(request)).url
-    identifier = 'Get_Example_Directory'
-    inputs = []
-    outputs = "example_directory"
-    from wps import execute
-    wpscall_result = execute(service_url, identifier, inputs=inputs, output=outputs)
-    EXAMPLEDATADIR = wpscall_result[0]
-
     #a field in fields must contain text, id and value. The entry help is optional.
     #allowed_values can be used if a limited number of possibile values should be available.
     #In that case value will be used as default if it is in allowed_values.
