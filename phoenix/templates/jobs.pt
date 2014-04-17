@@ -54,16 +54,17 @@ Refresh period:
                     $("*").tooltip('hide')
                     $("*").popover('hide')
                     document.getElementById('content').innerHTML = content;
-                    selected = document.getElementsByName("selected");
+                    var selected = document.getElementsByName("selected");
                     for(j=0; j < selectedValues.length;j++){
                         for(i=0; i < selected.length;i++){
                             if(selected[i].value==selectedValues[j]){
                                 selected[i].checked = true;
                                 break;}}}
                     var reloadTime =  document.getElementById("reloadTime").value;
-                    timer = setTimeout("reload()",reloadTime*1000);
+                    //timeout needs to be declared global for stopping it
+                    timeout = setTimeout("reload()",reloadTime*1000);
                     //Add an arrow for the sort direction
-                    text = document.getElementById(orderBy);
+                    var text = document.getElementById(orderBy);
                     if(orderType=="normal"){
                         text.innerHTML+="&#x25B2;";}
                     else{
@@ -75,7 +76,7 @@ Refresh period:
   
   function showValue(){
       document.getElementById("range").innerHTML=document.getElementById("reloadTime").value;
-      clearTimeout(timer);
+      clearTimeout(timeout);
       reload();}
   function pageLoaded(){    
       var hiddendiv = document.getElementById('scriptOnly')
