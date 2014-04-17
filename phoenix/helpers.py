@@ -98,6 +98,7 @@ def get_process_metadata(wps, process_id):
     if len(output.data) != 1:
         return {}
     metadata = json.loads(output.data[0])
+    logger.debug('extra metadata loaded: %s, type = %s', metadata, type(metadata))
     return metadata
 
 def execute_wps(wps, identifier, params):

@@ -173,7 +173,7 @@ class WPSSchema(colander.SchemaNode):
 
     appstruct = {}
 
-    def __init__(self, info=False, process=None, unknown='ignore', **kw):
+    def __init__(self, info=False, process=None, metadata=None, unknown='ignore', **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
@@ -183,9 +183,12 @@ class WPSSchema(colander.SchemaNode):
 
            Default: False
 
-        process
+        process:
            An ``WPS`` process description that you want a ``Colander`` schema
            to be generated for.
+
+        metadata:
+           Additional metadata for wps process.
 
         unknown
            Represents the `unknown` argument passed to
@@ -214,6 +217,7 @@ class WPSSchema(colander.SchemaNode):
         colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
         self.info = info
         self.process = process
+        self.metadata = metadata
         self.unknown = unknown
         self.kwargs = kwargs or {}   
 
@@ -364,21 +368,25 @@ class WPSSchema(colander.SchemaNode):
 
     def complex_data(self, data_input):
         # TODO: handle upload, url, direct input for complex data
+        node = None
 
-        node_upload = colander.SchemaNode(
-            deform.FileData(),
-            name=data_input.identifier,
-            title=data_input.title,
-            widget=deform.widget.FileUploadWidget(tmpstore)
-            )
-        node_url = colander.SchemaNode(
-            colander.String(),
-            name = data_input.identifier,
-            title = data_input.title,
-            widget = deform.widget.TextInputWidget(),
-            validator = colander.url)
-
-        node = node_url
+        # check if input is uploaded
+        logger.debug('metadata=%s', self.metadata)
+        if data_input.identifier in self.metadata.get('uploads'):
+            node = colander.SchemaNode(
+                deform.FileData(),
+                name=data_input.identifier,
+                title=data_input.title,
+                widget=deform.widget.FileUploadWidget(tmpstore)
+                )
+        # otherwise input is provided as url
+        else:
+            node = colander.SchemaNode(
+                colander.String(),
+                name = data_input.identifier,
+                title = data_input.title,
+                widget = deform.widget.TextInputWidget(),
+                validator = colander.url)
 
         # sometimes abstract is not set
         if hasattr(data_input, 'abstract'):
@@ -448,6 +456,7 @@ class WPSSchema(colander.SchemaNode):
         cloned = self.__class__(
             self.info,
             self.process,
+            self.metadata,
             self.unknown,
             **self.kwargs)
         cloned.__dict__.update(self.__dict__)

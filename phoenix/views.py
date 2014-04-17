@@ -262,6 +262,7 @@ def home(request):
 def build_processes_form(request, formid='deform'):
     from pyramid.security import has_permission
     from .schema import ProcessSchema
+  
     url = request.session.get('phoenix.wps.url', wps_url(request))
     schema = ProcessSchema().bind(
         wps_url = url,
@@ -495,10 +496,14 @@ class ExecuteView(FormView):
                 url = session['phoenix.wps.url']
             self.wps = get_wps(url)
             process = self.wps.describeprocess(identifier)
+            from .helpers import get_process_metadata
+            metadata = get_process_metadata(self.wps, identifier)
+            logger.debug('metadata = %s', metadata)
             self.schema = self.schema_factory(
                 info = True,
                 title = process.title,
-                process = process)
+                process = process,
+                metadata = metadata)
         except:
             raise
        
