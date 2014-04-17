@@ -119,24 +119,10 @@ def search_metadata(url, wizard_state):
     
     states = wizard_state.get_step_states()
     process_state = states.get(SELECT_PROCESS)
-    processid = process_state['process']
-    identifier = 'org.malleefowl.metadata'
-    inputs = [("processid", str(processid))]
-    outputs = [("output",False)]
-    logger.debug("wps url=%s", url)
-    wps = get_wps(url)
-    # TODO: use simple wps call
-    from owslib.wps import monitorExecution
-    execution = wps.execute(identifier, inputs=inputs, output=outputs)
-    monitorExecution(execution)
-    if len(execution.processOutputs) != 1:
-        return
-    output = execution.processOutputs[0]
-    logger.debug('output %s, data=%s, ref=%s', output.identifier, output.data, output.reference)
-    if len(output.data) != 1:
-        return {}
-    metadata = json.loads(output.data[0])
-    return metadata
+    process_id = process_state['process']
+
+    from .helpers import get_process_metadata
+    return get_process_metadata(get_wps(url), process_id)
 
 def bind_search_schema(node, kw):
     logger.debug("bind esg search schema, kw=%s" % (kw))
