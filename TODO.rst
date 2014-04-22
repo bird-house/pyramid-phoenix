@@ -5,7 +5,7 @@ Helsinki
 --------
 
 * openid login box for dkrz etc
-* configure esgf search node
+* DONE: configure esgf search node
 * DONE: wizard: check if credential is valid
 * DONE: check if token is valid
 * upload files function in wps ui
@@ -23,7 +23,7 @@ http://deform.readthedocs.org/en/latest/interfaces.html
 Bugs
 ----
 
-* no token when wps not avail at login: need update token button
+* DONE: no token when wps not avail at login: need update token button
 * REJECTED: need index.html page on mouflon for redirect to port 80
 * need to proxy ports for tomcat, wps, ...
 * REJECTED: phoenix fails sometimes with: can't find command '../pyramid-phoenix/bin/phoenix.sh'
