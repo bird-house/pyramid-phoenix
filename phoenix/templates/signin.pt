@@ -1,6 +1,21 @@
 <metal:block use-macro="main_template">
+ 
   <div metal:fill-slot="content">
   
+    <!--
+    <div>
+      <h3><img src="${request.static_url('phoenix:static/images/Germany.png')}">DKRZ ESGF Node</h3>
+      <form id="openid" action="/login/openid">
+        <input type="text" name="username" placeholder="Your username" value="pingutest"/>
+        <input type="hidden" name="id" value="https://esgf-data.dkrz.de/esgf-idp/openid"/>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+        <span class="help-block">
+          Enter your username of your DKRZ ESGF OpenID account
+        </span>
+      </form>
+    </div>
+    -->
+
     <div>
       <h3><img src="${request.static_url('phoenix:static/images/OpenID_24.png')}">OpenID</h3>
       <form action="/login/openid">
@@ -11,6 +26,7 @@
         </span>
       </form>
     </div>
+
     
     <div>
       <h3>Mozilla Persona</h3>

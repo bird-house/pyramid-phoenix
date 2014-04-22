@@ -202,7 +202,7 @@ def login_openid(request):
 
     logger.debug('authomatic login result: %s', result)
     
-    if result:
+    if result:  
         if result.error:
             # Login procedure finished with an error.
             #request.session.flash('Sorry, login failed: %s' % (result.error.message))
@@ -215,6 +215,8 @@ def login_openid(request):
             logger.debug("user=%s, id=%s, email=%s, credentials=%s",
                       result.user.name, result.user.id, result.user.email, result.user.credentials)
             logger.debug("provider=%s", result.provider.name )
+            logger.debug("response headers=%s", response.headers.keys())
+            #logger.debug("response cookie=%s", response.headers['Set-Cookie'])
 
             if is_valid_user(request, result.user.email):
                 logger.info("openid login successful for user %s", result.user.email)
