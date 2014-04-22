@@ -56,6 +56,11 @@ function initMap(token) {
     {layers:'Countries,Bathymetry,Topography,Hillshading,Coastlines,Builtup+areas,Waterbodies,Rivers,Streams,Railroads,Highways,Roads,Trails,Borders,Cities,Airports',
      format: 'image/png'});
   map.addLayer(baseLayer);
+
+  baseLayer = new OpenLayers.Layer.WMS( 
+    "OpenLayers WMS",
+    "http://vmap0.tiles.osgeo.org/wms/vmap0", {layers: 'basic'} );
+  map.addLayer(baseLayer);
  
   map.zoomToMaxExtent();
 
