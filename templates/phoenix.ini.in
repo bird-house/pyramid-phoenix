@@ -94,7 +94,7 @@ formatter = generic
 
 [handler_filelog]
 class = FileHandler
-args = ('${phoenix:log_file}', 'a')
+args = ('${phoenix_logrotate:log_file}', 'a')
 level = DEBUG
 formatter = generic
 
