@@ -12,6 +12,7 @@ Helsinki
 http://docs.pylonsproject.org/projects/pyramid-deform/en/latest/
 http://deform.readthedocs.org/en/latest/interfaces.html
 * ipython notebook
+http://ipython.org/ipython-doc/stable/notebook/public_server.html
 * tutorial for phoenix
 * using glob search for local files
 * ipython examples for wps client (also chaining processes)
