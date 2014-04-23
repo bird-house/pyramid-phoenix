@@ -554,6 +554,15 @@ def monitor(request):
     return dict(external_url=supervisor_url(request))
 
 @view_config(
+    route_name='notebook',
+    renderer='templates/embedded.pt',
+    layout='default',
+    permission='admin'
+    )
+def notebook(request):
+    return dict(external_url='http://localhost:8888')
+
+@view_config(
     route_name='tds',
     renderer='templates/embedded.pt',
     layout='default',
