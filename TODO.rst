@@ -18,7 +18,7 @@ http://ipython.org/ipython-doc/stable/notebook/public_server.html
 * tutorial for phoenix
 * using glob search for local files
 * ipython examples for wps client (also chaining processes)
-* configure admin users
+* DONE: configure admin users
 * enable local admin user
 * run test-suite in phoenix from ui
 * DONE: esgf cache should stay longer (1 week?)

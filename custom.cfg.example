@@ -1,11 +1,10 @@
 [buildout]
-
 extends = buildout.cfg
 
 [install]
 prefix = 
-user = root
-group = root
+user = nobody
+group = nogroup
 
 [server]
 host = 127.0.0.1
