@@ -5,6 +5,7 @@ Helsinki
 --------
 
 * enable openssl
+* by default install with unpriviledged user
 * openid login box for dkrz etc
 * DONE: configure esgf search node
 * DONE: wizard: check if credential is valid

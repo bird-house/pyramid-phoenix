@@ -26,6 +26,7 @@ timeout = 900
 [security]
 sys_token = change_me_in_custom.cfg
 sys_userid = sys_malleefowl.org
+admin_users = admin@malleefowl.org
 
 [esgf]
 esg_search = http://esgf-data.dkrz.de/esg-search

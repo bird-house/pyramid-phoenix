@@ -38,7 +38,7 @@ persona.siteName = Phoenix
 #persona.logout_path = '/logout'
 
 # users with admin permission
-phoenix.admin_users = carsten@linacs.org nils.hempelmann@hzg.de kipp@dkrz.de
+phoenix.admin_users = ${security:admin_users}
 
 # supervisor service
 phoenix.supervisor = http://${server:hostname}:${ports:supervisor}
