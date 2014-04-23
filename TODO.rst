@@ -4,6 +4,7 @@ Todo list for Phoenix
 Helsinki
 --------
 
+* enable openssl
 * openid login box for dkrz etc
 * DONE: configure esgf search node
 * DONE: wizard: check if credential is valid
