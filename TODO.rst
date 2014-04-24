@@ -15,6 +15,7 @@ http://docs.pylonsproject.org/projects/pyramid-deform/en/latest/
 http://deform.readthedocs.org/en/latest/interfaces.html
 * ipython notebook
 http://ipython.org/ipython-doc/stable/notebook/public_server.html
+http://nbviewer.ipython.org/github/koldunovn/py_klimacampus/blob/master/meeting_004/mpld3_my.ipynb?create=1
 * tutorial for phoenix
 * using glob search for local files
 * ipython examples for wps client (also chaining processes)
