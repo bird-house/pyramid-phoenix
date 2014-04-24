@@ -409,7 +409,7 @@ def jobsupdate(request):
         job["identifier"] ='<a rel="tooltip" data-placement="right" title="ID:'+uuid+'">'+identifier+'</a>'
         for tuplepair in tableheader:
             key = tuplepair[0]
-            tablerow.append(job[key])
+            tablerow.append(job.get(key))
 
         status = job["status"]
         tr1 = "Unknown status:"+str(status)
@@ -428,11 +428,11 @@ def jobsupdate(request):
                    status + '</a>')
         elif status == "ProcessFailed":
             tr1 = ('<a href="#" class="label label-warning" data-toggle="popover"' + 
-                  ' data-placement="left" data-content="' + job["error_message"] + 
+                  ' data-placement="left" data-content="' + job.get("error_message", '') + 
                   '" data-original-title="Error Message">' + status + '</a>')
         elif status == "Exception":
             tr1 = ('<a href="#" class="label label-important" data-toggle="popover"' +
-                  ' data-placement="left" data-content="' + job["error_message"] +
+                  ' data-placement="left" data-content="' + job.get("error_message", '') +
                   '" data-original-title="Error Message">'+ status +'</a>')
         #The last element is status
         tablerow[-1] = tr1
