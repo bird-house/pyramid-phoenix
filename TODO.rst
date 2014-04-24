@@ -39,6 +39,8 @@ Bugs
 Common
 ------
 
+* try linuxbrew
+https://github.com/mazzaroth/initpyr
 * configure logs per level
 * maybe run simple wf without restflow
 * refactor phoenix.cfg

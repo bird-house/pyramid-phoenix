@@ -10,10 +10,15 @@ port = *:${ports:supervisor}
 ;password = Admin123
 
 [supervisord]
+childlogdir=/var/log/supervisor            ; ('AUTO' child log dir, default $TEMP)
 logfile=/var/log/supervisor/supervisord.log ; (main log file;default $CWD/supervisord.log)
 pidfile=/var/run/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
-childlogdir=/var/log/supervisor            ; ('AUTO' child log dir, default $TEMP)
-loglevel=debug
+logfile_maxbytes=50MB
+logfile_backups=10
+loglevel=info
+nodaemon=false
+minfds=1024
+minprocs=200
 
 ; the below section must remain in the config file for RPC
 ; (supervisorctl/web interface) to work, additional interfaces may be

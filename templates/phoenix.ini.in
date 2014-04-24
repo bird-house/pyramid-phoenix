@@ -59,9 +59,6 @@ phoenix.thredds = http://${server:hostname}:${ports:http}/thredds
 
 [server:main]
 use = egg:gunicorn#main
-bind = unix://${socket}
-workers = 1
-timeout = 240
 
 ###
 # logging configuration
