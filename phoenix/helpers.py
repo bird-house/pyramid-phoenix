@@ -169,14 +169,7 @@ def execute_wps(wps, identifier, params):
     for output in process.processOutputs:
         outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
 
-    logger.debug('identifier=%s', identifier)
-    logger.debug('inputs=%s', inputs)
-    logger.debug('outputs=%s', outputs)
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
-    from owslib.wps import monitorExecution
-    monitorExecution(execution)
-    logger.debug('url=%s, status=%s', wps.url, execution.status)
- 
     logger.debug('status_location = %s', execution.statusLocation)
 
     return execution
