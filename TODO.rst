@@ -27,6 +27,7 @@ http://nbviewer.ipython.org/github/koldunovn/py_klimacampus/blob/master/meeting_
 Bugs
 ----
 
+* DONE: cdo sinfo etc: <Exception exceptionCode="MissingParameterValue" locator="file_identifier"/>
 * DONE: no token when wps not avail at login: need update token button
 * REJECTED: need index.html page on mouflon for redirect to port 80
 * need to proxy ports for tomcat, wps, ...
@@ -41,15 +42,15 @@ Common
 
 * improve usage of install:prefix
 * try linuxbrew
+https://github.com/Homebrew/linuxbrew
 https://github.com/mazzaroth/initpyr
-* configure logs per level
 * maybe run simple wf without restflow
 * refactor phoenix.cfg
 https://github.com/mazzaroth/initpyr
 * configure browserid, openid:
   * http://www.rfk.id.au/blog/entry/painless-auth-pyramid-browserid/
   * http://quantumcore.org/docs/repoze.who.plugins.openid/
-* show how long esgf certificate is valid
+* DONE: show how long esgf certificate is valid
 * run test-suite from ui (check common processes with nose)
 * refactor wps schema, add token default value
 * split phoenix logging for info, debug, ...

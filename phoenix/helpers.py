@@ -70,15 +70,18 @@ def is_url(text):
 
     TODO: code is taken from pywps. Maybe there is a better alternative.
     """
+    logger.debug("check is_url, text=%s", text)
         
     try:
-        (urltype, opaquestring) = urllib.splittype(text)
+        (urltype, opaquestring) = urllib2.splittype(text)
+        logger.debug('urltype=%s, str=%s', urltype, opaquestring)
 
         if urltype in ["http","https","ftp"]:
             return True
         else:
             return False
-    except:
+    except Exception as e:
+        logger.error('error occured in is_url, error=%s', e.message)
         return False
 
 def get_process_metadata(wps, process_id):
