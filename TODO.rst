@@ -39,6 +39,9 @@ Bugs
 Common
 ------
 
+* maybe run simple wf without restflow
+* refactor phoenix.cfg
+https://github.com/mazzaroth/initpyr
 * configure browserid, openid:
   * http://www.rfk.id.au/blog/entry/painless-auth-pyramid-browserid/
   * http://quantumcore.org/docs/repoze.who.plugins.openid/
