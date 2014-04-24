@@ -1,6 +1,6 @@
 # Phoenix: a pyramid web frontend for WPS 
 upstream phoenix {
-    server unix:${socket} fail_timeout=0;
+    server unix://${socket} fail_timeout=0;
 }
 
 # caching
@@ -9,7 +9,7 @@ proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=phoenix:20m inactive=7d m
 
 server 
 {
-    listen ${ports:http};
+    listen ${ports:http} default;
     server_name _;
 
     root /usr/share/nginx/www;      
@@ -18,21 +18,24 @@ server
     # Phoenix ...
     # -----------
 
-    location / 
-    {
+    # Local Docs ...
+    location /docs/ {
+        alias                   ${buildout:directory}/docs/html;
+    }
+
+    # Static files
+    location /static/ {
+        alias                   ${buildout:directory}/phoenix/static/;
+    }
+
+    location / {
         # checks for static file, if not found proxy to app
         try_files $uri @proxy_to_phoenix;
     }
 
-    # Local Docs ...
-    location /docs
-    {
-        alias                   ${buildout:directory}/docs/html;
-    }
-
     # esg search proxy at /esg-search/
     # http://stackoverflow.com/questions/7957998/nginx-caching-ajax
-    location /esg-search 
+    location /esg-search/ 
     {
         proxy_pass              ${esgf:esg_search};
         proxy_cache             phoenix;
@@ -47,13 +50,13 @@ server
     }
 
     # pywps avail at /wps
-    location /wps 
+    location /wps/ 
     {
         proxy_pass              ${malleefowl:wps};
     }
 
     # thredds avail at /thredds
-    location /thredds 
+    location /thredds/ 
     {
         proxy_pass              ${malleefowl:thredds};
     }
