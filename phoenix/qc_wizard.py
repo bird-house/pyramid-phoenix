@@ -284,6 +284,8 @@ def qc_wizard_yaml(request):
                   ("publish_quality", publish_quality), ("cleanup", cleanup)]
 
         outputs = [("process_log", True)]
+        #wps.execute does not like empty strings as value, so filter it out
+        inputs = [(x,y) for (x,y) in inputs if y!=""]
 
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
