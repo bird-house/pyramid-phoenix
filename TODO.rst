@@ -5,7 +5,7 @@ Helsinki
 --------
 
 * enable openssl
-* by default install with unpriviledged user
+* DONE: by default install with unpriviledged user
 * openid login box for dkrz etc
 * DONE: configure esgf search node
 * DONE: wizard: check if credential is valid
@@ -39,6 +39,7 @@ Bugs
 Common
 ------
 
+* improve usage of install:prefix
 * try linuxbrew
 https://github.com/mazzaroth/initpyr
 * configure logs per level
