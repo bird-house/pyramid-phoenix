@@ -13,7 +13,7 @@ Helsinki
 * upload files function in wps ui
 http://docs.pylonsproject.org/projects/pyramid-deform/en/latest/
 http://deform.readthedocs.org/en/latest/interfaces.html
-* ipython notebook
+* DONE: ipython notebook
 http://ipython.org/ipython-doc/stable/notebook/public_server.html
 http://nbviewer.ipython.org/github/koldunovn/py_klimacampus/blob/master/meeting_004/mpld3_my.ipynb?create=1
 * tutorial for phoenix
@@ -27,6 +27,7 @@ http://nbviewer.ipython.org/github/koldunovn/py_klimacampus/blob/master/meeting_
 Bugs
 ----
 
+* wizard: get message "token updated successfully" also when update fails
 * DONE: cdo sinfo etc: <Exception exceptionCode="MissingParameterValue" locator="file_identifier"/>
 * DONE: no token when wps not avail at login: need update token button
 * REJECTED: need index.html page on mouflon for redirect to port 80
