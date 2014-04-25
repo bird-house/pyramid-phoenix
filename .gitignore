@@ -45,6 +45,9 @@ docs/make.bat
 docs/doctrees/
 docs/html/
 
+# ipython notebook
+.*_checkpoints
+
 # External Sources
 
 #local only file for upload permissions
