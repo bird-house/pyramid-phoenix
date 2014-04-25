@@ -53,6 +53,9 @@ esgf.search = /esg-search
 # thredds service
 phoenix.thredds = http://${server:hostname}:${ports:http}/thredds
 
+# ipython notebook
+phoenix.notebook = http://${server:hostname}:${ports:notebook}
+
 ###
 # wsgi server configuration
 ###

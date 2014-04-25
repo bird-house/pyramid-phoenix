@@ -125,3 +125,17 @@ Low Priority
 * data selection favorites
 * store favorite process input params
 * store favorite esgf search selection
+
+
+Research
+--------
+
+other web related frameworks:
+
+* http://www.tornadoweb.org/en/stable/
+* http://zeromq.org/
+
+other web apps:
+
+* http://ipython.org/notebook.html
+* http://git-annex.branchable.com/assistant/

@@ -35,6 +35,7 @@ from .helpers import (
     wps_url,
     supervisor_url,
     thredds_url,
+    notebook_url,
     execute_wps
     )
 
@@ -560,7 +561,7 @@ def monitor(request):
     permission='admin'
     )
 def notebook(request):
-    return dict(external_url='http://localhost:8888')
+    return dict(external_url=notebook_url(request))
 
 @view_config(
     route_name='tds',
