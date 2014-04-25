@@ -47,17 +47,18 @@ server
     }
 
     # pywps avail at /wps
-    location /wps 
-    {
+    location /wps {
         proxy_pass              ${malleefowl:wps};
     }
 
     # thredds avail at /thredds
-    location /thredds 
-    {
+    location /thredds {
         proxy_pass              ${malleefowl:thredds};
     }
 
-   
+    # ipython notebook avail at /ipython
+    location /ipython {
+        proxy_pass              http://localhost:${ports:ipython}/ipython;
+    }
 
 }
