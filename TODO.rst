@@ -5,6 +5,9 @@ Helsinki
 --------
 
 * enable openssl
+http://ipython.org/ipython-doc/stable/notebook/public_server.html
+http://nginx.org/en/docs/http/configuring_https_servers.html
+http://www.cyberciti.biz/faq/linux-unix-nginx-redirect-all-http-to-https/
 * DONE: by default install with unpriviledged user
 * openid login box for dkrz etc
 * DONE: configure esgf search node
