@@ -32,6 +32,8 @@ http://nbviewer.ipython.org/github/koldunovn/py_klimacampus/blob/master/meeting_
 Bugs
 ----
 
+* ipython proxy does not work with old nginx (ubuntu 12.04)
+http://stackoverflow.com/questions/22665809/how-to-configure-ipython-behind-nginx-in-a-subpath
 * wizard: get message "token updated successfully" also when update fails
 * DONE: cdo sinfo etc: <Exception exceptionCode="MissingParameterValue" locator="file_identifier"/>
 * DONE: no token when wps not avail at login: need update token button
