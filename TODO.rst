@@ -28,6 +28,8 @@ http://deform.readthedocs.org/en/latest/interfaces.html
 Bugs
 ----
 
+* icons for settings
+https://github.com/ipython/ipython/blob/master/docs/resources/ipynb_icon_64x64.png
 * configure base wps in custom.cfg
 * ipython proxy does not work with old nginx (ubuntu 12.04)
 http://stackoverflow.com/questions/22665809/how-to-configure-ipython-behind-nginx-in-a-subpath

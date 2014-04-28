@@ -67,16 +67,15 @@
         </li>
         <li class="span2">
           <a href="/settings/catalog" class="thumbnail">
-            <img data-src="" alt="">
+            <img data-src="${request.static_url('phoenix:static/images/OpenID_24.png')}" alt="">
             <h3>Catalog</h3>
             <p>...</p>
           </a>
         </li>
         <li class="span2">
           <a href="/ipython" class="thumbnail">
-            <img data-src="" alt="">
+            <img data-src="${request.static_url('phoenix:static/images/ipynb_icon_24.png')}" alt="">
             <h3>IPython Notebook</h3>
-            <p>...</p>
           </a>
         </li>
       </ul>
