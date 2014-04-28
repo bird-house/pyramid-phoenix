@@ -28,6 +28,7 @@ http://deform.readthedocs.org/en/latest/interfaces.html
 Bugs
 ----
 
+* configure base wps in custom.cfg
 * ipython proxy does not work with old nginx (ubuntu 12.04)
 http://stackoverflow.com/questions/22665809/how-to-configure-ipython-behind-nginx-in-a-subpath
 * wizard: get message "token updated successfully" also when update fails
@@ -44,6 +45,8 @@ http://stackoverflow.com/questions/22665809/how-to-configure-ipython-behind-ngin
 Common
 ------
 
+* backup mongodb
+http://www.thegeekstuff.com/2013/09/mongodump-mongorestore/
 * improve usage of install:prefix
 * try linuxbrew
 https://github.com/Homebrew/linuxbrew
