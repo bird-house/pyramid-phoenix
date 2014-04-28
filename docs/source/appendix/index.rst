@@ -152,4 +152,13 @@ List of available Web Processing Services:
 * BADC CEDA - http://ceda-wps2.badc.rl.ac.uk/wps?request=GetCapabilities&service=WPS 
 
 
+==========================
+IPython Notebooks with WPS
+==========================
 
+Using IPython Notebook http://ipython.org/notebook.html and notebook viewer http://nbviewer.ipython.org/. 
+
+
+Examples:
+
+* Using owslib.wps - http://nbviewer.ipython.org/url/mouflon.dkrz.de/docs/notebook/pingutests/pingutest-inout.ipynb?create=1
