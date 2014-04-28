@@ -1,10 +1,3 @@
-# views.py
-# Copyright (C) 2013 the ClimDaPs/Phoenix authors and contributors
-# <see AUTHORS file>
-#
-# This module is part of ClimDaPs/Phoenix and is released under
-# the MIT License: http://www.opensource.org/licenses/mit-license.php
-
 import os
 import datetime
 
@@ -35,7 +28,7 @@ from .helpers import (
     wps_url,
     supervisor_url,
     thredds_url,
-    notebook_url,
+    ipython_url,
     execute_wps
     )
 
@@ -555,13 +548,13 @@ def monitor(request):
     return dict(external_url=supervisor_url(request))
 
 @view_config(
-    route_name='notebook',
+    route_name='ipython',
     renderer='templates/embedded.pt',
     layout='default',
     permission='admin'
     )
-def notebook(request):
-    return dict(external_url=notebook_url(request))
+def ipython(request):
+    return dict(external_url=ipython_url(request))
 
 @view_config(
     route_name='tds',

@@ -54,7 +54,7 @@ esgf.search = /esg-search
 phoenix.thredds = http://${server:hostname}:${ports:http}/thredds
 
 # ipython notebook
-phoenix.notebook = /ipython/tree
+phoenix.ipython = http://${server:hostname}:${ports:ipython}/ipython/tree
 
 ###
 # wsgi server configuration

@@ -87,7 +87,7 @@ def main(global_config, **settings):
     
     config.add_route('settings', '/settings')
     config.add_route('monitor', '/settings/monitor')
-    config.add_route('notebook', '/settings/notebook')
+    config.add_route('ipython', '/ipython')
     config.add_route('tds', '/settings/thredds')
     config.add_route('catalog', '/settings/catalog')
     config.add_route('admin_user_edit', '/settings/user/edit')

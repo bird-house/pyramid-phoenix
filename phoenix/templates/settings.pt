@@ -73,7 +73,7 @@
           </a>
         </li>
         <li class="span2">
-          <a href="/settings/notebook" class="thumbnail">
+          <a href="/ipython" class="thumbnail">
             <img data-src="" alt="">
             <h3>IPython Notebook</h3>
             <p>...</p>

@@ -17,6 +17,8 @@ http://www.cyberciti.biz/faq/linux-unix-nginx-redirect-all-http-to-https/
 http://docs.pylonsproject.org/projects/pyramid-deform/en/latest/
 http://deform.readthedocs.org/en/latest/interfaces.html
 * DONE: ipython notebook
+http://stackoverflow.com/questions/22665809/how-to-configure-ipython-behind-nginx-in-a-subpath
+http://nbviewer.ipython.org/
 http://ipython.org/ipython-doc/stable/notebook/public_server.html
 http://nbviewer.ipython.org/github/koldunovn/py_klimacampus/blob/master/meeting_004/mpld3_my.ipynb?create=1
 * tutorial for phoenix
@@ -137,7 +139,12 @@ Research
 other web related frameworks:
 
 * http://www.tornadoweb.org/en/stable/
-* http://zeromq.org/
+* message queue - http://zeromq.org/
+* message queue client - http://www.celeryproject.org/
+* message queue - http://www.rabbitmq.com/tutorials/tutorial-one-python.html
+* key value store - http://redis.io/
+* smtp mail client - http://msmtp.sourceforge.net/
+
 
 other web apps:
 
