@@ -5,81 +5,69 @@
     <!-- User -->
     
     <h2>User</h2>
-    <div class="hero-unit">
-      <ul class="thumbnails">
+    <ul class="thumbnails">
      
-        <li class="span2">
-          <a href="/settings/user/register" class="thumbnail">
-            <img data-src="" alt="">
-            <h3>Register</h3>
-            <p>Register User ...</p>
-          </a>
-        </li>
-        <li class="span2">
-          <a href="/settings/user/unregister" class="thumbnail">
-            <img data-src="" alt="">
-            <h3>Unregister</h3>
-            <p>...</p>
-          </a>
-        </li>
-        <li class="span2">
-          <a href="/settings/user/activate" class="thumbnail">
-            <img data-src="" alt="">
-            <h3>Activate</h3>
-            <p>...</p>
-          </a>
-        </li>
-        <li class="span2">
-          <a href="/settings/user/deactivate" class="thumbnail">
-            <img data-src="" alt="">
-            <h3>Deactivate</h3>
-            <p>...</p>
-          </a>
-        </li>
-        <li class="span2">
-          <a href="/settings/user/edit" class="thumbnail">
-            <img data-src="" alt="">
-            <h3>Edit</h3>
-            <p>...</p>
-          </a>
-        </li>
-      </ul>
-    </div>
+      <li class="span2">
+        <a href="/settings/user/register" class="thumbnail">
+          <img data-src="" alt="">
+          <h3>Register</h3>
+        </a>
+      </li>
+      <li class="span2">
+        <a href="/settings/user/unregister" class="thumbnail">
+          <img data-src="" alt="">
+          <h3>Unregister</h3>
+        </a>
+      </li>
+      <li class="span2">
+        <a href="/settings/user/activate" class="thumbnail">
+          <img data-src="" alt="">
+          <h3>Activate</h3>
+        </a>
+      </li>
+      <li class="span2">
+        <a href="/settings/user/deactivate" class="thumbnail">
+          <img data-src="" alt="">
+          <h3>Deactivate</h3>
+        </a>
+      </li>
+      <li class="span2">
+        <a href="/settings/user/edit" class="thumbnail">
+          <img data-src="" alt="">
+          <h3>Edit</h3>
+        </a>
+      </li>
+    </ul>
 
     <!-- Other -->
    
     <h2>Other</h2>
-    <div class="hero-unit">
-      <ul class="thumbnails">  
-        <li class="span2">
-          <a href="/settings/monitor" class="thumbnail">
-            <img data-src="" alt="">
-            <h3>Monitor</h3>
-            <p>...</p>
-          </a>
-        </li>
-        <li class="span2">
-          <a href="/settings/thredds" class="thumbnail">
-            <img data-src="" alt="">
-            <h3>Thredds</h3>
-            <p>...</p>
-          </a>
-        </li>
-        <li class="span2">
-          <a href="/settings/catalog" class="thumbnail">
-            <img data-src="${request.static_url('phoenix:static/images/OpenID_24.png')}" alt="">
-            <h3>Catalog</h3>
-            <p>...</p>
-          </a>
-        </li>
-        <li class="span2">
-          <a href="/ipython" class="thumbnail">
-            <img data-src="${request.static_url('phoenix:static/images/ipynb_icon_24.png')}" alt="">
-            <h3>IPython Notebook</h3>
-          </a>
-        </li>
-      </ul>
-    </div>
+    <ul class="thumbnails">  
+      <li class="span2">
+        <a href="/settings/monitor" class="thumbnail">
+          <img data-src="" alt="">
+          <h3>Supervisor</h3>
+        </a>
+      </li>
+      <li class="span2">
+        <a href="/settings/thredds" class="thumbnail">
+          <img src="${request.static_url('phoenix:static/images/unidataLogo.png')}" alt="unidata" width="64">
+          <h3>Thredds</h3>
+        </a>
+      </li>
+      <li class="span2">
+        <a href="/settings/catalog" class="thumbnail">
+          <img src="" alt="">
+          <h3>Catalog</h3>
+        </a>
+      </li>
+      <li class="span2">
+        <a href="/ipython" class="thumbnail">
+          <img src="${request.static_url('phoenix:static/images/ipynb_icon_64x64.png')}" alt="ipynb" width="64">
+          <h3>IPython</h3>
+        </a>
+      </li>
+    </ul>
   </div>
    
 </metal:block>
