@@ -135,6 +135,12 @@ Low Priority
 * store favorite process input params
 * store favorite esgf search selection
 
+working on ui
+-------------
+
+* http://www.jquerysample.com/
+* http://www.jqueryrain.com/example/bootstrap/
+
 
 Research
 --------
