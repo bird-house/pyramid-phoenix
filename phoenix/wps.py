@@ -223,7 +223,7 @@ class WPSSchema(colander.SchemaNode):
 
         if info:
             self.add_info_nodes()
-        self.add_nodes(process)
+        self.add_nodes(process, metadata)
 
     def add_info_nodes(self):
         #logger.debug("adding info nodes")
@@ -251,7 +251,7 @@ class WPSSchema(colander.SchemaNode):
             )
         self.add(node)
         
-    def add_nodes(self, process):
+    def add_nodes(self, process, metadata=None):
         if process is None:
             return
 
@@ -265,7 +265,7 @@ class WPSSchema(colander.SchemaNode):
             elif 'www.w3.org' in data_input.dataType:
                 node = self.literal_data(data_input)
             elif 'ComplexData' in data_input.dataType:
-                node = self.complex_data(data_input)
+                node = self.complex_data(data_input, metadata)
             else:
                 raise Exception('unknown data type %s' % (data_input.dataType))
 
@@ -366,13 +366,13 @@ class WPSSchema(colander.SchemaNode):
 
         logger.debug("choosen widget, identifier=%s, widget=%s", data_input.identifier, node.widget)
 
-    def complex_data(self, data_input):
+    def complex_data(self, data_input, metadata):
         # TODO: handle upload, url, direct input for complex data
         node = None
 
         # check if input is uploaded
         logger.debug('metadata=%s', self.metadata)
-        if not self.metadata is None and data_input.identifier in self.metadata.get('uploads', []):
+        if not metadata is None and data_input.identifier in metadata.get('uploads', []):
             node = colander.SchemaNode(
                 deform.FileData(),
                 name=data_input.identifier,

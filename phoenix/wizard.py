@@ -261,8 +261,12 @@ def bind_wps_schema(node, kw):
     identifier = state['process']
     wps = get_wps(wps_url(request))
     process = wps.describeprocess(identifier)
+
+    from .helpers import get_process_metadata
+    metadata = get_process_metadata(wps, identifier)
+    logger.debug('metadata = %s', metadata)
    
-    node.add_nodes(process)
+    node.add_nodes(process, metadata)
 
     if node.get('token', False):
         del node['token']

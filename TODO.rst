@@ -13,7 +13,7 @@ http://www.cyberciti.biz/faq/linux-unix-nginx-redirect-all-http-to-https/
 * DONE: configure esgf search node
 * DONE: wizard: check if credential is valid
 * DONE: check if token is valid
-* upload files function in wps ui
+* DONE: upload files function in wps ui
 http://docs.pylonsproject.org/projects/pyramid-deform/en/latest/
 http://deform.readthedocs.org/en/latest/interfaces.html
 * DONE: ipython notebook
@@ -28,7 +28,8 @@ http://deform.readthedocs.org/en/latest/interfaces.html
 Bugs
 ----
 
-* icons for settings
+* DONE: upload complexdata in wizard was not enabled
+* DONE: icons for settings
 https://github.com/ipython/ipython/blob/master/docs/resources/ipynb_icon_64x64.png
 * configure base wps in custom.cfg
 * ipython proxy does not work with old nginx (ubuntu 12.04)
