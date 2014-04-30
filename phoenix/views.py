@@ -536,7 +536,27 @@ class ExecuteView(FormView):
     permission='admin'
     )
 def settings(request):
-    return dict()
+    buttongroups = []
+    buttons = []
+
+    # user
+    buttons.append(dict(url="/settings/user/register", icon="user_catwomen.png", title="Register"))
+    buttons.append(dict(url="/settings/user/unregister", icon="user_catwomen.png", title="Unregister"))
+    buttons.append(dict(url="/settings/user/activate", icon="user_catwomen.png", title="Activate"))
+    buttons.append(dict(url="/settings/user/deactivate", icon="user_catwomen.png", title="Deactivate"))
+    buttons.append(dict(url="/settings/user/edit", icon="user_catwomen.png", title="Edit"))
+    buttongroups.append(dict(title='User', buttons=buttons))
+
+    # other
+    buttons = []
+
+    buttons.append(dict(url="/settings/monitor", icon="monitor_edit.png", title="Supervisor"))
+    buttons.append(dict(url="/settings/catalog", icon="catalog_pages.png", title="Catalog"))
+    buttons.append(dict(url="/settings/thredds", icon="unidataLogo.png", title="Thredds"))
+    buttons.append(dict(url="/ipython", icon="ipynb_icon_64x64.png", title="IPython"))
+    buttongroups.append(dict(title='Other', buttons=buttons))
+    
+    return dict(buttongroups=buttongroups)
 
 @view_config(
     route_name='monitor',
