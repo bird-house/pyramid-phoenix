@@ -9,31 +9,33 @@
      
       <li class="span2">
         <a href="/settings/user/register" class="thumbnail">
-          <img data-src="" alt="">
-          <h3>Register</h3>
+          <img src="${request.static_url('phoenix:static/images/user_catwomen.png')}" alt="" width="32">
+          <div align="center">
+            <h4>Register</h4>
+          </div>
         </a>
       </li>
       <li class="span2">
         <a href="/settings/user/unregister" class="thumbnail">
-          <img data-src="" alt="">
+          <img src="${request.static_url('phoenix:static/images/user_catwomen.png')}" alt="" width="32">
           <h3>Unregister</h3>
         </a>
       </li>
       <li class="span2">
         <a href="/settings/user/activate" class="thumbnail">
-          <img data-src="" alt="">
+          <img src="${request.static_url('phoenix:static/images/user_catwomen.png')}" alt="" width="32">
           <h3>Activate</h3>
         </a>
       </li>
       <li class="span2">
         <a href="/settings/user/deactivate" class="thumbnail">
-          <img data-src="" alt="">
+          <img src="${request.static_url('phoenix:static/images/user_catwomen.png')}" alt="" width="32">
           <h3>Deactivate</h3>
         </a>
       </li>
       <li class="span2">
         <a href="/settings/user/edit" class="thumbnail">
-          <img data-src="" alt="">
+          <img src="${request.static_url('phoenix:static/images/user_catwomen.png')}" alt="" width="32">
           <h3>Edit</h3>
         </a>
       </li>
@@ -45,25 +47,25 @@
     <ul class="thumbnails">  
       <li class="span2">
         <a href="/settings/monitor" class="thumbnail">
-          <img data-src="" alt="">
+          <img src="${request.static_url('phoenix:static/images/monitor_edit.png')}" alt="" width="32">
           <h3>Supervisor</h3>
         </a>
       </li>
       <li class="span2">
         <a href="/settings/thredds" class="thumbnail">
-          <img src="${request.static_url('phoenix:static/images/unidataLogo.png')}" alt="unidata" width="64">
+          <img src="${request.static_url('phoenix:static/images/unidataLogo.png')}" alt="unidata" width="32">
           <h3>Thredds</h3>
         </a>
       </li>
       <li class="span2">
         <a href="/settings/catalog" class="thumbnail">
-          <img src="" alt="">
+          <img src="${request.static_url('phoenix:static/images/catalog_pages.png')}" alt="" width="32">
           <h3>Catalog</h3>
         </a>
       </li>
       <li class="span2">
         <a href="/ipython" class="thumbnail">
-          <img src="${request.static_url('phoenix:static/images/ipynb_icon_64x64.png')}" alt="ipynb" width="64">
+          <img src="${request.static_url('phoenix:static/images/ipynb_icon_64x64.png')}" alt="ipynb" width="32">
           <h3>IPython</h3>
         </a>
       </li>

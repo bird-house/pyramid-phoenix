@@ -48,6 +48,7 @@ http://stackoverflow.com/questions/22665809/how-to-configure-ipython-behind-ngin
 Common
 ------
 
+* enable bbox in ui
 * backup mongodb
 http://www.thegeekstuff.com/2013/09/mongodump-mongorestore/
 * improve usage of install:prefix
@@ -69,7 +70,6 @@ https://github.com/mazzaroth/initpyr
 * maybe order processes by module name
 * use comman methods for flashing messages
 * check avail of wps in catalog
-* configure esg-search url
 * testing with curl, http (script): see fossgis geo python
 * try python request module 
 * configure buildout download
@@ -139,8 +139,16 @@ Low Priority
 working on ui
 -------------
 
+* http://www.ourtuts.com/34-outstanding-admin-panels-for-your-web-applications/
 * http://www.jquerysample.com/
 * http://www.jqueryrain.com/example/bootstrap/
+
+icon sets:
+
+* http://www.famfamfam.com/lab/icons/silk/
+* http://projects.opengeo.org/geosilk
+* https://www.iconfinder.com/search/?q=iconset%3Afunction_icon_set
+* http://p.yusukekamiyamane.com/
 
 
 Research
