@@ -110,6 +110,10 @@ Python Web Frameworks and Utils
 Example WPS Requests
 ====================
 
+OGC Web Processing Service Standard
+
+http://www.opengeospatial.org/standards/wps
+
 WPS Documentation with examples: 
 
 http://geoprocessing.info/wpsdoc/1x0GetCapabilities
