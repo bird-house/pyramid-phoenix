@@ -154,6 +154,7 @@ List of available Web Processing Services:
 * USGS Geo Data Portal- http://cida.usgs.gov/climate/gdp/process/WebProcessingService
 * KNMI climate4impact Portal - http://climate4impact.eu//impactportal/WPS?request=GetCapabilities&service=WPS
 * BADC CEDA - http://ceda-wps2.badc.rl.ac.uk/wps?request=GetCapabilities&service=WPS 
+* delatres - http://dtvirt5.deltares.nl/wps/?Request=GetCapabilities&Service=WPS
 
 
 ==========================
