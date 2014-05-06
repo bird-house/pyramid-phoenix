@@ -28,6 +28,7 @@ http://deform.readthedocs.org/en/latest/interfaces.html
 Bugs
 ----
 
+* owslib wps uses literaldata for inline complexdata ...
 * DONE: upload complexdata in wizard was not enabled
 * DONE: icons for settings
 https://github.com/ipython/ipython/blob/master/docs/resources/ipynb_icon_64x64.png
