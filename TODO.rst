@@ -28,6 +28,7 @@ http://deform.readthedocs.org/en/latest/interfaces.html
 Bugs
 ----
 
+* does not automatically add phoenix.socket in /var/run/phoenix (phoenix folder is missing)
 * owslib wps uses literaldata for inline complexdata ...
 * DONE: upload complexdata in wizard was not enabled
 * DONE: icons for settings
@@ -49,6 +50,8 @@ http://stackoverflow.com/questions/22665809/how-to-configure-ipython-behind-ngin
 Common
 ------
 
+* use supervisor to handle logging (via stdout?)
+http://supervisord.org/configuration.html#programx-section
 * enable bbox in ui
 * backup mongodb
 http://www.thegeekstuff.com/2013/09/mongodump-mongorestore/
