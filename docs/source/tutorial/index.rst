@@ -61,6 +61,17 @@ Check the **Visualisation of data** and klick on *Next* which guides you to the 
 
 .. image:: processparameter.png
 
+The values in the data files are stored with defined varable names. Here are the most common ones: 
+
+* tas -- mean air temperaure at 2m (in Kelvin)
+* tasmin -- minimum air temperaure at 2m (in Kelvin)  
+* tasmax -- maximum air temperaure at 2m (in Kelvin)
+* pr -- pricipitation fulx at surface (in kg/second)
+* ps -- air pressure at surface
+* huss -- specific humidiy (in Kg/Kg)
+
+A list of available variable names used for CMPI5 and CORDEX experiment can be found here in the Appendix B of this document: http://cordex.dmi.dk/joomla/images/CORDEX/cordex_archive_specifications.pdf
+
 
 
 
