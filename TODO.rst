@@ -29,6 +29,7 @@ Bugs
 ----
 
 * does not automatically add phoenix.socket in /var/run/phoenix (phoenix folder is missing)
+Workaround: use /tmp/phoenix.socket
 * owslib wps uses literaldata for inline complexdata ...
 * DONE: upload complexdata in wizard was not enabled
 * DONE: icons for settings
