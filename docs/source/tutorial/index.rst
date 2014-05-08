@@ -34,21 +34,40 @@ The token as well as your security cetificate (necessary to access the ESGF data
 
 .. image:: accout_settings.png
 
+For security reasons the certificate and the token is time limited valid. But don't worry; Phoenix will remind you to update if necessary:
+
+.. image:: expire.png
+
+
 --------------------------------
 **Creating some overview plots**
 --------------------------------
 
+Once the login procedure is done, processes are operable and data search and download within the ESGF data archive is possible. 
+There are two ways to submit a process: 
 
+- Processes
+or 
 
+- Wizard
 
-
+While with *Processes* you can select single operational processes the *Wizard* is guiding you through the necessary stepps to submit a job. For getting an idea of the operation procedure choose the *Wizard* menue and select **simple**: 
 
 .. image:: wizard.png
-:height: 100px
-:width: 200 px
-:scale: 50 %
-:alt: alternate text
-:align: right
+
+And check the listed *PyWPS Server on mouflon.dkrz.de (mouflon)* . 
+With clicking on *Next* you'll find the list of available processes. 
+Check the **Visualisation of data** and klick on *Next* which guides you to the process parameter: 
+
+.. image:: processparameter.png
+
+
+
+
+
+
+
+
 
 
 Calculation of summer days per year 
