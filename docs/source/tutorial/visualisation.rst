@@ -59,7 +59,6 @@ By selecting a Search Categorie (blue buttons), you can choose the appropriate o
 
 In this example select the following parameter: 
 
-
 +----------------+------------+
 | Categorie      | Option     |
 +================+============+
