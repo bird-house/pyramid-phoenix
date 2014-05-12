@@ -12,6 +12,7 @@ c.NotebookApp.open_browser = False
 c.NotebookApp.port = ${ports:ipython}
 # Running with a different URL prefix
 c.NotebookApp.base_project_url = '/ipython/'
+c.NotebookApp.base_kernel_url = '/ipython/'
 c.NotebookApp.base_url = '/ipython/'
 c.NotebookApp.trust_xheaders = True
 c.NotebookApp.webapp_settings = {'static_url_prefix':'/ipython/static/'}
