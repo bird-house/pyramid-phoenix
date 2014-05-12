@@ -1,7 +1,7 @@
 .. _installation:
-************************
-Installation of ClimDaPs
-************************
+************
+Installation
+************
 
 .. _require:
 ===============

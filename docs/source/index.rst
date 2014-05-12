@@ -13,9 +13,8 @@ Contents:
 .. toctree::
    :maxdepth: 1
 
-   tutorial/index
-   processes/index
    installation/index
+   tutorial/index
    phoenix/index
    malleefowl/index
    development/index
