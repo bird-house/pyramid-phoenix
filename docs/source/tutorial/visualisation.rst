@@ -1,4 +1,5 @@
 .. _Creating a timeseries plot: 
+
 --------------------------------
 **Creating a timeseries plot**
 --------------------------------

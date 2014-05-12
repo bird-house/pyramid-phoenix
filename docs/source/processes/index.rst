@@ -16,8 +16,9 @@ Some processes are allredy available:
 
    publishtothread
    CDO_operation
-   anopheles
-   speciesdistributionmodel
+   VBD
+   SDM
+   visualisation
 
 
 Future
