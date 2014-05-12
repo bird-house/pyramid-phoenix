@@ -9,6 +9,7 @@ c.IPKernelApp.pylab = 'inline'  # if you want plotting support always
 c.NotebookApp.ip = '127.0.0.1'
 c.NotebookApp.open_browser = False
 #c.NotebookApp.password = u'sha1:bcd259ccf...[your hashed password here]'
+c.NotebookApp.password = ${security:ipython_password}
 # It is a good idea to put it on a known, fixed port
 c.NotebookApp.port = ${ports:ipython}
 # Running with a different URL prefix
