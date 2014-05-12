@@ -9,18 +9,18 @@ Prerequirements
 ===============
     
 * Currently the buildout installation works *only on the 64 Bit version of Ubuntu 12.04* or above.
-* Installing and running ClimDaPs requires some resource. So you should *have a recent machine* (2 Cores, 4 GB).
+* Installing and running ClimDaPs requires some resources. So you should *have a recent machine* (2 Cores, 4 GB).
 * The buildout installation process will install required system packages. Therefore *you need sudo rights*. 
 
-.. _buildout:
+.. _malleefowl:
 ==========================
-Installation with buildout
+Installing Malleefowl (WPS service)
 ==========================
 
 In the installation process you will be *asked for your password* to
 run package installation with sudo rights.
 
-For installing ClimDaPs follow the next steps.::
+For installing Malleefowl follow the next steps.::
 
 1 - cd to installation folder::
         
@@ -28,11 +28,11 @@ For installing ClimDaPs follow the next steps.::
 
 2 - checkout from git repo::
 
-        $ git clone git://redmine.dkrz.de/climdaps.git
+        $ git clone git://redmine.dkrz.de/malleefowl.git
 
-3 - cd into the new folder climdaps::
+3 - cd into the new folder malleefowl::
 
-        $ cd climdaps
+        $ cd malleefowl
 
 4 - you should use the develop version to get recent updates::
 
@@ -47,7 +47,42 @@ prepared to enter your password for sudo because buildout will install
 dependend packages with the system package manager (apt on
 Debian/Ubuntu or yum on RedHat/CentOS).
 
-7 - maybe restart climdaps services with supervisor::
+.. _phoenix:
+==========================
+Installing Phoenix (WPS web client)
+==========================
+
+In the installation process you will be *asked for your password* to
+run package installation with sudo rights.
+
+For installing Phoenix follow the next steps.::
+
+1 - cd to installation folder::
+        
+        $ cd $HOME/sandbox
+
+2 - checkout from git repo::
+
+        $ git clone git://redmine.dkrz.de/phoenix.git
+
+3 - cd into the new folder phoenix::
+
+        $ cd phoenix
+
+4 - you should use the develop version to get recent updates::
+
+        $ git checkout develop
+
+4 - run install script::
+
+        $ ./install.sh
+
+5 - get yourself some tee or coffee. Be
+prepared to enter your password for sudo because buildout will install
+dependend packages with the system package manager (apt on
+Debian/Ubuntu or yum on RedHat/CentOS).
+
+7 - maybe restart phoenix/malleefowl services with supervisor::
 
         $ sudo supervisorctl
         > status
@@ -103,7 +138,7 @@ for buildout. This is for example *necessary* when climdaps is running
 on a *remote server* and you can not access the services via
 localhost. In this case do the following::
 
-       $ cd $HOME/sandbox/climdaps
+       $ cd $HOME/sandbox/phoenix
        $ vim custom.cfg
 
 The content of your custom config might look like this::
@@ -128,7 +163,7 @@ Get Updates from Git Repo
 
 You can update your installation from the `git` repository::
 
-        $ cd $HOME/sandbox/climdaps
+        $ cd $HOME/sandbox/phoenix
         $ git pull
 
 If you have local changes git might complain about it. If you *don't want to keep*
