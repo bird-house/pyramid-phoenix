@@ -19,8 +19,9 @@ Contents:
    phoenix/index
    malleefowl/index
    development/index
+   processes/index  
+   notebooks/index
    appendix/index
-      
 
 Indices and tables
 ==================

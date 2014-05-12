@@ -6,5 +6,5 @@ ${log_file} {
   missingok
   notifempty
   size 10M
-  create 0640 www-data adm
+  create 0640 ${user:www-data} adm
 }

@@ -157,13 +157,3 @@ List of available Web Processing Services:
 * delatres - http://dtvirt5.deltares.nl/wps/?Request=GetCapabilities&Service=WPS
 
 
-==========================
-IPython Notebooks with WPS
-==========================
-
-Using IPython Notebook http://ipython.org/notebook.html and notebook viewer http://nbviewer.ipython.org/. 
-
-
-Examples:
-
-* Using owslib.wps - http://nbviewer.ipython.org/url/mouflon.dkrz.de/docs/notebook/pingutests/pingutest-inout.ipynb?create=1
