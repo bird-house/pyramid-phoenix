@@ -35,7 +35,7 @@ Workaround: use /tmp/phoenix.socket
 * DONE: icons for settings
 https://github.com/ipython/ipython/blob/master/docs/resources/ipynb_icon_64x64.png
 * configure base wps in custom.cfg
-* ipython proxy does not work with old nginx (ubuntu 12.04)
+* DONE: ipython proxy does not work with old nginx (ubuntu 12.04)
 http://stackoverflow.com/questions/22665809/how-to-configure-ipython-behind-nginx-in-a-subpath
 https://chrislea.com/2013/02/23/proxying-websockets-with-nginx/
 * wizard: get message "token updated successfully" also when update fails
