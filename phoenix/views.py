@@ -28,7 +28,6 @@ from .helpers import (
     wps_url,
     supervisor_url,
     thredds_url,
-    ipython_url,
     execute_wps
     )
 
@@ -553,7 +552,7 @@ def settings(request):
     buttons.append(dict(url="/settings/monitor", icon="monitor_edit.png", title="Supervisor"))
     buttons.append(dict(url="/settings/catalog", icon="catalog_pages.png", title="Catalog"))
     buttons.append(dict(url="/settings/thredds", icon="unidataLogo.png", title="Thredds"))
-    buttons.append(dict(url="/notebook", icon="ipynb_icon_64x64.png", title="IPython"))
+    buttons.append(dict(url="/ipython", icon="ipynb_icon_64x64.png", title="IPython"))
     buttongroups.append(dict(title='Other', buttons=buttons))
     
     return dict(buttongroups=buttongroups)
@@ -568,13 +567,13 @@ def monitor(request):
     return dict(external_url=supervisor_url(request))
 
 @view_config(
-    route_name='notebook',
+    route_name='ipython',
     renderer='templates/embedded.pt',
     layout='default',
     permission='admin'
     )
 def ipython(request):
-    return dict(external_url=ipython_url(request))
+    return dict(external_url="/ipython/notebook/tree")
 
 @view_config(
     route_name='tds',

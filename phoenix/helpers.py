@@ -49,9 +49,6 @@ def wps_url(request):
 def thredds_url(request):
     return get_setting(request, 'phoenix.thredds')
 
-def ipython_url(request):
-    return get_setting(request, 'phoenix.ipython')
-   
 def esgsearch_url(request):
     return get_setting(request, 'esgf.search')
 

@@ -13,9 +13,9 @@ c.NotebookApp.password = ${security:ipython_password}
 # It is a good idea to put it on a known, fixed port
 c.NotebookApp.port = ${ports:ipython}
 # Running with a different URL prefix
-c.NotebookApp.base_project_url = '/ipython/'
-c.NotebookApp.base_kernel_url = '/ipython/'
-c.NotebookApp.base_url = '/ipython/'
+c.NotebookApp.base_project_url = '/ipython/notebook/'
+c.NotebookApp.base_kernel_url = '/ipython/notebook/'
+c.NotebookApp.base_url = '/ipython/notebook/'
 c.NotebookApp.trust_xheaders = True
-c.NotebookApp.webapp_settings = {'static_url_prefix':'/ipython/static/'}
+c.NotebookApp.webapp_settings = {'static_url_prefix':'/ipython/notebook/static/'}
 
