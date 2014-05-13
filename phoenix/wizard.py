@@ -34,7 +34,6 @@ from .models import (
 
 from .helpers import (
     wps_url, 
-    esgsearch_url,   
     )
 
 from .wps import WPSSchema, get_wps, execute_restflow, search_local_files
@@ -141,13 +140,12 @@ def bind_search_schema(node, kw):
     logger.debug('constraints = %s', constraints )
     query = metadata.get('esgquery')
     logger.debug('query = %s', query )
-    url = esgsearch_url(request)
     search = dict(facets=constraints, query=query)
     
     if 'esgf' in data_source:
         node.get('selection').title = 'ESGF Search'
         node.get('selection').default = json.dumps(search) 
-        node.get('selection').widget = EsgSearchWidget(url=url)
+        node.get('selection').widget = EsgSearchWidget(url="/esg-search")
     else:
         node.get('selection').title = 'Search Filter'
         node.get('selection').widget = FileSearchWidget()
@@ -204,10 +202,10 @@ def bind_files_schema(node, kw):
     if 'esgf' in data_source:
         if 'opendap' in data_source:
             node.get('file_identifier').widget = EsgFilesWidget(
-                url=esgsearch_url(request), search_type='Aggregation', search=search)
+                url="/esg-search", search_type='Aggregation', search=search)
         else: # wget
             node.get('file_identifier').widget = EsgFilesWidget(
-                url=esgsearch_url(request), search_type='File', search=search)
+                url="/esg-search", search_type='File', search=search)
     elif 'filesystem' in data_source:
         choices = [(f, f) for f in search_local_files( wps, token, search['filter'])]
         node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)

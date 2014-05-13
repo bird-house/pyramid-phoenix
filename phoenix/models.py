@@ -18,7 +18,7 @@ import uuid
 import datetime
 
 from phoenix import helpers
-from .helpers import mongodb_conn, esgsearch_url
+from .helpers import mongodb_conn
 from .wps import get_wps, wps_url, gen_token
 from .exceptions import TokenError
 

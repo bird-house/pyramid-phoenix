@@ -49,9 +49,6 @@ def wps_url(request):
 def thredds_url(request):
     return get_setting(request, 'phoenix.thredds')
 
-def esgsearch_url(request):
-    return get_setting(request, 'esgf.search')
-
 def admin_users(request):
     value = get_setting(request, 'phoenix.admin_users')
     if value:
