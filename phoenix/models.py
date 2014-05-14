@@ -241,7 +241,7 @@ def jobs_information(request,sortkey="starttime",inverted=True):
 
         # TODO: handle different process status
         # TODO: check Exception ... wps needs some time to provide status document which may cause an exception
-        if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused', 'Exception']:
+        if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
             job['errors'] = []
             try:
                 wps = get_wps(job['service_url'])
@@ -257,7 +257,8 @@ def jobs_information(request,sortkey="starttime",inverted=True):
             except:
                 msg = 'could not access wps %s' % (job['status_location'])
                 logger.warn(msg)
-                job['status'] = 'Exception'
+                # TODO: if url is not accessable ... try again!
+                job['status'] = 'ProcessPaused'
                 job['errors'].append( dict(code='', locator='', text=msg) )
             
             job['end_time'] = datetime.datetime.now()
