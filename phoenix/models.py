@@ -226,6 +226,11 @@ def drop_jobs_by_uuid(request, uuids=[]):
 
 
 def jobs_information(request,sortkey="starttime",inverted=True):
+    """
+    Collects jobs status ...
+
+    TODO: rewrite code
+    """
     from owslib.wps import WPSExecution
 
     dateformat = '%a, %d %b %Y %I:%M:%S %p'
@@ -235,7 +240,8 @@ def jobs_information(request,sortkey="starttime",inverted=True):
         job['starttime'] = job['start_time'].strftime(dateformat)
 
         # TODO: handle different process status
-        if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
+        # TODO: check Exception ... wps needs some time to provide status document which may cause an exception
+        if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused', 'Exception']:
             job['errors'] = []
             try:
                 wps = get_wps(job['service_url'])
