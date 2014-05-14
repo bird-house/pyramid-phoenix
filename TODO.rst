@@ -4,7 +4,11 @@ Todo list for Phoenix
 Helsinki
 --------
 
-* enable openssl
+* DONE: enable openssl
+https://wiki.apache.org/couchdb/Nginx_As_a_Reverse_Proxy
+http://www.micahcarrick.com/using-ssl-behind-reverse-proxy-in-django.html
+http://docs.gunicorn.org/en/latest/deploy.html
+http://www.cyberciti.biz/faq/linux-unix-nginx-redirect-all-http-to-https/
 http://ipython.org/ipython-doc/stable/notebook/public_server.html
 http://nginx.org/en/docs/http/configuring_https_servers.html
 http://www.cyberciti.biz/faq/linux-unix-nginx-redirect-all-http-to-https/
@@ -17,9 +21,9 @@ http://www.cyberciti.biz/faq/linux-unix-nginx-redirect-all-http-to-https/
 http://docs.pylonsproject.org/projects/pyramid-deform/en/latest/
 http://deform.readthedocs.org/en/latest/interfaces.html
 * DONE: ipython notebook
-* tutorial for phoenix
+* DONE: tutorial for phoenix
 * using glob search for local files
-* ipython examples for wps client (also chaining processes)
+* DONE: ipython examples for wps client (also chaining processes)
 * DONE: configure admin users
 * enable local admin user
 * run test-suite in phoenix from ui
@@ -36,6 +40,7 @@ Workaround: use /tmp/phoenix.socket
 https://github.com/ipython/ipython/blob/master/docs/resources/ipynb_icon_64x64.png
 * configure base wps in custom.cfg
 * DONE: ipython proxy does not work with old nginx (ubuntu 12.04)
+http://nginx.org/en/docs/http/websocket.html
 http://stackoverflow.com/questions/22665809/how-to-configure-ipython-behind-nginx-in-a-subpath
 https://chrislea.com/2013/02/23/proxying-websockets-with-nginx/
 * wizard: get message "token updated successfully" also when update fails
