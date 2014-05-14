@@ -57,6 +57,7 @@ https://chrislea.com/2013/02/23/proxying-websockets-with-nginx/
 Common
 ------
 
+* use seperate nginx config for proxy
 * use supervisor to handle logging (via stdout?)
 http://supervisord.org/configuration.html#programx-section
 * enable bbox in ui
@@ -82,15 +83,11 @@ https://github.com/mazzaroth/initpyr
 * use comman methods for flashing messages
 * check avail of wps in catalog
 * testing with curl, http (script): see fossgis geo python
-* try python request module 
 * configure buildout download
 * DONE: configure caching for esg search
 * integrate settings panel:
   http://www.ourtuts.com/34-outstanding-admin-panels-for-your-web-applications/
 * see todopyramid as an example for table and json requests to wps without proxy
-* configure defaults for custom.cfg
-* use https:
-  http://nginx.org/en/docs/http/configuring_https_servers.html
 * fix nginx config for wps
 * show wps service in result table
 * DONE: allow login also when wps is not available
@@ -101,12 +98,9 @@ https://github.com/mazzaroth/initpyr
   http://docs.pylonsproject.org/projects/pyramid/en/latest/narr/sessions.html
 * phoenix: make jobs repeateable 
 * phoenix: show jobs input and ouput parameter
-* phoenix: configure admin users in custom.cfg
+* DONE: configure admin users in custom.cfg
 * phoenix: show currently logged in users
-* phoenix: caching esgf search does not work
-* phoenix, malleefowl: simplify access params to esgf and publish
-* phoenix: refactorid admin/settings page (similar to macosx) 
-* phoenix: use stored openid as default value in wizard and process
+* DONE: refactorid admin/settings page (similar to macosx) 
 * phoenix: update to latests pyramid
 * DONE: rename phoenix to pyramid_phoenix
 * SKIPPED: refresh button on job list
@@ -119,12 +113,10 @@ https://github.com/mazzaroth/initpyr
 * dashboard with status and statistics
 * show workflow results
 * show wizard status
-* rework output param form
 * need improved login panel with widgets
 * use theme with larger font
   * http://getbootstrap.com/2.3.2/customize.html
 * cancel and pause process
-* use flash: self.request.session.flash(u"Your changes have been saved.")
 * maybe use metadata for gui: prio, group, restriction
 * pywps/colander/form: allowedValues are interpreted with wrong type. "true" => True even though it
   should stay a string.
