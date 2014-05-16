@@ -549,22 +549,13 @@ def settings(request):
     # other
     buttons = []
 
-    buttons.append(dict(url="/settings/monitor", icon="monitor_edit.png", title="Supervisor"))
+    buttons.append(dict(url=supervisor_url(request), icon="monitor_edit.png", title="Supervisor", id="external-url"))
     buttons.append(dict(url="/settings/catalog", icon="catalog_pages.png", title="Catalog"))
     buttons.append(dict(url="/settings/thredds", icon="unidataLogo.png", title="Thredds"))
     buttons.append(dict(url="/ipython", icon="ipynb_icon_64x64.png", title="IPython"))
     buttongroups.append(dict(title='Other', buttons=buttons))
     
     return dict(buttongroups=buttongroups)
-
-@view_config(
-    route_name='monitor',
-    renderer='templates/embedded.pt',
-    layout='default',
-    permission='admin'
-    )
-def monitor(request):
-    return dict(external_url=supervisor_url(request))
 
 @view_config(
     route_name='ipython',
