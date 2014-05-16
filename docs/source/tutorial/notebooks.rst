@@ -23,24 +23,52 @@ Basic WPS Client operations
 
 T1: Hello World
 
-http://nbviewer.ipython.org/url/mouflon.dkrz.de/docs/notebook/tutorial/t01-hello-world.ipynb?create=1
+http://nbviewer.ipython.org/url/mouflon.dkrz.de/nb/tutorial/t01-hello-world.ipynb
 
 T2: Get Capabilities
 
-http://nbviewer.ipython.org/url/mouflon.dkrz.de/docs/notebook/tutorial/t02-wps-get-capabilities.ipynb?create=1
+http://nbviewer.ipython.org/url/mouflon.dkrz.de/nb/tutorial/t02-wps-get-capabilities.ipynb
 
 T3: Describe Process
 
-http://nbviewer.ipython.org/url/mouflon.dkrz.de/docs/notebook/tutorial/t03-wps-describe-process.ipynb?create=1
+http://nbviewer.ipython.org/url/mouflon.dkrz.de/nb/tutorial/t03-wps-describe-process.ipynb
 
 T4: Execute
 
-http://nbviewer.ipython.org/url/mouflon.dkrz.de/docs/notebook/tutorial/t04-wps-execute.ipynb?create=1
+http://nbviewer.ipython.org/url/mouflon.dkrz.de/nb/tutorial/t04-wps-execute.ipynb
 
 T5: Execute sync
 
-http://nbviewer.ipython.org/url/mouflon.dkrz.de/docs/notebook/tutorial/t06-wps-execute-sync.ipynb?create=1
+http://nbviewer.ipython.org/url/mouflon.dkrz.de/nb/tutorial/t05-wps-execute-sync.ipynb
 
 T6: Execute async
 
-http://nbviewer.ipython.org/url/mouflon.dkrz.de/docs/notebook/tutorial/t06-wps-execute-async.ipynb?create=1
+http://nbviewer.ipython.org/url/mouflon.dkrz.de/nb/tutorial/t06-wps-execute-async.ipynb
+
+T7: ComplexType
+
+http://nbviewer.ipython.org/url/mouflon.dkrz.de/nb/tutorial/t07-wps-complextype.ipynb
+
+T8: raw output
+
+http://nbviewer.ipython.org/url/mouflon.dkrz.de/nb/tutorial/t08-wps-rawoutput.ipynb
+
+T9: post request
+
+http://nbviewer.ipython.org/url/mouflon.dkrz.de/nb/tutorial/t09-wps-post-request.ipynb
+
+T10: with owslib
+
+http://nbviewer.ipython.org/url/mouflon.dkrz.de/nb/tutorial/t10-wps-with-owslib.ipynb
+
+T11: wps chaining
+
+http://nbviewer.ipython.org/url/mouflon.dkrz.de/nb/tutorial/t11-wps-chain.ipynb
+
+
+Examples with real processes
+============================
+
+T50: Visualistation process
+
+http://nbviewer.ipython.org/url/mouflon.dkrz.de/nb/tutorial/t50-visualisation.ipynb
