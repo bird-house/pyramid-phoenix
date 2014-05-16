@@ -551,7 +551,7 @@ def settings(request):
 
     buttons.append(dict(url=supervisor_url(request), icon="monitor_edit.png", title="Supervisor", id="external-url"))
     buttons.append(dict(url="/settings/catalog", icon="catalog_pages.png", title="Catalog"))
-    buttons.append(dict(url="/settings/thredds", icon="unidataLogo.png", title="Thredds"))
+    buttons.append(dict(url=thredds_url(request), icon="unidataLogo.png", title="Thredds", id="external-url"))
     buttons.append(dict(url="/ipython", icon="ipynb_icon_64x64.png", title="IPython"))
     buttongroups.append(dict(title='Other', buttons=buttons))
     
@@ -565,15 +565,6 @@ def settings(request):
     )
 def ipython(request):
     return dict(external_url="/ipython/notebook/tree")
-
-@view_config(
-    route_name='tds',
-    renderer='templates/embedded.pt',
-    layout='default',
-    permission='edit'
-    )
-def thredds(request):
-    return dict(external_url=thredds_url(request))
 
 def generate_catalog_form(request, formid="deform"):
     """This helper code generates the form that will be used to add
