@@ -15,7 +15,7 @@ Some processes are allredy available:
    :maxdepth: 1
 
    publishtothread
-   CDO_operation
+   CDO_operations
    VBD
    SDM
    visualisation

@@ -1,43 +1,23 @@
-.. _phoenix:
-Phoenix WPS Web Interface
-=========================
+.. _releases:
 
-Login
------
+********
+Releases
+********
 
-You need a `Mozilla Persona`_ account to login to Phoenix.
+=======
+Roadmap
+=======
 
-If you want to give access to someone with a Mozilla Persona ID for your
-Phoenix instance you must add the Persona ID (email Address) to the
-whitelist of the Phoenix configuration file. For this edit the
-Phoenix configuration file:
+Milestone 16th May 2014:
 
-.. code-block:: bash
-            
-        $ cd $HOME/sandbox/climdaps/parts/phoenix
-        $ vim phoenix.ini
-        $ cat phoenix.ini
-        phoenix.login.whitelist = tux@linux.org, pingu@antarctica.org
+* present climdaps at EGI, Helsinki
+* stabilize climdaps and CSC processes
+* write documenation and tutorials
 
-Currently a login is only necessary for the Admin and Monitor tab in Phoenix.
+Milestone 25th April 2014:
 
-Admin
------
+* present climdaps at EGU, Vienna
+* prepare "quality check" workflow for cordex data
 
-On the tab you can delete the Phoenix database ... the whole Phoenix
-database ... don't worry about it ;)
 
-Monitor
--------
 
-On this tab you can see if all Climdaps services are running. You can
-also restart Phoenix (in case of config change) and PyWPS (in case of
-changes to the WPS processes).
-
-Future
-------
-
-This will all change in future ...
-
- 
-.. _`Mozilla Persona`: https://login.persona.org/
