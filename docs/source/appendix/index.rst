@@ -4,7 +4,6 @@
 Appendix
 ********
 
-============
 WPS Software
 ============
 
@@ -23,7 +22,6 @@ WPS Client Software:
 * OpenLayers WPS Plugin - http://dev.openlayers.org/docs/files/OpenLayers/WPSClient-js.html
 * GeoTools WPS Module - http://docs.geotools.org/latest/userguide/unsupported/wps.html
 
-=========================
 Scientific Workflow Tools
 =========================
     
@@ -69,7 +67,6 @@ Related Projects:
 * http://ceda-wps2.badc.rl.ac.uk/ui/home
 
 
-=================
 Scientific Python
 =================
 
@@ -82,7 +79,6 @@ data processing, predictive analytics, and scientific computing
 
 Python Data Analysis Library
 
-=========================
 Python in Climate Science
 ========================= 
 
@@ -98,7 +94,6 @@ data servers. [..]
 Python library for climate indices calculation. 
 Documentation at http://icclim.readthedocs.org/
 
-===============================
 Python Web Frameworks and Utils
 ===============================
 
@@ -106,43 +101,6 @@ Python Web Frameworks and Utils
 * Bootstrap - http://getbootstrap.com/
 * Bootstrap 2.x - http://getbootstrap.com/2.3.2/index.html
 
-====================
-Example WPS Requests
-====================
-
-OGC Web Processing Service Standard
-
-http://www.opengeospatial.org/standards/wps
-
-WPS Documentation with examples: 
-
-http://geoprocessing.info/wpsdoc/1x0GetCapabilities
-
-Get WPS Capabilities:
-
-http://mouflon.dkrz.de/wps?Request=GetCapabilities&Service=WPS
-
-Describe Process:
-
-http://mouflon.dkrz.de/wps?service=WPS&request=DescribeProcess&version=1.0.0&identifier=org.malleefowl.test.add
-
-Execute Process:
-
-http://mouflon.dkrz.de/wps?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.test.add&DataInputs=num_a=1.0;num_b=2.0
-
-Execute Process, Result XML containing output (asReference=false):
-
-http://mouflon.dkrz.de/wps?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.test.add&DataInputs=num_a=1.0;num_b=2.0&responsedocument=output=@asreference=false 
-
-Execute Process Async:
-
-http://mouflon.dkrz.de/wps?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.test.add&DataInputs=num_a=1.0;num_b=2.0&storeExecuteResponse=true&status=true
-
-Execute Process, Raw output:
-
-http://mouflon.dkrz.de/wps?service=WPS&request=Execute&version=1.0.0&identifier=org.malleefowl.test.add&DataInputs=num_a=1.0;num_b=2.0&rawdataoutput=output
-
-====================
 Example WPS Services
 ====================
 

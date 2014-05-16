@@ -7,9 +7,19 @@ IPython Notebooks
 Using IPython Notebook http://ipython.org/notebook.html and notebook viewer http://nbviewer.ipython.org/. 
 
 
-============
-WPS Tutorial
-============
+WPS Standard Documentation
+------------------------------
+
+OGC Web Processing Service Standard
+
+http://www.opengeospatial.org/standards/wps
+
+WPS Documentation with examples: 
+
+http://geoprocessing.info/wpsdoc/1x0GetCapabilities
+
+Basic WPS Client operations
+===========================
 
 T1: Hello World
 
