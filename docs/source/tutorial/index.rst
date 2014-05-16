@@ -1,18 +1,20 @@
 .. _tutorial:
 
-********
-Tutorial
-********
+**********
+Tutorials
+**********
 
-Phoenix is a Web Processing Service (WPS) for the earth systhem modelling community. The service offers an easy to use graphical user interface as a valuable practical tool to process and analyze big data. WPS represents an interface to perform processes over the HTTP network protocol, enabling users to trigger processes over a website. 
-
-In the following tutorial will guide you though the first stepps to get familliar with Phoenix. 
-
+The following tutorials will show how to use the Phoenix web UI. There
+are also some IPython Notebooks to explain WPS client requests with
+examples.
 
 .. toctree::
    :maxdepth: 1
 
-   login
-   visualisation
+   phoenix-tutorial
    notebooks
-   
+
+
+
+
+
