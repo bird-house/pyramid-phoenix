@@ -15,7 +15,7 @@ Contents:
 
    installation/index
    tutorial/index
-   phoenix/index
+   userguide/index
    malleefowl/index
    development/index
    processes/index  
