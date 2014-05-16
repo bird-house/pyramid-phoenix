@@ -16,10 +16,8 @@ Contents:
    installation/index
    tutorial/index
    userguide/index
-   malleefowl/index
-   development/index
-   processes/index  
-   notebooks/index
+   devguide/index
+   releases/index
    appendix/index
 
 Indices and tables

@@ -14,4 +14,5 @@ In the following tutorial will guide you though the first stepps to get famillia
 
    login
    visualisation
+   notebooks
    
