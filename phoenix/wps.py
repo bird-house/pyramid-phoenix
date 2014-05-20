@@ -289,9 +289,15 @@ class WPSSchema(colander.SchemaNode):
             node.missing = colander.drop
         # TODO: fix init of default
         if hasattr(data_input, 'defaultValue'):
+            logger.debug("node typ =%s, default value = %s, type=%s",
+                         node.typ, data_input.defaultValue, type(data_input.defaultValue))
             if type(node.typ) == colander.DateTime:
                 #logger.debug('we have a datetime default value')
                 node.default = dateutil.parser.parse(data_input.defaultValue)
+            elif type(node.typ) == colander.Boolean:
+                # TODO: boolean default does not work ...
+                node.default = bool(data_input.defaultValue == 'True')
+                logger.debug('boolean default value %s', node.default)
             else:
                 node.default = data_input.defaultValue
         self.colander_literal_widget(node, data_input)
@@ -309,7 +315,7 @@ class WPSSchema(colander.SchemaNode):
         return node
 
     def colander_literal_type(self, data_input):
-        #logger.debug('data input type = %s', data_input.dataType)
+        logger.debug('data input type = %s', data_input.dataType)
         if 'boolean' in data_input.dataType:
             return colander.Boolean()
         elif 'integer' in data_input.dataType:

@@ -22,7 +22,7 @@ http://docs.pylonsproject.org/projects/pyramid-deform/en/latest/
 http://deform.readthedocs.org/en/latest/interfaces.html
 * DONE: ipython notebook
 * DONE: tutorial for phoenix
-* using glob search for local files
+* DONE: using glob search for local files
 * DONE: ipython examples for wps client (also chaining processes)
 * DONE: configure admin users
 * enable local admin user
