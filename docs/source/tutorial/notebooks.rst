@@ -6,6 +6,28 @@ IPython Notebooks
 
 Using IPython Notebook http://ipython.org/notebook.html and notebook viewer http://nbviewer.ipython.org/. 
 
+Prepare yourself for the tutorials ...
+--------------------------------------
+
+For most of the tutorial it is sufficient to just try and edit the WPS request URLs in your browser.
+
+If you want to do all of it and with more ease you should install
+IPython notebook. For this you need a recent python version (> 2.6).
+
+Install IPython (http://ipython.org/install.html)::
+ 
+      $ pip install ipython[notebook]
+
+Install owslib with WPS client (https://pypi.python.org/pypi/OWSLib/)::
+
+      $ pip install owslib
+
+Start the IPython notebook::
+
+      $ ipython notebook
+
+You can import notebooks from the given links below.
+
 
 WPS Standard Documentation
 ------------------------------
