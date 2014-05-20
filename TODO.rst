@@ -1,6 +1,16 @@
 Todo list for Phoenix
 =====================
 
+name for github
+---------------
+
+* Nils:
+
+Eyrie (oder AM: aerie)
+
+Ist unter anderm der (Adler)Horst und ein gutes Zusause fuer all deine Voegel 
+
+
 Helsinki
 --------
 
