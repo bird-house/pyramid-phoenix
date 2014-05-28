@@ -11,13 +11,13 @@
             <!-- no dropdowns -->
             <div tal:condition="python:len(item['dropdowns']) == 0">
               <li class="${'active' if item['active'] else ''}">
-                <a href="${item['url']}"><i class="${item['icon']}"></i> ${item['name']}</a>
+                <a href="${item['url']}"><i class="${item['icon']}"></i><font color="white"> ${item['name']}</font></a>
               <li>
             </div>
             <!-- with dropdowns -->
             <div tal:condition="python:len(item['dropdowns']) > 0">
               <li class="nav dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" data-target="#"><i class="${item['icon']}"></i> ${item['name']}</a>
+                <a class="dropdown-toggle" data-toggle="dropdown" data-target="#"><i class="${item['icon']}"></i> <font color="white">${item['name']}</font></a>
                 <b class="caret"></b>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                   <li tal:repeat="subitem item['dropdowns']">
