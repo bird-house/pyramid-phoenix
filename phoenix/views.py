@@ -407,7 +407,7 @@ def jobsupdate(request):
         status = job["status"]
         tr1 = "Unknown status:"+str(status)
         if status in ["ProcessAccepted","ProcessStarted","ProcessPaused"]:
-            perc = job.get("percent_completed")
+            perc = job.get("percent_completed",0)#TODO: Using 0 as workaround if not found.
             barwidth = 80
             barfill = perc*barwidth/100
             tr1 = ('<a href="#" class="label label-info" data-toggle="popover"' +
