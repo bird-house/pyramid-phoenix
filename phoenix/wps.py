@@ -267,7 +267,11 @@ class WPSSchema(colander.SchemaNode):
             elif 'ComplexData' in data_input.dataType:
                 node = self.complex_data(data_input, metadata)
             else:
-                raise Exception('unknown data type %s' % (data_input.dataType))
+                #TODO: As workaround for geoserver wps.
+                if 'LiteralData' in data_input.dataType:#for geoserver wps
+                    node = self.literal_data(data_input)
+                else:
+                    raise Exception('unknown data type %s' % (data_input.dataType))
 
             if node is None:
                 continue
