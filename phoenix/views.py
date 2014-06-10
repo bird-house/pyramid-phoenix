@@ -420,8 +420,11 @@ def jobsupdate(request):
             tr1 = (' <a href="/output_details?uuid=' + job["uuid"] + '" class="label label-success">' +
                    status + '</a>')
         elif status == "ProcessFailed":
+            error_message = job.get("error_message","")
+            for x in ["[","]", " ",".",":","_","'","(",")"]:
+                    error_message = error_message.replace("\\"+x,x)
             tr1 = ('<a href="#" class="label label-warning" data-toggle="popover"' + 
-                  ' data-placement="left" data-content="' + job.get("error_message", '') + 
+                  ' data-placement="left" data-content="' + error_message + 
                   '" data-original-title="Error Message">' + status + '</a>')
         elif status == "Exception":
             tr1 = ('<a href="#" class="label label-important" data-toggle="popover"' +
