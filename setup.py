@@ -23,7 +23,6 @@ requires = [
     'Mako',
     'OWSLib',
     'lxml',
-    'MyProxyClient',
     'python-dateutil',
     #'egenix-mx-base',
     ]
