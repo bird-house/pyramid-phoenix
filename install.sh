@@ -3,6 +3,8 @@ PWD=`pwd`
 BUILDOUT_DIR=`dirname $0`
 DOWNLOAD_CACHE=downloads
 ANACONDA_HOME="/opt/anaconda"
+HOMEBREW_PREFIX="/opt/homebrew"
+HOMEBREW_CACHE="/opt/homebrew"
 ANACONDA_FILE=Miniconda-2.2.2-Linux-x86_64.sh
 ANACONDA_URL=http://repo.continuum.io/miniconda/$ANACONDA_FILE
 ANACONDA_MD5=a24a8baa264dee7cfd9286ae3d4add60
@@ -12,6 +14,7 @@ function pre_build() {
     upgrade
     setup_cfg
     setup_os
+    install_homebrew
     install_anaconda
 }
 
@@ -72,6 +75,21 @@ function install_anaconda() {
     #. /etc/profile.d/anaconda.sh
 
     echo "Installing Anaconda ... Done"
+}
+
+function install_homebrew() {
+    # see https://github.com/Homebrew/linuxbrew
+    
+    if [ -f /etc/debian_version ] ; then
+        sudo apt-get -y --force-yes install build-essential curl git m4 ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev
+    fi
+
+    if [ -f /etc/redhat-release ] ; then
+        sudo yum -y groupinstall 'Development Tools' && sudo yum -y install curl git m4 ruby texinfo bzip2-devel curl-devel expat-devel ncurses-devel zlib-devel
+    fi
+
+    ruby -e "$(wget -O- https://raw.github.com/Homebrew/linuxbrew/go/install)"
+    echo "Installing Homebrew ... Done"
 }
 
 # run install
