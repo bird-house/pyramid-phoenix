@@ -1,27 +1,18 @@
 [buildout]
 extends = buildout.cfg
 
-[install]
-prefix = 
-user = nobody
-group = nogroup
-
 [server]
 host = 127.0.0.1
 hostname = localhost
 
 [ports]
-http = 80
-https = 443
+http = 8081
+https = 8443
 tomcat = 8080
 supervisor = 9001
 
 [logging]
 log_level = DEBUG
-
-[service]
-# 15 mins (in secs)
-timeout = 900
 
 [security]
 sys_token = change_me_in_custom.cfg
@@ -31,8 +22,4 @@ admin_users = admin@malleefowl.org
 [esgf]
 esg_search = http://esgf-data.dkrz.de/esg-search
 #esg_search = http://esgf-node.ipsl.fr/esg-search
-
-[tests]
-user =
-password =
 
