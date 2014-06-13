@@ -1,10 +1,9 @@
 #!/bin/bash
 PWD=`pwd`
 BUILDOUT_DIR=`dirname $0`
+ANACONDA_HOME=/opt/anaconda
+HOMEBREW_HOME=/opt/homebrew
 DOWNLOAD_CACHE=downloads
-ANACONDA_HOME="/opt/anaconda"
-HOMEBREW_PREFIX="/opt/homebrew"
-HOMEBREW_CACHE="/opt/homebrew"
 ANACONDA_FILE=Miniconda-2.2.2-Linux-x86_64.sh
 ANACONDA_URL=http://repo.continuum.io/miniconda/$ANACONDA_FILE
 ANACONDA_MD5=a24a8baa264dee7cfd9286ae3d4add60
@@ -64,15 +63,13 @@ function install_anaconda() {
     # run miniconda setup, install in ANACONDA_HOME
     if [ ! -d $ANACONDA_HOME ]; then
         sudo bash "$DOWNLOAD_CACHE/$ANACONDA_FILE" -b -p $ANACONDA_HOME
+
          # add anaconda path to user .bashrc
         #echo -e "\n# Anaconda PATH added by climdaps installer" >> $HOME/.bashrc
         #echo "export PATH=$ANACONDA_HOME/bin:\$PATH" >> $HOME/.bashrc
     fi
 
-    # add anaconda to system path for all users
-    #echo "export PATH=$ANACONDA_HOME/bin:\$PATH" | sudo tee /etc/profile.d/anaconda.sh > /dev/null
-    # source the anaconda settings
-    #. /etc/profile.d/anaconda.sh
+    sudo chown -R $USER $ANACONDA_HOME
 
     echo "Installing Anaconda ... Done"
 }
@@ -89,6 +86,7 @@ function install_homebrew() {
     fi
 
     ruby -e "$(wget -O- https://raw.github.com/Homebrew/linuxbrew/go/install)"
+    sudo ln -sf $HOME/.linuxbrew $HOMEBREW_HOME
     echo "Installing Homebrew ... Done"
 }
 
