@@ -67,6 +67,7 @@ https://chrislea.com/2013/02/23/proxying-websockets-with-nginx/
 Common
 ------
 
+* use mongodb from anaconda
 * use seperate nginx config for proxy
 * use supervisor to handle logging (via stdout?)
 http://supervisord.org/configuration.html#programx-section

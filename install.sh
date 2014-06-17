@@ -85,8 +85,11 @@ function install_homebrew() {
         sudo yum -y groupinstall 'Development Tools' && sudo yum -y install curl git m4 ruby texinfo bzip2-devel curl-devel expat-devel ncurses-devel zlib-devel
     fi
 
-    ruby -e "$(wget -O- https://raw.github.com/Homebrew/linuxbrew/go/install)"
-    sudo ln -sf $HOME/.linuxbrew $HOMEBREW_HOME
+    if [ ! -e $HOMEBRE_HOME ]; then
+	echo "Installing Homebrew ..."
+    	ruby -e "$(wget -O- https://raw.github.com/Homebrew/linuxbrew/go/install)"
+    	sudo ln -sf $HOME/.linuxbrew $HOMEBREW_HOME
+    fi
     echo "Installing Homebrew ... Done"
 }
 
