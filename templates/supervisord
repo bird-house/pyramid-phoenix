@@ -1,0 +1,84 @@
+#!/bin/bash
+#
+# /etc/init.d/supervisord
+# Handles starting and stopping supervisord.
+#
+# Tested on OpenSUSE 12.1, SLES 11 SP2
+# Author: Gary Monson gary.monson@gmail.com
+#
+### BEGIN INIT INFO
+# Provides:          supervisord
+# Required-Start:    $local_fs $remote_fs $network
+# Required-Stop:     $local_fs $remote_fs $network
+# Default-Start:     3 5
+# Default-Stop:      0 1 2 6
+# Description:       Provides supervisord service
+### END INIT INFO
+
+DAEMON=/opt/anaconda/bin/supervisord
+SUPERVISORCTL=/opt/anaconda/bin/supervisorctl
+PIDFILE=${buildout:directory}/var/run/supervisord.pid
+CONFIGFILE=${buildout:directory}/etc/supervisor/supervisord.conf
+LOGFILE=${buildout:directory}/var/log/supervisor/supervisord.log
+
+# Exit if the package is not installed
+[ -x "$DAEMON" ] || exit 0
+
+start() {
+    echo -n "Starting supervisord: "
+    if [ -f $PIDFILE ]; then
+        PID=`cat $PIDFILE`
+        echo supervisord already running: $PID
+        exit 2;
+    else
+        mkdir -p `dirname $LOGFILE`
+        $DAEMON --pidfile $PIDFILE --configuration $CONFIGFILE --logfile $LOGFILE
+        RETVAL=$?
+        return $RETVAL
+    fi
+}
+
+stop() {
+    echo "Shutting down supervisord:"
+    $SUPERVISORCTL --configuration $CONFIGFILE shutdown
+    return 0
+}
+
+status() {
+    if [ -f $PIDFILE ]; then
+        PID=`cat $PIDFILE`
+        ps -p $PID >/dev/null 2>&1
+        if [ "$?" = 0 ]; then
+            echo "supervisord running"
+            exit 0
+        else
+            echo "pidfile exists ($PID), but supervisord not running"
+            exit 2
+        fi
+    else
+        echo "supervisord not running"
+        exit 1
+    fi
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    status)
+        status
+        ;;
+    *)
+        echo "Usage:  {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+exit $?
