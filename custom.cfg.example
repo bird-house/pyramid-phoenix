@@ -23,3 +23,7 @@ admin_users = admin@malleefowl.org
 esg_search = http://esgf-data.dkrz.de/esg-search
 #esg_search = http://esgf-node.ipsl.fr/esg-search
 
+[malleefowl]
+wps = http://localhost:8091/wps
+thredds = http://localhost:8080/thredds
+
