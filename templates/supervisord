@@ -41,6 +41,24 @@ start() {
 stop() {
     echo "Shutting down supervisord:"
     $SUPERVISORCTL --configuration $CONFIGFILE shutdown
+    echo "Waiting roughly 60 seconds for $PIDFILE to be removed after child processes exit"
+    total_sleep=0
+    for sleep in  2 2 2 2 4 4 4 4 8 8 8 8 last; do
+        if [ ! -e $PIDFILE ] ; then
+            echo "Supervisord exited as expected in under $total_sleep seconds"
+            break
+        else
+            if [[ $sleep -eq "last" ]] ; then
+                echo "Supervisord still working on shutting down. We've waited roughly 60 seconds, we'll let it do its thing from here"
+                return 1
+            else
+                sleep $sleep
+                total_sleep=$(( $total_sleep + $sleep ))
+            fi
+
+        fi
+    done
+
     return 0
 }
 
