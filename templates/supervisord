@@ -15,14 +15,14 @@
 # Description:       Provides supervisord service
 ### END INIT INFO
 
-DAEMON=/opt/anaconda/bin/supervisord
-SUPERVISORCTL=/opt/anaconda/bin/supervisorctl
-PIDFILE=${buildout:directory}/var/run/supervisord.pid
-CONFIGFILE=${buildout:directory}/etc/supervisor/supervisord.conf
-LOGFILE=${buildout:directory}/var/log/supervisor/supervisord.log
+SUPERVISORD=${conda:home}/bin/supervisord
+SUPERVISORCTL=${conda:home}/bin/supervisorctl
+PIDFILE=${conda:home}/var/run/supervisord.pid
+CONFIGFILE=${conda:home}/etc/supervisor/supervisord.conf
+LOGFILE=${conda:home}/var/log/supervisor/supervisord.log
 
 # Exit if the package is not installed
-[ -x "$DAEMON" ] || exit 0
+[ -x "$SUPERVISORD" ] || exit 0
 
 start() {
     echo -n "Starting supervisord: "
@@ -32,7 +32,7 @@ start() {
         exit 2;
     else
         mkdir -p `dirname $LOGFILE`
-        $DAEMON --pidfile $PIDFILE --configuration $CONFIGFILE --logfile $LOGFILE
+        $SUPERVISORD --pidfile $PIDFILE --configuration $CONFIGFILE --logfile $LOGFILE
         RETVAL=$?
         return $RETVAL
     fi
