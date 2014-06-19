@@ -13,7 +13,7 @@ function pre_build() {
     upgrade
     setup_cfg
     setup_os
-    install_homebrew
+    #install_homebrew
     install_anaconda
 }
 
