@@ -420,7 +420,7 @@ def jobsupdate(request):
                    status + '</a>')
         elif status == "ProcessFailed":
             error_message = job.get("error_message","")
-            for x in ["[","]", " ",".",":","_","'","(",")"]:
+            for x in ["[","]", " ",".",":","_","'","(",")","-",",","/","{","}","?"]:
                     error_message = error_message.replace("\\"+x,x)
             tr1 = ('<a href="#" class="label label-warning" data-toggle="popover"' + 
                   ' data-placement="left" data-content="' + error_message + 
