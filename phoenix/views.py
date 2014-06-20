@@ -497,7 +497,10 @@ class ExecuteView(FormView):
             self.wps = get_wps(url)
             process = self.wps.describeprocess(identifier)
             from .helpers import get_process_metadata
-            metadata = get_process_metadata(self.wps, identifier)
+            try:
+                metadata = get_process_metadata(self.wps, identifier)
+            except:
+                metadata = "{}"
             logger.debug('metadata = %s', metadata)
             self.schema = self.schema_factory(
                 info = True,
