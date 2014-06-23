@@ -15,11 +15,11 @@
 # Description:       Provides supervisord service
 ### END INIT INFO
 
-SUPERVISORD=${conda:home}/bin/supervisord
-SUPERVISORCTL=${conda:home}/bin/supervisorctl
-PIDFILE=${conda:home}/var/run/supervisord.pid
-CONFIGFILE=${conda:home}/etc/supervisor/supervisord.conf
-LOGFILE=${conda:home}/var/log/supervisor/supervisord.log
+SUPERVISORD=${buildout:anaconda-home}/bin/supervisord
+SUPERVISORCTL=${buildout:anaconda-home}/bin/supervisorctl
+PIDFILE=${buildout:anaconda-home}/var/run/supervisord.pid
+CONFIGFILE=${buildout:anaconda-home}/etc/supervisor/supervisord.conf
+LOGFILE=${buildout:anaconda-home}/var/log/supervisor/supervisord.log
 
 # Exit if the package is not installed
 [ -x "$SUPERVISORD" ] || exit 0
