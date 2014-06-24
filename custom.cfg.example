@@ -9,7 +9,6 @@ hostname = localhost
 http = 8081
 https = 8443
 tomcat = 8080
-supervisor = 9001
 
 [logging]
 log_level = DEBUG
