@@ -45,7 +45,7 @@ function setup_os() {
 }
 
 function setup_debian() {
-    sudo apt-get -y --force-yes install wget subversion
+    sudo apt-get -y --force-yes install wget subversion build-essential libssl1.0.0 libssl-dev
 }
 
 function install_anaconda() {
@@ -86,9 +86,9 @@ function install_homebrew() {
     fi
 
     if [ ! -e $HOMEBRE_HOME ]; then
-	echo "Installing Homebrew ..."
-    	ruby -e "$(wget -O- https://raw.github.com/Homebrew/linuxbrew/go/install)"
-    	sudo ln -sf $HOME/.linuxbrew $HOMEBREW_HOME
+        echo "Installing Homebrew ..."
+        ruby -e "$(wget -O- https://raw.github.com/Homebrew/linuxbrew/go/install)"
+        sudo ln -sf $HOME/.linuxbrew $HOMEBREW_HOME
     fi
     echo "Installing Homebrew ... Done"
 }
