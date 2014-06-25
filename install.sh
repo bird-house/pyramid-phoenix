@@ -41,11 +41,17 @@ function setup_cfg() {
 function setup_os() {
     if [ -f /etc/debian_version ] ; then
         setup_debian
+    elif [ -f /etc/redhat-release ] ; then
+        setup_redhat
     fi
 }
 
 function setup_debian() {
-    sudo apt-get -y --force-yes install wget subversion build-essential libssl1.0.0 libssl-dev
+    sudo apt-get -y --force-yes install wget subversion build-essential libssl1.0.0 libssl-dev myproxy
+}
+
+function setup_redhat() {
+    sudo yum -y install myproxy
 }
 
 function install_anaconda() {
