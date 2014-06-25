@@ -1,7 +1,7 @@
 #!/bin/bash
 PWD=`pwd`
 BUILDOUT_DIR=`dirname $0`
-ANACONDA_HOME=/opt/anaconda
+ANACONDA_HOME=$HOME/anaconda
 HOMEBREW_HOME=/opt/homebrew
 DOWNLOAD_CACHE=downloads
 ANACONDA_FILE=Miniconda-2.2.2-Linux-x86_64.sh
