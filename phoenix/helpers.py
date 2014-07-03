@@ -87,18 +87,23 @@ def get_process_metadata(wps, process_id):
     identifier = 'org.malleefowl.metadata'
     inputs = [("processid", str(process_id))]
     outputs = [("output", False)]
-    # TODO: use simple wps call
-    from owslib.wps import monitorExecution
-    execution = wps.execute(identifier, inputs=inputs, output=outputs)
-    monitorExecution(execution)
-    if len(execution.processOutputs) != 1:
-        return
-    output = execution.processOutputs[0]
-    logger.debug('output %s, data=%s, ref=%s', output.identifier, output.data, output.reference)
-    if len(output.data) != 1:
-        return {}
-    metadata = json.loads(output.data[0])
-    logger.debug('extra metadata loaded: %s, type = %s', metadata, type(metadata))
+    
+    metadata = {}
+    try:
+        # TODO: use simple wps call
+        from owslib.wps import monitorExecution
+        execution = wps.execute(identifier, inputs=inputs, output=outputs)
+        monitorExecution(execution)
+        if len(execution.processOutputs) != 1:
+            return {}
+        output = execution.processOutputs[0]
+        logger.debug('output %s, data=%s, ref=%s', output.identifier, output.data, output.reference)
+        if len(output.data) != 1:
+            return {}
+        metadata = json.loads(output.data[0])
+        logger.debug('extra metadata loaded: %s, type = %s', metadata, type(metadata))
+    except:
+        metadata = {}
     return metadata
 
 def execute_wps(wps, identifier, params):
