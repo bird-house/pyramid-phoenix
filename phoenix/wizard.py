@@ -255,9 +255,13 @@ def bind_wps_schema(node, kw):
         return
   
     states = wizard_state.get_step_states()
+
+    url = states.get(SELECT_WPS).get('url')
+    wps = get_wps(url, force=True)
+    
     state = states.get(SELECT_PROCESS)
     identifier = state['process']
-    wps = get_wps(wps_url(request))
+
     process = wps.describeprocess(identifier)
 
     from .helpers import get_process_metadata
