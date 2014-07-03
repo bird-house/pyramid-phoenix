@@ -114,4 +114,8 @@ List of available Web Processing Services:
 * BADC CEDA - http://ceda-wps2.badc.rl.ac.uk/wps?request=GetCapabilities&service=WPS 
 * delatres - http://dtvirt5.deltares.nl/wps/?Request=GetCapabilities&Service=WPS
 
+Using WPS ...
+=============
+
+* PyWPS tutorial - http://wiki.ieee-earth.org/Documents/GEOSS_Tutorials/GEOSS_Provider_Tutorials/Web_Processing_Service_Tutorial_for_GEOSS_Providers
 
