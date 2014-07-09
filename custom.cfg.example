@@ -9,7 +9,7 @@ log-level = DEBUG
 esgf-search = http://136.172.30.96/esg-search
 wps = http://localhost:8091/wps
 thredds = http://localhost:8080/thredds
-admin_users = ehbrecht@dkrz.de
+admin_users = admin@malleefowl.org
 sys_token = change_me_in_custom.cfg
 persona_secret = 87yYgBmp09
 
