@@ -47,11 +47,11 @@ function setup_os() {
 }
 
 function setup_debian() {
-    sudo apt-get -y --force-yes install wget subversion build-essential libssl1.0.0 libssl-dev myproxy
+    sudo apt-get -y --force-yes install wget build-essential
 }
 
 function setup_redhat() {
-    sudo yum -y install myproxy
+    sudo yum -y install wget
 }
 
 function install_anaconda() {
