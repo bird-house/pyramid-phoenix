@@ -45,12 +45,15 @@ def main(global_config, **settings):
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
 
+    # chameleon templates
+    config.include('pyramid_chameleon')
+    
     # using mozilla persona
     config.include('pyramid_persona')
 
     # includes
-    #config.include('deform_bootstrap')
-    config.include('deform_bootstrap_extra')
+    config.include('deform_bootstrap')
+    #config.include('deform_bootstrap_extra')
 
     # add my own templates
     # TODO: improve config of my own templates
@@ -66,10 +69,10 @@ def main(global_config, **settings):
         'deform_bootstrap_static', 'deform_bootstrap:static',
         cache_max_age=3600
     )
-    config.add_static_view(
-        'deform_bootstrap_extra_static', 'deform_bootstrap_extra:static',
-        cache_max_age=3600
-    )
+    #config.add_static_view(
+    #    'deform_bootstrap_extra_static', 'deform_bootstrap_extra:static',
+    #    cache_max_age=3600
+    #)
 
     # routes 
     config.add_route('home', '/')

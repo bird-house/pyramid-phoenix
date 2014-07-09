@@ -8,6 +8,7 @@ CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
 requires = [
     'pyramid',
+    'pyramid-chameleon',
     'pymongo',
     'pyramid_debugtoolbar',
     'waitress',
@@ -15,7 +16,7 @@ requires = [
     'pyramid_deform',
     'deform',
     'deform_bootstrap',
-    'deform_bootstrap_extra',
+    #'deform_bootstrap_extra',
     'pyramid_persona',
     'authomatic',
     'python-openid',

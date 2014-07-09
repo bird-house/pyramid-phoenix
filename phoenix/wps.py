@@ -1,6 +1,5 @@
 import colander
 import deform
-import deform_bootstrap_extra
 import logging
 
 import dateutil
