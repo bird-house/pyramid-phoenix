@@ -1,40 +1,41 @@
 #!/bin/bash
-PWD=`pwd`
-BUILDOUT_DIR=`dirname $0`
+
+# user settings
 ANACONDA_HOME=$HOME/anaconda
-DOWNLOAD_CACHE=downloads
-ANACONDA_FILE=Miniconda-latest-Linux-x86_64.sh
-ANACONDA_URL=http://repo.continuum.io/miniconda/$ANACONDA_FILE
-#ANACONDA_MD5=
 
-# actions before build
-function pre_build() {
-    clean_build
-    upgrade
-    setup_cfg
-    setup_os
-    #install_homebrew
-    install_anaconda
+# don't change these settings
+BUILDOUT_DIR=`dirname $0`
+DOWNLOAD_CACHE=$BUILDOUT_DIR/downloads
+ANACONDA_URL=http://repo.continuum.io/miniconda
+FN_LINUX=Miniconda-latest-Linux-x86_64.sh
+FN_OSX=Miniconda-3.5.5-MacOSX-x86_64.sh
+
+function install_anaconda() {
+    # run miniconda setup, install in ANACONDA_HOME
+    if [ -d $ANACONDA_HOME ]; then
+        echo "Anaconda already installed in $ANACONDA_HOME."
+    else
+        FN=$FN_LINUX
+        if [ `uname -s` = "Darwin" ] ; then
+            FN=$FN_OSX
+        fi
+
+        echo "Installing $FN ..."
+
+        # download miniconda setup script to download cache with wget
+        mkdir -p $DOWNLOAD_CACHE
+        wget -q -c -O "$DOWNLOAD_CACHE/$FN" $ANACONDA_URL/$FN
+        bash "$DOWNLOAD_CACHE/$FN" -b -p $ANACONDA_HOME   
+    fi
+
+    # add anaconda path to user .bashrc
+    echo -n "Add \"$ANACONDA_HOME/bin\" to your PATH: "
+    echo "\"export PATH=$ANACONDA_HOME/bin:\$PATH\""
+
+    echo "Installing Anaconda ... Done"
 }
 
-function clean_build() {
-    echo "Cleaning buildout ..."
-    rm -rf $BUILDOUT_DIR/downloads
-    rm -rf $BUILDOUT_DIR/eggs
-    rm -rf $BUILDOUT_DIR/develop-eggs
-    rm -rf $BUILDOUT_DIR/parts
-    rm -rf $BUILDOUT_DIR/bin
-    rm -f $BUILDOUT_DIR/.installed.cfg
-    rm -rf $BUILDOUT_DIR/*.egg-info
-    echo "Cleaning buildout ... Done"
-}
-
-# upgrade stuff which can not be done by buildout
-function upgrade() {
-    echo "Upgrading Phoenix ..."
-}
-
-# set configurion file for buildout
+# set default configurion file for buildout
 function setup_cfg() {
     if [ ! -d $DOWNLOAD_CACHE ]; then
         echo "Creating buildout downloads cache $DOWNLOAD_CACHE."
@@ -49,63 +50,26 @@ function setup_cfg() {
     fi
 }
 
-# install os packages needed for bootstrap
-function setup_os() {
-    if [ -f /etc/debian_version ] ; then
-        setup_debian
-    elif [ -f /etc/redhat-release ] ; then
-        setup_redhat
-    fi
-}
-
-function setup_debian() {
-    sudo apt-get -y --force-yes install wget build-essential
-}
-
-function setup_redhat() {
-    sudo yum -y install wget
-}
-
-function install_anaconda() {
-    # download miniconda setup script to download cache with wget
-    wget -q -c -O $DOWNLOAD_CACHE/$ANACONDA_FILE $ANACONDA_URL
-
-    # md5 check sum on the current file you downloaded and save results to 'test1'
-    #test_md5=`md5sum "$DOWNLOAD_CACHE/$ANACONDA_FILE" | awk '{print $1}'`;
-    #if [ "$test_md5" != $ANACONDA_MD5 ]; then 
-    #    echo "checksum didn't match!"
-    #    echo "Installing Anaconda ... Failed"
-    #    exit 1
-    #fi
-
-    # run miniconda setup, install in ANACONDA_HOME
-    if [ ! -d $ANACONDA_HOME ]; then
-        sudo bash "$DOWNLOAD_CACHE/$ANACONDA_FILE" -b -p $ANACONDA_HOME
-
-         # add anaconda path to user .bashrc
-        #echo -e "\n# Anaconda PATH added by climdaps installer" >> $HOME/.bashrc
-        #echo "export PATH=$ANACONDA_HOME/bin:\$PATH" >> $HOME/.bashrc
-    fi
-
-    echo "Installing Anaconda ... Done"
-}
-
 # run install
 function install() {
-    echo "Installing Phoenix ..."
+    echo "Installing ..."
     echo "BUILDOUT_DIR=$BUILDOUT_DIR"
     echo "DOWNLOAD_CACHE=$DOWNLOAD_CACHE"
 
-    cd $BUILDOUT_DIR
+    pushd $BUILDOUT_DIR || exit 1
     
-    pre_build
-    $ANACONDA_HOME/bin/python bootstrap.py -c custom.cfg
-    echo "Bootstrap ... Done"
-    bin/buildout -c custom.cfg
+    setup_cfg
 
-    cd $PWD
+    if [ ! -f "$BUILDOUT_DIR/bin/buildout" ]; then
+        "$ANACONDA_HOME/bin/python" bootstrap.py -c custom.cfg
+        echo "Bootstrap ... Done"
+    fi
 
-    echo "Installing Phoenix ... Done"
+    "$BUILDOUT_DIR/bin/buildout" -c custom.cfg
+
+    popd || exit 1
+
+    echo "Installing ... Done"
 }
 
 function usage() {
@@ -113,4 +77,7 @@ function usage() {
     exit 1
 }
 
+install_anaconda
 install
+
+exit 0
