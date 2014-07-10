@@ -291,7 +291,7 @@ class WPSSchema(colander.SchemaNode):
         if data_input.minOccurs == 0:
             node.missing = colander.drop
         # TODO: fix init of default
-        if hasattr(data_input, 'defaultValue'):
+        if hasattr(data_input, 'defaultValue') and data_input.defaultValue is not None:
             logger.debug("node typ =%s, default value = %s, type=%s",
                          node.typ, data_input.defaultValue, type(data_input.defaultValue))
             if type(node.typ) == colander.DateTime:
