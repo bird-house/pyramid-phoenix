@@ -10,11 +10,24 @@ ANACONDA_MD5=a24a8baa264dee7cfd9286ae3d4add60
 
 # actions before build
 function pre_build() {
+    clean_build
     upgrade
     setup_cfg
     setup_os
     #install_homebrew
     install_anaconda
+}
+
+function clean_build() {
+    echo "Cleaning buildout ..."
+    rm -rf $BUILDOUT_DIR/downloads
+    rm -rf $BUILDOUT_DIR/eggs
+    rm -rf $BUILDOUT_DIR/develop-eggs
+    rm -rf $BUILDOUT_DIR/parts
+    rm -rf $BUILDOUT_DIR/bin
+    rm -f $BUILDOUT_DIR/.installed.cfg
+    rm -rf $BUILDOUT_DIR/*.egg-info
+    echo "Cleaning buildout ... Done"
 }
 
 # upgrade stuff which can not be done by buildout
