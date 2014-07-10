@@ -4,9 +4,9 @@ BUILDOUT_DIR=`dirname $0`
 ANACONDA_HOME=$HOME/anaconda
 HOMEBREW_HOME=/opt/homebrew
 DOWNLOAD_CACHE=downloads
-ANACONDA_FILE=Miniconda-2.2.2-Linux-x86_64.sh
+ANACONDA_FILE=Miniconda-latest-Linux-x86_64.sh
 ANACONDA_URL=http://repo.continuum.io/miniconda/$ANACONDA_FILE
-ANACONDA_MD5=a24a8baa264dee7cfd9286ae3d4add60
+#ANACONDA_MD5=
 
 # actions before build
 function pre_build() {
@@ -72,12 +72,12 @@ function install_anaconda() {
     wget -q -c -O $DOWNLOAD_CACHE/$ANACONDA_FILE $ANACONDA_URL
 
     # md5 check sum on the current file you downloaded and save results to 'test1'
-    test_md5=`md5sum "$DOWNLOAD_CACHE/$ANACONDA_FILE" | awk '{print $1}'`;
-    if [ "$test_md5" != $ANACONDA_MD5 ]; then 
-        echo "checksum didn't match!"
-        echo "Installing Anaconda ... Failed"
-        exit 1
-    fi
+    #test_md5=`md5sum "$DOWNLOAD_CACHE/$ANACONDA_FILE" | awk '{print $1}'`;
+    #if [ "$test_md5" != $ANACONDA_MD5 ]; then 
+    #    echo "checksum didn't match!"
+    #    echo "Installing Anaconda ... Failed"
+    #    exit 1
+    #fi
 
     # run miniconda setup, install in ANACONDA_HOME
     if [ ! -d $ANACONDA_HOME ]; then
