@@ -121,7 +121,7 @@ def login_local(request):
     logger.debug("login with local account")
     # TODO: need some work work on local accounts
     if (True):
-        email = "demo@climdaps.org"
+        email = "admin@malleefowl.org"
         update_user(request, user_id=email)
 
         if is_valid_user(request, email):
