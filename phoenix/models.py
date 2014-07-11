@@ -255,11 +255,10 @@ def jobs_information(request,sortkey="starttime",inverted=True):
                     job['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
                
             except:
-                msg = 'could not access wps %s' % (job['status_location'])
-                logger.warn(msg)
+                logger.exception('could not access wps %s', job['status_location'])
                 # TODO: if url is not accessable ... try again!
-                job['status'] = 'ProcessPaused'
-                job['errors'].append( dict(code='', locator='', text=msg) )
+                job['status'] = 'ProcessFailed'
+                job['errors'].append( dict(code='', locator='', text="Could not access wps") )
             
             job['end_time'] = datetime.datetime.now()
             for err in job['errors']:
