@@ -649,12 +649,13 @@ def edit_catalog_entry(context, request):
              permission='admin'
              )
 def users_view(request):
+    from .models import all_users
     from .grid import UsersGrid
-    user_items = [{'name': 'pingu', 'status': 'activated'}, {'name': 'catwoman', 'status': 'invisible'}]
+    user_items = all_users(request)
     grid = UsersGrid(
             request,
             user_items,
-            ['name', 'status'],
+            ['name', 'user_id', 'organisation', 'openid', 'notes', 'activated'],
         )
     return dict(grid=grid, items=user_items)
 
