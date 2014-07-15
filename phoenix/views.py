@@ -673,6 +673,15 @@ def generate_user_form(request, formid="deform"):
         ajax_options=options,
         )
 
+@view_config(renderer='json', name='delete.user', permission='edit')
+def delete_user(context, request):
+    user_id = request.params.get('user_id', None)
+    logger.debug('delete user %s' %(user_id))
+    if user_id is not None:
+        unregister_user(request, user_id=user_id)
+
+    return True
+
 @view_config(route_name='users', renderer='templates/users.pt',
              layout='default',
              permission='admin'

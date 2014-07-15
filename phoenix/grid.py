@@ -80,8 +80,9 @@ class UsersGrid(Grid):
           <span class="caret"></span>
           </a>
           <ul class="dropdown-menu" id="%s">
-            <li><a class="todo-edit" href="#">Edit</a></li>
-            <li><a class="todo-complete" href="#">Complete</a></li>
+            <li><a class="user-edit" href="#">Edit</a></li>
+            <li><a class="user-delete" href="#">Delete</a></li>
+            <li><a class="user-activate" href="#">Activate/Deactivate</a></li>
           </ul>
         </div>
         """ % item.get('user_id')))
