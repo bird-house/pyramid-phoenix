@@ -113,6 +113,7 @@ List of available Web Processing Services:
 * KNMI climate4impact Portal - http://climate4impact.eu//impactportal/WPS?request=GetCapabilities&service=WPS
 * BADC CEDA - http://ceda-wps2.badc.rl.ac.uk/wps?request=GetCapabilities&service=WPS 
 * delatres - http://dtvirt5.deltares.nl/wps/?Request=GetCapabilities&Service=WPS
+* 52 North - http://geoprocessing.demo.52north.org:8081/wps/WebProcessingService
 
 Using WPS ...
 =============
