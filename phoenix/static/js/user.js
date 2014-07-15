@@ -2,13 +2,13 @@ $(function() {
   // Delete user entry
   $("a.user-delete").click(function(e) {
     e.preventDefault();
-    var wps_url = $(this).closest('ul').attr('id');
-    var entry = $(this).closest('tr');
+    var user_id = $(this).closest('ul').attr('id');
+    var row = $(this).closest('tr');
     $.getJSON(
       '/delete.user',
-      {'url': wps_url},
+      {'user_id': user_id},
       function(json) {
-        entry.remove();
+        row.remove();
       }
     );
   });

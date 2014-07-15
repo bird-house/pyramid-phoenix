@@ -218,13 +218,13 @@ class UserSchema(colander.MappingSchema):
         missing = '',
         default = '',
         )
-    email = colander.SchemaNode(
+    user_id = colander.SchemaNode(
         colander.String(),
-        title = "EMail",
+        title = "User ID",
         description = "Enter eMail used for login",
         validator = colander.Email(),
         missing = '',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget=deform.widget.TextInputWidget(),
         )
     openid = colander.SchemaNode(
         colander.String(),

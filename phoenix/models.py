@@ -34,7 +34,7 @@ def database(request):
 
 # registered users (whitelist)
 
-def register_user(request,
+def add_user(request,
                   user_id,
                   openid=None,
                   name=None,
@@ -44,7 +44,7 @@ def register_user(request,
     db = database(request)
     user = db.users.find_one(dict(user_id = user_id))
     if user != None:
-        unregister_user(request, user_id = user_id)
+        delete_user(request, user_id = user_id)
     user = dict(
         user_id = user_id,
         openid = openid,
@@ -58,7 +58,7 @@ def register_user(request,
     db.users.save(user)
     return user
 
-def unregister_user(request, user_id):
+def delete_user(request, user_id):
     db = database(request)
     db.users.remove(dict(user_id = user_id))
 
@@ -84,7 +84,7 @@ def update_user(request,
     db = database(request)
     user = db.users.find_one(dict(user_id = user_id))
     if user == None:
-        user = register_user(request, user_id=user_id, activated=False)
+        user = add_user(request, user_id=user_id, activated=False)
     if activated is not None:
         user['activated'] = activated
     if openid is not None:
@@ -118,14 +118,6 @@ def update_user(request,
 def all_users(request):
     db = database(request)
     return db.users.find()
-
-def activated_users(request):
-    db = database(request)
-    return db.users.find(dict(activated = True))
-
-def deactivated_users(request):
-    db = database(request)
-    return db.users.find(dict(activated = False))
 
 def is_user_activated(request, user_id):
     db = database(request)

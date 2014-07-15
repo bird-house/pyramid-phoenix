@@ -18,9 +18,9 @@ import config_public as config
 
 from owslib.wps import WPSExecution, ComplexData
 
+from .models import update_user
 from .exceptions import TokenError
 from .security import is_valid_user
-from .models import update_user
 from .wps import WPSSchema, get_wps
 from phoenix import catalog
 
@@ -668,7 +668,6 @@ def process_user_form(request, form):
         controls = request.POST.items()
         captured = form.validate(controls)
 
-        from .models import update_user
         update_user(request,
                     user_id = captured.get('user_id', ''),
                     openid = captured.get('openid', ''),
@@ -685,7 +684,8 @@ def delete_user(context, request):
     user_id = request.params.get('user_id', None)
     logger.debug('delete user %s' %(user_id))
     if user_id is not None:
-        unregister_user(request, user_id=user_id)
+        from .models import delete_user
+        delete_user(request, user_id=user_id)
 
     return True
 
@@ -698,7 +698,7 @@ def edit_user(context, request):
         from .models import user_with_id
         user = user_with_id(request, user_id=user_id)
         result = dict(
-            email = user_id,
+            user_id = user_id,
             openid = user.get('openid'),
             name = user.get('name'),
             organisation = user.get('organisation'),
