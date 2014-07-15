@@ -673,6 +673,23 @@ def generate_user_form(request, formid="deform"):
         ajax_options=options,
         )
 
+def process_user_form(request, form):
+    try:
+        controls = request.POST.items()
+        captured = form.validate(controls)
+
+        from .models import update_user
+        update_user(request,
+                    user_id = captured.get('user_id', ''),
+                    openid = captured.get('openid', ''),
+                    name = captured.get('name', ''),
+                    organisation = captured.get('organisation'),
+                    notes = captured.get('notes', ''),
+                    activated = captured.get('activated') == 'true')
+    except ValidationFailure:
+        logger.exception('validation of user form failed')
+    return HTTPFound(location=request.route_url('user'))
+
 @view_config(renderer='json', name='delete.user', permission='edit')
 def delete_user(context, request):
     user_id = request.params.get('user_id', None)
@@ -681,6 +698,25 @@ def delete_user(context, request):
         unregister_user(request, user_id=user_id)
 
     return True
+
+@view_config(renderer='json', name='edit.user', permission='edit')
+def edit_user(context, request):
+    user_id = request.params.get('user_id', None)
+    result = dict(user_id=user_id)
+    logger.debug('edit user %s' %(user_id))
+    if user_id is not None:
+        from .models import user_with_id
+        user = user_with_id(request, user_id=user_id)
+        result = dict(
+            email = user_id,
+            openid = user.get('openid'),
+            name = user.get('name'),
+            organisation = user.get('organisation'),
+            notes = user.get('notes'),
+            activated = user.get('activated'),
+            )
+
+    return result
 
 @view_config(route_name='user', renderer='templates/user.pt',
              layout='default',

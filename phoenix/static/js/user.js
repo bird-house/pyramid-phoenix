@@ -16,10 +16,10 @@ $(function() {
   // Edit a user when the edit link is clicked in the actions dropdown
   $("a.user-edit").click(function(e) {
     e.preventDefault();
-    var wps_url = $(this).closest('ul').attr('id');
+    var user_id = $(this).closest('ul').attr('id');
     $.getJSON(
       '/edit.user',
-      {'url': wps_url},
+      {'user_id': user_id},
       function(json) {
         if (json) {
           form = $('#user-form');
