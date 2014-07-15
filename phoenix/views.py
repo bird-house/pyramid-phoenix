@@ -644,20 +644,53 @@ def edit_catalog_entry(context, request):
                       password=entry.get('password'))
     return result
 
+## Settings/Users
+## --------------
+
+def generate_user_form(request, formid="deform"):
+    """This helper code generates the form that will be used to add
+    and edit a user based on the schema of the form.
+    """
+    from .schema import AdminUserEditTaskSchema
+    schema = AdminUserEditTaskSchema().bind()
+    options = """
+    {success:
+       function (rText, sText, xhr, form) {
+         deform.processCallbacks();
+         deform.focusFirstInput();
+         var loc = xhr.getResponseHeader('X-Relocate');
+            if (loc) {
+              document.location = loc;
+            };
+         }
+    }
+    """
+    return Form(
+        schema,
+        buttons=('submit',),
+        formid=formid,
+        use_ajax=True,
+        ajax_options=options,
+        )
+
 @view_config(route_name='users', renderer='templates/users.pt',
              layout='default',
              permission='admin'
              )
 def users_view(request):
+    form = generate_user_form(request)
+    if 'submit' in request.POST:
+        return process_user_form(form)
+    
     from .models import all_users
     from .grid import UsersGrid
     user_items = all_users(request)
     grid = UsersGrid(
             request,
             user_items,
-            ['name', 'user_id', 'organisation', 'openid', 'notes', 'activated'],
+            ['name', 'user_id', 'organisation', 'openid', 'notes', 'activated', ''],
         )
-    return dict(grid=grid, items=user_items)
+    return dict(grid=grid, items=user_items, form=form.render())
 
 @view_config(
     route_name='admin_user_edit',

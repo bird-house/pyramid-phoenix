@@ -16,6 +16,7 @@ class UsersGrid(Grid):
             kwargs['url'] = request.current_route_url
         super(UsersGrid, self).__init__(*args, **kwargs)
         self.exclude_ordering = ['_numbered']
+        self.column_formats[''] = self.action_td
 
     def default_header_column_format(self, column_number, column_name,
         header_label):
@@ -68,3 +69,19 @@ class UsersGrid(Grid):
                 r = self.default_record_format(i + 1, record, columns)
             records.append(r)
         return HTML(*records)
+
+    def action_td(self, col_num, i, item):
+        """Generate the column that has the actions in it.
+        """
+        return HTML.td(HTML.literal("""\
+        <div class="btn-group">
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          Action
+          <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" id="%s">
+            <li><a class="todo-edit" href="#">Edit</a></li>
+            <li><a class="todo-complete" href="#">Complete</a></li>
+          </ul>
+        </div>
+        """ % item.get('user_id')))
