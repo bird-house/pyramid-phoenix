@@ -654,7 +654,7 @@ def users_view(request):
     grid = UsersGrid(
             request,
             user_items,
-            ['name', 'status'],
+            ['_numbered', 'name', 'status'],
         )
     return dict(grid=grid, items=user_items)
 
