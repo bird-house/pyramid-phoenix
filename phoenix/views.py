@@ -644,6 +644,20 @@ def edit_catalog_entry(context, request):
                       password=entry.get('password'))
     return result
 
+@view_config(route_name='users', renderer='templates/users.pt',
+             layout='default',
+             permission='admin'
+             )
+def users_view(request):
+    from .grid import UsersGrid
+    user_items = [{'name': 'pingu', 'status': 'activated'}, {'name': 'catwoman', 'status': 'invisible'}]
+    grid = UsersGrid(
+            request,
+            user_items,
+            ['name', 'status'],
+        )
+    return dict(grid=grid, items=user_items)
+
 @view_config(
     route_name='admin_user_edit',
     renderer='templates/form.pt',

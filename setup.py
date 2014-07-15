@@ -21,7 +21,7 @@ requires = [
     'pyramid_persona',
     'authomatic',
     'python-openid',
-    #'WebHelpers',
+    'webhelpers',
     'mako',
     'pyyaml',
     'owslib',

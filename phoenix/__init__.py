@@ -91,6 +91,7 @@ def main(global_config, **settings):
     config.add_route('settings', '/settings')
     config.add_route('ipython', '/ipython')
     config.add_route('catalog', '/settings/catalog')
+    config.add_route('users', '/settings/users')
     config.add_route('admin_user_edit', '/settings/user/edit')
     config.add_route('admin_user_edit_task', '/settings/user/edit/task')
     config.add_route('admin_user_register', '/settings/user/register')
