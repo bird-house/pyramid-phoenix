@@ -682,11 +682,11 @@ def delete_user(context, request):
 
     return True
 
-@view_config(route_name='users', renderer='templates/users.pt',
+@view_config(route_name='user', renderer='templates/user.pt',
              layout='default',
              permission='admin'
              )
-def users_view(request):
+def user_view(request):
     form = generate_user_form(request)
     if 'submit' in request.POST:
         return process_user_form(form)
