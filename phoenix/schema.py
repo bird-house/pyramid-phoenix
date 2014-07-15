@@ -210,46 +210,7 @@ class CatalogSchema(colander.MappingSchema):
 # Admin
 # -----
 
-def user_choices(user_list):
-    choices = []
-    for user in user_list:
-        label = "%s (%s, %s, %s, %s, %s, %s)" % (user.get('user_id'),
-                                                 user.get('name', ''),
-                                                 user.get('openid', ''),
-                                                 user.get('organisation', ''),
-                                                 user.get('notes', ''),
-                                                 user.get('activated', ''),
-                                                 user.get('token', ''))
-        choices.append( (user.get('user_id'), label) )
-    return choices
-
-@colander.deferred
-def deferred_all_users_widget(node, kw):
-    request = kw.get('request')
-    from .models import all_users
-    return deform.widget.CheckboxChoiceWidget(values=user_choices(all_users(request)))
-
-@colander.deferred
-def deferred_deactivated_users_widget(node, kw):
-    request = kw.get('request')
-    from .models import deactivated_users
-    return deform.widget.CheckboxChoiceWidget(values=user_choices(deactivated_users(request)))
-
-@colander.deferred
-def deferred_activated_users_widget(node, kw):
-    request = kw.get('request')
-    from .models import activated_users
-    return deform.widget.CheckboxChoiceWidget(values=user_choices(activated_users(request)))
-
-class AdminUserEditSchema(colander.MappingSchema):
-    user_id = colander.SchemaNode(
-        colander.Set(),
-        title = "Users",
-        widget = deferred_all_users_widget,
-        validator=colander.Length(min=1),
-        )
-
-class AdminUserEditTaskSchema(colander.MappingSchema):
+class UserSchema(colander.MappingSchema):
     name = colander.SchemaNode(
         colander.String(),
         title = "User Name",
@@ -295,61 +256,6 @@ class AdminUserEditTaskSchema(colander.MappingSchema):
         default = False,
         )
 
-
-class AdminUserRegisterSchema(colander.MappingSchema):
-    name = colander.SchemaNode(
-        colander.String(),
-        title = "User Name",
-        description = "Enter User Name",
-        missing = '',
-        default = '',
-        )
-    email = colander.SchemaNode(
-        colander.String(),
-        title = "EMail",
-        description = "Enter eMail used for login",
-        validator = colander.Email(),
-        )
-    openid = colander.SchemaNode(
-        colander.String(),
-        title = "OpenID",
-        description = "Enter OpenID for data access",
-        validator = colander.url,
-        missing = '',
-        default = '',
-        )
-    organisation = colander.SchemaNode(
-        colander.String(),
-        title = "Organisation",
-        description = "The Organisation the User is working for",
-        missing = '',
-        default = '',
-        )
-    notes = colander.SchemaNode(
-        colander.String(),
-        title = "Notes",
-        description = "Some Notes about this User",
-        missing = '',
-        default = '',
-        )
-
-class AdminUserUnregisterSchema(colander.MappingSchema):
-    user_id = colander.SchemaNode(
-        colander.Set(),
-        title = "Users",
-        widget = deferred_all_users_widget)
-
-class AdminUserActivateSchema(colander.MappingSchema):
-    user_id = colander.SchemaNode(
-        colander.Set(),
-        title = "Users",
-        widget = deferred_deactivated_users_widget)
-
-class AdminUserDeactivateSchema(colander.MappingSchema):
-    user_id = colander.SchemaNode(
-        colander.Set(),
-        title = "Users",
-        widget = deferred_activated_users_widget)
 
 # jobs
 # ----

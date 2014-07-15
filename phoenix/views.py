@@ -538,22 +538,12 @@ def settings(request):
     buttongroups = []
     buttons = []
 
-    # user
-    buttons.append(dict(url="/settings/user/register", icon="user_catwomen.png", title="Register"))
-    buttons.append(dict(url="/settings/user/unregister", icon="user_catwomen.png", title="Unregister"))
-    buttons.append(dict(url="/settings/user/activate", icon="user_catwomen.png", title="Activate"))
-    buttons.append(dict(url="/settings/user/deactivate", icon="user_catwomen.png", title="Deactivate"))
-    buttons.append(dict(url="/settings/user/edit", icon="user_catwomen.png", title="Edit"))
-    buttongroups.append(dict(title='User', buttons=buttons))
-
-    # other
-    buttons = []
-
     buttons.append(dict(url=supervisor_url(request), icon="monitor_edit.png", title="Supervisor", id="external-url"))
     buttons.append(dict(url="/settings/catalog", icon="catalog_pages.png", title="Catalog"))
+    buttons.append(dict(url="/settings/user", icon="user_catwomen.png", title="Users"))
     buttons.append(dict(url=thredds_url(request), icon="unidataLogo.png", title="Thredds", id="external-url"))
     buttons.append(dict(url="/ipython", icon="ipynb_icon_64x64.png", title="IPython"))
-    buttongroups.append(dict(title='Other', buttons=buttons))
+    buttongroups.append(dict(title='Settings', buttons=buttons))
     
     return dict(buttongroups=buttongroups)
 
@@ -644,15 +634,15 @@ def edit_catalog_entry(context, request):
                       password=entry.get('password'))
     return result
 
-## Settings/Users
-## --------------
+## Settings/User
+## -------------
 
 def generate_user_form(request, formid="deform"):
     """This helper code generates the form that will be used to add
     and edit a user based on the schema of the form.
     """
-    from .schema import AdminUserEditTaskSchema
-    schema = AdminUserEditTaskSchema().bind()
+    from .schema import UserSchema
+    schema = UserSchema().bind()
     options = """
     {success:
        function (rText, sText, xhr, form) {
@@ -725,7 +715,7 @@ def edit_user(context, request):
 def user_view(request):
     form = generate_user_form(request)
     if 'submit' in request.POST:
-        return process_user_form(form)
+        return process_user_form(request, form)
     
     from .models import all_users
     from .grid import UsersGrid
@@ -737,173 +727,9 @@ def user_view(request):
         )
     return dict(grid=grid, items=user_items, form=form.render())
 
-@view_config(
-    route_name='admin_user_edit',
-    renderer='templates/form.pt',
-    layout='default',
-    permission='edit',
-    )
-class AdminUserEditView(FormView):
-    from .schema import AdminUserEditSchema
-    
-    schema = AdminUserEditSchema()
-    buttons = ('edit',)
-    title = u"Manage Users"
 
-    def appstruct(self):
-        return {}
-
-    def edit_success(self, appstruct):
-        params = self.schema.serialize(appstruct)
-        user_id = params.get('user_id').pop()
-
-        logger.debug("edit users %s", user_id)
-
-        session = self.request.session
-        session['phoenix.admin.edit.user_id'] = user_id
-        session.changed()
-
-        return HTTPFound(location=self.request.route_url('admin_user_edit_task'))
-
-@view_config(
-    route_name='admin_user_edit_task',
-    renderer='templates/form.pt',
-    layout='default',
-    permission='edit',
-    )
-class AdminUserEditTaskView(FormView):
-    from .schema import AdminUserEditTaskSchema
-    
-    schema = AdminUserEditTaskSchema()
-    buttons = ('update', 'cancel',)
-    title = u"Edit User"
-
-    def appstruct(self):
-        from .models import user_with_id
-        session = self.request.session
-        user_id = session['phoenix.admin.edit.user_id']
-        user = user_with_id(self.request, user_id=user_id)
-        return dict(
-            email = user_id,
-            openid = user.get('openid'),
-            name = user.get('name'),
-            organisation = user.get('organisation'),
-            notes = user.get('notes'),
-            activated = user.get('activated'),
-            )
-
-    def update_success(self, appstruct):
-        from .models import update_user
-        user = self.schema.serialize(appstruct)
-        session = self.request.session
-        user_id = session['phoenix.admin.edit.user_id']
-        #logger.debug("user activated: %s", user.get('activated') == 'true')
-        update_user(self.request,
-                      user_id = user_id,
-                      openid = user.get('openid'),
-                      name = user.get('name'),
-                      organisation = user.get('organisation'),
-                      notes = user.get('notes'),
-                      activated = user.get('activated') == 'true')
-
-        return HTTPFound(location=self.request.route_url('admin_user_edit'))
-    
-    def cancel_success(self, appstruct):
-        return HTTPFound(location=self.request.route_url('admin_user_edit'))
-
-
-@view_config(
-    route_name='admin_user_register',
-    renderer='templates/form.pt',
-    layout='default',
-    permission='edit',
-    )
-class AdminUserRegisterView(FormView):
-    from .schema import AdminUserRegisterSchema
-    
-    schema = AdminUserRegisterSchema()
-    buttons = ('register',)
-    title = u"Register User"
-
-    def appstruct(self):
-        return {}
-
-    def register_success(self, appstruct):
-        from .models import register_user
-        user = self.schema.serialize(appstruct)
-        register_user(self.request,
-                      user_id = user.get('email'),
-                      openid = user.get('openid'),
-                      name = user.get('name'),
-                      organisation = user.get('organisation'),
-                      notes = user.get('notes'),
-                      activated = True)
-
-        return HTTPFound(location=self.request.route_url('admin_user_register'))
-
-@view_config(
-    route_name='admin_user_unregister',
-    renderer='templates/form.pt',
-    layout='default',
-    permission='edit',
-    )
-class AdminUserUnregisterView(FormView):
-    from .schema import AdminUserUnregisterSchema
-    
-    schema = AdminUserUnregisterSchema()
-    buttons = ('unregister',)
-    title = u"Unregister User"
-
-    def unregister_success(self, appstruct):
-        from .models import unregister_user
-        params = self.schema.serialize(appstruct)
-        for user_id in params.get('user_id', []):
-            unregister_user(self.request, user_id=user_id)
-        
-        return HTTPFound(location=self.request.route_url('admin_user_unregister'))
-
-@view_config(
-    route_name='admin_user_activate',
-    renderer='templates/form.pt',
-    layout='default',
-    permission='edit',
-    )
-class AdminUserActivateView(FormView):
-    from .schema import AdminUserActivateSchema
-    
-    schema = AdminUserActivateSchema()
-    buttons = ('activate',)
-    title = u"Activate Users"
-    
-    def activate_success(self, appstruct):
-        from .models import activate_user
-        params = self.schema.serialize(appstruct)
-        for user_id in params.get('user_id', []):
-            activate_user(self.request, user_id=user_id)
-
-        return HTTPFound(location=self.request.route_url('admin_user_activate'))
-
-@view_config(
-    route_name='admin_user_deactivate',
-    renderer='templates/form.pt',
-    layout='default',
-    permission='edit',
-    )
-class AdminUserDeactivateView(FormView):
-    from .schema import AdminUserDeactivateSchema
-    
-    schema = AdminUserDeactivateSchema()
-    buttons = ('deactivate',)
-    title = u"Deactivate Users"
-
-    def deactivate_success(self, appstruct):
-        from .models import deactivate_user
-        params = self.schema.serialize(appstruct)
-        for user_id in params.get('user_id', []):
-            logger.debug('deactivate user %s', user_id)
-            deactivate_user(self.request, user_id=user_id)
-
-        return HTTPFound(location=self.request.route_url('admin_user_deactivate'))
+## map view
+## --------
 
 @view_config(
     route_name='map',
