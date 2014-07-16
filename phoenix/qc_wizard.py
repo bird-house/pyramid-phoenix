@@ -7,6 +7,7 @@ from .models import user_token, add_job
 from pyramid.httpexceptions import HTTPFound
 from wps import get_wps
 from .helpers import wps_url, get_setting
+from owslib.wps import WebProcessingService
 import os
 
 
@@ -18,7 +19,7 @@ import os
 def qc_wizard_check(request):
     title = "Quality Control Wizard"
     user_id = authenticated_userid(request)
-    token = user_token(request, user_id)
+    token = "1234"# user_token(request, user_id)
     if not token:
         raise Exception("Can not find token")
     
@@ -42,14 +43,16 @@ def qc_wizard_check(request):
     #In that case value will be used as default if it is in allowed_values.
     #For type "checkbox" the existence of the "checked" key will lead to the checkbox being True.
     fields = [
+        {"id": "quality_server_address", "type" : "text", "text": "URL to the Quality WPS",
+         "value":"http://suffolk.dkrz.de:8094/wps"},
         {"id": "session_id", "type": "text", "text": "Session ID", "help":session_id_help,
             "value": "web1"},
-        {"id": "irods_home", "type": "text", "text": "iRods Home",
-            "help": "The home directory of iRods", "value":"qc_dummy_DKRZ"},
-        {"id": "irods_collection", "type": "text", "text": "iRods collection", 
-            "help": "Name of the to analyze collection", "value": "qc_test_20140416"},
-        #{"id": "data_path", "type": "text", "text": "Root path of the to check data",
-        #    "value": EXAMPLEDATADIR},
+        #{"id": "irods_home", "type": "text", "text": "iRods Home",
+        #    "help": "The home directory of iRods", "value":"qc_dummy_DKRZ"},
+        #{"id": "irods_collection", "type": "text", "text": "iRods collection", 
+        #    "help": "Name of the to analyze collection", "value": "qc_test_20140416"},
+        {"id": "data_path", "type": "text", "text": "Root path of the to check data",
+            "value": ""},
         {"id": "project", "type": "select", "text": "Project", 
             "value": "CORDEX", "allowed_values": ["CORDEX"] },
         {"id": "select", "type": "text", "text": "QC SELECT", "value": "", "help": qc_select_help},
@@ -67,64 +70,55 @@ def qc_wizard_check(request):
 
     if "submit" in request.POST:
         DATA = request.POST
+        
+        #The parameters are fed as string to the full check method, therefore 
+        #the two helper methods already return strings.
+        def getValue(identifier):
+            val = DATA.get(identifier, "")
+            if str(val) in ["<colander.null>", "None"]:
+                val = ""
+            return str(val)
+        def getBool(identifier):
+            val = getValue(identifier)
+            return str(val.lower() == "true")
         ##########################
         #collect input parameters#
         ##########################
-        username = user_id.replace("@","(at)")
+        wps_address = getValue("quality_server_address")
+        username = str(user_id.replace("@","(at)"))
         token = token
-        session_id = DATA["session_id"]
-        irods_home = DATA["irods_home"]
-        irods_collection = DATA["irods_collection"]
-        #data_path = DATA["data_path"]
-        project =  DATA["project"]
+        session_id = getValue("session_id")
+        #irods_home = DATA["irods_home"]
+        #irods_collection = DATA["irods_collection"]
+        data_path = getValue("data_path")
+        project =  getValue("project")
         #ensure lock and select are valid values.
-        select = DATA["select"]
-        if select == '<colander.null>' or select == None:
-            select =  ""
-        lock = DATA["lock"]
-        if lock == '<colander.null>' or lock == None:
-            lock =  ""
+        select = getValue("select")
+        lock = getValue("lock")
         #html checkboxes are true if and only if they are in the POST (DATA variable)
-        replica = "replica" in DATA
-        latest = "latest" in DATA
-        publish_metadata = "publish_metadata" in DATA
-        publish_quality = "publish_quality" in DATA
-        cleanup = "clean" in DATA
-        #The wps used seems to only like string objects. Unicode is already not acceptable for the
-        #missing getXML method. The boolean values must be converted to strings as well.
-        #Empty strings must be excluded from the inputs.
-        username = str(username)
-        token = str(token)
-        session_id = str(session_id)
-        irods_home = str(irods_home)
-        irods_collection = str(irods_collection)
-        project = str(project)
-        select = str(select)
-        lock = str(lock)
-        replica = str(replica)
-        latest = str(latest)
-        publish_quality = str(publish_quality)
-        publish_metadata = str(publish_metadata)
-        cleanup = str(cleanup)
-        
+        replica = getBool("replica")
+        latest = getBool("latest")
+        publish_metadata = getBool("publish_metadata")
+        publish_quality = getBool("publish_quality")
+        cleanup = getBool("clean")
         #####################
         #Run the wps call#
         #####################
-        wps = get_wps(wps_url(request))
-        identifier = "QC_Chain"
+        #wps = get_wps(wps_url(request))
+        wps = WebProcessingService(wps_address)
+        identifier = "QC_Check_Full"
         inputs = [("username", username), ("token", token), ("session_id", session_id),
-                  ("irods_home", irods_home), ("irods_collection", irods_collection),
+                  #("irods_home", irods_home), ("irods_collection", irods_collection),
+                  ("data_path", data_path),
                   ("project", project), 
                   ("select", select), ("lock", lock),
                   ("replica", replica), ("latest", latest), ("publish_metadata", publish_metadata),
                   ("publish_quality", publish_quality), ("cleanup", cleanup)]
         #filter empty string values, because wps.execute does not like them.
         inputs = [(x,y) for (x,y) in inputs if y!=""]
-
+         
         outputs = [("process_log", True)]
-
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
-
         add_job(
             request = request,
             user_id = authenticated_userid(request),
@@ -143,7 +137,7 @@ def qc_wizard_check(request):
 
 def get_session_ids(user_id, request): 
     service_url = get_wps(wps_url(request)).url
-    token = user_token(request, user_id)
+    token = "1234"#user_token(request, user_id)
     identifier = 'Get_Session_IDs'
     inputs = [("username",user_id.replace("@","(at)")),("token",token)]
     outputs = "session_ids"
