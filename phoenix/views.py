@@ -711,7 +711,7 @@ class UserSettings:
         result = dict(user_id=user_id)
         logger.debug('edit user %s' % (user_id))
         if user_id is not None:
-            user = self.userdb_by_id(user_id=user_id)
+            user = self.userdb.by_id(user_id=user_id)
             result = dict(
                 user_id = user_id,
                 openid = user.get('openid'),
