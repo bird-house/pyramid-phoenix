@@ -1,7 +1,12 @@
 import os
 import datetime
 
-from pyramid.view import view_config, forbidden_view_config, notfound_view_config
+from pyramid.view import (
+    view_config,
+    view_defaults,
+    forbidden_view_config,
+    notfound_view_config
+    )
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.response import Response
 from pyramid.renderers import render
@@ -637,107 +642,110 @@ def edit_catalog_entry(context, request):
 ## Settings/User
 ## -------------
 
-def generate_user_form(request, formid="deform"):
-    """This helper code generates the form that will be used to add
-    and edit a user based on the schema of the form.
-    """
-    from .schema import UserSchema
-    schema = UserSchema().bind()
-    options = """
-    {success:
-       function (rText, sText, xhr, form) {
-         deform.processCallbacks();
-         deform.focusFirstInput();
-         var loc = xhr.getResponseHeader('X-Relocate');
-            if (loc) {
-              document.location = loc;
-            };
-         }
-    }
-    """
-    return Form(
-        schema,
-        buttons=('submit',),
-        formid=formid,
-        use_ajax=True,
-        ajax_options=options,
-        )
+@view_defaults(permission='admin', layout='default')
+class UserSettings:
+    def __init__(self, request):
+        self.request = request
 
-def process_user_form(request, form):
-    try:
-        controls = request.POST.items()
-        captured = form.validate(controls)
 
-        logger.debug('update user: %s', captured)
-
-        update_user(request,
-                    user_id = captured.get('user_id', ''),
-                    openid = captured.get('openid', ''),
-                    name = captured.get('name', ''),
-                    organisation = captured.get('organisation'),
-                    notes = captured.get('notes', ''),
-                    activated = captured.get('activated'))
-    except ValidationFailure:
-        logger.exception('validation of user form failed')
-    return HTTPFound(location=request.route_url('user'))
-
-@view_config(renderer='json', name='delete.user', permission='edit')
-def delete_user(context, request):
-    user_id = request.params.get('user_id', None)
-    logger.debug('delete user %s' %(user_id))
-    if user_id is not None:
-        from .models import delete_user
-        delete_user(request, user_id=user_id)
-
-    return {}
-
-@view_config(renderer='json', name='activate.user', permission='edit')
-def activate_user(context, request):
-    user_id = request.params.get('user_id', None)
-    logger.debug('activate user %s' %(user_id))
-    if user_id is not None:
-        from .models import activate_user
-        activate_user(request, user_id)
-
-    return {}
-
-@view_config(renderer='json', name='edit.user', permission='edit')
-def edit_user(context, request):
-    user_id = request.params.get('user_id', None)
-    result = dict(user_id=user_id)
-    logger.debug('edit user %s' % (user_id))
-    if user_id is not None:
-        from .models import user_with_id
-        user = user_with_id(request, user_id=user_id)
-        result = dict(
-            user_id = user_id,
-            openid = user.get('openid'),
-            name = user.get('name'),
-            organisation = user.get('organisation'),
-            notes = user.get('notes'),
-            activated = 'true' if user.get('activated') else 'false',
+    def generate_form(self, formid="deform"):
+        """This helper code generates the form that will be used to add
+        and edit a user based on the schema of the form.
+        """
+        from .schema import UserSchema
+        schema = UserSchema().bind()
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return Form(
+            schema,
+            buttons=('submit',),
+            formid=formid,
+            use_ajax=True,
+            ajax_options=options,
             )
 
-    return result
+    def process_form(self, form):
+        try:
+            controls = self.request.POST.items()
+            captured = form.validate(controls)
 
-@view_config(route_name='user', renderer='templates/user.pt',
-             layout='default',
-             permission='admin'
-             )
-def user_view(request):
-    form = generate_user_form(request)
-    if 'submit' in request.POST:
-        return process_user_form(request, form)
-    
-    from .models import all_users
-    from .grid import UsersGrid
-    user_items = all_users(request)
-    grid = UsersGrid(
-            request,
-            user_items,
-            ['name', 'user_id', 'organisation', 'notes', 'activated', ''],
-        )
-    return dict(grid=grid, items=user_items, form=form.render())
+            logger.debug('update user: %s', captured)
+
+            update_user(self.request,
+                        user_id = captured.get('user_id', ''),
+                        openid = captured.get('openid', ''),
+                        name = captured.get('name', ''),
+                        organisation = captured.get('organisation'),
+                        notes = captured.get('notes', ''),
+                        activated = captured.get('activated'))
+        except ValidationFailure:
+            logger.exception('validation of user form failed')
+        return HTTPFound(location=self.request.route_url('user'))
+
+    @view_config(renderer='json', name='delete.user')
+    def delete(self):
+        user_id = self.request.params.get('user_id', None)
+        logger.debug('delete user %s' %(user_id))
+        if user_id is not None:
+            from .models import delete_user
+            delete_user(self.request, user_id=user_id)
+
+        return {}
+
+    @view_config(renderer='json', name='activate.user')
+    def activate(self):
+        user_id = self.request.params.get('user_id', None)
+        logger.debug('activate user %s' %(user_id))
+        if user_id is not None:
+            from .models import activate_user
+            activate_user(self.request, user_id)
+
+        return {}
+
+    @view_config(renderer='json', name='edit.user')
+    def edit(self):
+        user_id = self.request.params.get('user_id', None)
+        result = dict(user_id=user_id)
+        logger.debug('edit user %s' % (user_id))
+        if user_id is not None:
+            from .models import user_with_id
+            user = user_with_id(self.request, user_id=user_id)
+            result = dict(
+                user_id = user_id,
+                openid = user.get('openid'),
+                name = user.get('name'),
+                organisation = user.get('organisation'),
+                notes = user.get('notes'),
+                activated = 'true' if user.get('activated') else 'false',
+                )
+
+        return result
+
+    @view_config(route_name='user', renderer='templates/user.pt')
+    def user_view(self):
+        form = self.generate_form()
+        if 'submit' in self.request.POST:
+            return self.process_form(form)
+
+        from .models import all_users
+        from .grid import UsersGrid
+        user_items = all_users(self.request)
+        grid = UsersGrid(
+                self.request,
+                user_items,
+                ['name', 'user_id', 'organisation', 'notes', 'activated', ''],
+            )
+        return dict(grid=grid, items=user_items, form=form.render())
 
 
 ## map view

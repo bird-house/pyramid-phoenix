@@ -89,9 +89,9 @@ def main(global_config, **settings):
     config.add_route('account', '/account')
     
     config.add_route('settings', '/settings')
-    config.add_route('ipython', '/ipython')
     config.add_route('catalog', '/settings/catalog')
     config.add_route('user', '/settings/user')
+    config.add_route('ipython', '/ipython')
     
     config.add_route('help', '/help')
     config.add_route('signin', '/signin')
