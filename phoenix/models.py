@@ -63,10 +63,7 @@ def delete_user(request, user_id):
     db.users.remove(dict(user_id = user_id))
 
 def activate_user(request, user_id):
-    update_user(request, user_id, activated=True)
-
-def deactivate_user(request, user_id):
-    update_user(request, user_id, activated=False)
+    update_user(request, user_id, activated= not is_user_activated(request, user_id))
 
 def update_user(request,
                 user_id,

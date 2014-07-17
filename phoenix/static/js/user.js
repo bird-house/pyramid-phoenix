@@ -12,6 +12,20 @@ $(function() {
       }
     );
   });
+
+  // Delete user entry
+  $("a.user-activate").click(function(e) {
+    e.preventDefault();
+    var user_id = $(this).closest('ul').attr('id');
+    $.getJSON(
+      '/activate.user',
+      {'user_id': user_id},
+      function(json) {
+        //console.log('activate user');
+        location.reload();
+      }
+    );
+  });
   
   // Edit a user when the edit link is clicked in the actions dropdown
   $("a.user-edit").click(function(e) {

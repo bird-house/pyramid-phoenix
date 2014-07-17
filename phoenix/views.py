@@ -689,7 +689,17 @@ def delete_user(context, request):
         from .models import delete_user
         delete_user(request, user_id=user_id)
 
-    return True
+    return {}
+
+@view_config(renderer='json', name='activate.user', permission='edit')
+def activate_user(context, request):
+    user_id = request.params.get('user_id', None)
+    logger.debug('activate user %s' %(user_id))
+    if user_id is not None:
+        from .models import activate_user
+        activate_user(request, user_id)
+
+    return {}
 
 @view_config(renderer='json', name='edit.user', permission='edit')
 def edit_user(context, request):
