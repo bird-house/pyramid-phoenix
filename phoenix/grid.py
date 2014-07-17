@@ -4,20 +4,14 @@ logger = logging.getLogger(__name__)
 from webhelpers.html.builder import HTML
 from webhelpers.html.grid import Grid
 
-class UsersGrid(Grid):
-    """A generated table for the todo list that supports ordering of
-    the task name and due date columns. We also customize the init so
-    that we accept the selected_tag and user_tz.
-    """
-
+class MyGrid(Grid):
     def __init__(self, request, *args, **kwargs):
         self.request = request
         if 'url' not in kwargs:
             kwargs['url'] = request.current_route_url
-        super(UsersGrid, self).__init__(*args, **kwargs)
+        super(MyGrid, self).__init__(*args, **kwargs)
         self.exclude_ordering = ['_numbered']
-        self.column_formats[''] = self.action_td
-
+    
     def default_header_column_format(self, column_number, column_name,
         header_label):
         """Override of the ObjectGrid to use <th> for header columns
@@ -68,7 +62,12 @@ class UsersGrid(Grid):
             else:
                 r = self.default_record_format(i + 1, record, columns)
             records.append(r)
-        return HTML(*records)
+        return HTML(*records)    
+
+class UsersGrid(MyGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(UsersGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats[''] = self.action_td
 
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
