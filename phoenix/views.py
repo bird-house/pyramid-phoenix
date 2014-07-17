@@ -562,89 +562,89 @@ def settings(request):
 def ipython(request):
     return dict(external_url="/ipython/notebook/tree")
 
-def generate_catalog_form(request, formid="deform"):
-    """This helper code generates the form that will be used to add
-    and edit wps based on the schema of the form.
-    """
-    from .schema import CatalogSchema
-    schema = CatalogSchema().bind()
-    options = """
-    {success:
-       function (rText, sText, xhr, form) {
-         deform.processCallbacks();
-         deform.focusFirstInput();
-         var loc = xhr.getResponseHeader('X-Relocate');
-            if (loc) {
-              document.location = loc;
-            };
-         }
-    }
-    """
-    return Form(
-        schema,
-        buttons=('submit',),
-        formid=formid,
-        use_ajax=True,
-        ajax_options=options,
-        )
+@view_defaults(permission='admin', layout='default')
+class CatalogSettings:
+    """View for catalog settings"""
+    
+    def __init__(self, request):
+        self.request = request
+        self.userdb = models.User(self.request)
 
-def process_catalog_form(request, form):
-    try:
-        controls = request.POST.items()
-        captured = form.validate(controls)
-        url = captured.get('url', '')
-        notes = captured.get('notes', '')
-        username = captured.get('username', '')
-        password = captured.get('password', '')
-        catalog.add_wps_entry(request, url, username, password, notes)
-    except ValidationFailure as e:
-        logger.error('validation of catalog form failed: message=%s' % (e.message))
-    return HTTPFound(location=request.route_url('catalog'))
+    def generate_form(self, formid="deform"):
+        """This helper code generates the form that will be used to add
+        and edit wps based on the schema of the form.
+        """
+        from .schema import CatalogSchema
+        schema = CatalogSchema().bind()
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return Form(
+            schema,
+            buttons=('submit',),
+            formid=formid,
+            use_ajax=True,
+            ajax_options=options,
+            )
 
-@view_config(
-    route_name="catalog",
-    renderer='templates/catalog.pt',
-    layout='default',
-    permission='edit',
-    )
-def show_catalog(request):
-    form = generate_catalog_form(request)
-    if 'submit' in request.POST:
-        return process_catalog_form(request, form)
-    appstruct = dict(url=wps_url(request))
-    return dict(
-        wps_list=catalog.get_wps_list(request),
-        form = form.render(appstruct))
+    def process_form(self, form):
+        try:
+            controls = self.request.POST.items()
+            captured = form.validate(controls)
+            url = captured.get('url', '')
+            notes = captured.get('notes', '')
+            username = captured.get('username', '')
+            password = captured.get('password', '')
+            catalog.add_wps_entry(self.request, url, username, password, notes)
+        except ValidationFailure as e:
+            logger.error('validation of catalog form failed: message=%s' % (e.message))
+        return HTTPFound(location=self.request.route_url('catalog'))
 
-@view_config(renderer='json', name='delete.entry', permission='edit')
-def delete_catalog_entry(context, request):
-    """
-    Delete a catalog entry, e.a. wps url
-    """
-    wps_url = request.params.get('url', None)
-    logger.debug('delete entry %s' %(wps_url))
-    if wps_url is not None:
-        catalog.delete_wps_entry(request, wps_url)
+    @view_config(route_name="catalog", renderer='templates/catalog.pt')
+    def catalog_view(self):
+        form = self.generate_form()
+        if 'submit' in self.request.POST:
+            return self.process_form(form)
+        appstruct = dict(url=wps_url(self.request))
+        return dict(
+            wps_list=catalog.get_wps_list(self.request),
+            form = form.render(appstruct))
 
-    return True
+    @view_config(renderer='json', name='delete.entry')
+    def delete(self):
+        """
+        Delete a catalog entry, e.a. wps url
+        """
+        wps_url = self.request.params.get('url', None)
+        if wps_url is not None:
+            catalog.delete_wps_entry(self.request, wps_url)
 
-@view_config(renderer='json', name='edit.entry', permission='edit')
-def edit_catalog_entry(context, request):
-    wps_url = request.params.get('url', None)
-    result = dict(url=wps_url)
-    logger.debug('edit entry %s' %(wps_url))
-    if wps_url is not None:
-        entry = catalog.get_wps_entry(request, wps_url)
-        result = dict(url=wps_url, notes=entry.get('notes'),
-                      username=entry.get('username'),
-                      password=entry.get('password'))
-    return result
+        return {}
 
-## Settings/User
-## -------------
+    @view_config(renderer='json', name='edit.entry')
+    def edit(self):
+        wps_url = self.request.params.get('url', None)
+        result = dict(url=wps_url)
+        if wps_url is not None:
+            entry = catalog.get_wps_entry(self.request, wps_url)
+            result = dict(url=wps_url, notes=entry.get('notes'),
+                          username=entry.get('username'),
+                          password=entry.get('password'))
+        return result
 
 @view_defaults(permission='admin', layout='default')
 class UserSettings:
+    """View for user settings"""
+    
     def __init__(self, request):
         self.request = request
         self.userdb = models.User(self.request)
