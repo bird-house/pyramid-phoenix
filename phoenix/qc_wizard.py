@@ -10,6 +10,7 @@ from .helpers import wps_url, get_setting
 from owslib.wps import WebProcessingService
 import os
 
+DEFAULTQUALITYSERVER="http://suffolk.dkrz.de:8094/wps"
 
 @view_config(route_name='qc_wizard_check',
              renderer='templates/qc_wizard.pt',
@@ -44,7 +45,7 @@ def qc_wizard_check(request):
     #For type "checkbox" the existence of the "checked" key will lead to the checkbox being True.
     fields = [
         {"id": "quality_server_address", "type" : "text", "text": "URL to the Quality WPS",
-         "value":"http://suffolk.dkrz.de:8094/wps"},
+         "value":DEFAULTQUALITYSERVER},
         {"id": "session_id", "type": "text", "text": "Session ID", "help":session_id_help,
             "value": "web1"},
         #{"id": "irods_home", "type": "text", "text": "iRods Home",
@@ -70,17 +71,11 @@ def qc_wizard_check(request):
 
     if "submit" in request.POST:
         DATA = request.POST
-        
-        #The parameters are fed as string to the full check method, therefore 
-        #the two helper methods already return strings.
+        #shorten the method parameters by automatically insert DATA
         def getValue(identifier):
-            val = DATA.get(identifier, "")
-            if str(val) in ["<colander.null>", "None"]:
-                val = ""
-            return str(val)
+            return getValueStatic(DATA, identifier)
         def getBool(identifier):
-            val = getValue(identifier)
-            return str(val.lower() == "true")
+            return getBoolStatic(DATA, identifier)
         ##########################
         #collect input parameters#
         ##########################
@@ -195,7 +190,7 @@ def get_html_fields(fields):
 def qc_wizard_yaml(request):
     title = "Quality Control Wizard"
     user_id = authenticated_userid(request)
-    token = user_token(request, user_id)
+    token = "1234" # user_token(request, user_id)
     
     session_id_help = ("An identifier used to avoid processes running on the same directory." + 
                         " Using an existing one will remove all data inside its work directory.")
@@ -213,6 +208,8 @@ def qc_wizard_yaml(request):
     #In that case value will be used as default if it is in allowed_values.
     #For type "checkbox" the existence of the "checked" key will lead to the checkbox being True.
     fields = [
+        {"id": "quality_server_address", "type" : "text", "text": "URL to the Quality WPS",
+         "value":DEFAULTQUALITYSERVER},
         {"id": "session_id", "type": "text", "text": "Session ID", "help":session_id_help,
             "value": "checkdone"},
         {"id": "yamllogs", "type": "text", "text": "YAML logs", "help": yamllogs_help, "value": ""},
@@ -233,43 +230,36 @@ def qc_wizard_yaml(request):
 
     if "submit" in request.POST:
         DATA = request.POST
+        #shorten the method parameters by automatically insert DATA
+        def getValue(identifier):
+            return getValueStatic(DATA, identifier)
+        def getBool(identifier):
+            return getBoolStatic(DATA, identifier)
         ##########################
         #collect input parameters#
         ##########################
-        username = user_id.replace("@","(at)")
+        username = str(user_id.replace("@","(at)"))
         token = token
-        session_id = DATA["session_id"]
-        yamllogs = DATA["yamllogs"]
-        prefix_old = DATA["prefix_old"]
-        prefix_new = DATA["prefix_new"]
-        project =  DATA["project"]
+        session_id = getValue("session_id")
+        yamllogs = getValue("yamllogs")
+        prefix_old = getValue("prefix_old")
+        prefix_new = getValue("prefix_new")
+        project =  getValue("project")
         #html checkboxes are true if and only if they are in the POST (DATA variable)
-        replica = "replica" in DATA
-        latest = "latest" in DATA
-        publish_metadata = "publish_metadata" in DATA
-        publish_quality = "publish_quality" in DATA
-        cleanup = "clean" in DATA
-        #The wps used seems to only like string objects. Unicode is already not acceptable for the
-        #missing getXML method. The boolean values must be converted to strings as well.
-        #Empty strings must be excluded from the inputs.
-        username = str(username)
-        token = str(token)
-        session_id = str(session_id)
-        yamllogs = str(yamllogs)
-        prefix_old = str(prefix_old)
-        prefix_new = str(prefix_new)
-        project = str(project)
-        replica = str(replica)
-        latest = str(latest)
-        publish_quality = str(publish_quality)
-        publish_metadata = str(publish_metadata)
-        cleanup = str(cleanup)
+        replica = getBool("replica")
+        latest = getBool("latest")
+        publish_metadata = getBool("publish_metadata")
+        publish_quality = getBool("publish_quality")
+        cleanup = getBool("clean")
+
+        wps_address = getValue("quality_server_address")
+        wps = WebProcessingService(wps_address)
         
-        #####################
+        ##################
         #Run the wps call#
-        #####################
+        ##################
         wps = get_wps(wps_url(request))
-        identifier = "QC_Yaml_Chain"
+        identifier = "QC_Check_YAML"
         inputs = [("username", username), ("token", token), ("session_id", session_id),
                   ("yamllogs", yamllogs), ("prefix_old", prefix_old), ("prefix_new", prefix_new),
                   ("project", project), 
@@ -280,6 +270,11 @@ def qc_wizard_yaml(request):
         #wps.execute does not like empty strings as value, so filter it out
         inputs = [(x,y) for (x,y) in inputs if y!=""]
 
+        g = open("/home/dkrz/k204205/log","w")
+        g.write(str(inputs)+"\n")
+        g.write(str(outputs)+"\n")
+        g.write(str(identifier)+"\n")
+        g.flush()
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
         add_job(
@@ -297,3 +292,15 @@ def qc_wizard_yaml(request):
             "title": title,
             "html_fields" : html_fields,
             }
+
+################
+#HELPER METHODS#
+################
+def getValueStatic(DATA, identifier):
+    val = DATA.get(identifier, "")
+    if str(val) in ["<colander.null>", "None"]:
+        val = ""
+    return str(val)
+def getBoolStatic(DATA, identifier):
+    val = getValueStatic(DATA, identifier)
+    return str(val.lower() == "true")
