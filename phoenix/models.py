@@ -34,6 +34,8 @@ def database(request):
 
 
 class User():
+    """ This class provides access to the users in mongodb."""
+    
     def __init__(self, request):
         self.request = request
         self.db = database(request)
@@ -151,116 +153,111 @@ class User():
         user = self.db.users.find_one(dict(user_id = user_id))
         return user.get('credentials')
 
-# jobs ...
+class Job():
+    """This class provides access to the jobs in mongodb."""
+    def __init__(self, request):
+        self.request = request
+        self.db = database(request)
 
-def add_job(request,
+
+    def add(self,
             identifier,
             wps_url,
             execution,
             user_id='anonymous',
             notes='',
             tags=''):
-    db = database(request)
-    db.jobs.save(dict(
-        user_id = user_id, 
-        uuid = uuid.uuid4().get_hex(),
-        identifier = identifier,
-        service_url = wps_url,
-        status_location = execution.statusLocation,
-        status = execution.status,
-        start_time = datetime.datetime.now(),
-        end_time = datetime.datetime.now(),
-        notes = notes,
-        tags = tags,
-        ))
-    #logger.debug('count jobs = %s', db.jobs.count())
+        self.db.jobs.save(dict(
+            user_id = user_id, 
+            uuid = uuid.uuid4().get_hex(),
+            identifier = identifier,
+            service_url = wps_url,
+            status_location = execution.statusLocation,
+            status = execution.status,
+            start_time = datetime.datetime.now(),
+            end_time = datetime.datetime.now(),
+            notes = notes,
+            tags = tags,
+            ))
 
-def get_job(request, uuid):
-    db = database(request)
-    job = db.jobs.find_one({'uuid': uuid})
-    return job
+    def by_id(self, uuid):
+        job = self.db.jobs.find_one({'uuid': uuid})
+        return job
 
-def update_job(request, job):
-    db = database(request)
-    db.jobs.update({'uuid': job['uuid']}, job)
+    def update(self, job):
+        self.db.jobs.update({'uuid': job['uuid']}, job)
 
-def num_jobs(request):
-    db = database(request)
-    return db.jobs.count()
+    def count(self):
+        return self.db.jobs.count()
 
-def drop_jobs(request):
-    db = database(request)
-    db.jobs.drop()
+    def drop(self):
+        self.db.jobs.drop()
 
-def jobs_by_userid(request, user_id='anonymous'):
-    db = database(request)
-    return db.jobs.find( dict(user_id=user_id) )
+    def by_userid(self, user_id='anonymous'):
+        return self.db.jobs.find( dict(user_id=user_id) )
 
-def drop_user_jobs(request):
-    db = database(request)
-    for job in jobs_by_userid(request, user_id=authenticated_userid(request)):
-        db.jobs.remove({"uuid": job['uuid']})
+    def drop_by_user_id(self, user_id):
+        for job in self.by_userid(user_id):
+            self.db.jobs.remove({"uuid": job['uuid']})
 
-def drop_jobs_by_uuid(request, uuids=[]):
-    db = database(request)
-    for uuid in uuids:
-        db.jobs.remove({"uuid": uuid})
+    def drop_by_ids(self, uuids=[]):
+        for uuid in uuids:
+            self.db.jobs.remove({"uuid": uuid})
 
+    def information(self, sortkey="starttime", inverted=True):
+        """
+        Collects jobs status ...
 
-def jobs_information(request,sortkey="starttime",inverted=True):
-    """
-    Collects jobs status ...
+        TODO: rewrite code
+        """
+        from owslib.wps import WPSExecution
 
-    TODO: rewrite code
-    """
-    from owslib.wps import WPSExecution
+        dateformat = '%a, %d %b %Y %I:%M:%S %p'
+        jobs = []
+        for job in self.by_userid(user_id=authenticated_userid(self.request)):
 
-    dateformat = '%a, %d %b %Y %I:%M:%S %p'
-    jobs = []
-    for job in jobs_by_userid(request, user_id=authenticated_userid(request)):
+            job['starttime'] = job['start_time'].strftime(dateformat)
 
-        job['starttime'] = job['start_time'].strftime(dateformat)
+            # TODO: handle different process status
+            # TODO: check Exception ... wps needs some time to provide status document which may cause an exception
+            if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
+                job['errors'] = []
+                try:
+                    wps = get_wps(job['service_url'])
+                    execution = WPSExecution(url=wps.url)
+                    execution.checkStatus(url=job['status_location'], sleepSecs=0)
+                    job['status'] = execution.status
+                    job['percent_completed'] = execution.percentCompleted
+                    job['status_message'] = execution.statusMessage
+                    job['error_message'] = ''
+                    for err in execution.errors:
+                        job['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
 
-        # TODO: handle different process status
-        # TODO: check Exception ... wps needs some time to provide status document which may cause an exception
-        if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
-            job['errors'] = []
-            try:
-                wps = get_wps(job['service_url'])
-                execution = WPSExecution(url=wps.url)
-                execution.checkStatus(url=job['status_location'], sleepSecs=0)
-                job['status'] = execution.status
-                job['percent_completed'] = execution.percentCompleted
-                job['status_message'] = execution.statusMessage
-                job['error_message'] = ''
-                for err in execution.errors:
-                    job['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
-               
-            except:
-                msg = 'could not access wps %s' % ( job['status_location'] )
-                logger.exception(msg)
-                # TODO: if url is not accessable ... try again!
-                job['status'] = 'ProcessFailed'
-                job['errors'].append( dict(code='', locator='', text=msg) )
-            
-            job['end_time'] = datetime.datetime.now()
-            for err in job['errors']:
-                job['error_message'] = err.get('text', '') + ';'
+                except:
+                    msg = 'could not access wps %s' % ( job['status_location'] )
+                    logger.exception(msg)
+                    # TODO: if url is not accessable ... try again!
+                    job['status'] = 'ProcessFailed'
+                    job['errors'].append( dict(code='', locator='', text=msg) )
 
-            # TODO: configure output delete time
-            dd = 3
-            job['output_delete_time'] = datetime.datetime.now() + datetime.timedelta(days=dd)
-            job['duration'] = str(job['end_time'] - job['start_time'])
-            update_job(request, job)
-        jobs.append(job)
-    #sort the jobs by starttime
-    if (sortkey == "starttime"):
-        jobs = sorted(jobs, key=lambda job: datetime.datetime.strptime(job['starttime'], dateformat))
-    else:
-        jobs = sorted(jobs, key=lambda job: job[sortkey])
-    #reverse the sorting
-    if(inverted):
-        jobs = jobs[::-1]
-        
-    return jobs
+                job['end_time'] = datetime.datetime.now()
+                for err in job['errors']:
+                    job['error_message'] = err.get('text', '') + ';'
+
+                # TODO: configure output delete time
+                dd = 3
+                job['output_delete_time'] = datetime.datetime.now() + datetime.timedelta(days=dd)
+                job['duration'] = str(job['end_time'] - job['start_time'])
+                self.update(job)
+            jobs.append(job)
+        #sort the jobs by starttime
+        if (sortkey == "starttime"):
+            jobs = sorted(jobs, key=lambda job: datetime.datetime.strptime(job['starttime'], dateformat))
+        else:
+            jobs = sorted(jobs, key=lambda job: job[sortkey])
+        #reverse the sorting
+        if(inverted):
+            jobs = jobs[::-1]
+
+        return jobs
 

@@ -348,9 +348,9 @@ def processes(request):
     permission='edit'
     )
 def jobs(request):
-    from .models import jobs_information
+    jobdb = models.Job(request)
 
-    jobs = jobs_information(request)
+    jobs = jobdb.information()
 
     #This block is used to allow viewing the data if javascript is deactivated
     from pyramid.request import Request
@@ -364,15 +364,13 @@ def jobs(request):
     noscriptform = response.body
 
     if "remove_all" in request.POST:
-        from .models import drop_user_jobs
-        drop_user_jobs(request)
+        jobdb.drop_by_user_id(authenticated_userid(request))
         
         return HTTPFound(location=request.route_url('jobs'))
 
     elif "remove_selected" in request.POST:
         if("selected" in request.POST):
-            from .models import drop_jobs_by_uuid
-            drop_jobs_by_uuid(request,request.POST.getall("selected"))
+            jobdb.drop_by_ids(request,request.POST.getall("selected"))
         return HTTPFound(location=request.route_url('jobs'))
 
  
@@ -384,14 +382,14 @@ def jobs(request):
     permission='edit'
     )
 def jobsupdate(request):
-    from .models import jobs_information
     from .schema import TableSchema
     data = request.matchdict
     #Sort the table with the given key, matching to the template name
     key = data["sortkey"]
     #If inverted is found as type then the ordering is inverted.
     inverted = (data["type"]=="inverted")
-    jobs = jobs_information(request,key,inverted)
+    jobdb = models.Job(request)
+    jobs = jobdb.information(key, inverted)
     #Add HTML data for the table
     def tpd(key,value):
         return (key,{key:"<div id=\""+key+"\" onclick=\"sort(\'"+key+"\')\">"+value+"</div>"})
@@ -461,8 +459,8 @@ def jobsupdate(request):
 def output_details(request):
     title = u"Process Outputs"
 
-    from .models import get_job
-    job = get_job(request, uuid=request.params.get('uuid'))
+    jobdb = model.Job(request)
+    job = jobdb.by_id(uuid=request.params.get('uuid'))
     wps = get_wps(job['service_url'])
     execution = WPSExecution(url=wps.url)
     execution.checkStatus(url=job['status_location'], sleepSecs=0)
@@ -525,9 +523,8 @@ class ExecuteView(FormView):
       
         execution = execute_wps(self.wps, identifier, params)
 
-        from .models import add_job
-        add_job(
-            request = self.request, 
+        jobdb = models.Job(request)
+        jobdb.add(
             user_id = authenticated_userid(self.request), 
             identifier = identifier, 
             wps_url = self.wps.url, 
