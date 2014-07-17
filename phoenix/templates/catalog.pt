@@ -5,63 +5,27 @@
   </div>
         
   <div metal:fill-slot="content">
-    <!-- Button to trigger modal dialog for wps addition -->
+    <!--! Button to trigger modal dialog for user addition -->
     <a href="#catalog-form" role="button" class="btn btn-success" data-toggle="modal">
       Add WPS
     </a>
-    <br/><br/>
+    <br/><br />
 
-    <table id="catalog-table" class="table table-striped accordion-group">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>URL</th>
-          <th>Username</th>
-          <th>Abstract</th>
-          <th>Notes</th>
-        </tr>
-      </thead>
-      <tbody>
-        <div tal:repeat="wps wps_list">
-          <tr>
-            <td>${wps.get('title', '')}</td>
-            <td>
-              <a href="${wps.get('url', '')}?SERVICE=WPS&VERSION=1.0.0&REQUEST=GetCapabilities"
-                 target="_blank">
-                ${wps.get('url', '')}
-              </a>
-            </td>
-            <td>${wps.get('username', '')}</td>
-            <td>${wps.get('abstract', '')}</td>
-            <td>${wps.get('notes', '')}</td>
-            <td>
-              <div class="btn-group">
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                  Action
-                  <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu" id="${wps.get('url', '')}">
-                  <li><a class="catalog-edit" href="#">Edit</a></li>
-                  <li><a class="catalog-delete" href="#">Delete</a></li>
-                </ul>
-              </div>
-            </td>
-          </tr>
-        </div>
-      </tbody>
+    <table class="table table-striped">
+      <tal:rows replace="structure grid" />
     </table>
 
-    <!--! Add form for WPS -->
-    <div id="catalog-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="task-form-label" aria-hidden="true">
+    <!--! Add form for tasks -->
+    <div id="catalog-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="catalog-form-label" aria-hidden="true">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="task-form-label">Add WPS</h3>
+        <h3 id="catalog-form-label">Add WPS</h3>
       </div>
       <div class="modal-body">
         <tal:form replace="structure form" />
       </div>
     </div>
-    
+
   </div>
    
 </metal:block>

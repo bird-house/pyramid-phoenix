@@ -85,3 +85,24 @@ class UsersGrid(MyGrid):
           </ul>
         </div>
         """ % item.get('user_id')))
+
+class CatalogGrid(MyGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(CatalogGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats[''] = self.action_td
+
+    def action_td(self, col_num, i, item):
+        """Generate the column that has the actions in it.
+        """
+        return HTML.td(HTML.literal("""\
+        <div class="btn-group">
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          Action
+          <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" id="%s">
+            <li><a class="catalog-edit" href="#">Edit</a></li>
+            <li><a class="catalog-delete" href="#">Delete</a></li>
+          </ul>
+        </div>
+        """ % item.get('url')))

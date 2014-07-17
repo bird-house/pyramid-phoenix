@@ -50,19 +50,17 @@ class Catalog():
                 url = wps.url,
                 title = wps.identification.title,
                 abstract = wps.identification.abstract,
-                username = username,
-                password = password,
                 notes = notes,
                 )
             self.db.catalog.save(entry)
 
             msg='Added wps %s succesfully' % (url)
             logger.info(msg)
-            request.session.flash(msg, queue='info')
+            self.request.session.flash(msg, queue='info')
         except:
             msg='Could not add wps %s' % (url)
             logger.exception(msg)
-            request.session.flash(msg, queue='error')
+            self.request.session.flash(msg, queue='error')
 
         return entry
 
@@ -71,7 +69,7 @@ class Catalog():
             self.db.catalog.remove(dict(url=url))
             msg='Removed wps %s succesfully' % (url)
             logger.info(msg)
-            request.session.flash(msg, queue='info')
+            self.request.session.flash(msg, queue='info')
         except:
             logger.exception('could not delete wps %s in catalog', url)
 

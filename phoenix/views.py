@@ -607,35 +607,35 @@ class CatalogSettings:
             logger.exception('validation of catalog form failed')
         return HTTPFound(location=self.request.route_url('catalog'))
 
+    @view_config(renderer='json', name='delete.entry')
+    def delete(self):
+        url = self.request.params.get('url', None)
+        if url is not None:
+            self.catalogdb.delete(url)
+        return {}
+
+    @view_config(renderer='json', name='edit.entry')
+    def edit(self):
+        url = self.request.params.get('url', None)
+        result = dict(url=url)
+        if url is not None:
+            entry = self.catalogdb.by_url(url)
+            result = dict(url = url, notes = entry.get('notes'))
+        return result
+    
     @view_config(route_name="catalog", renderer='templates/catalog.pt')
     def catalog_view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
             return self.process_form(form)
-        appstruct = dict(url=wps_url(self.request))
-        return dict(
-            wps_list=self.catalogdb.all(),
-            form = form.render(appstruct))
-
-    @view_config(renderer='json', name='delete.entry')
-    def delete(self):
-        """
-        Delete a catalog entry, e.a. wps url
-        """
-        wps_url = self.request.params.get('url', None)
-        if wps_url is not None:
-            self.catalogdb.delete(wps_url)
-
-        return {}
-
-    @view_config(renderer='json', name='edit.entry')
-    def edit(self):
-        wps_url = self.request.params.get('url', None)
-        result = dict(url=wps_url)
-        if wps_url is not None:
-            entry = self.catalogdb.by_url(wps_url)
-            result = dict(url=wps_url, notes=entry.get('notes'))
-        return result
+        from .grid import CatalogGrid
+        items = self.catalogdb.all()
+        grid = CatalogGrid(
+                self.request,
+                items,
+                ['title', 'url', 'abstract', 'notes', ''],
+            )
+        return dict(grid=grid, items=items, form=form.render())
 
 @view_defaults(permission='admin', layout='default')
 class UserSettings:
@@ -691,7 +691,6 @@ class UserSettings:
     @view_config(renderer='json', name='delete.user')
     def delete(self):
         user_id = self.request.params.get('user_id', None)
-        logger.debug('delete user %s' %(user_id))
         if user_id is not None:
             self.userdb.delete(user_id=user_id)
 
