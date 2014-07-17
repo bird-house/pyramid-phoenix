@@ -27,7 +27,6 @@ import models
 from .exceptions import TokenError
 from .security import is_valid_user
 from .wps import WPSSchema, get_wps
-from phoenix import catalog
 
 from .helpers import (
     wps_url,
@@ -274,8 +273,9 @@ def build_processes_form(request, formid='deform'):
 
 def build_processes_wps_form(request, formid='deform'):
     from .schema import SelectWPSSchema
+    catalogdb = models.Catalog(request)
     schema = SelectWPSSchema().bind(
-        wps_list = catalog.get_wps_list_as_tuple(request),
+        wps_list = catalogdb.all_as_tuple(),
         )
     return Form(schema, buttons=('select',), formid=formid)
 
@@ -568,7 +568,7 @@ class CatalogSettings:
     
     def __init__(self, request):
         self.request = request
-        self.userdb = models.User(self.request)
+        self.catalogdb = models.Catalog(self.request)
 
     def generate_form(self, formid="deform"):
         """This helper code generates the form that will be used to add
@@ -602,11 +602,9 @@ class CatalogSettings:
             captured = form.validate(controls)
             url = captured.get('url', '')
             notes = captured.get('notes', '')
-            username = captured.get('username', '')
-            password = captured.get('password', '')
-            catalog.add_wps_entry(self.request, url, username, password, notes)
-        except ValidationFailure as e:
-            logger.error('validation of catalog form failed: message=%s' % (e.message))
+            self.catalogdb.add(url, notes)
+        except ValidationFailure:
+            logger.exception('validation of catalog form failed')
         return HTTPFound(location=self.request.route_url('catalog'))
 
     @view_config(route_name="catalog", renderer='templates/catalog.pt')
@@ -616,7 +614,7 @@ class CatalogSettings:
             return self.process_form(form)
         appstruct = dict(url=wps_url(self.request))
         return dict(
-            wps_list=catalog.get_wps_list(self.request),
+            wps_list=self.catalogdb.all(),
             form = form.render(appstruct))
 
     @view_config(renderer='json', name='delete.entry')
@@ -626,7 +624,7 @@ class CatalogSettings:
         """
         wps_url = self.request.params.get('url', None)
         if wps_url is not None:
-            catalog.delete_wps_entry(self.request, wps_url)
+            self.catalogdb.delete(wps_url)
 
         return {}
 
@@ -635,10 +633,8 @@ class CatalogSettings:
         wps_url = self.request.params.get('url', None)
         result = dict(url=wps_url)
         if wps_url is not None:
-            entry = catalog.get_wps_entry(self.request, wps_url)
-            result = dict(url=wps_url, notes=entry.get('notes'),
-                          username=entry.get('username'),
-                          password=entry.get('password'))
+            entry = self.catalogdb.by_url(wps_url)
+            result = dict(url=wps_url, notes=entry.get('notes'))
         return result
 
 @view_defaults(permission='admin', layout='default')
@@ -774,12 +770,10 @@ def update_token(context, request):
     """
     user_id=authenticated_userid(request)
     logger.debug('update token: user_id=%s', user_id)
+
+    userdb = models.User(request)
+    userdb.update(user_id = user_id, update_token=True)
     
-    update_user(
-        request = request,
-        user_id = user_id,
-        update_token=True
-        )
     return True
 
 @view_config(route_name='account', renderer='templates/account.pt', layout='default', permission='edit')
@@ -819,8 +813,7 @@ def account(request):
                 cert_expires = execution.processOutputs[1].data[0]
                 logger.debug('cert expires %s', cert_expires)
                 # Update user credentials
-                update_user(
-                    request = request,
+                userdb.update(
                     user_id = user_id,
                     credentials = credentials,
                     cert_expires = cert_expires,

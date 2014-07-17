@@ -25,12 +25,69 @@ from .exceptions import TokenError
 import logging
 logger = logging.getLogger(__name__)
 
-# mongodb ...
-# -----------
-
 def database(request):
     conn = mongodb_conn(request)
     return conn.phoenix_db
+
+class Catalog():
+    """ This class provides access to the catalogs in mongodb."""
+    
+    def __init__(self, request):
+        self.request = request
+        self.db = database(request)
+
+    def add(self, url, notes=None):
+        entry = None
+        try:
+            url = url.split('?')[0]
+            wps = get_wps(url)
+
+            entry = self.db.catalog.find_one(dict(url = wps.url))
+            if entry is not None:
+                self.db.catalog.remove(dict(url = wps.url))
+            entry = dict(
+                format = 'WPS',
+                url = wps.url,
+                title = wps.identification.title,
+                abstract = wps.identification.abstract,
+                username = username,
+                password = password,
+                notes = notes,
+                )
+            self.db.catalog.save(entry)
+
+            msg='Added wps %s succesfully' % (url)
+            logger.info(msg)
+            request.session.flash(msg, queue='info')
+        except:
+            msg='Could not add wps %s' % (url)
+            logger.exception(msg)
+            request.session.flash(msg, queue='error')
+
+        return entry
+
+    def delete(self, url):
+        try:
+            self.db.catalog.remove(dict(url=url))
+            msg='Removed wps %s succesfully' % (url)
+            logger.info(msg)
+            request.session.flash(msg, queue='info')
+        except:
+            logger.exception('could not delete wps %s in catalog', url)
+
+    def by_url(self, url):
+        entry = None
+        try:
+            entry = self.db.catalog.find_one(dict(url = url))
+        except:
+            logger.exception('could not find wps %s in catalog', url)
+        return entry
+
+    def all(self):
+        return self.db.catalog.find(dict(format='WPS'))
+
+    def all_as_tuple(self):
+        return map(lambda entry: (entry['url'], '%s (%s)' % (entry.get('title', 'unknown'), entry.get('notes', ''))), self.all())
 
 
 class User():

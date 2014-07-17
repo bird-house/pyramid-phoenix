@@ -169,9 +169,6 @@ class SelectWPSSchema(colander.MappingSchema):
         widget = deferred_wps_list_widget
         )
 
-# catalog
-# -------
-
 class CatalogSchema(colander.MappingSchema):
     url = colander.SchemaNode(
         colander.String(),
@@ -182,22 +179,6 @@ class CatalogSchema(colander.MappingSchema):
         validator = colander.url,
         widget = deform.widget.TextInputWidget())
 
-    username = colander.SchemaNode(
-        colander.String(),
-        title = 'Username',
-        description = 'Username to access WPS (optional)',
-        missing = '',
-        default = '',
-        widget = deform.widget.TextInputWidget())
-
-    password = colander.SchemaNode(
-        colander.String(),
-        title = 'Password',
-        description = 'Password to access WPS (optional)',
-        missing = '',
-        default = '',
-        widget = deform.widget.PasswordWidget(size=20))
-    
     notes = colander.SchemaNode(
         colander.String(),
         title = 'Notes',
@@ -206,9 +187,6 @@ class CatalogSchema(colander.MappingSchema):
         default = '',
         widget = deform.widget.TextInputWidget())
 
-
-# User
-# -----
 
 class UserSchema(colander.MappingSchema):
     name = colander.SchemaNode(
