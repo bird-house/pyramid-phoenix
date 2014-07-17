@@ -1,22 +1,22 @@
 from .helpers import admin_users
-from .models import is_user_activated
+import models
 
 import logging
-
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 def is_valid_user(request, user_id):
     if user_id in admin_users(request):
         return True
-    return is_user_activated(request, user_id)
+    userdb = models.User(request)
+    return userdb.is_activated(user_id)
 
 def groupfinder(user_id, request):
-    #log.debug('groupfinder: user_id=%s', user_id)
     admins = admin_users(request)
+    userdb = models.User(request)
     
     if user_id in admins:
         return ['group:admins']
-    elif is_user_activated(request, user_id):
+    elif userdb.is_activated(user_id):
         return ['group:editors']
     else:
         return ['group:views']

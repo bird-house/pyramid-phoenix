@@ -23,7 +23,7 @@ import config_public as config
 
 from owslib.wps import WPSExecution, ComplexData
 
-from .models import update_user
+import models
 from .exceptions import TokenError
 from .security import is_valid_user
 from .wps import WPSSchema, get_wps
@@ -127,7 +127,8 @@ def login_local(request):
     # TODO: need some work work on local accounts
     if (True):
         email = "admin@malleefowl.org"
-        update_user(request, user_id=email)
+        userdb = models.User(request)
+        userdb.update(user_id=email)
 
         if is_valid_user(request, email):
             request.response.text = render('phoenix:templates/openid_success.pt',
@@ -160,16 +161,17 @@ def login(request):
     email = verify_login(request)
 
     # update user list
+    userdb = models.User(request)
     
     # check whitelist
     if not is_valid_user(request, email):
         logger.info("persona login: user %s is not registered", email)
-        update_user(request, user_id=email, activated=False)
+        userdb.update(user_id=email, activated=False)
         #    request.session.flash('Sorry, you are not on the list')
         return {'redirect': '/register', 'success': False}
     logger.info("persona login successful for user %s", email)
     try:
-        update_user(request, user_id=email, update_token=True, activated=True)
+        userdb.update(user_id=email, update_token=True, activated=True)
     except TokenError as e:
         pass
     # Add the headers required to remember the user to the response
@@ -197,7 +199,9 @@ def login_openid(request):
 
     logger.debug('authomatic login result: %s', result)
     
-    if result:  
+    if result:
+        userdb = models.User(request)
+        
         if result.error:
             # Login procedure finished with an error.
             #request.session.flash('Sorry, login failed: %s' % (result.error.message))
@@ -216,10 +220,10 @@ def login_openid(request):
             if is_valid_user(request, result.user.email):
                 logger.info("openid login successful for user %s", result.user.email)
                 try:
-                    update_user(request, user_id=result.user.email,
-                                openid=result.user.id,
-                                update_token=True,
-                                activated=True)
+                    userdb.update(user_id=result.user.email,
+                                  openid=result.user.id,
+                                  update_token=True,
+                                  activated=True)
                 except TokenError as e:
                     pass
                 response.text = render('phoenix:templates/openid_success.pt',
@@ -229,10 +233,10 @@ def login_openid(request):
                 response.headers.extend(remember(request, result.user.email))
             else:
                 logger.info("openid login: user %s is not registered", result.user.email)
-                update_user(request, user_id=result.user.email,
-                            openid=result.user.id,
-                            update_token=False,
-                            activated=False)
+                userdb.update(user_id=result.user.email,
+                              openid=result.user.id,
+                              update_token=False,
+                              activated=False)
                 response.text = render('phoenix:templates/register.pt',
                                        {'email': result.user.email}, request=request)
     #logger.debug('response: %s', response)
@@ -646,6 +650,7 @@ def edit_catalog_entry(context, request):
 class UserSettings:
     def __init__(self, request):
         self.request = request
+        self.userdb = models.User(self.request)
 
 
     def generate_form(self, formid="deform"):
@@ -681,13 +686,11 @@ class UserSettings:
 
             logger.debug('update user: %s', captured)
 
-            update_user(self.request,
-                        user_id = captured.get('user_id', ''),
-                        openid = captured.get('openid', ''),
-                        name = captured.get('name', ''),
-                        organisation = captured.get('organisation'),
-                        notes = captured.get('notes', ''),
-                        )
+            self.userdb.update(user_id = captured.get('user_id', ''),
+                               openid = captured.get('openid', ''),
+                               name = captured.get('name', ''),
+                               organisation = captured.get('organisation'),
+                               notes = captured.get('notes', ''))
         except ValidationFailure:
             logger.exception('validation of user form failed')
         return HTTPFound(location=self.request.route_url('user'))
@@ -697,8 +700,7 @@ class UserSettings:
         user_id = self.request.params.get('user_id', None)
         logger.debug('delete user %s' %(user_id))
         if user_id is not None:
-            from .models import delete_user
-            delete_user(self.request, user_id=user_id)
+            self.userdb.delete(user_id=user_id)
 
         return {}
 
@@ -707,8 +709,7 @@ class UserSettings:
         user_id = self.request.params.get('user_id', None)
         logger.debug('activate user %s' %(user_id))
         if user_id is not None:
-            from .models import activate_user
-            activate_user(self.request, user_id)
+            self.userdb.activate(user_id)
 
         return {}
 
@@ -718,8 +719,7 @@ class UserSettings:
         result = dict(user_id=user_id)
         logger.debug('edit user %s' % (user_id))
         if user_id is not None:
-            from .models import user_with_id
-            user = user_with_id(self.request, user_id=user_id)
+            user = self.userdb_by_id(user_id=user_id)
             result = dict(
                 user_id = user_id,
                 openid = user.get('openid'),
@@ -736,9 +736,8 @@ class UserSettings:
         if 'submit' in self.request.POST:
             return self.process_form(form)
 
-        from .models import all_users
         from .grid import UsersGrid
-        user_items = all_users(self.request)
+        user_items = self.userdb.all()
         grid = UsersGrid(
                 self.request,
                 user_items,
@@ -758,8 +757,8 @@ class UserSettings:
     )
 def map(request):
     userid = authenticated_userid(request)
-    from .models import user_token
-    token = user_token(request, userid)
+    userdb = models.User(request)
+    token = userdb.token(userid)
     return dict(token=token)
 
 @view_config(
@@ -791,8 +790,8 @@ def account(request):
     user_id=authenticated_userid(request)
     logger.debug('account: user_id=%s', user_id)
     
-    from .models import user_with_id
-    user = user_with_id(request, user_id=user_id)
+    userdb = models.User(request)
+    user = userdb.by_id(user_id=user_id)
     logger.debug('account: user=%s', user)
     
     from schema import AccountSchema

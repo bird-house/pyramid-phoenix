@@ -25,12 +25,7 @@ from colander import Range, Invalid, null
 from mako.template import Template
 
 from .exceptions import TokenError
-
-from .models import (
-    add_job,
-    user_token,
-    user_credentials,
-    )
+import models
 
 from .helpers import (
     wps_url, 
@@ -184,7 +179,8 @@ def bind_files_schema(node, kw):
         logger.debug('not fetching files')
         return
 
-    token = user_token(request, authenticated_userid(request))
+    userdb = models.User(request)
+    token = userdb.token(authenticated_userid(request))
     logger.debug('user token = %s' % (token))
 
     logger.debug('step num = %s', wizard_state.get_step_num())
@@ -295,19 +291,19 @@ class MyFormWizardView(FormWizardView):
     from pyramid.security import authenticated_userid
      
     def check_token(self):
-        from .models import update_user, is_token_valid
+        userdb = models.User(self.request)
         user_id=authenticated_userid(self.request)
         
-        if not is_token_valid(self.request, user_id):
+        if not userdb.is_token_valid(user_id):
             try:
-                update_user(self.request, user_id, update_token=True, update_login=False)
+                userdb.update(user_id, update_token=True, update_login=False)
             except TokenError as e:
                 pass
     
     def check_credentials(self):
         user_id=authenticated_userid(self.request)
-        from .models import user_with_id
-        user = user_with_id(self.request, user_id=user_id)
+        userdb = models.User(self.request)
+        user = userdb.by_id(user_id=user_id)
         cert_expires = user.get('cert_expires')
 
         valid_hours = 0
@@ -395,8 +391,9 @@ class MyFormWizardView(FormWizardView):
 
 
 def convert_states_to_nodes(request, states):
-    token = user_token(request, authenticated_userid(request))
-    credentials = user_credentials(request, authenticated_userid(request))
+    userdb = models.User(request)
+    token = userdb.token(authenticated_userid(request))
+    credentials = userdb.credentials(authenticated_userid(request))
     
     source = dict(
         service = wps_url(request),
@@ -441,7 +438,7 @@ class Done():
         wps = get_wps(wps_url(request))
         execution = execute_restflow(wps, nodes)
         
-        add_job(
+        models.add_job(
             request = request,
             user_id = authenticated_userid(request), 
             identifier = nodes['worker']['identifier'], 

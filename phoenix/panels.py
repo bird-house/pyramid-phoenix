@@ -80,8 +80,9 @@ def heading_info(context, request):
 @panel_config(name='heading_stats',
               renderer='templates/panels/heading_stats.pt')
 def heading_statistics(context, request):
-    from .models import count_users
-    return count_users(request)
+    import models
+    userdb = models.User(request)
+    return userdb.count()
 
 @panel_config(name='headings')
 def headings(context, request):

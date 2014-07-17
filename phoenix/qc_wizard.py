@@ -3,7 +3,7 @@ import logging
 logger = logging.getLogger(__name__)
 from pyramid.view import view_config
 from pyramid.security import authenticated_userid
-from .models import user_token, add_job
+import models
 from pyramid.httpexceptions import HTTPFound
 from wps import get_wps
 from .helpers import wps_url, get_setting
@@ -18,7 +18,8 @@ import os
 def qc_wizard_check(request):
     title = "Quality Control Wizard"
     user_id = authenticated_userid(request)
-    token = user_token(request, user_id)
+    usersdb = models.User(request)
+    token = userdb.token(user_id)
     if not token:
         raise Exception("Can not find token")
     
@@ -125,7 +126,7 @@ def qc_wizard_check(request):
 
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
-        add_job(
+        models.add_job(
             request = request,
             user_id = authenticated_userid(request),
             identifier = identifier,
@@ -143,7 +144,8 @@ def qc_wizard_check(request):
 
 def get_session_ids(user_id, request): 
     service_url = get_wps(wps_url(request)).url
-    token = user_token(request, user_id)
+    userdb = models.User(request)
+    token = userdb.token(user_id)
     identifier = 'Get_Session_IDs'
     inputs = [("username",user_id.replace("@","(at)")),("token",token)]
     outputs = "session_ids"
@@ -201,7 +203,8 @@ def get_html_fields(fields):
 def qc_wizard_yaml(request):
     title = "Quality Control Wizard"
     user_id = authenticated_userid(request)
-    token = user_token(request, user_id)
+    userdb = models.User(request)
+    token = userdb.token(user_id)
     
     session_id_help = ("An identifier used to avoid processes running on the same directory." + 
                         " Using an existing one will remove all data inside its work directory.")
@@ -288,7 +291,7 @@ def qc_wizard_yaml(request):
 
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
-        add_job(
+        models.add_job(
             request = request,
             user_id = authenticated_userid(request),
             identifier = identifier,

@@ -32,40 +32,42 @@ def database(request):
     conn = mongodb_conn(request)
     return conn.phoenix_db
 
-# registered users (whitelist)
 
-def add_user(request,
-                  user_id,
-                  openid=None,
-                  name=None,
-                  organisation=None,
-                  notes=None,
-                  activated=False):
-    db = database(request)
-    user = db.users.find_one(dict(user_id = user_id))
-    if user != None:
-        delete_user(request, user_id = user_id)
-    user = dict(
-        user_id = user_id,
-        openid = openid,
-        name = name,
-        organisation = organisation,
-        notes = notes,
-        activated = activated,
-        creation_time = datetime.datetime.now(),
-        last_login = datetime.datetime.now(),
-        )
-    db.users.save(user)
-    return user
+class User():
+    def __init__(self, request):
+        self.request = request
+        self.db = database(request)
 
-def delete_user(request, user_id):
-    db = database(request)
-    db.users.remove(dict(user_id = user_id))
+    def add(self,
+            user_id,
+            openid=None,
+            name=None,
+            organisation=None,
+            notes=None,
+            activated=False):
+        user = self.db.users.find_one(dict(user_id = user_id))
+        if user != None:
+            delete(user_id = user_id)
+        user = dict(
+            user_id = user_id,
+            openid = openid,
+            name = name,
+            organisation = organisation,
+            notes = notes,
+            activated = activated,
+            creation_time = datetime.datetime.now(),
+            last_login = datetime.datetime.now(),
+            )
+        self.db.users.save(user)
+        return user
 
-def activate_user(request, user_id):
-    update_user(request, user_id, activated= not is_user_activated(request, user_id))
+    def delete(self, user_id):
+        self.db.users.remove(dict(user_id = user_id))
 
-def update_user(request,
+    def activate(self, user_id):
+        self.update(user_id, activated = not self.is_activated(user_id))
+
+    def update(self,
                 user_id,
                 openid=None,
                 name=None,
@@ -76,87 +78,78 @@ def update_user(request,
                 cert_expires=None,
                 update_token=False,
                 update_login=True):
-    logger.debug("update user %s", user_id)
-       
-    db = database(request)
-    user = db.users.find_one(dict(user_id = user_id))
-    if user == None:
-        user = add_user(request, user_id=user_id, activated=False)
-    if activated is not None:
-        user['activated'] = activated
-    if openid is not None:
-        user['openid'] = openid
-    if name is not None:
-        user['name'] = name
-    if organisation is not None:
-        user['organisation'] = organisation
-    if notes is not None:
-        user['notes'] = notes
-    if credentials is not None:
-        user['credentials'] = credentials
-    if cert_expires is not None:
-        user['cert_expires'] = cert_expires
-    if update_token:
-         try:
-             wps = get_wps(wps_url(request))
-             user['token'] = gen_token(wps, helpers.sys_token(request), user_id)
-             msg = "Your access token was successfully updated. See <a href='/account'>My Account</a>"
-             logger.info(msg)
-             request.session.flash(msg, queue='info')
-         except Exception as e:
-             msg = 'Could not generate token for user %s, err msg=%s' % (user_id, e.message)
-             logger.error(msg)
-             request.session.flash(msg, queue='error')
-             raise TokenError(msg)
-    if update_login:
-        user['last_login'] = datetime.datetime.now()
-    db.users.update(dict(user_id = user_id), user)
+        logger.debug("update user %s", user_id)
 
-def all_users(request):
-    db = database(request)
-    return db.users.find()
+        user = self.db.users.find_one(dict(user_id = user_id))
+        if user == None:
+            user = self.add(user_id=user_id, activated=False)
+        if activated is not None:
+            user['activated'] = activated
+        if openid is not None:
+            user['openid'] = openid
+        if name is not None:
+            user['name'] = name
+        if organisation is not None:
+            user['organisation'] = organisation
+        if notes is not None:
+            user['notes'] = notes
+        if credentials is not None:
+            user['credentials'] = credentials
+        if cert_expires is not None:
+            user['cert_expires'] = cert_expires
+        if update_token:
+             try:
+                 wps = get_wps(wps_url(self.request))
+                 user['token'] = gen_token(wps, helpers.sys_token(self.request), user_id)
+                 msg = "Your access token was successfully updated. See <a href='/account'>My Account</a>"
+                 logger.info(msg)
+                 self.request.session.flash(msg, queue='info')
+             except Exception as e:
+                 msg = 'Could not generate token for user %s, err msg=%s' % (user_id, e.message)
+                 logger.error(msg)
+                 self.request.session.flash(msg, queue='error')
+                 raise TokenError(msg)
+        if update_login:
+            user['last_login'] = datetime.datetime.now()
+        self.db.users.update(dict(user_id = user_id), user)
 
-def is_user_activated(request, user_id):
-    db = database(request)
-    return None != db.users.find_one(dict(user_id = user_id, activated = True))
+    def all(self):
+        return self.db.users.find()
 
-def count_users(request):
-    db = database(request)
+    def is_activated(self, user_id):
+        return None != self.db.users.find_one(dict(user_id = user_id, activated = True))
 
-    d = datetime.datetime.now() - datetime.timedelta(hours=3)
-    num_logins_3h = db.users.find({"last_login": {"$gt": d}}).count()
+    def count(self):
+        d = datetime.datetime.now() - datetime.timedelta(hours=3)
+        num_logins_3h = self.db.users.find({"last_login": {"$gt": d}}).count()
 
-    d = datetime.datetime.now() - datetime.timedelta(days=7)
-    num_logins_7d = db.users.find({"last_login": {"$gt": d}}).count()
+        d = datetime.datetime.now() - datetime.timedelta(days=7)
+        num_logins_7d = self.db.users.find({"last_login": {"$gt": d}}).count()
 
-    return dict(num_users=db.users.count(),
-                num_logins_3h=num_logins_3h,
-                num_logins_7d=num_logins_7d)
+        return dict(num_users=self.db.users.count(),
+                    num_logins_3h=num_logins_3h,
+                    num_logins_7d=num_logins_7d)
 
-def user_with_id(request, user_id):
-    db = database(request)
-    return db.users.find_one(dict(user_id = user_id))
+    def by_id(self, user_id):
+        return self.db.users.find_one(dict(user_id = user_id))
 
-def user_openid(request, user_id):
-    db = database(request)
-    user = db.users.find_one(dict(user_id = user_id))
-    return user.get('openid')
+    def openid(self, user_id):
+        user = self.db.users.find_one(dict(user_id = user_id))
+        return user.get('openid')
 
-def user_token(request, user_id):
-    db = database(request)
-    user = db.users.find_one(dict(user_id = user_id))
-    return user.get('token')
+    def token(self, user_id):
+        user = self.db.users.find_one(dict(user_id = user_id))
+        return user.get('token')
 
-def is_token_valid(request, user_id):
-    token = user_token(request, user_id)
-    if token is None or len(token) < 22:
-        return False
-    return True
+    def is_token_valid(self, user_id):
+        token = self.token(user_id)
+        if token is None or len(token) < 22:
+            return False
+        return True
 
-def user_credentials(request, user_id):
-    db = database(request)
-    user = db.users.find_one(dict(user_id = user_id))
-    return user.get('credentials')
+    def credentials(self, user_id):
+        user = self.db.users.find_one(dict(user_id = user_id))
+        return user.get('credentials')
 
 # jobs ...
 
