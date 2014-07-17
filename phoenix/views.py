@@ -668,13 +668,15 @@ def process_user_form(request, form):
         controls = request.POST.items()
         captured = form.validate(controls)
 
+        logger.debug('update user: %s', captured)
+
         update_user(request,
                     user_id = captured.get('user_id', ''),
                     openid = captured.get('openid', ''),
                     name = captured.get('name', ''),
                     organisation = captured.get('organisation'),
                     notes = captured.get('notes', ''),
-                    activated = captured.get('activated') == 'true')
+                    activated = captured.get('activated'))
     except ValidationFailure:
         logger.exception('validation of user form failed')
     return HTTPFound(location=request.route_url('user'))
@@ -693,7 +695,7 @@ def delete_user(context, request):
 def edit_user(context, request):
     user_id = request.params.get('user_id', None)
     result = dict(user_id=user_id)
-    logger.debug('edit user %s' %(user_id))
+    logger.debug('edit user %s' % (user_id))
     if user_id is not None:
         from .models import user_with_id
         user = user_with_id(request, user_id=user_id)
@@ -703,7 +705,7 @@ def edit_user(context, request):
             name = user.get('name'),
             organisation = user.get('organisation'),
             notes = user.get('notes'),
-            activated = user.get('activated'),
+            activated = 'true' if user.get('activated') else 'false',
             )
 
     return result
@@ -723,7 +725,7 @@ def user_view(request):
     grid = UsersGrid(
             request,
             user_items,
-            ['name', 'user_id', 'organisation', 'openid', 'notes', 'activated', ''],
+            ['name', 'user_id', 'organisation', 'notes', 'activated', ''],
         )
     return dict(grid=grid, items=user_items, form=form.render())
 

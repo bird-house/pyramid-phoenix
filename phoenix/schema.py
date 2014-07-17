@@ -207,53 +207,40 @@ class CatalogSchema(colander.MappingSchema):
         widget = deform.widget.TextInputWidget())
 
 
-# Admin
+# User
 # -----
 
 class UserSchema(colander.MappingSchema):
     name = colander.SchemaNode(
         colander.String(),
-        title = "User Name",
-        description = "Enter User Name",
-        missing = '',
-        default = '',
+        title = "Name",
+        missing = colander.drop,
         )
     user_id = colander.SchemaNode(
         colander.String(),
-        title = "User ID",
-        description = "Enter eMail used for login",
+        title = "eMail",
         validator = colander.Email(),
-        missing = '',
         widget=deform.widget.TextInputWidget(),
         )
     openid = colander.SchemaNode(
         colander.String(),
         title = "OpenID",
-        description = "Enter OpenID for data access",
         validator = colander.url,
-        missing = '',
-        default = '',
+        missing = colander.drop,
         )
     organisation = colander.SchemaNode(
         colander.String(),
         title = "Organisation",
-        description = "The Organisation the User is working for",
-        missing = '',
-        default = '',
+        missing = colander.drop,
         )
     notes = colander.SchemaNode(
         colander.String(),
         title = "Notes",
-        description = "Some Notes about this User",
-        missing = '',
-        default = '',
+        missing = colander.drop,
         )
     activated = colander.SchemaNode(
-        colander.Boolean(),
-        title = "Activated",
-        description = "Check if user is allowed to use system",
-        missing = False,
-        default = False,
+        colander.Boolean(false_choices=('false', '0'), true_choices=('true', '1')),
+        title = "Allow Login",
         )
 
 
