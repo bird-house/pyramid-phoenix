@@ -238,11 +238,6 @@ class UserSchema(colander.MappingSchema):
         title = "Notes",
         missing = colander.drop,
         )
-    activated = colander.SchemaNode(
-        colander.Boolean(false_choices=('false', '0'), true_choices=('true', '1')),
-        title = "Allow Login",
-        )
-
 
 # jobs
 # ----

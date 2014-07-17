@@ -687,7 +687,7 @@ class UserSettings:
                         name = captured.get('name', ''),
                         organisation = captured.get('organisation'),
                         notes = captured.get('notes', ''),
-                        activated = captured.get('activated'))
+                        )
         except ValidationFailure:
             logger.exception('validation of user form failed')
         return HTTPFound(location=self.request.route_url('user'))
@@ -726,7 +726,6 @@ class UserSettings:
                 name = user.get('name'),
                 organisation = user.get('organisation'),
                 notes = user.get('notes'),
-                activated = 'true' if user.get('activated') else 'false',
                 )
 
         return result
