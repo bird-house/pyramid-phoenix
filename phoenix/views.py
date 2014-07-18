@@ -407,9 +407,6 @@ class Jobs:
             form_info=form_info,
             outputs=execution.processOutputs) )
 
-# form
-# -----
-
 @view_config(
     route_name='execute',
     renderer='templates/form.pt',
@@ -469,33 +466,28 @@ class ExecuteView(FormView):
 
         return HTTPFound(location=self.request.route_url('jobs'))
 
-@view_config(
-    route_name='settings',
-    renderer='templates/settings.pt',
-    layout='default',
-    permission='admin'
-    )
-def settings(request):
-    buttongroups = []
-    buttons = []
+@view_defaults(permission='admin', layout='default')    
+class Settings:
+    def __init__(self, request):
+        self.request = request
 
-    buttons.append(dict(url=supervisor_url(request), icon="monitor_edit.png", title="Supervisor", id="external-url"))
-    buttons.append(dict(url="/settings/catalog", icon="catalog_pages.png", title="Catalog"))
-    buttons.append(dict(url="/settings/user", icon="user_catwomen.png", title="Users"))
-    buttons.append(dict(url=thredds_url(request), icon="unidataLogo.png", title="Thredds", id="external-url"))
-    buttons.append(dict(url="/ipython", icon="ipynb_icon_64x64.png", title="IPython"))
-    buttongroups.append(dict(title='Settings', buttons=buttons))
-    
-    return dict(buttongroups=buttongroups)
+    @view_config(route_name='settings', renderer='templates/settings.pt')
+    def settings_view(self):
+        buttongroups = []
+        buttons = []
 
-@view_config(
-    route_name='ipython',
-    renderer='templates/embedded.pt',
-    layout='default',
-    permission='admin'
-    )
-def ipython(request):
-    return dict(external_url="/ipython/notebook/tree")
+        buttons.append(dict(url=supervisor_url(self.request), icon="monitor_edit.png", title="Supervisor", id="external-url"))
+        buttons.append(dict(url="/settings/catalog", icon="catalog_pages.png", title="Catalog"))
+        buttons.append(dict(url="/settings/user", icon="user_catwomen.png", title="Users"))
+        buttons.append(dict(url=thredds_url(self.request), icon="unidataLogo.png", title="Thredds", id="external-url"))
+        buttons.append(dict(url="/ipython", icon="ipynb_icon_64x64.png", title="IPython"))
+        buttongroups.append(dict(title='Settings', buttons=buttons))
+
+        return dict(buttongroups=buttongroups)
+
+    @view_config(route_name='ipython', renderer='templates/embedded.pt')
+    def ipython(self):
+        return dict(external_url="/ipython/notebook/tree")
 
 @view_defaults(permission='admin', layout='default')
 class CatalogSettings:
