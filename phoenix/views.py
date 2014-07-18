@@ -289,140 +289,123 @@ class Processes:
             form_wps = form_wps.render(),
             current_wps = wps, 
             )
-   
-# jobs
-# -------
 
-@view_config(
-    route_name='jobs',
-    renderer='templates/jobs.pt',
-    layout='default',
-    permission='edit'
-    )
-def jobs(request):
-    jobdb = models.Job(request)
-
-    jobs = jobdb.information()
-
-    #This block is used to allow viewing the data if javascript is deactivated
-    from pyramid.request import Request
-    #create a new request to jobsupdate
-    subreq = Request.blank('/jobsupdate/starttime/inverted')
-    #copy the cookie for authenication (else 403 error)
-    subreq.cookies = request.cookies
-    #Make the request
-    response = request.invoke_subrequest(subreq)
-    #Get the HTML part of the response
-    noscriptform = response.body
-
-    if "remove_all" in request.POST:
-        jobdb.drop_by_user_id(authenticated_userid(request))
-        
-        return HTTPFound(location=request.route_url('jobs'))
-
-    elif "remove_selected" in request.POST:
-        if("selected" in request.POST):
-            jobdb.drop_by_ids(request,request.POST.getall("selected"))
-        return HTTPFound(location=request.route_url('jobs'))
-
- 
-    return {"jobs":jobs,"noscriptform":noscriptform}
-
-@view_config(
-    route_name="jobsupdate",
-    layout='default',
-    permission='edit'
-    )
-def jobsupdate(request):
-    from .schema import TableSchema
-    data = request.matchdict
-    #Sort the table with the given key, matching to the template name
-    key = data["sortkey"]
-    #If inverted is found as type then the ordering is inverted.
-    inverted = (data["type"]=="inverted")
-    jobdb = models.Job(request)
-    jobs = jobdb.information(key, inverted)
-    #Add HTML data for the table
-    def tpd(key,value):
-        return (key,{key:"<div id=\""+key+"\" onclick=\"sort(\'"+key+"\')\">"+value+"</div>"})
-    table_options = 'id="process_table" class="table table-condensed accordion-group" style="table-layout: fixed; word-wrap: break-word;"'
-    tableheader= [tpd('select','Select'),tpd('identifier','Identifier'),
-                  tpd('starttime','Start Time'),tpd('duration','Duration'),
-                  tpd('notes','Notes'),tpd('tags','Tags'),tpd('status','Status')]
-    tablerows = []
-    for job in jobs:
-        tablerow = []
-        job["select"] = '<input type="checkbox" name="selected" value="'+job['uuid']+'">'
-        identifier = job["identifier"]
-        uuid = job['uuid']
-        job["identifier"] ='<a rel="tooltip" data-placement="right" title="ID:'+uuid+'">'+identifier+'</a>'
-        for tuplepair in tableheader:
-            key = tuplepair[0]
-            tablerow.append(job.get(key))
-
-        status = job["status"]
-        tr1 = "Unknown status:"+str(status)
-        if status in ["ProcessAccepted","ProcessStarted","ProcessPaused"]:
-            perc = job.get("percent_completed",0)#TODO: Using 0 as workaround if not found.
-            barwidth = 80
-            barfill = perc*barwidth/100
-            tr1 = ('<a href="#" class="label label-info" data-toggle="popover"' +
-                       ' data-placement="left" data-content="' + str(job.get("status_message")) +
-                       '" data-original-title="Status Message">' + job["status"] + '</a>\n' +
-                       '<div><progress style="height:20px;width:' + str(barwidth) + 'px;"  max="' + 
-                       str(barwidth) + '" value="' + str(barfill) + '"></progress>' + 
-                       str(perc) + '%</div>')
-        elif status == "ProcessSucceeded":
-            tr1 = (' <a href="/output_details?uuid=' + job["uuid"] + '" class="label label-success">' +
-                   status + '</a>')
-        elif status == "ProcessFailed":
-            error_message = job.get("error_message","")
-            for x in ["[","]", " ",".",":","_","'","(",")","-",",","/","{","}","?"]:
-                    error_message = error_message.replace("\\"+x,x)
-            tr1 = ('<a href="#" class="label label-warning" data-toggle="popover"' + 
-                  ' data-placement="left" data-content="' + error_message + 
-                  '" data-original-title="Error Message">' + status + '</a>')
-        elif status == "Exception":
-            tr1 = ('<a href="#" class="label label-important" data-toggle="popover"' +
-                  ' data-placement="left" data-content="' + job.get("error_message", '') +
-                  '" data-original-title="Error Message">'+ status +'</a>')
-        #The last element is status
-        tablerow[-1] = tr1
-        tablerows.append(tablerow)
-    #Create a form using the HTML data above and using the TableSchema
-    appstruct = {'table':{'tableheader':tableheader, 'tablerows':tablerows,
-        'table_options':table_options}}
-    schema = TableSchema().bind()
-    schema.set_title("My Jobs")
-    myForm = Form(schema,buttons=("remove selected","remove all"))
-    form = myForm.render(appstruct=appstruct)
-    #Change the layout from horizontal to vertical to allow the table take the full width.
-    form = form.replace('deform form-horizontal','deform form-vertical')
-    return Response(form,content_type='text/html')
-
-# output_details
-# --------------
-
-@view_config(
-     route_name='output_details',
-     renderer='templates/output_details.pt',
-     layout='default',
-     permission='edit')
-def output_details(request):
-    title = u"Process Outputs"
-
-    jobdb = models.Job(request)
-    job = jobdb.by_id(uuid=request.params.get('uuid'))
-    wps = get_wps(job['service_url'])
-    execution = WPSExecution(url=wps.url)
-    execution.checkStatus(url=job['status_location'], sleepSecs=0)
-
-    form_info="Status: %s" % (execution.status)
+@view_defaults(permission='edit', layout='default')
+class Jobs:
+    def __init__(self, request):
+        self.request = request
+        self.jobdb = models.Job(self.request)
     
-    return( dict(
-        title=execution.process.title, 
-        form_info=form_info,
-        outputs=execution.processOutputs) )
+    @view_config(route_name='jobs', renderer='templates/jobs.pt')
+    def jobs(self):
+        jobs = self.jobdb.information()
+
+        #This block is used to allow viewing the data if javascript is deactivated
+        from pyramid.request import Request
+        #create a new request to jobsupdate
+        subreq = Request.blank('/jobsupdate/starttime/inverted')
+        #copy the cookie for authenication (else 403 error)
+        subreq.cookies = self.request.cookies
+        #Make the request
+        response = self.request.invoke_subrequest(subreq)
+        #Get the HTML part of the response
+        noscriptform = response.body
+
+        if "remove_all" in self.request.POST:
+            self.jobdb.drop_by_user_id(authenticated_userid(self.request))
+
+            return HTTPFound(location=self.request.route_url('jobs'))
+
+        elif "remove_selected" in self.request.POST:
+            if("selected" in self.request.POST):
+                self.jobdb.drop_by_ids(self.request.POST.getall("selected"))
+            return HTTPFound(location=self.request.route_url('jobs'))
+
+
+        return {"jobs":jobs,"noscriptform":noscriptform}
+
+    @view_config(route_name="jobsupdate")
+    def jobsupdate(self):
+        from .schema import TableSchema
+        data = self.request.matchdict
+        #Sort the table with the given key, matching to the template name
+        key = data["sortkey"]
+        #If inverted is found as type then the ordering is inverted.
+        inverted = (data["type"]=="inverted")
+        jobs = self.jobdb.information(key, inverted)
+        #Add HTML data for the table
+        def tpd(key,value):
+            return (key,{key:"<div id=\""+key+"\" onclick=\"sort(\'"+key+"\')\">"+value+"</div>"})
+        table_options = 'id="process_table" class="table table-condensed accordion-group" style="table-layout: fixed; word-wrap: break-word;"'
+        tableheader= [tpd('select','Select'),tpd('identifier','Identifier'),
+                      tpd('starttime','Start Time'),tpd('duration','Duration'),
+                      tpd('notes','Notes'),tpd('tags','Tags'),tpd('status','Status')]
+        tablerows = []
+        for job in jobs:
+            tablerow = []
+            job["select"] = '<input type="checkbox" name="selected" value="'+job['uuid']+'">'
+            identifier = job["identifier"]
+            uuid = job['uuid']
+            job["identifier"] ='<a rel="tooltip" data-placement="right" title="ID:'+uuid+'">'+identifier+'</a>'
+            for tuplepair in tableheader:
+                key = tuplepair[0]
+                tablerow.append(job.get(key))
+
+            status = job["status"]
+            tr1 = "Unknown status:"+str(status)
+            if status in ["ProcessAccepted","ProcessStarted","ProcessPaused"]:
+                perc = job.get("percent_completed",0)#TODO: Using 0 as workaround if not found.
+                barwidth = 80
+                barfill = perc*barwidth/100
+                tr1 = ('<a href="#" class="label label-info" data-toggle="popover"' +
+                           ' data-placement="left" data-content="' + str(job.get("status_message")) +
+                           '" data-original-title="Status Message">' + job["status"] + '</a>\n' +
+                           '<div><progress style="height:20px;width:' + str(barwidth) + 'px;"  max="' + 
+                           str(barwidth) + '" value="' + str(barfill) + '"></progress>' + 
+                           str(perc) + '%</div>')
+            elif status == "ProcessSucceeded":
+                tr1 = (' <a href="/output_details?uuid=' + job["uuid"] + '" class="label label-success">' +
+                       status + '</a>')
+            elif status == "ProcessFailed":
+                error_message = job.get("error_message","")
+                for x in ["[","]", " ",".",":","_","'","(",")","-",",","/","{","}","?"]:
+                        error_message = error_message.replace("\\"+x,x)
+                tr1 = ('<a href="#" class="label label-warning" data-toggle="popover"' + 
+                      ' data-placement="left" data-content="' + error_message + 
+                      '" data-original-title="Error Message">' + status + '</a>')
+            elif status == "Exception":
+                tr1 = ('<a href="#" class="label label-important" data-toggle="popover"' +
+                      ' data-placement="left" data-content="' + job.get("error_message", '') +
+                      '" data-original-title="Error Message">'+ status +'</a>')
+            #The last element is status
+            tablerow[-1] = tr1
+            tablerows.append(tablerow)
+        #Create a form using the HTML data above and using the TableSchema
+        appstruct = {'table':{'tableheader':tableheader, 'tablerows':tablerows,
+            'table_options':table_options}}
+        schema = TableSchema().bind()
+        schema.set_title("My Jobs")
+        myForm = Form(schema,buttons=("remove selected","remove all"))
+        form = myForm.render(appstruct=appstruct)
+        #Change the layout from horizontal to vertical to allow the table take the full width.
+        form = form.replace('deform form-horizontal','deform form-vertical')
+        return Response(form,content_type='text/html')
+
+    @view_config(route_name='output_details', renderer='templates/output_details.pt')
+    def output_details(self):
+        title = u"Process Outputs"
+
+        job = self.jobdb.by_id(uuid=self.request.params.get('uuid'))
+        wps = get_wps(job['service_url'])
+        execution = WPSExecution(url=wps.url)
+        execution.checkStatus(url=job['status_location'], sleepSecs=0)
+
+        form_info="Status: %s" % (execution.status)
+
+        return( dict(
+            title=execution.process.title, 
+            form_info=form_info,
+            outputs=execution.processOutputs) )
 
 # form
 # -----
