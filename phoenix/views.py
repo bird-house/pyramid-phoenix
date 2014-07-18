@@ -43,219 +43,174 @@ authomatic = Authomatic(config=config.config,
                         report_errors=True,
                         logging_level=logging.DEBUG)
 
-@subscriber(BeforeRender)
-def add_global(event):
-    event['message_type'] = 'alert-info'
-    event['message'] = ''
 
-
-# Exception view
-# --------------
-
-@view_config(context=Exception)
-def unknown_failure(exc, request):
-    #import traceback
-    logger.exception('unknown failure')
-    #msg = exc.args[0] if exc.args else ""
-    #response =  Response('Ooops, something went wrong: %s' % (traceback.format_exc()))
-    response =  Response('Ooops, something went wrong. Check the log files.')
-    response.status_int = 500
-    return response
-
-@notfound_view_config(
-    layout='default',
-    renderer='templates/404.pt')
-def notfound(self):
+@notfound_view_config(renderer='templates/404.pt')
+def notfound(request):
     """This special view just renders a custom 404 page. We do this
     so that the 404 page fits nicely into our global layout.
     """
     return {}
 
-# sign-in
-# -------
-
-@view_config(
-    route_name='signin', 
-    layout='default', 
-    renderer='templates/signin.pt',
-    permission='view')
-def signin(request):
-    logger.debug("sign-in view")
-    return dict()
-
-# logout
-# --------
-
-@view_config(
-    route_name='logout',
-    permission='edit')
-def logout(request):
-    logger.debug("logout")
-    headers = forget(request)
-    return HTTPFound(location = request.route_url('home'),
-                     headers = headers)
-
-# forbidden view
-# --------------
-
-@forbidden_view_config(
-    renderer='templates/forbidden.pt',
-    )
+@forbidden_view_config(renderer='templates/forbidden.pt')
 def forbidden(request):
     request.response.status = 403
     return dict(message=None)
 
-# register view
-# -------------
-@view_config(
-    route_name='register',
-    renderer='templates/register.pt',
-    permission='view')
-def register(request):
-    return dict(email=None)
+@view_defaults(permission='view', layout='default')
+class PhoenixViews:
+    def __init__(self, request):
+        self.request = request
+
+    @subscriber(BeforeRender)
+    def add_global(self, event):
+        event['message_type'] = 'alert-info'
+        event['message'] = ''
 
 
-# local login for admin and demo user
-# -----------------------------------
-@view_config(
-    route_name='login_local',
-    #check_csrf=True, 
-    permission='view')
-def login_local(request):
-    logger.debug("login with local account")
-    # TODO: need some work work on local accounts
-    if (True):
-        email = "admin@malleefowl.org"
-        userdb = models.User(request)
-        userdb.update(user_id=email)
+    @view_config(context=Exception)
+    def unknown_failure(self, exc):
+        #import traceback
+        logger.exception('unknown failure')
+        #msg = exc.args[0] if exc.args else ""
+        #response =  Response('Ooops, something went wrong: %s' % (traceback.format_exc()))
+        response =  Response('Ooops, something went wrong. Check the log files.')
+        response.status_int = 500
+        return response
 
-        if is_valid_user(request, email):
-            request.response.text = render('phoenix:templates/openid_success.pt',
-                                           {'result': email},
-                                           request=request)
-            # Add the headers required to remember the user to the response
-            request.response.headers.extend(remember(request, email))
-        else:
-            request.response.text = render('phoenix:templates/register.pt',
-                                           {'email': email}, request=request)
-    else:
-        request.response.text = render('phoenix:templates/forbidden.pt',
-                                       {'message': 'Wrong Password'},
-                                       request=request)
+    @view_config(route_name='signin', renderer='templates/signin.pt')
+    def signin(self):
+        return dict()
 
-    return request.response
+    @view_config(route_name='logout', permission='edit')
+    def logout(self):
+        headers = forget(self.request)
+        return HTTPFound(location = self.request.route_url('home'), headers = headers)
 
-# persona login
-# -------------
+    @view_config(route_name='register', renderer='templates/register.pt')
+    def register(self):
+        return dict(email=None)
 
-@view_config(route_name='login', check_csrf=True, renderer='json', permission='view')
-def login(request):
-    # TODO: update login to my needs
-    # https://pyramid_persona.readthedocs.org/en/latest/customization.html#do-extra-work-or-verification-at-login
-
-    logger.debug('login with persona')
-
-    # Verify the assertion and get the email of the user
-    from pyramid_persona.views import verify_login 
-    email = verify_login(request)
-
-    # update user list
-    userdb = models.User(request)
-    
-    # check whitelist
-    if not is_valid_user(request, email):
-        logger.info("persona login: user %s is not registered", email)
-        userdb.update(user_id=email, activated=False)
-        #    request.session.flash('Sorry, you are not on the list')
-        return {'redirect': '/register', 'success': False}
-    logger.info("persona login successful for user %s", email)
-    try:
-        userdb.update(user_id=email, update_token=True, activated=True)
-    except TokenError as e:
-        pass
-    # Add the headers required to remember the user to the response
-    request.response.headers.extend(remember(request, email))
-    # Return a json message containing the address or path to redirect to.
-    #return {'redirect': request.POST['came_from'], 'success': True}
-    return {'redirect': '/', 'success': True}
-
-# authomatic openid login
-# -----------------------
-
-@view_config(
-    route_name='login_openid',
-    permission='view')
-def login_openid(request):
-    # Get the internal provider name URL variable.
-    provider_name = request.matchdict.get('provider_name', 'openid')
-
-    logger.debug('provider_name: %s', provider_name)
-    
-    # Start the login procedure.
-    response = Response()
-    #response = request.response
-    result = authomatic.login(WebObAdapter(request, response), provider_name)
-
-    logger.debug('authomatic login result: %s', result)
-    
-    if result:
-        userdb = models.User(request)
+    @view_config(route_name='login_local')
+    def login_local(self):
+        """local login for admin and demo user"""
         
-        if result.error:
-            # Login procedure finished with an error.
-            #request.session.flash('Sorry, login failed: %s' % (result.error.message))
-            logger.error('openid login failed: %s', result.error.message)
-            #response.write(u'<h2>Login failed: {}</h2>'.format(result.error.message))
-            response.text = render('phoenix:templates/forbidden.pt',
-                                   {'message': result.error.message}, request=request)
-        elif result.user:
-            # Hooray, we have the user!
-            logger.debug("user=%s, id=%s, email=%s, credentials=%s",
-                      result.user.name, result.user.id, result.user.email, result.user.credentials)
-            logger.debug("provider=%s", result.provider.name )
-            logger.debug("response headers=%s", response.headers.keys())
-            #logger.debug("response cookie=%s", response.headers['Set-Cookie'])
+        # TODO: need some work work on local accounts
+        if (True):
+            email = "admin@malleefowl.org"
+            userdb = models.User(self.request)
+            userdb.update(user_id=email)
 
-            if is_valid_user(request, result.user.email):
-                logger.info("openid login successful for user %s", result.user.email)
-                try:
+            if is_valid_user(self.request, email):
+                self.request.response.text = render('phoenix:templates/openid_success.pt',
+                                               {'result': email},
+                                               request=self.request)
+                # Add the headers required to remember the user to the response
+                self.request.response.headers.extend(remember(self.request, email))
+            else:
+                self.request.response.text = render('phoenix:templates/register.pt',
+                                               {'email': email}, request=self.request)
+        else:
+            self.request.response.text = render('phoenix:templates/forbidden.pt',
+                                           {'message': 'Wrong Password'},
+                                           request=self.request)
+
+        return self.request.response
+
+    @view_config(route_name='login', check_csrf=True, renderer='json')
+    def login(self):
+        """mozilla persona login"""
+
+        # TODO: update login to my needs
+        # https://pyramid_persona.readthedocs.org/en/latest/customization.html#do-extra-work-or-verification-at-login
+        # Verify the assertion and get the email of the user
+        from pyramid_persona.views import verify_login 
+        email = verify_login(self.request)
+
+        # update user list
+        userdb = models.User(self.request)
+
+        # check whitelist
+        if not is_valid_user(self.request, email):
+            logger.info("persona login: user %s is not registered", email)
+            userdb.update(user_id=email, activated=False)
+            #    request.session.flash('Sorry, you are not on the list')
+            return {'redirect': '/register', 'success': False}
+        logger.info("persona login successful for user %s", email)
+        try:
+            userdb.update(user_id=email, update_token=True, activated=True)
+        except TokenError as e:
+            pass
+        # Add the headers required to remember the user to the response
+        self.request.response.headers.extend(remember(self.request, email))
+        # Return a json message containing the address or path to redirect to.
+        #return {'redirect': request.POST['came_from'], 'success': True}
+        return {'redirect': '/', 'success': True}
+
+    @view_config(route_name='login_openid')
+    def login_openid(self):
+        """authomatic openid login"""
+        # Get the internal provider name URL variable.
+        provider_name = self.request.matchdict.get('provider_name', 'openid')
+
+        logger.debug('provider_name: %s', provider_name)
+
+        # Start the login procedure.
+        response = Response()
+        #response = request.response
+        result = authomatic.login(WebObAdapter(self.request, response), provider_name)
+
+        logger.debug('authomatic login result: %s', result)
+
+        if result:
+            userdb = models.User(self.request)
+
+            if result.error:
+                # Login procedure finished with an error.
+                #request.session.flash('Sorry, login failed: %s' % (result.error.message))
+                logger.error('openid login failed: %s', result.error.message)
+                #response.write(u'<h2>Login failed: {}</h2>'.format(result.error.message))
+                response.text = render('phoenix:templates/forbidden.pt',
+                                       {'message': result.error.message}, request=self.request)
+            elif result.user:
+                # Hooray, we have the user!
+                logger.debug("user=%s, id=%s, email=%s, credentials=%s",
+                          result.user.name, result.user.id, result.user.email, result.user.credentials)
+                logger.debug("provider=%s", result.provider.name )
+                logger.debug("response headers=%s", response.headers.keys())
+                #logger.debug("response cookie=%s", response.headers['Set-Cookie'])
+
+                if is_valid_user(self.request, result.user.email):
+                    logger.info("openid login successful for user %s", result.user.email)
+                    try:
+                        userdb.update(user_id=result.user.email,
+                                      openid=result.user.id,
+                                      update_token=True,
+                                      activated=True)
+                    except TokenError as e:
+                        pass
+                    response.text = render('phoenix:templates/openid_success.pt',
+                                           {'result': result},
+                                           request=self.request)
+                    # Add the headers required to remember the user to the response
+                    response.headers.extend(remember(self.request, result.user.email))
+                else:
+                    logger.info("openid login: user %s is not registered", result.user.email)
                     userdb.update(user_id=result.user.email,
                                   openid=result.user.id,
-                                  update_token=True,
-                                  activated=True)
-                except TokenError as e:
-                    pass
-                response.text = render('phoenix:templates/openid_success.pt',
-                                       {'result': result},
-                                       request=request)
-                # Add the headers required to remember the user to the response
-                response.headers.extend(remember(request, result.user.email))
-            else:
-                logger.info("openid login: user %s is not registered", result.user.email)
-                userdb.update(user_id=result.user.email,
-                              openid=result.user.id,
-                              update_token=False,
-                              activated=False)
-                response.text = render('phoenix:templates/register.pt',
-                                       {'email': result.user.email}, request=request)
-    #logger.debug('response: %s', response)
-        
-    return response
+                                  update_token=False,
+                                  activated=False)
+                    response.text = render('phoenix:templates/register.pt',
+                                           {'email': result.user.email}, request=self.request)
+        #logger.debug('response: %s', response)
 
-# home view
-# ---------
+        return response
 
-@view_config(
-    route_name='home',
-    renderer='templates/home.pt',
-    layout='default',
-    permission='view'
-    )
-def home(request):
-    lm = request.layout_manager
-    lm.layout.add_heading('heading_info')
-    lm.layout.add_heading('heading_stats')
-    return dict()
+    @view_config(route_name='home', renderer='templates/home.pt')
+    def home(self):
+        lm = self.request.layout_manager
+        lm.layout.add_heading('heading_info')
+        lm.layout.add_heading('heading_stats')
+        return dict()
 
 
 # processes
