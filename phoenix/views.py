@@ -501,14 +501,16 @@ class Account:
             controls = self.request.POST.items()
             captured = form.validate(controls)
 
+            user_id=authenticated_userid(self.request)
+            user = self.userdb.by_id(user_id=user_id)
+            
             inputs = []
             openid =  user.get('openid').encode('ascii', 'ignore')
             inputs.append( ('openid', openid) )
             password = captured.get('password', '').encode('ascii', 'ignore')
             inputs.append( ('password', password) )
             logger.debug('update credentials with openid=%s', openid)
-            wps = get_wps(wps_url(self.request))
-            execution = wps.execute(identifier='org.malleefowl.esgf.logon',
+            execution = self.request.wps.execute(identifier='org.malleefowl.esgf.logon',
                                     inputs=inputs,
                                     output=[('output',True),('expires',False)])
             from owslib.wps import monitorExecution

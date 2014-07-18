@@ -17,7 +17,7 @@ import pymongo
 from .helpers import button
 import logging
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 from deform import Form
 
@@ -31,10 +31,9 @@ def add_search_path():
 
 
 def main(global_config, **settings):
-    """ This function returns a Pyramid WSGI application.
     """
-    log.debug("init phoenix application")
-    #log.debug("settings: %s", settings)
+    This function returns a Pyramid WSGI application.
+    """
 
     # security
     authn_policy = AuthTktAuthenticationPolicy(
@@ -59,7 +58,7 @@ def main(global_config, **settings):
     # see also: http://docs.pylonsproject.org/projects/deform/en/latest/templates.html#overriding-for-all-forms
     # register template search path
     add_search_path()
-    #log.debug('search path= %s', Form.default_renderer.loader.search_path)
+    #logger.debug('search path= %s', Form.default_renderer.loader.search_path)
 
     # static views (stylesheets etc)
     config.add_static_view('static', 'static', cache_max_age=3600)
@@ -120,6 +119,16 @@ def main(global_config, **settings):
     conn = MongoDB(db_uri)
     config.registry.settings['mongodb_conn'] = conn
     config.add_subscriber(add_mongo_db, NewRequest)
+
+    # WPS
+    def add_wps(event):
+        settings = event.request.registry.settings
+        event.request.wps = settings['wps']
+    logger.debug("init wps !!!!!!!!!!!!!!!!!!!")
+    from wps import get_wps
+    config.registry.settings['wps'] = get_wps(settings['malleefowl.wps'])
+    config.add_subscriber(add_wps, NewRequest)
+    
     config.scan('phoenix')
 
     return config.make_wsgi_app()
