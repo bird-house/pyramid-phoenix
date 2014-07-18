@@ -56,26 +56,26 @@ def forbidden(request):
     request.response.status = 403
     return dict(message=None)
 
+@subscriber(BeforeRender)
+def add_global(event):
+    event['message_type'] = 'alert-info'
+    event['message'] = ''
+
+@view_config(context=Exception)
+def unknown_failure(request, exc):
+    #import traceback
+    logger.exception('unknown failure')
+    #msg = exc.args[0] if exc.args else ""
+    #response =  Response('Ooops, something went wrong: %s' % (traceback.format_exc()))
+    response =  Response('Ooops, something went wrong. Check the log files.')
+    response.status_int = 500
+    return response
+
 @view_defaults(permission='view', layout='default')
 class PhoenixViews:
     def __init__(self, request):
         self.request = request
-
-    @subscriber(BeforeRender)
-    def add_global(self, event):
-        event['message_type'] = 'alert-info'
-        event['message'] = ''
-
-
-    @view_config(context=Exception)
-    def unknown_failure(self, exc):
-        #import traceback
-        logger.exception('unknown failure')
-        #msg = exc.args[0] if exc.args else ""
-        #response =  Response('Ooops, something went wrong: %s' % (traceback.format_exc()))
-        response =  Response('Ooops, something went wrong. Check the log files.')
-        response.status_int = 500
-        return response
+        self.userdb = models.User(self.request)
 
     @view_config(route_name='signin', renderer='templates/signin.pt')
     def signin(self):
@@ -97,8 +97,7 @@ class PhoenixViews:
         # TODO: need some work work on local accounts
         if (True):
             email = "admin@malleefowl.org"
-            userdb = models.User(self.request)
-            userdb.update(user_id=email)
+            self.userdb.update(user_id=email)
 
             if is_valid_user(self.request, email):
                 self.request.response.text = render('phoenix:templates/openid_success.pt',
@@ -127,17 +126,16 @@ class PhoenixViews:
         email = verify_login(self.request)
 
         # update user list
-        userdb = models.User(self.request)
 
         # check whitelist
         if not is_valid_user(self.request, email):
             logger.info("persona login: user %s is not registered", email)
-            userdb.update(user_id=email, activated=False)
+            self.userdb.update(user_id=email, activated=False)
             #    request.session.flash('Sorry, you are not on the list')
             return {'redirect': '/register', 'success': False}
         logger.info("persona login successful for user %s", email)
         try:
-            userdb.update(user_id=email, update_token=True, activated=True)
+            self.userdb.update(user_id=email, update_token=True, activated=True)
         except TokenError as e:
             pass
         # Add the headers required to remember the user to the response
@@ -162,8 +160,6 @@ class PhoenixViews:
         logger.debug('authomatic login result: %s', result)
 
         if result:
-            userdb = models.User(self.request)
-
             if result.error:
                 # Login procedure finished with an error.
                 #request.session.flash('Sorry, login failed: %s' % (result.error.message))
@@ -182,7 +178,7 @@ class PhoenixViews:
                 if is_valid_user(self.request, result.user.email):
                     logger.info("openid login successful for user %s", result.user.email)
                     try:
-                        userdb.update(user_id=result.user.email,
+                        self.userdb.update(user_id=result.user.email,
                                       openid=result.user.id,
                                       update_token=True,
                                       activated=True)
@@ -195,7 +191,7 @@ class PhoenixViews:
                     response.headers.extend(remember(self.request, result.user.email))
                 else:
                     logger.info("openid login: user %s is not registered", result.user.email)
-                    userdb.update(user_id=result.user.email,
+                    self.userdb.update(user_id=result.user.email,
                                   openid=result.user.id,
                                   update_token=False,
                                   activated=False)
@@ -211,6 +207,10 @@ class PhoenixViews:
         lm.layout.add_heading('heading_info')
         lm.layout.add_heading('heading_stats')
         return dict()
+
+    @view_config(route_name='help', renderer='templates/embedded.pt')
+    def help(self):
+        return dict(external_url='/docs')
 
 
 # processes
@@ -723,15 +723,6 @@ def map(request):
     userdb = models.User(request)
     token = userdb.token(userid)
     return dict(token=token)
-
-@view_config(
-    route_name='help',
-    renderer='templates/embedded.pt',
-    layout='default',
-    permission='view'
-    )
-def help(request):
-    return dict(external_url='/docs')
 
 @view_config(renderer='json', name='update.token', permission='edit')
 def update_token(context, request):
