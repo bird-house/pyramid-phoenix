@@ -7,6 +7,8 @@
 
 # TODO: refactor usage of mongodb etc ...
 
+import pymongo
+
 from pyramid.security import authenticated_userid
 
 from pyramid.security import (
@@ -18,23 +20,18 @@ import uuid
 import datetime
 
 from phoenix import helpers
-from .helpers import mongodb_conn
 from .wps import get_wps, wps_url, gen_token
 from .exceptions import TokenError
 
 import logging
 logger = logging.getLogger(__name__)
 
-def database(request):
-    conn = mongodb_conn(request)
-    return conn.phoenix_db
-
 class Catalog():
     """ This class provides access to the catalogs in mongodb."""
     
     def __init__(self, request):
         self.request = request
-        self.db = database(request)
+        self.db = request.db
 
     def add(self, url, notes=None):
         entry = None
@@ -93,7 +90,7 @@ class User():
     
     def __init__(self, request):
         self.request = request
-        self.db = database(request)
+        self.db = request.db
 
     def add(self,
             user_id,
@@ -170,8 +167,8 @@ class User():
             user['last_login'] = datetime.datetime.now()
         self.db.users.update(dict(user_id = user_id), user)
 
-    def all(self):
-        return self.db.users.find()
+    def all(self, key='activated', direction=pymongo.ASCENDING):
+        return self.db.users.find().sort(key, direction)
 
     def is_activated(self, user_id):
         return None != self.db.users.find_one(dict(user_id = user_id, activated = True))
@@ -212,8 +209,7 @@ class Job():
     """This class provides access to the jobs in mongodb."""
     def __init__(self, request):
         self.request = request
-        self.db = database(request)
-
+        self.db = request.db
 
     def add(self,
             identifier,

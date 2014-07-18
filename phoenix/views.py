@@ -645,6 +645,21 @@ class UserSettings:
         self.request = request
         self.userdb = models.User(self.request)
 
+    def sort_order(self):
+        """The list_view and tag_view both use this helper method to
+        determine what the current sort parameters are.
+        """
+        order = self.request.GET.get('order_col', 'activated')
+        order_dir = self.request.GET.get('order_dir', 'asc')
+        ## if order == 'due_date':
+        ##     # handle sorting of NULL values so they are always at the end
+        ##     order = 'CASE WHEN due_date IS NULL THEN 1 ELSE 0 END, due_date'
+        ## if order == 'task':
+        ##     # Sort ignoring case
+        ##     order += ' COLLATE NOCASE'
+        order_dir = 1 if order_dir == 'asc' else -1
+        return dict(order=order, order_dir=order_dir)   
+        
 
     def generate_form(self, formid="deform"):
         """This helper code generates the form that will be used to add
@@ -729,7 +744,8 @@ class UserSettings:
             return self.process_form(form)
 
         from .grid import UsersGrid
-        user_items = self.userdb.all()
+        order = self.sort_order()
+        user_items = self.userdb.all(key=order.get('order'), direction=order.get('order_dir'))
         grid = UsersGrid(
                 self.request,
                 user_items,

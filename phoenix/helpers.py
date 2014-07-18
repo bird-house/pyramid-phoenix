@@ -56,9 +56,6 @@ def admin_users(request):
         return map(str.strip, re.split("\\s+", value.strip()))
     return []
 
-def mongodb_conn(request):
-    return get_setting(request, 'mongodb_conn')
-
 def sys_token(request):
     return get_setting(request, 'malleefowl.sys_token')
 

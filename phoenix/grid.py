@@ -11,6 +11,27 @@ class MyGrid(Grid):
             kwargs['url'] = request.current_route_url
         super(MyGrid, self).__init__(*args, **kwargs)
         self.exclude_ordering = ['_numbered']
+
+    def generate_header_link(self, column_number, column, label_text):
+        """Override of the ObjectGrid to customize the headers. This is
+        mostly taken from the example code in ObjectGrid itself.
+        """
+        GET = dict(self.request.copy().GET)
+        self.order_column = GET.pop("order_col", None)
+        self.order_dir = GET.pop("order_dir", None)
+        # determine new order
+        if column == self.order_column and self.order_dir == "desc":
+            new_order_dir = "asc"
+        else:
+            new_order_dir = "desc"
+        self.additional_kw['order_col'] = column
+        self.additional_kw['order_dir'] = new_order_dir
+        new_url = self.url_generator(_query=self.additional_kw)
+        # set label for header with link
+        label_text = HTML.tag("a", href=new_url, c=label_text)
+        return super(MyGrid, self).generate_header_link(column_number,
+                                                        column,
+                                                        label_text)
     
     def default_header_column_format(self, column_number, column_name,
         header_label):
@@ -27,20 +48,20 @@ class MyGrid(Grid):
             class_name = "c%s ordering %s" % (column_number, column_name)
             return HTML.tag("th", header_label, class_=class_name)
 
-    ## def default_header_ordered_column_format(self, column_number, column_name,
-    ##                                          header_label):
-    ##     """Override of the ObjectGrid to use <th> and to add an icon
-    ##     that represents the sort order for the column.
-    ##     """
-    ##     icon_direction = self.order_dir == 'asc' and 'up' or 'down'
-    ##     icon_class = 'icon-chevron-%s' % icon_direction
-    ##     icon_tag = HTML.tag("i", class_=icon_class)
-    ##     header_label = HTML(header_label, " ", icon_tag)
-    ##     if column_name == "_numbered":
-    ##         column_name = "numbered"
-    ##     class_name = "c%s ordering %s %s" % (
-    ##         column_number, self.order_dir, column_name)
-    ##     return HTML.tag("th", header_label, class_=class_name)
+    def default_header_ordered_column_format(self, column_number, column_name,
+                                             header_label):
+        """Override of the ObjectGrid to use <th> and to add an icon
+        that represents the sort order for the column.
+        """
+        icon_direction = self.order_dir == 'asc' and 'up' or 'down'
+        icon_class = 'icon-chevron-%s' % icon_direction
+        icon_tag = HTML.tag("i", class_=icon_class)
+        header_label = HTML(header_label, " ", icon_tag)
+        if column_name == "_numbered":
+            column_name = "numbered"
+        class_name = "c%s ordering %s %s" % (
+            column_number, self.order_dir, column_name)
+        return HTML.tag("th", header_label, class_=class_name)
         
 
     def __html__(self):
