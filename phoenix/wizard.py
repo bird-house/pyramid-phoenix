@@ -464,10 +464,10 @@ class Done():
              )
 def wizard(request):
     schemas = []
-    from phoenix import catalog
+    catalogdb = models.Catalog(request)
     from schema import SelectWPSSchema
     schemas.append( SelectWPSSchema().bind(
-        wps_list=catalog.get_wps_list_as_tuple(request)))
+        wps_list=catalogdb.all_as_tuple()))
     schemas.append( SelectProcessSchema(title='Select Process') )
     schemas.append( WPSSchema(
         info=True,

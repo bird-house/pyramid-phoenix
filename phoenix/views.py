@@ -459,7 +459,7 @@ def jobsupdate(request):
 def output_details(request):
     title = u"Process Outputs"
 
-    jobdb = model.Job(request)
+    jobdb = models.Job(request)
     job = jobdb.by_id(uuid=request.params.get('uuid'))
     wps = get_wps(job['service_url'])
     execution = WPSExecution(url=wps.url)
@@ -523,7 +523,7 @@ class ExecuteView(FormView):
       
         execution = execute_wps(self.wps, identifier, params)
 
-        jobdb = models.Job(request)
+        jobdb = models.Job(self.request)
         jobdb.add(
             user_id = authenticated_userid(self.request), 
             identifier = identifier, 
