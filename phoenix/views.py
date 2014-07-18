@@ -19,7 +19,6 @@ from deform.form import Button
 from peppercorn import parse
 from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
-import config_public as config
 
 from owslib.wps import WPSExecution, ComplexData
 
@@ -30,14 +29,13 @@ from .wps import WPSSchema, get_wps
 
 from .helpers import (
     wps_url,
-    supervisor_url,
-    thredds_url,
     execute_wps
     )
 
 import logging
 logger = logging.getLogger(__name__)
 
+import config_public as config
 authomatic = Authomatic(config=config.config,
                         secret=config.SECRET,
                         report_errors=True,
@@ -618,16 +616,19 @@ class Map:
 class Settings:
     def __init__(self, request):
         self.request = request
+        self.settings = self.request.registry.settings
 
     @view_config(route_name='settings', renderer='templates/settings.pt')
     def settings_view(self):
         buttongroups = []
         buttons = []
 
-        buttons.append(dict(url=supervisor_url(self.request), icon="monitor_edit.png", title="Supervisor", id="external-url"))
+        buttons.append(dict(url=self.settings.get('phoenix.supervisor'),
+                            icon="monitor_edit.png", title="Supervisor", id="external-url"))
         buttons.append(dict(url="/settings/catalog", icon="catalog_pages.png", title="Catalog"))
         buttons.append(dict(url="/settings/user", icon="user_catwomen.png", title="Users"))
-        buttons.append(dict(url=thredds_url(self.request), icon="unidataLogo.png", title="Thredds", id="external-url"))
+        buttons.append(dict(url=self.settings.get('phoenix.thredds'),
+                            icon="unidataLogo.png", title="Thredds", id="external-url"))
         buttons.append(dict(url="/ipython", icon="ipynb_icon_64x64.png", title="IPython"))
         buttongroups.append(dict(title='Settings', buttons=buttons))
 

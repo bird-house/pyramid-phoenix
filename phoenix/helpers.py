@@ -32,22 +32,15 @@ def unquote_wps_params(params):
 def get_setting(request, key):
     settings = request.registry.settings
     value = settings.get(key, None)
-    #logger.debug('get_setting(): key=%s, value=%s' % (key, value))
     return value
 
 def set_setting(request, key, value):
     settings = request.registry.settings
     settings[key] = value
 
-def supervisor_url(request):
-    return get_setting(request, 'phoenix.supervisor')
-
 def wps_url(request):
     url = get_setting(request, 'malleefowl.wps')
     return url
-
-def thredds_url(request):
-    return get_setting(request, 'phoenix.thredds')
 
 def admin_users(request):
     value = get_setting(request, 'phoenix.admin_users')
