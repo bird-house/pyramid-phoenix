@@ -466,6 +466,17 @@ class ExecuteView(FormView):
 
         return HTTPFound(location=self.request.route_url('jobs'))
 
+@view_defaults(permission='edit', layout='default') 
+class Map:
+    def __init__(self, request):
+        self.request = request
+        self.userdb = models.User(self.request)
+
+    @view_config(route_name='map', renderer='templates/map.pt')
+    def map(self):
+        token = self.userdb.token(authenticated_userid(self.request))
+        return dict(token=token)
+
 @view_defaults(permission='admin', layout='default')    
 class Settings:
     def __init__(self, request):
@@ -679,22 +690,6 @@ class UserSettings:
                 ['name', 'user_id', 'openid', 'organisation', 'notes', 'activated', ''],
             )
         return dict(grid=grid, items=user_items, form=form.render())
-
-
-## map view
-## --------
-
-@view_config(
-    route_name='map',
-    renderer='templates/map.pt',
-    layout='default',
-    permission='edit'
-    )
-def map(request):
-    userid = authenticated_userid(request)
-    userdb = models.User(request)
-    token = userdb.token(userid)
-    return dict(token=token)
 
 @view_config(renderer='json', name='update.token', permission='edit')
 def update_token(context, request):
