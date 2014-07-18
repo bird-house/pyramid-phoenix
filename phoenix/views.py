@@ -749,7 +749,7 @@ class UserSettings:
         grid = UsersGrid(
                 self.request,
                 user_items,
-                ['name', 'user_id', 'organisation', 'notes', 'activated', ''],
+                ['name', 'user_id', 'openid', 'organisation', 'notes', 'activated', ''],
             )
         return dict(grid=grid, items=user_items, form=form.render())
 
