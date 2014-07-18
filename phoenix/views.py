@@ -213,85 +213,82 @@ class PhoenixViews:
         return dict(external_url='/docs')
 
 
-# processes
-# ---------
+@view_defaults(permission='edit', layout='default')
+class Processes:
+    def __init__(self, request):
+        self.request = request
+        self.catalogdb = models.Catalog(self.request)
+    
+    def generate_form(self, formid='deform'):
+        from pyramid.security import has_permission
+        from .schema import ProcessSchema
 
-def build_processes_form(request, formid='deform'):
-    from pyramid.security import has_permission
-    from .schema import ProcessSchema
-  
-    url = request.session.get('phoenix.wps.url', wps_url(request))
-    schema = ProcessSchema().bind(
-        wps_url = url,
-        allow_admin = has_permission('admin', request.context, request))
-    return Form(schema, buttons=('submit',), formid=formid)
+        url = self.request.session.get('phoenix.wps.url', wps_url(self.request))
+        schema = ProcessSchema().bind(
+            wps_url = url,
+            allow_admin = has_permission('admin', self.request.context, self.request))
+        return Form(schema, buttons=('submit',), formid=formid)
 
-def build_processes_wps_form(request, formid='deform'):
-    from .schema import SelectWPSSchema
-    catalogdb = models.Catalog(request)
-    schema = SelectWPSSchema().bind(
-        wps_list = catalogdb.all_as_tuple(),
-        )
-    return Form(schema, buttons=('select',), formid=formid)
+    def process_form(self, form):
+        controls = self.request.POST.items()
+        try:
+            captured = form.validate(controls)
+            process = captured.get('process', '')
+            session = self.request.session
+            session['phoenix.process.identifier'] = process
+            session.changed()
+        except ValidationFailure:
+            logger.exception('validation of process view failed.')
+        return HTTPFound(location=self.request.route_url('execute'))
 
-def eval_processes_form(request, form):
-    controls = request.POST.items()
-    try:
-        captured = form.validate(controls)
-        process = captured.get('process', '')
-        session = request.session
-        session['phoenix.process.identifier'] = process
-        session.changed()
-    except ValidationFailure as e:
-        logger.error('validation of process view failed: message=%s' % (e.message))
-    return HTTPFound(location=request.route_url('execute'))
+    def generate_wps_form(self, formid='deform'):
+        from .schema import SelectWPSSchema
+        schema = SelectWPSSchema().bind(
+            wps_list = self.catalogdb.all_as_tuple(),
+            )
+        return Form(schema, buttons=('select',), formid=formid)
 
-def eval_processes_wps_form(request, form):
-    controls = request.POST.items()
-    try:
-        captured = form.validate(controls)
-        url = captured.get('url', '')
-        session = request.session
-        session['phoenix.wps.url'] = url
-        session.changed()
-    except ValidationFailure as e:
-        logger.error('validation of process view failed: message=%s' % (e.message))
-    return HTTPFound(location=request.route_url('processes'))
+    def process_wps_form(self, form):
+        controls = self.request.POST.items()
+        try:
+            captured = form.validate(controls)
+            url = captured.get('url', '')
+            session = self.request.session
+            session['phoenix.wps.url'] = url
+            session.changed()
+        except ValidationFailure:
+            logger.exception('validation of process view failed.')
+        return HTTPFound(location=self.request.route_url('processes'))
 
-@view_config(
-    route_name='processes',
-    renderer='templates/processes.pt',
-    layout='default',
-    permission='edit'
-    )
-def processes(request):
-    form = build_processes_form(request)
-    form_wps = build_processes_wps_form(request)
-    if 'submit' in request.POST:
-        return eval_processes_form(request, form)
-    elif 'select' in request.POST:
-        return eval_processes_wps_form(request, form_wps)
+    @view_config(route_name='processes', renderer='templates/processes.pt')
+    def processes(self):
+        form = self.generate_form()
+        form_wps = self.generate_wps_form()
+        if 'submit' in self.request.POST:
+            return self.process_form(form)
+        elif 'select' in self.request.POST:
+            return self.process_wps_form(form_wps)
 
-    url = wps_url(request)
-    session = request.session
-    if 'phoenix.wps.url' in session:
-        url = session['phoenix.wps.url']
-    wps = get_wps(url, force=True)
-    if wps is None:
-        logger.warn('selected wps (url=%s) is not avail. using default.' % (url))
-        wps = get_wps(wps_url(request), force=True)
-        msg = "WPS <b><i>%s</i></b> selection failed" % (url)
-        session.flash(msg, queue='error')
+        url = wps_url(self.request)
+        session = self.request.session
+        if 'phoenix.wps.url' in session:
+            url = session['phoenix.wps.url']
+        wps = get_wps(url, force=True)
+        if wps is None:
+            logger.warn('selected wps (url=%s) is not avail. using default.', url)
+            wps = get_wps(wps_url(self.request), force=True)
+            msg = "WPS <b><i>%s</i></b> selection failed" % (url)
+            session.flash(msg, queue='error')
 
-    msg = "WPS <b><i>%s</i></b> selected successfully" % (wps.url)
-    session.flash(msg, queue='info')
+        msg = "WPS <b><i>%s</i></b> selected successfully" % (wps.url)
+        session.flash(msg, queue='info')
 
-    appstruct = dict()
-    return dict(
-        form = form.render(appstruct),
-        form_wps = form_wps.render(),
-        current_wps = wps, 
-        )
+        appstruct = dict()
+        return dict(
+            form = form.render(appstruct),
+            form_wps = form_wps.render(),
+            current_wps = wps, 
+            )
    
 # jobs
 # -------
