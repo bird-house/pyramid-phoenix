@@ -471,6 +471,76 @@ class Account:
     def __init__(self, request):
         self.request = request
         self.userdb = models.User(request)
+
+    def generate_creds_form(self, formid="deform"):
+        """This helper code generates the form that will be used to add
+        and edit wps based on the schema of the form.
+        """
+        from .schema import CredentialsSchema
+        schema = CredentialsSchema().bind()
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return Form(
+            schema,
+            buttons=('update',),
+            formid=formid,
+            use_ajax=True,
+            ajax_options=options,
+            )
+
+    def process_creds_form(self, form):
+        try:
+            controls = self.request.POST.items()
+            captured = form.validate(controls)
+
+            inputs = []
+            openid =  user.get('openid').encode('ascii', 'ignore')
+            inputs.append( ('openid', openid) )
+            password = captured.get('password', '').encode('ascii', 'ignore')
+            inputs.append( ('password', password) )
+            logger.debug('update credentials with openid=%s', openid)
+            wps = get_wps(wps_url(self.request))
+            execution = wps.execute(identifier='org.malleefowl.esgf.logon',
+                                    inputs=inputs,
+                                    output=[('output',True),('expires',False)])
+            from owslib.wps import monitorExecution
+            monitorExecution(execution)
+            if execution.processOutputs is not None and len(execution.processOutputs) > 1:
+                credentials = execution.processOutputs[0].reference
+                cert_expires = execution.processOutputs[1].data[0]
+                logger.debug('cert expires %s', cert_expires)
+                # Update user credentials
+                self.userdb.update(
+                    user_id = user_id,
+                    credentials = credentials,
+                    cert_expires = cert_expires,
+                    update_login=False,
+                    update_token=False
+                    )
+                logger.debug('update credentials successful, credentials=%s', credentials)
+                self.request.session.flash(
+                    'Credentials updated successfully',
+                    queue='success',
+                    )
+        except ValidationFailure:
+            msg = 'Validation of credentials form failed.'
+            logger.exception(msg)
+            self.request.session.flash(msg, queue='error')
+        except:
+            msg = 'Update of credentials failed.'
+            logger.exception(msg)
+            self.request.session.flash(msg, queue='error')
+        return HTTPFound(location=self.request.route_url('account'))
         
     @view_config(renderer='json', name='update.token')
     def update_token(self):
@@ -484,53 +554,10 @@ class Account:
 
         from .schema import AccountSchema
         form = Form(schema=AccountSchema(), buttons=('submit',))
-
-        from .schema import CredentialsSchema
-        form_credentials = Form(schema=CredentialsSchema(), buttons=('update',))
+        creds_form = self.generate_creds_form()
 
         if 'update' in self.request.POST:
-            try:
-                controls = self.request.POST.items()
-                captured = form_credentials.validate(controls)
-
-                inputs = []
-                openid =  user.get('openid').encode('ascii', 'ignore')
-                inputs.append( ('openid', openid) )
-                password = captured.get('password', '').encode('ascii', 'ignore')
-                inputs.append( ('password', password) )
-                logger.debug('update credentials with openid=%s', openid)
-                wps = get_wps(wps_url(self.request))
-                execution = wps.execute(identifier='org.malleefowl.esgf.logon',
-                                        inputs=inputs,
-                                        output=[('output',True),('expires',False)])
-                from owslib.wps import monitorExecution
-                monitorExecution(execution)
-                if execution.processOutputs is not None and len(execution.processOutputs) > 1:
-                    credentials = execution.processOutputs[0].reference
-                    cert_expires = execution.processOutputs[1].data[0]
-                    logger.debug('cert expires %s', cert_expires)
-                    # Update user credentials
-                    self.userdb.update(
-                        user_id = user_id,
-                        credentials = credentials,
-                        cert_expires = cert_expires,
-                        update_login=False,
-                        update_token=False
-                        )
-                    logger.debug('update credentials successful, credentials=%s', credentials)
-                    self.request.session.flash(
-                        'Credentials updated successfully',
-                        queue='success',
-                        )
-            except ValidationFailure:
-                msg = 'Validation of credentials form failed.'
-                logger.exception(msg)
-                self.request.session.flash(msg, queue='error')
-            except:
-                msg = 'Update of credentials failed.'
-                logger.exception(msg)
-                self.request.session.flash(msg, queue='error')
-            return HTTPFound(location=self.request.route_url('account'))
+            return self.process_creds_form(creds_form)
         if 'submit' in self.request.POST:
             controls = self.request.POST.items()
             try:
@@ -574,7 +601,7 @@ class Account:
                 )
         return dict(
             form=form.render(appstruct),
-            form_credentials=form_credentials.render(appstruct))
+            form_credentials=creds_form.render(appstruct))
 
 @view_defaults(permission='edit', layout='default') 
 class Map:
