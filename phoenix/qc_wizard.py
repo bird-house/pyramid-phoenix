@@ -302,5 +302,4 @@ def getValueStatic(DATA, identifier):
         val = ""
     return str(val)
 def getBoolStatic(DATA, identifier):
-    val = getValueStatic(DATA, identifier)
-    return str(val.lower() == "true")
+    return str(identifier in DATA).lower()
