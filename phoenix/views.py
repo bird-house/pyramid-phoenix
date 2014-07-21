@@ -194,7 +194,7 @@ class Processes:
         from pyramid.security import has_permission
         from .schema import ProcessSchema
 
-        url = self.request.session.get('phoenix.wps.url', self.request.wps.url)
+        url = self.request.session.get('wps.url', self.request.wps.url)
         schema = ProcessSchema().bind(
             wps_url = url,
             allow_admin = has_permission('admin', self.request.context, self.request))
@@ -225,7 +225,7 @@ class Processes:
             captured = form.validate(controls)
             url = captured.get('url', '')
             session = self.request.session
-            session['phoenix.wps.url'] = url
+            session['wps.url'] = url
             session.changed()
         except ValidationFailure:
             logger.exception('validation of process view failed.')
@@ -241,8 +241,8 @@ class Processes:
             return self.process_wps_form(form_wps)
 
         wps = self.request.wps
-        if 'phoenix.wps.url' in self.request.session:
-            url = self.request.session['phoenix.wps.url']
+        if 'wps.url' in self.request.session:
+            url = self.request.session['wps.url']
             wps = WebProcessingService(url)
             if wps is None:
                 logger.warn('selected wps (url=%s) is not avail. using default.', url)
@@ -258,7 +258,7 @@ class Processes:
         return dict(
             form = form.render(appstruct),
             form_wps = form_wps.render(),
-            current_wps = wps, 
+            wps = wps, 
             )
 
 @view_defaults(permission='edit', layout='default')
@@ -399,8 +399,8 @@ class ExecuteView(FormView):
             session = self.request.session
             identifier = session['phoenix.process.identifier']
             self.wps = self.request.wps
-            if 'phoenix.wps.url' in session:
-                url = session['phoenix.wps.url']
+            if 'wps.url' in session:
+                url = session['wps.url']
                 self.wps = WebProcessingService(url)
             process = self.wps.describeprocess(identifier)
             from .helpers import get_process_metadata
