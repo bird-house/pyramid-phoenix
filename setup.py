@@ -15,6 +15,7 @@ requires = [
     'waitress',
     'pyramid_layout',
     'pyramid_deform',
+    'pyramid_beaker',
     'deform',
     'deform_bootstrap',
     #'deform_bootstrap_extra',

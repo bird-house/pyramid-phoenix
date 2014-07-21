@@ -11,6 +11,5 @@ wps = https://mouflon.dkrz.de/wps
 thredds = http://localhost:8080/thredds
 admin_users = admin@malleefowl.org
 sys_token = change_me_in_custom.cfg
-persona_secret = 87yYgBmp09
 
 

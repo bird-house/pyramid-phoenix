@@ -109,35 +109,6 @@ class PhoenixViews:
 
         return self.request.response
 
-    @view_config(route_name='login', check_csrf=True, renderer='json')
-    def login(self):
-        """mozilla persona login"""
-
-        # TODO: update login to my needs
-        # https://pyramid_persona.readthedocs.org/en/latest/customization.html#do-extra-work-or-verification-at-login
-        # Verify the assertion and get the email of the user
-        from pyramid_persona.views import verify_login 
-        email = verify_login(self.request)
-
-        # update user list
-
-        # check whitelist
-        if not is_valid_user(self.request, email):
-            logger.info("persona login: user %s is not registered", email)
-            self.userdb.update(user_id=email, activated=False)
-            #    request.session.flash('Sorry, you are not on the list')
-            return {'redirect': '/register', 'success': False}
-        logger.info("persona login successful for user %s", email)
-        try:
-            self.userdb.update(user_id=email, update_token=True, activated=True)
-        except TokenError as e:
-            pass
-        # Add the headers required to remember the user to the response
-        self.request.response.headers.extend(remember(self.request, email))
-        # Return a json message containing the address or path to redirect to.
-        #return {'redirect': request.POST['came_from'], 'success': True}
-        return {'redirect': '/', 'success': True}
-
     @view_config(route_name='login_openid')
     def login_openid(self):
         """authomatic openid login"""

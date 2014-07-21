@@ -43,13 +43,13 @@ def main(global_config, **settings):
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
 
+    # beaker session
+    config.include('pyramid_beaker')
+
     # chameleon templates
     config.include('pyramid_chameleon')
     
-    # using mozilla persona
-    config.include('pyramid_persona')
-
-    # includes
+    # deform
     config.include('deform_bootstrap')
     #config.include('deform_bootstrap_extra')
 
@@ -93,7 +93,7 @@ def main(global_config, **settings):
     
     config.add_route('help', '/help')
     config.add_route('signin', '/signin')
-    config.add_route('login', '/login')
+    config.add_route('logout', '/logout')
     config.add_route('login_openid', '/login/openid')
     # TODO: need some work work on local accounts
     config.add_route('login_local', '/login/local')
