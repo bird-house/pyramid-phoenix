@@ -29,25 +29,6 @@ def quote_wps_params(params):
 def unquote_wps_params(params):
     return map(lambda(item): ( item[0], urllib2.unquote(item[1]) ), params)
 
-def get_setting(request, key):
-    settings = request.registry.settings
-    value = settings.get(key, None)
-    return value
-
-def set_setting(request, key, value):
-    settings = request.registry.settings
-    settings[key] = value
-
-def admin_users(request):
-    value = get_setting(request, 'phoenix.admin_users')
-    if value:
-        import re
-        return map(str.strip, re.split("\\s+", value.strip()))
-    return []
-
-def sys_token(request):
-    return get_setting(request, 'malleefowl.sys_token')
-
 def is_url(text):
     """Check wheather given text is url or not
 

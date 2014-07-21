@@ -19,7 +19,6 @@ from pyramid.security import (
 import uuid
 import datetime
 
-from phoenix import helpers
 from .wps import get_wps, gen_token
 from .exceptions import TokenError
 
@@ -153,7 +152,9 @@ class User():
             user['cert_expires'] = cert_expires
         if update_token:
              try:
-                 user['token'] = gen_token(self.request.wps, helpers.sys_token(self.request), user_id)
+                 user['token'] = gen_token(self.request.wps,
+                                           self.request.registry.settings.get('malleefowl.sys_token'),
+                                           user_id)
                  msg = "Your access token was successfully updated. See <a href='/account'>My Account</a>"
                  logger.info(msg)
                  self.request.session.flash(msg, queue='info')

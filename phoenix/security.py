@@ -1,8 +1,14 @@
-from .helpers import admin_users
 import models
 
 import logging
 logger = logging.getLogger(__name__)
+
+def admin_users(request):
+    value = request.registry.settings.get('phoenix.admin_users')
+    if value is not None:
+        import re
+        return map(str.strip, re.split("\\s+", value.strip()))
+    return []
 
 def is_valid_user(request, user_id):
     if user_id in admin_users(request):

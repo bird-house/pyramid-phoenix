@@ -6,7 +6,6 @@ from pyramid.security import authenticated_userid
 import models
 from pyramid.httpexceptions import HTTPFound
 from wps import get_wps
-from .helpers import get_setting
 import os
 
 
