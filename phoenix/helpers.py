@@ -38,10 +38,6 @@ def set_setting(request, key, value):
     settings = request.registry.settings
     settings[key] = value
 
-def wps_url(request):
-    url = get_setting(request, 'malleefowl.wps')
-    return url
-
 def admin_users(request):
     value = get_setting(request, 'phoenix.admin_users')
     if value:

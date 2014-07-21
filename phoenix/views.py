@@ -26,11 +26,7 @@ import models
 from .exceptions import TokenError
 from .security import is_valid_user
 from .wps import WPSSchema, get_wps
-
-from .helpers import (
-    wps_url,
-    execute_wps
-    )
+from .helpers import execute_wps
 
 import logging
 logger = logging.getLogger(__name__)
@@ -221,7 +217,7 @@ class Processes:
         from pyramid.security import has_permission
         from .schema import ProcessSchema
 
-        url = self.request.session.get('phoenix.wps.url', wps_url(self.request))
+        url = self.request.session.get('phoenix.wps.url', self.request.wps.url)
         schema = ProcessSchema().bind(
             wps_url = url,
             allow_admin = has_permission('admin', self.request.context, self.request))
@@ -267,19 +263,19 @@ class Processes:
         elif 'select' in self.request.POST:
             return self.process_wps_form(form_wps)
 
-        url = wps_url(self.request)
-        session = self.request.session
-        if 'phoenix.wps.url' in session:
-            url = session['phoenix.wps.url']
-        wps = get_wps(url, force=True)
+        wps = self.request.wps
+        if 'phoenix.wps.url' in self.request.session:
+            url = self.request.session['phoenix.wps.url']
+            wps = get_wps(url, force=True)
+            if wps is None:
+                logger.warn('selected wps (url=%s) is not avail. using default.', url)
+                msg = "WPS <b><i>%s</i></b> selection failed" % (url)
+                self.request.session.flash(msg, queue='error')
         if wps is None:
-            logger.warn('selected wps (url=%s) is not avail. using default.', url)
-            wps = get_wps(wps_url(self.request), force=True)
-            msg = "WPS <b><i>%s</i></b> selection failed" % (url)
-            session.flash(msg, queue='error')
+            wps = self.request.wps
 
         msg = "WPS <b><i>%s</i></b> selected successfully" % (wps.url)
-        session.flash(msg, queue='info')
+        self.request.session.flash(msg, queue='info')
 
         appstruct = dict()
         return dict(
@@ -425,10 +421,10 @@ class ExecuteView(FormView):
         try:
             session = self.request.session
             identifier = session['phoenix.process.identifier']
-            url = wps_url(self.request)
+            self.wps = self.request.wps
             if 'phoenix.wps.url' in session:
                 url = session['phoenix.wps.url']
-            self.wps = get_wps(url)
+                self.wps = get_wps(url)
             process = self.wps.describeprocess(identifier)
             from .helpers import get_process_metadata
             metadata = get_process_metadata(self.wps, identifier)

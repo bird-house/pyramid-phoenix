@@ -11,7 +11,6 @@ import types
 from owslib.wps import WebProcessingService, monitorExecution
 
 from .widget import TagsWidget
-from .helpers import wps_url
 
 __all__ = ['WPSSchema']
 

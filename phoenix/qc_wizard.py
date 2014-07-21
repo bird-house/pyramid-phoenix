@@ -6,7 +6,7 @@ from pyramid.security import authenticated_userid
 import models
 from pyramid.httpexceptions import HTTPFound
 from wps import get_wps
-from .helpers import wps_url, get_setting
+from .helpers import get_setting
 import os
 
 
@@ -111,7 +111,7 @@ def qc_wizard_check(request):
         #####################
         #Run the wps call#
         #####################
-        wps = get_wps(wps_url(request))
+        wps = request.wps
         identifier = "QC_Chain"
         inputs = [("username", username), ("token", token), ("session_id", session_id),
                   ("irods_home", irods_home), ("irods_collection", irods_collection),
@@ -143,7 +143,7 @@ def qc_wizard_check(request):
             }
 
 def get_session_ids(user_id, request): 
-    service_url = get_wps(wps_url(request)).url
+    service_url = request.wps.url
     userdb = models.User(request)
     token = userdb.token(user_id)
     identifier = 'Get_Session_IDs'
@@ -277,7 +277,7 @@ def qc_wizard_yaml(request):
         #####################
         #Run the wps call#
         #####################
-        wps = get_wps(wps_url(request))
+        wps = request.wps
         identifier = "QC_Yaml_Chain"
         inputs = [("username", username), ("token", token), ("session_id", session_id),
                   ("yamllogs", yamllogs), ("prefix_old", prefix_old), ("prefix_new", prefix_new),
