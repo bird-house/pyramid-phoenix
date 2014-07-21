@@ -19,7 +19,9 @@ from pyramid.security import (
 import uuid
 import datetime
 
-from .wps import get_wps, gen_token
+from owslib.wps import WebProcessingService
+
+from .wps import gen_token
 from .exceptions import TokenError
 
 import logging
@@ -35,8 +37,7 @@ class Catalog():
     def add(self, url, notes=None):
         entry = None
         try:
-            url = url.split('?')[0]
-            wps = get_wps(url)
+            wps = WebProcessingService(url=url.split('?')[0])
 
             entry = self.db.catalog.find_one(dict(url = wps.url))
             if entry is not None:
@@ -50,11 +51,11 @@ class Catalog():
                 )
             self.db.catalog.save(entry)
 
-            msg='Added wps %s succesfully' % (url)
+            msg='Added wps %s succesfully' % (wps.url)
             logger.info(msg)
             self.request.session.flash(msg, queue='info')
         except:
-            msg='Could not add wps %s' % (url)
+            msg='Could not add wps %s' % (wps.url)
             logger.exception(msg)
             self.request.session.flash(msg, queue='error')
 
@@ -274,7 +275,7 @@ class Job():
             if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
                 job['errors'] = []
                 try:
-                    wps = get_wps(job['service_url'])
+                    wps = WebProcessingService(url=job['service_url'])
                     execution = WPSExecution(url=wps.url)
                     execution.checkStatus(url=job['status_location'], sleepSecs=0)
                     job['status'] = execution.status

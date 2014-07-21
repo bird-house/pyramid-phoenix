@@ -5,9 +5,7 @@ from pyramid.view import view_config
 from pyramid.security import authenticated_userid
 import models
 from pyramid.httpexceptions import HTTPFound
-from wps import get_wps
 import os
-
 
 @view_config(route_name='qc_wizard_check',
              renderer='templates/qc_wizard.pt',

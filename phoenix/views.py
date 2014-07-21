@@ -20,12 +20,16 @@ from peppercorn import parse
 from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
 
-from owslib.wps import WPSExecution, ComplexData
+from owslib.wps import (
+    WebProcessingService,
+    WPSExecution,
+    ComplexData
+    )
 
 import models
 from .exceptions import TokenError
 from .security import is_valid_user
-from .wps import WPSSchema, get_wps
+from .wps import WPSSchema
 from .helpers import execute_wps
 
 import logging
@@ -36,6 +40,8 @@ authomatic = Authomatic(config=config.config,
                         secret=config.SECRET,
                         report_errors=True,
                         logging_level=logging.DEBUG)
+
+
 
 
 @notfound_view_config(renderer='templates/404.pt')
@@ -237,7 +243,7 @@ class Processes:
         wps = self.request.wps
         if 'phoenix.wps.url' in self.request.session:
             url = self.request.session['phoenix.wps.url']
-            wps = get_wps(url, force=True)
+            wps = WebProcessingService(url)
             if wps is None:
                 logger.warn('selected wps (url=%s) is not avail. using default.', url)
                 msg = "WPS <b><i>%s</i></b> selection failed" % (url)
@@ -361,7 +367,7 @@ class Jobs:
         title = u"Process Outputs"
 
         job = self.jobdb.by_id(uuid=self.request.params.get('uuid'))
-        wps = get_wps(job['service_url'])
+        wps = WebProcessingService(job['service_url'])
         execution = WPSExecution(url=wps.url)
         execution.checkStatus(url=job['status_location'], sleepSecs=0)
 
@@ -395,7 +401,7 @@ class ExecuteView(FormView):
             self.wps = self.request.wps
             if 'phoenix.wps.url' in session:
                 url = session['phoenix.wps.url']
-                self.wps = get_wps(url)
+                self.wps = WebProcessingService(url)
             process = self.wps.describeprocess(identifier)
             from .helpers import get_process_metadata
             metadata = get_process_metadata(self.wps, identifier)

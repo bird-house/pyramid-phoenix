@@ -13,9 +13,6 @@ from deform.widget import OptGroup
 import logging
 logger = logging.getLogger(__name__)
 
-from .wps import get_wps
-
-
 class CredentialsSchema(colander.MappingSchema):
     """
     ESGF user credentials schema
@@ -106,7 +103,8 @@ class AccountSchema(colander.MappingSchema):
 
 @colander.deferred
 def deferred_select_process_widget(node, kw):
-    wps = get_wps(kw.get('wps_url'))
+    from owslib.wps import WebProcessingService
+    wps = WebProcessingService(url=kw.get('wps_url'))
     allow_admin = kw.get('allow_admin')
 
     test_group = []

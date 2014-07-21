@@ -24,10 +24,12 @@ from colander import Range, Invalid, null
 
 from mako.template import Template
 
+from owslib.wps import WebProcessingService
+
 from .exceptions import TokenError
 import models
 
-from .wps import WPSSchema, get_wps, execute_restflow, search_local_files
+from .wps import WPSSchema, execute_restflow, search_local_files
 
 from .widget import (
     EsgSearchWidget,
@@ -60,7 +62,7 @@ def deferred_choose_process_widget(node, kw):
 
     states = wizard_state.get_step_states()
     url = states.get(SELECT_WPS).get('url')
-    wps = get_wps(url, force=True)
+    wps = WebProcessingService(url)
 
     choices = []
     if wps is not None:
@@ -246,7 +248,7 @@ def bind_wps_schema(node, kw):
     states = wizard_state.get_step_states()
 
     url = states.get(SELECT_WPS).get('url')
-    wps = get_wps(url, force=True)
+    wps = WebProcessingService(url)
     
     state = states.get(SELECT_PROCESS)
     identifier = state['process']

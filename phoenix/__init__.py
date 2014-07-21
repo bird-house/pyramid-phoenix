@@ -125,8 +125,8 @@ def main(global_config, **settings):
         settings = event.request.registry.settings
         event.request.wps = settings['wps']
     logger.debug("init wps !!!!!!!!!!!!!!!!!!!")
-    from wps import get_wps
-    config.registry.settings['wps'] = get_wps(settings['malleefowl.wps'])
+    from owslib.wps import WebProcessingService
+    config.registry.settings['wps'] = WebProcessingService(url=settings['malleefowl.wps'])
     config.add_subscriber(add_wps, NewRequest)
     
     config.scan('phoenix')
