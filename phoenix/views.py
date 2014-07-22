@@ -598,11 +598,11 @@ class Settings:
         buttongroups = []
         buttons = []
 
-        buttons.append(dict(url=self.settings.get('phoenix.supervisor'),
+        buttons.append(dict(url=self.settings.get('supervisor.url'),
                             icon="monitor_edit.png", title="Supervisor", id="external-url"))
         buttons.append(dict(url="/settings/catalog", icon="catalog_pages.png", title="Catalog"))
         buttons.append(dict(url="/settings/user", icon="user_catwomen.png", title="Users"))
-        buttons.append(dict(url=self.settings.get('phoenix.thredds'),
+        buttons.append(dict(url=self.settings.get('thredds.url'),
                             icon="unidataLogo.png", title="Thredds", id="external-url"))
         buttons.append(dict(url="/ipython", icon="ipynb_icon_64x64.png", title="IPython"))
         buttongroups.append(dict(title='Settings', buttons=buttons))
