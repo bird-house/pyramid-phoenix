@@ -14,11 +14,10 @@ from .security import groupfinder, root_factory
 
 import pymongo
 
-
 from .helpers import button
 import logging
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 from deform import Form
 
@@ -32,10 +31,9 @@ def add_search_path():
 
 
 def main(global_config, **settings):
-    """ This function returns a Pyramid WSGI application.
     """
-    log.debug("init phoenix application")
-    #log.debug("settings: %s", settings)
+    This function returns a Pyramid WSGI application.
+    """
 
     # security
     authn_policy = AuthTktAuthenticationPolicy(
@@ -45,13 +43,13 @@ def main(global_config, **settings):
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
 
+    # beaker session
+    config.include('pyramid_beaker')
+
     # chameleon templates
     config.include('pyramid_chameleon')
     
-    # using mozilla persona
-    config.include('pyramid_persona')
-
-    # includes
+    # deform
     config.include('deform_bootstrap')
     #config.include('deform_bootstrap_extra')
 
@@ -60,7 +58,7 @@ def main(global_config, **settings):
     # see also: http://docs.pylonsproject.org/projects/deform/en/latest/templates.html#overriding-for-all-forms
     # register template search path
     add_search_path()
-    #log.debug('search path= %s', Form.default_renderer.loader.search_path)
+    #logger.debug('search path= %s', Form.default_renderer.loader.search_path)
 
     # static views (stylesheets etc)
     config.add_static_view('static', 'static', cache_max_age=3600)
@@ -89,18 +87,13 @@ def main(global_config, **settings):
     config.add_route('account', '/account')
     
     config.add_route('settings', '/settings')
-    config.add_route('ipython', '/ipython')
     config.add_route('catalog', '/settings/catalog')
-    config.add_route('admin_user_edit', '/settings/user/edit')
-    config.add_route('admin_user_edit_task', '/settings/user/edit/task')
-    config.add_route('admin_user_register', '/settings/user/register')
-    config.add_route('admin_user_unregister', '/settings/user/unregister')
-    config.add_route('admin_user_activate', '/settings/user/activate')
-    config.add_route('admin_user_deactivate', '/settings/user/deactivate')
+    config.add_route('user', '/settings/user')
+    config.add_route('ipython', '/ipython')
     
     config.add_route('help', '/help')
     config.add_route('signin', '/signin')
-    config.add_route('login', '/login')
+    config.add_route('logout', '/logout')
     config.add_route('login_openid', '/login/openid')
     # TODO: need some work work on local accounts
     config.add_route('login_local', '/login/local')
@@ -126,6 +119,16 @@ def main(global_config, **settings):
     conn = MongoDB(db_uri)
     config.registry.settings['mongodb_conn'] = conn
     config.add_subscriber(add_mongo_db, NewRequest)
+
+    # WPS
+    def add_wps(event):
+        settings = event.request.registry.settings
+        event.request.wps = settings['wps']
+    logger.debug("init wps !!!!!!!!!!!!!!!!!!!")
+    from owslib.wps import WebProcessingService
+    config.registry.settings['wps'] = WebProcessingService(url=settings['wps.url'])
+    config.add_subscriber(add_wps, NewRequest)
+    
     config.scan('phoenix')
 
     return config.make_wsgi_app()

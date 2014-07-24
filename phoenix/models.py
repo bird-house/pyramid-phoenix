@@ -7,6 +7,8 @@
 
 # TODO: refactor usage of mongodb etc ...
 
+import pymongo
+
 from pyramid.security import authenticated_userid
 
 from pyramid.security import (
@@ -17,58 +19,109 @@ from pyramid.security import (
 import uuid
 import datetime
 
-from phoenix import helpers
-from .helpers import mongodb_conn
-from .wps import get_wps, wps_url, gen_token
+from owslib.wps import WebProcessingService
+
+from .wps import gen_token
 from .exceptions import TokenError
 
 import logging
 logger = logging.getLogger(__name__)
 
-# mongodb ...
-# -----------
+class Catalog():
+    """ This class provides access to the catalogs in mongodb."""
+    
+    def __init__(self, request):
+        self.request = request
+        self.db = request.db
 
-def database(request):
-    conn = mongodb_conn(request)
-    return conn.phoenix_db
+    def add(self, url, notes=None):
+        entry = None
+        try:
+            wps = WebProcessingService(url=url.split('?')[0])
 
-# registered users (whitelist)
+            entry = self.db.catalog.find_one(dict(url = wps.url))
+            if entry is not None:
+                self.db.catalog.remove(dict(url = wps.url))
+            entry = dict(
+                format = 'WPS',
+                url = wps.url,
+                title = wps.identification.title,
+                abstract = wps.identification.abstract,
+                notes = notes,
+                )
+            self.db.catalog.save(entry)
 
-def register_user(request,
-                  user_id,
-                  openid=None,
-                  name=None,
-                  organisation=None,
-                  notes=None,
-                  activated=False):
-    db = database(request)
-    user = db.users.find_one(dict(user_id = user_id))
-    if user != None:
-        unregister_user(request, user_id = user_id)
-    user = dict(
-        user_id = user_id,
-        openid = openid,
-        name = name,
-        organisation = organisation,
-        notes = notes,
-        activated = activated,
-        creation_time = datetime.datetime.now(),
-        last_login = datetime.datetime.now(),
-        )
-    db.users.save(user)
-    return user
+            msg='Added wps %s succesfully' % (wps.url)
+            logger.info(msg)
+            self.request.session.flash(msg, queue='info')
+        except:
+            msg='Could not add wps %s' % (wps.url)
+            logger.exception(msg)
+            self.request.session.flash(msg, queue='error')
 
-def unregister_user(request, user_id):
-    db = database(request)
-    db.users.remove(dict(user_id = user_id))
+        return entry
 
-def activate_user(request, user_id):
-    update_user(request, user_id, activated=True)
+    def delete(self, url):
+        try:
+            self.db.catalog.remove(dict(url=url))
+            msg='Removed wps %s succesfully' % (url)
+            logger.info(msg)
+            self.request.session.flash(msg, queue='info')
+        except:
+            logger.exception('could not delete wps %s in catalog', url)
 
-def deactivate_user(request, user_id):
-    update_user(request, user_id, activated=False)
+    def by_url(self, url):
+        entry = None
+        try:
+            entry = self.db.catalog.find_one(dict(url = url))
+        except:
+            logger.exception('could not find wps %s in catalog', url)
+        return entry
 
-def update_user(request,
+    def all(self):
+        return self.db.catalog.find(dict(format='WPS'))
+
+    def all_as_tuple(self):
+        return map(lambda entry: (entry['url'], '%s (%s)' % (entry.get('title', 'unknown'), entry.get('notes', ''))), self.all())
+
+
+class User():
+    """ This class provides access to the users in mongodb."""
+    
+    def __init__(self, request):
+        self.request = request
+        self.db = request.db
+
+    def add(self,
+            user_id,
+            openid=None,
+            name=None,
+            organisation=None,
+            notes=None,
+            activated=False):
+        user = self.db.users.find_one(dict(user_id = user_id))
+        if user != None:
+            delete(user_id = user_id)
+        user = dict(
+            user_id = user_id,
+            openid = openid,
+            name = name,
+            organisation = organisation,
+            notes = notes,
+            activated = activated,
+            creation_time = datetime.datetime.now(),
+            last_login = datetime.datetime.now(),
+            )
+        self.db.users.save(user)
+        return user
+
+    def delete(self, user_id):
+        self.db.users.remove(dict(user_id = user_id))
+
+    def activate(self, user_id):
+        self.update(user_id, activated = not self.is_activated(user_id))
+
+    def update(self,
                 user_id,
                 openid=None,
                 name=None,
@@ -79,206 +132,184 @@ def update_user(request,
                 cert_expires=None,
                 update_token=False,
                 update_login=True):
-    logger.debug("update user %s", user_id)
-       
-    db = database(request)
-    user = db.users.find_one(dict(user_id = user_id))
-    if user == None:
-        user = register_user(request, user_id=user_id, activated=False)
-    if activated is not None:
-        user['activated'] = activated
-    if openid is not None:
-        user['openid'] = openid
-    if name is not None:
-        user['name'] = name
-    if organisation is not None:
-        user['organisation'] = organisation
-    if notes is not None:
-        user['notes'] = notes
-    if credentials is not None:
-        user['credentials'] = credentials
-    if cert_expires is not None:
-        user['cert_expires'] = cert_expires
-    if update_token:
-         try:
-             wps = get_wps(wps_url(request))
-             user['token'] = gen_token(wps, helpers.sys_token(request), user_id)
-             msg = "Your access token was successfully updated. See <a href='/account'>My Account</a>"
-             logger.info(msg)
-             request.session.flash(msg, queue='info')
-         except Exception as e:
-             msg = 'Could not generate token for user %s, err msg=%s' % (user_id, e.message)
-             logger.error(msg)
-             request.session.flash(msg, queue='error')
-             raise TokenError(msg)
-    if update_login:
-        user['last_login'] = datetime.datetime.now()
-    db.users.update(dict(user_id = user_id), user)
+        logger.debug("update user %s", user_id)
 
-def all_users(request):
-    db = database(request)
-    return db.users.find()
+        user = self.db.users.find_one(dict(user_id = user_id))
+        if user == None:
+            user = self.add(user_id=user_id, activated=False)
+        if activated is not None:
+            user['activated'] = activated
+        if openid is not None:
+            user['openid'] = openid
+        if name is not None:
+            user['name'] = name
+        if organisation is not None:
+            user['organisation'] = organisation
+        if notes is not None:
+            user['notes'] = notes
+        if credentials is not None:
+            user['credentials'] = credentials
+        if cert_expires is not None:
+            user['cert_expires'] = cert_expires
+        if update_token:
+             try:
+                 user['token'] = gen_token(self.request.wps,
+                                           self.request.registry.settings.get('malleefowl.sys_token'),
+                                           user_id)
+                 msg = "Your access token was successfully updated. See <a href='/account'>My Account</a>"
+                 logger.info(msg)
+                 self.request.session.flash(msg, queue='info')
+             except Exception as e:
+                 msg = 'Could not generate token for user %s, err msg=%s' % (user_id, e.message)
+                 logger.error(msg)
+                 self.request.session.flash(msg, queue='error')
+                 raise TokenError(msg)
+        if update_login:
+            user['last_login'] = datetime.datetime.now()
+        self.db.users.update(dict(user_id = user_id), user)
 
-def activated_users(request):
-    db = database(request)
-    return db.users.find(dict(activated = True))
+    def all(self, key='activated', direction=pymongo.ASCENDING):
+        return self.db.users.find().sort(key, direction)
 
-def deactivated_users(request):
-    db = database(request)
-    return db.users.find(dict(activated = False))
+    def is_activated(self, user_id):
+        return None != self.db.users.find_one(dict(user_id = user_id, activated = True))
 
-def is_user_activated(request, user_id):
-    db = database(request)
-    return None != db.users.find_one(dict(user_id = user_id, activated = True))
+    def count(self):
+        d = datetime.datetime.now() - datetime.timedelta(hours=3)
+        num_logins_3h = self.db.users.find({"last_login": {"$gt": d}}).count()
 
-def count_users(request):
-    db = database(request)
+        d = datetime.datetime.now() - datetime.timedelta(days=7)
+        num_logins_7d = self.db.users.find({"last_login": {"$gt": d}}).count()
 
-    d = datetime.datetime.now() - datetime.timedelta(hours=3)
-    num_logins_3h = db.users.find({"last_login": {"$gt": d}}).count()
+        return dict(num_users=self.db.users.count(),
+                    num_logins_3h=num_logins_3h,
+                    num_logins_7d=num_logins_7d)
 
-    d = datetime.datetime.now() - datetime.timedelta(days=7)
-    num_logins_7d = db.users.find({"last_login": {"$gt": d}}).count()
+    def by_id(self, user_id):
+        return self.db.users.find_one(dict(user_id = user_id))
 
-    return dict(num_users=db.users.count(),
-                num_logins_3h=num_logins_3h,
-                num_logins_7d=num_logins_7d)
+    def openid(self, user_id):
+        user = self.db.users.find_one(dict(user_id = user_id))
+        return user.get('openid')
 
-def user_with_id(request, user_id):
-    db = database(request)
-    return db.users.find_one(dict(user_id = user_id))
+    def token(self, user_id):
+        user = self.db.users.find_one(dict(user_id = user_id))
+        return user.get('token')
 
-def user_openid(request, user_id):
-    db = database(request)
-    user = db.users.find_one(dict(user_id = user_id))
-    return user.get('openid')
+    def is_token_valid(self, user_id):
+        token = self.token(user_id)
+        if token is None or len(token) < 22:
+            return False
+        return True
 
-def user_token(request, user_id):
-    db = database(request)
-    user = db.users.find_one(dict(user_id = user_id))
-    return user.get('token')
+    def credentials(self, user_id):
+        user = self.db.users.find_one(dict(user_id = user_id))
+        return user.get('credentials')
 
-def is_token_valid(request, user_id):
-    token = user_token(request, user_id)
-    if token is None or len(token) < 22:
-        return False
-    return True
+class Job():
+    """This class provides access to the jobs in mongodb."""
+    def __init__(self, request):
+        self.request = request
+        self.db = request.db
 
-def user_credentials(request, user_id):
-    db = database(request)
-    user = db.users.find_one(dict(user_id = user_id))
-    return user.get('credentials')
-
-# jobs ...
-
-def add_job(request,
+    def add(self,
             identifier,
             wps_url,
             execution,
             user_id='anonymous',
             notes='',
             tags=''):
-    db = database(request)
-    db.jobs.save(dict(
-        user_id = user_id, 
-        uuid = uuid.uuid4().get_hex(),
-        identifier = identifier,
-        service_url = wps_url,
-        status_location = execution.statusLocation,
-        status = execution.status,
-        start_time = datetime.datetime.now(),
-        end_time = datetime.datetime.now(),
-        notes = notes,
-        tags = tags,
-        ))
-    #logger.debug('count jobs = %s', db.jobs.count())
+        self.db.jobs.save(dict(
+            user_id = user_id, 
+            uuid = uuid.uuid4().get_hex(),
+            identifier = identifier,
+            service_url = wps_url,
+            status_location = execution.statusLocation,
+            status = execution.status,
+            start_time = datetime.datetime.now(),
+            end_time = datetime.datetime.now(),
+            notes = notes,
+            tags = tags,
+            ))
 
-def get_job(request, uuid):
-    db = database(request)
-    job = db.jobs.find_one({'uuid': uuid})
-    return job
+    def by_id(self, uuid):
+        job = self.db.jobs.find_one({'uuid': uuid})
+        return job
 
-def update_job(request, job):
-    db = database(request)
-    db.jobs.update({'uuid': job['uuid']}, job)
+    def update(self, job):
+        self.db.jobs.update({'uuid': job['uuid']}, job)
 
-def num_jobs(request):
-    db = database(request)
-    return db.jobs.count()
+    def count(self):
+        return self.db.jobs.count()
 
-def drop_jobs(request):
-    db = database(request)
-    db.jobs.drop()
+    def drop(self):
+        self.db.jobs.drop()
 
-def jobs_by_userid(request, user_id='anonymous'):
-    db = database(request)
-    return db.jobs.find( dict(user_id=user_id) )
+    def by_userid(self, user_id='anonymous'):
+        return self.db.jobs.find( dict(user_id=user_id) )
 
-def drop_user_jobs(request):
-    db = database(request)
-    for job in jobs_by_userid(request, user_id=authenticated_userid(request)):
-        db.jobs.remove({"uuid": job['uuid']})
+    def drop_by_user_id(self, user_id):
+        for job in self.by_userid(user_id):
+            self.db.jobs.remove({"uuid": job['uuid']})
 
-def drop_jobs_by_uuid(request, uuids=[]):
-    db = database(request)
-    for uuid in uuids:
-        db.jobs.remove({"uuid": uuid})
+    def drop_by_ids(self, uuids=[]):
+        for uuid in uuids:
+            self.db.jobs.remove({"uuid": uuid})
 
+    def information(self, sortkey="starttime", inverted=True):
+        """
+        Collects jobs status ...
 
-def jobs_information(request,sortkey="starttime",inverted=True):
-    """
-    Collects jobs status ...
+        TODO: rewrite code
+        """
+        from owslib.wps import WPSExecution
 
-    TODO: rewrite code
-    """
-    from owslib.wps import WPSExecution
+        dateformat = '%a, %d %b %Y %I:%M:%S %p'
+        jobs = []
+        for job in self.by_userid(user_id=authenticated_userid(self.request)):
 
-    dateformat = '%a, %d %b %Y %I:%M:%S %p'
-    jobs = []
-    for job in jobs_by_userid(request, user_id=authenticated_userid(request)):
+            job['starttime'] = job['start_time'].strftime(dateformat)
 
-        job['starttime'] = job['start_time'].strftime(dateformat)
+            # TODO: handle different process status
+            # TODO: check Exception ... wps needs some time to provide status document which may cause an exception
+            if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
+                job['errors'] = []
+                try:
+                    wps = WebProcessingService(url=job['service_url'])
+                    execution = WPSExecution(url=wps.url)
+                    execution.checkStatus(url=job['status_location'], sleepSecs=0)
+                    job['status'] = execution.status
+                    job['percent_completed'] = execution.percentCompleted
+                    job['status_message'] = execution.statusMessage
+                    job['error_message'] = ''
+                    for err in execution.errors:
+                        job['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
 
-        # TODO: handle different process status
-        # TODO: check Exception ... wps needs some time to provide status document which may cause an exception
-        if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
-            job['errors'] = []
-            try:
-                wps = get_wps(job['service_url'])
-                execution = WPSExecution(url=wps.url)
-                execution.checkStatus(url=job['status_location'], sleepSecs=0)
-                job['status'] = execution.status
-                job['percent_completed'] = execution.percentCompleted
-                job['status_message'] = execution.statusMessage
-                job['error_message'] = ''
-                for err in execution.errors:
-                    job['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
-               
-            except:
-                msg = 'could not access wps %s' % ( job['status_location'] )
-                logger.exception(msg)
-                # TODO: if url is not accessable ... try again!
-                job['status'] = 'ProcessFailed'
-                job['errors'].append( dict(code='', locator='', text=msg) )
-            
-            job['end_time'] = datetime.datetime.now()
-            for err in job['errors']:
-                job['error_message'] = err.get('text', '') + ';'
+                except:
+                    msg = 'could not access wps %s' % ( job['status_location'] )
+                    logger.exception(msg)
+                    # TODO: if url is not accessable ... try again!
+                    job['status'] = 'ProcessFailed'
+                    job['errors'].append( dict(code='', locator='', text=msg) )
 
-            # TODO: configure output delete time
-            dd = 3
-            job['output_delete_time'] = datetime.datetime.now() + datetime.timedelta(days=dd)
-            job['duration'] = str(job['end_time'] - job['start_time'])
-            update_job(request, job)
-        jobs.append(job)
-    #sort the jobs by starttime
-    if (sortkey == "starttime"):
-        jobs = sorted(jobs, key=lambda job: datetime.datetime.strptime(job['starttime'], dateformat))
-    else:
-        jobs = sorted(jobs, key=lambda job: job[sortkey])
-    #reverse the sorting
-    if(inverted):
-        jobs = jobs[::-1]
-        
-    return jobs
+                job['end_time'] = datetime.datetime.now()
+                for err in job['errors']:
+                    job['error_message'] = err.get('text', '') + ';'
+
+                # TODO: configure output delete time
+                dd = 3
+                job['output_delete_time'] = datetime.datetime.now() + datetime.timedelta(days=dd)
+                job['duration'] = str(job['end_time'] - job['start_time'])
+                self.update(job)
+            jobs.append(job)
+        #sort the jobs by starttime
+        if (sortkey == "starttime"):
+            jobs = sorted(jobs, key=lambda job: datetime.datetime.strptime(job['starttime'], dateformat))
+        else:
+            jobs = sorted(jobs, key=lambda job: job[sortkey])
+        #reverse the sorting
+        if(inverted):
+            jobs = jobs[::-1]
+
+        return jobs
 

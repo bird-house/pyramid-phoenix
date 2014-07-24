@@ -5,8 +5,6 @@ import logging
 
 log = logging.getLogger(__name__)
 
-from .helpers import wps_url
-
 # navbar
 # ------
 @panel_config(name='navbar',
@@ -61,7 +59,7 @@ def navbar(context, request):
 def welcome(context, request, title):
     return dict(title=title,
                 logged_in=authenticated_userid(request),
-                wps_service_url=wps_url(request))
+                wps_service_url=request.wps.url)
 
 @panel_config(name='heading_processes', renderer='templates/panels/heading_processes.pt')
 def heading_processes(context, request):
@@ -80,8 +78,9 @@ def heading_info(context, request):
 @panel_config(name='heading_stats',
               renderer='templates/panels/heading_stats.pt')
 def heading_statistics(context, request):
-    from .models import count_users
-    return count_users(request)
+    import models
+    userdb = models.User(request)
+    return userdb.count()
 
 @panel_config(name='headings')
 def headings(context, request):

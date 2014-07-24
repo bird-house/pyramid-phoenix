@@ -24,19 +24,12 @@ from colander import Range, Invalid, null
 
 from mako.template import Template
 
+from owslib.wps import WebProcessingService
+
 from .exceptions import TokenError
+import models
 
-from .models import (
-    add_job,
-    user_token,
-    user_credentials,
-    )
-
-from .helpers import (
-    wps_url, 
-    )
-
-from .wps import WPSSchema, get_wps, execute_restflow, search_local_files
+from .wps import WPSSchema, execute_restflow, search_local_files
 
 from .widget import (
     EsgSearchWidget,
@@ -69,7 +62,7 @@ def deferred_choose_process_widget(node, kw):
 
     states = wizard_state.get_step_states()
     url = states.get(SELECT_WPS).get('url')
-    wps = get_wps(url, force=True)
+    wps = WebProcessingService(url)
 
     choices = []
     if wps is not None:
@@ -93,10 +86,9 @@ class SelectProcessSchema(colander.MappingSchema):
 @colander.deferred
 def deferred_choose_datasource_widget(node, kw):
     request = kw.get('request')
-    wps = get_wps(wps_url(request))
 
     choices = []
-    for process in wps.processes:
+    for process in request.wps.processes:
         if 'source' in process.identifier:
             choices.append( (process.identifier, process.title) )
     return widget.RadioChoiceWidget(values = choices)
@@ -112,8 +104,8 @@ class SelectDataSourceSchema(colander.MappingSchema):
 # search schema
 # -----------------
 
-def search_metadata(url, wizard_state):
-    if url == None or wizard_state == None:
+def search_metadata(wps, wizard_state):
+    if wps == None or wizard_state == None:
         return {}
     
     states = wizard_state.get_step_states()
@@ -121,7 +113,7 @@ def search_metadata(url, wizard_state):
     process_id = process_state['process']
 
     from .helpers import get_process_metadata
-    return get_process_metadata(get_wps(url), process_id)
+    return get_process_metadata(wps, process_id)
 
 def bind_search_schema(node, kw):
     logger.debug("bind esg search schema, kw=%s" % (kw))
@@ -134,7 +126,7 @@ def bind_search_schema(node, kw):
     data_source_state = states.get(SELECT_SOURCE)
     data_source = data_source_state['data_source']
 
-    metadata = search_metadata( wps_url(request), wizard_state)
+    metadata = search_metadata( request.wps, wizard_state)
 
     constraints =  metadata.get('esgfilter')
     logger.debug('constraints = %s', constraints )
@@ -176,7 +168,6 @@ class SearchSchema(colander.MappingSchema):
 
 def bind_files_schema(node, kw):
     request = kw.get('request', None)
-    wps = get_wps(wps_url(request))
     
     wizard_state = kw.get('wizard_state', None)
 
@@ -184,7 +175,8 @@ def bind_files_schema(node, kw):
         logger.debug('not fetching files')
         return
 
-    token = user_token(request, authenticated_userid(request))
+    userdb = models.User(request)
+    token = userdb.token(authenticated_userid(request))
     logger.debug('user token = %s' % (token))
 
     logger.debug('step num = %s', wizard_state.get_step_num())
@@ -207,7 +199,7 @@ def bind_files_schema(node, kw):
             node.get('file_identifier').widget = EsgFilesWidget(
                 url="/esg-search", search_type='File', search=search)
     elif 'filesystem' in data_source:
-        choices = [(f, f) for f in search_local_files( wps, token, search['filter'])]
+        choices = [(f, f) for f in search_local_files( request.wps, token, search['filter'])]
         node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
     else:
         logger.error('unknown datasource: %s', data_source)
@@ -233,8 +225,7 @@ def bind_esg_access_schema(node, kw):
         states = wizard_state.get_step_states()
         data_source_state = states.get(SELECT_SOURCE)
         identifier = data_source_state['data_source']
-        wps = get_wps(wps_url(request))
-        process = wps.describeprocess(identifier)
+        process = request.wps.describeprocess(identifier)
         node.add_nodes(process)
     if node.get('token', False):
         del node['token']
@@ -257,7 +248,7 @@ def bind_wps_schema(node, kw):
     states = wizard_state.get_step_states()
 
     url = states.get(SELECT_WPS).get('url')
-    wps = get_wps(url, force=True)
+    wps = WebProcessingService(url)
     
     state = states.get(SELECT_PROCESS)
     identifier = state['process']
@@ -295,19 +286,19 @@ class MyFormWizardView(FormWizardView):
     from pyramid.security import authenticated_userid
      
     def check_token(self):
-        from .models import update_user, is_token_valid
+        userdb = models.User(self.request)
         user_id=authenticated_userid(self.request)
         
-        if not is_token_valid(self.request, user_id):
+        if not userdb.is_token_valid(user_id):
             try:
-                update_user(self.request, user_id, update_token=True, update_login=False)
+                userdb.update(user_id, update_token=True, update_login=False)
             except TokenError as e:
                 pass
     
     def check_credentials(self):
         user_id=authenticated_userid(self.request)
-        from .models import user_with_id
-        user = user_with_id(self.request, user_id=user_id)
+        userdb = models.User(self.request)
+        user = userdb.by_id(user_id=user_id)
         cert_expires = user.get('cert_expires')
 
         valid_hours = 0
@@ -395,11 +386,12 @@ class MyFormWizardView(FormWizardView):
 
 
 def convert_states_to_nodes(request, states):
-    token = user_token(request, authenticated_userid(request))
-    credentials = user_credentials(request, authenticated_userid(request))
+    userdb = models.User(request)
+    token = userdb.token(authenticated_userid(request))
+    credentials = userdb.credentials(authenticated_userid(request))
     
     source = dict(
-        service = wps_url(request),
+        service = request.wps.url,
         identifier = str(states[SELECT_SOURCE].get('data_source')),
         input = ['token=%s' % (token), 'credentials=%s' % (credentials)],
         output = ['output'],
@@ -438,14 +430,13 @@ class Done():
         
         # convert states to workflow desc and run workflow
         nodes = convert_states_to_nodes(request, states)
-        wps = get_wps(wps_url(request))
-        execution = execute_restflow(wps, nodes)
-        
-        add_job(
-            request = request,
+        execution = execute_restflow(request.wps, nodes)
+
+        jobdb = models.Job(request)
+        jobdb.add(
             user_id = authenticated_userid(request), 
             identifier = nodes['worker']['identifier'], 
-            wps_url = wps.url, 
+            wps_url = request.wps.url, 
             execution = execution,
             notes = notes,
             tags = tags)
@@ -467,10 +458,10 @@ class Done():
              )
 def wizard(request):
     schemas = []
-    from phoenix import catalog
+    catalogdb = models.Catalog(request)
     from schema import SelectWPSSchema
     schemas.append( SelectWPSSchema().bind(
-        wps_list=catalog.get_wps_list_as_tuple(request)))
+        wps_list=catalogdb.all_as_tuple()))
     schemas.append( SelectProcessSchema(title='Select Process') )
     schemas.append( WPSSchema(
         info=True,

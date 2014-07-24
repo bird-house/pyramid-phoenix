@@ -11,13 +11,10 @@ import types
 from owslib.wps import WebProcessingService, monitorExecution
 
 from .widget import TagsWidget
-from .helpers import wps_url
 
 __all__ = ['WPSSchema']
 
 logger = logging.getLogger(__name__)
-
-wps_registry = {}
 
 @property
 def RAW():
@@ -26,32 +23,6 @@ def RAW():
 @property
 def JSON():
     return 'json'
-
-def get_wps(url, username=None, password=None, force=False):
-    """
-    Get wps instance with url. Using wps registry to cache wps instances.
-    """
-    global wps_registry
-    verbose = logger.isEnabledFor(logging.DEBUG)
-    logger.debug("get wps: %s, verbose=%s" % (url, verbose))
-    wps = wps_registry.get(url)
-    try:
-        if wps is None:
-            logger.info('register wps: %s', url)
-            wps = WebProcessingService(url, username=username, password=password, verbose=verbose, skip_caps=False)
-            wps_registry[url] = wps
-        elif force:
-            logger.debug("loading wps caps ...")
-            wps = WebProcessingService(wps.url, username=username, password=password, verbose=verbose, skip_caps=False)
-        logger.debug("number of registered wps: %d", len(wps_registry))
-        logger.debug("number of processes: %d", len(wps.processes))
-    except Exception as e:
-        logger.error('could not get wps with url=%s, error message=%s' % (url, e.message))
-        if wps_registry.has_key(url):
-            del wps_registry[url]
-        wps = None
-
-    return wps
 
 def build_request_url(service_url, identifier, inputs=[], output='output'):
     """

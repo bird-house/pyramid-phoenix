@@ -7,7 +7,7 @@
     </a>
     <br/>
     <br/>
-     ${current_wps.identification.title} (${current_wps.url})
+     ${wps.identification.title} (${wps.url})
     <br/>
     <br/>
 
