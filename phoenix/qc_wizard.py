@@ -3,10 +3,8 @@ import logging
 logger = logging.getLogger(__name__)
 from pyramid.view import view_config
 from pyramid.security import authenticated_userid
-from .models import user_token, add_job
+import models
 from pyramid.httpexceptions import HTTPFound
-from wps import get_wps
-from .helpers import wps_url, get_setting
 from owslib.wps import WebProcessingService
 import os
 
@@ -99,7 +97,6 @@ def qc_wizard_check(request):
         #####################
         #Run the wps call#
         #####################
-        #wps = get_wps(wps_url(request))
         wps = WebProcessingService(wps_address)
         identifier = "QC_Check_Full"
         inputs = [("username", username), ("token", token), ("session_id", session_id),
@@ -114,8 +111,8 @@ def qc_wizard_check(request):
          
         outputs = [("process_log", True)]
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
-        add_job(
-            request = request,
+        jobdb = models.Job(request)
+        jobdb.add(
             user_id = authenticated_userid(request),
             identifier = identifier,
             wps_url = wps.url,
@@ -131,7 +128,7 @@ def qc_wizard_check(request):
             }
 
 def get_session_ids(user_id, request): 
-    service_url = get_wps(wps_url(request)).url
+    service_url = request.wps.url
     token = "1234"#user_token(request, user_id)
     identifier = 'Get_Session_IDs'
     inputs = [("username",user_id.replace("@","(at)")),("token",token)]
@@ -258,7 +255,7 @@ def qc_wizard_yaml(request):
         ##################
         #Run the wps call#
         ##################
-        wps = get_wps(wps_url(request))
+        wps = request.wps
         identifier = "QC_Check_YAML"
         inputs = [("username", username), ("token", token), ("session_id", session_id),
                   ("yamllogs", yamllogs), ("prefix_old", prefix_old), ("prefix_new", prefix_new),
@@ -277,8 +274,8 @@ def qc_wizard_yaml(request):
         g.flush()
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
-        add_job(
-            request = request,
+        jobdb = models.Job(request)
+        jobdb.add(
             user_id = authenticated_userid(request),
             identifier = identifier,
             wps_url = wps.url,
