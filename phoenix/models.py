@@ -233,14 +233,10 @@ class Job():
             ))
 
     def by_id(self, uuid):
-        job = self.db.jobs.find_one({'uuid': uuid})
-        return job
+        return self.db.jobs.find_one({'uuid': uuid})
 
     def update(self, job):
         self.db.jobs.update({'uuid': job['uuid']}, job)
-
-    def count(self):
-        return self.db.jobs.count()
 
     def by_userid(self, user_id='anonymous'):
         return self.db.jobs.find( dict(user_id=user_id) )
@@ -252,44 +248,4 @@ class Job():
     def delete(self, uuid):
         self.db.jobs.remove({"uuid": uuid})
 
-    def information(self, key='start_time', direction=pymongo.ASCENDING):
-        """
-        Collects jobs status ...
-
-        TODO: rewrite code
-        """
-        from owslib.wps import WPSExecution
-
-        jobs = []
-        for job in self.by_userid(user_id=authenticated_userid(self.request)).sort(key, direction):
-            job['message'] = job.get('message', '')
-            if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
-                job['errors'] = []
-                try:
-                    wps = WebProcessingService(url=job['service_url'])
-                    execution = WPSExecution(url=wps.url)
-                    execution.checkStatus(url=job['status_location'], sleepSecs=0)
-                    job['status'] = execution.status
-                    job['progress'] = execution.percentCompleted
-                    job['message'] = execution.statusMessage
-                    for err in execution.errors:
-                        job['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
-
-                except:
-                    msg = 'could not access wps %s' % ( job['status_location'] )
-                    logger.exception(msg)
-                    # TODO: if url is not accessable ... try again!
-                    job['status'] = 'ProcessFailed'
-                    job['errors'].append( dict(code='', locator='', text=msg) )
-
-                job['end_time'] = datetime.datetime.now()
-                for err in job['errors']:
-                    job['message'] += err.get('text', '') + ';'
-
-                job['duration'] = str(job['end_time'] - job['start_time'])
-            if job['status'] in ['ProcessSucceeded']:
-                job['progress'] = 100
-            self.update(job)
-            jobs.append(job)
-        return jobs
-
+    

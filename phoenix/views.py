@@ -353,8 +353,41 @@ class Jobs:
         # http://t.wits.sg/misc/jQueryProgressBar/demo.php
         # http://demo.todo.sixfeetup.com/list
         job_id = self.request.params.get('job_id', None)
+        
+        return {'progress': 50}
 
-        return dict(progress=50)
+    def update_jobs(self):
+        order = self.sort_order()
+        key=order.get('order')
+        direction=order.get('order_dir')
+
+        from owslib.wps import WPSExecution
+
+        jobs = []
+        for job in self.jobdb.by_userid(user_id=authenticated_userid(self.request)).sort(key, direction):
+            job['message'] = job.get('message', '')
+            if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
+                try:
+                    execution = WPSExecution(url=job['service_url'])
+                    execution.checkStatus(url=job['status_location'], sleepSecs=0)
+                    job['status'] = execution.status
+                    job['progress'] = execution.percentCompleted
+                    job['message'] = execution.statusMessage
+                    job['errors'] = execution.errors
+                except:
+                    msg = 'could not access wps %s' % ( job['status_location'] )
+                    logger.exception(msg)
+                    # TODO: if url is not accessable ... try again!
+                    job['status'] = 'ProcessFailed'
+                    job['errors'].append( dict(code='', locator='', text=msg) )
+
+                job['end_time'] = datetime.datetime.now()
+                job['duration'] = str(job['end_time'] - job['start_time'])
+            if job['status'] in ['ProcessSucceeded']:
+                job['progress'] = 100
+            self.jobdb.update(job)
+            jobs.append(job)
+        return jobs
 
     @view_config(renderer='json', name='delete.job')
     def delete(self):
@@ -370,8 +403,7 @@ class Jobs:
             self.jobdb.drop_by_user_id(authenticated_userid(self.request))
             return HTTPFound(location=self.request.route_url('jobs'))
 
-        order = self.sort_order()
-        items = self.jobdb.information(key=order.get('order'), direction=order.get('order_dir'))
+        items = self.update_jobs()
         
         from .grid import JobsGrid
         grid = JobsGrid(
