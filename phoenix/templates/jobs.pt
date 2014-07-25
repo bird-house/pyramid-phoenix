@@ -1,98 +1,11 @@
 <metal:block use-macro="main_template">
-  <span  metal:fill-slot="content">
-  <div id="content"></div>
-<noscript>
-<tal:form replace="structure noscriptform">The noscript form will render here</tal:form>
-</noscript>
-<div id="scriptOnly" style="display: none;">
-Refresh period:
-<input id="reloadTime" type="range" min="1" max="50" value="5" step="1" onchange="showValue()"/>
-<span id="range">5</span>
-</div>
 
-<script type="text/javascript">
-  $(function(){
-    $('body').popover({
-      selector: '[data-toggle="popover"]'});
-    $('body').tooltip({
-      selector: 'a[rel="tooltip"], [data-toggle="tooltip"]'});
-  }); 
-  var orderBy = "starttime";
-  var orderType = "inverted";
-  function sort(value){
-      if(orderBy==value){
-          if(orderType=="normal"){
-              orderType="inverted";}
-          else{
-              orderType="normal";}}
-      orderBy = value;
+  <div metal:fill-slot="content">
 
-      //reuse the code to clear timer and reload
-      showValue()
-      };
-  $.ajaxSetup({
-      cache: false
-  });
+    <table class="table table-striped">
+      <tal:rows replace="structure grid" />
+    </table>
 
-  function reload(){
-     update();}
-     ///request.open('post','jobsupdate/'+orderBy+'/'+orderType, false);
-     ///request.send(null);
-     ///if (request.status == 200){update();}
-     ///};
-     //request.onreadystatechange = update};
-
-    function update(){
-                var loadUrl =  'jobsupdate/'+orderBy+'/'+orderType;
-                $.post( 
-                    loadUrl,
-                    function(responseText){
-                        //store selected boxes
-                        var selected = document.getElementsByName("selected");
-                        var selectedValues = new Array();
-                        j=0;
-                        for(i=0; i < selected.length;i++){
-                            if(selected[i].checked){
-                                selectedValues[j] = selected[i].value;
-                            j++;}}
-                        //remove the tooltip and popover so they do not remain on screen
-                        //TODO:A non flickering solution would be nice
-                        $("*").tooltip('hide')
-                        $("*").popover('hide')
-                        //replace the table
-                        $("#content").html(responseText);
-                        //set the direction symbol for sort
-                        var text = document.getElementById(orderBy);
-                        if(orderType=="normal"){
-                            text.innerHTML+="&#x25B2;";}
-                        else{
-                            text.innerHTML+="&#x25BC;";}
-                        //reload the selected boxes
-                        var selected = document.getElementsByName("selected");
-                        for(j=0; j < selectedValues.length;j++){
-                            for(i=0; i < selected.length;i++){
-                                if(selected[i].value==selectedValues[j]){
-                                    selected[i].checked = true;
-                                    break;}}}
-                    });
-                    //var content = request.responseText;
-                    // den Inhalt des Requests in das <div> schreiben
-                var reloadTime =  document.getElementById("reloadTime").value;
-                //timeout needs to be declared global for stopping it
-                timeout = setTimeout("reload()",reloadTime*1000);
-                //Add an arrow for the sort direction
-                };
-  
-  function showValue(){
-      document.getElementById("range").innerHTML=document.getElementById("reloadTime").value;
-      clearTimeout(timeout);
-      reload();}
-  function pageLoaded(){    
-      var hiddendiv = document.getElementById('scriptOnly')
-      hiddendiv.style.display="";
-      reload();}
-  document.addEventListener("DOMContentLoaded", pageLoaded, false);
-</script>
-
-</span>
+  </div>
+   
 </metal:block>

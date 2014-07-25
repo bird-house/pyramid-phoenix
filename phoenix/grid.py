@@ -101,6 +101,7 @@ class ProcessesGrid(MyGrid):
           </a>
           <ul class="dropdown-menu" id="%s">
             <li><a class="process-execute" href="#">Execute</a></li>
+            <li><a class="process-execute" href="#">Info</a></li>
           </ul>
         </div>
         """ % item.get('identifier') ))
@@ -126,7 +127,28 @@ class OutputDetailsGrid(MyGrid):
           </ul>
         </div>
         """ % item.get('identifier')))
-    
+
+class JobsGrid(MyGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(JobsGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats[''] = self.action_td
+
+    def action_td(self, col_num, i, item):
+        """Generate the column that has the actions in it.
+        """
+        return HTML.td(HTML.literal("""\
+        <div class="btn-group">
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          Action
+          <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" id="%s">
+            <li><a class="job-details" href="#">Details</a></li>
+            <li><a class="job-delete" href="#">Delete</a></li>
+          </ul>
+        </div>
+        """ % item.get('identifier')))
+        
 class UsersGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(UsersGrid, self).__init__(request, *args, **kwargs)
