@@ -100,10 +100,10 @@ class ProcessesGrid(MyGrid):
           <span class="caret"></span>
           </a>
           <ul class="dropdown-menu" id="%s">
-            <li><a class="processes-execute" href="#">Execute</a></li>
+            <li><a class="process-execute" href="/execute?identifier=%s">Execute</a></li>
           </ul>
         </div>
-        """ % item.get('identifier')))
+        """ % (item.get('identifier'), item.get('identifier')) ))
 
 class OutputDetailsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):

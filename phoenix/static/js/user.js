@@ -1,5 +1,5 @@
 $(function() {
-  // Delete user entry
+  // Delete user
   $("a.user-delete").click(function(e) {
     e.preventDefault();
     var user_id = $(this).closest('ul').attr('id');
@@ -13,7 +13,7 @@ $(function() {
     );
   });
 
-  // Delete user entry
+  // Activate user
   $("a.user-activate").click(function(e) {
     e.preventDefault();
     var user_id = $(this).closest('ul').attr('id');

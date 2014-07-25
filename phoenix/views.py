@@ -388,6 +388,7 @@ class ExecuteView(FormView):
     buttons = ('submit',)
     schema_factory = None
     wps = None
+    identifier = None
    
     def __call__(self):
         # build the schema if it not exist
@@ -397,14 +398,15 @@ class ExecuteView(FormView):
             
         try:
             session = self.request.session
-            identifier = session['phoenix.process.identifier']
+            #identifier = session['identifier']
+            self.identifier = self.request.params.get('identifier', None)
             self.wps = self.request.wps
             if 'wps.url' in session:
                 url = session['wps.url']
                 self.wps = WebProcessingService(url)
-            process = self.wps.describeprocess(identifier)
+            process = self.wps.describeprocess(self.identifier)
             from .helpers import get_process_metadata
-            metadata = get_process_metadata(self.wps, identifier)
+            metadata = get_process_metadata(self.wps, self.identifier)
             logger.debug('metadata = %s', metadata)
             self.schema = self.schema_factory(
                 info = True,
@@ -420,16 +422,14 @@ class ExecuteView(FormView):
         return None
 
     def submit_success(self, appstruct):
-        session = self.request.session
-        identifier = session['phoenix.process.identifier']
         params = self.schema.serialize(appstruct)
       
-        execution = execute_wps(self.wps, identifier, params)
+        execution = execute_wps(self.wps, self.identifier, params)
 
         jobdb = models.Job(self.request)
         jobdb.add(
             user_id = authenticated_userid(self.request), 
-            identifier = identifier, 
+            identifier = self.identifier, 
             wps_url = self.wps.url, 
             execution = execution,
             notes = params.get('info_notes', ''),
@@ -438,7 +438,7 @@ class ExecuteView(FormView):
         return HTTPFound(location=self.request.route_url('jobs'))
 
 @view_defaults(permission='edit', layout='default') 
-class Account:
+class UserAccount:
     def __init__(self, request):
         self.request = request
         self.userdb = models.User(request)
