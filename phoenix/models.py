@@ -252,7 +252,7 @@ class Job():
     def delete(self, uuid):
         self.db.jobs.remove({"uuid": uuid})
 
-    def information(self, sortkey="starttime", inverted=True):
+    def information(self):
         """
         Collects jobs status ...
 
@@ -260,14 +260,9 @@ class Job():
         """
         from owslib.wps import WPSExecution
 
-        dateformat = '%a, %d %b %Y %I:%M:%S %p'
         jobs = []
         for job in self.by_userid(user_id=authenticated_userid(self.request)):
-
-            job['starttime'] = job['start_time'].strftime(dateformat)
-
-            # TODO: handle different process status
-            # TODO: check Exception ... wps needs some time to provide status document which may cause an exception
+            job['message'] = ''
             if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
                 job['errors'] = []
                 try:
@@ -276,8 +271,7 @@ class Job():
                     execution.checkStatus(url=job['status_location'], sleepSecs=0)
                     job['status'] = execution.status
                     job['percent_completed'] = execution.percentCompleted
-                    job['status_message'] = execution.statusMessage
-                    job['error_message'] = ''
+                    job['message'] = execution.statusMessage
                     for err in execution.errors:
                         job['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
 
@@ -290,22 +284,10 @@ class Job():
 
                 job['end_time'] = datetime.datetime.now()
                 for err in job['errors']:
-                    job['error_message'] = err.get('text', '') + ';'
+                    job['message'] += err.get('text', '') + ';'
 
-                # TODO: configure output delete time
-                dd = 3
-                job['output_delete_time'] = datetime.datetime.now() + datetime.timedelta(days=dd)
                 job['duration'] = str(job['end_time'] - job['start_time'])
                 self.update(job)
             jobs.append(job)
-        #sort the jobs by starttime
-        if (sortkey == "starttime"):
-            jobs = sorted(jobs, key=lambda job: datetime.datetime.strptime(job['starttime'], dateformat))
-        else:
-            jobs = sorted(jobs, key=lambda job: job[sortkey])
-        #reverse the sorting
-        if(inverted):
-            jobs = jobs[::-1]
-
         return jobs
 

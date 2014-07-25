@@ -134,6 +134,7 @@ class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['start_time'] = self.start_time_td
+        self.column_formats['status'] = self.status_td
         self.column_formats[''] = self.action_td
         #self.user_tz = u'US/Eastern'
         self.user_tz = u'UTC'
@@ -150,6 +151,28 @@ class JobsGrid(MyGrid):
         span = HTML.tag(
             "span",
             c=HTML.literal(start_time.strftime('%Y-%m-%d %H:%M:%S')),
+            class_=span_class,
+        )
+        return HTML.td(span)
+
+    def status_td(self, col_num, i, item):
+        """Generate the column for the job status.
+        """
+        status = item.get('status')
+        if status is None:
+            return HTML.td('')
+        span_class = 'label'
+        if status == 'ProcessSucceeded':
+            span_class += ' label-success'
+        elif status == 'ProcessFailed':
+            span_class += ' label-warning'
+        elif status == 'Exception':
+            span_class += ' label-important'
+        else:
+            span_class += ' label-info'
+        span = HTML.tag(
+            "span",
+            c=HTML.literal(status),
             class_=span_class,
         )
         return HTML.td(span)
