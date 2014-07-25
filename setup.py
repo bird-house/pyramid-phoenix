@@ -28,6 +28,7 @@ requires = [
     'owslib',
     'lxml',
     'python-dateutil',
+    'pytz',
     #'egenix-mx-base',
     ]
 

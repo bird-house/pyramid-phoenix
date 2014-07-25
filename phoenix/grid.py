@@ -4,6 +4,8 @@ logger = logging.getLogger(__name__)
 from webhelpers.html.builder import HTML
 from webhelpers.html.grid import Grid
 
+from .utils import localize_datetime
+
 class MyGrid(Grid):
     def __init__(self, request, *args, **kwargs):
         self.request = request
@@ -131,7 +133,26 @@ class OutputDetailsGrid(MyGrid):
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['start_time'] = self.start_time_td
         self.column_formats[''] = self.action_td
+        #self.user_tz = u'US/Eastern'
+        self.user_tz = u'UTC'
+
+    def start_time_td(self, col_num, i, item):
+        """Generate the column for the start time.
+        """
+        if item.get('start_time') is None:
+            return HTML.td('')
+        span_class = 'due-date badge'
+        #if item.start_time:
+        #    span_class += ' badge-important'
+        start_time = localize_datetime(item.get('start_time'), self.user_tz)
+        span = HTML.tag(
+            "span",
+            c=HTML.literal(start_time.strftime('%Y-%m-%d %H:%M:%S')),
+            class_=span_class,
+        )
+        return HTML.td(span)
 
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
