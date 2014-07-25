@@ -85,6 +85,26 @@ class MyGrid(Grid):
             records.append(r)
         return HTML(*records)
 
+class ProcessesGrid(MyGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(ProcessesGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats[''] = self.action_td
+
+    def action_td(self, col_num, i, item):
+        """Generate the column that has the actions in it.
+        """
+        return HTML.td(HTML.literal("""\
+        <div class="btn-group">
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          Action
+          <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" id="%s">
+            <li><a class="processes-execute" href="#">Execute</a></li>
+          </ul>
+        </div>
+        """ % item.get('identifier')))
+
 class OutputDetailsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(OutputDetailsGrid, self).__init__(request, *args, **kwargs)

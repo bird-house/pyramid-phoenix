@@ -186,37 +186,36 @@ class Processes:
     def __init__(self, request):
         self.request = request
         self.catalogdb = models.Catalog(self.request)
+        self.wps = self.request.wps
+        session = self.request.session
+        if 'wps.url' in session:
+            url = session['wps.url']
+            self.wps = WebProcessingService(url)
     
     def generate_form(self, formid='deform'):
-        from pyramid.security import has_permission
-        from .schema import ProcessSchema
-
-        url = self.request.session.get('wps.url', self.request.wps.url)
-        schema = ProcessSchema().bind(
-            wps_url = url,
-            allow_admin = has_permission('admin', self.request.context, self.request))
-        return Form(schema, buttons=('submit',), formid=formid)
-
-    def process_form(self, form):
-        controls = self.request.POST.items()
-        try:
-            captured = form.validate(controls)
-            process = captured.get('process', '')
-            session = self.request.session
-            session['phoenix.process.identifier'] = process
-            session.changed()
-        except ValidationFailure:
-            logger.exception('validation of process view failed.')
-        return HTTPFound(location=self.request.route_url('execute'))
-
-    def generate_wps_form(self, formid='deform'):
         from .schema import SelectWPSSchema
         schema = SelectWPSSchema().bind(
-            wps_list = self.catalogdb.all_as_tuple(),
+            wps_list = self.catalogdb.all_as_tuple())
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return Form(
+            schema,
+            buttons=('select',),
+            formid=formid,
+            use_ajax=True,
+            ajax_options=options,
             )
-        return Form(schema, buttons=('select',), formid=formid)
-
-    def process_wps_form(self, form):
+    def process_form(self, form):
         controls = self.request.POST.items()
         try:
             captured = form.validate(controls)
@@ -229,34 +228,25 @@ class Processes:
         return HTTPFound(location=self.request.route_url('processes'))
 
     @view_config(route_name='processes', renderer='templates/processes.pt')
-    def processes(self):
+    def processes_view(self):
         form = self.generate_form()
-        form_wps = self.generate_wps_form()
-        if 'submit' in self.request.POST:
+        if 'select' in self.request.POST:
             return self.process_form(form)
-        elif 'select' in self.request.POST:
-            return self.process_wps_form(form_wps)
 
-        wps = self.request.wps
-        if 'wps.url' in self.request.session:
-            url = self.request.session['wps.url']
-            wps = WebProcessingService(url)
-            if wps is None:
-                logger.warn('selected wps (url=%s) is not avail. using default.', url)
-                msg = "WPS <b><i>%s</i></b> selection failed" % (url)
-                self.request.session.flash(msg, queue='error')
-        if wps is None:
-            wps = self.request.wps
+        items = []
+        for process in self.wps.processes:
+            items.append(dict(title=process.title,
+                              identifier=process.identifier,
+                              abstract = process.abstract,
+                              version = process.processVersion))
 
-        msg = "WPS <b><i>%s</i></b> selected successfully" % (wps.url)
-        self.request.session.flash(msg, queue='info')
-
-        appstruct = dict()
-        return dict(
-            form = form.render(appstruct),
-            form_wps = form_wps.render(),
-            wps = wps, 
+        from .grid import ProcessesGrid
+        grid = ProcessesGrid(
+                self.request,
+                items,
+                ['identifier', 'title', 'abstract', 'version', ''],
             )
+        return dict(grid=grid, items=items, form=form.render())
 
 @view_defaults(permission='edit', layout='default')
 class Jobs:
