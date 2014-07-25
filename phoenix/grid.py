@@ -101,6 +101,7 @@ class OutputDetailsGrid(MyGrid):
           </a>
           <ul class="dropdown-menu" id="%s">
             <li><a class="output-publish" href="#">Publish</a></li>
+            <li><a class="output-show" href="#">Show in Viewer</a></li>
             <li><a class="output-map" href="#">Show on Map</a></li>
           </ul>
         </div>
