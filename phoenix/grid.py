@@ -83,8 +83,29 @@ class MyGrid(Grid):
             else:
                 r = self.default_record_format(i + 1, record, columns)
             records.append(r)
-        return HTML(*records)    
+        return HTML(*records)
 
+class OutputDetailsGrid(MyGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(OutputDetailsGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats[''] = self.action_td
+
+    def action_td(self, col_num, i, item):
+        """Generate the column that has the actions in it.
+        """
+        return HTML.td(HTML.literal("""\
+        <div class="btn-group">
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          Action
+          <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" id="%s">
+            <li><a class="output-publish" href="#">Publish</a></li>
+            <li><a class="output-map" href="#">Show on Map</a></li>
+          </ul>
+        </div>
+        """ % item.get('identifier')))
+    
 class UsersGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(UsersGrid, self).__init__(request, *args, **kwargs)
@@ -127,3 +148,4 @@ class CatalogGrid(MyGrid):
           </ul>
         </div>
         """ % item.get('url')))
+

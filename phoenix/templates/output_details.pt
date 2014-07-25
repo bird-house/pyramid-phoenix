@@ -1,36 +1,9 @@
 <metal:block use-macro="main_template">
-	
+
   <div metal:fill-slot="content">
-    <legend>
-      <h3>${title}</h3>
-      <small>${form_info}</small>
-    </legend>
-            
-    <table id="output_details_table" class="table table-condensed accordion-group" style="table-layout: fixed; word-wrap: break-word;">
-      <thead>
-        <tr>
-	  <th>Identifier</th>
-          <th>Title</th>
-	  <th>Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        <div tal:repeat="output outputs">
-          <tr>
-	    <td>${output.identifier}</td>
-	    <td>${output.title}</td>
-	    <div tal:condition="output.reference">
-              <td><a href="${output.reference}">Download</a> (${output.mimeType})</td>
-            </div>
-	    <div tal:condition="not output.reference">
-	      <td>${', '.join(output.data)}</td>
-	    </div>
-	  <tr>                    
-        </div>
-      </tbody>
+    <table class="table table-striped">
+      <tal:rows replace="structure grid" />
     </table>
-    
   </div>
    
 </metal:block>
-

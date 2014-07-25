@@ -41,9 +41,6 @@ authomatic = Authomatic(config=config.config,
                         report_errors=True,
                         logging_level=logging.DEBUG)
 
-
-
-
 @notfound_view_config(renderer='templates/404.pt')
 def notfound(request):
     """This special view just renders a custom 404 page. We do this
@@ -362,21 +359,34 @@ class Jobs:
         form = form.replace('deform form-horizontal','deform form-vertical')
         return Response(form,content_type='text/html')
 
+@view_defaults(permission='edit', layout='default')
+class OutputDetails:
+    def __init__(self, request):
+        self.request = request
+        self.jobdb = models.Job(self.request)
+
     @view_config(route_name='output_details', renderer='templates/output_details.pt')
-    def output_details(self):
-        title = u"Process Outputs"
-
+    def output_details_view(self):
         job = self.jobdb.by_id(uuid=self.request.params.get('uuid'))
-        wps = WebProcessingService(job['service_url'])
-        execution = WPSExecution(url=wps.url)
+        execution = WPSExecution(url=job['service_url'])
         execution.checkStatus(url=job['status_location'], sleepSecs=0)
+        logger.debug('check status: url=%s', job['status_location'])
 
-        form_info="Status: %s" % (execution.status)
+        items = []
+        for output in execution.processOutputs:
+            items.append(dict(title=output.title,
+                              identifier=output.identifier,
+                              mime_type = output.mimeType,
+                              data = output.data,
+                              reference=output.reference))
 
-        return( dict(
-            title=execution.process.title, 
-            form_info=form_info,
-            outputs=execution.processOutputs) )
+        from .grid import OutputDetailsGrid
+        grid = OutputDetailsGrid(
+                self.request,
+                items,
+                ['identifier', 'title', 'data', 'reference', 'mime_type', ''],
+            )
+        return dict(grid=grid, items=items)
 
 @view_config(
     route_name='execute',
