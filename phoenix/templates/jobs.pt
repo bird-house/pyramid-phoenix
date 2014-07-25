@@ -6,8 +6,13 @@
 
   <div metal:fill-slot="content">
     <!-- Button to remove jobs -->
+    <a class="job-refresh btn btn-success" href="#" role="button">
+      Refresh
+    </a>
+
+    <!-- Button to remove jobs -->
     <a class="job-delete-all btn btn-danger" href="#" role="button">
-      Remove all Jobs
+      Remove all
     </a>
     <br/><br/>
 

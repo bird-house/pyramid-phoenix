@@ -1,4 +1,10 @@
 $(function() {
+  // Refresh job list ...
+  $("a.job-refresh").click(function(e) {
+    e.preventDefault();
+    location.reload()
+  });
+
   // Delete all jobs
   $("a.job-delete-all").click(function(e) {
     e.preventDefault();
@@ -45,6 +51,6 @@ $(function() {
 
         location.reload(true);
       })
-  }, 5000);
+  }, 60000);
 
 });
