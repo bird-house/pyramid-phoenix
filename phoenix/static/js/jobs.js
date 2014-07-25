@@ -20,4 +20,19 @@ $(function() {
     window.location.href = "/output_details?job_id=" + job_id;
   });
 
+  var i = setInterval(function() {
+    $.getJSON(
+      'update.job', 
+      {'job_id': 0},
+      function(json) {
+        if (json == null) {
+          clearInterval(i);
+          location.reload(true);
+          return;
+        }
+
+        location.reload(true);
+      })
+  }, 5000);
+
 });

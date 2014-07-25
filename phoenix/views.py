@@ -327,7 +327,15 @@ class Jobs:
         ##     # Sort ignoring case
         ##     order += ' COLLATE NOCASE'
         order_dir = 1 if order_dir == 'asc' else -1
-        return dict(order=order, order_dir=order_dir) 
+        return dict(order=order, order_dir=order_dir)
+
+    @view_config(renderer='json', name='update.job')
+    def update(self):
+        # http://t.wits.sg/misc/jQueryProgressBar/demo.php
+        # http://demo.todo.sixfeetup.com/list
+        job_id = self.request.params.get('job_id', None)
+
+        return dict(progress=50)
 
     @view_config(renderer='json', name='delete.job')
     def delete(self):
