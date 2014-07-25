@@ -438,12 +438,12 @@ class ExecuteView(FormView):
         return HTTPFound(location=self.request.route_url('jobs'))
 
 @view_defaults(permission='edit', layout='default') 
-class UserAccount:
+class MyAccount:
     def __init__(self, request):
         self.request = request
         self.userdb = models.User(request)
 
-    def generate_creds_form(self, formid="deform"):
+    def generate_form(self, formid="deform"):
         """This helper code generates the form that will be used to add
         and edit wps based on the schema of the form.
         """
@@ -469,7 +469,7 @@ class UserAccount:
             ajax_options=options,
             )
 
-    def process_creds_form(self, form):
+    def process_form(self, form):
         try:
             controls = self.request.POST.items()
             captured = form.validate(controls)
@@ -527,10 +527,10 @@ class UserAccount:
 
         from .schema import AccountSchema
         form = Form(schema=AccountSchema(), buttons=('submit',))
-        creds_form = self.generate_creds_form()
+        creds_form = self.generate_form()
 
         if 'update' in self.request.POST:
-            return self.process_creds_form(creds_form)
+            return self.process_form(creds_form)
         if 'submit' in self.request.POST:
             controls = self.request.POST.items()
             try:
