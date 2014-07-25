@@ -252,7 +252,7 @@ class Job():
     def delete(self, uuid):
         self.db.jobs.remove({"uuid": uuid})
 
-    def information(self):
+    def information(self, key='start_time', direction=pymongo.ASCENDING):
         """
         Collects jobs status ...
 
@@ -261,8 +261,8 @@ class Job():
         from owslib.wps import WPSExecution
 
         jobs = []
-        for job in self.by_userid(user_id=authenticated_userid(self.request)):
-            job['message'] = ''
+        for job in self.by_userid(user_id=authenticated_userid(self.request)).sort(key, direction):
+            job['message'] = job.get('message', '')
             if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
                 job['errors'] = []
                 try:

@@ -315,6 +315,20 @@ class Jobs:
         self.request = request
         self.jobdb = models.Job(self.request)
 
+    def sort_order(self):
+        """Determine what the current sort parameters are.
+        """
+        order = self.request.GET.get('order_col', 'start_time')
+        order_dir = self.request.GET.get('order_dir', 'asc')
+        ## if order == 'due_date':
+        ##     # handle sorting of NULL values so they are always at the end
+        ##     order = 'CASE WHEN due_date IS NULL THEN 1 ELSE 0 END, due_date'
+        ## if order == 'task':
+        ##     # Sort ignoring case
+        ##     order += ' COLLATE NOCASE'
+        order_dir = 1 if order_dir == 'asc' else -1
+        return dict(order=order, order_dir=order_dir) 
+
     @view_config(renderer='json', name='delete.job')
     def delete(self):
         job_id = self.request.params.get('job_id', None)
@@ -329,7 +343,8 @@ class Jobs:
             self.jobdb.drop_by_user_id(authenticated_userid(self.request))
             return HTTPFound(location=self.request.route_url('jobs'))
 
-        items = self.jobdb.information()
+        order = self.sort_order()
+        items = self.jobdb.information(key=order.get('order'), direction=order.get('order_dir'))
         
         from .grid import JobsGrid
         grid = JobsGrid(
@@ -630,8 +645,7 @@ class UserSettings:
         self.userdb = models.User(self.request)
 
     def sort_order(self):
-        """The list_view and tag_view both use this helper method to
-        determine what the current sort parameters are.
+        """Determine what the current sort parameters are.
         """
         order = self.request.GET.get('order_col', 'activated')
         order_dir = self.request.GET.get('order_dir', 'asc')
