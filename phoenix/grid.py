@@ -135,6 +135,7 @@ class JobsGrid(MyGrid):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['start_time'] = self.start_time_td
         self.column_formats['status'] = self.status_td
+        self.column_formats['progress'] = self.progress_td
         self.column_formats[''] = self.action_td
         #self.user_tz = u'US/Eastern'
         self.user_tz = u'UTC'
@@ -170,12 +171,34 @@ class JobsGrid(MyGrid):
             span_class += ' label-important'
         else:
             span_class += ' label-info'
+            
         span = HTML.tag(
             "span",
             c=HTML.literal(status),
             class_=span_class,
         )
         return HTML.td(span)
+
+    def progress_td(self, col_num, i, item):
+        """Generate the column for the job progress.
+        """
+        progress = item.get('progress', 100)
+        if progress is None:
+            return HTML.td('')
+        span_class = 'progress progress-info bar'
+
+        div_bar = HTML.tag(
+            "div",
+            c=HTML.literal(progress),
+            class_="bar",
+            style_="width: %d%s" % (progress, '%'),
+        )
+        div_progress = HTML.tag(
+            "div",
+            c=div_bar,
+            class_="progress progress-info")
+       
+        return HTML.td(div_progress)
 
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.

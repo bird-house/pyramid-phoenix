@@ -350,7 +350,7 @@ class Jobs:
         grid = JobsGrid(
                 self.request,
                 items,
-                ['identifier', 'start_time', 'duration', 'notes', 'tags', 'status', 'message', ''],
+                ['identifier', 'start_time', 'duration', 'notes', 'tags', 'status', 'message', 'progress', ''],
             )
 
         return dict(grid=grid, items=items)

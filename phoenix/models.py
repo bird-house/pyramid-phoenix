@@ -270,7 +270,7 @@ class Job():
                     execution = WPSExecution(url=wps.url)
                     execution.checkStatus(url=job['status_location'], sleepSecs=0)
                     job['status'] = execution.status
-                    job['percent_completed'] = execution.percentCompleted
+                    job['progress'] = execution.percentCompleted
                     job['message'] = execution.statusMessage
                     for err in execution.errors:
                         job['errors'].append( dict(code=err.code, locator=err.locator, text=err.text) )
@@ -287,7 +287,9 @@ class Job():
                     job['message'] += err.get('text', '') + ';'
 
                 job['duration'] = str(job['end_time'] - job['start_time'])
-                self.update(job)
+            if job['status'] in ['ProcessSucceeded']:
+                job['progress'] = 100
+            self.update(job)
             jobs.append(job)
         return jobs
 
