@@ -242,9 +242,6 @@ class Job():
     def count(self):
         return self.db.jobs.count()
 
-    def drop(self):
-        self.db.jobs.drop()
-
     def by_userid(self, user_id='anonymous'):
         return self.db.jobs.find( dict(user_id=user_id) )
 
@@ -252,9 +249,8 @@ class Job():
         for job in self.by_userid(user_id):
             self.db.jobs.remove({"uuid": job['uuid']})
 
-    def drop_by_ids(self, uuids=[]):
-        for uuid in uuids:
-            self.db.jobs.remove({"uuid": uuid})
+    def delete(self, uuid):
+        self.db.jobs.remove({"uuid": uuid})
 
     def information(self, sortkey="starttime", inverted=True):
         """

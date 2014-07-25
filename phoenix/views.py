@@ -314,6 +314,14 @@ class Jobs:
     def __init__(self, request):
         self.request = request
         self.jobdb = models.Job(self.request)
+
+    @view_config(renderer='json', name='delete.job')
+    def delete(self):
+        job_id = self.request.params.get('job_id', None)
+        if job_id is not None:
+            self.jobdb.delete(job_id)
+
+        return {}
     
     @view_config(route_name='jobs', renderer='templates/jobs.pt')
     def jobs_view(self):

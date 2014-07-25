@@ -143,11 +143,11 @@ class JobsGrid(MyGrid):
           <span class="caret"></span>
           </a>
           <ul class="dropdown-menu" id="%s">
-            <li><a class="job-details" href="#">Details</a></li>
+            <li><a class="job-show" href="#">Show Output Details</a></li>
             <li><a class="job-delete" href="#">Delete</a></li>
           </ul>
         </div>
-        """ % item.get('identifier')))
+        """ % item.get('uuid')))
         
 class UsersGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
