@@ -1,17 +1,5 @@
-# schema.py
-# Copyright (C) 2013 the ClimDaPs/Phoenix authors and contributors
-# <see AUTHORS file>
-#
-# This module is part of ClimDaPs/Phoenix and is released under
-# the MIT License: http://www.opensource.org/licenses/mit-license.php
-
-
 import colander
 import deform
-from deform.widget import OptGroup
-
-import logging
-logger = logging.getLogger(__name__)
 
 class CredentialsSchema(colander.MappingSchema):
     """
@@ -160,38 +148,4 @@ class UserSchema(colander.MappingSchema):
         missing = colander.drop,
         )
 
-# jobs
-# ----
-
-
-@colander.deferred
-def deferred_job_widget(node, kw):
-    request = kw.get('request')
-    from .models import jobs_information 
-    jobs = jobs_information(request)
-    from .widget import JobsWidget
-    return JobsWidget(jobs = jobs)
-
-    
-
-class JobsSchema(colander.MappingSchema):
-    process = colander.SchemaNode(
-        colander.String(),
-        title = "Jobs",
-        missing=unicode(''),
-        widget = deferred_job_widget
-        )
-
-class TableSchema(colander.MappingSchema):
-
-    from widget import GenericTableWidget
-    table = colander.SchemaNode(
-        colander.String(),
-        missing='',#do not show the required *
-        widget = GenericTableWidget(),
-
-    )
-
-    def set_title(self,title="Table"):
-        self.children[0].title=title
 
