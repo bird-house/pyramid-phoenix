@@ -378,65 +378,73 @@ class OutputDetails:
             )
         return dict(grid=grid, items=items)
 
-@view_config(
-    route_name='execute',
-    renderer='templates/form.pt',
-    layout='default',
-    permission='edit'
-    )
-class ExecuteView(FormView):
-    buttons = ('submit',)
-    schema_factory = None
-    wps = None
-    identifier = None
-   
-    def __call__(self):
-        # build the schema if it not exist
-        if self.schema is None:
-            if self.schema_factory is None:
-                self.schema_factory = WPSSchema
-            
-        try:
-            session = self.request.session
-            #identifier = session['identifier']
-            self.identifier = self.request.params.get('identifier', None)
-            self.wps = self.request.wps
-            if 'wps.url' in session:
-                url = session['wps.url']
-                self.wps = WebProcessingService(url)
-            process = self.wps.describeprocess(self.identifier)
-            from .helpers import get_process_metadata
-            metadata = get_process_metadata(self.wps, self.identifier)
-            logger.debug('metadata = %s', metadata)
-            self.schema = self.schema_factory(
-                info = True,
-                title = process.title,
-                process = process,
-                metadata = metadata)
-        except:
-            raise
+
+@view_defaults(permission='edit', layout='default')
+class Execute:
+    def __init__(self, request):
+        self.request = request
+        self.jobdb = models.Job(self.request)
        
-        return super(ExecuteView, self).__call__()
+        self.identifier = self.request.params.get('identifier', None)
+        self.wps = self.request.wps
+        session = self.request.session
+        if 'wps.url' in session:
+            url = session['wps.url']
+            self.wps = WebProcessingService(url)
 
-    def appstruct(self):
-        return None
+    def generate_form(self, formid='deform'):
+        from .wps import WPSSchema
+        from .helpers import get_process_metadata
+        # TODO: should be WPSSchema.bind() ...
+        schema = WPSSchema(
+            info=True,
+            process = self.wps.describeprocess(self.identifier),
+            metadata = get_process_metadata(self.wps, self.identifier))
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return Form(
+            schema,
+            buttons=('submit',),
+            formid=formid,
+            use_ajax=True,
+            ajax_options=options,
+            )
+    
+    def process_form(self, form):
+        controls = self.request.POST.items()
+        try:
+            captured = form.validate(controls)
 
-    def submit_success(self, appstruct):
-        params = self.schema.serialize(appstruct)
-      
-        execution = execute_wps(self.wps, self.identifier, params)
+            execution = execute_wps(self.wps, self.identifier, captured)
 
-        jobdb = models.Job(self.request)
-        jobdb.add(
-            user_id = authenticated_userid(self.request), 
-            identifier = self.identifier, 
-            wps_url = self.wps.url, 
-            execution = execution,
-            notes = params.get('info_notes', ''),
-            tags = params.get('info_tags', ''))
-
+            self.jobdb.add(
+                user_id = authenticated_userid(self.request), 
+                identifier = self.identifier, 
+                wps_url = self.wps.url, 
+                execution = execution,
+                notes = captured.get('info_notes', ''),
+                tags = captured.get('info_tags', ''))
+        except ValidationFailure:
+            logger.exception('validation of exectue view failed.')
         return HTTPFound(location=self.request.route_url('jobs'))
 
+    @view_config(route_name='execute', renderer='templates/form.pt')
+    def execute_view(self):
+        form = self.generate_form()
+        if 'submit' in self.request.POST:
+            return self.process_form(form)
+        return dict(form=form.render())
+        
 @view_defaults(permission='edit', layout='default') 
 class MyAccount:
     def __init__(self, request):
