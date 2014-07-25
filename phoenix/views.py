@@ -12,25 +12,19 @@ from pyramid.response import Response
 from pyramid.renderers import render
 from pyramid.security import remember, forget, authenticated_userid
 from pyramid.events import subscriber, BeforeRender
-from pyramid_deform import FormView
 from deform import Form
 from deform import ValidationFailure
-from deform.form import Button
-from peppercorn import parse
 from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
 
 from owslib.wps import (
     WebProcessingService,
     WPSExecution,
-    ComplexData
     )
 
 import models
 from .exceptions import TokenError
 from .security import is_valid_user
-from .wps import WPSSchema
-from .helpers import execute_wps
 
 import logging
 logger = logging.getLogger(__name__)
@@ -425,6 +419,7 @@ class Execute:
         try:
             captured = form.validate(controls)
 
+            from .helpers import execute_wps
             execution = execute_wps(self.wps, self.identifier, captured)
 
             self.jobdb.add(
@@ -550,6 +545,7 @@ class MyAccount:
                 return {
                     'form': e.render(),
                     }
+            from peppercorn import parse
             values = parse(self.request.params.items())
             # Update the user
             update_user(
