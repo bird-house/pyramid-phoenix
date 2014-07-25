@@ -243,6 +243,73 @@ class Processes:
         return dict(grid=grid, items=items, form=form.render())
 
 @view_defaults(permission='edit', layout='default')
+class Execute:
+    def __init__(self, request):
+        self.request = request
+        self.jobdb = models.Job(self.request)
+       
+        self.identifier = self.request.params.get('identifier', None)
+        self.wps = self.request.wps
+        session = self.request.session
+        if 'wps.url' in session:
+            url = session['wps.url']
+            self.wps = WebProcessingService(url)
+
+    def generate_form(self, formid='deform'):
+        from .wps import WPSSchema
+        from .helpers import get_process_metadata
+        # TODO: should be WPSSchema.bind() ...
+        schema = WPSSchema(
+            info=True,
+            process = self.wps.describeprocess(self.identifier),
+            metadata = get_process_metadata(self.wps, self.identifier))
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return Form(
+            schema,
+            buttons=('submit',),
+            formid=formid,
+            use_ajax=True,
+            ajax_options=options,
+            )
+    
+    def process_form(self, form):
+        controls = self.request.POST.items()
+        try:
+            captured = form.validate(controls)
+
+            from .helpers import execute_wps
+            execution = execute_wps(self.wps, self.identifier, captured)
+
+            self.jobdb.add(
+                user_id = authenticated_userid(self.request), 
+                identifier = self.identifier, 
+                wps_url = self.wps.url, 
+                execution = execution,
+                notes = captured.get('info_notes', ''),
+                tags = captured.get('info_tags', ''))
+        except ValidationFailure:
+            logger.exception('validation of exectue view failed.')
+        return HTTPFound(location=self.request.route_url('jobs'))
+
+    @view_config(route_name='execute', renderer='templates/form.pt')
+    def execute_view(self):
+        form = self.generate_form()
+        if 'submit' in self.request.POST:
+            return self.process_form(form)
+        return dict(form=form.render())
+    
+@view_defaults(permission='edit', layout='default')
 class Jobs:
     def __init__(self, request):
         self.request = request
@@ -371,74 +438,6 @@ class OutputDetails:
                 ['identifier', 'title', 'data', 'reference', 'mime_type', ''],
             )
         return dict(grid=grid, items=items)
-
-
-@view_defaults(permission='edit', layout='default')
-class Execute:
-    def __init__(self, request):
-        self.request = request
-        self.jobdb = models.Job(self.request)
-       
-        self.identifier = self.request.params.get('identifier', None)
-        self.wps = self.request.wps
-        session = self.request.session
-        if 'wps.url' in session:
-            url = session['wps.url']
-            self.wps = WebProcessingService(url)
-
-    def generate_form(self, formid='deform'):
-        from .wps import WPSSchema
-        from .helpers import get_process_metadata
-        # TODO: should be WPSSchema.bind() ...
-        schema = WPSSchema(
-            info=True,
-            process = self.wps.describeprocess(self.identifier),
-            metadata = get_process_metadata(self.wps, self.identifier))
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
-        return Form(
-            schema,
-            buttons=('submit',),
-            formid=formid,
-            use_ajax=True,
-            ajax_options=options,
-            )
-    
-    def process_form(self, form):
-        controls = self.request.POST.items()
-        try:
-            captured = form.validate(controls)
-
-            from .helpers import execute_wps
-            execution = execute_wps(self.wps, self.identifier, captured)
-
-            self.jobdb.add(
-                user_id = authenticated_userid(self.request), 
-                identifier = self.identifier, 
-                wps_url = self.wps.url, 
-                execution = execution,
-                notes = captured.get('info_notes', ''),
-                tags = captured.get('info_tags', ''))
-        except ValidationFailure:
-            logger.exception('validation of exectue view failed.')
-        return HTTPFound(location=self.request.route_url('jobs'))
-
-    @view_config(route_name='execute', renderer='templates/form.pt')
-    def execute_view(self):
-        form = self.generate_form()
-        if 'submit' in self.request.POST:
-            return self.process_form(form)
-        return dict(form=form.render())
         
 @view_defaults(permission='edit', layout='default') 
 class MyAccount:
