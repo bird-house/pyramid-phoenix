@@ -1,5 +1,9 @@
 <metal:block use-macro="main_template">
 
+  <div metal:fill-slot="javascript">
+    <script src="${request.static_url('phoenix:static/js/processes.js')}"></script>
+  </div>
+
   <div metal:fill-slot="content">
     <!--! Button to trigger modal dialog to select wps -->
     <a href="#select-wps" role="button" class="btn btn-success" data-toggle="modal">
