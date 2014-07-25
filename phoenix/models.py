@@ -206,45 +206,26 @@ class User():
         user = self.db.users.find_one(dict(user_id = user_id))
         return user.get('credentials')
 
-class Job():
-    """This class provides access to the jobs in mongodb."""
-    def __init__(self, request):
-        self.request = request
-        self.db = request.db
-
-    def add(self,
+def add_job(request,
             identifier,
             wps_url,
             execution,
             user_id='anonymous',
             notes='',
             tags=''):
-        self.db.jobs.save(dict(
-            user_id = user_id, 
-            uuid = uuid.uuid4().get_hex(),
-            identifier = identifier,
-            service_url = wps_url,
-            status_location = execution.statusLocation,
-            status = execution.status,
-            start_time = datetime.datetime.now(),
-            end_time = datetime.datetime.now(),
-            notes = notes,
-            tags = tags,
-            ))
+    request.db.jobs.save(dict(
+        user_id = user_id, 
+        uuid = uuid.uuid4().get_hex(),
+        identifier = identifier,
+        service_url = wps_url,
+        status_location = execution.statusLocation,
+        status = execution.status,
+        start_time = datetime.datetime.now(),
+        end_time = datetime.datetime.now(),
+        notes = notes,
+        tags = tags,
+    ))
 
-    def by_id(self, uuid):
-        return self.db.jobs.find_one({'uuid': uuid})
 
-    def update(self, job):
-        self.db.jobs.update({'uuid': job['uuid']}, job)
-
-    def by_userid(self, user_id='anonymous'):
-        return self.db.jobs.find( dict(user_id=user_id) )
-
-    def drop_by_user_id(self, user_id):
-        self.db.jobs.remove({"user_id": user_id})
-
-    def delete(self, uuid):
-        self.db.jobs.remove({"uuid": uuid})
 
     

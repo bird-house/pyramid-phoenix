@@ -265,7 +265,7 @@ class Processes:
 class Execute:
     def __init__(self, request):
         self.request = request
-        self.jobdb = models.Job(self.request)
+        self.db = self.request.db
        
         self.identifier = self.request.params.get('identifier', None)
         self.wps = self.request.wps
@@ -310,7 +310,8 @@ class Execute:
             from .helpers import execute_wps
             execution = execute_wps(self.wps, self.identifier, captured)
 
-            self.jobdb.add(
+            models.add_job(
+                request = self.request,
                 user_id = authenticated_userid(self.request), 
                 identifier = self.identifier, 
                 wps_url = self.wps.url, 
@@ -332,7 +333,7 @@ class Execute:
 class Jobs:
     def __init__(self, request):
         self.request = request
-        self.jobdb = models.Job(self.request)
+        self.db = self.request.db 
 
     def sort_order(self):
         """Determine what the current sort parameters are.
@@ -364,7 +365,7 @@ class Jobs:
         from owslib.wps import WPSExecution
 
         jobs = []
-        for job in self.jobdb.by_userid(user_id=authenticated_userid(self.request)).sort(key, direction):
+        for job in self.db.jobs.find({'user_id':authenticated_userid(self.request)}).sort(key, direction):
             job['message'] = job.get('message', '')
             if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
                 try:
@@ -385,20 +386,20 @@ class Jobs:
                 job['duration'] = str(job['end_time'] - job['start_time'])
             if job['status'] in ['ProcessSucceeded']:
                 job['progress'] = 100
-            self.jobdb.update(job)
+            self.db.jobs.update({'uuid': job['uuid']}, job)
             jobs.append(job)
         return jobs
 
     @view_config(renderer='json', name='deleteall.job')
     def delete_all(self):
-        self.jobdb.drop_by_user_id(authenticated_userid(self.request))
+        self.db.jobs.remove({'user_id':authenticated_userid(self.request)})
         return {}
 
     @view_config(renderer='json', name='delete.job')
     def delete(self):
         job_id = self.request.params.get('job_id', None)
         if job_id is not None:
-            self.jobdb.delete(job_id)
+            self.db.jobs.delete({'uuid':job_id})
 
         return {}
     
@@ -419,11 +420,11 @@ class Jobs:
 class OutputDetails:
     def __init__(self, request):
         self.request = request
-        self.jobdb = models.Job(self.request)
+        self.db = self.request.db
 
     @view_config(route_name='output_details', renderer='templates/output_details.pt')
     def output_details_view(self):
-        job = self.jobdb.by_id(uuid=self.request.params.get('job_id'))
+        job = self.db.jobs.find_one({'uuid':self.request.params.get('job_id')})
         execution = WPSExecution(url=job['service_url'])
         execution.checkStatus(url=job['status_location'], sleepSecs=0)
         logger.debug('check status: url=%s', job['status_location'])

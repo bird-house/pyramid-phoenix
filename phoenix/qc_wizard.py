@@ -1,4 +1,3 @@
-
 import logging
 logger = logging.getLogger(__name__)
 from pyramid.view import view_config
@@ -111,8 +110,8 @@ def qc_wizard_check(request):
          
         outputs = [("process_log", True)]
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
-        jobdb = models.Job(request)
-        jobdb.add(
+        models.add_job(
+            request = request,
             user_id = authenticated_userid(request),
             identifier = identifier,
             wps_url = wps.url,
@@ -274,8 +273,8 @@ def qc_wizard_yaml(request):
         g.flush()
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
-        jobdb = models.Job(request)
-        jobdb.add(
+        models.add_job(
+            request = request,
             user_id = authenticated_userid(request),
             identifier = identifier,
             wps_url = wps.url,

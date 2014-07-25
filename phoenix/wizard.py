@@ -432,8 +432,8 @@ class Done():
         nodes = convert_states_to_nodes(request, states)
         execution = execute_restflow(request.wps, nodes)
 
-        jobdb = models.Job(request)
-        jobdb.add(
+        models.add_job(
+            request = request,
             user_id = authenticated_userid(request), 
             identifier = nodes['worker']['identifier'], 
             wps_url = request.wps.url, 
