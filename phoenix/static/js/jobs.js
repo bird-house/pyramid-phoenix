@@ -1,4 +1,16 @@
 $(function() {
+  // Delete all jobs
+  $("a.job-delete-all").click(function(e) {
+    e.preventDefault();
+    $.getJSON(
+      '/deleteall.job',
+      {},
+      function(json) {
+        location.reload()
+      }
+    );
+  });
+
   // Delete job
   $("a.job-delete").click(function(e) {
     e.preventDefault();

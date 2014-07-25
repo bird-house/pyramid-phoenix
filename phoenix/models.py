@@ -242,8 +242,7 @@ class Job():
         return self.db.jobs.find( dict(user_id=user_id) )
 
     def drop_by_user_id(self, user_id):
-        for job in self.by_userid(user_id):
-            self.db.jobs.remove({"uuid": job['uuid']})
+        self.db.jobs.remove({"user_id": user_id})
 
     def delete(self, uuid):
         self.db.jobs.remove({"uuid": uuid})

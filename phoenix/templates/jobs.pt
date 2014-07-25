@@ -5,6 +5,11 @@
   </div>
 
   <div metal:fill-slot="content">
+    <!-- Button to remove jobs -->
+    <a class="job-delete-all btn btn-danger" href="#" role="button">
+      Remove all Jobs
+    </a>
+    <br/><br/>
 
     <table class="table table-striped">
       <tal:rows replace="structure grid" />

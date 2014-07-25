@@ -389,6 +389,11 @@ class Jobs:
             jobs.append(job)
         return jobs
 
+    @view_config(renderer='json', name='deleteall.job')
+    def delete_all(self):
+        self.jobdb.drop_by_user_id(authenticated_userid(self.request))
+        return {}
+
     @view_config(renderer='json', name='delete.job')
     def delete(self):
         job_id = self.request.params.get('job_id', None)
@@ -399,10 +404,6 @@ class Jobs:
     
     @view_config(route_name='jobs', renderer='templates/jobs.pt')
     def jobs_view(self):
-        if "remove_all" in self.request.POST:
-            self.jobdb.drop_by_user_id(authenticated_userid(self.request))
-            return HTTPFound(location=self.request.route_url('jobs'))
-
         items = self.update_jobs()
         
         from .grid import JobsGrid
