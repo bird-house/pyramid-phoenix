@@ -348,7 +348,7 @@ class OutputDetails:
 
     @view_config(route_name='output_details', renderer='templates/output_details.pt')
     def output_details_view(self):
-        job = self.jobdb.by_id(uuid=self.request.params.get('uuid'))
+        job = self.jobdb.by_id(uuid=self.request.params.get('job_id'))
         execution = WPSExecution(url=job['service_url'])
         execution.checkStatus(url=job['status_location'], sleepSecs=0)
         logger.debug('check status: url=%s', job['status_location'])
