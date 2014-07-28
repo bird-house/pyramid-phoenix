@@ -257,7 +257,7 @@ class Processes:
         grid = ProcessesGrid(
                 self.request,
                 items,
-                ['identifier', 'title', 'abstract', 'version', ''],
+                ['title', 'abstract', ''],
             )
         return dict(grid=grid, items=items, form=form.render())
 
