@@ -350,24 +350,24 @@ class WPSSchema(colander.SchemaNode):
         # TODO: handle upload, url, direct input for complex data
         node = None
 
-        # check if input is uploaded
+        # check if input is uploaded: upload is default
         logger.debug('metadata=%s', self.metadata)
-        if not metadata is None and data_input.identifier in metadata.get('uploads', []):
-            node = colander.SchemaNode(
-                deform.FileData(),
-                name=data_input.identifier,
-                title=data_input.title,
-                widget=deform.widget.FileUploadWidget(tmpstore)
-                )
-        # otherwise input is provided as url
-        else:
+        if metadata and not data_input.identifier in metadata.get('uploads', []):
             node = colander.SchemaNode(
                 colander.String(),
                 name = data_input.identifier,
                 title = data_input.title,
                 widget = deform.widget.TextInputWidget(),
                 validator = colander.url)
-
+        # default: upload file
+        else:
+            node = colander.SchemaNode(
+                deform.FileData(),
+                name=data_input.identifier,
+                title=data_input.title,
+                widget=deform.widget.FileUploadWidget(tmpstore)
+                )
+           
         # sometimes abstract is not set
         if hasattr(data_input, 'abstract'):
             node.description = data_input.abstract
