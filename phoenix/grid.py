@@ -104,6 +104,7 @@ class ProcessesGrid(MyGrid):
           <ul class="dropdown-menu" id="%s">
             <li><a class="process-execute" href="#">Execute</a></li>
             <li><a class="process-execute" href="#">Info</a></li>
+            <li><a class="process-execute" href="#">Set Favorite</a></li>
           </ul>
         </div>
         """ % item.get('identifier') ))
