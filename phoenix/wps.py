@@ -353,7 +353,7 @@ class WPSSchema(colander.SchemaNode):
         # check if input is uploaded
         # TODO: refactor upload, url, text-input choice ...
         logger.debug('metadata=%s', self.metadata)
-        if metadata is not None and data_input.identifier in metadata.get('uploads', []):
+        if metadata is None or metadata == {} or data_input.identifier in metadata.get('uploads', []):
             node = colander.SchemaNode(
                 deform.FileData(),
                 name=data_input.identifier,
