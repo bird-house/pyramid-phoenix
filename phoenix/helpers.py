@@ -83,8 +83,10 @@ def execute_wps(wps, identifier, params):
     process = wps.describeprocess(identifier)
 
     input_types = {}
+    mime_types = {}
     for data_input in process.dataInputs:
         input_types[data_input.identifier] = data_input.dataType
+        mime_types[data_input.identifier] = map(lambda val: val.mimeType, data_input.supportedValues)
  
     inputs = []
     # TODO: dont append value if default
@@ -127,8 +129,12 @@ def execute_wps(wps, identifier, params):
                     logger.debug('is upload')
                     try:
                         if value.has_key('fp'):
-                            logger.debug('reading content')
                             content = value.get('fp').read()
+                            # TODO: fix mime-type encoding
+                            if 'application/x-netcdf' in mime_types[key]:
+                                import base64
+                                logger.debug('encode content of %s', key)
+                                content =  base64.encodestring(content)
                             inputs.append( (key, content) )
                     except:
                         logger.error('could not add complex value')

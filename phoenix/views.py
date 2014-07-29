@@ -367,6 +367,7 @@ class Jobs:
         jobs = []
         for job in self.db.jobs.find({'user_id':authenticated_userid(self.request)}).sort(key, direction):
             job['message'] = job.get('message', '')
+            job['errors'] = job.get('errors', [])
             if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
                 try:
                     execution = WPSExecution(url=job['service_url'])
@@ -386,7 +387,10 @@ class Jobs:
                 job['duration'] = str(job['end_time'] - job['start_time'])
             if job['status'] in ['ProcessSucceeded']:
                 job['progress'] = 100
-            self.db.jobs.update({'uuid': job['uuid']}, job)
+            try:
+                self.db.jobs.update({'uuid': job['uuid']}, job)
+            except:
+                logger.exception("update job failed")
             jobs.append(job)
         return jobs
 
@@ -411,7 +415,7 @@ class Jobs:
         grid = JobsGrid(
                 self.request,
                 items,
-                ['status', 'start_time', 'identifier', 'message', 'progress', ''],
+                ['status', 'start_time', 'identifier', 'message', 'errors', 'progress', ''],
             )
 
         return dict(grid=grid, items=items)
