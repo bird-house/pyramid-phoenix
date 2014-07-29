@@ -339,7 +339,7 @@ class Jobs:
         """Determine what the current sort parameters are.
         """
         order = self.request.GET.get('order_col', 'start_time')
-        order_dir = self.request.GET.get('order_dir', 'asc')
+        order_dir = self.request.GET.get('order_dir', 'desc')
         ## if order == 'due_date':
         ##     # handle sorting of NULL values so they are always at the end
         ##     order = 'CASE WHEN due_date IS NULL THEN 1 ELSE 0 END, due_date'
