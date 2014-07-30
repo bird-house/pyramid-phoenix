@@ -103,7 +103,7 @@ def main(global_config, **settings):
     config.add_request_method(button, 'login_button', reify=True)
 
     # MongoDB
-    # TODO: move this to models.py
+    # TODO: maybe move this to models.py?
     def add_mongo_db(event):
         settings = event.request.registry.settings
         url = settings['mongodb.url']
@@ -120,14 +120,29 @@ def main(global_config, **settings):
     config.registry.settings['mongodb_conn'] = conn
     config.add_subscriber(add_mongo_db, NewRequest)
 
-    # WPS
+    # malleefowl wps
     def add_wps(event):
         settings = event.request.registry.settings
         event.request.wps = settings['wps']
-    logger.debug("init wps !!!!!!!!!!!!!!!!!!!")
-    from owslib.wps import WebProcessingService
-    config.registry.settings['wps'] = WebProcessingService(url=settings['wps.url'])
-    config.add_subscriber(add_wps, NewRequest)
+
+    try:
+        from owslib.wps import WebProcessingService
+        config.registry.settings['wps'] = WebProcessingService(url=settings['wps.url'])
+        config.add_subscriber(add_wps, NewRequest)
+    except:
+        logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
+
+    # catalog service
+    def add_csw(event):
+        settings = event.request.registry.settings
+        event.request.csw = settings['csw']
+
+    try:
+        from owslib.csw import CatalogueServiceWeb
+        config.registry.settings['csw'] = CatalogueServiceWeb(url=settings['csw.url'])
+        config.add_subscriber(add_csw, NewRequest)
+    except:
+        logger.exception('Could not connect catalog service %s', settings['csw.url'])
     
     config.scan('phoenix')
 

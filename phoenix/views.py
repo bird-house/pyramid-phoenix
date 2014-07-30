@@ -474,11 +474,9 @@ class OutputDetails:
             from mako.template import Template
             templ_dc = Template(filename=os.path.join(os.path.dirname(__file__), "templates", "dc.xml"))
 
-            from owslib.csw import CatalogueServiceWeb
-            csw = CatalogueServiceWeb("http://localhost:8082/csw?service=CSW&version=2.0.2&request=GetCapabilities")
             record=templ_dc.render(**captured)
             logger.debug('record=%s', record)
-            csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
+            self.request.csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
         except ValidationFailure:
             logger.exception('validation of publish form failed')
         except:
