@@ -424,14 +424,82 @@ class Jobs:
 class OutputDetails:
     def __init__(self, request):
         self.request = request
+        self.session = self.request.session
         self.db = self.request.db
 
+    def sort_order(self):
+        """Determine what the current sort parameters are.
+        """
+        order = self.request.GET.get('order_col', 'title')
+        order_dir = self.request.GET.get('order_dir', 'asc')
+        ## if order == 'due_date':
+        ##     # handle sorting of NULL values so they are always at the end
+        ##     order = 'CASE WHEN due_date IS NULL THEN 1 ELSE 0 END, due_date'
+        ## if order == 'task':
+        ##     # Sort ignoring case
+        ##     order += ' COLLATE NOCASE'
+        order_dir = 1 if order_dir == 'asc' else -1
+        return dict(order=order, order_dir=order_dir)   
+
+    def generate_form(self, formid="deform"):
+        """Generate form for publishing to catalog service"""
+        from .schema import PublishSchema
+        schema = PublishSchema().bind()
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return Form(
+            schema,
+            buttons=('submit',),
+            formid=formid,
+            use_ajax=True,
+            ajax_options=options,
+            )
+
+    def process_form(self, form):
+        try:
+            controls = self.request.POST.items()
+            captured = form.validate(controls)
+
+            logger.debug('publish: %s', captured)
+        except ValidationFailure:
+            logger.exception('validation of publish form failed')
+        return HTTPFound(location=self.request.route_url('output_details'))
+
+    @view_config(renderer='json', name='publish.output')
+    def publish(self):
+        identifier = self.request.params.get('identifier', None)
+        job_id = self.session.get('job_id')
+        result = dict()
+        if identifier is not None:
+            result = dict(
+                title = 'title',
+                abstract = 'nix',
+                author = 'me',
+                keywords = 'one,two,three',
+                )
+
+        return result
+        
     @view_config(route_name='output_details', renderer='templates/output_details.pt')
     def output_details_view(self):
+        form = self.generate_form()
         job = self.db.jobs.find_one({'uuid':self.request.params.get('job_id')})
         execution = WPSExecution(url=job['service_url'])
         execution.checkStatus(url=job['status_location'], sleepSecs=0)
         logger.debug('check status: url=%s', job['status_location'])
+
+        self.session['job_id'] = self.request.params.get('job_id')
+        self.session.changed()
 
         items = []
         for output in execution.processOutputs:
@@ -447,7 +515,7 @@ class OutputDetails:
                 items,
                 ['identifier', 'title', 'data', 'reference', 'mime_type', ''],
             )
-        return dict(grid=grid, items=items)
+        return dict(grid=grid, items=items, form=form.render())
         
 @view_defaults(permission='edit', layout='default') 
 class MyAccount:

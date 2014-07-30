@@ -15,7 +15,7 @@
       <tal:rows replace="structure grid" />
     </table>
 
-    <!--! Add form for tasks -->
+    <!-- Add form for tasks -->
     <div id="user-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="user-form-label" aria-hidden="true">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>

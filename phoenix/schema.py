@@ -1,6 +1,8 @@
 import colander
 import deform
 
+from .widget import TagsWidget
+
 class CredentialsSchema(colander.MappingSchema):
     """
     ESGF user credentials schema
@@ -119,6 +121,28 @@ class CatalogSchema(colander.MappingSchema):
         widget = deform.widget.TextInputWidget())
 
 
+class PublishSchema(colander.MappingSchema):
+    title = colander.SchemaNode(
+        colander.String(),
+        widget=deform.widget.TextInputWidget(),
+        )
+    abstract = colander.SchemaNode(
+        colander.String(),
+        validator = colander.Length(max=150),
+        widget = deform.widget.TextAreaWidget(rows=2, cols=80),
+        )
+    author = colander.SchemaNode(
+        colander.String(),
+        validator = colander.Email(),
+        widget=deform.widget.TextInputWidget(),
+        )
+    keywords = colander.SchemaNode(
+        colander.String(),
+        default = 'test',
+        missing = 'test',
+        widget = TagsWidget(),
+        )
+            
 class UserSchema(colander.MappingSchema):
     name = colander.SchemaNode(
         colander.String(),
