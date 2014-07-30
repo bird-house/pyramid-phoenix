@@ -500,7 +500,7 @@ class OutputDetails:
     
     @view_config(renderer='json', name='publish.output')
     def publish(self):
-        identifier = self.request.params.get('identifier', None)
+        identifier = self.request.params.get('identifier')
         job_id = self.session.get('job_id')
         result = dict()
         if identifier is not None:
@@ -523,6 +523,9 @@ class OutputDetails:
 
         if 'publish' in self.request.POST:
             return self.process_form(form)
+
+        self.session['job_id'] = self.request.params.get('job_id')
+        self.session.changed()
 
         items = []
         for output in self.process_outputs(self.session.get('job_id')):
