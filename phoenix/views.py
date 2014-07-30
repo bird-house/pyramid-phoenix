@@ -181,10 +181,14 @@ class Processes:
         self.request = request
         self.catalogdb = models.Catalog(self.request)
         self.wps = self.request.wps
-        session = self.request.session
-        if 'wps.url' in session:
-            url = session['wps.url']
-            self.wps = WebProcessingService(url)
+        self.session = self.request.session
+        if 'wps.url' in self.session:
+            try:
+                self.wps = WebProcessingService(url=self.session['wps.url'])
+            except:
+                msg = "Could not connect to wps"
+                logger.exception(msg)
+                self.session.flash(msg, queue='error')
 
     def sort_order(self):
         """Determine what the current sort parameters are.
