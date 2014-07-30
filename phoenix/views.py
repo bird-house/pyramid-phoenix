@@ -469,10 +469,24 @@ class OutputDetails:
         try:
             controls = self.request.POST.items()
             captured = form.validate(controls)
+            logger.debug('publish captured %s', captured)
 
-            logger.debug('publish: %s', captured)
+            from mako.template import Template
+            templ_dc = Template(filename=os.path.join(os.path.dirname(__file__), "templates", "dc.xml"))
+
+            from owslib.csw import CatalogueServiceWeb
+            csw = CatalogueServiceWeb("http://localhost:8082/csw?service=CSW&version=2.0.2&request=GetCapabilities")
+            record=templ_dc.render(**captured)
+            logger.debug('record=%s', record)
+            csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
         except ValidationFailure:
             logger.exception('validation of publish form failed')
+        except:
+            msg = 'Publication failed.'
+            logger.exception(msg)
+            self.session.flash(msg, queue='error')
+        else:
+            self.session.flash("Publication was successful", queue='success')
         return HTTPFound(location=self.request.route_url('output_details'))
 
     def process_outputs(self, job_id):
@@ -497,7 +511,7 @@ class OutputDetails:
             result = dict(
                 title = output.title,
                 abstract = 'nix',
-                author = authenticated_userid(self.request),
+                creator = authenticated_userid(self.request),
                 url = output.reference,
                 mime_type = output.mimeType,
                 keywords = 'one,two,three',

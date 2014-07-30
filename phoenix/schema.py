@@ -128,10 +128,12 @@ class PublishSchema(colander.MappingSchema):
         )
     abstract = colander.SchemaNode(
         colander.String(),
+        missing = '',
+        default = '',
         validator = colander.Length(max=150),
         widget = deform.widget.TextAreaWidget(rows=2, cols=80),
         )
-    author = colander.SchemaNode(
+    creator = colander.SchemaNode(
         colander.String(),
         validator = colander.Email(),
         widget=deform.widget.TextInputWidget(),
