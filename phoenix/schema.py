@@ -136,6 +136,15 @@ class PublishSchema(colander.MappingSchema):
         validator = colander.Email(),
         widget=deform.widget.TextInputWidget(),
         )
+    url = colander.SchemaNode(
+        colander.String(),
+        title = 'URL',
+        validator = colander.url,
+        widget = deform.widget.TextInputWidget())
+    mime_type = colander.SchemaNode(
+        colander.String(),
+        widget=deform.widget.TextInputWidget(),
+        )
     keywords = colander.SchemaNode(
         colander.String(),
         default = 'test',

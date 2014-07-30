@@ -459,7 +459,7 @@ class OutputDetails:
         """
         return Form(
             schema,
-            buttons=('submit',),
+            buttons=('publish',),
             formid=formid,
             use_ajax=True,
             ajax_options=options,
@@ -475,16 +475,31 @@ class OutputDetails:
             logger.exception('validation of publish form failed')
         return HTTPFound(location=self.request.route_url('output_details'))
 
+    def process_outputs(self, job_id):
+        job = self.db.jobs.find_one({'uuid':job_id})
+        execution = WPSExecution(url=job['service_url'])
+        execution.checkStatus(url=job['status_location'], sleepSecs=0)
+        return execution.processOutputs
+
+    def process_output(self, job_id, identifier):
+        process_outputs = self.process_outputs(job_id)
+        output = next(o for o in process_outputs if o.identifier == identifier)
+        return output
+    
     @view_config(renderer='json', name='publish.output')
     def publish(self):
         identifier = self.request.params.get('identifier', None)
         job_id = self.session.get('job_id')
         result = dict()
         if identifier is not None:
+            output = self.process_output(job_id, identifier)
+            
             result = dict(
-                title = 'title',
+                title = output.title,
                 abstract = 'nix',
-                author = 'me',
+                author = authenticated_userid(self.request),
+                url = output.reference,
+                mime_type = output.mimeType,
                 keywords = 'one,two,three',
                 )
 
@@ -493,16 +508,12 @@ class OutputDetails:
     @view_config(route_name='output_details', renderer='templates/output_details.pt')
     def output_details_view(self):
         form = self.generate_form()
-        job = self.db.jobs.find_one({'uuid':self.request.params.get('job_id')})
-        execution = WPSExecution(url=job['service_url'])
-        execution.checkStatus(url=job['status_location'], sleepSecs=0)
-        logger.debug('check status: url=%s', job['status_location'])
 
-        self.session['job_id'] = self.request.params.get('job_id')
-        self.session.changed()
+        if 'publish' in self.request.POST:
+            return self.process_form(form)
 
         items = []
-        for output in execution.processOutputs:
+        for output in self.process_outputs(self.session.get('job_id')):
             items.append(dict(title=output.title,
                               identifier=output.identifier,
                               mime_type = output.mimeType,
