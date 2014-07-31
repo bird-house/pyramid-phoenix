@@ -57,9 +57,7 @@ def navbar(context, request):
 
 @panel_config(name='welcome', renderer='templates/panels/welcome.pt')
 def welcome(context, request, title):
-    return dict(title=title,
-                logged_in=authenticated_userid(request),
-                wps_service_url=request.wps.url)
+    return dict(title=title, logged_in=authenticated_userid(request))
 
 @panel_config(name='heading_processes', renderer='templates/panels/heading_processes.pt')
 def heading_processes(context, request):

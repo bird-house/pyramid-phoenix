@@ -180,7 +180,7 @@ class Processes:
     def __init__(self, request):
         self.request = request
         self.catalogdb = models.Catalog(self.request)
-        self.wps = self.request.wps
+        self.wps = None
         self.session = self.request.session
         if 'wps.url' in self.session:
             try:
@@ -246,11 +246,12 @@ class Processes:
             return self.process_form(form)
 
         items = []
-        for process in self.wps.processes:
-            items.append(dict(title=process.title,
-                              identifier=process.identifier,
-                              abstract = process.abstract,
-                              version = process.processVersion))
+        if self.wps is not None:
+            for process in self.wps.processes:
+                items.append(dict(title=process.title,
+                                  identifier=process.identifier,
+                                  abstract = process.abstract,
+                                  version = process.processVersion))
 
         # sort items
         order = self.sort_order()

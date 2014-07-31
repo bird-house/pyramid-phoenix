@@ -24,6 +24,10 @@ After successful installation you need to start the services. Phoenix is using `
 
 Phoenix web application is available on http://localhost:8081. You will need an OpenID to login to Phoenix.
 
+Check the log file for errors::
+
+   $ tail -f  ~/anaconda/var/log/phoenix.log
+
 Configuration
 -------------
 
