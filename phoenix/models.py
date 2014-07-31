@@ -152,18 +152,23 @@ class User():
         if cert_expires is not None:
             user['cert_expires'] = cert_expires
         if update_token:
-             try:
-                 user['token'] = gen_token(self.request.wps,
-                                           self.request.registry.settings.get('malleefowl.sys_token'),
-                                           user_id)
-                 msg = "Your access token was successfully updated. See <a href='/account'>My Account</a>"
-                 logger.info(msg)
-                 self.request.session.flash(msg, queue='info')
-             except Exception as e:
-                 msg = 'Could not generate token for user %s, err msg=%s' % (user_id, e.message)
-                 logger.error(msg)
-                 self.request.session.flash(msg, queue='error')
-                 raise TokenError(msg)
+            try:
+                if self.request.wps is None:
+                    msg = 'Malleefowl WPS is not available.'
+                    self.request.session.flash(msg, queue='error')
+                    raise Exception(msg)
+                user['token'] = gen_token(
+                    self.request.wps,
+                    self.request.registry.settings.get('malleefowl.sys_token'),
+                    user_id)
+                msg = "Your access token was successfully updated. See <a href='/account'>My Account</a>"
+                logger.info(msg)
+                self.request.session.flash(msg, queue='info')
+            except:
+                msg = 'Could not generate token for user %s' % (user_id)
+                logger.exception(msg)
+                self.request.session.flash(msg, queue='error')
+                raise TokenError(msg)
         if update_login:
             user['last_login'] = datetime.datetime.now()
         self.db.users.update(dict(user_id = user_id), user)
