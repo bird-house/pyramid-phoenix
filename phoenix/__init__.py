@@ -91,7 +91,6 @@ def main(global_config, **settings):
     config.add_route('user', '/settings/user')
     config.add_route('ipython', '/ipython')
     
-    #config.add_route('help', '/help')
     config.add_route('signin', '/signin')
     config.add_route('logout', '/logout')
     config.add_route('login_openid', '/login/openid')

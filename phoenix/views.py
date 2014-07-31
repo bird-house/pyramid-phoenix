@@ -170,11 +170,6 @@ class PhoenixViews:
         lm.layout.add_heading('heading_stats')
         return dict()
 
-    @view_config(route_name='help', renderer='templates/embedded.pt')
-    def help(self):
-        return dict(external_url='/docs')
-
-
 @view_defaults(permission='edit', layout='default')
 class Processes:
     def __init__(self, request):

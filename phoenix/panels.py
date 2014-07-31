@@ -28,7 +28,7 @@ def navbar(context, request):
         nav.append( nav_item('My Account', request.route_url('account'), 'icon-user') )
     if has_permission('admin', request.context, request):
         nav.append( nav_item('Settings', request.route_url('settings'), 'icon-edit') )
-    nav.append( nav_item('Help', request.route_url('help'), 'icon-question-sign') )
+    #nav.append( nav_item('Help', request.route_url('help'), 'icon-question-sign') )
 
     login = request.current_route_url() == request.route_url('signin')
 
