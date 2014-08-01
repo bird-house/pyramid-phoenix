@@ -52,6 +52,22 @@ SEARCH_INPUT = 4
 SELECT_INPUT = 5
 DEFINE_ACCESS = 6
 
+# csw function
+def search_csw_files(csw, filter):
+    logger.debug('filter=%s', filter)
+    keywords = [k for k in map(str.strip, str(filter).split(' ')) if len(k)>0]
+    
+    files = []
+    try:
+        csw.getrecords(keywords=filter)
+        logger.debug('csw results %s', csw.results)
+        for rec in csw.records:
+            files.append(csw.records[rec].identifier)
+    except:
+        files = []
+        logger.exception('retrieving files failed! filter=%s', filter)
+    return files
+
 # select wps process
 # ------------------
 
@@ -87,8 +103,11 @@ class SelectProcessSchema(colander.MappingSchema):
 def deferred_choose_datasource_widget(node, kw):
     request = kw.get('request')
 
+    logger.debug('init datasource widget')
+    
     choices = []
     for process in request.wps.processes:
+        logger.debug('source process: %s', process.identifier)
         if 'source' in process.identifier:
             choices.append( (process.identifier, process.title) )
     return widget.RadioChoiceWidget(values = choices)
@@ -200,6 +219,9 @@ def bind_files_schema(node, kw):
                 url="/esg-search", search_type='File', search=search)
     elif 'filesystem' in data_source:
         choices = [(f, f) for f in search_local_files( request.wps, token, search['filter'])]
+        node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
+    elif 'csw' in data_source:
+        choices = [(f, f) for f in search_csw_files( request.csw, search['filter'])]
         node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
     else:
         logger.error('unknown datasource: %s', data_source)
