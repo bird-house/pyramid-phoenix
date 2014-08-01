@@ -95,6 +95,13 @@ class ProcessesGrid(MyGrid):
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
         """
+        ## return HTML.td(HTML.literal("""\
+        ## <div class="btn-group">
+        ##     <button class="btn btn-mini btn-success" id="execute" data-value="%s">Execute</button>
+        ##     <button class="btn btn-mini btn-info" id="info">Info</button>
+        ## </div>
+        ## """ % item.get('identifier') ))
+        
         return HTML.td(HTML.literal("""\
         <div class="btn-group">
           <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
