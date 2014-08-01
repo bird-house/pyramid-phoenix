@@ -524,8 +524,11 @@ class OutputDetails:
         if 'publish' in self.request.POST:
             return self.process_form(form)
 
-        self.session['job_id'] = self.request.params.get('job_id')
-        self.session.changed()
+        if self.request.params.get('job_id') is not None:
+            self.session['job_id'] = self.request.params.get('job_id')
+            self.session.changed()
+
+        logger.debug('jobid=%s', self.session['job_id'])
 
         items = []
         for output in self.process_outputs(self.session.get('job_id')):
