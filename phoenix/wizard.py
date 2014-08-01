@@ -59,10 +59,12 @@ def search_csw_files(csw, filter):
     
     files = []
     try:
-        csw.getrecords(keywords=filter)
+        csw.getrecords(keywords=keywords)
         logger.debug('csw results %s', csw.results)
         for rec in csw.records:
-            files.append(csw.records[rec].identifier)
+            myrec = csw.records[rec]
+            title = "%s (%s, %s)" % (myrec.title, myrec.subjects, myrec.abstract)
+            files.append( (csw.records[rec].identifier, title) )
     except:
         files = []
         logger.exception('retrieving files failed! filter=%s', filter)
@@ -221,7 +223,7 @@ def bind_files_schema(node, kw):
         choices = [(f, f) for f in search_local_files( request.wps, token, search['filter'])]
         node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
     elif 'csw' in data_source:
-        choices = [(f, f) for f in search_csw_files( request.csw, search['filter'])]
+        choices = search_csw_files( request.csw, search['filter'] )
         node.get('file_identifier').widget = widget.CheckboxChoiceWidget(values=choices)
     else:
         logger.error('unknown datasource: %s', data_source)
