@@ -6,14 +6,15 @@ $(function() {
     window.location.href = "/execute?identifier=" + identifier;
   });
 
-  $("#execute").button({
+  $(".execute").button({
     text: false,
   }).click(function( event ) {
     var identifier = $(this).attr('data-value');
+    //var identifier = $(this).closest('span').attr('id');
     window.location.href = "/execute?identifier=" + identifier;
   });
 
-  $("#info").button({
+  $(".info").button({
     text: false,
   }).click(function( event ) {
     alert('not available yet!');
