@@ -5,6 +5,17 @@
   </div>
         
   <div metal:fill-slot="content">
+
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a> <span class="divider">/</span></li>
+      <li><a href="/jobs">My Jobs</a> <span class="divider">/</span></li>
+      <li class="active">Ouput Details</li>
+    </ul>
+
+    <div class="page-header">
+      <h1>Job = <small>Subtext for header</small></h1>
+    </div>    
+
     <table class="table table-striped">
       <tal:rows replace="structure grid" />
     </table>

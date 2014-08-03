@@ -10,10 +10,16 @@
   
   <div metal:fill-slot="content">
 
-    <!-- User -->
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a> <span class="divider">/</span></li>
+      <li class="active">Settings</li>
+    </ul>
+
+    <div class="page-header">
+      <h1>Settings = <small>Subtext for header</small></h1>
+    </div>    
     
     <div tal:repeat="group buttongroups">
-      <h2 tal:content="group['title']">title</h2>
       <ul class="thumbnails">
      
         <li class="span2" tal:repeat="button group['buttons']">

@@ -5,6 +5,16 @@
   </div>
 
   <div metal:fill-slot="content">
+
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a> <span class="divider">/</span></li>
+      <li class="active">My Jobs</li>
+    </ul>
+
+    <div class="page-header">
+      <h1>My Jobs<small>Subtext for header</small></h1>
+    </div>    
+
     <!-- Button to remove jobs -->
     <a class="job-refresh btn btn-success" href="#" role="button">
       Refresh

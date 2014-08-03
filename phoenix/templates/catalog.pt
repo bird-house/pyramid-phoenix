@@ -5,6 +5,17 @@
   </div>
         
   <div metal:fill-slot="content">
+
+     <ul class="breadcrumb">
+      <li><a href="/">Home</a> <span class="divider">/</span></li>
+       <li><a href="/settings">Settings</a> <span class="divider">/</span></li>
+      <li class="active">Catalog</li>
+    </ul>
+
+    <div class="page-header">
+      <h1>Catalog<small>Subtext for header</small></h1>
+    </div>    
+
     <!--! Button to trigger modal dialog for user addition -->
     <a href="#catalog-form" role="button" class="btn btn-success" data-toggle="modal">
       Add WPS

@@ -322,7 +322,7 @@ class Execute:
             logger.exception('validation of exectue view failed.')
         return HTTPFound(location=self.request.route_url('jobs'))
 
-    @view_config(route_name='execute', renderer='templates/form.pt')
+    @view_config(route_name='execute', renderer='templates/execute.pt')
     def execute_view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
