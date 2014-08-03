@@ -4,6 +4,8 @@ logger = logging.getLogger(__name__)
 from webhelpers.html.builder import HTML
 from webhelpers.html.grid import Grid
 
+from string import Template
+
 from .utils import localize_datetime
 
 class MyGrid(Grid):
@@ -95,12 +97,13 @@ class ProcessesGrid(MyGrid):
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
         """
-        return HTML.td(HTML.literal("""\
+        div = Template("""\
         <div class="btn-group">
-            <button class="btn btn-mini btn-success execute" data-value="%s">Execute</button>
-            <button class="btn btn-mini btn-info info">Info</button>
+            <button class="btn btn-mini btn-success execute" data-value="${identifier}">Execute</button>
+            <button class="btn btn-mini btn-info info" data-value="${identifier}">Info</button>
         </div>
-        """ % item.get('identifier') ))
+        """)
+        return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))
         
 
 class OutputDetailsGrid(MyGrid):
