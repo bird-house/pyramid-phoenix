@@ -62,44 +62,32 @@
     
   </head>
 
-    <body>
+  <body>
+    <div class="container-fluid">
 
-        ${panel('navbar')}
-    
-        <div class="container">
-          <div id="flash-messages">
-            <!--! Flash messages -->
-            <!--! one flash message that can be used by js -->
-            <div class="alert hide">
-              <button type="button" class="close" data-dismiss="alert">&times;</button>
-            </div>
-            <!--! Standard flash messages -->
-            <tal:message condition="request.session.peek_flash()">
-              <div class="alert"
-                   tal:repeat="message request.session.pop_flash()">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <tal:alert replace="structure message" />
-              </div>
-            </tal:message>
-            <!--! Flash messages from specific queues -->
-            <tal:newsflash repeat="flash_type ['success', 'info', 'error']">
-              <tal:message condition="request.session.peek_flash(flash_type)">
-                <div tal:repeat="message request.session.pop_flash(flash_type)"
-                     tal:attributes="class string:alert alert-$flash_type">
-                  <button type="button" class="close" data-dismiss="alert">&times;</button>
-                  <tal:alert replace="structure message" />
-                </div>
-              </tal:message>
-            </tal:newsflash>
+      <div class="row-fluid">
+        <div class="span12">
+          ${panel('navbar')}
+        </div>
+      
+        <div class="row-fluid">
+          <div class="span10">
+            <metal:content define-slot="content">
+              Site content goes here ...
+            </metal:content>
           </div>
 
-          <metal:content define-slot="content">
-            Site content goes here ...
-          </metal:content>
-    
+          <div class="span2">
+            ${panel('sidebar')}
+          </div>
+        </div>
+        
+        <div class="span12">
           ${panel('footer')}
-          
-        </div> <!-- /container -->
+        </div>
+      </div>  
+      
+    </div> <!-- /container -->
 
-    </body>
+  </body>
 </html>

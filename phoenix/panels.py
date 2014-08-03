@@ -58,6 +58,10 @@ def navbar(context, request):
 def welcome(context, request, title):
     return dict(title=title, logged_in=authenticated_userid(request))
 
+@panel_config(name='sidebar', renderer='templates/panels/sidebar.pt')
+def sidebar(context, request):
+    return dict(title="Sidebar...")
+
 @panel_config(name='heading_processes', renderer='templates/panels/heading_processes.pt')
 def heading_processes(context, request):
     return dict(title='Run a process')
