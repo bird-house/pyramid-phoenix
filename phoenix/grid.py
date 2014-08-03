@@ -130,7 +130,7 @@ class JobsGrid(MyGrid):
         self.column_formats['status'] = self.status_td
         self.column_formats['message'] = self.message_td
         self.column_formats['progress'] = self.progress_td
-        self.column_formats[''] = self.action_td
+        self.column_formats['action'] = self.action_td
         #self.user_tz = u'US/Eastern'
         self.user_tz = u'UTC'
 
