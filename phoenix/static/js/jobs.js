@@ -40,7 +40,7 @@ $(function() {
     window.location.href = "/output_details?job_id=" + job_id;
   });
  
-  // refresh page each 10 secs
+  // refresh page each 5 secs
   var i = setInterval(function() {
     $.getJSON(
       'update.job', 
@@ -54,6 +54,6 @@ $(function() {
 
         location.reload(true);
       })
-  }, 60000);
+  }, 5000);
 
 });
