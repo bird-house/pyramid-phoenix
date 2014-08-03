@@ -1,8 +1,9 @@
 $(function() {
-  // Delete user
-  $("a.user-delete").click(function(e) {
-    e.preventDefault();
-    var user_id = $(this).closest('ul').attr('id');
+  // delete user
+  $(".delete").button({
+    text:false,
+  }).click(function( event ) {
+    var user_id = $(this).attr('data-value');
     var row = $(this).closest('tr');
     $.getJSON(
       '/delete.user',
@@ -14,23 +15,24 @@ $(function() {
   });
 
   // Activate user
-  $("a.user-activate").click(function(e) {
-    e.preventDefault();
-    var user_id = $(this).closest('ul').attr('id');
+  $(".activate").button({
+    text: false,
+  }).click(function( event ) {
+    var user_id = $(this).attr('data-value');
     $.getJSON(
       '/activate.user',
       {'user_id': user_id},
       function(json) {
-        //console.log('activate user');
         location.reload();
       }
     );
   });
   
-  // Edit a user when the edit link is clicked in the actions dropdown
-  $("a.user-edit").click(function(e) {
-    e.preventDefault();
-    var user_id = $(this).closest('ul').attr('id');
+  // edit user
+  $(".edit").button({
+    text: false,
+  }).click(function( event ) {
+    var user_id = $(this).attr('data-value');
     $.getJSON(
       '/edit.user',
       {'user_id': user_id},

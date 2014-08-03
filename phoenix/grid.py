@@ -100,7 +100,7 @@ class ProcessesGrid(MyGrid):
         div = Template("""\
         <div class="btn-group">
             <button class="btn btn-mini btn-success execute" data-value="${identifier}">Execute</button>
-            <button class="btn btn-mini btn-info info" data-value="${identifier}">Info</button>
+            <button class="btn btn-mini btn-primary info" data-value="${identifier}">Info</button>
         </div>
         """)
         return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))
@@ -114,19 +114,14 @@ class OutputDetailsGrid(MyGrid):
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
         """
-        return HTML.td(HTML.literal("""\
+        div = Template("""\
         <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-          Action
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" id="%s">
-            <li><a class="output-publish" href="#">Publish</a></li>
-            <li><a class="output-show" href="#">Show in Viewer</a></li>
-            <li><a class="output-map" href="#">Show on Map</a></li>
-          </ul>
+            <button class="btn btn-mini btn-primary publish" data-value="${identifier}">Publish</button>
+            <button class="btn btn-mini btn-primary view" data-value="${identifier}">View</button>
+            <button class="btn btn-mini btn-primary mapit" data-value="${identifier}">MapIt</button>
         </div>
-        """ % item.get('identifier')))
+        """)
+        return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))
 
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
@@ -201,18 +196,14 @@ class JobsGrid(MyGrid):
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
         """
-        return HTML.td(HTML.literal("""\
+        div = Template("""\
         <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-          Action
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" id="%s">
-            <li><a class="job-show" href="#">Show Output Details</a></li>
-            <li><a class="job-delete" href="#">Delete</a></li>
-          </ul>
+            <button class="btn btn-mini btn-primary show" data-value="${jobid}">Details</button>
+            <button class="btn btn-mini btn-danger delete" data-value="${jobid}">Delete</button>
         </div>
-        """ % item.get('uuid')))
+        """)
+        return HTML.td(HTML.literal(div.substitute({'jobid': item.get('uuid')} )))
+       
         
 class UsersGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
@@ -222,19 +213,14 @@ class UsersGrid(MyGrid):
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
         """
-        return HTML.td(HTML.literal("""\
+        div = Template("""\
         <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-          Action
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" id="%s">
-            <li><a class="user-edit" href="#">Edit</a></li>
-            <li><a class="user-delete" href="#">Delete</a></li>
-            <li><a class="user-activate" href="#">Activate/Deactivate</a></li>
-          </ul>
+            <button class="btn btn-mini btn-primary edit" data-value="${user_id}">Edit</button>
+            <button class="btn btn-mini btn-danger delete" data-value="${user_id}">Delete</button>
+            <button class="btn btn-mini btn-primary activate" data-value="${user_id}">Activate</button>
         </div>
-        """ % item.get('user_id')))
+        """)
+        return HTML.td(HTML.literal(div.substitute({'user_id': item.get('user_id')} )))
 
 class CatalogGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
@@ -244,16 +230,12 @@ class CatalogGrid(MyGrid):
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
         """
-        return HTML.td(HTML.literal("""\
+        div = Template("""\
         <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-          Action
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" id="%s">
-            <li><a class="catalog-edit" href="#">Edit</a></li>
-            <li><a class="catalog-delete" href="#">Delete</a></li>
-          </ul>
+            <button class="btn btn-mini btn-primary edit" data-value="${url}">Edit</button>
+            <button class="btn btn-mini btn-danger delete" data-value="${url}">Delete</button>
         </div>
-        """ % item.get('url')))
+        """)
+        return HTML.td(HTML.literal(div.substitute({'url': item.get('url')} )))
+       
 

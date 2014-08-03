@@ -1,9 +1,10 @@
 $(function() {
   
-  // Open publish form when the publish link is clicked
-  $("a.output-publish").click(function(e) {
-    e.preventDefault();
-    var identifier = $(this).closest('ul').attr('id');
+  // Open publish form when publish is clicked
+  $(".publish").button({
+    text: false,
+  }).click(function( event ) {
+    var identifier = $(this).attr('data-value');
     $.getJSON(
       '/publish.output',
       {'identifier': identifier},

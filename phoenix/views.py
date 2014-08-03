@@ -403,7 +403,7 @@ class Jobs:
     def delete(self):
         job_id = self.request.params.get('job_id', None)
         if job_id is not None:
-            self.db.jobs.delete({'uuid':job_id})
+            self.db.jobs.remove({'uuid':job_id})
 
         return {}
     

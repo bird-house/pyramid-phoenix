@@ -17,10 +17,11 @@ $(function() {
     );
   });
 
-  // Delete job
-  $("a.job-delete").click(function(e) {
-    e.preventDefault();
-    var job_id = $(this).closest('ul').attr('id');
+  // delete job
+  $(".delete").button({
+    text: false,
+  }).click(function( event ) {
+    var job_id = $(this).attr('data-value');
     var row = $(this).closest('tr');
     $.getJSON(
       '/delete.job',
@@ -30,14 +31,16 @@ $(function() {
       }
     );
   });
-
-  // Show details
-  $("a.job-show").click(function(e) {
-    e.preventDefault();
-    var job_id = $(this).closest('ul').attr('id');
+ 
+  // show details
+  $(".show").button({
+    text: false,
+  }).click(function( event ) {
+    var job_id = $(this).attr('data-value');
     window.location.href = "/output_details?job_id=" + job_id;
   });
-
+ 
+  // refresh page each 10 secs
   var i = setInterval(function() {
     $.getJSON(
       'update.job', 

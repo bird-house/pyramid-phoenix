@@ -1,22 +1,24 @@
 $(function() {
-  // Delete catalog entry
-  $("a.catalog-delete").click(function(e) {
-    e.preventDefault();
-    var wps_url = $(this).closest('ul').attr('id');
-    var entry = $(this).closest('tr');
-    $.getJSON(
+  // delete catalog entry
+  $(".delete").button({
+    text: false,
+  }).click(function( event ) {
+    var wps_url = $(this).attr('data-value');
+    var row = $(this).closest('tr');
+     $.getJSON(
       '/delete.entry',
       {'url': wps_url},
       function(json) {
-        entry.remove();
+        row.remove();
       }
     );
   });
   
-  // Edit a task when the edit link is clicked in the actions dropdown
-  $("a.catalog-edit").click(function(e) {
-    e.preventDefault();
-    var wps_url = $(this).closest('ul').attr('id');
+  // edit catalog entry
+  $(".edit").button({
+    text: false,
+  }).click(function( event ) {
+    var wps_url = $(this).attr('data-value');
     $.getJSON(
       '/edit.entry',
       {'url': wps_url},
