@@ -5,7 +5,7 @@
   </div>
 
   <div class="hero-unit" metal:fill-slot="content">
-    <h1>Settings</h1>
+    <h1>My Account</h1>
     <p>Update your profile details.</p>
 
     <!-- Button to trigger modal dialog for credentials update -->

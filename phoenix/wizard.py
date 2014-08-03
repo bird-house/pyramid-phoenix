@@ -92,7 +92,7 @@ def deferred_choose_process_widget(node, kw):
 
 class SelectProcessSchema(colander.MappingSchema):
     description = "Select WPS Process"
-    appstruct = {}
+    appstruct = {'title': "Select WPS Process"}
 
     process = colander.SchemaNode(
         colander.String(),
@@ -401,9 +401,8 @@ class MyFormWizardView(FormWizardView):
         form_view.show = self.show
         form_view.appstruct = getattr(self.schema, 'appstruct', None)
         logger.debug("before form_view, schema = %s" % (self.schema))
-        result = form_view()
-        return result
-
+        return form_view()
+      
     def cancel(self, validated):
         self.wizard_state.clear()
         return HTTPFound(location = self.request.path_url)
@@ -473,7 +472,7 @@ class Done():
         return result
 
     def appstruct(self):
-        return {'states': "Job submitted"}
+        return {'title': "Summary", 'states': "Job submitted"}
 
 @view_config(route_name='wizard',
              renderer='templates/wizard.pt',
@@ -484,7 +483,7 @@ def wizard(request):
     schemas = []
     catalogdb = models.Catalog(request)
     from schema import SelectWPSSchema
-    schemas.append( SelectWPSSchema().bind(
+    schemas.append( SelectWPSSchema(title="bla").bind(
         wps_list=catalogdb.all_as_tuple()))
     schemas.append( SelectProcessSchema(title='Select Process') )
     schemas.append( WPSSchema(
