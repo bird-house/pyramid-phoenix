@@ -128,6 +128,7 @@ class JobsGrid(MyGrid):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['start_time'] = self.start_time_td
         self.column_formats['status'] = self.status_td
+        self.column_formats['message'] = self.message_td
         self.column_formats['progress'] = self.progress_td
         self.column_formats[''] = self.action_td
         #self.user_tz = u'US/Eastern'
@@ -170,6 +171,17 @@ class JobsGrid(MyGrid):
             c=HTML.literal(status),
             class_=span_class,
         )
+        return HTML.td(span)
+
+    def message_td(self, col_num, i, item):
+        """Generates the column with job message.
+        """
+        message = item.get('message')
+        errors = item.get('errors')
+        span = HTML.tag(
+            "span",
+            c=HTML.literal("%s %s" % (message, errors)),
+            class_="")
         return HTML.td(span)
 
     def progress_td(self, col_num, i, item):
