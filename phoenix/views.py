@@ -230,8 +230,9 @@ class Processes:
             session = self.request.session
             session['wps.url'] = url
             session.changed()
-        except ValidationFailure:
+        except ValidationFailure, e:
             logger.exception('validation of process view failed.')
+            return dict(form=e.render())
         return HTTPFound(location=self.request.route_url('processes'))
 
     @view_config(route_name='processes', renderer='templates/processes.pt')
@@ -318,8 +319,9 @@ class Execute:
                 execution = execution,
                 notes = captured.get('info_notes', ''),
                 tags = captured.get('info_tags', ''))
-        except ValidationFailure:
+        except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
+            return dict(form = e.render())
         return HTTPFound(location=self.request.route_url('jobs'))
 
     @view_config(route_name='execute', renderer='templates/execute.pt')
@@ -478,8 +480,9 @@ class OutputDetails:
             record=templ_dc.render(**captured)
             logger.debug('record=%s', record)
             self.request.csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
-        except ValidationFailure:
+        except ValidationFailure, e:
             logger.exception('validation of publish form failed')
+            return dict(form=e.render())
         except:
             msg = 'Publication failed.'
             logger.exception(msg)
@@ -615,10 +618,9 @@ class MyAccount:
                     'Credentials updated successfully',
                     queue='success',
                     )
-        except ValidationFailure:
-            msg = 'Validation of credentials form failed.'
-            logger.exception(msg)
-            self.request.session.flash(msg, queue='error')
+        except ValidationFailure, e:
+            logger.exception('Validation of credentials form failed.')
+            return dict(form=e.render())
         except:
             msg = 'Update of credentials failed.'
             logger.exception(msg)
@@ -645,13 +647,10 @@ class MyAccount:
             controls = self.request.POST.items()
             try:
                 form.validate(controls)
-            except ValidationFailure:
-                msg = 'There was an error saving your settings.'
-                logger.exception(msg)
-                self.request.session.flash(msg, queue='error')
-                return {
-                    'form': e.render(),
-                    }
+            except ValidationFailure, e:
+                logger.exception('There was an error saving your settings.')
+                return dict(form = e.render())
+
             from peppercorn import parse
             values = parse(self.request.params.items())
             # Update the user
@@ -765,8 +764,9 @@ class CatalogSettings:
             url = captured.get('url', '')
             notes = captured.get('notes', '')
             self.catalogdb.add(url, notes)
-        except ValidationFailure:
+        except ValidationFailure, e:
             logger.exception('validation of catalog form failed')
+            return dict(form = e.render())
         return HTTPFound(location=self.request.route_url('catalog'))
 
     @view_config(renderer='json', name='delete.entry')
@@ -860,8 +860,9 @@ class UserSettings:
                                name = captured.get('name', ''),
                                organisation = captured.get('organisation'),
                                notes = captured.get('notes', ''))
-        except ValidationFailure:
+        except ValidationFailure, e:
             logger.exception('validation of user form failed')
+            return dict(form = e.render())
         return HTTPFound(location=self.request.route_url('user'))
 
     @view_config(renderer='json', name='delete.user')
