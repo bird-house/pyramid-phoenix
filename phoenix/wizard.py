@@ -91,9 +91,6 @@ def deferred_choose_process_widget(node, kw):
     return widget.RadioChoiceWidget(values = choices)
 
 class SelectProcessSchema(colander.MappingSchema):
-    description = "Select WPS Process"
-    appstruct = {'title': "Select WPS Process"}
-
     process = colander.SchemaNode(
         colander.String(),
         widget = deferred_choose_process_widget)
@@ -115,7 +112,6 @@ def deferred_choose_datasource_widget(node, kw):
     return widget.RadioChoiceWidget(values = choices)
 
 class SelectDataSourceSchema(colander.MappingSchema):
-    description = "Select data source"
     appstruct = {}
 
     data_source = colander.SchemaNode(
@@ -173,7 +169,6 @@ def esgsearch_validator(node, value):
         raise Invalid(node, 'More than 20 datasets selected: %r.' %  search['hit-count'])
 
 class SearchSchema(colander.MappingSchema):
-    description = 'Search Input Files'
     appstruct = {}
 
     selection = colander.SchemaNode(
@@ -230,7 +225,6 @@ def bind_files_schema(node, kw):
 
    
 class SelectFilesSchema(colander.MappingSchema):
-    description = 'Choose input files'
     appstruct = {}
     
     file_identifier = colander.SchemaNode(
@@ -294,7 +288,6 @@ def bind_wps_schema(node, kw):
 # --------------
     
 class SummarySchema(colander.MappingSchema):
-    description = 'Summary'
     appstruct = {}
 
     states = colander.SchemaNode(
@@ -407,6 +400,12 @@ class MyFormWizardView(FormWizardView):
         self.wizard_state.clear()
         return HTTPFound(location = self.request.path_url)
 
+    def title(self):
+        return getattr(self.schema, 'title', '...')
+
+    def description(self):
+        return getattr(self.schema, 'description', 'description')
+
 
 def convert_states_to_nodes(request, states):
     userdb = models.User(request)
@@ -441,7 +440,7 @@ def convert_states_to_nodes(request, states):
 
 class Done():
     form_view_class = FormView
-    schema = SummarySchema(title="Summary")
+    schema = SummarySchema
     states = None
     
     def __init__(self):
@@ -465,14 +464,14 @@ class Done():
             tags = tags)
         
         form_view = self.form_view_class(request)
-        form_view.schema = self.schema.bind()
+        form_view.schema = self.schema(title="Summary").bind()
         self.states = states
         form_view.appstruct = self.appstruct 
         result = form_view()
         return result
 
     def appstruct(self):
-        return {'title': "Summary", 'states': "Job submitted"}
+        return {'states': "Job submitted"}
 
 @view_config(route_name='wizard',
              renderer='templates/wizard.pt',
@@ -483,8 +482,7 @@ def wizard(request):
     schemas = []
     catalogdb = models.Catalog(request)
     from schema import SelectWPSSchema
-    schemas.append( SelectWPSSchema(title="bla").bind(
-        wps_list=catalogdb.all_as_tuple()))
+    schemas.append( SelectWPSSchema(title="Select WPS").bind(wps_list=catalogdb.all_as_tuple()))
     schemas.append( SelectProcessSchema(title='Select Process') )
     schemas.append( WPSSchema(
         info=True,
@@ -509,6 +507,10 @@ def wizard(request):
                         *schemas 
                         )
     view = MyFormWizardView(wizard)
-    return view(request)
+    result = view(request)
+    if type(result) is dict:
+        result['title'] = view.title()
+        result['description'] = view.description()
+    return result
 
 

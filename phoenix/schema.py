@@ -94,7 +94,6 @@ def deferred_wps_list_widget(node, kw):
     return deform.widget.RadioChoiceWidget(values=wps_list)
 
 class SelectWPSSchema(colander.MappingSchema):
-   
     url = colander.SchemaNode(
         colander.String(),
         title = 'WPS',
