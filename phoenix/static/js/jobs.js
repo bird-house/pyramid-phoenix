@@ -12,33 +12,31 @@ $(function() {
         $.each(json, function(index, job) {
           // update only if necessary
           var currentStatus = $("#status-"+job.job_id).text();
-          if (currentStatus in ['ProcessSucceeded', 'ProcessFailed', 'Exception']) {
-            continue;
-          }
+          if (! (currentStatus in ['ProcessSucceeded', 'ProcessFailed', 'Exception']) ) {
+            var status_class = 'label'
+            if (job.status == 'ProcessSucceeded') {
+              status_class += ' label-success';
+            }
+            else if (job.status == 'ProcessFailed') {
+              status_class += ' label-warning';
+            }
+            else if (job.status == 'Exception') {
+              status_class += ' label-important';
+            }
+            else {
+              status_class += ' label-info';
+              finished = false;
+            }
 
-          var status_class = 'label'
-          if (job.status == 'ProcessSucceeded') {
-            status_class += ' label-success';
+            $("#status-"+job.job_id).attr('class', status_class);
+            $("#status-"+job.job_id).text(job.status);
+            $("#message-"+job.job_id).text(job.message);
+            $("#progress-"+job.job_id).attr('style', "width: "+job.progress+"%");
+            $("#progress-"+job.job_id).text(job.progress);
           }
-          else if (job.status == 'ProcessFailed') {
-            status_class += ' label-warning';
-          }
-          else if (job.status == 'Exception') {
-            status_class += ' label-important';
-          }
-          else {
-            status_class += ' label-info';
-            finished = false;
-          }
-
-          $("#status-"+job.job_id).attr('class', status_class);
-          $("#status-"+job.job_id).text(job.status);
-          $("#message-"+job.job_id).text(job.message);
-          $("#progress-"+job.job_id).attr('style', "width: "+job.progress+"%");
-          $("#progress-"+job.job_id).text(job.progress);
         });
 
-        if (finished) {
+        if (finished == true) {
           clearInterval(timerId);
         }
       }
