@@ -257,7 +257,7 @@ class Processes:
         grid = ProcessesGrid(
                 self.request,
                 items,
-                ['title', 'abstract', ''],
+                ['title', 'abstract', 'action'],
             )
         return dict(grid=grid, items=items, form=form.render())
 
@@ -542,7 +542,7 @@ class OutputDetails:
         grid = OutputDetailsGrid(
                 self.request,
                 items,
-                ['identifier', 'title', 'data', 'reference', 'mime_type', ''],
+                ['identifier', 'title', 'data', 'reference', 'mime_type', 'action'],
             )
         return dict(grid=grid, items=items, form=form.render())
         
@@ -794,7 +794,7 @@ class CatalogSettings:
         grid = CatalogGrid(
                 self.request,
                 items,
-                ['title', 'url', 'abstract', 'notes', ''],
+                ['title', 'url', 'abstract', 'notes', 'action'],
             )
         return dict(grid=grid, items=items, form=form.render())
 
@@ -909,7 +909,7 @@ class UserSettings:
         grid = UsersGrid(
                 self.request,
                 user_items,
-                ['name', 'user_id', 'openid', 'organisation', 'notes', 'activated', ''],
+                ['name', 'user_id', 'openid', 'organisation', 'notes', 'activated', 'action'],
             )
         return dict(grid=grid, items=user_items, form=form.render())
 

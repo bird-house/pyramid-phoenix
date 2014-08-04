@@ -92,7 +92,7 @@ class MyGrid(Grid):
 class ProcessesGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(ProcessesGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats[''] = self.action_td
+        self.column_formats['action'] = self.action_td
 
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
@@ -109,7 +109,7 @@ class ProcessesGrid(MyGrid):
 class OutputDetailsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(OutputDetailsGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats[''] = self.action_td
+        self.column_formats['action'] = self.action_td
 
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
@@ -220,7 +220,7 @@ class JobsGrid(MyGrid):
 class UsersGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(UsersGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats[''] = self.action_td
+        self.column_formats['action'] = self.action_td
 
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
@@ -237,7 +237,7 @@ class UsersGrid(MyGrid):
 class CatalogGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(CatalogGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats[''] = self.action_td
+        self.column_formats['action'] = self.action_td
 
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
