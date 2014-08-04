@@ -98,6 +98,9 @@ def main(global_config, **settings):
     config.add_route('login_local', '/login/local')
     config.add_route('register', '/register')
 
+    # wizard2
+    config.add_route('csw', '/csw')
+
     # A quick access to the login button
     config.add_request_method(button, 'login_button', reify=True)
 

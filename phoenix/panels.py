@@ -20,6 +20,7 @@ def navbar(context, request):
         nav.append( nav_item('My Jobs', request.route_url('jobs'), 'icon-list') )
         dropdowns = []
         dropdowns.append(nav_item('Simple', request.route_url('wizard'), 'icon-star'))
+        dropdowns.append(nav_item('Catalog', request.route_url('csw'), 'icon-star'))
         dropdowns.append(nav_item('QC Full', request.route_url('qc_wizard_check'), 'icon-star'))
         dropdowns.append(nav_item('QC YAML', request.route_url('qc_wizard_yaml'), 'icon-star'))
         nav.append( nav_item('Wizard', None, 'icon-star', dropdowns) )

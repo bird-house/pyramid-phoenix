@@ -1,0 +1,24 @@
+<metal:block use-macro="main_template">
+        
+  <div metal:fill-slot="content">
+        <ul class="breadcrumb">
+      <li><a href="/">Home</a> <span class="divider">/</span></li>              
+          <li><a href="/wizard">Wizard</a> <span class="divider">/</span></li>
+      <li class="active">${title}</li>
+    </ul>
+
+    <div class="page-header">
+      <h1>${title} <small>${description}</small></h1>
+    </div>    
+
+    <div class="well well-large">
+      <div class="btn-group">
+	<button class="btn">Previous</button>
+	<button class="btn btn-primary">Next</button>
+	<button class="btn btn-danger">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+   
+</metal:block>
