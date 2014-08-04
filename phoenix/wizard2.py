@@ -15,4 +15,15 @@ class Wizard:
         elif 'cancel' in self.request.POST:
             return HTTPFound(location=self.request.route_url('csw'))    
 
-        return dict(title="Catalog Viewer", description="Search in Catalog Service")
+        from .grid import MyGrid    
+        grid = MyGrid(
+                self.request,
+                [],
+                ['action'],
+            )
+
+        return dict(
+            title="Catalog Viewer", 
+            description="Search in Catalog Service",
+            grid=grid,
+        )
