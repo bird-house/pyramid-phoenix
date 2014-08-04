@@ -109,7 +109,16 @@ class ProcessesGrid(MyGrid):
 class OutputDetailsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(OutputDetailsGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['reference'] = self.reference_td
         self.column_formats['action'] = self.action_td
+
+    def reference_td(self, col_num, i, item):
+        """Generates the column with a download reference.
+        """
+        anchor = Template("""\
+        <a class="reference" href="${reference}"><i class="icon-download"></i></a>
+        """)
+        return HTML.td(HTML.literal(anchor.substitute( {'reference': item.get('reference')} )))
 
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
