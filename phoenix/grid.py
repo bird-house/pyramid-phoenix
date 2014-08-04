@@ -14,7 +14,7 @@ class MyGrid(Grid):
         if 'url' not in kwargs:
             kwargs['url'] = request.current_route_url
         super(MyGrid, self).__init__(*args, **kwargs)
-        self.exclude_ordering = ['_numbered']
+        self.exclude_ordering = ['action', '_numbered']
 
     def generate_header_link(self, column_number, column, label_text):
         """Override of the ObjectGrid to customize the headers. This is
@@ -111,6 +111,7 @@ class OutputDetailsGrid(MyGrid):
         super(OutputDetailsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['reference'] = self.reference_td
         self.column_formats['action'] = self.action_td
+        self.exclude_ordering = ['data', 'reference', 'action']
 
     def reference_td(self, col_num, i, item):
         """Generates the column with a download reference.
@@ -142,6 +143,7 @@ class JobsGrid(MyGrid):
         self.column_formats['action'] = self.action_td
         #self.user_tz = u'US/Eastern'
         self.user_tz = u'UTC'
+        self.exclude_ordering = ['message', 'action']
 
     def start_time_td(self, col_num, i, item):
         """Generate the column for the start time.
