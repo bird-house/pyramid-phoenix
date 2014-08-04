@@ -181,18 +181,19 @@ class JobsGrid(MyGrid):
             "span",
             c=HTML.literal(status),
             class_=span_class,
-        )
+            id_="status-%s" % item.get('uuid'))
         return HTML.td(span)
 
     def message_td(self, col_num, i, item):
         """Generates the column with job message.
         """
         message = item.get('message')
-        errors = item.get('errors')
+        #errors = item.get('errors')
         span = HTML.tag(
             "span",
-            c=HTML.literal("%s %s" % (message, errors)),
-            class_="")
+            c=HTML.literal(message),
+            class_="",
+            id_="message-%s" % item.get('uuid'))
         return HTML.td(span)
 
     def progress_td(self, col_num, i, item):
@@ -208,7 +209,7 @@ class JobsGrid(MyGrid):
             c=HTML.literal(progress),
             class_="bar",
             style_="width: %d%s" % (progress, '%'),
-        )
+            id_="progress-%s" % item.get('uuid'))
         div_progress = HTML.tag(
             "div",
             c=div_bar,

@@ -349,13 +349,14 @@ class Jobs:
         order_dir = 1 if order_dir == 'asc' else -1
         return dict(order=order, order_dir=order_dir)
 
-    @view_config(renderer='json', name='update.job')
+    @view_config(renderer='json', name='update.jobs')
     def update(self):
         # http://t.wits.sg/misc/jQueryProgressBar/demo.php
         # http://demo.todo.sixfeetup.com/list
-        job_id = self.request.params.get('job_id', None)
-        
-        return {'progress': 50}
+
+        #job_id = self.request.params.get('job_id', None)
+
+        return [{'job_id': job['uuid'], 'status': job['status'], 'message': job['message'], 'progress': job['progress']} for job in self.update_jobs()]
 
     def update_jobs(self):
         order = self.sort_order()

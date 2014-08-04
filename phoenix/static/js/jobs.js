@@ -1,8 +1,46 @@
 $(function() {
+
+  // update job table with current values
+  var update_jobs = function() {
+     $.getJSON(
+      '/update.jobs',
+      {},
+      function(json) {
+        $.each(json, function(index, job) {
+
+          var status_class = 'label'
+          if (job.status == 'ProcessSucceeded') {
+            status_class += ' label-success';
+          }
+          else if (job.status == 'ProcessFailed') {
+            status_class += ' label-warning';
+          }
+          else if (job.status == 'Exception') {
+            status_class += ' label-important';
+          }
+          else {
+            status_class += ' label-info';
+          }
+
+          $("#status-"+job.job_id).attr('class', status_class);
+          $("#status-"+job.job_id).text(job.status);
+          $("#message-"+job.job_id).text(job.message);
+          $("#progress-"+job.job_id).attr('style', "width: "+job.progress+"%");
+          $("#progress-"+job.job_id).text(job.progress);
+        });
+      }
+    );
+  };
+
+  // refresh job list each sec ...
+  var i = setInterval(function() {
+    update_jobs();
+  }, 1000); 
+
   // Refresh job list ...
   $("a.job-refresh").click(function(e) {
     e.preventDefault();
-    location.reload()
+    update_jobs();
   });
 
   // Delete all jobs
@@ -40,20 +78,4 @@ $(function() {
     window.location.href = "/output_details?job_id=" + job_id;
   });
  
-  // refresh page each 5 secs
-  var i = setInterval(function() {
-    $.getJSON(
-      'update.job', 
-      {'job_id': 0},
-      function(json) {
-        if (json == null) {
-          clearInterval(i);
-          location.reload(true);
-          return;
-        }
-
-        location.reload(true);
-      })
-  }, 5000);
-
 });
