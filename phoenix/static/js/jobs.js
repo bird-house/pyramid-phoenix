@@ -1,12 +1,20 @@
 $(function() {
 
+  var timerId = 0;
+
   // update job table with current values
-  var update_jobs = function() {
+  var updateJobs = function() {
      $.getJSON(
       '/update.jobs',
       {},
       function(json) {
+        var finished = true;
         $.each(json, function(index, job) {
+          // update only if necessary
+          var currentStatus = $("#status-"+job.job_id).text();
+          if (currentStatus in ['ProcessSucceeded', 'ProcessFailed', 'Exception']) {
+            continue;
+          }
 
           var status_class = 'label'
           if (job.status == 'ProcessSucceeded') {
@@ -20,6 +28,7 @@ $(function() {
           }
           else {
             status_class += ' label-info';
+            finished = false;
           }
 
           $("#status-"+job.job_id).attr('class', status_class);
@@ -28,19 +37,23 @@ $(function() {
           $("#progress-"+job.job_id).attr('style', "width: "+job.progress+"%");
           $("#progress-"+job.job_id).text(job.progress);
         });
+
+        if (finished) {
+          clearInterval(timerId);
+        }
       }
     );
   };
 
   // refresh job list each sec ...
-  var i = setInterval(function() {
-    update_jobs();
+  timerId = setInterval(function() {
+    updateJobs();
   }, 1000); 
 
   // Refresh job list ...
   $("a.job-refresh").click(function(e) {
     e.preventDefault();
-    update_jobs();
+    updateJobs();
   });
 
   // Delete all jobs
