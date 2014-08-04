@@ -188,7 +188,8 @@ class JobsGrid(MyGrid):
         """Generates the column with job message.
         """
         message = item.get('message')
-        #errors = item.get('errors')
+        for error in item.get('errors'):
+            message += ', Exception: %s' % error
         span = HTML.tag(
             "span",
             c=HTML.literal(message),
