@@ -33,9 +33,7 @@
       <div class="span4" id="div-map">Map</div>
       <div class="span8">
         <form class="form-search">
-          <input type="text" class="input-medium search-query">
-          <button type="submit" class="btn">Search</button>
-
+          <input type="text" name="query" class="input-medium search-query" placeholder="Search Terms">
           <table class="table table-bordered table-striped" id="table-csw-results">
             <tal:rows replace="structure grid" />
           </table>

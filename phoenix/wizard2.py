@@ -11,9 +11,8 @@ class Wizard:
         self.csw = self.request.csw
 
     # csw function
-    def search_csw_files(self, filter):
-        logger.debug('filter=%s', filter)
-        keywords = [k for k in map(str.strip, str(filter).split(' ')) if len(k)>0]
+    def search_csw_files(self, query=''):
+        keywords = [k for k in map(str.strip, str(query).split(' ')) if len(k)>0]
 
         results = []
         try:
@@ -26,9 +25,13 @@ class Wizard:
                     title = myrec.title,
                     abstract = myrec.abstract,
                     subjects = myrec.subjects,
+                    format = myrec.format,
+                    creator = myrec.creator,
+                    modified = myrec.modified,
+                    bbox = myrec.bbox,
                     ))
         except:
-            logger.exception('retrieving files failed! filter=%s', filter)
+            logger.exception('retrieving files failed!')
         return results
 
     @view_config(route_name='csw', renderer='templates/csw.pt')
@@ -40,7 +43,8 @@ class Wizard:
         elif 'cancel' in self.request.POST:
             return HTTPFound(location=self.request.route_url('csw'))
 
-        items = self.search_csw_files(filter='tas')
+        query = self.request.params.get('query', None)
+        items = self.search_csw_files(query)
 
         from .grid import CatalogSearchGrid    
         grid = CatalogSearchGrid(
