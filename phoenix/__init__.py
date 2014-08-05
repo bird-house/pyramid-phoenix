@@ -76,7 +76,6 @@ def main(global_config, **settings):
     config.add_route('home', '/')
     config.add_route('processes', '/processes')
     config.add_route('jobs', '/jobs')
-    config.add_route('jobsupdate', '/jobsupdate/{sortkey}/{type}')
     config.add_route('output_details', '/output_details')
     config.add_route('execute', '/execute')
   
@@ -89,7 +88,6 @@ def main(global_config, **settings):
     config.add_route('settings', '/settings')
     config.add_route('catalog', '/settings/catalog')
     config.add_route('user', '/settings/user')
-    config.add_route('ipython', '/ipython')
     
     config.add_route('signin', '/signin')
     config.add_route('logout', '/logout')
@@ -99,7 +97,8 @@ def main(global_config, **settings):
     config.add_route('register', '/register')
 
     # wizard2
-    config.add_route('csw', '/csw')
+    config.add_route('wizard_wps', '/wizard/wps')
+    config.add_route('wizard_csw', '/wizard/csw')
 
     # A quick access to the login button
     config.add_request_method(button, 'login_button', reify=True)

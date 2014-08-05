@@ -714,14 +714,9 @@ class Settings:
         buttons.append(dict(url="/settings/user", icon="user_catwomen.png", title="Users"))
         buttons.append(dict(url=self.settings.get('thredds.url'),
                             icon="unidataLogo.png", title="Thredds", id="external-url"))
-        buttons.append(dict(url="/ipython", icon="ipynb_icon_64x64.png", title="IPython"))
         buttongroups.append(dict(title='Settings', buttons=buttons))
 
         return dict(buttongroups=buttongroups)
-
-    @view_config(route_name='ipython', renderer='templates/embedded.pt')
-    def ipython(self):
-        return dict(external_url="/ipython/notebook/tree")
 
 @view_defaults(permission='admin', layout='default')
 class CatalogSettings:
