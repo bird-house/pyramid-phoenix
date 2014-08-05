@@ -5,6 +5,8 @@ from pyramid.httpexceptions import HTTPFound
 from deform import Form
 from deform import ValidationFailure
 
+from owslib.wps import WebProcessingService
+
 import models
 
 import logging
@@ -26,8 +28,7 @@ class SelectWPS(Wizard):
 
     def generate_form(self, formid='deform'):
         from .schema import SelectWPSSchema
-        schema = SelectWPSSchema().bind(
-            wps_list = self.catalogdb.all_as_tuple())
+        schema = SelectWPSSchema().bind(wps_list = self.catalogdb.all_as_tuple())
         options = """
         {success:
            function (rText, sText, xhr, form) {
@@ -58,7 +59,7 @@ class SelectWPS(Wizard):
         except ValidationFailure, e:
             logger.exception('validation of wps view failed.')
             return dict(title=self.title, description=self.description, form=e.render())
-        return HTTPFound(location=self.request.route_url('wizard_csw'))
+        return HTTPFound(location=self.request.route_url('wizard_process'))
 
     @view_config(route_name='wizard_wps', renderer='templates/wizard/wps.pt')
     def select_wps_view(self):
@@ -70,6 +71,62 @@ class SelectWPS(Wizard):
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
             return HTTPFound(location=self.request.route_url('wizard_wps'))
+
+        return dict(
+            title=self.title,
+            description=self.description,
+            form=form.render())
+
+class SelectProcess(Wizard):
+    def __init__(self, request):
+        super(SelectProcess, self).__init__(request, 'Select WPS Process')
+        self.wps = None
+        self.wps = WebProcessingService(self.session['wizard_wps_url'])
+
+    def generate_form(self, formid='deform'):
+        from .schema import SelectProcessSchema
+        schema = SelectProcessSchema().bind(processes = self.wps.processes)
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return Form(
+            schema,
+            buttons=('previous', 'next', 'cancel'),
+            formid=formid,
+            use_ajax=True,
+            ajax_options=options,
+            )
+    def process_form(self, form):
+        controls = self.request.POST.items()
+        try:
+            captured = form.validate(controls)
+            identifier = captured.get('identifier', '')
+            self.session['wizard_process_identifier'] = identifier
+            self.session.changed()
+        except ValidationFailure, e:
+            logger.exception('validation of process view failed.')
+            return dict(title=self.title, description=self.description, form=e.render())
+        return HTTPFound(location=self.request.route_url('wizard_csw'))
+
+    @view_config(route_name='wizard_process', renderer='templates/wizard/process.pt')
+    def select_process_view(self):
+        form = self.generate_form()
+        
+        if 'previous' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_wps'))
+        elif 'next' in self.request.POST:
+            return self.process_form(form)
+        elif 'cancel' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_process'))
 
         return dict(
             title=self.title,

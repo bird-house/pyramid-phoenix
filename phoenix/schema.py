@@ -1,6 +1,7 @@
 import colander
 import deform
 
+from deform.widget import RadioChoiceWidget
 from .widget import TagsWidget
 
 class CredentialsSchema(colander.MappingSchema):
@@ -100,6 +101,20 @@ class SelectWPSSchema(colander.MappingSchema):
         description = "Select WPS",
         widget = deferred_wps_list_widget
         )
+
+@colander.deferred
+def deferred_choose_process_widget(node, kw):
+    processes = kw.get('processes', [])
+
+    choices = []
+    for process in processes:
+        choices.append( (process.identifier, process.title) )
+    return RadioChoiceWidget(values = choices)
+
+class SelectProcessSchema(colander.MappingSchema):
+    identifier = colander.SchemaNode(
+        colander.String(),
+        widget = deferred_choose_process_widget)
 
 class CatalogSchema(colander.MappingSchema):
     url = colander.SchemaNode(

@@ -98,6 +98,7 @@ def main(global_config, **settings):
 
     # wizard2
     config.add_route('wizard_wps', '/wizard/wps')
+    config.add_route('wizard_process', '/wizard/process')
     config.add_route('wizard_csw', '/wizard/csw')
 
     # A quick access to the login button
