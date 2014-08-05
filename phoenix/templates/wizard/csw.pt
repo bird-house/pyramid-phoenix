@@ -30,31 +30,32 @@
     </div>    
 
     <div class="row-fluid">
-      <form class="form-search" method="POST" action="">
-        <div class="span4" id="div-map">Map</div>
+      <div class="span4" id="div-map">Map</div>
         
-        <div class="span8">
+      <div class="span8">
+	<form id="query" class="form-search">
           <input type="text" name="query" class="input-medium search-query" placeholder="Search Terms">
-          <table class="table table-bordered table-striped" id="table-csw-results">
-            <tal:rows replace="structure grid" />
-          </table>
+	</form>
+        <table class="table table-bordered table-striped" id="table-csw-results">
+          <tal:rows replace="structure grid" />
+        </table>
 
-          <div class="pagination">
-            <ul>
-              <li><a href="#">Prev</a></li>
-              <li><a href="#">Next</a></li>
-            </ul>
-          </div>
+        <div class="pagination">
+          <ul>
+            <li><a href="#">Prev</a></li>
+            <li><a href="#">Next</a></li>
+          </ul>
         </div>
-      </form>
+      </div>
       
-      <form method="POST" action="">
+      <form id="wizard" method="POST" action="">
         <div class="span12 well well-small">
           <button class="btn" type="submit" name="previous">Previous</button>
           <button class="btn btn-primary" type="submit" name="next">Next</button>
           <button class="btn" type="submit" name="cancel">Cancel</button>
         </div>
       </form>
+
 
     </div>
 
