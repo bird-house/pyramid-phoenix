@@ -1,4 +1,22 @@
 <metal:block use-macro="main_template">
+
+  <div metal:fill-slot="css">
+    <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
+          href="${request.static_url('phoenix:static/css/csw.css')}" />
+  </div>
+
+  <div metal:fill-slot="javascript">
+    <!-- leaflet -->
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+    <!--[if lte IE 8]><link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" /><![endif]-->
+    <script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+    <script src="${request.static_url('phoenix:static/js/csw.js')}"></script>
+    <script type="text/javascript">
+      $(document).ready(function (e) {
+         initMap();
+      });
+    </script>
+  </div>
         
   <div metal:fill-slot="content">
     <ul class="breadcrumb">
@@ -14,21 +32,21 @@
     <div class="row-fluid">
       <div class="span4" id="div-map">Map</div>
       <div class="span8">
-	<form class="form-search">
-	  <input type="text" class="input-medium search-query">
-	  <button type="submit" class="btn">Search</button>
+        <form class="form-search">
+          <input type="text" class="input-medium search-query">
+          <button type="submit" class="btn">Search</button>
 
-	  <table class="table table-bordered table-striped" id="table-csw-results">
-	    <tal:rows replace="structure grid" />
-	  </table>
+          <table class="table table-bordered table-striped" id="table-csw-results">
+            <tal:rows replace="structure grid" />
+          </table>
 
-	  <div class="pagination">
-	    <ul>
-	      <li><a href="#">Prev</a></li>
-	      <li><a href="#">Next</a></li>
-	    </ul>
-	  </div>
-	</form>
+          <div class="pagination">
+            <ul>
+              <li><a href="#">Prev</a></li>
+              <li><a href="#">Next</a></li>
+            </ul>
+          </div>
+        </form>
       </div>
     </div>
 
