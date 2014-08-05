@@ -53,9 +53,8 @@ class SelectWPS(Wizard):
         try:
             captured = form.validate(controls)
             url = captured.get('url', '')
-            session = self.request.session
-            session['wizard_wps_url'] = url
-            session.changed()
+            self.session['wizard_wps_url'] = url
+            self.session.changed()
         except ValidationFailure, e:
             logger.exception('validation of wps view failed.')
             return dict(title=self.title, description=self.description, form=e.render())
@@ -80,7 +79,6 @@ class SelectWPS(Wizard):
 class SelectProcess(Wizard):
     def __init__(self, request):
         super(SelectProcess, self).__init__(request, 'Select WPS Process')
-        self.wps = None
         self.wps = WebProcessingService(self.session['wizard_wps_url'])
 
     def generate_form(self, formid='deform'):
@@ -115,7 +113,7 @@ class SelectProcess(Wizard):
         except ValidationFailure, e:
             logger.exception('validation of process view failed.')
             return dict(title=self.title, description=self.description, form=e.render())
-        return HTTPFound(location=self.request.route_url('wizard_csw'))
+        return HTTPFound(location=self.request.route_url('wizard_parameters'))
 
     @view_config(route_name='wizard_process', renderer='templates/wizard/process.pt')
     def select_process_view(self):
@@ -133,6 +131,65 @@ class SelectProcess(Wizard):
             description=self.description,
             form=form.render())
 
+class ProcessParameters(Wizard):
+    def __init__(self, request):
+        super(ProcessParameters, self).__init__(
+            request,
+            "Process Parameters",
+            "")
+        logger.debug(self.session.items())
+        self.wps = WebProcessingService(self.session['wizard_wps_url'])
+        self.process = self.wps.describeprocess(self.session['wizard_process_identifier'])
+
+    def generate_form(self, formid='deform'):
+        from .wps import WPSSchema
+        schema = WPSSchema(info=True, hide=True, process = self.process)
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return Form(
+            schema,
+            buttons=('previous', 'next', 'cancel'),
+            formid=formid,
+            use_ajax=True,
+            ajax_options=options,
+            )
+    def process_form(self, form):
+        controls = self.request.POST.items()
+        try:
+            captured = form.validate(controls)
+            self.session['wizard_process_parameters'] = captured
+            self.session.changed()
+        except ValidationFailure, e:
+            logger.exception('validation of process parameter failed.')
+            return dict(title=self.title, description=self.description, form=e.render())
+        return HTTPFound(location=self.request.route_url('wizard_csw'))
+
+    @view_config(route_name='wizard_parameters', renderer='templates/wizard/parameters.pt')
+    def process_paramters_view(self):
+        form = self.generate_form()
+        
+        if 'previous' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_process'))
+        elif 'next' in self.request.POST:
+            return self.process_form(form)
+        elif 'cancel' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_parameters'))
+
+        return dict(
+            title=self.title,
+            description=self.description,
+            form=form.render())
+    
 class CatalogSearch(Wizard):
     def __init__(self, request):
         super(CatalogSearch, self).__init__(
@@ -182,9 +239,9 @@ class CatalogSearch(Wizard):
     @view_config(route_name='wizard_csw', renderer='templates/wizard/csw.pt')
     def csw_view(self):
         if 'previous' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_wps'))
+            return HTTPFound(location=self.request.route_url('wizard_parameters'))
         elif 'next' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_csw'))
+            return HTTPFound(location=self.request.route_url('wizard_done'))
         elif 'cancel' in self.request.POST:
             return HTTPFound(location=self.request.route_url('wizard_csw'))
 
@@ -213,3 +270,23 @@ class CatalogSearch(Wizard):
             items=items,
         )
 
+class Done(Wizard):
+    def __init__(self, request):
+        super(Done, self).__init__(
+            request,
+            "Done",
+            "Check Parameters and start WPS Process")
+
+    @view_config(route_name='wizard_done', renderer='templates/wizard/done.pt')
+    def done_view(self):
+        if 'previous' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_csw'))
+        elif 'done' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_summary'))
+        elif 'cancel' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_summary'))
+
+        return dict(
+            title=self.title, 
+            description=self.description,
+            )

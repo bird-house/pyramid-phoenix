@@ -1,0 +1,24 @@
+<metal:block use-macro="main_template">
+        
+  <div metal:fill-slot="content">
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a> <span class="divider">/</span></li>              
+      <li><a href="/wizard">Wizard</a> <span class="divider">/</span></li>
+      <li class="active">${title}</li>
+    </ul>
+
+    <div class="page-header">
+      <h1>${title} <small>${description}</small></h1>
+    </div>    
+
+    <form method="POST" action="">
+      <div class="well well-small">
+        <button class="btn" type="submit" name="previous">Previous</button>
+        <button class="btn btn-primary" type="submit" name="done">Done</button>
+        <button class="btn" type="submit" name="cancel">Cancel</button>
+      </div>
+    </form>
+
+  </div>
+   
+</metal:block>

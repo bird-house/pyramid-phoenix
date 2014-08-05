@@ -30,9 +30,10 @@
     </div>    
 
     <div class="row-fluid">
-      <div class="span4" id="div-map">Map</div>
-      <div class="span8">
-        <form class="form-search">
+      <form class="form-search" method="POST" action="">
+        <div class="span4" id="div-map">Map</div>
+        
+        <div class="span8">
           <input type="text" name="query" class="input-medium search-query" placeholder="Search Terms">
           <table class="table table-bordered table-striped" id="table-csw-results">
             <tal:rows replace="structure grid" />
@@ -44,15 +45,17 @@
               <li><a href="#">Next</a></li>
             </ul>
           </div>
-        </form>
-      </div>
-    </div>
+        </div>
+      </form>
+      
+      <form method="POST" action="">
+        <div class="span12 well well-small">
+          <button class="btn" type="submit" name="previous">Previous</button>
+          <button class="btn btn-primary" type="submit" name="next">Next</button>
+          <button class="btn" type="submit" name="cancel">Cancel</button>
+        </div>
+      </form>
 
-    <div class="well well-small">
-      <button class="btn disabled">Previous</button>
-      <button class="btn btn-primary">Next</button>
-      <span/>
-      <button class="btn disabled">Cancel</button>
     </div>
 
   </div>

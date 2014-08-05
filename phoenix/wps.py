@@ -143,7 +143,7 @@ class WPSSchema(colander.SchemaNode):
 
     appstruct = {}
 
-    def __init__(self, info=False, process=None, metadata=None, unknown='ignore', **kw):
+    def __init__(self, info=False, hide=False, process=None, metadata=None, unknown='ignore', **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
@@ -194,6 +194,9 @@ class WPSSchema(colander.SchemaNode):
         if info:
             self.add_info_nodes()
         self.add_nodes(process, metadata)
+        if hide:
+            if self.get('file_identifier', False):
+                del self['file_identifier']
 
     def add_info_nodes(self):
         #logger.debug("adding info nodes")
