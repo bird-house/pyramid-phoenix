@@ -12,15 +12,17 @@ logger = logging.getLogger(__name__)
 
 @view_defaults(permission='view', layout='default')
 class Wizard(object):
-    def __init__(self, request):
+    def __init__(self, request, title, description=''):
         self.request = request
+        self.title = title
+        self.description = description
         self.session = self.request.session
         self.csw = self.request.csw
         self.catalogdb = models.Catalog(self.request)
 
 class SelectWPS(Wizard):
     def __init__(self, request):
-        super(SelectWPS, self).__init__(request)
+        super(SelectWPS, self).__init__(request, 'Select WPS')
 
     def generate_form(self, formid='deform'):
         from .schema import SelectWPSSchema
@@ -55,7 +57,7 @@ class SelectWPS(Wizard):
             session.changed()
         except ValidationFailure, e:
             logger.exception('validation of wps view failed.')
-            return dict(title="Select WPS", description="", form=e.render())
+            return dict(title=self.title, description=self.description, form=e.render())
         return HTTPFound(location=self.request.route_url('wizard_csw'))
 
     @view_config(route_name='wizard_wps', renderer='templates/wizard/wps.pt')
@@ -70,13 +72,16 @@ class SelectWPS(Wizard):
             return HTTPFound(location=self.request.route_url('wizard_wps'))
 
         return dict(
-            title="Select WPS",
-            description="",
+            title=self.title,
+            description=self.description,
             form=form.render())
 
 class CatalogSearch(Wizard):
     def __init__(self, request):
-        super(CatalogSearch, self).__init__(request)
+        super(CatalogSearch, self).__init__(
+            request,
+            "Catalog Search",
+            "Search in CSW Catalog Service")
 
     def search_csw(self, query=''):
         keywords = [k for k in map(str.strip, str(query).split(' ')) if len(k)>0]
@@ -145,8 +150,8 @@ class CatalogSearch(Wizard):
             )
 
         return dict(
-            title="Catalog Search", 
-            description="Search in Catalog Service",
+            title=self.title, 
+            description=self.description,
             grid=grid,
             items=items,
         )
