@@ -10,56 +10,21 @@ import models
 import logging
 logger = logging.getLogger(__name__)
 
-@view_defaults(permission='edit', layout='default')
-class Wizard:
+@view_defaults(permission='view', layout='default')
+class Wizard(object):
     def __init__(self, request):
         self.request = request
         self.session = self.request.session
         self.csw = self.request.csw
         self.catalogdb = models.Catalog(self.request)
 
-    # csw function
-    def search_csw(self, query=''):
-        keywords = [k for k in map(str.strip, str(query).split(' ')) if len(k)>0]
-
-        results = []
-        try:
-            self.csw.getrecords(keywords=keywords)
-            logger.debug('csw results %s', self.csw.results)
-            for rec in self.csw.records:
-                myrec = self.csw.records[rec]
-                results.append(dict(
-                    identifier = myrec.identifier,
-                    title = myrec.title,
-                    abstract = myrec.abstract,
-                    subjects = myrec.subjects,
-                    format = myrec.format,
-                    creator = myrec.creator,
-                    modified = myrec.modified,
-                    bbox = myrec.bbox,
-                    ))
-        except:
-            logger.exception('could not get items for csw.')
-        return results
-
-    @view_config(renderer='json', name='select.csw')
-    def select_csw(self):
-        # TODO: refactor this ... not efficient
-        identifier = self.request.params.get('identifier', None)
-        logger.debug('called with %s', identifier)
-        if identifier is not None:
-            if 'csw_selection' in self.session:
-                if identifier in self.session['selection']:
-                    self.session['csw_selection'].remove(identifier)
-                else:
-                    self.session['csw_selection'].append(identifier)
-            else:
-                self.session['csw_selection'] = [identifier]
-        return {}
+class SelectWPS(Wizard):
+    def __init__(self, request):
+        super(SelectWPS, self).__init__(request)
 
     def generate_form(self, formid='deform'):
         from .schema import SelectWPSSchema
-        schema = SelectWPSSchema(title="Select WPS").bind(
+        schema = SelectWPSSchema().bind(
             wps_list = self.catalogdb.all_as_tuple())
         options = """
         {success:
@@ -94,7 +59,7 @@ class Wizard:
         return HTTPFound(location=self.request.route_url('wizard_csw'))
 
     @view_config(route_name='wizard_wps', renderer='templates/wizard/wps.pt')
-    def wps_view(self):
+    def select_wps_view(self):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
@@ -108,6 +73,49 @@ class Wizard:
             title="Select WPS",
             description="",
             form=form.render())
+
+class CatalogSearch(Wizard):
+    def __init__(self, request):
+        super(CatalogSearch, self).__init__(request)
+
+    def search_csw(self, query=''):
+        keywords = [k for k in map(str.strip, str(query).split(' ')) if len(k)>0]
+
+        results = []
+        try:
+            self.csw.getrecords(keywords=keywords)
+            logger.debug('csw results %s', self.csw.results)
+            for rec in self.csw.records:
+                myrec = self.csw.records[rec]
+                results.append(dict(
+                    identifier = myrec.identifier,
+                    title = myrec.title,
+                    abstract = myrec.abstract,
+                    subjects = myrec.subjects,
+                    format = myrec.format,
+                    creator = myrec.creator,
+                    modified = myrec.modified,
+                    bbox = myrec.bbox,
+                    ))
+        except:
+            logger.exception('could not get items for csw.')
+        return results
+        
+    @view_config(renderer='json', name='select.csw')
+    def select_csw(self):
+        # TODO: refactor this ... not efficient
+        identifier = self.request.params.get('identifier', None)
+        logger.debug('called with %s', identifier)
+        if identifier is not None:
+            if 'csw_selection' in self.session:
+                if identifier in self.session['selection']:
+                    self.session['csw_selection'].remove(identifier)
+                else:
+                    self.session['csw_selection'].append(identifier)
+            else:
+                self.session['csw_selection'] = [identifier]
+        return {}
+
 
     @view_config(route_name='wizard_csw', renderer='templates/wizard/csw.pt')
     def csw_view(self):
@@ -142,3 +150,4 @@ class Wizard:
             grid=grid,
             items=items,
         )
+
