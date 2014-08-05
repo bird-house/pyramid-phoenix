@@ -8,3 +8,21 @@ function initMap() {
   map.addLayer(basemap);
   map_layers_control = L.control.layers({"basemap": basemap}, {}, {'collapsed': true}).addTo(map);
 }
+
+$(function() {
+  // select item
+  $(".select").button({
+    text: false,
+  }).click(function( event ) {
+    event.preventDefault();
+    var identifier = $(this).attr('data-value');
+    $.getJSON(
+      '/select.csw',
+      {'identifier': identifier},
+      function(json) {
+        location.reload();
+      }
+    );
+  });
+
+});
