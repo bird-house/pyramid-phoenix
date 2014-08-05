@@ -228,6 +228,23 @@ class JobsGrid(MyGrid):
         </div>
         """)
         return HTML.td(HTML.literal(div.substitute({'jobid': item.get('uuid')} )))
+
+class CatalogSearchGrid(MyGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(CatalogSearchGrid, self).__init__(request, *args, **kwargs)
+        #self.column_formats['title'] = self.title_td
+        self.column_formats['action'] = self.action_td
+        self.exclude_ordering = ['action']
+
+    def action_td(self, col_num, i, item):
+        """Generate the column that has the actions in it.
+        """
+        div = Template("""\
+        <div class="btn-group">
+            <button class="btn btn-mini btn-primary publish" data-value="${identifier}">Select</button>
+        </div>
+        """)
+        return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))
        
         
 class UsersGrid(MyGrid):
