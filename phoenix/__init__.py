@@ -99,8 +99,8 @@ def main(global_config, **settings):
     # wizard
     config.add_route('wizard_wps', '/wizard/wps')
     config.add_route('wizard_process', '/wizard/process')
-    config.add_route('wizard_parameters', '/wizard/parameters')
-    config.add_route('wizard_inputs', '/wizard/inputs')
+    config.add_route('wizard_literal_inputs', '/wizard/literal_inputs')
+    config.add_route('wizard_complex_inputs', '/wizard/complex_inputs')
     config.add_route('wizard_source', '/wizard/source')
     config.add_route('wizard_csw', '/wizard/csw')
     config.add_route('wizard_esgf', '/wizard/esgf')

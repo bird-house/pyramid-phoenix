@@ -15,32 +15,38 @@ logger = logging.getLogger(__name__)
 class WizardState(object):
     def __init__(self, session, initial_step):
         self.session = session
-        if not 'wizard_state' in self.session:
-            self.session['wizard_state'] = {}
         self.initial_step = initial_step
-        self.current_step = initial_step
-        self.previous_step = initial_step
+        if not 'wizard' in self.session:
+            self.clear()
+        
+    def current_step(self):
+        step = self.initial_step
+        if len(self.session['wizard']['chain']) > 0:
+            step = self.session['wizard']['chain'][-1]
+        return step
+
+    def next(self, step):
+        self.session['wizard']['chain'].append(step)
+        self.session.changed()
+
+    def previous(self):
+        if len(self.session['wizard']['chain']) > 1:
+            self.session['wizard']['chain'].pop()
+            self.session.changed()
 
     def get(self, key, default=None):
-        if not key in self.session['wizard_state']:
-            self.session['wizard_state'][key] = default
+        if not key in self.session['wizard']['state']:
+            self.session['wizard']['state'][key] = default
             self.session.changed()
-        return self.session['wizard_state'].get(key)
+        return self.session['wizard']['state'].get(key)
 
     def set(self, key, value):
-        self.session['wizard_state'][key] = value
+        self.session['wizard']['state'][key] = value
         self.session.changed()
 
     def clear(self):
-        self.session['wizard_state'] = {}
+        self.session['wizard'] = dict(state={}, chain=[self.initial_step])
         self.session.changed()
-        
-        self.current_step = self.initial_step
-        self.previous_step = self.initial_step
-
-    def next_step(self, step):
-        self.previous_step = self.current_step
-        self.current_step = step
 
 @view_defaults(permission='view', layout='default')
 class Wizard(object):
@@ -53,9 +59,17 @@ class Wizard(object):
         self.catalogdb = models.Catalog(self.request)
         self.wizard_state = WizardState(self.session, 'wizard_wps')
 
+    def previous(self):
+        self.wizard_state.previous()
+        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
+
+    def next(self, step):
+        self.wizard_state.next(step)
+        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
+
     def cancel(self):
         self.wizard_state.clear()
-        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step))
+        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
 
 class ChooseWPS(Wizard):
     def __init__(self, request):
@@ -92,14 +106,14 @@ class ChooseWPS(Wizard):
         except ValidationFailure, e:
             logger.exception('validation of wps view failed.')
             return dict(title=self.title, description=self.description, form=e.render())
-        return HTTPFound(location=self.request.route_url('wizard_process'))
+        return self.next('wizard_process')
 
     @view_config(route_name='wizard_wps', renderer='templates/wizard/wps.pt')
     def choose_wps_view(self):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_wps'))
+            return self.previous()
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
@@ -146,14 +160,14 @@ class ChooseWPSProcess(Wizard):
         except ValidationFailure, e:
             logger.exception('validation of process view failed.')
             return dict(title=self.title, description=self.description, form=e.render())
-        return HTTPFound(location=self.request.route_url('wizard_parameters'))
+        return self.next('wizard_literal_inputs')
 
     @view_config(route_name='wizard_process', renderer='templates/wizard/process.pt')
     def select_process_view(self):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_wps'))
+            return self.previous()
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
@@ -203,14 +217,14 @@ class LiteralInputs(Wizard):
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
-        return HTTPFound(location=self.request.route_url('wizard_inputs'))
+        return self.next('wizard_complex_inputs')
 
-    @view_config(route_name='wizard_parameters', renderer='templates/wizard/parameters.pt')
+    @view_config(route_name='wizard_literal_inputs', renderer='templates/wizard/literal_inputs.pt')
     def literal_inputs_view(self):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_process'))
+            return self.previous()
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
@@ -260,14 +274,14 @@ class ComplexInputs(Wizard):
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
-        return HTTPFound(location=self.request.route_url('wizard_source'))
+        return self.next('wizard_source')
 
-    @view_config(route_name='wizard_inputs', renderer='templates/wizard/inputs.pt')
+    @view_config(route_name='wizard_complex_inputs', renderer='templates/wizard/complex_inputs.pt')
     def complex_parameters_view(self):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_parameters'))
+            return self.previous()
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
@@ -315,14 +329,14 @@ class ChooseSource(Wizard):
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
-        return HTTPFound(location=self.request.route_url( self.wizard_state.get('source') ))
+        return self.next( self.wizard_state.get('source') )
 
     @view_config(route_name='wizard_source', renderer='templates/wizard/source.pt')
     def choose_source_view(self):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_inputs'))
+            return self.previous()
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
@@ -377,16 +391,12 @@ class CatalogSearch(Wizard):
             self.wizard_state.set('csw_selection', selection)
         return {}
 
-    def next(self):
-        return HTTPFound(location=self.request.route_url('wizard_done'))
-
-
     @view_config(route_name='wizard_csw', renderer='templates/wizard/csw.pt')
     def csw_view(self):
         if 'previous' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_source'))
+            return self.previous()
         elif 'next' in self.request.POST:
-            return self.next()
+            return self.next( 'wizard_done' )
         elif 'cancel' in self.request.POST:
             return self.cancel()
 
@@ -451,14 +461,14 @@ class ESGFSearch(Wizard):
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
-        return HTTPFound(location=self.request.route_url('wizard_esgf_files'))
+        return self.next('wizard_esgf_files')
 
     @view_config(route_name='wizard_esgf', renderer='templates/wizard/esgf.pt')
     def esgf_search_view(self):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_source'))
+            return self.previous()
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
@@ -506,14 +516,14 @@ class ESGFFileSearch(Wizard):
         except ValidationFailure, e:
             logger.exception('validation failed.')
             return dict(title=self.title, description=self.description, form=e.render())
-        return HTTPFound(location=self.request.route_url('wizard_done'))
+        return self.next('wizard_done')
 
     @view_config(route_name='wizard_esgf_files', renderer='templates/wizard/esgf_files.pt')
     def esgf_file_search_view(self):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_esgf'))
+            return self.previous()
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
@@ -556,7 +566,7 @@ class Done(Wizard):
     @view_config(route_name='wizard_done', renderer='templates/wizard/done.pt')
     def done_view(self):
         if 'previous' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_csw'))
+            return self.previous()
         elif 'done' in self.request.POST:
             return self.done()
         elif 'cancel' in self.request.POST:
