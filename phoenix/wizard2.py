@@ -546,8 +546,12 @@ class Done(Wizard):
         identifier = self.wizard_state.get('process_identifier')
         inputs = self.wizard_state.get('literal_inputs').items()
         complex_input = self.wizard_state.get('complex_input_identifier')
-        for url in self.wizard_state.get('csw_selection'):
-            inputs.append( (complex_input, url) )
+        if self.wizard_state.get('source') == 'wizard_csw':
+            for url in self.wizard_state.get('csw_selection'):
+                inputs.append( (complex_input, url) )
+        else:
+            for url in self.wizard_state.get('esgf_files'):
+                inputs.append( (complex_input, url) )
         inputs = [(str(key), str(value)) for key, value in inputs]
         outputs = [("output",True)]
         execution = self.wps.execute(identifier, inputs=inputs, output=outputs)

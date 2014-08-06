@@ -358,7 +358,7 @@ class Jobs:
 
         #job_id = self.request.params.get('job_id', None)
 
-        return [{'job_id': job['uuid'], 'status': job['status'], 'message': job['message'], 'progress': job['progress']} for job in self.update_jobs()]
+        return [{'job_id': job['uuid'], 'status': job['status'], 'message': job['message'], 'status_location': job['status_location'], 'progress': job['progress']} for job in self.update_jobs()]
 
     def update_jobs(self):
         order = self.sort_order()
@@ -378,7 +378,7 @@ class Jobs:
                     job['status'] = execution.status
                     job['progress'] = execution.percentCompleted
                     job['message'] = execution.statusMessage
-                    job['errors'] = [error.message for error in execution.errors]
+                    job['errors'] = ['%s, code=%s, locator=%s' % (error.text, error.code, error.locator) for error in execution.errors]
                 except:
                     msg = 'could not access wps %s' % ( job['status_location'] )
                     logger.exception(msg)
@@ -418,7 +418,7 @@ class Jobs:
         grid = JobsGrid(
                 self.request,
                 items,
-                ['status', 'start_time', 'identifier', 'message', 'progress', 'action'],
+                ['status', 'start_time', 'identifier', 'message', 'status_location', 'progress', 'action'],
             )
 
         return dict(grid=grid, items=items)

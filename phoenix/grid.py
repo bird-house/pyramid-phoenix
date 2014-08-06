@@ -139,6 +139,7 @@ class JobsGrid(MyGrid):
         self.column_formats['start_time'] = self.start_time_td
         self.column_formats['status'] = self.status_td
         self.column_formats['message'] = self.message_td
+        self.column_formats['status_location'] = self.status_location_td
         self.column_formats['progress'] = self.progress_td
         self.column_formats['action'] = self.action_td
         #self.user_tz = u'US/Eastern'
@@ -196,6 +197,12 @@ class JobsGrid(MyGrid):
             class_="",
             id_="message-%s" % item.get('uuid'))
         return HTML.td(span)
+
+    def status_location_td(self, col_num, i, item):
+        anchor = Template("""\
+        <a class="reference" href="${url}"><i class="icon-download"></i></a>
+        """)
+        return HTML.td(HTML.literal(anchor.substitute( {'url': item.get('status_location')} )))
 
     def progress_td(self, col_num, i, item):
         """Generate the column for the job progress.
