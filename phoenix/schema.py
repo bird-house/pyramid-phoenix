@@ -6,7 +6,10 @@ from deform.widget import (
     PasswordWidget,
     TextAreaWidget
     )
-from .widget import TagsWidget
+from .widget import (
+    TagsWidget,
+    EsgSearchWidget
+    )
 
 class CredentialsSchema(colander.MappingSchema):
     """
@@ -140,6 +143,19 @@ class ChooseSourceSchema(colander.MappingSchema):
     source = colander.SchemaNode(
         colander.String(),
         widget = RadioChoiceWidget(values = choices))
+
+def esgsearch_validator(node, value):
+    import json
+    search = json.loads(value)
+    if search.get('hit-count', 0) > 20:
+        raise Invalid(node, 'More than 20 datasets selected: %r.' %  search['hit-count'])
+
+class ESGFSearchSchema(colander.MappingSchema):
+    selection = colander.SchemaNode(
+        colander.String(),
+        validator = esgsearch_validator,
+        title = 'ESGF Search',
+        widget = EsgSearchWidget(url="/esg-search"))
 
 class CatalogSchema(colander.MappingSchema):
     url = colander.SchemaNode(

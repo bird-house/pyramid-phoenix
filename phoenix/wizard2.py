@@ -402,12 +402,10 @@ class ESGFSearch(Wizard):
             request,
             "ESGF Search",
             "")
-        self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
-        self.process = self.wps.describeprocess(self.wizard_state.get('process_identifier'))
 
     def generate_form(self, formid='deform'):
-        from .schema import ChooseInputParamterSchema
-        schema = ChooseInputParamterSchema().bind(process=self.process)
+        from .schema import ESGFSearchSchema
+        schema = ESGFSearchSchema()
         options = """
         {success:
            function (rText, sText, xhr, form) {
@@ -431,7 +429,7 @@ class ESGFSearch(Wizard):
         controls = self.request.POST.items()
         try:
             captured = form.validate(controls)
-            self.wizard_state.set('complex_input_identifier', captured['identifier'])
+            self.wizard_state.set('esgf_selection', captured['selection'])
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
