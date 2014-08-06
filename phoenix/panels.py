@@ -10,22 +10,15 @@ log = logging.getLogger(__name__)
 @panel_config(name='navbar',
               renderer='templates/panels/navbar.pt')
 def navbar(context, request):
-    def nav_item(name, url, icon, dropdowns=[]):
+    def nav_item(name, url, icon):
         active = request.current_route_url() == url
-        return dict(name=name, url=url, active=active, icon=icon, dropdowns=dropdowns)
+        return dict(name=name, url=url, active=active, icon=icon)
 
     nav = []
     if has_permission('edit', request.context, request):
         nav.append( nav_item('Processes', request.route_url('processes'), 'icon-star') )
         nav.append( nav_item('My Jobs', request.route_url('jobs'), 'icon-list') )
-        dropdowns = []
-        dropdowns.append(nav_item('Simple', request.route_url('wizard'), 'icon-star'))
-        dropdowns.append(nav_item('Catalog', request.route_url('wizard_wps'), 'icon-star'))
-        
-        #dropdowns.append(nav_item('QC Full', request.route_url('qc_wizard_check'), 'icon-star'))
-        #dropdowns.append(nav_item('QC YAML', request.route_url('qc_wizard_yaml'), 'icon-star'))
-
-        nav.append( nav_item('Wizard', None, 'icon-star', dropdowns) )
+        nav.append( nav_item('Wizard', request.route_url('wizard_wps'), 'icon-star') )
         nav.append( nav_item('Map', request.route_url('map'), 'icon-globe') )
         nav.append( nav_item('My Account', request.route_url('account'), 'icon-user') )
     if has_permission('admin', request.context, request):
