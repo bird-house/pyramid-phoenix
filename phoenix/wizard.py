@@ -100,13 +100,15 @@ class ChooseWPS(Wizard):
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
-            captured = form.validate(controls)
-            url = captured.get('url', '')
-            self.wizard_state.set('wps_url', url)
+            appstruct = form.validate(controls)
+            self.wizard_state.set('wps_url', appstruct.get('url'))
         except ValidationFailure, e:
             logger.exception('validation of wps view failed.')
             return dict(title=self.title, description=self.description, form=e.render())
         return self.next('wizard_process')
+
+    def appstruct(self):
+        return dict(url=self.wizard_state.get('wps_url'))
 
     @view_config(route_name='wizard_wps', renderer='templates/wizard/default.pt')
     def choose_wps_view(self):
@@ -122,7 +124,7 @@ class ChooseWPS(Wizard):
         return dict(
             title=self.title,
             description=self.description,
-            form=form.render())
+            form=form.render(self.appstruct()))
 
 class ChooseWPSProcess(Wizard):
     def __init__(self, request):
@@ -154,13 +156,15 @@ class ChooseWPSProcess(Wizard):
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
-            captured = form.validate(controls)
-            identifier = captured.get('identifier', '')
-            self.wizard_state.set('process_identifier', identifier)
+            appstruct = form.validate(controls)
+            self.wizard_state.set('process_identifier', appstruct.get('identifier'))
         except ValidationFailure, e:
             logger.exception('validation of process view failed.')
             return dict(title=self.title, description=self.description, form=e.render())
         return self.next('wizard_literal_inputs')
+
+    def appstruct(self):
+        return dict(identifier=self.wizard_state.get('process_identifier'))
 
     @view_config(route_name='wizard_process', renderer='templates/wizard/default.pt')
     def select_process_view(self):
@@ -176,7 +180,7 @@ class ChooseWPSProcess(Wizard):
         return dict(
             title=self.title,
             description=self.description,
-            form=form.render())
+            form=form.render(self.appstruct()))
 
 class LiteralInputs(Wizard):
     def __init__(self, request):
@@ -212,12 +216,15 @@ class LiteralInputs(Wizard):
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
-            captured = form.validate(controls)
-            self.wizard_state.set('literal_inputs', captured)
+            appstruct = form.validate(controls)
+            self.wizard_state.set('literal_inputs', appstruct)
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
         return self.next('wizard_complex_inputs')
+
+    def appstruct(self):
+        return self.wizard_state.get('literal_inputs', {})
 
     @view_config(route_name='wizard_literal_inputs', renderer='templates/wizard/default.pt')
     def literal_inputs_view(self):
@@ -233,7 +240,7 @@ class LiteralInputs(Wizard):
         return dict(
             title=self.title,
             description=self.description,
-            form=form.render())
+            form=form.render(self.appstruct()))
 
 class ComplexInputs(Wizard):
     def __init__(self, request):
@@ -269,12 +276,15 @@ class ComplexInputs(Wizard):
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
-            captured = form.validate(controls)
-            self.wizard_state.set('complex_input_identifier', captured['identifier'])
+            appstruct = form.validate(controls)
+            self.wizard_state.set('complex_input_identifier', appstruct.get('identifier'))
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
         return self.next('wizard_source')
+
+    def appstruct(self):
+        return dict(identifier=self.wizard_state.get('complex_input_identifier'))
 
     @view_config(route_name='wizard_complex_inputs', renderer='templates/wizard/default.pt')
     def complex_parameters_view(self):
@@ -290,7 +300,7 @@ class ComplexInputs(Wizard):
         return dict(
             title=self.title,
             description=self.description,
-            form=form.render())
+            form=form.render(self.appstruct()))
 
 class ChooseSource(Wizard):
     def __init__(self, request):
@@ -324,12 +334,15 @@ class ChooseSource(Wizard):
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
-            captured = form.validate(controls)
-            self.wizard_state.set('source', captured['source'])
+            appstruct = form.validate(controls)
+            self.wizard_state.set('source', appstruct.get('source'))
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
         return self.next( self.wizard_state.get('source') )
+
+    def appstruct(self):
+        return dict(source=self.wizard_state.get('source'))
 
     @view_config(route_name='wizard_source', renderer='templates/wizard/default.pt')
     def choose_source_view(self):
@@ -345,7 +358,7 @@ class ChooseSource(Wizard):
         return dict(
             title=self.title,
             description=self.description,
-            form=form.render())
+            form=form.render(self.appstruct()))
     
 class CatalogSearch(Wizard):
     def __init__(self, request):
@@ -390,6 +403,9 @@ class CatalogSearch(Wizard):
                 selection.append(identifier)
             self.wizard_state.set('csw_selection', selection)
         return {}
+
+    def appstruct(self):
+        return dict(csw_selection=self.wizard_state.get('csw_selection'))
 
     @view_config(route_name='wizard_csw', renderer='templates/wizard/csw.pt')
     def csw_view(self):
@@ -456,12 +472,16 @@ class ESGFSearch(Wizard):
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
-            captured = form.validate(controls)
-            self.wizard_state.set('esgf_selection', captured['selection'])
+            appstruct = form.validate(controls)
+            logger.debug("esgf selection = %s", appstruct)
+            self.wizard_state.set('esgf_selection', appstruct.get('selection'))
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
         return self.next('wizard_esgf_files')
+
+    def appstruct(self):
+        return dict(selection=self.wizard_state.get('esgf_selection', {}))
 
     @view_config(route_name='wizard_esgf', renderer='templates/wizard/esgf.pt')
     def esgf_search_view(self):
@@ -477,7 +497,7 @@ class ESGFSearch(Wizard):
         return dict(
             title=self.title,
             description=self.description,
-            form=form.render())
+            form=form.render(self.appstruct()))
 
 class ESGFFileSearch(Wizard):
     def __init__(self, request):
@@ -511,12 +531,15 @@ class ESGFFileSearch(Wizard):
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
-            captured = form.validate(controls)
-            self.wizard_state.set('esgf_files', captured['url'])
+            appstruct = form.validate(controls)
+            self.wizard_state.set('esgf_files', appstruct.get('url'))
         except ValidationFailure, e:
             logger.exception('validation failed.')
             return dict(title=self.title, description=self.description, form=e.render())
         return self.next('wizard_done')
+
+    def appstruct(self):
+        return dict(url=self.wizard_state.get('esgf_files'))
 
     @view_config(route_name='wizard_esgf_files', renderer='templates/wizard/esgf.pt')
     def esgf_file_search_view(self):
@@ -532,7 +555,7 @@ class ESGFFileSearch(Wizard):
         return dict(
             title=self.title,
             description=self.description,
-            form=form.render())
+            form=form.render(self.appstruct()))
 
 class Done(Wizard):
     def __init__(self, request):
