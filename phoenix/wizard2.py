@@ -542,35 +542,53 @@ class Done(Wizard):
             "Check Parameters and start WPS Process")
         self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
 
+    def convert_states_to_nodes(self):
+        userdb = models.User(self.request)
+        credentials = userdb.credentials(authenticated_userid(self.request))
+
+        source = dict(
+            service = self.request.wps.url,
+            identifier = 'esgf_wget',
+            input = ['credentials=%s' % (credentials)],
+            output = ['output'],
+            sources = [str(file_url) for file_url in self.wizard_state.get('esgf_files')])
+        worker_inputs = map(lambda x: str(x[0]) + '=' + str(x[1]),  self.wizard_state.get('literal_inputs').items())
+        worker = dict(
+            service = self.wps.url,
+            identifier = self.wizard_state.get('process_identifier'),
+            input = worker_inputs,
+            output = ['output'])
+        nodes = dict(source=source, worker=worker)
+        return nodes
+
     def done(self):
         identifier = self.wizard_state.get('process_identifier')
         inputs = self.wizard_state.get('literal_inputs').items()
         complex_input = self.wizard_state.get('complex_input_identifier')
+        notes = self.wizard_state.get('literal_inputs')['info_notes']
+        tags = self.wizard_state.get('literal_inputs')['info_tags']
+
+        execution = None
         if self.wizard_state.get('source') == 'wizard_csw':
             for url in self.wizard_state.get('csw_selection'):
                 inputs.append( (complex_input, url) )
+            inputs = [(str(key), str(value)) for key, value in inputs]
+            outputs = [("output",True)]
+            execution = self.wps.execute(identifier, inputs=inputs, output=outputs)
         else:
-            for file_url in self.wizard_state.get('esgf_files'):
-                userdb = models.User(self.request)
-                cert_url = userdb.credentials(authenticated_userid(self.request))
+            nodes = self.convert_states_to_nodes()
+            from .wps import execute_restflow
+            execution = execute_restflow(self.request.wps, nodes)
 
-                from .utils import wps_wget_url
-                wps_chain_url = wps_wget_url(self.request.wps.url, cert_url, file_url)
-                inputs.append( (complex_input, wps_chain_url) )
-        inputs = [(str(key), str(value)) for key, value in inputs]
-        logger.debug('inputs = %s', inputs)
-        outputs = [("output",True)]
-        execution = self.wps.execute(identifier, inputs=inputs, output=outputs)
-        
         models.add_job(
             request = self.request,
             user_id = authenticated_userid(self.request), 
             identifier = identifier,
             wps_url = self.wps.url,
             execution = execution,
-            notes = self.wizard_state.get('literal_inputs')['info_notes'],
-            tags = self.wizard_state.get('literal_inputs')['info_tags'])
-         
+            notes = notes,
+            tags = tags)
+                
         return HTTPFound(location=self.request.route_url('jobs'))
 
     @view_config(route_name='wizard_done', renderer='templates/wizard/done.pt')
