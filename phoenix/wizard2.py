@@ -433,7 +433,7 @@ class ESGFSearch(Wizard):
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
-        return HTTPFound(location=self.request.route_url('wizard_done'))
+        return HTTPFound(location=self.request.route_url('wizard_esgf_files'))
 
     @view_config(route_name='wizard_esgf', renderer='templates/wizard/esgf.pt')
     def esgf_search_view(self):
@@ -445,6 +445,61 @@ class ESGFSearch(Wizard):
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
             return HTTPFound(location=self.request.route_url('wizard_esgf'))
+
+        return dict(
+            title=self.title,
+            description=self.description,
+            form=form.render())
+
+class ESGFFileSearch(Wizard):
+    def __init__(self, request):
+        super(ESGFFileSearch, self).__init__(
+            request,
+            "ESGF File Search",
+            "")
+
+    def generate_form(self, formid='deform'):
+        from .schema import ESGFFilesSchema
+        schema = ESGFFilesSchema().bind(selection=self.wizard_state.get('esgf_selection'))
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return Form(
+            schema,
+            buttons=('previous', 'next', 'cancel'),
+            formid=formid,
+            use_ajax=True,
+            ajax_options=options,
+            )
+    def process_form(self, form):
+        controls = self.request.POST.items()
+        try:
+            captured = form.validate(controls)
+            self.wizard_state.set('esgf_files', captured['url'])
+        except ValidationFailure, e:
+            logger.exception('validation failed.')
+            return dict(title=self.title, description=self.description, form=e.render())
+        return HTTPFound(location=self.request.route_url('wizard_done'))
+
+    @view_config(route_name='wizard_esgf_files', renderer='templates/wizard/esgf_files.pt')
+    def esgf_file_search_view(self):
+        form = self.generate_form()
+        
+        if 'previous' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_esgf'))
+        elif 'next' in self.request.POST:
+            return self.process_form(form)
+        elif 'cancel' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_esgf_files'))
 
         return dict(
             title=self.title,

@@ -8,7 +8,8 @@ from deform.widget import (
     )
 from .widget import (
     TagsWidget,
-    EsgSearchWidget
+    EsgSearchWidget,
+    EsgFilesWidget
     )
 
 class CredentialsSchema(colander.MappingSchema):
@@ -156,6 +157,18 @@ class ESGFSearchSchema(colander.MappingSchema):
         validator = esgsearch_validator,
         title = 'ESGF Search',
         widget = EsgSearchWidget(url="/esg-search"))
+
+@colander.deferred
+def deferred_esgf_files_widget(node, kw):
+    import json
+    selection = kw.get('selection', {})
+    search = json.loads(selection)
+    return EsgFilesWidget(url="/esg-search", search_type='File', search=search)
+class ESGFFilesSchema(colander.MappingSchema):
+    url = colander.SchemaNode(
+        colander.Set(),
+        description = 'URL',
+        widget = deferred_esgf_files_widget)
 
 class CatalogSchema(colander.MappingSchema):
     url = colander.SchemaNode(

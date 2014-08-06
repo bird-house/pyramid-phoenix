@@ -96,7 +96,7 @@ def main(global_config, **settings):
     config.add_route('login_local', '/login/local')
     config.add_route('register', '/register')
 
-    # wizard2
+    # wizard
     config.add_route('wizard_wps', '/wizard/wps')
     config.add_route('wizard_process', '/wizard/process')
     config.add_route('wizard_parameters', '/wizard/parameters')
@@ -104,6 +104,7 @@ def main(global_config, **settings):
     config.add_route('wizard_source', '/wizard/source')
     config.add_route('wizard_csw', '/wizard/csw')
     config.add_route('wizard_esgf', '/wizard/esgf')
+    config.add_route('wizard_esgf_files', '/wizard/esgf_files')
     config.add_route('wizard_done', '/wizard/done')
 
     # A quick access to the login button
