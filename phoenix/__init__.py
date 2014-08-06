@@ -100,6 +100,7 @@ def main(global_config, **settings):
     config.add_route('wizard_wps', '/wizard/wps')
     config.add_route('wizard_process', '/wizard/process')
     config.add_route('wizard_parameters', '/wizard/parameters')
+    config.add_route('wizard_inputs', '/wizard/inputs')
     config.add_route('wizard_csw', '/wizard/csw')
     config.add_route('wizard_done', '/wizard/done')
 

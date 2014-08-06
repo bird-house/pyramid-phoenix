@@ -116,6 +116,21 @@ class SelectProcessSchema(colander.MappingSchema):
         colander.String(),
         widget = deferred_choose_process_widget)
 
+@colander.deferred
+def deferred_choose_input_parameter_widget(node, kw):
+    process = kw.get('process', [])
+
+    choices = []
+    for dataInput in process.dataInputs:
+        if dataInput.dataType == 'ComplexData':
+            choices.append( (dataInput.identifier, dataInput.title) )
+    return RadioChoiceWidget(values = choices)
+
+class ChooseInputParamterSchema(colander.MappingSchema):
+    identifier = colander.SchemaNode(
+        colander.String(),
+        widget = deferred_choose_input_parameter_widget)
+
 class CatalogSchema(colander.MappingSchema):
     url = colander.SchemaNode(
         colander.String(),

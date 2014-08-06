@@ -131,13 +131,12 @@ class SelectProcess(Wizard):
             description=self.description,
             form=form.render())
 
-class ProcessParameters(Wizard):
+class LiteralInputs(Wizard):
     def __init__(self, request):
-        super(ProcessParameters, self).__init__(
+        super(LiteralInputs, self).__init__(
             request,
-            "Process Parameters",
+            "Literal Inputs",
             "")
-        logger.debug(self.session.items())
         self.wps = WebProcessingService(self.session['wizard_wps_url'])
         self.process = self.wps.describeprocess(self.session['wizard_process_identifier'])
 
@@ -172,10 +171,10 @@ class ProcessParameters(Wizard):
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
-        return HTTPFound(location=self.request.route_url('wizard_csw'))
+        return HTTPFound(location=self.request.route_url('wizard_inputs'))
 
     @view_config(route_name='wizard_parameters', renderer='templates/wizard/parameters.pt')
-    def process_paramters_view(self):
+    def process_parameters_view(self):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
@@ -184,6 +183,64 @@ class ProcessParameters(Wizard):
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
             return HTTPFound(location=self.request.route_url('wizard_parameters'))
+
+        return dict(
+            title=self.title,
+            description=self.description,
+            form=form.render())
+
+class ComplexInputs(Wizard):
+    def __init__(self, request):
+        super(ComplexInputs, self).__init__(
+            request,
+            "Choose Complex Input",
+            "")
+        self.wps = WebProcessingService(self.session['wizard_wps_url'])
+        self.process = self.wps.describeprocess(self.session['wizard_process_identifier'])
+
+    def generate_form(self, formid='deform'):
+        from .schema import ChooseInputParamterSchema
+        schema = ChooseInputParamterSchema().bind(process=self.process)
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return Form(
+            schema,
+            buttons=('previous', 'next', 'cancel'),
+            formid=formid,
+            use_ajax=True,
+            ajax_options=options,
+            )
+    def process_form(self, form):
+        controls = self.request.POST.items()
+        try:
+            captured = form.validate(controls)
+            self.session['wizard_complex_input'] = captured['identifier']
+            self.session.changed()
+        except ValidationFailure, e:
+            logger.exception('validation of process parameter failed.')
+            return dict(title=self.title, description=self.description, form=e.render())
+        return HTTPFound(location=self.request.route_url('wizard_csw'))
+
+    @view_config(route_name='wizard_inputs', renderer='templates/wizard/inputs.pt')
+    def complex_parameters_view(self):
+        form = self.generate_form()
+        
+        if 'previous' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_parameters'))
+        elif 'next' in self.request.POST:
+            return self.process_form(form)
+        elif 'cancel' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_inputs'))
 
         return dict(
             title=self.title,
@@ -283,8 +340,9 @@ class Done(Wizard):
     def done(self):
         identifier = self.session['wizard_process_identifier']
         inputs = self.session['wizard_process_parameters'].items()
+        complex_input = self.session['wizard_complex_input']
         for url in self.session['wizard_csw_selection']:
-            inputs.append( ('file_identifier', url) )
+            inputs.append( (complex_input, url) )
         inputs = [(str(key), str(value)) for key,value in inputs]
         outputs = [("output",True)]
         execution = self.wps.execute(identifier, inputs=inputs, output=outputs)
