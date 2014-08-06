@@ -22,13 +22,13 @@ class Wizard(object):
         self.csw = self.request.csw
         self.catalogdb = models.Catalog(self.request)
 
-class SelectWPS(Wizard):
+class ChooseWPS(Wizard):
     def __init__(self, request):
-        super(SelectWPS, self).__init__(request, 'Select WPS')
+        super(ChooseWPS, self).__init__(request, 'Choose WPS')
 
     def generate_form(self, formid='deform'):
-        from .schema import SelectWPSSchema
-        schema = SelectWPSSchema().bind(wps_list = self.catalogdb.all_as_tuple())
+        from .schema import ChooseWPSSchema
+        schema = ChooseWPSSchema().bind(wps_list = self.catalogdb.all_as_tuple())
         options = """
         {success:
            function (rText, sText, xhr, form) {
@@ -61,7 +61,7 @@ class SelectWPS(Wizard):
         return HTTPFound(location=self.request.route_url('wizard_process'))
 
     @view_config(route_name='wizard_wps', renderer='templates/wizard/wps.pt')
-    def select_wps_view(self):
+    def choose_wps_view(self):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:

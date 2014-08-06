@@ -200,8 +200,8 @@ class Processes:
         return dict(order=order, order_dir=order_dir)
     
     def generate_form(self, formid='deform'):
-        from .schema import SelectWPSSchema
-        schema = SelectWPSSchema().bind(
+        from .schema import ChooseWPSSchema
+        schema = ChooseWPSSchema().bind(
             wps_list = self.catalogdb.all_as_tuple())
         options = """
         {success:

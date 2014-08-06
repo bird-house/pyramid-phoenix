@@ -481,8 +481,8 @@ class Done():
 def wizard(request):
     schemas = []
     catalogdb = models.Catalog(request)
-    from schema import SelectWPSSchema
-    schemas.append( SelectWPSSchema(title="Select WPS").bind(wps_list=catalogdb.all_as_tuple()))
+    from schema import ChooseWPSSchema
+    schemas.append( ChooseWPSSchema(title="Choose WPS").bind(wps_list=catalogdb.all_as_tuple()))
     schemas.append( SelectProcessSchema(title='Select Process') )
     schemas.append( WPSSchema(
         info=True,
