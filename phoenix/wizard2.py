@@ -77,7 +77,7 @@ class ChooseWPS(Wizard):
 
     def generate_form(self, formid='deform'):
         from .schema import ChooseWPSSchema
-        schema = ChooseWPSSchema().bind(wps_list = self.catalogdb.all_as_tuple())
+        schema = ChooseWPSSchema().bind(wps_list = self.catalogdb.all())
         options = """
         {success:
            function (rText, sText, xhr, form) {
@@ -553,6 +553,7 @@ class Done(Wizard):
             for url in self.wizard_state.get('esgf_files'):
                 inputs.append( (complex_input, url) )
         inputs = [(str(key), str(value)) for key, value in inputs]
+        logger.debug('inputs = %s', inputs)
         outputs = [("output",True)]
         execution = self.wps.execute(identifier, inputs=inputs, output=outputs)
         

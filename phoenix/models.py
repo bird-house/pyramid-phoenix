@@ -79,10 +79,7 @@ class Catalog():
         return entry
 
     def all(self):
-        return self.db.catalog.find(dict(format='WPS'))
-
-    def all_as_tuple(self):
-        return map(lambda entry: (entry['url'], '%s (%s)' % (entry.get('title', 'unknown'), entry.get('notes', ''))), self.all())
+        return self.db.catalog.find()
 
 
 class User():

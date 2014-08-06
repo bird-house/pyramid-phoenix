@@ -202,7 +202,7 @@ class Processes:
     def generate_form(self, formid='deform'):
         from .schema import ChooseWPSSchema
         schema = ChooseWPSSchema().bind(
-            wps_list = self.catalogdb.all_as_tuple())
+            wps_list = self.catalogdb.all())
         options = """
         {success:
            function (rText, sText, xhr, form) {

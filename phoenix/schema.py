@@ -12,6 +12,9 @@ from .widget import (
     EsgFilesWidget
     )
 
+import logging
+logger = logging.getLogger(__name__)
+
 class CredentialsSchema(colander.MappingSchema):
     """
     ESGF user credentials schema
@@ -100,7 +103,12 @@ class AccountSchema(colander.MappingSchema):
 @colander.deferred
 def deferred_wps_list_widget(node, kw):
     wps_list = kw.get('wps_list', [])
-    return RadioChoiceWidget(values=wps_list)
+    logger.debug('wps_list %s', wps_list)
+    choices = []
+    for wps in wps_list:
+        title = "%s (%s)" % (wps.get('title'), wps.get('notes'))
+        choices.append((wps.get('url'), title))
+    return RadioChoiceWidget(values = choices)
 
 class ChooseWPSSchema(colander.MappingSchema):
     url = colander.SchemaNode(
@@ -116,7 +124,8 @@ def deferred_choose_process_widget(node, kw):
 
     choices = []
     for process in processes:
-        choices.append( (process.identifier, process.title) )
+        title = "%s [%s]" % (process.title, process.identifier)
+        choices.append( (process.identifier, title) )
     return RadioChoiceWidget(values = choices)
 
 class SelectProcessSchema(colander.MappingSchema):
