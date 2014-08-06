@@ -13,10 +13,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 class WizardState(object):
-    def __init__(self, session):
+    def __init__(self, session, initial_step):
         self.session = session
         if not 'wizard_state' in self.session:
             self.session['wizard_state'] = {}
+        self.initial_step = initial_step
+        self.current_step = initial_step
+        self.previous_step = initial_step
 
     def get(self, key, default=None):
         if not key in self.session['wizard_state']:
@@ -28,6 +31,17 @@ class WizardState(object):
         self.session['wizard_state'][key] = value
         self.session.changed()
 
+    def clear(self):
+        self.session['wizard_state'] = {}
+        self.session.changed()
+        
+        self.current_step = self.initial_step
+        self.previous_step = self.initial_step
+
+    def next_step(self, step):
+        self.previous_step = self.current_step
+        self.current_step = step
+
 @view_defaults(permission='view', layout='default')
 class Wizard(object):
     def __init__(self, request, title, description=''):
@@ -37,7 +51,11 @@ class Wizard(object):
         self.session = self.request.session
         self.csw = self.request.csw
         self.catalogdb = models.Catalog(self.request)
-        self.wizard_state = WizardState(self.session)
+        self.wizard_state = WizardState(self.session, 'wizard_wps')
+
+    def cancel(self):
+        self.wizard_state.clear()
+        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step))
 
 class ChooseWPS(Wizard):
     def __init__(self, request):
@@ -85,7 +103,7 @@ class ChooseWPS(Wizard):
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_wps'))
+            return self.cancel()
 
         return dict(
             title=self.title,
@@ -139,7 +157,7 @@ class ChooseWPSProcess(Wizard):
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_process'))
+            return self.cancel()
 
         return dict(
             title=self.title,
@@ -196,7 +214,7 @@ class LiteralInputs(Wizard):
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_parameters'))
+            return self.cancel()
 
         return dict(
             title=self.title,
@@ -253,7 +271,7 @@ class ComplexInputs(Wizard):
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_inputs'))
+            return self.cancel()
 
         return dict(
             title=self.title,
@@ -308,7 +326,7 @@ class ChooseSource(Wizard):
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_source'))
+            return self.cancel()
 
         return dict(
             title=self.title,
@@ -370,7 +388,7 @@ class CatalogSearch(Wizard):
         elif 'next' in self.request.POST:
             return self.next()
         elif 'cancel' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_csw'))
+            return self.cancel()
 
         query = self.request.params.get('query', None)
         checkbox = self.request.params.get('checkbox', None)
@@ -444,7 +462,7 @@ class ESGFSearch(Wizard):
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_esgf'))
+            return self.cancel()
 
         return dict(
             title=self.title,
@@ -499,7 +517,7 @@ class ESGFFileSearch(Wizard):
         elif 'next' in self.request.POST:
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_esgf_files'))
+            return self.cancel()
 
         return dict(
             title=self.title,
@@ -542,7 +560,7 @@ class Done(Wizard):
         elif 'done' in self.request.POST:
             return self.done()
         elif 'cancel' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_summary'))
+            return self.cancel()
 
         return dict(
             title=self.title, 
