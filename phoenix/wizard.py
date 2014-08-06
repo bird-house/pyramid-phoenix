@@ -108,7 +108,7 @@ class ChooseWPS(Wizard):
             return dict(title=self.title, description=self.description, form=e.render())
         return self.next('wizard_process')
 
-    @view_config(route_name='wizard_wps', renderer='templates/wizard/wps.pt')
+    @view_config(route_name='wizard_wps', renderer='templates/wizard/default.pt')
     def choose_wps_view(self):
         form = self.generate_form()
         
@@ -162,7 +162,7 @@ class ChooseWPSProcess(Wizard):
             return dict(title=self.title, description=self.description, form=e.render())
         return self.next('wizard_literal_inputs')
 
-    @view_config(route_name='wizard_process', renderer='templates/wizard/process.pt')
+    @view_config(route_name='wizard_process', renderer='templates/wizard/default.pt')
     def select_process_view(self):
         form = self.generate_form()
         
@@ -219,7 +219,7 @@ class LiteralInputs(Wizard):
             return dict(title=self.title, description=self.description, form=e.render())
         return self.next('wizard_complex_inputs')
 
-    @view_config(route_name='wizard_literal_inputs', renderer='templates/wizard/literal_inputs.pt')
+    @view_config(route_name='wizard_literal_inputs', renderer='templates/wizard/default.pt')
     def literal_inputs_view(self):
         form = self.generate_form()
         
@@ -276,7 +276,7 @@ class ComplexInputs(Wizard):
             return dict(title=self.title, description=self.description, form=e.render())
         return self.next('wizard_source')
 
-    @view_config(route_name='wizard_complex_inputs', renderer='templates/wizard/complex_inputs.pt')
+    @view_config(route_name='wizard_complex_inputs', renderer='templates/wizard/default.pt')
     def complex_parameters_view(self):
         form = self.generate_form()
         
@@ -331,7 +331,7 @@ class ChooseSource(Wizard):
             return dict(title=self.title, description=self.description, form=e.render())
         return self.next( self.wizard_state.get('source') )
 
-    @view_config(route_name='wizard_source', renderer='templates/wizard/source.pt')
+    @view_config(route_name='wizard_source', renderer='templates/wizard/default.pt')
     def choose_source_view(self):
         form = self.generate_form()
         
@@ -518,7 +518,7 @@ class ESGFFileSearch(Wizard):
             return dict(title=self.title, description=self.description, form=e.render())
         return self.next('wizard_done')
 
-    @view_config(route_name='wizard_esgf_files', renderer='templates/wizard/esgf_files.pt')
+    @view_config(route_name='wizard_esgf_files', renderer='templates/wizard/esgf.pt')
     def esgf_file_search_view(self):
         form = self.generate_form()
         
