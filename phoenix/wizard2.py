@@ -188,7 +188,7 @@ class LiteralInputs(Wizard):
         return HTTPFound(location=self.request.route_url('wizard_inputs'))
 
     @view_config(route_name='wizard_parameters', renderer='templates/wizard/parameters.pt')
-    def process_parameters_view(self):
+    def literal_inputs_view(self):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
@@ -242,7 +242,7 @@ class ComplexInputs(Wizard):
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
-        return HTTPFound(location=self.request.route_url('wizard_csw'))
+        return HTTPFound(location=self.request.route_url('wizard_source'))
 
     @view_config(route_name='wizard_inputs', renderer='templates/wizard/inputs.pt')
     def complex_parameters_view(self):
@@ -254,6 +254,61 @@ class ComplexInputs(Wizard):
             return self.process_form(form)
         elif 'cancel' in self.request.POST:
             return HTTPFound(location=self.request.route_url('wizard_inputs'))
+
+        return dict(
+            title=self.title,
+            description=self.description,
+            form=form.render())
+
+class ChooseSource(Wizard):
+    def __init__(self, request):
+        super(ChooseSource, self).__init__(
+            request,
+            "Choose Source",
+            "")
+
+    def generate_form(self, formid='deform'):
+        from .schema import ChooseSourceSchema
+        schema = ChooseSourceSchema()
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return Form(
+            schema,
+            buttons=('previous', 'next', 'cancel'),
+            formid=formid,
+            use_ajax=True,
+            ajax_options=options,
+            )
+    def process_form(self, form):
+        controls = self.request.POST.items()
+        try:
+            captured = form.validate(controls)
+            self.wizard_state.set('source', captured['source'])
+        except ValidationFailure, e:
+            logger.exception('validation of process parameter failed.')
+            return dict(title=self.title, description=self.description, form=e.render())
+        return HTTPFound(location=self.request.route_url( self.wizard_state.get('source') ))
+
+    @view_config(route_name='wizard_source', renderer='templates/wizard/source.pt')
+    def choose_source_view(self):
+        form = self.generate_form()
+        
+        if 'previous' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_inputs'))
+        elif 'next' in self.request.POST:
+            return self.process_form(form)
+        elif 'cancel' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_source'))
 
         return dict(
             title=self.title,
@@ -311,7 +366,7 @@ class CatalogSearch(Wizard):
     @view_config(route_name='wizard_csw', renderer='templates/wizard/csw.pt')
     def csw_view(self):
         if 'previous' in self.request.POST:
-            return HTTPFound(location=self.request.route_url('wizard_parameters'))
+            return HTTPFound(location=self.request.route_url('wizard_source'))
         elif 'next' in self.request.POST:
             return self.next()
         elif 'cancel' in self.request.POST:
@@ -340,6 +395,63 @@ class CatalogSearch(Wizard):
             grid=grid,
             items=items,
         )
+
+class ESGFSearch(Wizard):
+    def __init__(self, request):
+        super(ESGFSearch, self).__init__(
+            request,
+            "ESGF Search",
+            "")
+        self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
+        self.process = self.wps.describeprocess(self.wizard_state.get('process_identifier'))
+
+    def generate_form(self, formid='deform'):
+        from .schema import ChooseInputParamterSchema
+        schema = ChooseInputParamterSchema().bind(process=self.process)
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return Form(
+            schema,
+            buttons=('previous', 'next', 'cancel'),
+            formid=formid,
+            use_ajax=True,
+            ajax_options=options,
+            )
+    def process_form(self, form):
+        controls = self.request.POST.items()
+        try:
+            captured = form.validate(controls)
+            self.wizard_state.set('complex_input_identifier', captured['identifier'])
+        except ValidationFailure, e:
+            logger.exception('validation of process parameter failed.')
+            return dict(title=self.title, description=self.description, form=e.render())
+        return HTTPFound(location=self.request.route_url('wizard_done'))
+
+    @view_config(route_name='wizard_esgf', renderer='templates/wizard/esgf.pt')
+    def esgf_search_view(self):
+        form = self.generate_form()
+        
+        if 'previous' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_source'))
+        elif 'next' in self.request.POST:
+            return self.process_form(form)
+        elif 'cancel' in self.request.POST:
+            return HTTPFound(location=self.request.route_url('wizard_esgf'))
+
+        return dict(
+            title=self.title,
+            description=self.description,
+            form=form.render())
 
 class Done(Wizard):
     def __init__(self, request):

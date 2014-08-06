@@ -1,7 +1,11 @@
 import colander
-import deform
 
-from deform.widget import RadioChoiceWidget
+from deform.widget import (
+    RadioChoiceWidget,
+    TextInputWidget,
+    PasswordWidget,
+    TextAreaWidget
+    )
 from .widget import TagsWidget
 
 class CredentialsSchema(colander.MappingSchema):
@@ -15,7 +19,7 @@ class CredentialsSchema(colander.MappingSchema):
         validator = colander.url,
         missing = '',
         default = '',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget = TextInputWidget(template='readonly/textinput'),
         )
     password = colander.SchemaNode(
         colander.String(),
@@ -23,7 +27,7 @@ class CredentialsSchema(colander.MappingSchema):
         description = 'Password for this OpenID',
         missing = '',
         default = '',
-        widget = deform.widget.PasswordWidget(size=20))
+        widget = PasswordWidget(size=20))
 
 class AccountSchema(colander.MappingSchema):
     """
@@ -42,7 +46,7 @@ class AccountSchema(colander.MappingSchema):
         description = "eMail used for login",
         validator = colander.Email(),
         missing = '',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget = TextInputWidget(template='readonly/textinput'),
         )
     openid = colander.SchemaNode(
         colander.String(),
@@ -71,7 +75,7 @@ class AccountSchema(colander.MappingSchema):
         title = "Token",
         description = "Access Token",
         missing = '',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget = TextInputWidget(template='readonly/textinput'),
         )
     credentials = colander.SchemaNode(
         colander.String(),
@@ -79,20 +83,20 @@ class AccountSchema(colander.MappingSchema):
         description = "URL to ESGF Proxy Certificate",
         validator = colander.url,
         missing = '',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget = TextInputWidget(template='readonly/textinput'),
         )
     cert_expires = colander.SchemaNode(
         colander.String(),
         title = "Expires",
         description = "When your Proxy Certificate expires",
         missing = '',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget = TextInputWidget(template='readonly/textinput'),
         )
 
 @colander.deferred
 def deferred_wps_list_widget(node, kw):
     wps_list = kw.get('wps_list', [])
-    return deform.widget.RadioChoiceWidget(values=wps_list)
+    return RadioChoiceWidget(values=wps_list)
 
 class ChooseWPSSchema(colander.MappingSchema):
     url = colander.SchemaNode(
@@ -131,6 +135,12 @@ class ChooseInputParamterSchema(colander.MappingSchema):
         colander.String(),
         widget = deferred_choose_input_parameter_widget)
 
+class ChooseSourceSchema(colander.MappingSchema):
+    choices = [('wizard_csw', "CSW Catalog Search"), ('wizard_esgf', "ESGF Source")]
+    source = colander.SchemaNode(
+        colander.String(),
+        widget = RadioChoiceWidget(values = choices))
+
 class CatalogSchema(colander.MappingSchema):
     url = colander.SchemaNode(
         colander.String(),
@@ -139,7 +149,7 @@ class CatalogSchema(colander.MappingSchema):
         missing = '',
         default = '',
         validator = colander.url,
-        widget = deform.widget.TextInputWidget())
+        widget = TextInputWidget())
 
     notes = colander.SchemaNode(
         colander.String(),
@@ -147,34 +157,33 @@ class CatalogSchema(colander.MappingSchema):
         description = 'Add some notes for this WPS',
         missing = '',
         default = '',
-        widget = deform.widget.TextInputWidget())
-
+        widget = TextInputWidget())
 
 class PublishSchema(colander.MappingSchema):
     title = colander.SchemaNode(
         colander.String(),
-        widget=deform.widget.TextInputWidget(),
+        widget = TextInputWidget(),
         )
     abstract = colander.SchemaNode(
         colander.String(),
         missing = '',
         default = '',
         validator = colander.Length(max=150),
-        widget = deform.widget.TextAreaWidget(rows=2, cols=80),
+        widget = TextAreaWidget(rows=2, cols=80),
         )
     creator = colander.SchemaNode(
         colander.String(),
         validator = colander.Email(),
-        widget=deform.widget.TextInputWidget(),
+        widget = TextInputWidget(),
         )
     url = colander.SchemaNode(
         colander.String(),
         title = 'URL',
         validator = colander.url,
-        widget = deform.widget.TextInputWidget())
+        widget = TextInputWidget())
     mime_type = colander.SchemaNode(
         colander.String(),
-        widget=deform.widget.TextInputWidget(),
+        widget = TextInputWidget(),
         )
     keywords = colander.SchemaNode(
         colander.String(),
@@ -193,7 +202,7 @@ class UserSchema(colander.MappingSchema):
         colander.String(),
         title = "eMail",
         validator = colander.Email(),
-        widget=deform.widget.TextInputWidget(),
+        widget = TextInputWidget(),
         )
     openid = colander.SchemaNode(
         colander.String(),
