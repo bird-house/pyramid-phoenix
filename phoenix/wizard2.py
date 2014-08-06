@@ -12,6 +12,22 @@ import models
 import logging
 logger = logging.getLogger(__name__)
 
+class WizardState(object):
+    def __init__(self, session):
+        self.session = session
+        if not 'wizard_state' in self.session:
+            self.session['wizard_state'] = {}
+
+    def get(self, key, default=None):
+        if not key in self.session['wizard_state']:
+            self.session['wizard_state'][key] = default
+            self.session.changed()
+        return self.session['wizard_state'].get(key)
+
+    def set(self, key, value):
+        self.session['wizard_state'][key] = value
+        self.session.changed()
+
 @view_defaults(permission='view', layout='default')
 class Wizard(object):
     def __init__(self, request, title, description=''):
@@ -21,6 +37,7 @@ class Wizard(object):
         self.session = self.request.session
         self.csw = self.request.csw
         self.catalogdb = models.Catalog(self.request)
+        self.wizard_state = WizardState(self.session)
 
 class ChooseWPS(Wizard):
     def __init__(self, request):
@@ -53,8 +70,7 @@ class ChooseWPS(Wizard):
         try:
             captured = form.validate(controls)
             url = captured.get('url', '')
-            self.session['wizard_wps_url'] = url
-            self.session.changed()
+            self.wizard_state.set('wps_url', url)
         except ValidationFailure, e:
             logger.exception('validation of wps view failed.')
             return dict(title=self.title, description=self.description, form=e.render())
@@ -76,10 +92,10 @@ class ChooseWPS(Wizard):
             description=self.description,
             form=form.render())
 
-class SelectProcess(Wizard):
+class ChooseWPSProcess(Wizard):
     def __init__(self, request):
-        super(SelectProcess, self).__init__(request, 'Select WPS Process')
-        self.wps = WebProcessingService(self.session['wizard_wps_url'])
+        super(ChooseWPSProcess, self).__init__(request, 'Choose WPS Process')
+        self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
 
     def generate_form(self, formid='deform'):
         from .schema import SelectProcessSchema
@@ -108,8 +124,7 @@ class SelectProcess(Wizard):
         try:
             captured = form.validate(controls)
             identifier = captured.get('identifier', '')
-            self.session['wizard_process_identifier'] = identifier
-            self.session.changed()
+            self.wizard_state.set('process_identifier', identifier)
         except ValidationFailure, e:
             logger.exception('validation of process view failed.')
             return dict(title=self.title, description=self.description, form=e.render())
@@ -137,8 +152,8 @@ class LiteralInputs(Wizard):
             request,
             "Literal Inputs",
             "")
-        self.wps = WebProcessingService(self.session['wizard_wps_url'])
-        self.process = self.wps.describeprocess(self.session['wizard_process_identifier'])
+        self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
+        self.process = self.wps.describeprocess(self.wizard_state.get('process_identifier'))
 
     def generate_form(self, formid='deform'):
         from .wps import WPSSchema
@@ -166,8 +181,7 @@ class LiteralInputs(Wizard):
         controls = self.request.POST.items()
         try:
             captured = form.validate(controls)
-            self.session['wizard_process_parameters'] = captured
-            self.session.changed()
+            self.wizard_state.set('literal_inputs', captured)
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
@@ -193,10 +207,10 @@ class ComplexInputs(Wizard):
     def __init__(self, request):
         super(ComplexInputs, self).__init__(
             request,
-            "Choose Complex Input",
+            "Choose Complex Input Parameter",
             "")
-        self.wps = WebProcessingService(self.session['wizard_wps_url'])
-        self.process = self.wps.describeprocess(self.session['wizard_process_identifier'])
+        self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
+        self.process = self.wps.describeprocess(self.wizard_state.get('process_identifier'))
 
     def generate_form(self, formid='deform'):
         from .schema import ChooseInputParamterSchema
@@ -224,8 +238,7 @@ class ComplexInputs(Wizard):
         controls = self.request.POST.items()
         try:
             captured = form.validate(controls)
-            self.session['wizard_complex_input'] = captured['identifier']
-            self.session.changed()
+            self.wizard_state.set('complex_input_identifier', captured['identifier'])
         except ValidationFailure, e:
             logger.exception('validation of process parameter failed.')
             return dict(title=self.title, description=self.description, form=e.render())
@@ -283,13 +296,12 @@ class CatalogSearch(Wizard):
         identifier = self.request.params.get('identifier', None)
         logger.debug('called with %s', identifier)
         if identifier is not None:
-            if 'wizard_csw_selection' in self.session:
-                if identifier in self.session['wizard_csw_selection']:
-                    self.session['wizard_csw_selection'].remove(identifier)
-                else:
-                    self.session['wizard_csw_selection'].append(identifier)
+            selection = self.wizard_state.get('csw_selection', [])
+            if identifier in selection:
+                selection.remove(identifier)
             else:
-                self.session['wizard_csw_selection'] = [identifier]
+                selection.append(identifier)
+            self.wizard_state.set('csw_selection', selection)
         return {}
 
     def next(self):
@@ -310,7 +322,7 @@ class CatalogSearch(Wizard):
         logger.debug(checkbox)
         items = self.search_csw(query)
         for item in items:            
-            if 'wizard_csw_selection' in self.session and  item['identifier'] in self.session['wizard_csw_selection']:
+            if item['identifier'] in self.wizard_state.get('csw_selection', []):
                 item['selected'] = True
             else:
                 item['selected'] = False
@@ -335,15 +347,15 @@ class Done(Wizard):
             request,
             "Done",
             "Check Parameters and start WPS Process")
-        self.wps = WebProcessingService(self.session['wizard_wps_url'])
+        self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
 
     def done(self):
-        identifier = self.session['wizard_process_identifier']
-        inputs = self.session['wizard_process_parameters'].items()
-        complex_input = self.session['wizard_complex_input']
-        for url in self.session['wizard_csw_selection']:
+        identifier = self.wizard_state.get('process_identifier')
+        inputs = self.wizard_state.get('literal_inputs').items()
+        complex_input = self.wizard_state.get('complex_input_identifier')
+        for url in self.wizard_state.get('csw_selection'):
             inputs.append( (complex_input, url) )
-        inputs = [(str(key), str(value)) for key,value in inputs]
+        inputs = [(str(key), str(value)) for key, value in inputs]
         outputs = [("output",True)]
         execution = self.wps.execute(identifier, inputs=inputs, output=outputs)
         
@@ -353,8 +365,8 @@ class Done(Wizard):
             identifier = identifier,
             wps_url = self.wps.url,
             execution = execution,
-            notes = self.session['wizard_process_parameters']['info_notes'],
-            tags = self.session['wizard_process_parameters']['info_tags'])
+            notes = self.wizard_state.get('literal_inputs')['info_notes'],
+            tags = self.wizard_state.get('literal_inputs')['info_tags'])
          
         return HTTPFound(location=self.request.route_url('jobs'))
 
