@@ -596,7 +596,7 @@ class MyAccount:
             password = captured.get('password', '').encode('ascii', 'ignore')
             inputs.append( ('password', password) )
             logger.debug('update credentials with openid=%s', openid)
-            execution = self.request.wps.execute(identifier='org.malleefowl.esgf.logon',
+            execution = self.request.wps.execute(identifier='esgf_logon',
                                     inputs=inputs,
                                     output=[('output',True),('expires',False)])
             from owslib.wps import monitorExecution

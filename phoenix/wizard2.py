@@ -550,8 +550,13 @@ class Done(Wizard):
             for url in self.wizard_state.get('csw_selection'):
                 inputs.append( (complex_input, url) )
         else:
-            for url in self.wizard_state.get('esgf_files'):
-                inputs.append( (complex_input, url) )
+            for file_url in self.wizard_state.get('esgf_files'):
+                userdb = models.User(self.request)
+                cert_url = userdb.credentials(authenticated_userid(self.request))
+
+                from .utils import wps_wget_url
+                wps_chain_url = wps_wget_url(self.request.wps.url, cert_url, file_url)
+                inputs.append( (complex_input, wps_chain_url) )
         inputs = [(str(key), str(value)) for key, value in inputs]
         logger.debug('inputs = %s', inputs)
         outputs = [("output",True)]
