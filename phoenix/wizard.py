@@ -3,7 +3,6 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 
 from deform import Form, Button
-from deform import ValidationFailure
 
 from owslib.wps import WebProcessingService
 
@@ -118,6 +117,9 @@ class Wizard(object):
     def schema(self):
         raise NotImplementedError
 
+    def previous_success(self):
+        raise NotImplementedError
+    
     def next_success(self):
         raise NotImplementedError
 
@@ -134,12 +136,14 @@ class Wizard(object):
             )
 
     def process_form(self, form, action):
+        from deform import ValidationFailure
+        
         success_method = getattr(self, '%s_success' % action)
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
             result = success_method(appstruct)
-        except deform.exception.ValidationFailure as e:
+        except ValidationFailure as e:
             logger.exception('Validation of wizard view failed.')
             result = dict(title=self.title, description=self.description, form=e.render())
         return result
@@ -164,8 +168,15 @@ class ChooseWPS(Wizard):
         from .schema import ChooseWPSSchema
         return ChooseWPSSchema().bind(wps_list = self.catalogdb.all())
 
-    def next_success(self, appstruct):
+    def success(self, appstruct):
         self.wizard_state.set('wps_url', appstruct.get('url'))
+
+    def previous_success(self, appstruct):
+        self.success(appstruct)
+        return self.previous()
+
+    def next_success(self, appstruct):
+        self.success(appstruct)
         return self.next('wizard_process')
 
     def appstruct(self):
@@ -176,7 +187,7 @@ class ChooseWPS(Wizard):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return self.previous()
+            return self.process_form(form, 'previous')
         elif 'next' in self.request.POST:
             return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
@@ -196,8 +207,15 @@ class ChooseWPSProcess(Wizard):
         from .schema import SelectProcessSchema
         return SelectProcessSchema().bind(processes = self.wps.processes)
 
-    def next_success(self, appstruct):
+    def success(self, appstruct):
         self.wizard_state.set('process_identifier', appstruct.get('identifier'))
+
+    def previous_success(self, appstruct):
+        self.success(appstruct)
+        return self.previous()
+        
+    def next_success(self, appstruct):
+        self.success(appstruct)
         return self.next('wizard_literal_inputs')
         
     def appstruct(self):
@@ -208,7 +226,7 @@ class ChooseWPSProcess(Wizard):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return self.previous()
+            return self.process_form(form, 'previous')
         elif 'next' in self.request.POST:
             return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
@@ -232,8 +250,15 @@ class LiteralInputs(Wizard):
         from .wps import WPSSchema
         return WPSSchema(info=True, hide=True, process = self.process)
 
-    def next_success(self, appstruct):
+    def success(self, appstruct):
         self.wizard_state.set('literal_inputs', appstruct)
+
+    def previous_success(self, appstruct):
+        self.success(appstruct)
+        return self.previous()
+    
+    def next_success(self, appstruct):
+        self.success(appstruct)
         return self.next('wizard_complex_inputs')
     
     def appstruct(self):
@@ -244,7 +269,7 @@ class LiteralInputs(Wizard):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return self.previous()
+            return self.process_form(form, 'previous')
         elif 'next' in self.request.POST:
             return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
@@ -301,8 +326,15 @@ class ChooseSource(Wizard):
         from .schema import ChooseSourceSchema
         return ChooseSourceSchema()
 
-    def next_success(self, appstruct):
+    def success(self, appstruct):
         self.wizard_state.set('source', appstruct.get('source'))
+
+    def previous_success(self, appstruct):
+        self.success(appstruct)
+        return self.previous()
+
+    def next_success(self, appstruct):
+        self.success(appstruct)
         return self.next( self.wizard_state.get('source') )
         
     def appstruct(self):
@@ -313,7 +345,7 @@ class ChooseSource(Wizard):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return self.previous()
+            return self.process_form(form, 'previous')
         elif 'next' in self.request.POST:
             return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
@@ -335,8 +367,16 @@ class CatalogSearch(Wizard):
         from .schema import CatalogSearchSchema
         return CatalogSearchSchema()
 
-    def next_success(self, appstruct):
+    def success(self, appstruct):
         #self.wizard_state.set('esgf_files', appstruct.get('url'))
+        pass
+
+    def previous_success(self, appstruct):
+        self.success(appstruct)
+        return self.previous()
+
+    def next_success(self, appstruct):
+        self.success(appstruct)
         return self.next('wizard_done')
 
     def search_csw(self, query=''):
@@ -384,7 +424,7 @@ class CatalogSearch(Wizard):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return self.previous()
+            return self.process_form(form, 'previous')
         elif 'next' in self.request.POST:
             return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
@@ -425,8 +465,15 @@ class ESGFSearch(Wizard):
         from .schema import ESGFSearchSchema
         return ESGFSearchSchema()
 
-    def next_success(self, appstruct):
+    def success(self, appstruct):
         self.wizard_state.set('esgf_selection', appstruct.get('selection'))
+
+    def previous_success(self, appstruct):
+        self.success(appstruct)
+        return self.previous()
+        
+    def next_success(self, appstruct):
+        self.success(appstruct)
         return self.next('wizard_esgf_files')
 
     def appstruct(self):
@@ -437,7 +484,7 @@ class ESGFSearch(Wizard):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return self.previous()
+            return self.process_form(form, 'previous')
         elif 'next' in self.request.POST:
             return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
@@ -513,7 +560,7 @@ class Done(Wizard):
         nodes = dict(source=source, worker=worker)
         return nodes
 
-    def next_success(self, appstruct):
+    def success(self, appstruct):
         identifier = self.wizard_state.get('process_identifier')
         inputs = self.wizard_state.get('literal_inputs').items()
         complex_input = self.wizard_state.get('complex_input_identifier')
@@ -540,7 +587,12 @@ class Done(Wizard):
             execution = execution,
             notes = notes,
             tags = tags)
-                
+
+    def previous_success(self, appstruct):
+        return self.previous()
+    
+    def next_success(self, appstruct):
+        self.success(appstruct)
         return HTTPFound(location=self.request.route_url('jobs'))
 
     @view_config(route_name='wizard_done', renderer='templates/wizard/default.pt')
@@ -548,7 +600,7 @@ class Done(Wizard):
         form = self.generate_form()
         
         if 'previous' in self.request.POST:
-            return self.previous()
+            return self.process_form(form, 'previous')
         elif 'next' in self.request.POST:
             return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
