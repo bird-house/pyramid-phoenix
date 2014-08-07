@@ -181,6 +181,9 @@ class ESGFFilesSchema(colander.MappingSchema):
         description = 'URL',
         widget = deferred_esgf_files_widget)
 
+class DoneSchema(colander.MappingSchema):
+    pass
+
 class CatalogSchema(colander.MappingSchema):
     url = colander.SchemaNode(
         colander.String(),

@@ -112,6 +112,9 @@ class Wizard(object):
         """
         return '{}'
 
+    def appstruct(self):
+        return {}
+
     def previous(self):
         self.wizard_state.previous()
         return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
@@ -534,6 +537,26 @@ class Done(Wizard):
             "Check Parameters and start WPS Process")
         self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
 
+    def generate_form(self, formid='deform'):
+        from .schema import DoneSchema
+        schema = DoneSchema()
+        return Form(
+            schema,
+            buttons=self.buttons(),
+            formid=formid,
+            use_ajax=self.use_ajax(),
+            ajax_options=self.ajax_options(),
+            )
+    def process_form(self, form):
+        controls = self.request.POST.items()
+        try:
+            appstruct = form.validate(controls)
+            #self.wizard_state.set('esgf_files', appstruct.get('url'))
+        except ValidationFailure, e:
+            logger.exception('validation failed.')
+            return dict(title=self.title, description=self.description, form=e.render())
+        return self.next('wizard_done')
+
     def convert_states_to_nodes(self):
         userdb = models.User(self.request)
         credentials = userdb.credentials(authenticated_userid(self.request))
@@ -553,7 +576,7 @@ class Done(Wizard):
         nodes = dict(source=source, worker=worker)
         return nodes
 
-    def done(self):
+    def next(self):
         identifier = self.wizard_state.get('process_identifier')
         inputs = self.wizard_state.get('literal_inputs').items()
         complex_input = self.wizard_state.get('complex_input_identifier')
@@ -562,7 +585,7 @@ class Done(Wizard):
 
         execution = None
         if self.wizard_state.get('source') == 'wizard_csw':
-            for url in self.wizard_state.get('csw_selection'):
+            for url in self.wizard_state.get('csw_selection', []):
                 inputs.append( (complex_input, url) )
             inputs = [(str(key), str(value)) for key, value in inputs]
             outputs = [("output",True)]
@@ -583,16 +606,19 @@ class Done(Wizard):
                 
         return HTTPFound(location=self.request.route_url('jobs'))
 
-    @view_config(route_name='wizard_done', renderer='templates/wizard/done.pt')
+    @view_config(route_name='wizard_done', renderer='templates/wizard/default.pt')
     def done_view(self):
+        form = self.generate_form()
+        
         if 'previous' in self.request.POST:
             return self.previous()
-        elif 'done' in self.request.POST:
-            return self.done()
+        elif 'next' in self.request.POST:
+            return self.next()
         elif 'cancel' in self.request.POST:
             return self.cancel()
 
         return dict(
             title=self.title, 
             description=self.description,
+            form=form.render(self.appstruct())
             )
