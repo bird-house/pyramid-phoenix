@@ -219,7 +219,7 @@ class Processes:
             schema,
             buttons=('select',),
             formid=formid,
-            use_ajax=True,
+            use_ajax=False,
             ajax_options=options,
             )
     def process_form(self, form):
@@ -299,7 +299,7 @@ class Execute:
             schema,
             buttons=('submit',),
             formid=formid,
-            use_ajax=True,
+            use_ajax=False,
             ajax_options=options,
             )
     
@@ -464,7 +464,7 @@ class OutputDetails:
             schema,
             buttons=('publish',),
             formid=formid,
-            use_ajax=True,
+            use_ajax=False,
             ajax_options=options,
             )
 
@@ -578,7 +578,7 @@ class MyAccount:
             schema,
             buttons=('update',),
             formid=formid,
-            use_ajax=True,
+            use_ajax=False,
             ajax_options=options,
             )
 
@@ -748,7 +748,7 @@ class CatalogSettings:
             schema,
             buttons=('submit',),
             formid=formid,
-            use_ajax=True,
+            use_ajax=False,
             ajax_options=options,
             )
 
@@ -839,7 +839,7 @@ class UserSettings:
             schema,
             buttons=('submit',),
             formid=formid,
-            use_ajax=True,
+            use_ajax=False,
             ajax_options=options,
             )
 

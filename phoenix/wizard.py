@@ -475,6 +475,28 @@ class Done(Wizard):
         from .schema import DoneSchema
         return DoneSchema()
 
+    def execute_with_csw(self, appstruct):
+        identifier = self.wizard_state.get('process_identifier')
+        inputs = self.wizard_state.get('literal_inputs').items()
+        complex_input = self.wizard_state.get('complex_input_identifier')
+        notes = self.wizard_state.get('literal_inputs')['info_notes']
+        tags = self.wizard_state.get('literal_inputs')['info_tags']
+
+        for url in self.wizard_state.get('csw_selection', []):
+            inputs.append( (complex_input, url) )
+        inputs = [(str(key), str(value)) for key, value in inputs]
+        outputs = [("output",True)]
+        execution = self.wps.execute(identifier, inputs=inputs, output=outputs)
+       
+        models.add_job(
+            request = self.request,
+            user_id = authenticated_userid(self.request), 
+            identifier = identifier,
+            wps_url = self.wps.url,
+            execution = execution,
+            notes = notes,
+            tags = tags)
+
     def convert_states_to_nodes(self):
         userdb = models.User(self.request)
         credentials = userdb.credentials(authenticated_userid(self.request))
@@ -494,24 +516,14 @@ class Done(Wizard):
         nodes = dict(source=source, worker=worker)
         return nodes
 
-    def success(self, appstruct):
+    def execute_with_esgf(self, appstruct):
         identifier = self.wizard_state.get('process_identifier')
-        inputs = self.wizard_state.get('literal_inputs').items()
-        complex_input = self.wizard_state.get('complex_input_identifier')
         notes = self.wizard_state.get('literal_inputs')['info_notes']
         tags = self.wizard_state.get('literal_inputs')['info_tags']
 
-        execution = None
-        if self.wizard_state.get('source') == 'wizard_csw':
-            for url in self.wizard_state.get('csw_selection', []):
-                inputs.append( (complex_input, url) )
-            inputs = [(str(key), str(value)) for key, value in inputs]
-            outputs = [("output",True)]
-            execution = self.wps.execute(identifier, inputs=inputs, output=outputs)
-        else:
-            nodes = self.convert_states_to_nodes()
-            from .wps import execute_restflow
-            execution = execute_restflow(self.request.wps, nodes)
+        nodes = self.convert_states_to_nodes()
+        from .wps import execute_restflow
+        execution = execute_restflow(self.request.wps, nodes)
 
         models.add_job(
             request = self.request,
@@ -522,11 +534,18 @@ class Done(Wizard):
             notes = notes,
             tags = tags)
 
+    def success(self, appstruct):
+        if self.wizard_state.get('source') == 'wizard_csw':
+            self.execute_with_csw(appstruct)
+        else:
+            self.execute_with_esgf(appstruct)
+
     def previous_success(self, appstruct):
         return self.previous()
     
     def next_success(self, appstruct):
         self.success(appstruct)
+        self.wizard_state.clear()
         return HTTPFound(location=self.request.route_url('jobs'))
 
     @view_config(route_name='wizard_done', renderer='templates/wizard/default.pt')
