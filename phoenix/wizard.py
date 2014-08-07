@@ -116,7 +116,13 @@ class Wizard(object):
         return {}
 
     def schema(self):
-        raise NotImplementedError 
+        raise NotImplementedError
+
+    def next_success(self):
+        raise NotImplementedError
+
+    def success_previous(self):
+        raise NotImplementedError
 
     def generate_form(self, formid='deform'):
         return Form(
@@ -127,6 +133,17 @@ class Wizard(object):
             ajax_options=self.ajax_options(),
             )
 
+    def process_form(self, form, action):
+        success_method = getattr(self, '%s_success' % action)
+        try:
+            controls = self.request.POST.items()
+            appstruct = form.validate(controls)
+            result = success_method(appstruct)
+        except deform.exception.ValidationFailure as e:
+            logger.exception('Validation of wizard view failed.')
+            result = dict(title=self.title, description=self.description, form=e.render())
+        return result
+        
     def previous(self):
         self.wizard_state.previous()
         return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
@@ -147,14 +164,8 @@ class ChooseWPS(Wizard):
         from .schema import ChooseWPSSchema
         return ChooseWPSSchema().bind(wps_list = self.catalogdb.all())
 
-    def process_form(self, form):
-        controls = self.request.POST.items()
-        try:
-            appstruct = form.validate(controls)
-            self.wizard_state.set('wps_url', appstruct.get('url'))
-        except ValidationFailure, e:
-            logger.exception('validation of wps view failed.')
-            return dict(title=self.title, description=self.description, form=e.render())
+    def next_success(self, appstruct):
+        self.wizard_state.set('wps_url', appstruct.get('url'))
         return self.next('wizard_process')
 
     def appstruct(self):
@@ -167,7 +178,7 @@ class ChooseWPS(Wizard):
         if 'previous' in self.request.POST:
             return self.previous()
         elif 'next' in self.request.POST:
-            return self.process_form(form)
+            return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
 
@@ -184,17 +195,11 @@ class ChooseWPSProcess(Wizard):
     def schema(self):
         from .schema import SelectProcessSchema
         return SelectProcessSchema().bind(processes = self.wps.processes)
-   
-    def process_form(self, form):
-        controls = self.request.POST.items()
-        try:
-            appstruct = form.validate(controls)
-            self.wizard_state.set('process_identifier', appstruct.get('identifier'))
-        except ValidationFailure, e:
-            logger.exception('validation of process view failed.')
-            return dict(title=self.title, description=self.description, form=e.render())
-        return self.next('wizard_literal_inputs')
 
+    def next_success(self, appstruct):
+        self.wizard_state.set('process_identifier', appstruct.get('identifier'))
+        return self.next('wizard_literal_inputs')
+        
     def appstruct(self):
         return dict(identifier=self.wizard_state.get('process_identifier'))
 
@@ -205,7 +210,7 @@ class ChooseWPSProcess(Wizard):
         if 'previous' in self.request.POST:
             return self.previous()
         elif 'next' in self.request.POST:
-            return self.process_form(form)
+            return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
 
@@ -227,16 +232,10 @@ class LiteralInputs(Wizard):
         from .wps import WPSSchema
         return WPSSchema(info=True, hide=True, process = self.process)
 
-    def process_form(self, form):
-        controls = self.request.POST.items()
-        try:
-            appstruct = form.validate(controls)
-            self.wizard_state.set('literal_inputs', appstruct)
-        except ValidationFailure, e:
-            logger.exception('validation of process parameter failed.')
-            return dict(title=self.title, description=self.description, form=e.render())
+    def next_success(self, appstruct):
+        self.wizard_state.set('literal_inputs', appstruct)
         return self.next('wizard_complex_inputs')
-
+    
     def appstruct(self):
         return self.wizard_state.get('literal_inputs', {})
 
@@ -247,7 +246,7 @@ class LiteralInputs(Wizard):
         if 'previous' in self.request.POST:
             return self.previous()
         elif 'next' in self.request.POST:
-            return self.process_form(form)
+            return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
 
@@ -269,14 +268,8 @@ class ComplexInputs(Wizard):
         from .schema import ChooseInputParamterSchema
         return ChooseInputParamterSchema().bind(process=self.process)
 
-    def process_form(self, form):
-        controls = self.request.POST.items()
-        try:
-            appstruct = form.validate(controls)
-            self.wizard_state.set('complex_input_identifier', appstruct.get('identifier'))
-        except ValidationFailure, e:
-            logger.exception('validation of process parameter failed.')
-            return dict(title=self.title, description=self.description, form=e.render())
+    def next_success(self, appstruct):
+        self.wizard_state.set('complex_input_identifier', appstruct.get('identifier'))
         return self.next('wizard_source')
 
     def appstruct(self):
@@ -289,7 +282,7 @@ class ComplexInputs(Wizard):
         if 'previous' in self.request.POST:
             return self.previous()
         elif 'next' in self.request.POST:
-            return self.process_form(form)
+            return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
 
@@ -307,17 +300,11 @@ class ChooseSource(Wizard):
     def schema(self):
         from .schema import ChooseSourceSchema
         return ChooseSourceSchema()
-        
-    def process_form(self, form):
-        controls = self.request.POST.items()
-        try:
-            appstruct = form.validate(controls)
-            self.wizard_state.set('source', appstruct.get('source'))
-        except ValidationFailure, e:
-            logger.exception('validation of process parameter failed.')
-            return dict(title=self.title, description=self.description, form=e.render())
-        return self.next( self.wizard_state.get('source') )
 
+    def next_success(self, appstruct):
+        self.wizard_state.set('source', appstruct.get('source'))
+        return self.next( self.wizard_state.get('source') )
+        
     def appstruct(self):
         return dict(source=self.wizard_state.get('source'))
 
@@ -328,7 +315,7 @@ class ChooseSource(Wizard):
         if 'previous' in self.request.POST:
             return self.previous()
         elif 'next' in self.request.POST:
-            return self.process_form(form)
+            return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
 
@@ -348,14 +335,8 @@ class CatalogSearch(Wizard):
         from .schema import CatalogSearchSchema
         return CatalogSearchSchema()
 
-    def process_form(self, form):
-        controls = self.request.POST.items()
-        try:
-            appstruct = form.validate(controls)
-            #self.wizard_state.set('esgf_files', appstruct.get('url'))
-        except ValidationFailure, e:
-            logger.exception('validation failed.')
-            return dict(title=self.title, description=self.description, form=e.render())
+    def next_success(self, appstruct):
+        #self.wizard_state.set('esgf_files', appstruct.get('url'))
         return self.next('wizard_done')
 
     def search_csw(self, query=''):
@@ -405,7 +386,7 @@ class CatalogSearch(Wizard):
         if 'previous' in self.request.POST:
             return self.previous()
         elif 'next' in self.request.POST:
-            return self.next( 'wizard_done' )
+            return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
 
@@ -444,15 +425,8 @@ class ESGFSearch(Wizard):
         from .schema import ESGFSearchSchema
         return ESGFSearchSchema()
 
-    def process_form(self, form):
-        controls = self.request.POST.items()
-        try:
-            appstruct = form.validate(controls)
-            logger.debug("esgf selection = %s", appstruct)
-            self.wizard_state.set('esgf_selection', appstruct.get('selection'))
-        except ValidationFailure, e:
-            logger.exception('validation of process parameter failed.')
-            return dict(title=self.title, description=self.description, form=e.render())
+    def next_success(self, appstruct):
+        self.wizard_state.set('esgf_selection', appstruct.get('selection'))
         return self.next('wizard_esgf_files')
 
     def appstruct(self):
@@ -465,7 +439,7 @@ class ESGFSearch(Wizard):
         if 'previous' in self.request.POST:
             return self.previous()
         elif 'next' in self.request.POST:
-            return self.process_form(form)
+            return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
 
@@ -485,16 +459,10 @@ class ESGFFileSearch(Wizard):
         from .schema import ESGFFilesSchema
         return ESGFFilesSchema().bind(selection=self.wizard_state.get('esgf_selection'))
 
-    def process_form(self, form):
-        controls = self.request.POST.items()
-        try:
-            appstruct = form.validate(controls)
-            self.wizard_state.set('esgf_files', appstruct.get('url'))
-        except ValidationFailure, e:
-            logger.exception('validation failed.')
-            return dict(title=self.title, description=self.description, form=e.render())
+    def next_success(self, appstruct):
+        self.wizard_state.set('esgf_files', appstruct.get('url'))
         return self.next('wizard_done')
-
+        
     def appstruct(self):
         return dict(url=self.wizard_state.get('esgf_files'))
 
@@ -505,7 +473,7 @@ class ESGFFileSearch(Wizard):
         if 'previous' in self.request.POST:
             return self.previous()
         elif 'next' in self.request.POST:
-            return self.process_form(form)
+            return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
 
@@ -526,17 +494,6 @@ class Done(Wizard):
         from .schema import DoneSchema
         return DoneSchema()
 
-    # TODO: not used yet
-    ## def process_form(self, form):
-    ##     controls = self.request.POST.items()
-    ##     try:
-    ##         appstruct = form.validate(controls)
-    ##         #self.wizard_state.set('esgf_files', appstruct.get('url'))
-    ##     except ValidationFailure, e:
-    ##         logger.exception('validation failed.')
-    ##         return dict(title=self.title, description=self.description, form=e.render())
-    ##     return self.next('wizard_done')
-
     def convert_states_to_nodes(self):
         userdb = models.User(self.request)
         credentials = userdb.credentials(authenticated_userid(self.request))
@@ -556,7 +513,7 @@ class Done(Wizard):
         nodes = dict(source=source, worker=worker)
         return nodes
 
-    def next(self):
+    def next_success(self, appstruct):
         identifier = self.wizard_state.get('process_identifier')
         inputs = self.wizard_state.get('literal_inputs').items()
         complex_input = self.wizard_state.get('complex_input_identifier')
@@ -593,7 +550,7 @@ class Done(Wizard):
         if 'previous' in self.request.POST:
             return self.previous()
         elif 'next' in self.request.POST:
-            return self.next()
+            return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
 
