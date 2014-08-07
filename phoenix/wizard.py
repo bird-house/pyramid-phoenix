@@ -59,6 +59,24 @@ class Wizard(object):
         self.catalogdb = models.Catalog(self.request)
         self.wizard_state = WizardState(self.session, 'wizard_wps')
 
+    def use_ajax(self):
+        return False
+
+    def ajax_options(self):
+        options = """
+        {success:
+           function (rText, sText, xhr, form) {
+             deform.processCallbacks();
+             deform.focusFirstInput();
+             var loc = xhr.getResponseHeader('X-Relocate');
+                if (loc) {
+                  document.location = loc;
+                };
+             }
+        }
+        """
+        return '{}'
+
     def previous(self):
         self.wizard_state.previous()
         return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
@@ -78,24 +96,12 @@ class ChooseWPS(Wizard):
     def generate_form(self, formid='deform'):
         from .schema import ChooseWPSSchema
         schema = ChooseWPSSchema().bind(wps_list = self.catalogdb.all())
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
         return Form(
             schema,
             buttons=('previous', 'next', 'cancel'),
             formid=formid,
-            use_ajax=True,
-            ajax_options=options,
+            use_ajax=self.use_ajax(),
+            ajax_options=self.ajax_options(),
             )
     def process_form(self, form):
         controls = self.request.POST.items()
@@ -134,24 +140,12 @@ class ChooseWPSProcess(Wizard):
     def generate_form(self, formid='deform'):
         from .schema import SelectProcessSchema
         schema = SelectProcessSchema().bind(processes = self.wps.processes)
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
         return Form(
             schema,
             buttons=('previous', 'next', 'cancel'),
             formid=formid,
-            use_ajax=True,
-            ajax_options=options,
+            use_ajax=self.use_ajax(),
+            ajax_options=self.ajax_options(),
             )
     def process_form(self, form):
         controls = self.request.POST.items()
@@ -194,24 +188,12 @@ class LiteralInputs(Wizard):
     def generate_form(self, formid='deform'):
         from .wps import WPSSchema
         schema = WPSSchema(info=True, hide=True, process = self.process)
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
         return Form(
             schema,
             buttons=('previous', 'next', 'cancel'),
             formid=formid,
-            use_ajax=True,
-            ajax_options=options,
+            use_ajax=self.use_ajax(),
+            ajax_options=self.ajax_options(),
             )
     def process_form(self, form):
         controls = self.request.POST.items()
@@ -254,24 +236,12 @@ class ComplexInputs(Wizard):
     def generate_form(self, formid='deform'):
         from .schema import ChooseInputParamterSchema
         schema = ChooseInputParamterSchema().bind(process=self.process)
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
         return Form(
             schema,
             buttons=('previous', 'next', 'cancel'),
             formid=formid,
-            use_ajax=True,
-            ajax_options=options,
+            use_ajax=self.use_ajax(),
+            ajax_options=self.ajax_options(),
             )
     def process_form(self, form):
         controls = self.request.POST.items()
@@ -312,24 +282,12 @@ class ChooseSource(Wizard):
     def generate_form(self, formid='deform'):
         from .schema import ChooseSourceSchema
         schema = ChooseSourceSchema()
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
         return Form(
             schema,
             buttons=('previous', 'next', 'cancel'),
             formid=formid,
-            use_ajax=True,
-            ajax_options=options,
+            use_ajax=self.use_ajax(),
+            ajax_options=self.ajax_options(),
             )
     def process_form(self, form):
         controls = self.request.POST.items()
@@ -450,24 +408,12 @@ class ESGFSearch(Wizard):
     def generate_form(self, formid='deform'):
         from .schema import ESGFSearchSchema
         schema = ESGFSearchSchema()
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
         return Form(
             schema,
             buttons=('previous', 'next', 'cancel'),
             formid=formid,
-            use_ajax=True,
-            ajax_options=options,
+            use_ajax=self.use_ajax(),
+            ajax_options=self.ajax_options(),
             )
     def process_form(self, form):
         controls = self.request.POST.items()
@@ -509,24 +455,12 @@ class ESGFFileSearch(Wizard):
     def generate_form(self, formid='deform'):
         from .schema import ESGFFilesSchema
         schema = ESGFFilesSchema().bind(selection=self.wizard_state.get('esgf_selection'))
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
         return Form(
             schema,
             buttons=('previous', 'next', 'cancel'),
             formid=formid,
-            use_ajax=True,
-            ajax_options=options,
+            use_ajax=self.use_ajax(),
+            ajax_options=self.ajax_options(),
             )
     def process_form(self, form):
         controls = self.request.POST.items()
