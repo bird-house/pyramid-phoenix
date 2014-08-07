@@ -115,6 +115,18 @@ class Wizard(object):
     def appstruct(self):
         return {}
 
+    def schema(self):
+        raise NotImplementedError 
+
+    def generate_form(self, formid='deform'):
+        return Form(
+            schema = self.schema(),
+            buttons=self.buttons(),
+            formid=formid,
+            use_ajax=self.use_ajax(),
+            ajax_options=self.ajax_options(),
+            )
+
     def previous(self):
         self.wizard_state.previous()
         return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
@@ -131,16 +143,10 @@ class ChooseWPS(Wizard):
     def __init__(self, request):
         super(ChooseWPS, self).__init__(request, 'Choose WPS')
 
-    def generate_form(self, formid='deform'):
+    def schema(self):
         from .schema import ChooseWPSSchema
-        schema = ChooseWPSSchema().bind(wps_list = self.catalogdb.all())
-        return Form(
-            schema,
-            buttons=self.buttons(),
-            formid=formid,
-            use_ajax=self.use_ajax(),
-            ajax_options=self.ajax_options(),
-            )
+        return ChooseWPSSchema().bind(wps_list = self.catalogdb.all())
+
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
@@ -175,16 +181,10 @@ class ChooseWPSProcess(Wizard):
         super(ChooseWPSProcess, self).__init__(request, 'Choose WPS Process')
         self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
 
-    def generate_form(self, formid='deform'):
+    def schema(self):
         from .schema import SelectProcessSchema
-        schema = SelectProcessSchema().bind(processes = self.wps.processes)
-        return Form(
-            schema,
-            buttons=self.buttons(),
-            formid=formid,
-            use_ajax=self.use_ajax(),
-            ajax_options=self.ajax_options(),
-            )
+        return SelectProcessSchema().bind(processes = self.wps.processes)
+   
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
@@ -223,16 +223,10 @@ class LiteralInputs(Wizard):
         self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
         self.process = self.wps.describeprocess(self.wizard_state.get('process_identifier'))
 
-    def generate_form(self, formid='deform'):
+    def schema(self):
         from .wps import WPSSchema
-        schema = WPSSchema(info=True, hide=True, process = self.process)
-        return Form(
-            schema,
-            buttons=self.buttons(),
-            formid=formid,
-            use_ajax=self.use_ajax(),
-            ajax_options=self.ajax_options(),
-            )
+        return WPSSchema(info=True, hide=True, process = self.process)
+
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
@@ -271,16 +265,10 @@ class ComplexInputs(Wizard):
         self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
         self.process = self.wps.describeprocess(self.wizard_state.get('process_identifier'))
 
-    def generate_form(self, formid='deform'):
+    def schema(self):
         from .schema import ChooseInputParamterSchema
-        schema = ChooseInputParamterSchema().bind(process=self.process)
-        return Form(
-            schema,
-            buttons=self.buttons(),
-            formid=formid,
-            use_ajax=self.use_ajax(),
-            ajax_options=self.ajax_options(),
-            )
+        return ChooseInputParamterSchema().bind(process=self.process)
+
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
@@ -316,17 +304,10 @@ class ChooseSource(Wizard):
             request,
             "Choose Source",
             "")
-
-    def generate_form(self, formid='deform'):
+    def schema(self):
         from .schema import ChooseSourceSchema
-        schema = ChooseSourceSchema()
-        return Form(
-            schema,
-            buttons=self.buttons(),
-            formid=formid,
-            use_ajax=self.use_ajax(),
-            ajax_options=self.ajax_options(),
-            )
+        return ChooseSourceSchema()
+        
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
@@ -363,16 +344,10 @@ class CatalogSearch(Wizard):
             "Catalog Search",
             "Search in CSW Catalog Service")
 
-    def generate_form(self, formid='deform'):
+    def schema(self):
         from .schema import CatalogSearchSchema
-        schema = CatalogSearchSchema()
-        return Form(
-            schema,
-            buttons=self.buttons(),
-            formid=formid,
-            use_ajax=self.use_ajax(),
-            ajax_options=self.ajax_options(),
-            )
+        return CatalogSearchSchema()
+
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
@@ -465,16 +440,10 @@ class ESGFSearch(Wizard):
             "ESGF Search",
             "")
 
-    def generate_form(self, formid='deform'):
+    def schema(self):
         from .schema import ESGFSearchSchema
-        schema = ESGFSearchSchema()
-        return Form(
-            schema,
-            buttons=self.buttons(),
-            formid=formid,
-            use_ajax=self.use_ajax(),
-            ajax_options=self.ajax_options(),
-            )
+        return ESGFSearchSchema()
+
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
@@ -512,16 +481,10 @@ class ESGFFileSearch(Wizard):
             "ESGF File Search",
             "")
 
-    def generate_form(self, formid='deform'):
+    def schema(self):
         from .schema import ESGFFilesSchema
-        schema = ESGFFilesSchema().bind(selection=self.wizard_state.get('esgf_selection'))
-        return Form(
-            schema,
-            buttons=self.buttons(),
-            formid=formid,
-            use_ajax=self.use_ajax(),
-            ajax_options=self.ajax_options(),
-            )
+        return ESGFFilesSchema().bind(selection=self.wizard_state.get('esgf_selection'))
+
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
@@ -559,16 +522,10 @@ class Done(Wizard):
             "Check Parameters and start WPS Process")
         self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
 
-    def generate_form(self, formid='deform'):
+    def schema(self):
         from .schema import DoneSchema
-        schema = DoneSchema()
-        return Form(
-            schema,
-            buttons=self.buttons(),
-            formid=formid,
-            use_ajax=self.use_ajax(),
-            ajax_options=self.ajax_options(),
-            )
+        return DoneSchema()
+
     # TODO: not used yet
     ## def process_form(self, form):
     ##     controls = self.request.POST.items()
