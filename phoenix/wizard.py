@@ -2,7 +2,7 @@ from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 
-from deform import Form
+from deform import Form, Button
 from deform import ValidationFailure
 
 from owslib.wps import WebProcessingService
@@ -13,17 +13,24 @@ import logging
 logger = logging.getLogger(__name__)
 
 class WizardState(object):
-    def __init__(self, session, initial_step):
+    def __init__(self, session, initial_step, final_step='wizard_done'):
         self.session = session
         self.initial_step = initial_step
+        self.final_step = final_step
         if not 'wizard' in self.session:
             self.clear()
-        
+            
     def current_step(self):
         step = self.initial_step
         if len(self.session['wizard']['chain']) > 0:
             step = self.session['wizard']['chain'][-1]
         return step
+
+    def is_first(self):
+        return self.current_step() == self.initial_step
+
+    def is_last(self):
+        return self.current_step() == self.final_step
 
     def next(self, step):
         self.session['wizard']['chain'].append(step)
@@ -59,6 +66,34 @@ class Wizard(object):
         self.catalogdb = models.Catalog(self.request)
         self.wizard_state = WizardState(self.session, 'wizard_wps')
 
+    def buttons(self):
+        prev_disabled = not self.prev_ok()
+        next_disabled = not self.next_ok()
+
+        prev_button = Button(name='previous', title='Previous',
+                             disabled=prev_disabled)   #type=submit|reset|button,value=name,css_type="btn-..."
+        next_button = Button(name='next', title='Next',
+                             disabled=next_disabled)
+        done_button = Button(name='next', title='Done',
+                             disabled=next_disabled)
+        cancel_button = Button(name='cancel', title='Cancel',
+                               disabled=False)
+        buttons = []
+        if not self.wizard_state.is_first():
+            buttons.append(prev_button)
+        if self.wizard_state.is_last():
+            buttons.append(done_button)
+        else:
+            buttons.append(next_button)
+        buttons.append(cancel_button)
+        return buttons
+
+    def prev_ok(self):
+        return True
+
+    def next_ok(self):
+        return True
+    
     def use_ajax(self):
         return False
 
@@ -98,7 +133,7 @@ class ChooseWPS(Wizard):
         schema = ChooseWPSSchema().bind(wps_list = self.catalogdb.all())
         return Form(
             schema,
-            buttons=('previous', 'next', 'cancel'),
+            buttons=self.buttons(),
             formid=formid,
             use_ajax=self.use_ajax(),
             ajax_options=self.ajax_options(),
@@ -142,7 +177,7 @@ class ChooseWPSProcess(Wizard):
         schema = SelectProcessSchema().bind(processes = self.wps.processes)
         return Form(
             schema,
-            buttons=('previous', 'next', 'cancel'),
+            buttons=self.buttons(),
             formid=formid,
             use_ajax=self.use_ajax(),
             ajax_options=self.ajax_options(),
@@ -190,7 +225,7 @@ class LiteralInputs(Wizard):
         schema = WPSSchema(info=True, hide=True, process = self.process)
         return Form(
             schema,
-            buttons=('previous', 'next', 'cancel'),
+            buttons=self.buttons(),
             formid=formid,
             use_ajax=self.use_ajax(),
             ajax_options=self.ajax_options(),
@@ -238,7 +273,7 @@ class ComplexInputs(Wizard):
         schema = ChooseInputParamterSchema().bind(process=self.process)
         return Form(
             schema,
-            buttons=('previous', 'next', 'cancel'),
+            buttons=self.buttons(),
             formid=formid,
             use_ajax=self.use_ajax(),
             ajax_options=self.ajax_options(),
@@ -284,7 +319,7 @@ class ChooseSource(Wizard):
         schema = ChooseSourceSchema()
         return Form(
             schema,
-            buttons=('previous', 'next', 'cancel'),
+            buttons=self.buttons(),
             formid=formid,
             use_ajax=self.use_ajax(),
             ajax_options=self.ajax_options(),
@@ -410,7 +445,7 @@ class ESGFSearch(Wizard):
         schema = ESGFSearchSchema()
         return Form(
             schema,
-            buttons=('previous', 'next', 'cancel'),
+            buttons=self.buttons(),
             formid=formid,
             use_ajax=self.use_ajax(),
             ajax_options=self.ajax_options(),
@@ -457,7 +492,7 @@ class ESGFFileSearch(Wizard):
         schema = ESGFFilesSchema().bind(selection=self.wizard_state.get('esgf_selection'))
         return Form(
             schema,
-            buttons=('previous', 'next', 'cancel'),
+            buttons=self.buttons(),
             formid=formid,
             use_ajax=self.use_ajax(),
             ajax_options=self.ajax_options(),
