@@ -160,6 +160,28 @@ class Wizard(object):
         self.wizard_state.clear()
         return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
 
+    def custom_view(self):
+        return {}
+
+    def view(self):
+        form = self.generate_form()
+        
+        if 'previous' in self.request.POST:
+            return self.process_form(form, 'previous')
+        elif 'next' in self.request.POST:
+            return self.process_form(form, 'next')
+        elif 'cancel' in self.request.POST:
+            return self.cancel()
+        
+        custom = self.custom_view()    
+        result = dict(
+            title=self.title,
+            description=self.description,
+            form=form.render(self.appstruct()))
+
+        # custom overwrites result
+        return dict(result, **custom)
+
 class ChooseWPS(Wizard):
     def __init__(self, request):
         super(ChooseWPS, self).__init__(request, 'Choose WPS')
@@ -183,20 +205,8 @@ class ChooseWPS(Wizard):
         return dict(url=self.wizard_state.get('wps_url'))
 
     @view_config(route_name='wizard_wps', renderer='templates/wizard/default.pt')
-    def choose_wps_view(self):
-        form = self.generate_form()
-        
-        if 'previous' in self.request.POST:
-            return self.process_form(form, 'previous')
-        elif 'next' in self.request.POST:
-            return self.process_form(form, 'next')
-        elif 'cancel' in self.request.POST:
-            return self.cancel()
-
-        return dict(
-            title=self.title,
-            description=self.description,
-            form=form.render(self.appstruct()))
+    def view(self):
+        return super(ChooseWPS, self).view()
 
 class ChooseWPSProcess(Wizard):
     def __init__(self, request):
@@ -222,20 +232,8 @@ class ChooseWPSProcess(Wizard):
         return dict(identifier=self.wizard_state.get('process_identifier'))
 
     @view_config(route_name='wizard_process', renderer='templates/wizard/default.pt')
-    def select_process_view(self):
-        form = self.generate_form()
-        
-        if 'previous' in self.request.POST:
-            return self.process_form(form, 'previous')
-        elif 'next' in self.request.POST:
-            return self.process_form(form, 'next')
-        elif 'cancel' in self.request.POST:
-            return self.cancel()
-
-        return dict(
-            title=self.title,
-            description=self.description,
-            form=form.render(self.appstruct()))
+    def view(self):
+        return super(ChooseWPSProcess, self).view()
 
 class LiteralInputs(Wizard):
     def __init__(self, request):
@@ -265,20 +263,8 @@ class LiteralInputs(Wizard):
         return self.wizard_state.get('literal_inputs', {})
 
     @view_config(route_name='wizard_literal_inputs', renderer='templates/wizard/default.pt')
-    def literal_inputs_view(self):
-        form = self.generate_form()
-        
-        if 'previous' in self.request.POST:
-            return self.process_form(form, 'previous')
-        elif 'next' in self.request.POST:
-            return self.process_form(form, 'next')
-        elif 'cancel' in self.request.POST:
-            return self.cancel()
-
-        return dict(
-            title=self.title,
-            description=self.description,
-            form=form.render(self.appstruct()))
+    def view(self):
+        return super(LiteralInputs, self).view()
 
 class ComplexInputs(Wizard):
     def __init__(self, request):
@@ -301,20 +287,8 @@ class ComplexInputs(Wizard):
         return dict(identifier=self.wizard_state.get('complex_input_identifier'))
 
     @view_config(route_name='wizard_complex_inputs', renderer='templates/wizard/default.pt')
-    def complex_parameters_view(self):
-        form = self.generate_form()
-        
-        if 'previous' in self.request.POST:
-            return self.previous()
-        elif 'next' in self.request.POST:
-            return self.process_form(form, 'next')
-        elif 'cancel' in self.request.POST:
-            return self.cancel()
-
-        return dict(
-            title=self.title,
-            description=self.description,
-            form=form.render(self.appstruct()))
+    def view(self):
+        return super(ComplexInputs, self).view()
 
 class ChooseSource(Wizard):
     def __init__(self, request):
@@ -341,20 +315,8 @@ class ChooseSource(Wizard):
         return dict(source=self.wizard_state.get('source'))
 
     @view_config(route_name='wizard_source', renderer='templates/wizard/default.pt')
-    def choose_source_view(self):
-        form = self.generate_form()
-        
-        if 'previous' in self.request.POST:
-            return self.process_form(form, 'previous')
-        elif 'next' in self.request.POST:
-            return self.process_form(form, 'next')
-        elif 'cancel' in self.request.POST:
-            return self.cancel()
-
-        return dict(
-            title=self.title,
-            description=self.description,
-            form=form.render(self.appstruct()))
+    def view(self):
+        return super(ChooseSource, self).view()
     
 class CatalogSearch(Wizard):
     def __init__(self, request):
@@ -419,20 +381,9 @@ class CatalogSearch(Wizard):
     def appstruct(self):
         return dict(csw_selection=self.wizard_state.get('csw_selection'))
 
-    @view_config(route_name='wizard_csw', renderer='templates/wizard/csw.pt')
-    def csw_view(self):
-        form = self.generate_form()
-        
-        if 'previous' in self.request.POST:
-            return self.process_form(form, 'previous')
-        elif 'next' in self.request.POST:
-            return self.process_form(form, 'next')
-        elif 'cancel' in self.request.POST:
-            return self.cancel()
-
+    def custom_view(self):
         query = self.request.params.get('query', None)
         checkbox = self.request.params.get('checkbox', None)
-        logger.debug(checkbox)
         items = self.search_csw(query)
         for item in items:            
             if item['identifier'] in self.wizard_state.get('csw_selection', []):
@@ -446,13 +397,11 @@ class CatalogSearch(Wizard):
                 items,
                 ['title', 'subjects', 'selected'],
             )
+        return dict(grid=grid, items=items)
 
-        return dict(
-            title=self.title, 
-            description=self.description,
-            form=form.render(self.appstruct()),
-            grid=grid,
-            items=items)
+    @view_config(route_name='wizard_csw', renderer='templates/wizard/csw.pt')
+    def view(self):
+        return super(CatalogSearch, self).view()
 
 class ESGFSearch(Wizard):
     def __init__(self, request):
@@ -480,20 +429,8 @@ class ESGFSearch(Wizard):
         return dict(selection=self.wizard_state.get('esgf_selection', {}))
 
     @view_config(route_name='wizard_esgf', renderer='templates/wizard/esgf.pt')
-    def esgf_search_view(self):
-        form = self.generate_form()
-        
-        if 'previous' in self.request.POST:
-            return self.process_form(form, 'previous')
-        elif 'next' in self.request.POST:
-            return self.process_form(form, 'next')
-        elif 'cancel' in self.request.POST:
-            return self.cancel()
-
-        return dict(
-            title=self.title,
-            description=self.description,
-            form=form.render(self.appstruct()))
+    def view(self):
+        return super(ESGFSearch, self).view()
 
 class ESGFFileSearch(Wizard):
     def __init__(self, request):
@@ -506,28 +443,23 @@ class ESGFFileSearch(Wizard):
         from .schema import ESGFFilesSchema
         return ESGFFilesSchema().bind(selection=self.wizard_state.get('esgf_selection'))
 
-    def next_success(self, appstruct):
+    def success(self, appstruct):
         self.wizard_state.set('esgf_files', appstruct.get('url'))
+
+    def previous_success(self, appstruct):
+        self.success(appstruct)
+        return self.previous()
+        
+    def next_success(self, appstruct):
+        self.success(appstruct)
         return self.next('wizard_done')
         
     def appstruct(self):
         return dict(url=self.wizard_state.get('esgf_files'))
 
     @view_config(route_name='wizard_esgf_files', renderer='templates/wizard/esgf.pt')
-    def esgf_file_search_view(self):
-        form = self.generate_form()
-        
-        if 'previous' in self.request.POST:
-            return self.previous()
-        elif 'next' in self.request.POST:
-            return self.process_form(form, 'next')
-        elif 'cancel' in self.request.POST:
-            return self.cancel()
-
-        return dict(
-            title=self.title,
-            description=self.description,
-            form=form.render(self.appstruct()))
+    def view(self):
+        return super(ESGFFileSearch, self).view()
 
 class Done(Wizard):
     def __init__(self, request):
@@ -596,18 +528,5 @@ class Done(Wizard):
         return HTTPFound(location=self.request.route_url('jobs'))
 
     @view_config(route_name='wizard_done', renderer='templates/wizard/default.pt')
-    def done_view(self):
-        form = self.generate_form()
-        
-        if 'previous' in self.request.POST:
-            return self.process_form(form, 'previous')
-        elif 'next' in self.request.POST:
-            return self.process_form(form, 'next')
-        elif 'cancel' in self.request.POST:
-            return self.cancel()
-
-        return dict(
-            title=self.title, 
-            description=self.description,
-            form=form.render(self.appstruct())
-            )
+    def view(self):
+        return super(Done, self).view()
