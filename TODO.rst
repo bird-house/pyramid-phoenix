@@ -1,14 +1,14 @@
 Todo list for Phoenix
 =====================
 
-name for github
----------------
 
-* Nils:
+Links
+-----
 
-Eyrie (oder AM: aerie)
-
-Ist unter anderm der (Adler)Horst und ein gutes Zusause fuer all deine Voegel 
+* http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/quick_tutorial/index.html
+* http://docs.pylonsproject.org/projects/deform/en/latest/index.html
+* http://deformdemo.repoze.org/
+* http://getbootstrap.com/2.3.2/index.html
 
 
 Helsinki
