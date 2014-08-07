@@ -1,12 +1,3 @@
-# models.py
-# Copyright (C) 2013 the ClimDaPs/Phoenix authors and contributors
-# <see AUTHORS file>
-#
-# This module is part of ClimDaPs/Phoenix and is released under
-# the MIT License: http://www.opensource.org/licenses/mit-license.php
-
-# TODO: refactor usage of mongodb etc ...
-
 import pymongo
 
 from pyramid.security import authenticated_userid
@@ -27,60 +18,25 @@ from .exceptions import TokenError
 import logging
 logger = logging.getLogger(__name__)
 
-class Catalog():
-    """ This class provides access to the catalogs in mongodb."""
-    
-    def __init__(self, request):
-        self.request = request
-        self.db = request.db
-
-    def add(self, url, notes=None):
-        entry = None
-        try:
-            wps = WebProcessingService(url=url.split('?')[0])
-
-            entry = self.db.catalog.find_one(dict(url = wps.url))
-            if entry is not None:
-                self.db.catalog.remove(dict(url = wps.url))
-            entry = dict(
-                format = 'WPS',
-                url = wps.url,
-                title = wps.identification.title,
-                abstract = wps.identification.abstract,
-                notes = notes,
-                )
-            self.db.catalog.save(entry)
-
-            msg='Added wps %s succesfully' % (wps.url)
-            logger.info(msg)
-            self.request.session.flash(msg, queue='info')
-        except:
-            msg='Could not add wps %s' % (wps.url)
-            logger.exception(msg)
-            self.request.session.flash(msg, queue='error')
-
-        return entry
-
-    def delete(self, url):
-        try:
-            self.db.catalog.remove(dict(url=url))
-            msg='Removed wps %s succesfully' % (url)
-            logger.info(msg)
-            self.request.session.flash(msg, queue='info')
-        except:
-            logger.exception('could not delete wps %s in catalog', url)
-
-    def by_url(self, url):
-        entry = None
-        try:
-            entry = self.db.catalog.find_one(dict(url = url))
-        except:
-            logger.exception('could not find wps %s in catalog', url)
-        return entry
-
-    def all(self):
-        return self.db.catalog.find()
-
+def get_wps_list(request):
+    csw = request.csw
+    csw.getrecords(
+        qtype="service",
+        esn="full",
+        propertyname="dc:format",
+        keywords=['WPS'])
+    items = []
+    for rec in csw.records:
+        items.append(dict(
+            identifier=csw.records[rec].identifier,
+            title=csw.records[rec].title,
+            subjects=csw.records[rec].subjects,
+            abstract=csw.records[rec].abstract,
+            references=csw.records[rec].references,
+            format=csw.records[rec].format,
+            source=csw.records[rec].source,
+            rights=csw.records[rec].rights))
+    return items
 
 class User():
     """ This class provides access to the users in mongodb."""

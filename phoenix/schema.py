@@ -103,11 +103,10 @@ class AccountSchema(colander.MappingSchema):
 @colander.deferred
 def deferred_wps_list_widget(node, kw):
     wps_list = kw.get('wps_list', [])
-    logger.debug('wps_list %s', wps_list)
     choices = []
     for wps in wps_list:
-        title = "%s (%s)" % (wps.get('title'), wps.get('notes'))
-        choices.append((wps.get('url'), title))
+        title = "%s (%s)" % (wps.get('title'), wps.get('abstract'))
+        choices.append((wps.get('source'), title))
     return RadioChoiceWidget(values = choices)
 
 class ChooseWPSSchema(colander.MappingSchema):
@@ -195,14 +194,6 @@ class CatalogSchema(colander.MappingSchema):
         missing = '',
         default = '',
         validator = colander.url,
-        widget = TextInputWidget())
-
-    notes = colander.SchemaNode(
-        colander.String(),
-        title = 'Notes',
-        description = 'Add some notes for this WPS',
-        missing = '',
-        default = '',
         widget = TextInputWidget())
 
 class PublishSchema(colander.MappingSchema):

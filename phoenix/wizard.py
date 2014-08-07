@@ -62,7 +62,6 @@ class Wizard(object):
         self.description = description
         self.session = self.request.session
         self.csw = self.request.csw
-        self.catalogdb = models.Catalog(self.request)
         self.wizard_state = WizardState(self.session, 'wizard_wps')
 
     def buttons(self):
@@ -190,7 +189,7 @@ class ChooseWPS(Wizard):
 
     def schema(self):
         from .schema import ChooseWPSSchema
-        return ChooseWPSSchema().bind(wps_list = self.catalogdb.all())
+        return ChooseWPSSchema().bind(wps_list = models.get_wps_list(self.request))
 
     def success(self, appstruct):
         self.wizard_state.set('wps_url', appstruct.get('url'))

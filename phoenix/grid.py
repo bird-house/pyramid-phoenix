@@ -281,10 +281,9 @@ class CatalogGrid(MyGrid):
         """
         div = Template("""\
         <div class="btn-group">
-            <button class="btn btn-mini btn-primary edit" data-value="${url}">Edit</button>
-            <button class="btn btn-mini btn-danger delete" data-value="${url}">Delete</button>
+            <button class="btn btn-mini btn-danger delete" data-value="${identifier}">Delete</button>
         </div>
         """)
-        return HTML.td(HTML.literal(div.substitute({'url': item.get('url')} )))
+        return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))
        
 

@@ -174,7 +174,6 @@ class PhoenixViews:
 class Processes:
     def __init__(self, request):
         self.request = request
-        self.catalogdb = models.Catalog(self.request)
         self.wps = None
         self.session = self.request.session
         if 'wps.url' in self.session:
@@ -201,26 +200,11 @@ class Processes:
     
     def generate_form(self, formid='deform'):
         from .schema import ChooseWPSSchema
-        schema = ChooseWPSSchema().bind(
-            wps_list = self.catalogdb.all())
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
+        schema = ChooseWPSSchema().bind(wps_list = models.get_wps_list(self.request))
         return Form(
             schema,
             buttons=('select',),
-            formid=formid,
-            use_ajax=False,
-            ajax_options=options,
+            formid=formid
             )
     def process_form(self, form):
         controls = self.request.POST.items()
@@ -720,11 +704,10 @@ class Settings:
 
 @view_defaults(permission='admin', layout='default')
 class CatalogSettings:
-    """View for catalog settings"""
     
     def __init__(self, request):
         self.request = request
-        self.catalogdb = models.Catalog(self.request)
+        self.session = self.request.session
 
     def generate_form(self, formid="deform"):
         """This helper code generates the form that will be used to add
@@ -755,42 +738,38 @@ class CatalogSettings:
     def process_form(self, form):
         try:
             controls = self.request.POST.items()
-            captured = form.validate(controls)
-            url = captured.get('url', '')
-            notes = captured.get('notes', '')
-            self.catalogdb.add(url, notes)
+            appstruct = form.validate(controls)
+            url = appstruct.get('url', '')
+            self.request.csw.harvest(
+                source=url,
+                resourcetype="http://www.opengis.net/wps/1.0.0")
+            self.session.flash('Added WPS %s' % (url), queue="success")
         except ValidationFailure, e:
             logger.exception('validation of catalog form failed')
             return dict(form = e.render())
+        except:
+            logger.exception('could not harvest wps.')
+            self.session.flash('Could not add WPS %s' % (url), queue="error")
         return HTTPFound(location=self.request.route_url('catalog'))
 
     @view_config(renderer='json', name='delete.entry')
     def delete(self):
-        url = self.request.params.get('url', None)
-        if url is not None:
-            self.catalogdb.delete(url)
+        identfier = self.request.params.get('identifier', None)
+        self.session.flash('Delete WPS not Implemented', queue="error")
         return {}
-
-    @view_config(renderer='json', name='edit.entry')
-    def edit(self):
-        url = self.request.params.get('url', None)
-        result = dict(url=url)
-        if url is not None:
-            entry = self.catalogdb.by_url(url)
-            result = dict(url = url, notes = entry.get('notes'))
-        return result
-    
+ 
     @view_config(route_name="catalog", renderer='templates/catalog.pt')
     def catalog_view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
             return self.process_form(form)
         from .grid import CatalogGrid
-        items = self.catalogdb.all()
+        items = models.get_wps_list(self.request)
+            
         grid = CatalogGrid(
                 self.request,
                 items,
-                ['title', 'url', 'abstract', 'notes', 'action'],
+                ['title', 'source', 'abstract', 'subjects', 'action'],
             )
         return dict(grid=grid, items=items, form=form.render())
 
