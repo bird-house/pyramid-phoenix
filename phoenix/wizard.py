@@ -42,7 +42,7 @@ class WizardState(object):
             self.session.changed()
 
     def get(self, key, default=None):
-        if not key in self.session['wizard']['state']:
+        if self.session['wizard']['state'].get(key) is None:
             self.session['wizard']['state'][key] = default
             self.session.changed()
         return self.session['wizard']['state'].get(key)
@@ -363,6 +363,26 @@ class CatalogSearch(Wizard):
             "Catalog Search",
             "Search in CSW Catalog Service")
 
+    def generate_form(self, formid='deform'):
+        from .schema import CatalogSearchSchema
+        schema = CatalogSearchSchema()
+        return Form(
+            schema,
+            buttons=self.buttons(),
+            formid=formid,
+            use_ajax=self.use_ajax(),
+            ajax_options=self.ajax_options(),
+            )
+    def process_form(self, form):
+        controls = self.request.POST.items()
+        try:
+            appstruct = form.validate(controls)
+            #self.wizard_state.set('esgf_files', appstruct.get('url'))
+        except ValidationFailure, e:
+            logger.exception('validation failed.')
+            return dict(title=self.title, description=self.description, form=e.render())
+        return self.next('wizard_done')
+
     def search_csw(self, query=''):
         keywords = [k for k in map(str.strip, str(query).split(' ')) if len(k)>0]
 
@@ -405,6 +425,8 @@ class CatalogSearch(Wizard):
 
     @view_config(route_name='wizard_csw', renderer='templates/wizard/csw.pt')
     def csw_view(self):
+        form = self.generate_form()
+        
         if 'previous' in self.request.POST:
             return self.previous()
         elif 'next' in self.request.POST:
@@ -432,9 +454,9 @@ class CatalogSearch(Wizard):
         return dict(
             title=self.title, 
             description=self.description,
+            form=form.render(self.appstruct()),
             grid=grid,
-            items=items,
-        )
+            items=items)
 
 class ESGFSearch(Wizard):
     def __init__(self, request):
@@ -547,15 +569,16 @@ class Done(Wizard):
             use_ajax=self.use_ajax(),
             ajax_options=self.ajax_options(),
             )
-    def process_form(self, form):
-        controls = self.request.POST.items()
-        try:
-            appstruct = form.validate(controls)
-            #self.wizard_state.set('esgf_files', appstruct.get('url'))
-        except ValidationFailure, e:
-            logger.exception('validation failed.')
-            return dict(title=self.title, description=self.description, form=e.render())
-        return self.next('wizard_done')
+    # TODO: not used yet
+    ## def process_form(self, form):
+    ##     controls = self.request.POST.items()
+    ##     try:
+    ##         appstruct = form.validate(controls)
+    ##         #self.wizard_state.set('esgf_files', appstruct.get('url'))
+    ##     except ValidationFailure, e:
+    ##         logger.exception('validation failed.')
+    ##         return dict(title=self.title, description=self.description, form=e.render())
+    ##     return self.next('wizard_done')
 
     def convert_states_to_nodes(self):
         userdb = models.User(self.request)

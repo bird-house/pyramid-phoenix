@@ -33,9 +33,9 @@
       <div class="span4" id="div-map">Map</div>
         
       <div class="span8">
-	<form id="query" class="form-search">
+        <form id="query" class="form-search">
           <input type="text" name="query" class="input-medium search-query" placeholder="Search Terms">
-	</form>
+        </form>
         <table class="table table-bordered table-striped" id="table-csw-results">
           <tal:rows replace="structure grid" />
         </table>
@@ -48,14 +48,7 @@
         </div>
       </div>
       
-      <form id="wizard" method="POST" action="">
-        <div class="span12 well well-small">
-          <button class="btn" type="submit" name="previous">Previous</button>
-          <button class="btn btn-primary" type="submit" name="next">Next</button>
-          <button class="btn" type="submit" name="cancel">Cancel</button>
-        </div>
-      </form>
-
+      <tal:form replace="structure form">The form will render here</tal:form>
 
     </div>
 
