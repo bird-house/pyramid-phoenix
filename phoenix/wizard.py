@@ -76,14 +76,16 @@ class Wizard(object):
         done_button = Button(name='next', title='Done',
                              disabled=next_disabled)
         cancel_button = Button(name='cancel', title='Cancel',
+                               css_class='btn btn-danger',
                                disabled=False)
         buttons = []
-        if not self.wizard_state.is_first():
-            buttons.append(prev_button)
+        # TODO: fix focus button
         if self.wizard_state.is_last():
             buttons.append(done_button)
         else:
             buttons.append(next_button)
+        if not self.wizard_state.is_first():
+            buttons.append(prev_button)
         buttons.append(cancel_button)
         return buttons
 
@@ -109,7 +111,7 @@ class Wizard(object):
              }
         }
         """
-        return '{}'
+        return options
 
     def appstruct(self):
         return {}
