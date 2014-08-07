@@ -471,6 +471,7 @@ class Done(Wizard):
             "Done",
             "Check Parameters and start WPS Process")
         self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
+        self.csw = self.request.csw
 
     def schema(self):
         from .schema import DoneSchema
@@ -483,8 +484,9 @@ class Done(Wizard):
         notes = self.wizard_state.get('literal_inputs')['info_notes']
         tags = self.wizard_state.get('literal_inputs')['info_tags']
 
-        for url in self.wizard_state.get('csw_selection', []):
-            inputs.append( (complex_input, url) )
+        self.csw.getrecordbyid(id=self.wizard_state.get('csw_selection', []))
+        for rec in self.csw.records.values():
+            inputs.append( (complex_input, rec.source) )
         inputs = [(str(key), str(value)) for key, value in inputs]
         outputs = [("output",True)]
         execution = self.wps.execute(identifier, inputs=inputs, output=outputs)

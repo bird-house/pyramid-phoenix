@@ -10,6 +10,11 @@ Links
 * http://deformdemo.repoze.org/
 * http://getbootstrap.com/2.3.2/index.html
 
+Catalog Service
+---------------
+
+http://localhost:8082/csw?&service=CSW&version=2.0.2&request=GetRecords&typenames=csw:Record&elementsetname=full&resulttype=results&sortby=dc:title:D
+
 
 Helsinki
 --------

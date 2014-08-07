@@ -432,25 +432,10 @@ class OutputDetails:
         """Generate form for publishing to catalog service"""
         from .schema import PublishSchema
         schema = PublishSchema().bind()
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
         return Form(
             schema,
             buttons=('publish',),
-            formid=formid,
-            use_ajax=False,
-            ajax_options=options,
-            )
+            formid=formid)
 
     def process_form(self, form):
         try:
@@ -488,6 +473,7 @@ class OutputDetails:
     
     @view_config(renderer='json', name='publish.output')
     def publish(self):
+        import uuid
         identifier = self.request.params.get('identifier')
         job_id = self.session.get('job_id')
         result = dict()
@@ -495,11 +481,12 @@ class OutputDetails:
             output = self.process_output(job_id, identifier)
             
             result = dict(
+                identifier = uuid.uuid4().get_urn(),
                 title = output.title,
                 abstract = 'nix',
                 creator = authenticated_userid(self.request),
-                url = output.reference,
-                mime_type = output.mimeType,
+                source = output.reference,
+                format = output.mimeType,
                 keywords = 'one,two,three',
                 )
 

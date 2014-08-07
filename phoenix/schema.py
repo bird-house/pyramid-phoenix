@@ -197,38 +197,38 @@ class CatalogSchema(colander.MappingSchema):
         widget = TextInputWidget())
 
 class PublishSchema(colander.MappingSchema):
-    title = colander.SchemaNode(
-        colander.String(),
-        widget = TextInputWidget(),
-        )
+    identifier = colander.SchemaNode(colander.String())
+    title = colander.SchemaNode(colander.String())
     abstract = colander.SchemaNode(
         colander.String(),
         missing = '',
         default = '',
         validator = colander.Length(max=150),
-        widget = TextAreaWidget(rows=2, cols=80),
-        )
+        widget = TextAreaWidget(rows=2, cols=80))
     creator = colander.SchemaNode(
         colander.String(),
-        validator = colander.Email(),
-        widget = TextInputWidget(),
-        )
-    url = colander.SchemaNode(
+        validator = colander.Email())
+    source = colander.SchemaNode(
         colander.String(),
-        title = 'URL',
-        validator = colander.url,
-        widget = TextInputWidget())
-    mime_type = colander.SchemaNode(
+        description = 'URL to the source',
+        validator = colander.url)
+    format = colander.SchemaNode(
         colander.String(),
-        widget = TextInputWidget(),
+        description = 'MIME Type: application/x-netcdf',
         )
-    keywords = colander.SchemaNode(
+    subjects = colander.SchemaNode(
         colander.String(),
         default = 'test',
         missing = 'test',
+        description = "Keywords: tas, temperature, ...",
         widget = TagsWidget(),
         )
-            
+    rights = colander.SchemaNode(
+        colander.String(),
+        missing = '',
+        default = '',
+        )
+
 class UserSchema(colander.MappingSchema):
     name = colander.SchemaNode(
         colander.String(),
