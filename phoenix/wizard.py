@@ -347,11 +347,12 @@ class CatalogSearch(Wizard):
 
         results = []
         try:
-            self.csw.getrecords(keywords=keywords)
+            self.csw.getrecords(keywords=keywords, esn="full")
             logger.debug('csw results %s', self.csw.results)
             for rec in self.csw.records:
                 myrec = self.csw.records[rec]
                 results.append(dict(
+                    source = myrec.source,
                     identifier = myrec.identifier,
                     title = myrec.title,
                     abstract = myrec.abstract,
@@ -360,6 +361,7 @@ class CatalogSearch(Wizard):
                     creator = myrec.creator,
                     modified = myrec.modified,
                     bbox = myrec.bbox,
+                    references = myrec.references,
                     ))
         except:
             logger.exception('could not get items for csw.')
@@ -396,7 +398,7 @@ class CatalogSearch(Wizard):
         grid = CatalogSearchGrid(
                 self.request,
                 items,
-                ['title', 'subjects', 'selected'],
+                ['title', 'abstract', 'subjects', 'format', 'selected'],
             )
         return dict(grid=grid, items=items)
 
