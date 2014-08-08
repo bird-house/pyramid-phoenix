@@ -1,11 +1,5 @@
 import pymongo
 
-from pyramid.security import authenticated_userid
-
-from pyramid.security import (
-    Allow,
-    Everyone,
-    )
 
 import uuid
 import datetime
@@ -164,29 +158,21 @@ class User():
         user = self.db.users.find_one(dict(user_id = user_id))
         return user.get('credentials')
 
-def add_job(request,
-            identifier,
-            wps_url,
-            execution,
-            user_id='anonymous@malleefowl.org',
-            notes='',
-            tags=''):
+def add_job(request, wps_url, status_location, notes=None, tags=None):
+    from pyramid.security import authenticated_userid
+
+    logger.debug("add job: status_location=%s", status_location)
+    
     request.db.jobs.save(dict(
-        user_id = user_id, 
-        uuid = uuid.uuid4().get_hex(),
-        identifier = identifier,
-        title = execution.process.title,
-        service_url = wps_url,
-        status_location = execution.statusLocation,
-        status = execution.status,
-        progress = execution.percentCompleted,
-        message = execution.statusMessage,
-        errors = ['%s, code=%s, locator=%s' % (error.text, error.code, error.locator) for error in execution.errors],
-        start_time = datetime.datetime.now(),
-        end_time = datetime.datetime.now(),
+        # TODO: need job name ...
+        #identifier = uuid.uuid4().get_urn(), # urn does not work as id in javascript
+        identifier = uuid.uuid4().get_hex(),
+        userid = authenticated_userid(request),
+        wps_url = wps_url,
+        status_location = status_location,
         notes = notes,
-        tags = tags,
-    ))
+        tags = tags))
+    
 
 
 

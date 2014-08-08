@@ -112,10 +112,8 @@ def qc_wizard_check(request):
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
         models.add_job(
             request = request,
-            user_id = authenticated_userid(request),
-            identifier = identifier,
-            wps_url = wps.url,
-            execution = execution,
+            wps_url = execution.serviceInstance,
+            status_location = execution.statusLocation,
             notes = "test",
             tags = "test")
 

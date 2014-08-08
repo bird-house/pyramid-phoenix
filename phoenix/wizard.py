@@ -490,13 +490,11 @@ class Done(Wizard):
         inputs = [(str(key), str(value)) for key, value in inputs]
         outputs = [("output",True)]
         execution = self.wps.execute(identifier, inputs=inputs, output=outputs)
-       
+
         models.add_job(
             request = self.request,
-            user_id = authenticated_userid(self.request), 
-            identifier = identifier,
-            wps_url = self.wps.url,
-            execution = execution,
+            wps_url = execution.serviceInstance,
+            status_location = execution.statusLocation,
             notes = notes,
             tags = tags)
 
@@ -532,10 +530,8 @@ class Done(Wizard):
 
         models.add_job(
             request = self.request,
-            user_id = authenticated_userid(self.request), 
-            identifier = identifier,
-            wps_url = self.wps.url,
-            execution = execution,
+            wps_url = execution.serviceInstance,
+            status_location = execution.statusLocation,
             notes = notes,
             tags = tags)
 

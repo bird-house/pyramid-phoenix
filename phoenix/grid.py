@@ -137,13 +137,13 @@ class JobsGrid(MyGrid):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['start_time'] = self.start_time_td
         self.column_formats['status'] = self.status_td
-        self.column_formats['message'] = self.message_td
+        self.column_formats['status_message'] = self.message_td
         self.column_formats['status_location'] = self.status_location_td
         self.column_formats['progress'] = self.progress_td
         self.column_formats['action'] = self.action_td
         #self.user_tz = u'US/Eastern'
         self.user_tz = u'UTC'
-        self.exclude_ordering = ['message', 'action']
+        self.exclude_ordering = ['status_message', 'action']
 
     def start_time_td(self, col_num, i, item):
         """Generate the column for the start time.
@@ -181,20 +181,20 @@ class JobsGrid(MyGrid):
             "span",
             c=HTML.literal(status),
             class_=span_class,
-            id_="status-%s" % item.get('uuid'))
+            id_="status-%s" % item.get('identifier'))
         return HTML.td(span)
 
     def message_td(self, col_num, i, item):
         """Generates the column with job message.
         """
-        message = item.get('message')
+        message = item.get('status_message')
         #for error in item.get('errors'):
         #    message += ', Exception: %s' % str(error)
         span = HTML.tag(
             "span",
             c=HTML.literal(message),
             class_="",
-            id_="message-%s" % item.get('uuid'))
+            id_="message-%s" % item.get('identifier'))
         return HTML.td(span)
 
     def status_location_td(self, col_num, i, item):
@@ -216,7 +216,7 @@ class JobsGrid(MyGrid):
             c=HTML.literal(progress),
             class_="bar",
             style_="width: %d%s" % (progress, '%'),
-            id_="progress-%s" % item.get('uuid'))
+            id_="progress-%s" % item.get('identifier'))
         div_progress = HTML.tag(
             "div",
             c=div_bar,
@@ -229,11 +229,11 @@ class JobsGrid(MyGrid):
         """
         div = Template("""\
         <div class="btn-group">
-            <button class="btn btn-mini btn-primary show" data-value="${jobid}">Details</button>
-            <button class="btn btn-mini btn-danger delete" data-value="${jobid}">Delete</button>
+            <button class="btn btn-mini btn-primary show" data-value="${identifier}">Details</button>
+            <button class="btn btn-mini btn-danger delete" data-value="${identifier}">Delete</button>
         </div>
         """)
-        return HTML.td(HTML.literal(div.substitute({'jobid': item.get('uuid')} )))
+        return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))
 
 class CatalogSearchGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):

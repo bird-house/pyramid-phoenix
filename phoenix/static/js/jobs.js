@@ -11,7 +11,7 @@ $(function() {
         var finished = true;
         $.each(json, function(index, job) {
           // update only if necessary
-          var currentStatus = $("#status-"+job.job_id).text();
+          var currentStatus = $("#status-"+job.identifier).text();
           if (! (currentStatus in ['ProcessSucceeded', 'ProcessFailed', 'Exception']) ) {
             var status_class = 'label'
             if (job.status == 'ProcessSucceeded') {
@@ -28,11 +28,11 @@ $(function() {
               finished = false;
             }
 
-            $("#status-"+job.job_id).attr('class', status_class);
-            $("#status-"+job.job_id).text(job.status);
-            $("#message-"+job.job_id).text(job.message);
-            $("#progress-"+job.job_id).attr('style', "width: "+job.progress+"%");
-            $("#progress-"+job.job_id).text(job.progress);
+            $("#status-"+job.identifier).attr('class', status_class);
+            $("#status-"+job.identifier).text(job.status);
+            $("#message-"+job.identifier).text(job.message);
+            $("#progress-"+job.identifier).attr('style', "width: "+job.progress+"%");
+            $("#progress-"+job.identifier).text(job.progress);
           }
         });
 
@@ -64,11 +64,11 @@ $(function() {
   $(".delete").button({
     text: false,
   }).click(function( event ) {
-    var job_id = $(this).attr('data-value');
+    var identifier = $(this).attr('data-value');
     var row = $(this).closest('tr');
     $.getJSON(
       '/delete.job',
-      {'job_id': job_id},
+      {'identifier': identifier},
       function(json) {
         row.remove();
       }
@@ -79,8 +79,8 @@ $(function() {
   $(".show").button({
     text: false,
   }).click(function( event ) {
-    var job_id = $(this).attr('data-value');
-    window.location.href = "/output_details?job_id=" + job_id;
+    var identifier = $(this).attr('data-value');
+    window.location.href = "/output_details?identifier=" + identifier;
   });
  
 });

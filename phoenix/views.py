@@ -301,19 +301,17 @@ class Execute(MyView):
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
-            captured = form.validate(controls)
+            appstruct = form.validate(controls)
 
             from .helpers import execute_wps
-            execution = execute_wps(self.wps, self.identifier, captured)
+            execution = execute_wps(self.wps, self.identifier, appstruct)
 
             models.add_job(
                 request = self.request,
-                user_id = authenticated_userid(self.request), 
-                identifier = self.identifier, 
-                wps_url = self.wps.url, 
-                execution = execution,
-                notes = captured.get('info_notes', ''),
-                tags = captured.get('info_tags', ''))
+                wps_url = execution.serviceInstance,
+                status_location = execution.statusLocation,
+                notes = appstruct.get('info_notes', ''),
+                tags = appstruct.get('info_tags', ''))
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
             return dict(form = e.render())
@@ -350,14 +348,6 @@ class Jobs(MyView):
         return dict(order=order, order_dir=order_dir)
 
     @view_config(renderer='json', name='update.jobs')
-    def update(self):
-        # http://t.wits.sg/misc/jQueryProgressBar/demo.php
-        # http://demo.todo.sixfeetup.com/list
-
-        #job_id = self.request.params.get('job_id', None)
-
-        return [{'job_id': job['uuid'], 'status': job['status'], 'message': job['message'], 'status_location': job['status_location'], 'progress': job['progress']} for job in self.update_jobs()]
-
     def update_jobs(self):
         order = self.sort_order()
         key=order.get('order')
@@ -365,46 +355,42 @@ class Jobs(MyView):
 
         from owslib.wps import WPSExecution
 
-        jobs = []
-        for job in self.db.jobs.find({'user_id':authenticated_userid(self.request)}).sort(key, direction):
-            job['message'] = job.get('message', '')
-            job['errors'] = job.get('errors', [])
-            if job['status'] in ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused']:
-                try:
-                    execution = WPSExecution(url=job['service_url'])
-                    execution.checkStatus(url=job['status_location'], sleepSecs=0)
-                    job['status'] = execution.status
-                    job['progress'] = execution.percentCompleted
-                    job['message'] = execution.statusMessage
-                    job['errors'] = ['%s, code=%s, locator=%s' % (error.text, error.code, error.locator) for error in execution.errors]
-                except:
-                    msg = 'could not access wps %s' % ( job['status_location'] )
-                    logger.exception(msg)
-                    # TODO: if url is not accessable ... try again!
-                    job['status'] = 'ProcessFailed'
-                    #job['errors'].append( dict(code='', locator='', text=msg) )
-
-                job['end_time'] = datetime.datetime.now()
-                job['duration'] = str(job['end_time'] - job['start_time'])
-            if job['status'] in ['ProcessSucceeded']:
-                job['progress'] = 100
+        items = []
+        for job in self.db.jobs.find({'userid': authenticated_userid(self.request)}).sort(key, direction):
             try:
-                self.db.jobs.update({'uuid': job['uuid']}, job)
+                logger.debug("update job: %s", job['identifier'])
+                item = dict(
+                    identifier = job['identifier'],
+                    status_location = job['status_location'])
+                
+                execution = WPSExecution(url = job['wps_url'])
+                execution.checkStatus(url = job['status_location'], sleepSecs=0)
+                item['status'] = job['status'] = execution.getStatus()
+                item['status_message'] = job['status_message'] = execution.statusMessage
+                job['is_complete'] = execution.isComplete()
+                job['is_succeded'] = execution.isSucceded() 
+                if execution.isSucceded():
+                    item['progress'] = job['progress'] = 100
+                else:
+                    item['progress'] = job['progress'] = execution.percentCompleted
+                # update db
+                self.db.jobs.update({'identifier': job['identifier']}, job)
             except:
-                logger.exception("update job failed")
-            jobs.append(job)
-        return jobs
+                logger.exception("could not update job %s", job.get('identifier'))
+            else:
+                items.append( item )
+        return items
 
     @view_config(renderer='json', name='deleteall.job')
     def delete_all(self):
-        self.db.jobs.remove({'user_id':authenticated_userid(self.request)})
+        self.db.jobs.remove({'userid': authenticated_userid(self.request)})
         return {}
 
     @view_config(renderer='json', name='delete.job')
     def delete(self):
-        job_id = self.request.params.get('job_id', None)
-        if job_id is not None:
-            self.db.jobs.remove({'uuid':job_id})
+        identifier = self.request.params.get('identifier', None)
+        if identifier is not None:
+            self.db.jobs.remove({'identifier': identifier})
 
         return {}
     
@@ -416,7 +402,7 @@ class Jobs(MyView):
         grid = JobsGrid(
                 self.request,
                 items,
-                ['status', 'start_time', 'title', 'message', 'status_location', 'progress', 'action'],
+                ['status', 'identifier', 'status_message', 'status_location', 'progress', 'action'],
             )
 
         return dict(title=self.title, description=self.description, grid=grid, items=items)
@@ -475,7 +461,7 @@ class OutputDetails:
         return HTTPFound(location=self.request.route_url('output_details'))
 
     def process_outputs(self, job_id):
-        job = self.db.jobs.find_one({'uuid':job_id})
+        job = self.db.jobs.find_one({'identifier': job_id})
         execution = WPSExecution(url=job['service_url'])
         execution.checkStatus(url=job['status_location'], sleepSecs=0)
         return execution.processOutputs
@@ -507,17 +493,16 @@ class OutputDetails:
         return result
         
     @view_config(route_name='output_details', renderer='templates/output_details.pt')
-    def output_details_view(self):
+    def view(self):
         form = self.generate_form()
 
         if 'publish' in self.request.POST:
             return self.process_form(form)
 
+        # TODO: this is a bit fishy ...
         if self.request.params.get('job_id') is not None:
             self.session['job_id'] = self.request.params.get('job_id')
             self.session.changed()
-
-        logger.debug('jobid=%s', self.session['job_id'])
 
         items = []
         for output in self.process_outputs(self.session.get('job_id')):
