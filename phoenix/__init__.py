@@ -1,10 +1,3 @@
-# __init__.py
-# Copyright (C) 2013 the ClimDaPs/Phoenix authors and contributors
-# <see AUTHORS file>
-#
-# This module is part of ClimDaPs/Phoenix and is released under
-# the MIT License: http://www.opensource.org/licenses/mit-license.php
-
 from pyramid.config import Configurator
 from pyramid.events import subscriber
 from pyramid.events import NewRequest
@@ -74,6 +67,7 @@ def main(global_config, **settings):
 
     # routes 
     config.add_route('home', '/')
+    config.add_route('dashboard', '/dashboard')
     config.add_route('processes', '/processes')
     config.add_route('jobs', '/jobs')
     config.add_route('output_details', '/output_details')

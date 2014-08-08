@@ -15,6 +15,7 @@ def navbar(context, request):
         return dict(name=name, url=url, active=active)
 
     nav = []
+    nav.append( nav_item('Dashboard', request.route_url('dashboard')) )
     if has_permission('edit', request.context, request):
         nav.append( nav_item('Processes', request.route_url('processes')) )
         nav.append( nav_item('My Jobs', request.route_url('jobs')) )

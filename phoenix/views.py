@@ -177,6 +177,18 @@ class PhoenixViews:
         lm.layout.add_heading('heading_stats')
         return dict()
 
+@view_defaults(permission='view', layout='default')
+class Dashboard(MyView):
+    def __init__(self, request):
+        super(Dashboard, self).__init__(request, 'Dashboard')
+
+    @view_config(route_name='dashboard', renderer='templates/dashboard.pt')
+    def view(self):
+        return dict(
+            title=self.title,
+            description=self.description,
+            )
+
 @view_defaults(permission='edit', layout='default')
 class Processes(MyView):
     def __init__(self, request):
