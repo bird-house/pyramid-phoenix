@@ -247,7 +247,7 @@ class LiteralInputs(Wizard):
 
     def schema(self):
         from .wps import WPSSchema
-        return WPSSchema(info=True, hide=True, process = self.process)
+        return WPSSchema(info=True, hide_complex=True, process = self.process)
 
     def success(self, appstruct):
         self.wizard_state.set('literal_inputs', appstruct)

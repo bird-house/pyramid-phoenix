@@ -143,7 +143,7 @@ class WPSSchema(colander.SchemaNode):
 
     appstruct = {}
 
-    def __init__(self, info=False, hide=False, process=None, unknown='ignore', **kw):
+    def __init__(self, info=False, hide_complex=False, process=None, unknown='ignore', **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
@@ -183,6 +183,7 @@ class WPSSchema(colander.SchemaNode):
         # The default type of this SchemaNode is Mapping.
         colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
         self.info = info
+        self.hide_complex = hide_complex
         self.process = process
         self.unknown = unknown
         self.kwargs = kwargs or {}   
@@ -190,9 +191,6 @@ class WPSSchema(colander.SchemaNode):
         if info:
             self.add_info_nodes()
         self.add_nodes(process)
-        if hide:
-            if self.get('file_identifier', False):
-                del self['file_identifier']
 
     def add_info_nodes(self):
         #logger.debug("adding info nodes")
@@ -233,14 +231,12 @@ class WPSSchema(colander.SchemaNode):
                 node = self.boundingbox(data_input) 
             elif 'www.w3.org' in data_input.dataType:
                 node = self.literal_data(data_input)
-            elif 'ComplexData' in data_input.dataType:
+            elif not self.hide_complex and 'ComplexData' in data_input.dataType:
                 node = self.complex_data(data_input)
+            elif 'LiteralData' in data_input.dataType:# TODO: workaround for geoserver wps
+                node = self.literal_data(data_input)
             else:
-                #TODO: As workaround for geoserver wps.
-                if 'LiteralData' in data_input.dataType:#for geoserver wps
-                    node = self.literal_data(data_input)
-                else:
-                    raise Exception('unknown data type %s' % (data_input.dataType))
+                logger.warning('unknown data type %s', data_input.dataType)
 
             if node is None:
                 continue
