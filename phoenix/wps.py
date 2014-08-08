@@ -101,20 +101,6 @@ def execute_restflow(wps, nodes):
 
     return execution
 
-def search_local_files(wps, token, filter):
-    files = []
-    try:
-        files = execute(wps.url,
-                        identifier='org.malleefowl.listfiles',
-                        inputs=[('token', token), ('filter', filter)],
-                        format=JSON)
-        assert type(files) == types.ListType
-        logger.debug("num found local files: %d", len(files))
-    except Exception as e:
-        files = []
-        logger.error('retrieving files failed! token=%s, filter=%s, error msg=%s' % (token, filter, e.message))
-    return files
-
 # Memory tempstore for file uploads
 # ---------------------------------
 
