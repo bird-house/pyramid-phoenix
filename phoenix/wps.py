@@ -143,7 +143,7 @@ class WPSSchema(colander.SchemaNode):
 
     appstruct = {}
 
-    def __init__(self, info=False, hide=False, process=None, metadata=None, unknown='ignore', **kw):
+    def __init__(self, info=False, hide=False, process=None, unknown='ignore', **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
@@ -156,9 +156,6 @@ class WPSSchema(colander.SchemaNode):
         process:
            An ``WPS`` process description that you want a ``Colander`` schema
            to be generated for.
-
-        metadata:
-           Additional metadata for wps process.
 
         unknown
            Represents the `unknown` argument passed to
@@ -187,13 +184,12 @@ class WPSSchema(colander.SchemaNode):
         colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
         self.info = info
         self.process = process
-        self.metadata = metadata
         self.unknown = unknown
         self.kwargs = kwargs or {}   
 
         if info:
             self.add_info_nodes()
-        self.add_nodes(process, metadata)
+        self.add_nodes(process)
         if hide:
             if self.get('file_identifier', False):
                 del self['file_identifier']
@@ -224,7 +220,7 @@ class WPSSchema(colander.SchemaNode):
             )
         self.add(node)
         
-    def add_nodes(self, process, metadata=None):
+    def add_nodes(self, process):
         if process is None:
             return
 
@@ -238,7 +234,7 @@ class WPSSchema(colander.SchemaNode):
             elif 'www.w3.org' in data_input.dataType:
                 node = self.literal_data(data_input)
             elif 'ComplexData' in data_input.dataType:
-                node = self.complex_data(data_input, metadata)
+                node = self.complex_data(data_input)
             else:
                 #TODO: As workaround for geoserver wps.
                 if 'LiteralData' in data_input.dataType:#for geoserver wps
@@ -349,13 +345,8 @@ class WPSSchema(colander.SchemaNode):
 
         logger.debug("choosen widget, identifier=%s, widget=%s", data_input.identifier, node.widget)
 
-    def complex_data(self, data_input, metadata):
-        # TODO: handle upload, url, direct input for complex data
-        node = None
-
-        # check if input is uploaded
+    def complex_data(self, data_input):
         # TODO: refactor upload, url, text-input choice ...
-        logger.debug('metadata=%s', self.metadata)
         ## if metadata is None or metadata == {} or data_input.identifier in metadata.get('uploads', []):
         ##     node = colander.SchemaNode(
         ##         deform.FileData(),
@@ -439,7 +430,6 @@ class WPSSchema(colander.SchemaNode):
         cloned = self.__class__(
             self.info,
             self.process,
-            self.metadata,
             self.unknown,
             **self.kwargs)
         cloned.__dict__.update(self.__dict__)

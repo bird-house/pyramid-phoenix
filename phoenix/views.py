@@ -261,30 +261,12 @@ class Execute:
 
     def generate_form(self, formid='deform'):
         from .wps import WPSSchema
-        from .helpers import get_process_metadata
         # TODO: should be WPSSchema.bind() ...
-        schema = WPSSchema(
-            info=True,
-            process = self.wps.describeprocess(self.identifier),
-            metadata = get_process_metadata(self.wps, self.identifier))
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
+        schema = WPSSchema(info=True, process = self.wps.describeprocess(self.identifier))
         return Form(
             schema,
             buttons=('submit',),
             formid=formid,
-            use_ajax=False,
-            ajax_options=options,
             )
     
     def process_form(self, form):

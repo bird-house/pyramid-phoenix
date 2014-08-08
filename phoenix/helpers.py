@@ -48,31 +48,6 @@ def is_url(text):
         logger.error('error occured in is_url, error=%s', e.message)
         return False
 
-def get_process_metadata(wps, process_id):
-    import json
-    
-    identifier = 'org.malleefowl.metadata'
-    inputs = [("processid", str(process_id))]
-    outputs = [("output", False)]
-    
-    metadata = {}
-    try:
-        # TODO: use simple wps call
-        from owslib.wps import monitorExecution
-        execution = wps.execute(identifier, inputs=inputs, output=outputs)
-        monitorExecution(execution)
-        if len(execution.processOutputs) != 1:
-            return {}
-        output = execution.processOutputs[0]
-        logger.debug('output %s, data=%s, ref=%s', output.identifier, output.data, output.reference)
-        if len(output.data) != 1:
-            return {}
-        metadata = json.loads(output.data[0])
-        logger.debug('extra metadata loaded: %s, type = %s', metadata, type(metadata))
-    except:
-        metadata = {}
-    return metadata
-
 def execute_wps(wps, identifier, params):
     # TODO: handle sync/async case, 
     # TODO: fix wps-client (parsing response)
