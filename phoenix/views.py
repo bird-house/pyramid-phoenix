@@ -260,22 +260,24 @@ class Processes(MyView):
             form=form.render())
 
 @view_defaults(permission='edit', layout='default')
-class Execute:
+class Execute(MyView):
     def __init__(self, request):
-        self.request = request
+        super(Execute, self).__init__(request, 'Execute')
+        
         self.db = self.request.db
        
         self.identifier = self.request.params.get('identifier', None)
         self.wps = self.request.wps
-        session = self.request.session
-        if 'wps.url' in session:
-            url = session['wps.url']
+        if 'wps.url' in self.session:
+            url = self.session['wps.url']
             self.wps = WebProcessingService(url)
+        self.process = self.wps.describeprocess(self.identifier)
+        self.description = self.process.title
 
     def generate_form(self, formid='deform'):
         from .wps import WPSSchema
         # TODO: should be WPSSchema.bind() ...
-        schema = WPSSchema(info=True, process = self.wps.describeprocess(self.identifier))
+        schema = WPSSchema(info=True, process = self.process)
         return Form(
             schema,
             buttons=('submit',),
@@ -308,7 +310,10 @@ class Execute:
         form = self.generate_form()
         if 'submit' in self.request.POST:
             return self.process_form(form)
-        return dict(form=form.render())
+        return dict(
+            title=self.title,
+            description=self.description,
+            form=form.render())
     
 @view_defaults(permission='edit', layout='default')
 class Jobs:
