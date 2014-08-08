@@ -1,5 +1,6 @@
-<div class="span4">
-    <h3>Statistics</h3>
+<div class="row-fluid">
+  <div class="span4">
+    <h3>Users</h3>
     <p>
       Number of Users: <span class="badge badge-success">${num_users}</span>
     </p>
@@ -9,4 +10,5 @@
     <p>
       Logins last 7 Days: <span class="badge badge-success">${num_logins_7d}</span>
     </p>
+  </div>
 </div>

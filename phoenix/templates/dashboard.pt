@@ -11,6 +11,11 @@
       <h1>${title} <small>${description}</small></h1>
     </div>    
 
+     <!-- row columns -->
+     <div class="row">
+       ${panel('headings')}
+     </div>
+
   </div>
    
 </metal:block>

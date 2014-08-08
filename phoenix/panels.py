@@ -31,26 +31,6 @@ def navbar(context, request):
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request), login=login)
 
 
-#==============================================================================
-# user_statistic
-#==============================================================================
-
-# @panel_config(name='user_statistic',
-#               renderer='templates/panels/user_statistic.pt')
-# def user_statistic(context, request):
-#     userid = authenticated_userid(request)
-#     processes = []
-
-#     if userid:
-#         processes = ProcessHistory.status_count_by_userid(userid)
-
-#     lastlogin = 'first login'
-#     if 'lastlogin' in request.cookies:
-#         lastlogin = request.cookies['lastlogin']
-
-#     return dict(lastlogin=lastlogin, processes=processes)
-
-
 @panel_config(name='welcome', renderer='templates/panels/welcome.pt')
 def welcome(context, request, title):
     return dict(title=title, logged_in=authenticated_userid(request))
@@ -59,23 +39,14 @@ def welcome(context, request, title):
 def sidebar(context, request):
     return dict(title="Sidebar...")
 
-@panel_config(name='heading_processes', renderer='templates/panels/heading_processes.pt')
-def heading_processes(context, request):
-    return dict(title='Run a process')
-
-@panel_config(name='heading_jobs',
-              renderer='templates/panels/heading_jobs.pt')
-def heading_history(context, request):
-    return dict(title='Monitor processes')
-
-@panel_config(name='heading_info',
-              renderer='templates/panels/heading_info.pt')
+@panel_config(name='info',
+              renderer='templates/panels/info.pt')
 def heading_info(context, request):
     return dict(title='Info')
 
-@panel_config(name='heading_stats',
-              renderer='templates/panels/heading_stats.pt')
-def heading_statistics(context, request):
+@panel_config(name='users',
+              renderer='templates/panels/users.pt')
+def heading_users(context, request):
     import models
     userdb = models.User(request)
     return userdb.count()

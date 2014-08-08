@@ -173,8 +173,7 @@ class PhoenixViews:
     @view_config(route_name='home', renderer='templates/home.pt')
     def home(self):
         lm = self.request.layout_manager
-        lm.layout.add_heading('heading_info')
-        lm.layout.add_heading('heading_stats')
+        lm.layout.add_heading('info')
         return dict()
 
 @view_defaults(permission='view', layout='default')
@@ -184,6 +183,9 @@ class Dashboard(MyView):
 
     @view_config(route_name='dashboard', renderer='templates/dashboard.pt')
     def view(self):
+        lm = self.request.layout_manager
+        lm.layout.add_heading('users')
+
         return dict(
             title=self.title,
             description=self.description,
