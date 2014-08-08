@@ -48,12 +48,6 @@ $(function() {
     updateJobs();
   }, 1000); 
 
-  // Refresh job list ...
-  $("a.job-refresh").click(function(e) {
-    e.preventDefault();
-    updateJobs();
-  });
-
   // Delete all jobs
   $("a.job-delete-all").click(function(e) {
     e.preventDefault();
