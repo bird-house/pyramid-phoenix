@@ -316,9 +316,9 @@ class Execute(MyView):
             form=form.render())
     
 @view_defaults(permission='edit', layout='default')
-class Jobs:
+class Jobs(MyView):
     def __init__(self, request):
-        self.request = request
+        super(Jobs, self).__init__(request, 'My Jobs')
         self.db = self.request.db 
 
     def sort_order(self):
@@ -402,10 +402,10 @@ class Jobs:
         grid = JobsGrid(
                 self.request,
                 items,
-                ['status', 'start_time', 'identifier', 'message', 'status_location', 'progress', 'action'],
+                ['status', 'start_time', 'title', 'message', 'status_location', 'progress', 'action'],
             )
 
-        return dict(grid=grid, items=items)
+        return dict(title=self.title, description=self.description, grid=grid, items=items)
 
 @view_defaults(permission='edit', layout='default')
 class OutputDetails:
