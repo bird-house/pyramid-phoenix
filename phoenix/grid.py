@@ -100,7 +100,6 @@ class ProcessesGrid(MyGrid):
         div = Template("""\
         <div class="btn-group">
             <button class="btn btn-mini btn-success execute" data-value="${identifier}">Execute</button>
-            <button class="btn btn-mini btn-primary info" data-value="${identifier}">Info</button>
         </div>
         """)
         return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))

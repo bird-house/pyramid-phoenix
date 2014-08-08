@@ -62,6 +62,13 @@ def unknown_failure(request, exc):
     response.status_int = 500
     return response
 
+class MyView(object):
+    def __init__(self, request, title, description=''):
+        self.request = request
+        self.session = self.request.session
+        self.title = title
+        self.description = description
+
 @view_defaults(permission='view', layout='default')
 class PhoenixViews:
     def __init__(self, request):
@@ -171,14 +178,15 @@ class PhoenixViews:
         return dict()
 
 @view_defaults(permission='edit', layout='default')
-class Processes:
+class Processes(MyView):
     def __init__(self, request):
-        self.request = request
+        super(Processes, self).__init__(request, 'WPS Processes')
+
         self.wps = None
-        self.session = self.request.session
         if 'wps.url' in self.session:
             try:
                 self.wps = WebProcessingService(url=self.session['wps.url'])
+                self.description = self.wps.identification.title
             except:
                 msg = "Could not connect to wps"
                 logger.exception(msg)
@@ -203,7 +211,7 @@ class Processes:
         schema = ChooseWPSSchema().bind(wps_list = models.get_wps_list(self.request))
         return Form(
             schema,
-            buttons=('select',),
+            buttons=('submit',),
             formid=formid
             )
     def process_form(self, form):
@@ -220,9 +228,9 @@ class Processes:
         return HTTPFound(location=self.request.route_url('processes'))
 
     @view_config(route_name='processes', renderer='templates/processes.pt')
-    def processes_view(self):
+    def view(self):
         form = self.generate_form()
-        if 'select' in self.request.POST:
+        if 'submit' in self.request.POST:
             return self.process_form(form)
 
         items = []
@@ -244,7 +252,12 @@ class Processes:
                 items,
                 ['title', 'abstract', 'action'],
             )
-        return dict(grid=grid, items=items, form=form.render())
+        return dict(
+            title=self.title,
+            description=self.description,
+            grid=grid,
+            items=items,
+            form=form.render())
 
 @view_defaults(permission='edit', layout='default')
 class Execute:
