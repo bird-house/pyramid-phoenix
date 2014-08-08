@@ -508,6 +508,7 @@ class Done(Wizard):
             service = self.request.wps.url,
             identifier = 'esgf_wget',
             input = ['credentials=%s' % (credentials)],
+            complex_input = 'source',
             output = ['output'],
             sources = [[str(file_url)] for file_url in self.wizard_state.get('esgf_files')])
         worker_inputs = map(lambda x: str(x[0]) + '=' + str(x[1]),  self.wizard_state.get('literal_inputs').items())
@@ -515,6 +516,7 @@ class Done(Wizard):
             service = self.wps.url,
             identifier = self.wizard_state.get('process_identifier'),
             input = worker_inputs,
+            complex_input = self.wizard_state.get('complex_input_identifier'),
             output = ['output'])
         nodes = dict(source=source, worker=worker)
         return nodes

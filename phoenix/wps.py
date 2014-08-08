@@ -89,12 +89,12 @@ def execute_restflow(wps, nodes):
     # generate url for workflow description
     wf_url = build_request_url(
         wps.url,
-        identifier='org.malleefowl.restflow.generate',
+        identifier='restflow_generate',
         inputs=[('nodes', nodes_json)])
     logger.debug('wf url: %s', wf_url)
 
     # run workflow
-    identifier = 'org.malleefowl.restflow.run'
+    identifier = 'restflow_run'
     inputs = [("workflow_description", wf_url)]
     outputs = [("output",True)]
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
