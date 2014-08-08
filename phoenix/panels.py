@@ -10,20 +10,20 @@ log = logging.getLogger(__name__)
 @panel_config(name='navbar',
               renderer='templates/panels/navbar.pt')
 def navbar(context, request):
-    def nav_item(name, url, icon):
+    def nav_item(name, url):
         active = request.current_route_url() == url
-        return dict(name=name, url=url, active=active, icon=icon)
+        return dict(name=name, url=url, active=active)
 
     nav = []
     if has_permission('edit', request.context, request):
-        nav.append( nav_item('Processes', request.route_url('processes'), 'icon-star') )
-        nav.append( nav_item('My Jobs', request.route_url('jobs'), 'icon-list') )
-        nav.append( nav_item('Wizard', request.route_url('wizard_wps'), 'icon-star') )
-        nav.append( nav_item('Map', request.route_url('map'), 'icon-globe') )
-        nav.append( nav_item('My Account', request.route_url('account'), 'icon-user') )
+        nav.append( nav_item('Processes', request.route_url('processes')) )
+        nav.append( nav_item('My Jobs', request.route_url('jobs')) )
+        nav.append( nav_item('Wizard', request.route_url('wizard_wps')) )
+        nav.append( nav_item('Map', request.route_url('map')) )
+        nav.append( nav_item('My Account', request.route_url('account')) )
     if has_permission('admin', request.context, request):
-        nav.append( nav_item('Settings', request.route_url('settings'), 'icon-edit') )
-    #nav.append( nav_item('Help', request.route_url('help'), 'icon-question-sign') )
+        nav.append( nav_item('Settings', request.route_url('settings')) )
+    #nav.append( nav_item('Help', request.route_url('help')) )
 
     login = request.current_route_url() == request.route_url('signin')
 
