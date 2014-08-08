@@ -184,7 +184,7 @@ class Dashboard(MyView):
     @view_config(route_name='dashboard', renderer='templates/dashboard.pt')
     def view(self):
         lm = self.request.layout_manager
-        lm.layout.add_heading('users')
+        lm.layout.add_heading('dashboard_users')
 
         return dict(
             title=self.title,

@@ -44,8 +44,8 @@ def sidebar(context, request):
 def heading_info(context, request):
     return dict(title='Info')
 
-@panel_config(name='users',
-              renderer='templates/panels/users.pt')
+@panel_config(name='dashboard_users',
+              renderer='templates/panels/dashboard_users.pt')
 def heading_users(context, request):
     import models
     userdb = models.User(request)
