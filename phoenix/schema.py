@@ -186,15 +186,23 @@ class CatalogSearchSchema(colander.MappingSchema):
 class DoneSchema(colander.MappingSchema):
     pass
 
-class CatalogSchema(colander.MappingSchema):
+class CatalogAddServiceSchema(colander.MappingSchema):
     url = colander.SchemaNode(
         colander.String(),
-        title = 'URL',
-        description = 'Add WPS URL',
-        missing = '',
-        default = '',
+        title = 'Service URL',
+        description = 'Add URL of OGC service (WPS, WMS, ...). Example: http://localhost:8091/wps',
+        default = 'http://localhost:8091/wps',
         validator = colander.url,
         widget = TextInputWidget())
+    resource_type = colander.SchemaNode(
+        colander.String(),
+        description = "Choose OGC service resource type.",
+        default = 'http://www.opengis.net/wps/1.0.0',
+        widget = RadioChoiceWidget(
+            values=[('http://www.opengis.net/wps/1.0.0', "OGC:WPS 1.0.0"),
+                    ('http://www.opengis.net/wms', "OGC:WMS 1.1.1"),
+                    ('http://www.opengis.net/cat/csw/2.0.2', "OGC:CSW 2.0.2")])
+        )
 
 class PublishSchema(colander.MappingSchema):
     identifier = colander.SchemaNode(colander.String())

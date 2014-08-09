@@ -701,8 +701,8 @@ class CatalogSettings(MyView):
         """This helper code generates the form that will be used to add
         and edit wps based on the schema of the form.
         """
-        from .schema import CatalogSchema
-        schema = CatalogSchema().bind()
+        from .schema import CatalogAddServiceSchema
+        schema = CatalogAddServiceSchema()
         return Form(
             schema,
             buttons=('submit',),
@@ -712,10 +712,10 @@ class CatalogSettings(MyView):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
-            url = appstruct.get('url', '')
+            url = appstruct.get('url')
             self.request.csw.harvest(
                 source=url,
-                resourcetype="http://www.opengis.net/wps/1.0.0")
+                resourcetype=appstruct.get('resource_type'))
             self.session.flash('Added WPS %s' % (url), queue="success")
         except ValidationFailure, e:
             logger.exception('validation of catalog form failed')

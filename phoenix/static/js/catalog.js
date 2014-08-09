@@ -10,7 +10,7 @@ $(function() {
       {'identifier': identifier},
       function(json) {
         //row.remove();
-        console.log("delete wps from catalog not implemented yet");
+        console.log("delete entry from catalog not implemented yet");
         location.reload()
       }
     );

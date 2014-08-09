@@ -16,9 +16,9 @@
       <h1>${title} <small>${description}</small></h1>
     </div>    
 
-    <!--! Button to trigger modal dialog for user addition -->
-    <a href="#catalog-form" role="button" class="btn btn-success" data-toggle="modal">
-      Add WPS
+    <!--! Button to trigger modal dialog for adding ogc service to catalog -->
+    <a href="#add-service-form" role="button" class="btn btn-success" data-toggle="modal">
+      Add Service
     </a>
     <br/><br />
 
@@ -26,11 +26,11 @@
       <tal:rows replace="structure grid" />
     </table>
 
-    <!--! Add form for tasks -->
-    <div id="catalog-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="catalog-form-label" aria-hidden="true">
+    <!--! Add form for service addition -->
+    <div id="add-service-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="add-service-form-label" aria-hidden="true">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="catalog-form-label">Add WPS</h3>
+        <h3 id="add-service-form-label">Add OGC Service to Catalog</h3>
       </div>
       <div class="modal-body">
         <tal:form replace="structure form" />
