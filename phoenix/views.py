@@ -238,7 +238,7 @@ class Processes(MyView):
             session.changed()
         except ValidationFailure, e:
             logger.exception('validation of process view failed.')
-            return dict(form=e.render())
+            return dict(title=self.title, description=self.description, form=e.render())
         return HTTPFound(location=self.request.route_url('processes'))
 
     @view_config(route_name='processes', renderer='templates/processes.pt')
@@ -314,7 +314,7 @@ class Execute(MyView):
                 tags = appstruct.get('info_tags', ''))
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
-            return dict(form = e.render())
+            return dict(title=self.title, description=self.description, form = e.render())
         return HTTPFound(location=self.request.route_url('jobs'))
 
     @view_config(route_name='execute', renderer='templates/execute.pt')
@@ -448,7 +448,7 @@ class OutputDetails(MyView):
             self.request.csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
         except ValidationFailure, e:
             logger.exception('validation of publish form failed')
-            return dict(form=e.render())
+            return dict(title=self.title, description=self.description, form=e.render())
         except:
             msg = 'Publication failed.'
             logger.exception(msg)
@@ -522,36 +522,18 @@ class OutputDetails(MyView):
                     grid=grid, items=items, form=form.render())
         
 @view_defaults(permission='edit', layout='default') 
-class MyAccount:
+class MyAccount(MyView):
     def __init__(self, request):
-        self.request = request
+        super(MyAccount, self).__init__(request, 'My Account')
         self.userdb = models.User(request)
 
     def generate_form(self, formid="deform"):
-        """This helper code generates the form that will be used to add
-        and edit wps based on the schema of the form.
-        """
         from .schema import CredentialsSchema
         schema = CredentialsSchema().bind()
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
         return Form(
             schema,
             buttons=('update',),
-            formid=formid,
-            use_ajax=False,
-            ajax_options=options,
-            )
+            formid=formid)
 
     def process_form(self, form):
         try:
@@ -591,7 +573,7 @@ class MyAccount:
                     )
         except ValidationFailure, e:
             logger.exception('Validation of credentials form failed.')
-            return dict(form=e.render())
+            return dict(title=self.title, description=self.description, form=e.render())
         except:
             msg = 'Update of credentials failed.'
             logger.exception(msg)
@@ -654,6 +636,8 @@ class MyAccount:
                 cert_expires = user.get('cert_expires')
                 )
         return dict(
+            title=self.title,
+            description=self.description,
             form=form.render(appstruct),
             form_credentials=creds_form.render(appstruct))
 
@@ -718,7 +702,7 @@ class CatalogSettings(MyView):
             self.session.flash('Added WPS %s' % (url), queue="success")
         except ValidationFailure, e:
             logger.exception('validation of catalog form failed')
-            return dict(form = e.render())
+            return dict(title=self.title, description=self.description, form = e.render())
         except Exception, e:
             logger.exception('could not harvest wps.')
             self.session.flash('Could not add WPS %s. %s' % (url, e), queue="error")
@@ -745,7 +729,7 @@ class CatalogSettings(MyView):
             self.session.flash('Added Dataset %s' % (appstruct.get('title')), queue="success")
         except ValidationFailure, e:
             logger.exception('validation of catalog form failed')
-            return dict(form = e.render())
+            return dict(title=self.title, description=self.description, form = e.render())
         except Exception, e:
             logger.exception('could not harvest wps.')
             self.session.flash('Could not add WPS %s. %s' % (url, e), queue="error")
@@ -865,7 +849,7 @@ class UserSettings(MyView):
                                notes = captured.get('notes', ''))
         except ValidationFailure, e:
             logger.exception('validation of user form failed')
-            return dict(form = e.render())
+            return dict(title=self.title, description=self.description, form = e.render())
         return HTTPFound(location=self.request.route_url('user'))
 
     @view_config(renderer='json', name='delete.user')
