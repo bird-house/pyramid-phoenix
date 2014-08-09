@@ -9,10 +9,10 @@ $(function() {
   $(".publish").button({
     text: false,
   }).click(function( event ) {
-    var identifier = $(this).attr('data-value');
+    var outputid = $(this).attr('data-value');
     $.getJSON(
       '/publish.output',
-      {'identifier': identifier},
+      {'outputid': outputid},
       function(json) {
         if (json) {
           form = $('#publish-form');

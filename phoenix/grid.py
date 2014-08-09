@@ -125,12 +125,12 @@ class OutputDetailsGrid(MyGrid):
         """
         div = Template("""\
         <div class="btn-group">
-            <button class="btn btn-mini btn-primary publish" data-value="${identifier}">Publish</button>
-            <button class="btn btn-mini btn-primary view" data-value="${identifier}">View</button>
-            <button class="btn btn-mini btn-primary mapit" data-value="${identifier}">MapIt</button>
+            <button class="btn btn-mini btn-primary publish" data-value="${outputid}">Publish</button>
+            <button class="btn btn-mini btn-primary view" data-value="${outputid}">View</button>
+            <button class="btn btn-mini btn-primary mapit" data-value="${outputid}">MapIt</button>
         </div>
         """)
-        return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))
+        return HTML.td(HTML.literal(div.substitute({'outputid': item.get('identifier')} )))
 
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
@@ -229,11 +229,11 @@ class JobsGrid(MyGrid):
         """
         div = Template("""\
         <div class="btn-group">
-            <button class="btn btn-mini btn-primary show" data-value="${identifier}">Details</button>
-            <button class="btn btn-mini btn-danger delete" data-value="${identifier}">Delete</button>
+            <button class="btn btn-mini btn-primary show" data-value="${jobid}">Details</button>
+            <button class="btn btn-mini btn-danger delete" data-value="${jobid}">Delete</button>
         </div>
         """)
-        return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))
+        return HTML.td(HTML.literal(div.substitute({'jobid': item.get('identifier')} )))
 
 class CatalogSearchGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):

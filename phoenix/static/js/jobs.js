@@ -64,11 +64,11 @@ $(function() {
   $(".delete").button({
     text: false,
   }).click(function( event ) {
-    var identifier = $(this).attr('data-value');
+    var jobid = $(this).attr('data-value');
     var row = $(this).closest('tr');
     $.getJSON(
       '/delete.job',
-      {'identifier': identifier},
+      {'jobid': jobid},
       function(json) {
         row.remove();
       }
@@ -79,8 +79,9 @@ $(function() {
   $(".show").button({
     text: false,
   }).click(function( event ) {
-    var identifier = $(this).attr('data-value');
-    window.location.href = "/output_details?identifier=" + identifier;
+    var jobid = $(this).attr('data-value');
+    // TODO: fix the call
+    window.location.href = "/output_details?jobid=" + jobid;
   });
  
 });

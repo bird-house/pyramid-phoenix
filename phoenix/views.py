@@ -388,14 +388,14 @@ class Jobs(MyView):
 
     @view_config(renderer='json', name='delete.job')
     def delete(self):
-        identifier = self.request.params.get('identifier', None)
-        if identifier is not None:
-            self.db.jobs.remove({'identifier': identifier})
+        jobid = self.request.params.get('jobid', None)
+        if jobid is not None:
+            self.db.jobs.remove({'identifier': jobid})
 
         return {}
     
     @view_config(route_name='jobs', renderer='templates/jobs.pt')
-    def jobs_view(self):
+    def view(self):
         items = self.update_jobs()
         
         from .grid import JobsGrid
@@ -408,10 +408,9 @@ class Jobs(MyView):
         return dict(title=self.title, description=self.description, grid=grid, items=items)
 
 @view_defaults(permission='edit', layout='default')
-class OutputDetails:
+class OutputDetails(MyView):
     def __init__(self, request):
-        self.request = request
-        self.session = self.request.session
+        super(OutputDetails, self).__init__(request, 'Output Details')
         self.db = self.request.db
 
     def sort_order(self):
@@ -440,14 +439,12 @@ class OutputDetails:
     def process_form(self, form):
         try:
             controls = self.request.POST.items()
-            captured = form.validate(controls)
-            logger.debug('publish captured %s', captured)
+            appstruct = form.validate(controls)
 
             from mako.template import Template
             templ_dc = Template(filename=os.path.join(os.path.dirname(__file__), "templates", "dc.xml"))
 
-            record=templ_dc.render(**captured)
-            logger.debug('record=%s', record)
+            record=templ_dc.render(**appstruct)
             self.request.csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
         except ValidationFailure, e:
             logger.exception('validation of publish form failed')
@@ -460,26 +457,28 @@ class OutputDetails:
             self.session.flash("Publication was successful", queue='success')
         return HTTPFound(location=self.request.route_url('output_details'))
 
-    def process_outputs(self, job_id):
-        job = self.db.jobs.find_one({'identifier': job_id})
-        execution = WPSExecution(url=job['service_url'])
+    def process_outputs(self, jobid):
+        job = self.db.jobs.find_one({'identifier': jobid})
+        execution = WPSExecution(url=job['wps_url'])
         execution.checkStatus(url=job['status_location'], sleepSecs=0)
         return execution.processOutputs
 
-    def process_output(self, job_id, identifier):
-        process_outputs = self.process_outputs(job_id)
-        output = next(o for o in process_outputs if o.identifier == identifier)
+    def process_output(self, jobid, outputid):
+        process_outputs = self.process_outputs(jobid)
+        output = next(o for o in process_outputs if o.identifier == outputid)
         return output
     
     @view_config(renderer='json', name='publish.output')
     def publish(self):
         import uuid
-        identifier = self.request.params.get('identifier')
-        job_id = self.session.get('job_id')
+        outputid = self.request.params.get('outputid')
+        # TODO: why use session for joid?
+        jobid = self.session.get('jobid')
         result = dict()
         if identifier is not None:
-            output = self.process_output(job_id, identifier)
-            
+            output = self.process_output(jobid, outputid)
+
+            # TODO: who about schema.bind?
             result = dict(
                 identifier = uuid.uuid4().get_urn(),
                 title = output.title,
@@ -500,12 +499,13 @@ class OutputDetails:
             return self.process_form(form)
 
         # TODO: this is a bit fishy ...
-        if self.request.params.get('job_id') is not None:
-            self.session['job_id'] = self.request.params.get('job_id')
+        if self.request.params.get('jobid') is not None:
+            self.session['jobid'] = self.request.params.get('jobid')
             self.session.changed()
+        self.description = self.session['jobid']
 
         items = []
-        for output in self.process_outputs(self.session.get('job_id')):
+        for output in self.process_outputs(self.session.get('jobid')):
             items.append(dict(title=output.title,
                               identifier=output.identifier,
                               mime_type = output.mimeType,
@@ -518,7 +518,8 @@ class OutputDetails:
                 items,
                 ['identifier', 'title', 'data', 'reference', 'mime_type', 'action'],
             )
-        return dict(grid=grid, items=items, form=form.render())
+        return dict(title=self.title, description=self.description,
+                    grid=grid, items=items, form=form.render())
         
 @view_defaults(permission='edit', layout='default') 
 class MyAccount:
