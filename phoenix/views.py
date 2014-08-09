@@ -603,7 +603,7 @@ class MyAccount:
         return True
 
     @view_config(route_name='account', renderer='templates/account.pt')
-    def account_view(self):
+    def view(self):
         user_id=authenticated_userid(self.request)
         user = self.userdb.by_id(user_id=user_id)
 
@@ -668,32 +668,34 @@ class Map:
         return dict(token=token)
 
 @view_defaults(permission='admin', layout='default')    
-class Settings:
+class Settings(MyView):
     def __init__(self, request):
-        self.request = request
+        super(Settings, self).__init__(request, 'Settings', "Configure Phoenix.")
         self.settings = self.request.registry.settings
 
     @view_config(route_name='settings', renderer='templates/settings.pt')
-    def settings_view(self):
+    def view(self):
         buttongroups = []
         buttons = []
 
         buttons.append(dict(url=self.settings.get('supervisor.url'),
                             icon="monitor_edit.png", title="Supervisor", id="external-url"))
         buttons.append(dict(url="/settings/catalog", icon="catalog_pages.png", title="Catalog"))
-        buttons.append(dict(url="/settings/user", icon="user_catwomen.png", title="Users"))
+        buttons.append(dict(url="/settings/users", icon="user_catwomen.png", title="Users"))
         buttons.append(dict(url=self.settings.get('thredds.url'),
                             icon="unidataLogo.png", title="Thredds", id="external-url"))
         buttongroups.append(dict(title='Settings', buttons=buttons))
 
-        return dict(buttongroups=buttongroups)
+        return dict(
+            title=self.title,
+            description=self.description,
+            buttongroups=buttongroups)
 
 @view_defaults(permission='admin', layout='default')
-class CatalogSettings:
+class CatalogSettings(MyView):
     
     def __init__(self, request):
-        self.request = request
-        self.session = self.request.session
+        super(CatalogSettings, self).__init__(request, 'Catalog', "Configure Catalog Service (CSW).")
 
     def generate_form(self, formid="deform"):
         """This helper code generates the form that will be used to add
@@ -701,25 +703,10 @@ class CatalogSettings:
         """
         from .schema import CatalogSchema
         schema = CatalogSchema().bind()
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
         return Form(
             schema,
             buttons=('submit',),
-            formid=formid,
-            use_ajax=False,
-            ajax_options=options,
-            )
+            formid=formid)
 
     def process_form(self, form):
         try:
@@ -744,8 +731,8 @@ class CatalogSettings:
         self.session.flash('Delete WPS not Implemented', queue="error")
         return {}
  
-    @view_config(route_name="catalog", renderer='templates/catalog.pt')
-    def catalog_view(self):
+    @view_config(route_name="catalog", renderer='templates/settings/catalog.pt')
+    def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
             return self.process_form(form)
@@ -757,14 +744,17 @@ class CatalogSettings:
                 items,
                 ['title', 'source', 'abstract', 'subjects', 'action'],
             )
-        return dict(grid=grid, items=items, form=form.render())
+        return dict(
+            title=self.title,
+            description=self.description,
+            grid=grid,
+            items=items,
+            form=form.render())
 
 @view_defaults(permission='admin', layout='default')
-class UserSettings:
-    """View for user settings"""
-    
+class UserSettings(MyView):
     def __init__(self, request):
-        self.request = request
+        super(UserSettings, self).__init__(request, 'Users', "Configure Phoenix Users.")
         self.userdb = models.User(self.request)
 
     def sort_order(self):
@@ -859,8 +849,8 @@ class UserSettings:
 
         return result
 
-    @view_config(route_name='user', renderer='templates/user.pt')
-    def user_view(self):
+    @view_config(route_name='user_settings', renderer='templates/settings/users.pt')
+    def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
             return self.process_form(form)
@@ -873,5 +863,10 @@ class UserSettings:
                 user_items,
                 ['name', 'user_id', 'openid', 'organisation', 'notes', 'activated', 'action'],
             )
-        return dict(grid=grid, items=user_items, form=form.render())
+        return dict(
+            title=self.title,
+            description=self.description,
+            grid=grid,
+            items=user_items,
+            form=form.render())
 

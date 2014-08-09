@@ -81,7 +81,7 @@ def main(global_config, **settings):
     
     config.add_route('settings', '/settings')
     config.add_route('catalog', '/settings/catalog')
-    config.add_route('user', '/settings/user')
+    config.add_route('user_settings', '/settings/users')
     
     config.add_route('signin', '/signin')
     config.add_route('logout', '/logout')
