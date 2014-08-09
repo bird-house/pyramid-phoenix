@@ -720,9 +720,9 @@ class CatalogSettings(MyView):
         except ValidationFailure, e:
             logger.exception('validation of catalog form failed')
             return dict(form = e.render())
-        except:
+        except Exception, e:
             logger.exception('could not harvest wps.')
-            self.session.flash('Could not add WPS %s' % (url), queue="error")
+            self.session.flash('Could not add WPS %s. %s' % (url, e), queue="error")
         return HTTPFound(location=self.request.route_url('catalog'))
 
     @view_config(renderer='json', name='delete.entry')
