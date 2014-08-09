@@ -1,13 +1,9 @@
 import pymongo
 
-
 import uuid
 import datetime
 
 from owslib.wps import WebProcessingService
-
-from .wps import gen_token
-from .exceptions import TokenError
 
 import logging
 logger = logging.getLogger(__name__)
@@ -77,7 +73,6 @@ class User():
                 activated=None,
                 credentials=None,
                 cert_expires=None,
-                update_token=False,
                 update_login=True):
         logger.debug("update user %s", user_id)
 
@@ -98,24 +93,6 @@ class User():
             user['credentials'] = credentials
         if cert_expires is not None:
             user['cert_expires'] = cert_expires
-        if update_token:
-            try:
-                if self.request.wps is None:
-                    msg = 'Malleefowl WPS is not available.'
-                    self.request.session.flash(msg, queue='error')
-                    raise Exception(msg)
-                user['token'] = gen_token(
-                    self.request.wps,
-                    self.request.registry.settings.get('malleefowl.sys_token'),
-                    user_id)
-                msg = "Your access token was successfully updated. See <a href='/account'>My Account</a>"
-                logger.info(msg)
-                self.request.session.flash(msg, queue='info')
-            except:
-                msg = 'Could not generate token for user %s' % (user_id)
-                logger.exception(msg)
-                self.request.session.flash(msg, queue='error')
-                raise TokenError(msg)
         if update_login:
             user['last_login'] = datetime.datetime.now()
         self.db.users.update(dict(user_id = user_id), user)
@@ -144,16 +121,6 @@ class User():
         user = self.db.users.find_one(dict(user_id = user_id))
         return user.get('openid')
 
-    def token(self, user_id):
-        user = self.db.users.find_one(dict(user_id = user_id))
-        return user.get('token')
-
-    def is_token_valid(self, user_id):
-        token = self.token(user_id)
-        if token is None or len(token) < 22:
-            return False
-        return True
-
     def credentials(self, user_id):
         user = self.db.users.find_one(dict(user_id = user_id))
         return user.get('credentials')
@@ -165,7 +132,7 @@ def add_job(request, wps_url, status_location, notes=None, tags=None):
     
     request.db.jobs.save(dict(
         # TODO: need job name ...
-        #identifier = uuid.uuid4().get_urn(), # urn does not work as id in javascript
+        #identifier = uuid.uuid4().get_urn(), # TODO: urn does not work as id in javascript
         identifier = uuid.uuid4().get_hex(),
         userid = authenticated_userid(request),
         wps_url = wps_url,

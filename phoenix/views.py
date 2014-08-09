@@ -23,7 +23,6 @@ from owslib.wps import (
     )
 
 import models
-from .exceptions import TokenError
 from .security import is_valid_user
 
 import logging
@@ -149,10 +148,9 @@ class PhoenixViews:
                     try:
                         self.userdb.update(user_id=result.user.email,
                                       openid=result.user.id,
-                                      update_token=True,
                                       activated=True)
-                    except TokenError as e:
-                        pass
+                    except Exception, e:
+                        logger.exception("update user failed")
                     response.text = render('phoenix:templates/openid_success.pt',
                                            {'result': result},
                                            request=self.request)
@@ -162,7 +160,6 @@ class PhoenixViews:
                     logger.info("openid login: user %s is not registered", result.user.email)
                     self.userdb.update(user_id=result.user.email,
                                   openid=result.user.id,
-                                  update_token=False,
                                   activated=False)
                     response.text = render('phoenix:templates/register.pt',
                                            {'email': result.user.email}, request=self.request)
@@ -564,7 +561,6 @@ class MyAccount(MyView):
                     credentials = credentials,
                     cert_expires = cert_expires,
                     update_login=False,
-                    update_token=False
                     )
                 logger.debug('update credentials successful, credentials=%s', credentials)
                 self.request.session.flash(
@@ -580,11 +576,6 @@ class MyAccount(MyView):
             self.request.session.flash(msg, queue='error')
         return HTTPFound(location=self.request.route_url('account'))
         
-    @view_config(renderer='json', name='update.token')
-    def update_token(self):
-        self.userdb.update(user_id = authenticated_userid(self.request), update_token=True)
-        return True
-
     @view_config(route_name='account', renderer='templates/account.pt')
     def view(self):
         user_id=authenticated_userid(self.request)
@@ -615,7 +606,6 @@ class MyAccount(MyView):
                 organisation = values.get('organisation', u''),
                 notes = values.get('notes', u''),
                 update_login=False,
-                update_token=False
                 )
             self.request.session.flash(
                 'Settings updated successfully',
@@ -631,7 +621,6 @@ class MyAccount(MyView):
                 name = user.get('name'),
                 organisation = user.get('organisation'),
                 notes = user.get('notes'),
-                token = user.get('token'),
                 credentials = user.get('credentials'),
                 cert_expires = user.get('cert_expires')
                 )
@@ -649,8 +638,7 @@ class Map:
 
     @view_config(route_name='map', renderer='templates/map.pt')
     def map(self):
-        token = self.userdb.token(authenticated_userid(self.request))
-        return dict(token=token)
+        return dict()
 
 @view_defaults(permission='admin', layout='default')    
 class Settings(MyView):

@@ -78,13 +78,6 @@ class AccountSchema(colander.MappingSchema):
         missing = '',
         default = '',
         )
-    token = colander.SchemaNode(
-        colander.String(),
-        title = "Token",
-        description = "Access Token",
-        missing = '',
-        widget = TextInputWidget(template='readonly/textinput'),
-        )
     credentials = colander.SchemaNode(
         colander.String(),
         title = "Credentials",

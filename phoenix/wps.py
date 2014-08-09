@@ -67,21 +67,6 @@ def execute(service_url, identifier, inputs=[], output='output', format=RAW):
         raise
     return result
 
-def gen_token(wps, sys_token, userid):
-    # TODO: need token exception if not avail
-    token = None
-    try:
-        execution = wps.execute(
-            identifier='org.malleefowl.token.generate',
-            inputs=[('sys_token', sys_token.encode('ascii', 'ignore')),
-                    ('userid', userid.encode('ascii', 'ignore'))],
-            output=[('output', False)])
-        monitorExecution(execution, sleepSecs=1)
-        token = execution.processOutputs[0].data[0]
-    except Exception as e:
-        logger.error('generate token failed! userid=%s, error msg=%s' % (userid, e.message))
-    return token
-
 def execute_restflow(wps, nodes):
     import json
     nodes_json = json.dumps(nodes)
