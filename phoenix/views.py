@@ -524,7 +524,7 @@ class OutputDetails(MyView):
 @view_defaults(permission='edit', layout='default') 
 class MyAccount(MyView):
     def __init__(self, request):
-        super(MyAccount, self).__init__(request, 'My Account')
+        super(MyAccount, self).__init__(request, 'My Account', "Update your profile details.")
         self.userdb = models.User(request)
 
     def generate_form(self, formid="deform"):

@@ -4,9 +4,16 @@
     <script src="${request.static_url('phoenix:static/js/account.js')}"></script>
   </div>
 
-  <div class="hero-unit" metal:fill-slot="content">
-    <h1>My Account</h1>
-    <p>Update your profile details.</p>
+  <div metal:fill-slot="content">
+
+    <ul class="breadcrumb">
+      <li><a href="/">Home</a> <span class="divider">/</span></li>
+      <li class="active">${title}</li>
+    </ul>
+
+    <div class="page-header">
+      <h1>${title} <small>${description}</small></h1>
+    </div>    
 
     <!-- Button to trigger modal dialog for credentials update -->
     <a href="#account-form" role="button" class="btn btn-success" data-toggle="modal">
