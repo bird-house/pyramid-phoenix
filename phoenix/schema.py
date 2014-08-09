@@ -4,7 +4,8 @@ from deform.widget import (
     RadioChoiceWidget,
     TextInputWidget,
     PasswordWidget,
-    TextAreaWidget
+    TextAreaWidget,
+    SelectWidget 
     )
 from .widget import (
     TagsWidget,
@@ -205,7 +206,15 @@ class CatalogAddServiceSchema(colander.MappingSchema):
         )
 
 class PublishSchema(colander.MappingSchema):
-    identifier = colander.SchemaNode(colander.String())
+    import uuid
+
+    @colander.deferred
+    def deferred_default_creator(node, kw):
+        return kw.get('userid')
+        
+    identifier = colander.SchemaNode(
+        colander.String(),
+        default = uuid.uuid4().get_urn())
     title = colander.SchemaNode(colander.String())
     abstract = colander.SchemaNode(
         colander.String(),
@@ -215,14 +224,17 @@ class PublishSchema(colander.MappingSchema):
         widget = TextAreaWidget(rows=2, cols=80))
     creator = colander.SchemaNode(
         colander.String(),
-        validator = colander.Email())
+        validator = colander.Email(),
+        default = deferred_default_creator,)
     source = colander.SchemaNode(
         colander.String(),
         description = 'URL to the source',
         validator = colander.url)
     format = colander.SchemaNode(
         colander.String(),
-        description = 'MIME Type: application/x-netcdf',
+        default = 'application/x-netcdf',
+        description = 'Format of your source. Example: NetCDF',
+        widget = SelectWidget(values=[('application/x-netcdf', "NetCDF")]) 
         )
     subjects = colander.SchemaNode(
         colander.String(),
@@ -233,8 +245,8 @@ class PublishSchema(colander.MappingSchema):
         )
     rights = colander.SchemaNode(
         colander.String(),
-        missing = '',
-        default = '',
+        missing = 'Unknown',
+        default = 'Free for non-commercial use',
         )
 
 class UserSchema(colander.MappingSchema):

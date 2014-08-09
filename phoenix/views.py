@@ -12,7 +12,7 @@ from pyramid.response import Response
 from pyramid.renderers import render
 from pyramid.security import remember, forget, authenticated_userid
 from pyramid.events import subscriber, BeforeRender
-from deform import Form
+from deform import Form, Button
 from deform import ValidationFailure
 from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
@@ -696,19 +696,17 @@ class CatalogSettings(MyView):
     
     def __init__(self, request):
         super(CatalogSettings, self).__init__(request, 'Catalog', "Configure Catalog Service (CSW).")
-
-    def generate_form(self, formid="deform"):
-        """This helper code generates the form that will be used to add
-        and edit wps based on the schema of the form.
-        """
+        self.csw = self.request.csw
+        
+    def generate_service_form(self, formid="deform"):
         from .schema import CatalogAddServiceSchema
         schema = CatalogAddServiceSchema()
         return Form(
             schema,
-            buttons=('submit',),
+            buttons=(Button(name='add_service', title='Add Service'),),
             formid=formid)
 
-    def process_form(self, form):
+    def process_service_form(self, form):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
@@ -725,31 +723,85 @@ class CatalogSettings(MyView):
             self.session.flash('Could not add WPS %s. %s' % (url, e), queue="error")
         return HTTPFound(location=self.request.route_url('catalog'))
 
+    def generate_dataset_form(self, formid="deform"):
+        from .schema import PublishSchema
+        schema = PublishSchema().bind(userid=authenticated_userid(self.request))
+        return Form(
+            schema,
+            buttons=(Button(name='add_dataset', title='Add Dataset'),),
+            formid=formid)
+
+    def process_dataset_form(self, form):
+        try:
+            controls = self.request.POST.items()
+            appstruct = form.validate(controls)
+
+            from mako.template import Template
+            templ_dc = Template(filename=os.path.join(os.path.dirname(__file__), "templates", "dc.xml"))
+            record = templ_dc.render(**appstruct)
+            logger.debug('record=%s', record)
+            self.request.csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
+            self.session.flash('Added Dataset %s' % (appstruct.get('title')), queue="success")
+        except ValidationFailure, e:
+            logger.exception('validation of catalog form failed')
+            return dict(form = e.render())
+        except Exception, e:
+            logger.exception('could not harvest wps.')
+            self.session.flash('Could not add WPS %s. %s' % (url, e), queue="error")
+        return HTTPFound(location=self.request.route_url('catalog'))
+
     @view_config(renderer='json', name='delete.entry')
     def delete(self):
         identfier = self.request.params.get('identifier', None)
         self.session.flash('Delete WPS not Implemented', queue="error")
         return {}
+
+    def get_csw_items(self):
+        results = []
+        try:
+            self.csw.getrecords(esn="full")
+            logger.debug('csw results %s', self.csw.results)
+            for rec in self.csw.records:
+                myrec = self.csw.records[rec]
+                results.append(dict(
+                    source = myrec.source,
+                    identifier = myrec.identifier,
+                    title = myrec.title,
+                    abstract = myrec.abstract,
+                    subjects = myrec.subjects,
+                    format = myrec.format,
+                    creator = myrec.creator,
+                    modified = myrec.modified,
+                    bbox = myrec.bbox,
+                    references = myrec.references,
+                    ))
+        except:
+            logger.exception('could not get items for csw.')
+        return results
  
     @view_config(route_name="catalog", renderer='templates/settings/catalog.pt')
     def view(self):
-        form = self.generate_form()
-        if 'submit' in self.request.POST:
-            return self.process_form(form)
+        service_form = self.generate_service_form()
+        dataset_form = self.generate_dataset_form()
+        if 'add_service' in self.request.POST:
+            return self.process_service_form(service_form)
+        elif 'add_dataset' in self.request.POST:
+            return self.process_dataset_form(dataset_form)
         from .grid import CatalogGrid
-        items = models.get_wps_list(self.request)
+        items = self.get_csw_items()
             
         grid = CatalogGrid(
                 self.request,
                 items,
-                ['title', 'source', 'abstract', 'subjects', 'action'],
+                ['title', 'source', 'abstract', 'subjects', 'format', 'action'],
             )
         return dict(
             title=self.title,
             description=self.description,
             grid=grid,
             items=items,
-            form=form.render())
+            service_form=service_form.render(),
+            dataset_form=dataset_form.render())
 
 @view_defaults(permission='admin', layout='default')
 class UserSettings(MyView):
