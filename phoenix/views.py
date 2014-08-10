@@ -69,12 +69,12 @@ class MyView(object):
         # db access
         self.userdb = self.request.db.users
 
-    def userid(self):
+    def user_email(self):
         return authenticated_userid(self.request)
 
     def get_user(self, email=None):
         if email is None:
-            email = self.userid()
+            email = self.user_email()
         return self.userdb.find_one(dict(email=email))
 
 @view_defaults(permission='view', layout='default')
@@ -380,7 +380,7 @@ class Jobs(MyView):
         from owslib.wps import WPSExecution
 
         items = []
-        for job in self.db.jobs.find({'email': self.userid()}).sort(key, direction):
+        for job in self.db.jobs.find({'email': self.user_email()}).sort(key, direction):
             try:
                 logger.debug("update job: %s", job['identifier'])
                 item = dict(
@@ -407,7 +407,7 @@ class Jobs(MyView):
 
     @view_config(renderer='json', name='deleteall.job')
     def delete_all(self):
-        self.db.jobs.remove({'email': self.userid()})
+        self.db.jobs.remove({'email': self.user_email()})
         return {}
 
     @view_config(renderer='json', name='delete.job')
@@ -507,7 +507,7 @@ class OutputDetails(MyView):
                 identifier = uuid.uuid4().get_urn(),
                 title = output.title,
                 abstract = 'nix',
-                creator = self.userid(),
+                creator = self.user_email(),
                 source = output.reference,
                 format = output.mimeType,
                 keywords = 'one,two,three',
@@ -565,7 +565,7 @@ class MyAccount(MyView):
             user = self.get_user()
             for key in ['name', 'openid', 'organisation', 'notes']:
                 user[key] = appstruct.get(key)
-            self.userdb.update({'email':self.userid()}, user)
+            self.userdb.update({'email':self.user_email()}, user)
         except ValidationFailure, e:
             logger.exception('validation of form failed.')
             return dict(title=self.title, description=self.description, form=e.render())
@@ -611,7 +611,7 @@ class MyAccount(MyView):
                 user = self.get_user()
                 user['credentials'] = credentials
                 user['cert_expires'] = cert_expires 
-                self.userdb.update({'email':self.userid()}, user)
+                self.userdb.update({'email':self.user_email()}, user)
             else:
                 raise Exception('logon process failed.',
                                 execution.status,
@@ -717,7 +717,7 @@ class CatalogSettings(MyView):
 
     def generate_dataset_form(self, formid="deform"):
         from .schema import PublishSchema
-        schema = PublishSchema().bind(email=self.userid())
+        schema = PublishSchema().bind(email=self.user_email())
         return Form(
             schema,
             buttons=(Button(name='add_dataset', title='Add Dataset'),),
@@ -849,7 +849,7 @@ class UserSettings(MyView):
             user = self.get_user(appstruct.get('email'))
             for key in ['name', 'openid', 'organisation', 'notes']:
                 user[key] = appstruct.get(key)
-            self.userdb.update({'email':self.userid()}, user)
+            self.userdb.update({'email':self.user_email()}, user)
         except ValidationFailure, e:
             logger.exception('validation of user form failed')
             return dict(title=self.title, description=self.description, form = e.render())
