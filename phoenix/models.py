@@ -1,12 +1,46 @@
-import pymongo
-
 import uuid
 import datetime
 
-from owslib.wps import WebProcessingService
-
 import logging
 logger = logging.getLogger(__name__)
+
+def add_user(
+    request,
+    email,
+    openid='',
+    name='unknown',
+    organisation='unknown',
+    notes='',
+    activated=False):
+    user=dict(
+        identifier = uuid.uuid4().get_urn(),
+        email = email,
+        openid = openid,
+        name = name,
+        organisation = organisation,
+        notes = notes,
+        activated = activated,
+        creation_time = datetime.datetime.now(),
+        last_login = datetime.datetime.now())
+    request.db.users.save(user)
+    return request.db.users.find_one({'email':email})
+
+def add_job(request, wps_url, status_location, notes=None, tags=None):
+    from pyramid.security import authenticated_userid
+
+    logger.debug("add job: status_location=%s", status_location)
+
+    job = dict(
+        # TODO: need job name ...
+        #identifier = uuid.uuid4().get_urn(), # TODO: urn does not work as id in javascript
+        identifier = uuid.uuid4().get_hex(),
+        #TODO: dont use auth... userid=email ...
+        userid = authenticated_userid(request),
+        wps_url = wps_url,
+        status_location = status_location,
+        notes = notes,
+        tags = tags)
+    request.db.jobs.save(job)
 
 def user_stats(request):
     d = datetime.datetime.now() - datetime.timedelta(hours=3)
@@ -39,105 +73,7 @@ def get_wps_list(request):
             rights=csw.records[rec].rights))
     return items
 
-class User():
-    """ This class provides access to the users in mongodb."""
-    
-    def __init__(self, request):
-        self.request = request
-        self.db = request.db
 
-    def add(self,
-            user_id,
-            openid=None,
-            name=None,
-            organisation=None,
-            notes=None,
-            activated=False):
-        user = self.db.users.find_one(dict(user_id = user_id))
-        if user != None:
-            delete(user_id = user_id)
-        user = dict(
-            user_id = user_id,
-            openid = openid,
-            name = name,
-            organisation = organisation,
-            notes = notes,
-            activated = activated,
-            creation_time = datetime.datetime.now(),
-            last_login = datetime.datetime.now(),
-            )
-        self.db.users.save(user)
-        return user
-
-    def delete(self, user_id):
-        self.db.users.remove(dict(user_id = user_id))
-
-    def activate(self, user_id):
-        self.update(user_id, activated = not self.is_activated(user_id))
-
-    def update(self,
-                user_id,
-                openid=None,
-                name=None,
-                organisation=None,
-                notes=None,
-                activated=None,
-                credentials=None,
-                cert_expires=None,
-                update_login=True):
-        logger.debug("update user %s", user_id)
-
-        user = self.db.users.find_one(dict(user_id = user_id))
-        if user == None:
-            user = self.add(user_id=user_id, activated=False)
-        if activated is not None:
-            user['activated'] = activated
-        if openid is not None:
-            user['openid'] = openid
-        if name is not None:
-            user['name'] = name
-        if organisation is not None:
-            user['organisation'] = organisation
-        if notes is not None:
-            user['notes'] = notes
-        if credentials is not None:
-            user['credentials'] = credentials
-        if cert_expires is not None:
-            user['cert_expires'] = cert_expires
-        if update_login:
-            user['last_login'] = datetime.datetime.now()
-        self.db.users.update(dict(user_id = user_id), user)
-
-    def all(self, key='activated', direction=pymongo.ASCENDING):
-        return self.db.users.find().sort(key, direction)
-
-    def is_activated(self, user_id):
-        return None != self.db.users.find_one(dict(user_id = user_id, activated = True))
-
-   
-
-    def by_id(self, user_id):
-        return self.db.users.find_one(dict(user_id = user_id))
-
-    def openid(self, user_id):
-        user = self.db.users.find_one(dict(user_id = user_id))
-        return user.get('openid')
-
-def add_job(request, wps_url, status_location, notes=None, tags=None):
-    from pyramid.security import authenticated_userid
-
-    logger.debug("add job: status_location=%s", status_location)
-    
-    request.db.jobs.save(dict(
-        # TODO: need job name ...
-        #identifier = uuid.uuid4().get_urn(), # TODO: urn does not work as id in javascript
-        identifier = uuid.uuid4().get_hex(),
-        userid = authenticated_userid(request),
-        wps_url = wps_url,
-        status_location = status_location,
-        notes = notes,
-        tags = tags))
-    
 
 
 

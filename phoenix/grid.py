@@ -263,12 +263,12 @@ class UsersGrid(MyGrid):
         """
         div = Template("""\
         <div class="btn-group">
-            <button class="btn btn-mini btn-primary edit" data-value="${user_id}">Edit</button>
-            <button class="btn btn-mini btn-danger delete" data-value="${user_id}">Delete</button>
-            <button class="btn btn-mini btn-primary activate" data-value="${user_id}">Activate</button>
+            <button class="btn btn-mini btn-primary edit" data-value="${email}">Edit</button>
+            <button class="btn btn-mini btn-danger delete" data-value="${email}">Delete</button>
+            <button class="btn btn-mini btn-primary activate" data-value="${email}">Activate</button>
         </div>
         """)
-        return HTML.td(HTML.literal(div.substitute({'user_id': item.get('user_id')} )))
+        return HTML.td(HTML.literal(div.substitute({'email': item.get('email')} )))
 
 class CatalogGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):

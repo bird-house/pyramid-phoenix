@@ -23,7 +23,6 @@ from owslib.wps import (
     )
 
 import models
-from .security import is_valid_user
 
 import logging
 logger = logging.getLogger(__name__)
@@ -68,18 +67,41 @@ class MyView(object):
         self.title = title
         self.description = description
         # db access
-        self.users = self.request.db.users
+        self.userdb = self.request.db.users
 
     def userid(self):
         return authenticated_userid(self.request)
-    def get_user(self):
-        return self.users.find_one(dict(user_id=self.userid()))
+
+    def get_user(self, email=None):
+        if email is None:
+            email = self.userid()
+        return self.userdb.find_one(dict(email=email))
 
 @view_defaults(permission='view', layout='default')
-class PhoenixViews:
+class PhoenixView(MyView):
     def __init__(self, request):
-        self.request = request
-        self.userdb = models.User(self.request)
+        super(PhoenixView, self).__init__(request, 'Phoenix')
+
+    def is_valid_user(self, email):
+        from .security import admin_users
+        if email in admin_users(self.request):
+            return True
+        user = self.get_user(email=email)
+        if user is None:
+            return False
+        return user.get('activated', False)
+
+    def login_success(self, email, openid=None, activated=False):
+        logger.debug('login success: email=%s', email)
+        user = self.get_user(email)
+        if user is None:
+            user = models.add_user(self.request, email=email)
+        user['last_login'] = datetime.datetime.now()
+        if openid is not None:
+            user['openid'] = openid
+        user['activated'] = activated
+        logger.debug('user=%s', user)
+        self.userdb.update({'email':email}, user)
 
     @view_config(route_name='signin', renderer='templates/signin.pt')
     def signin(self):
@@ -101,14 +123,13 @@ class PhoenixViews:
         # TODO: need some work work on local accounts
         if (True):
             email = "admin@malleefowl.org"
-            self.userdb.update(user_id=email)
-
-            if is_valid_user(self.request, email):
+            if self.is_valid_user(email):
                 self.request.response.text = render('phoenix:templates/openid_success.pt',
                                                {'result': email},
                                                request=self.request)
                 # Add the headers required to remember the user to the response
                 self.request.response.headers.extend(remember(self.request, email))
+                self.login_success(email=email)
             else:
                 self.request.response.text = render('phoenix:templates/register.pt',
                                                {'email': email}, request=self.request)
@@ -150,14 +171,12 @@ class PhoenixViews:
                 logger.debug("response headers=%s", response.headers.keys())
                 #logger.debug("response cookie=%s", response.headers['Set-Cookie'])
 
-                if is_valid_user(self.request, result.user.email):
+                if self.is_valid_user(result.user.email):
                     logger.info("openid login successful for user %s", result.user.email)
-                    try:
-                        self.userdb.update(user_id=result.user.email,
-                                      openid=result.user.id,
-                                      activated=True)
-                    except Exception, e:
-                        logger.exception("update user failed")
+                    self.login_success(
+                        email=result.user.email,
+                        openid=result.user.id,
+                        activated=True)
                     response.text = render('phoenix:templates/openid_success.pt',
                                            {'result': result},
                                            request=self.request)
@@ -165,9 +184,10 @@ class PhoenixViews:
                     response.headers.extend(remember(self.request, result.user.email))
                 else:
                     logger.info("openid login: user %s is not registered", result.user.email)
-                    self.userdb.update(user_id=result.user.email,
-                                  openid=result.user.id,
-                                  activated=False)
+                    self.login_success(
+                        email=result.user.email,
+                        openid=result.user.id,
+                        activated=False)
                     response.text = render('phoenix:templates/register.pt',
                                            {'email': result.user.email}, request=self.request)
         #logger.debug('response: %s', response)
@@ -360,7 +380,7 @@ class Jobs(MyView):
         from owslib.wps import WPSExecution
 
         items = []
-        for job in self.db.jobs.find({'userid': authenticated_userid(self.request)}).sort(key, direction):
+        for job in self.db.jobs.find({'email': self.userid()}).sort(key, direction):
             try:
                 logger.debug("update job: %s", job['identifier'])
                 item = dict(
@@ -387,7 +407,7 @@ class Jobs(MyView):
 
     @view_config(renderer='json', name='deleteall.job')
     def delete_all(self):
-        self.db.jobs.remove({'userid': authenticated_userid(self.request)})
+        self.db.jobs.remove({'email': self.userid()})
         return {}
 
     @view_config(renderer='json', name='delete.job')
@@ -487,7 +507,7 @@ class OutputDetails(MyView):
                 identifier = uuid.uuid4().get_urn(),
                 title = output.title,
                 abstract = 'nix',
-                creator = authenticated_userid(self.request),
+                creator = self.userid(),
                 source = output.reference,
                 format = output.mimeType,
                 keywords = 'one,two,three',
@@ -529,8 +549,6 @@ class OutputDetails(MyView):
 class MyAccount(MyView):
     def __init__(self, request):
         super(MyAccount, self).__init__(request, 'My Account', "Update your profile details.")
-        self.userdb = models.User(request)
-        self.userid = authenticated_userid(self.request)
 
     def generate_form(self, formid="deform"):
         from .schema import MyAccountSchema
@@ -544,15 +562,10 @@ class MyAccount(MyView):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
-
-            self.userdb.update(
-                user_id = self.userid,
-                name = appstruct.get('name'),
-                openid = appstruct.get('openid'),
-                organisation = appstruct.get('organisation'),
-                notes = appstruct.get('notes'),
-                update_login=False,
-                )
+            user = self.get_user()
+            for key in ['name', 'openid', 'organisation', 'notes']:
+                user[key] = appstruct.get(key)
+            self.userdb.update({'email':self.userid()}, user)
         except ValidationFailure, e:
             logger.exception('validation of form failed.')
             return dict(title=self.title, description=self.description, form=e.render())
@@ -575,11 +588,9 @@ class MyAccount(MyView):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
-
-            user = self.get_user()
             
             inputs = []
-            openid =  user.get('openid').encode('ascii', 'ignore')
+            openid =  self.get_user().get('openid').encode('ascii', 'ignore')
             inputs.append( ('openid', openid) )
             password = appstruct.get('password').encode('ascii', 'ignore')
             inputs.append( ('password', password) )
@@ -597,12 +608,10 @@ class MyAccount(MyView):
                 cert_expires = execution.processOutputs[1].data[0]
                 logger.debug('cert expires %s', cert_expires)
                 # Update user credentials
-                self.userdb.update(
-                    user_id = self.userid,
-                    credentials = credentials,
-                    cert_expires = cert_expires,
-                    update_login=False,
-                    )
+                user = self.get_user()
+                user['credentials'] = credentials
+                user['cert_expires'] = cert_expires 
+                self.userdb.update({'email':self.userid()}, user)
             else:
                 raise Exception('logon process failed.',
                                 execution.status,
@@ -620,22 +629,10 @@ class MyAccount(MyView):
                 queue='success')
         return HTTPFound(location=self.request.route_url('myaccount'))
 
-    def get_user(self):
-        return self.userdb.by_id(user_id=self.userid)
-        
     def appstruct(self):
-        appstruct = {}
-        user = self.get_user()
-        if user is not None:
-            appstruct = dict(
-                email = user.get('user_id'),
-                openid = user.get('openid'),
-                name = user.get('name'),
-                organisation = user.get('organisation'),
-                notes = user.get('notes'),
-                credentials = user.get('credentials'),
-                cert_expires = user.get('cert_expires')
-                )
+        appstruct = self.get_user()
+        if appstruct is None:
+            appstruct = {}
         return appstruct
         
     @view_config(route_name='myaccount', renderer='templates/myaccount.pt')
@@ -657,7 +654,6 @@ class MyAccount(MyView):
 class Map:
     def __init__(self, request):
         self.request = request
-        self.userdb = models.User(self.request)
 
     @view_config(route_name='map', renderer='templates/map.pt')
     def map(self):
@@ -721,7 +717,7 @@ class CatalogSettings(MyView):
 
     def generate_dataset_form(self, formid="deform"):
         from .schema import PublishSchema
-        schema = PublishSchema().bind(userid=authenticated_userid(self.request))
+        schema = PublishSchema().bind(email=self.userid())
         return Form(
             schema,
             buttons=(Button(name='add_dataset', title='Add Dataset'),),
@@ -803,7 +799,6 @@ class CatalogSettings(MyView):
 class UserSettings(MyView):
     def __init__(self, request):
         super(UserSettings, self).__init__(request, 'Users', "Configure Phoenix Users.")
-        self.userdb = models.User(self.request)
 
     def sort_order(self):
         """Determine what the current sort parameters are.
@@ -849,53 +844,50 @@ class UserSettings(MyView):
     def process_form(self, form):
         try:
             controls = self.request.POST.items()
-            captured = form.validate(controls)
-
-            logger.debug('update user: %s', captured)
-
-            self.userdb.update(user_id = captured.get('user_id', ''),
-                               openid = captured.get('openid', ''),
-                               name = captured.get('name', ''),
-                               organisation = captured.get('organisation'),
-                               notes = captured.get('notes', ''))
+            appstruct = form.validate(controls)
+            # TODO: fix update user ... email is readonly
+            user = self.get_user(appstruct.get('email'))
+            for key in ['name', 'openid', 'organisation', 'notes']:
+                user[key] = appstruct.get(key)
+            self.userdb.update({'email':self.userid()}, user)
         except ValidationFailure, e:
             logger.exception('validation of user form failed')
             return dict(title=self.title, description=self.description, form = e.render())
-        return HTTPFound(location=self.request.route_url('user'))
+        return HTTPFound(location=self.request.route_url('user_settings'))
 
     @view_config(renderer='json', name='delete.user')
     def delete(self):
-        user_id = self.request.params.get('user_id', None)
-        if user_id is not None:
-            self.userdb.delete(user_id=user_id)
-
+        email = self.request.params.get('email', None)
+        if email is not None:
+            self.userdb.remove(dict(email=email))
         return {}
 
     @view_config(renderer='json', name='activate.user')
     def activate(self):
-        user_id = self.request.params.get('user_id', None)
-        logger.debug('activate user %s' %(user_id))
-        if user_id is not None:
-            self.userdb.activate(user_id)
-
+        email = self.request.params.get('email')
+        logger.debug('activate %s', email)
+        if email is not None:
+            user = self.userdb.find_one({'email':email})
+            user['activated'] = not user.get('activated', True)
+            self.userdb.update({'email':email}, user)
         return {}
 
     @view_config(renderer='json', name='edit.user')
     def edit(self):
-        user_id = self.request.params.get('user_id', None)
-        result = dict(user_id=user_id)
-        logger.debug('edit user %s' % (user_id))
-        if user_id is not None:
-            user = self.userdb.by_id(user_id=user_id)
-            result = dict(
-                user_id = user_id,
-                openid = user.get('openid'),
-                name = user.get('name'),
-                organisation = user.get('organisation'),
-                notes = user.get('notes'),
-                )
-
-        return result
+        email = self.request.params.get('email', None)
+        user = None
+        if email is not None:
+            user = self.userdb.find_one({'email':email})
+        if user is None:
+            user = dict(email=email)
+        #TODO: datetime is not json serializable
+        if '_id' in user:
+            del user['_id']
+        if 'last_login' in user:
+            del user['last_login']
+        if 'creation_time' in user:
+            del user['creation_time']    
+        return user
 
     @view_config(route_name='user_settings', renderer='templates/settings/users.pt')
     def view(self):
@@ -905,11 +897,12 @@ class UserSettings(MyView):
 
         from .grid import UsersGrid
         order = self.sort_order()
-        user_items = self.userdb.all(key=order.get('order'), direction=order.get('order_dir'))
+        user_items = list(self.userdb.find().sort(order.get('order'), order.get('order_dir')))
+        logger.debug('user_items: %s', user_items)
         grid = UsersGrid(
                 self.request,
                 user_items,
-                ['name', 'user_id', 'openid', 'organisation', 'notes', 'activated', 'action'],
+                ['name', 'email', 'openid', 'organisation', 'notes', 'activated', 'action'],
             )
         return dict(
             title=self.title,

@@ -1,6 +1,5 @@
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
-from pyramid.security import authenticated_userid
 
 from deform import Form, Button
 

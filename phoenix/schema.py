@@ -203,7 +203,7 @@ class PublishSchema(colander.MappingSchema):
 
     @colander.deferred
     def deferred_default_creator(node, kw):
-        return kw.get('userid')
+        return kw.get('email')
         
     identifier = colander.SchemaNode(
         colander.String(),
@@ -248,9 +248,8 @@ class UserSchema(colander.MappingSchema):
         title = "Name",
         missing = colander.drop,
         )
-    user_id = colander.SchemaNode(
+    email = colander.SchemaNode(
         colander.String(),
-        title = "eMail",
         validator = colander.Email(),
         widget = TextInputWidget(),
         )

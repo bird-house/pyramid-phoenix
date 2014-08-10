@@ -3,11 +3,11 @@ $(function() {
   $(".delete").button({
     text:false,
   }).click(function( event ) {
-    var user_id = $(this).attr('data-value');
+    var email = $(this).attr('data-value');
     var row = $(this).closest('tr');
     $.getJSON(
       '/delete.user',
-      {'user_id': user_id},
+      {'email': email},
       function(json) {
         row.remove();
       }
@@ -18,10 +18,10 @@ $(function() {
   $(".activate").button({
     text: false,
   }).click(function( event ) {
-    var user_id = $(this).attr('data-value');
+    var email = $(this).attr('data-value');
     $.getJSON(
       '/activate.user',
-      {'user_id': user_id},
+      {'email': email},
       function(json) {
         location.reload();
       }
@@ -32,10 +32,10 @@ $(function() {
   $(".edit").button({
     text: false,
   }).click(function( event ) {
-    var user_id = $(this).attr('data-value');
+    var email = $(this).attr('data-value');
     $.getJSON(
       '/edit.user',
-      {'user_id': user_id},
+      {'email': email},
       function(json) {
         if (json) {
           form = $('#user-form');
