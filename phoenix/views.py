@@ -381,33 +381,37 @@ class Jobs(MyView):
             if '_id' in job:
                 del job['_id']
         return jobs
+
+    def update_job(self, job):
+        from owslib.wps import WPSExecution
+        
+        try:
+            execution = WPSExecution(url = job['wps_url'])
+            execution.checkStatus(url = job['status_location'], sleepSecs=0)
+            job['title'] = execution.process.title
+            job['status'] = execution.getStatus()
+            job['status_message'] = execution.statusMessage
+            job['is_complete'] = execution.isComplete()
+            job['is_succeded'] = execution.isSucceded() 
+            if execution.isSucceded():
+                job['progress'] = 100
+            else:
+                job['progress'] = execution.percentCompleted
+            # update db
+            self.db.jobs.update({'identifier': job['identifier']}, job)
+        except:
+            logger.exception("could not update job %s", job.get('identifier'))
     
     def update_jobs(self):
         order = self.sort_order()
         key=order.get('order')
         direction=order.get('order_dir')
 
-        from owslib.wps import WPSExecution
-
         jobs = []
         for job in self.db.jobs.find({'email': self.user_email()}).sort(key, direction):
-            try:
-                execution = WPSExecution(url = job['wps_url'])
-                execution.checkStatus(url = job['status_location'], sleepSecs=0)
-                job['status'] = execution.getStatus()
-                job['status_message'] = execution.statusMessage
-                job['is_complete'] = execution.isComplete()
-                job['is_succeded'] = execution.isSucceded() 
-                if execution.isSucceded():
-                    job['progress'] = 100
-                else:
-                    job['progress'] = execution.percentCompleted
-                # update db
-                self.db.jobs.update({'identifier': job['identifier']}, job)
-            except:
-                logger.exception("could not update job %s", job.get('identifier'))
-            else:
-                jobs.append( job )
+            if not job.get('is_complete', False):
+                self.update_job(job)
+            jobs.append( job )
         return jobs
 
     @view_config(renderer='json', name='deleteall.job')
@@ -431,7 +435,7 @@ class Jobs(MyView):
         grid = JobsGrid(
                 self.request,
                 items,
-                ['status', 'creation_time', 'identifier', 'status_message', 'status_location', 'progress', 'action'],
+                ['status', 'creation_time', 'title', 'status_message', 'status_location', 'progress', 'action'],
             )
 
         return dict(title=self.title, description=self.description, grid=grid, items=items)
