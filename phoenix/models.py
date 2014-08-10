@@ -35,7 +35,7 @@ def add_job(request, wps_url, status_location, notes=None, tags=None):
         #identifier = uuid.uuid4().get_urn(), # TODO: urn does not work as id in javascript
         identifier = uuid.uuid4().get_hex(),
         #TODO: dont use auth... userid=email ...
-        userid = authenticated_userid(request),
+        email = authenticated_userid(request),
         wps_url = wps_url,
         status_location = status_location,
         notes = notes,
