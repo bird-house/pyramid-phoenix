@@ -38,6 +38,7 @@ def add_job(request, wps_url, status_location, notes=None, tags=None):
         email = authenticated_userid(request),
         wps_url = wps_url,
         status_location = status_location,
+        creation_time = datetime.datetime.now(),
         notes = notes,
         tags = tags)
     request.db.jobs.save(job)

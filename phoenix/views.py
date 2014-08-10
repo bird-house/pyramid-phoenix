@@ -360,7 +360,7 @@ class Jobs(MyView):
     def sort_order(self):
         """Determine what the current sort parameters are.
         """
-        order = self.request.GET.get('order_col', 'start_time')
+        order = self.request.GET.get('order_col', 'creation_time')
         order_dir = self.request.GET.get('order_dir', 'desc')
         ## if order == 'due_date':
         ##     # handle sorting of NULL values so they are always at the end
@@ -372,6 +372,16 @@ class Jobs(MyView):
         return dict(order=order, order_dir=order_dir)
 
     @view_config(renderer='json', name='update.jobs')
+    def update(self):
+        jobs = self.update_jobs()
+        # TODO: json does not like datetime
+        for job in jobs:
+            if 'creation_time' in job:
+                del job['creation_time']
+            if '_id' in job:
+                del job['_id']
+        return jobs
+    
     def update_jobs(self):
         order = self.sort_order()
         key=order.get('order')
@@ -379,31 +389,26 @@ class Jobs(MyView):
 
         from owslib.wps import WPSExecution
 
-        items = []
+        jobs = []
         for job in self.db.jobs.find({'email': self.user_email()}).sort(key, direction):
             try:
-                logger.debug("update job: %s", job['identifier'])
-                item = dict(
-                    identifier = job['identifier'],
-                    status_location = job['status_location'])
-                
                 execution = WPSExecution(url = job['wps_url'])
                 execution.checkStatus(url = job['status_location'], sleepSecs=0)
-                item['status'] = job['status'] = execution.getStatus()
-                item['status_message'] = job['status_message'] = execution.statusMessage
+                job['status'] = execution.getStatus()
+                job['status_message'] = execution.statusMessage
                 job['is_complete'] = execution.isComplete()
                 job['is_succeded'] = execution.isSucceded() 
                 if execution.isSucceded():
-                    item['progress'] = job['progress'] = 100
+                    job['progress'] = 100
                 else:
-                    item['progress'] = job['progress'] = execution.percentCompleted
+                    job['progress'] = execution.percentCompleted
                 # update db
                 self.db.jobs.update({'identifier': job['identifier']}, job)
             except:
                 logger.exception("could not update job %s", job.get('identifier'))
             else:
-                items.append( item )
-        return items
+                jobs.append( job )
+        return jobs
 
     @view_config(renderer='json', name='deleteall.job')
     def delete_all(self):
@@ -426,7 +431,7 @@ class Jobs(MyView):
         grid = JobsGrid(
                 self.request,
                 items,
-                ['status', 'identifier', 'status_message', 'status_location', 'progress', 'action'],
+                ['status', 'creation_time', 'identifier', 'status_message', 'status_location', 'progress', 'action'],
             )
 
         return dict(title=self.title, description=self.description, grid=grid, items=items)

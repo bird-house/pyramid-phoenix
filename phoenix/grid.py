@@ -135,7 +135,7 @@ class OutputDetailsGrid(MyGrid):
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats['start_time'] = self.start_time_td
+        self.column_formats['creation_time'] = self.creation_time_td
         self.column_formats['status'] = self.status_td
         self.column_formats['status_message'] = self.message_td
         self.column_formats['status_location'] = self.status_location_td
@@ -145,18 +145,16 @@ class JobsGrid(MyGrid):
         self.user_tz = u'UTC'
         self.exclude_ordering = ['status_message', 'action']
 
-    def start_time_td(self, col_num, i, item):
-        """Generate the column for the start time.
-        """
-        if item.get('start_time') is None:
+    def creation_time_td(self, col_num, i, item):
+        if item.get('creation_time') is None:
             return HTML.td('')
         span_class = 'due-date badge'
         #if item.start_time:
         #    span_class += ' badge-important'
-        start_time = localize_datetime(item.get('start_time'), self.user_tz)
+        creation_time = localize_datetime(item.get('creation_time'), self.user_tz)
         span = HTML.tag(
             "span",
-            c=HTML.literal(start_time.strftime('%Y-%m-%d %H:%M:%S')),
+            c=HTML.literal(creation_time.strftime('%Y-%m-%d %H:%M:%S')),
             class_=span_class,
         )
         return HTML.td(span)
