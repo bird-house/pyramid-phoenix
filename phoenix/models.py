@@ -40,7 +40,8 @@ def add_job(request, wps_url, status_location, notes=None, tags=None):
         status_location = status_location,
         creation_time = datetime.datetime.now(),
         notes = notes,
-        tags = tags)
+        tags = tags,
+        is_user_notified = False)
     request.db.jobs.save(job)
 
 def user_stats(request):

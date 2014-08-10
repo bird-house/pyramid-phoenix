@@ -373,9 +373,15 @@ class Jobs(MyView):
 
     @view_config(renderer='json', name='update.jobs')
     def update(self):
-        jobs = self.update_jobs()
+        self.update_jobs()
+        jobs = list(self.db.jobs.find({'email': self.user_email(), 'is_user_notified':False}))
         # TODO: json does not like datetime
         for job in jobs:
+            if job.get('is_complete', False) == True:
+                job['is_user_notified'] = True
+                logger.debug('job completed %s', job['identifier'])
+                self.db.jobs.update({'identifier': job['identifier']}, job)
+                self.session.flash("Job %s completed." % job['title'], queue='success')
             if 'creation_time' in job:
                 del job['creation_time']
             if '_id' in job:
@@ -403,16 +409,8 @@ class Jobs(MyView):
             logger.exception("could not update job %s", job.get('identifier'))
     
     def update_jobs(self):
-        order = self.sort_order()
-        key=order.get('order')
-        direction=order.get('order_dir')
-
-        jobs = []
-        for job in self.db.jobs.find({'email': self.user_email()}).sort(key, direction):
-            if not job.get('is_complete', False):
-                self.update_job(job)
-            jobs.append( job )
-        return jobs
+        for job in self.db.jobs.find({'email': self.user_email(), 'is_user_notified':False}):
+            self.update_job(job)
 
     @view_config(renderer='json', name='deleteall.job')
     def delete_all(self):
@@ -429,7 +427,12 @@ class Jobs(MyView):
     
     @view_config(route_name='jobs', renderer='templates/jobs.pt')
     def view(self):
-        items = self.update_jobs()
+        order = self.sort_order()
+        key=order.get('order')
+        direction=order.get('order_dir')
+
+        self.update_jobs()
+        items = list(self.db.jobs.find({'email': self.user_email()}).sort(key, direction))
         
         from .grid import JobsGrid
         grid = JobsGrid(

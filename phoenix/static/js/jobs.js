@@ -10,9 +10,6 @@ $(function() {
       function(json) {
         var finished = true;
         $.each(json, function(index, job) {
-          // update only if necessary
-          var currentStatus = $("#status-"+job.identifier).text();
-          if (! (currentStatus in ['ProcessSucceeded', 'ProcessFailed', 'Exception']) ) {
             var status_class = 'label'
             if (job.status == 'ProcessSucceeded') {
               status_class += ' label-success';
@@ -33,11 +30,10 @@ $(function() {
             $("#message-"+job.identifier).text(job.message);
             $("#progress-"+job.identifier).attr('style', "width: "+job.progress+"%");
             $("#progress-"+job.identifier).text(job.progress);
-          }
         });
 
         if (finished == true) {
-          clearInterval(timerId);
+            clearInterval(timerId);
         }
       }
     );
