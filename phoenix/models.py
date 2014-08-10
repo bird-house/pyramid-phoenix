@@ -8,6 +8,17 @@ from owslib.wps import WebProcessingService
 import logging
 logger = logging.getLogger(__name__)
 
+def user_stats(request):
+    d = datetime.datetime.now() - datetime.timedelta(hours=3)
+    num_logins_3h = request.db.users.find({"last_login": {"$gt": d}}).count()
+
+    d = datetime.datetime.now() - datetime.timedelta(days=7)
+    num_logins_7d = request.db.users.find({"last_login": {"$gt": d}}).count()
+
+    return dict(num_users=request.db.users.count(),
+                num_logins_3h=num_logins_3h,
+                num_logins_7d=num_logins_7d)
+
 def get_wps_list(request):
     csw = request.csw
     csw.getrecords(
@@ -103,16 +114,7 @@ class User():
     def is_activated(self, user_id):
         return None != self.db.users.find_one(dict(user_id = user_id, activated = True))
 
-    def count(self):
-        d = datetime.datetime.now() - datetime.timedelta(hours=3)
-        num_logins_3h = self.db.users.find({"last_login": {"$gt": d}}).count()
-
-        d = datetime.datetime.now() - datetime.timedelta(days=7)
-        num_logins_7d = self.db.users.find({"last_login": {"$gt": d}}).count()
-
-        return dict(num_users=self.db.users.count(),
-                    num_logins_3h=num_logins_3h,
-                    num_logins_7d=num_logins_7d)
+   
 
     def by_id(self, user_id):
         return self.db.users.find_one(dict(user_id = user_id))

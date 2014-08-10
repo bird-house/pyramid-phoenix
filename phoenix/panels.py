@@ -47,9 +47,8 @@ def heading_info(context, request):
 @panel_config(name='dashboard_users',
               renderer='templates/panels/dashboard_users.pt')
 def heading_users(context, request):
-    import models
-    userdb = models.User(request)
-    return userdb.count()
+    from .models import user_stats
+    return user_stats(request)
 
 @panel_config(name='headings')
 def headings(context, request):
