@@ -21,7 +21,7 @@ def navbar(context, request):
         nav.append( nav_item('My Jobs', request.route_url('jobs')) )
         nav.append( nav_item('Wizard', request.route_url('wizard_wps')) )
         nav.append( nav_item('Map', request.route_url('map')) )
-        nav.append( nav_item('My Account', request.route_url('account')) )
+        nav.append( nav_item('My Account', request.route_url('myaccount')) )
     if has_permission('admin', request.context, request):
         nav.append( nav_item('Settings', request.route_url('settings')) )
     #nav.append( nav_item('Help', request.route_url('help')) )

@@ -523,8 +523,40 @@ class MyAccount(MyView):
     def __init__(self, request):
         super(MyAccount, self).__init__(request, 'My Account', "Update your profile details.")
         self.userdb = models.User(request)
+        self.userid = authenticated_userid(self.request)
 
     def generate_form(self, formid="deform"):
+        from .schema import MyAccountSchema
+        schema = MyAccountSchema().bind()
+        return Form(
+            schema=schema,
+            buttons=('submit',),
+            formid=formid)
+
+    def process_form(self, form):
+        try:
+            controls = self.request.POST.items()
+            appstruct = form.validate(controls)
+
+            self.userdb.update(
+                user_id = self.userid,
+                name = appstruct.get('name'),
+                openid = appstruct.get('openid'),
+                organisation = appstruct.get('organisation'),
+                notes = appstruct.get('notes'),
+                update_login=False,
+                )
+        except ValidationFailure, e:
+            logger.exception('validation of form failed.')
+            return dict(title=self.title, description=self.description, form=e.render())
+        except Exception, e:
+            logger.exception('update user failed.')
+            self.session.flash('Update of your accound failed. %s' % (e), queue='error')
+        else:
+            self.session.flash("Your account was updated.", queue='success')
+        return HTTPFound(location=self.request.route_url('myaccount'))
+        
+    def generate_creds_form(self, formid="deform"):
         from .schema import CredentialsSchema
         schema = CredentialsSchema().bind()
         return Form(
@@ -532,91 +564,64 @@ class MyAccount(MyView):
             buttons=('update',),
             formid=formid)
 
-    def process_form(self, form):
+    def process_creds_form(self, form):
         try:
             controls = self.request.POST.items()
-            captured = form.validate(controls)
+            appstruct = form.validate(controls)
 
-            user_id=authenticated_userid(self.request)
-            user = self.userdb.by_id(user_id=user_id)
+            user = self.get_user()
             
             inputs = []
             openid =  user.get('openid').encode('ascii', 'ignore')
             inputs.append( ('openid', openid) )
-            password = captured.get('password', '').encode('ascii', 'ignore')
+            password = appstruct.get('password').encode('ascii', 'ignore')
             inputs.append( ('password', password) )
             logger.debug('update credentials with openid=%s', openid)
-            execution = self.request.wps.execute(identifier='esgf_logon',
-                                    inputs=inputs,
-                                    output=[('output',True),('expires',False)])
+            execution = self.request.wps.execute(
+                identifier='esgf_logon',
+                inputs=inputs,
+                output=[('output',True),('expires',False)])
+            logger.debug('wps url=%s', execution.url)
             from owslib.wps import monitorExecution
             monitorExecution(execution)
-            if execution.processOutputs is not None and len(execution.processOutputs) > 1:
+            logger.debug('outputs=%s', execution.processOutputs)
+            if execution.isSucceded():
                 credentials = execution.processOutputs[0].reference
                 cert_expires = execution.processOutputs[1].data[0]
                 logger.debug('cert expires %s', cert_expires)
                 # Update user credentials
                 self.userdb.update(
-                    user_id = user_id,
+                    user_id = self.userid,
                     credentials = credentials,
                     cert_expires = cert_expires,
                     update_login=False,
                     )
-                logger.debug('update credentials successful, credentials=%s', credentials)
-                self.request.session.flash(
-                    'Credentials updated successfully',
-                    queue='success',
-                    )
+            else:
+                raise Exception('logon process failed.',
+                                execution.status,
+                                execution.statusMessage)
         except ValidationFailure, e:
             logger.exception('Validation of credentials form failed.')
             return dict(title=self.title, description=self.description, form=e.render())
-        except:
-            msg = 'Update of credentials failed.'
-            logger.exception(msg)
-            self.request.session.flash(msg, queue='error')
-        return HTTPFound(location=self.request.route_url('account'))
-        
-    @view_config(route_name='account', renderer='templates/account.pt')
-    def view(self):
-        user_id=authenticated_userid(self.request)
-        user = self.userdb.by_id(user_id=user_id)
-
-        from .schema import AccountSchema
-        form = Form(schema=AccountSchema(), buttons=('submit',))
-        creds_form = self.generate_form()
-
-        if 'update' in self.request.POST:
-            return self.process_form(creds_form)
-        if 'submit' in self.request.POST:
-            controls = self.request.POST.items()
-            try:
-                form.validate(controls)
-            except ValidationFailure, e:
-                logger.exception('There was an error saving your settings.')
-                return dict(form = e.render())
-
-            from peppercorn import parse
-            values = parse(self.request.params.items())
-            # Update the user
-            update_user(
-                request = self.request,
-                user_id = user_id,
-                name = values.get('name', u''),
-                openid = values.get('openid', u''),
-                organisation = values.get('organisation', u''),
-                notes = values.get('notes', u''),
-                update_login=False,
-                )
+        except Exception, e:
+            logger.exception("update credentials failed.")
             self.request.session.flash(
-                'Settings updated successfully',
-                queue='success',
-                )
-            return HTTPFound('/account')
-        # Get existing values
+                "Could not update your credentials. %s" % (e), queue='error')
+        else:
+            self.request.session.flash(
+                'Credentials updated.',
+                queue='success')
+        return HTTPFound(location=self.request.route_url('myaccount'))
+
+    def get_user(self):
+        return self.userdb.by_id(user_id=self.userid)
+        
+    def appstruct(self):
         appstruct = {}
+        user = self.get_user()
         if user is not None:
             appstruct = dict(
-                email = user_id,
+                email = user.get('user_id'),
                 openid = user.get('openid'),
                 name = user.get('name'),
                 organisation = user.get('organisation'),
@@ -624,11 +629,22 @@ class MyAccount(MyView):
                 credentials = user.get('credentials'),
                 cert_expires = user.get('cert_expires')
                 )
+        return appstruct
+        
+    @view_config(route_name='myaccount', renderer='templates/myaccount.pt')
+    def view(self):
+        form = self.generate_form()
+        creds_form = self.generate_creds_form()
+
+        if 'update' in self.request.POST:
+            return self.process_creds_form(creds_form)
+        if 'submit' in self.request.POST:
+            return self.process_form(form)
         return dict(
             title=self.title,
             description=self.description,
-            form=form.render(appstruct),
-            form_credentials=creds_form.render(appstruct))
+            form=form.render(self.appstruct()),
+            form_credentials=creds_form.render(self.appstruct()))
 
 @view_defaults(permission='edit', layout='default') 
 class Map:

@@ -77,7 +77,7 @@ def main(global_config, **settings):
     config.add_route('qc_wizard_check', '/qc_wizard_check')
     config.add_route('qc_wizard_yaml', '/qc_wizard_yaml')
     config.add_route('map', '/map')
-    config.add_route('account', '/account')
+    config.add_route('myaccount', '/myaccount')
     
     config.add_route('settings', '/settings')
     config.add_route('catalog', '/settings/catalog')

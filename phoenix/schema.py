@@ -37,7 +37,7 @@ class CredentialsSchema(colander.MappingSchema):
         default = '',
         widget = PasswordWidget(size=20))
 
-class AccountSchema(colander.MappingSchema):
+class MyAccountSchema(colander.MappingSchema):
     """
     User account schema
     """
