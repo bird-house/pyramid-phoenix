@@ -121,10 +121,6 @@ class User():
         user = self.db.users.find_one(dict(user_id = user_id))
         return user.get('openid')
 
-    def credentials(self, user_id):
-        user = self.db.users.find_one(dict(user_id = user_id))
-        return user.get('credentials')
-
 def add_job(request, wps_url, status_location, notes=None, tags=None):
     from pyramid.security import authenticated_userid
 

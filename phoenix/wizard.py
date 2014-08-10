@@ -7,6 +7,7 @@ from deform import Form, Button
 from owslib.wps import WebProcessingService
 
 import models
+from .views import MyView
 
 import logging
 logger = logging.getLogger(__name__)
@@ -55,15 +56,12 @@ class WizardState(object):
         self.session.changed()
 
 @view_defaults(permission='view', layout='default')
-class Wizard(object):
+class Wizard(MyView):
     def __init__(self, request, title, description=''):
-        self.request = request
-        self.title = title
-        self.description = description
-        self.session = self.request.session
+        super(Wizard, self).__init__(request, title, description)
         self.csw = self.request.csw
         self.wizard_state = WizardState(self.session, 'wizard_wps')
-
+        
     def buttons(self):
         prev_disabled = not self.prev_ok()
         next_disabled = not self.next_ok()
@@ -499,8 +497,7 @@ class Done(Wizard):
             tags = tags)
 
     def convert_states_to_nodes(self):
-        userdb = models.User(self.request)
-        credentials = userdb.credentials(authenticated_userid(self.request))
+        credentials = self.get_user().get('credentials')
 
         source = dict(
             service = self.request.wps.url,

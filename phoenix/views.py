@@ -67,6 +67,13 @@ class MyView(object):
         self.session = self.request.session
         self.title = title
         self.description = description
+        # db access
+        self.users = self.request.db.users
+
+    def userid(self):
+        return authenticated_userid(self.request)
+    def get_user(self):
+        return self.users.find_one(dict(user_id=self.userid()))
 
 @view_defaults(permission='view', layout='default')
 class PhoenixViews:
