@@ -751,7 +751,7 @@ class CatalogSettings(MyView):
             return dict(title=self.title, description=self.description, form = e.render())
         except Exception, e:
             logger.exception('could not harvest wps.')
-            self.session.flash('Could not add WPS %s. %s' % (url, e), queue="error")
+            self.session.flash('Could not add Dataset %s. %s' % (appstruct.get('source'), e), queue="error")
         return HTTPFound(location=self.request.route_url('catalog'))
 
     @view_config(renderer='json', name='delete.entry')
