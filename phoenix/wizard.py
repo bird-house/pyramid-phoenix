@@ -474,28 +474,17 @@ class Done(Wizard):
         from .schema import DoneSchema
         return DoneSchema()
 
-    def execute_with_csw(self, appstruct):
-        identifier = self.wizard_state.get('process_identifier')
-        inputs = self.wizard_state.get('literal_inputs').items()
-        complex_input = self.wizard_state.get('complex_input_identifier')
-        notes = self.wizard_state.get('literal_inputs')['info_notes']
-        tags = self.wizard_state.get('literal_inputs')['info_tags']
+    def sources(self):
+        sources = []
+        source = self.wizard_state.get('source')
+        if source == 'wizard_csw':
+            self.csw.getrecordbyid(id=self.wizard_state.get('csw_selection', []))
+            sources = [[str(rec.source)] for rec in self.csw.records.values()]
+        elif source == 'wizard_esgf':
+            sources = [[str(file_url)] for file_url in self.wizard_state.get('esgf_files')]
+        return sources
 
-        self.csw.getrecordbyid(id=self.wizard_state.get('csw_selection', []))
-        for rec in self.csw.records.values():
-            inputs.append( (complex_input, rec.source) )
-        inputs = [(str(key), str(value)) for key, value in inputs]
-        outputs = [("output",True)]
-        execution = self.wps.execute(identifier, inputs=inputs, output=outputs)
-
-        models.add_job(
-            request = self.request,
-            wps_url = execution.serviceInstance,
-            status_location = execution.statusLocation,
-            notes = notes,
-            tags = tags)
-
-    def convert_states_to_nodes(self):
+    def workflow_description(self):
         credentials = self.get_user().get('credentials')
 
         source = dict(
@@ -504,7 +493,7 @@ class Done(Wizard):
             input = ['credentials=%s' % (credentials)],
             complex_input = 'source',
             output = ['output'],
-            sources = [[str(file_url)] for file_url in self.wizard_state.get('esgf_files')])
+            sources = self.sources())
         worker_inputs = map(lambda x: str(x[0]) + '=' + str(x[1]),  self.wizard_state.get('literal_inputs').items())
         worker = dict(
             service = self.wps.url,
@@ -515,27 +504,26 @@ class Done(Wizard):
         nodes = dict(source=source, worker=worker)
         return nodes
 
-    def execute_with_esgf(self, appstruct):
+    def execute_workflow(self, appstruct):
+       
+
+        nodes = self.workflow_description()
+        from .wps import execute_restflow
+        return execute_restflow(self.request.wps, nodes)
+
+    def success(self, appstruct):
         identifier = self.wizard_state.get('process_identifier')
         notes = self.wizard_state.get('literal_inputs')['info_notes']
         tags = self.wizard_state.get('literal_inputs')['info_tags']
-
-        nodes = self.convert_states_to_nodes()
-        from .wps import execute_restflow
-        execution = execute_restflow(self.request.wps, nodes)
-
+        
+        execution = self.execute_workflow(appstruct)
         models.add_job(
             request = self.request,
+            title = identifier,
             wps_url = execution.serviceInstance,
             status_location = execution.statusLocation,
             notes = notes,
             tags = tags)
-
-    def success(self, appstruct):
-        if self.wizard_state.get('source') == 'wizard_csw':
-            self.execute_with_csw(appstruct)
-        else:
-            self.execute_with_esgf(appstruct)
 
     def previous_success(self, appstruct):
         return self.previous()

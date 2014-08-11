@@ -332,6 +332,7 @@ class Execute(MyView):
 
             models.add_job(
                 request = self.request,
+                title = execution.process.title,
                 wps_url = execution.serviceInstance,
                 status_location = execution.statusLocation,
                 notes = appstruct.get('info_notes', ''),
@@ -394,7 +395,6 @@ class Jobs(MyView):
         try:
             execution = WPSExecution(url = job['wps_url'])
             execution.checkStatus(url = job['status_location'], sleepSecs=0)
-            job['title'] = execution.process.title
             job['status'] = execution.getStatus()
             job['status_message'] = execution.statusMessage
             job['is_complete'] = execution.isComplete()
