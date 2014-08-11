@@ -497,6 +497,7 @@ class OutputDetails(MyView):
         job = self.db.jobs.find_one({'identifier': jobid})
         execution = WPSExecution(url=job['wps_url'])
         execution.checkStatus(url=job['status_location'], sleepSecs=0)
+        self.description = execution.process.title
         return execution.processOutputs
 
     def process_output(self, jobid, outputid):
@@ -538,7 +539,6 @@ class OutputDetails(MyView):
         if self.request.params.get('jobid') is not None:
             self.session['jobid'] = self.request.params.get('jobid')
             self.session.changed()
-        self.description = self.session['jobid']
 
         items = []
         for output in self.process_outputs(self.session.get('jobid')):
