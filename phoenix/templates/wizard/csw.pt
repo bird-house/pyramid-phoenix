@@ -30,27 +30,38 @@
     </div>    
 
     <div class="row-fluid">
-      <div class="span4" id="div-map">Map</div>
+      <div class="span3" id="div-map">Map</div>
         
-      <div class="span8">
-        <form id="query" class="form-search">
-          <input type="text" name="query" class="input-medium search-query" placeholder="Search Terms">
-        </form>
-        <table class="table table-bordered table-striped" id="table-csw-results">
-          <tal:rows replace="structure grid" />
-        </table>
+      <div class="span9">
+        <!-- search form -->
+        <div>
+          <form id="query" class="form-search">
+            <input type="text" name="query" class="input-medium search-query" placeholder="Search Terms">
+          </form>
+        </div>
 
-        <div class="pagination">
+        <!-- table -->
+        <div>
+          <table class="table table-bordered table-striped" id="table-csw-results">
+            <tal:rows replace="structure grid" />
+          </table>
+        </div>
+
+        <!-- Pagination for catalog search results -->
+        <div class="pagination pagination-centered pagination-large">
           <ul>
-            <li><a href="#">Prev</a></li>
-            <li><a href="#">Next</a></li>
+            <li class="disabled"><a href="#">&laquo;</a></li>
+            <li class="active"><a href="#">1</a></li>
+            <li class="active"><a href="#">2</a></li>
+            <li class="active"><a href="#">&raquo;</a></li>
           </ul>
         </div>
+
       </div>
       
-      <tal:form replace="structure form">The form will render here</tal:form>
-
     </div>
+
+    <tal:form replace="structure form">The form will render here</tal:form>
 
   </div>
    
