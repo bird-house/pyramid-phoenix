@@ -116,13 +116,10 @@ class Wizard(MyView):
     def schema(self):
         raise NotImplementedError
 
-    def previous_success(self):
+    def previous_success(self, appstruct):
         raise NotImplementedError
     
-    def next_success(self):
-        raise NotImplementedError
-
-    def success_previous(self):
+    def next_success(self, appstruct):
         raise NotImplementedError
 
     def generate_form(self, formid='deform'):
@@ -211,6 +208,7 @@ class ChooseWPSProcess(Wizard):
     def __init__(self, request):
         super(ChooseWPSProcess, self).__init__(request, 'Choose WPS Process')
         self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
+        self.description = self.wps.identification.title
 
     def schema(self):
         from .schema import SelectProcessSchema
@@ -280,8 +278,15 @@ class ComplexInputs(Wizard):
         from .schema import ChooseInputParamterSchema
         return ChooseInputParamterSchema().bind(process=self.process)
 
-    def next_success(self, appstruct):
+    def success(self, appstruct):
         self.wizard_state.set('complex_input_identifier', appstruct.get('identifier'))
+
+    def previous_success(self, appstruct):
+        self.success(appstruct)
+        return self.previous()
+
+    def next_success(self, appstruct):
+        self.success(appstruct)
         return self.next('wizard_source')
 
     def appstruct(self):
@@ -297,6 +302,7 @@ class ChooseSource(Wizard):
             request,
             "Choose Source",
             "")
+        self.description = self.wizard_state.get('complex_input_identifier')
     def schema(self):
         from .schema import ChooseSourceSchema
         return ChooseSourceSchema()
@@ -323,8 +329,8 @@ class CatalogSearch(Wizard):
     def __init__(self, request):
         super(CatalogSearch, self).__init__(
             request,
-            "Catalog Search",
-            "Search in CSW Catalog Service")
+            "CSW Catalog Search")
+        self.description = self.wizard_state.get('complex_input_identifier')
 
     def schema(self):
         from .schema import CatalogSearchSchema

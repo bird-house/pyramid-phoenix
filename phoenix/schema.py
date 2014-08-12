@@ -99,14 +99,14 @@ def deferred_wps_list_widget(node, kw):
     wps_list = kw.get('wps_list', [])
     choices = []
     for wps in wps_list:
-        title = "%s (%s)" % (wps.get('title'), wps.get('abstract'))
+        title = "%s (%s) [%s]" % (wps.get('title'), wps.get('abstract'), wps.get('source'))
         choices.append((wps.get('source'), title))
     return RadioChoiceWidget(values = choices)
 
 class ChooseWPSSchema(colander.MappingSchema):
     url = colander.SchemaNode(
         colander.String(),
-        title = 'WPS',
+        title = 'WPS service',
         description = "Select WPS",
         widget = deferred_wps_list_widget
         )
@@ -124,6 +124,7 @@ def deferred_choose_process_widget(node, kw):
 class SelectProcessSchema(colander.MappingSchema):
     identifier = colander.SchemaNode(
         colander.String(),
+        title = "WPS Process",
         widget = deferred_choose_process_widget)
 
 @colander.deferred
@@ -142,6 +143,7 @@ def deferred_choose_input_parameter_widget(node, kw):
 class ChooseInputParamterSchema(colander.MappingSchema):
     identifier = colander.SchemaNode(
         colander.String(),
+        title = "Input Parameter",
         widget = deferred_choose_input_parameter_widget)
 
 class ChooseSourceSchema(colander.MappingSchema):
