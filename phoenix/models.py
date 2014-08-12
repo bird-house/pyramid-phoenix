@@ -1,6 +1,8 @@
 import uuid
 import datetime
 
+from .exceptions import MyProxyLogonFailure
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -76,7 +78,7 @@ def get_wps_list(request):
             rights=csw.records[rec].rights))
     return items
 
-def update_esgf_credentials(request, openid, password):
+def myproxy_logon(request, openid, password):
     inputs = []
     inputs.append( ('openid', openid.encode('ascii', 'ignore')) )
     inputs.append( ('password', password.encode('ascii', 'ignore')) )
@@ -91,20 +93,15 @@ def update_esgf_credentials(request, openid, password):
     
     from owslib.wps import monitorExecution
     monitorExecution(execution)
-    logger.debug('outputs=%s', execution.processOutputs)
-    if execution.isSucceded():
-        credentials = execution.processOutputs[0].reference
-        cert_expires = execution.processOutputs[1].data[0]
-        logger.debug('cert expires %s', cert_expires)
-        # Update user credentials
-        ## user = self.get_user()
-        ## user['credentials'] = credentials
-        ## user['cert_expires'] = cert_expires 
-        ## self.userdb.update({'email':self.user_email()}, user)
-    else:
-        raise Exception('logon process failed.',
-                        execution.status,
-                        execution.statusMessage)
+    
+    if not execution.isSucceded():
+        raise MyProxyLogonFailure('logon process failed.',
+                                  execution.status,
+                                  execution.statusMessage)
+    credentials = execution.processOutputs[0].reference
+    cert_expires = execution.processOutputs[1].data[0]
+    logger.debug('cert expires %s', cert_expires)
+    return dict(credentials=credentials, cert_expires=cert_expires)
 
 
 

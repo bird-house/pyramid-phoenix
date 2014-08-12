@@ -7,6 +7,7 @@ from owslib.wps import WebProcessingService
 
 import models
 from .views import MyView
+from .exceptions import MyProxyLogonFailure
 
 import logging
 logger = logging.getLogger(__name__)
@@ -475,13 +476,24 @@ class ESGFCredentials(Wizard):
         return CredentialsSchema().bind()
 
     def success(self, appstruct):
-        self.wizard_state.set('password', appstruct.get('password'))
-        #TODO: update credentials
-        models.update_esgf_credentials(
-            self.request,
-            openid=self.get_user().get('openid'),
-            password=appstruct.get('password'))
-
+        try:
+            self.wizard_state.set('password', appstruct.get('password'))
+            result = models.myproxy_logon(
+                self.request,
+                openid=self.get_user().get('openid'),
+                password=appstruct.get('password'))
+            user = self.get_user()
+            user['credentials'] = result['credentials']
+            user['cert_expires'] = result['cert_expires'] 
+            self.userdb.update({'email':self.user_email()}, user)
+        except Exception, e:
+            logger.exception("update credentials failed.")
+            self.request.session.flash(
+                "Could not update your credentials. %s" % (e), queue='error')
+        else:
+            self.request.session.flash(
+                'Credentials updated.', queue='success')
+        
     def previous_success(self, appstruct):
         self.success(appstruct)
         return self.previous()

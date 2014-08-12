@@ -2,5 +2,5 @@
 all Exceptions defined by Phoenix ...
 """
 
-class TokenError(Exception):
+class MyProxyLogonFailure(Exception):
     pass
