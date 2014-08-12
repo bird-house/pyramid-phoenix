@@ -99,6 +99,7 @@ def main(global_config, **settings):
     config.add_route('wizard_csw', '/wizard/csw')
     config.add_route('wizard_esgf', '/wizard/esgf')
     config.add_route('wizard_esgf_files', '/wizard/esgf_files')
+    config.add_route('wizard_esgf_credentials', '/wizard/esgf_credentials')
     config.add_route('wizard_done', '/wizard/done')
 
     # A quick access to the login button

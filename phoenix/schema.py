@@ -35,7 +35,7 @@ class CredentialsSchema(colander.MappingSchema):
         description = 'Password for this OpenID',
         missing = '',
         default = '',
-        widget = PasswordWidget(size=20))
+        widget = PasswordWidget(size=30))
 
 class MyAccountSchema(colander.MappingSchema):
     """

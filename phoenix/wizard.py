@@ -454,7 +454,7 @@ class ESGFFileSearch(Wizard):
         
     def next_success(self, appstruct):
         self.success(appstruct)
-        return self.next('wizard_done')
+        return self.next('wizard_esgf_credentials')
         
     def appstruct(self):
         return dict(url=self.wizard_state.get('esgf_files'))
@@ -462,6 +462,38 @@ class ESGFFileSearch(Wizard):
     @view_config(route_name='wizard_esgf_files', renderer='templates/wizard/esgf.pt')
     def view(self):
         return super(ESGFFileSearch, self).view()
+
+class ESGFCredentials(Wizard):
+    def __init__(self, request):
+        super(ESGFCredentials, self).__init__(
+            request,
+            "ESGF Credentials",
+            "")
+
+    def schema(self):
+        from .schema import CredentialsSchema
+        return CredentialsSchema().bind()
+
+    def success(self, appstruct):
+        self.wizard_state.set('password', appstruct.get('password'))
+        #TODO: update credentials
+
+    def previous_success(self, appstruct):
+        self.success(appstruct)
+        return self.previous()
+        
+    def next_success(self, appstruct):
+        self.success(appstruct)
+        return self.next('wizard_done')
+        
+    def appstruct(self):
+        return dict(
+            openid=self.get_user().get('openid'),
+            password=self.wizard_state.get('password'))
+
+    @view_config(route_name='wizard_esgf_credentials', renderer='templates/wizard/esgf.pt')
+    def view(self):
+        return super(ESGFCredentials, self).view()
 
 class Done(Wizard):
     def __init__(self, request):
