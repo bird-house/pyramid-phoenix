@@ -241,6 +241,7 @@ class LiteralInputs(Wizard):
             "")
         self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
         self.process = self.wps.describeprocess(self.wizard_state.get('process_identifier'))
+        self.description = "Process %s" % self.process.title
 
     def schema(self):
         from .wps import WPSSchema
@@ -272,6 +273,7 @@ class ComplexInputs(Wizard):
             "")
         self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
         self.process = self.wps.describeprocess(self.wizard_state.get('process_identifier'))
+        self.description = "Process %s" % self.process.title
 
     def schema(self):
         from .schema import ChooseInputParamterSchema

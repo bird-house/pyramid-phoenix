@@ -133,7 +133,10 @@ def deferred_choose_input_parameter_widget(node, kw):
     choices = []
     for dataInput in process.dataInputs:
         if dataInput.dataType == 'ComplexData':
-            choices.append( (dataInput.identifier, dataInput.title) )
+            title = dataInput.title
+            title += " [%s]" % (', '.join([value.mimeType for value in dataInput.supportedValues]))
+            title += " (%d-%d)" % (dataInput.minOccurs, dataInput.maxOccurs)
+            choices.append( (dataInput.identifier, title) )
     return RadioChoiceWidget(values = choices)
 
 class ChooseInputParamterSchema(colander.MappingSchema):
