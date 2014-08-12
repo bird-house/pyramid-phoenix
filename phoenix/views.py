@@ -274,10 +274,17 @@ class Processes(MyView):
         items = []
         if self.wps is not None:
             for process in self.wps.processes:
+                # TODO: sometime no abstract avail. Fix handling this in owslib
+                abstract = ''
+                if hasattr(process, 'abstract'):
+                    abstract = process.abstract
+                processVersion = ''
+                if hasattr(process, 'processVersion'):
+                    processVersion = process.processVersion
                 items.append(dict(title=process.title,
                                   identifier=process.identifier,
-                                  abstract = process.abstract,
-                                  version = process.processVersion))
+                                  abstract=abstract,
+                                  version=processVersion))
 
         # sort items
         order = self.sort_order()
