@@ -284,14 +284,17 @@ class UsersGrid(MyGrid):
 class CatalogGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(CatalogGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats['action'] = self.action_td
+        self.column_formats[''] = self.action_td
 
     def action_td(self, col_num, i, item):
-        """Generate the column that has the actions in it.
-        """
         div = Template("""\
         <div class="btn-group">
-            <button class="btn btn-mini btn-danger delete" data-value="${identifier}">Delete</button>
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Action<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <!-- dropdown menu links -->
+            <li><a class="edit" data-value="${identifier}"><i class="icon-pencil"></i> Edit</a></li>
+            <li><a class="delete" data-value="${identifier}"><i class="icon-trash"></i> Delete</a></li>
+          </ul>
         </div>
         """)
         return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))

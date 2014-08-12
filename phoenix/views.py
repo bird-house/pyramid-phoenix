@@ -736,10 +736,16 @@ class CatalogSettings(MyView):
             self.session.flash('Could not add Dataset %s. %s' % (appstruct.get('source'), e), queue="error")
         return HTTPFound(location=self.request.route_url('catalog'))
 
-    @view_config(renderer='json', name='delete.entry')
+    @view_config(renderer='json', name='catalog.edit')
     def delete(self):
         identfier = self.request.params.get('identifier', None)
-        self.session.flash('Delete WPS not Implemented', queue="error")
+        self.session.flash('Edit catalog entry not implemented yet.', queue="error")
+        return {}
+    
+    @view_config(renderer='json', name='catalog.delete')
+    def delete(self):
+        identfier = self.request.params.get('identifier', None)
+        self.session.flash('Delete catalog entry not implemented yet.', queue="error")
         return {}
 
     def get_csw_items(self):
@@ -779,7 +785,7 @@ class CatalogSettings(MyView):
         grid = CatalogGrid(
                 self.request,
                 items,
-                ['title', 'source', 'abstract', 'subjects', 'format', 'action'],
+                ['title', 'source', 'abstract', 'subjects', 'format', ''],
             )
         return dict(
             title=self.title,
