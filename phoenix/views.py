@@ -896,7 +896,7 @@ class UserSettings(MyView):
         grid = UsersGrid(
                 self.request,
                 user_items,
-                ['name', 'email', 'openid', 'organisation', 'notes', 'activated', 'action'],
+                ['name', 'email', 'openid', 'organisation', 'notes', 'activated', ''],
             )
         return dict(
             title=self.title,
