@@ -77,12 +77,12 @@ class Wizard(MyView):
                                disabled=False)
         buttons = []
         # TODO: fix focus button
+        if not self.wizard_state.is_first():
+            buttons.append(prev_button)
         if self.wizard_state.is_last():
             buttons.append(done_button)
         else:
             buttons.append(next_button)
-        if not self.wizard_state.is_first():
-            buttons.append(prev_button)
         buttons.append(cancel_button)
         return buttons
 
