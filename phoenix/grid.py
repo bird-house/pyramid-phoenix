@@ -5,6 +5,7 @@ from webhelpers.html.builder import HTML
 from webhelpers.html.grid import Grid
 
 from string import Template
+from dateutil import parser as datetime_parser
 
 from .utils import localize_datetime
 
@@ -14,7 +15,9 @@ class MyGrid(Grid):
         if 'url' not in kwargs:
             kwargs['url'] = request.current_route_url
         super(MyGrid, self).__init__(*args, **kwargs)
-        self.exclude_ordering = ['action', '_numbered']
+        self.exclude_ordering = ['', 'action', '_numbered']
+         #self.user_tz = u'US/Eastern'
+        self.user_tz = u'UTC'
 
     def generate_header_link(self, column_number, column, label_text):
         """Override of the ObjectGrid to customize the headers. This is
@@ -141,8 +144,6 @@ class JobsGrid(MyGrid):
         self.column_formats['status_location'] = self.status_location_td
         self.column_formats['progress'] = self.progress_td
         self.column_formats['action'] = self.action_td
-        #self.user_tz = u'US/Eastern'
-        self.user_tz = u'UTC'
         self.exclude_ordering = ['status_message', 'action']
 
     def creation_time_td(self, col_num, i, item):
@@ -256,6 +257,7 @@ class UsersGrid(MyGrid):
         super(UsersGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['activated'] = self.activated_td
         self.column_formats[''] = self.action_td
+        self.exclude_ordering = ['notes', '']
 
     def activated_td(self, col_num, i, item):
         icon_class = "icon-thumbs-down"
@@ -284,7 +286,23 @@ class UsersGrid(MyGrid):
 class CatalogGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(CatalogGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['modified'] = self.modified_td
         self.column_formats[''] = self.action_td
+        self.exclude_ordering = ['source', 'abstract', 'subjects', '']
+
+    def modified_td(self, col_num, i, item):
+        if item.get('modified') is None:
+            return HTML.td('')
+        span_class = 'due-date badge'
+        #if item.start_time:
+        #    span_class += ' badge-important'
+        creation_time = datetime_parser.parse(item.get('modified'))
+        span = HTML.tag(
+            "span",
+            c=HTML.literal(creation_time.strftime('%Y-%m-%d %H:%M:%S')),
+            class_=span_class,
+        )
+        return HTML.td(span)
 
     def action_td(self, col_num, i, item):
         div = Template("""\

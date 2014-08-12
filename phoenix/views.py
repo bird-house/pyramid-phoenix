@@ -681,8 +681,9 @@ class Settings(MyView):
 class CatalogSettings(MyView):
     
     def __init__(self, request):
-        super(CatalogSettings, self).__init__(request, 'Catalog', "Configure Catalog Service (CSW).")
+        super(CatalogSettings, self).__init__(request, 'CSW Catalog Service')
         self.csw = self.request.csw
+        self.description = "%s (%s)" % (self.csw.identification.title, self.csw.url)
         
     def generate_service_form(self, formid="deform"):
         from .schema import CatalogAddServiceSchema
@@ -785,7 +786,7 @@ class CatalogSettings(MyView):
         grid = CatalogGrid(
                 self.request,
                 items,
-                ['title', 'source', 'abstract', 'subjects', 'format', ''],
+                ['title', 'source', 'abstract', 'creator', 'subjects', 'modified', 'format', ''],
             )
         return dict(
             title=self.title,
