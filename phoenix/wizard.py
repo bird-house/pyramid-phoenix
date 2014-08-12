@@ -404,7 +404,7 @@ class CatalogSearch(Wizard):
         grid = CatalogSearchGrid(
                 self.request,
                 items,
-                ['title', 'abstract', 'subjects', 'format', 'selected'],
+                ['title', 'format', 'selected'],
             )
         return dict(grid=grid, items=items)
 

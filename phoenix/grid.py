@@ -234,24 +234,6 @@ class JobsGrid(MyGrid):
         """)
         return HTML.td(HTML.literal(div.substitute({'jobid': item.get('identifier')} )))
 
-class CatalogSearchGrid(MyGrid):
-    def __init__(self, request, *args, **kwargs):
-        super(CatalogSearchGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats['selected'] = self.selected_td
-        #self.exclude_ordering = ['action']
-
-    def selected_td(self, col_num, i, item):
-        """Generate the column for selecting items.
-        """
-        icon_class = "icon-thumbs-down"
-        if item['selected'] == True:
-            icon_class = "icon-thumbs-up"
-        div = Template("""\
-        <button class="btn btn-mini select" data-value="${identifier}"><i class="${icon_class}"></i></button>
-        """)
-        return HTML.td(HTML.literal(div.substitute({'identifier': item['identifier'], 'icon_class': icon_class} )))
-       
-        
 class UsersGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(UsersGrid, self).__init__(request, *args, **kwargs)
@@ -289,7 +271,6 @@ class CatalogGrid(MyGrid):
         self.column_formats['title'] = self.title_td
         self.column_formats['format'] = self.format_td
         self.column_formats['modified'] = self.modified_td
-        self.column_formats[''] = self.action_td
 
     def title_td(self, col_num, i, item):
         tag_links = []
@@ -338,6 +319,27 @@ class CatalogGrid(MyGrid):
             class_=span_class,
         )
         return HTML.td(span)
+
+class CatalogSearchGrid(CatalogGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(CatalogSearchGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['selected'] = self.selected_td
+
+    def selected_td(self, col_num, i, item):
+        """Generate the column for selecting items.
+        """
+        icon_class = "icon-thumbs-down"
+        if item['selected'] == True:
+            icon_class = "icon-thumbs-up"
+        div = Template("""\
+        <button class="btn btn-mini select" data-value="${identifier}"><i class="${icon_class}"></i></button>
+        """)
+        return HTML.td(HTML.literal(div.substitute({'identifier': item['identifier'], 'icon_class': icon_class} )))
+
+class CatalogSettingsGrid(CatalogGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(CatalogSettingsGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats[''] = self.action_td
 
     def action_td(self, col_num, i, item):
         div = Template("""\

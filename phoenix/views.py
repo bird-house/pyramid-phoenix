@@ -780,10 +780,10 @@ class CatalogSettings(MyView):
             return self.process_service_form(service_form)
         elif 'add_dataset' in self.request.POST:
             return self.process_dataset_form(dataset_form)
-        from .grid import CatalogGrid
+        from .grid import CatalogSettingsGrid
         items = self.get_csw_items()
             
-        grid = CatalogGrid(
+        grid = CatalogSettingsGrid(
                 self.request,
                 items,
                 ['title', 'creator', 'modified', 'format', ''],
