@@ -600,34 +600,16 @@ class MyAccount(MyView):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
+
+            user = self.get_user()
+            result = models.myproxy_logon(
+                self.request,
+                openid = user.get('openid'),
+                password = appstruct.get('password'))
             
-            inputs = []
-            openid =  self.get_user().get('openid').encode('ascii', 'ignore')
-            inputs.append( ('openid', openid) )
-            password = appstruct.get('password').encode('ascii', 'ignore')
-            inputs.append( ('password', password) )
-            logger.debug('update credentials with openid=%s', openid)
-            execution = self.request.wps.execute(
-                identifier='esgf_logon',
-                inputs=inputs,
-                output=[('output',True),('expires',False)])
-            logger.debug('wps url=%s', execution.url)
-            from owslib.wps import monitorExecution
-            monitorExecution(execution)
-            logger.debug('outputs=%s', execution.processOutputs)
-            if execution.isSucceded():
-                credentials = execution.processOutputs[0].reference
-                cert_expires = execution.processOutputs[1].data[0]
-                logger.debug('cert expires %s', cert_expires)
-                # Update user credentials
-                user = self.get_user()
-                user['credentials'] = credentials
-                user['cert_expires'] = cert_expires 
-                self.userdb.update({'email':self.user_email()}, user)
-            else:
-                raise Exception('logon process failed.',
-                                execution.status,
-                                execution.statusMessage)
+            user['credentials'] = result['credentials']
+            user['cert_expires'] = result['cert_expires'] 
+            self.userdb.update({'email':self.user_email()}, user)
         except ValidationFailure, e:
             logger.exception('Validation of credentials form failed.')
             return dict(title=self.title, description=self.description, form=e.render())
