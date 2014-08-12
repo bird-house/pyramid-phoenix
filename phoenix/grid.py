@@ -286,9 +286,27 @@ class UsersGrid(MyGrid):
 class CatalogGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(CatalogGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['source'] = self.source_td
         self.column_formats['modified'] = self.modified_td
         self.column_formats[''] = self.action_td
         self.exclude_ordering = ['source', 'abstract', 'subjects', '']
+
+    def source_td(self, col_num, i, item):
+        format = item.get('format')
+        span_class = 'label'
+        if 'wps' in format.lower():
+            span_class += ' label-warning'
+        elif 'wms' in format.lower():
+            span_class += ' label-info'
+        elif 'netcdf' in format.lower():
+            span_class += ' label-success'
+        else:
+            span_class += ' label-default'
+        anchor = Template("""\
+        <a class="${span_class}" href="${source}" data-format="${format}">${format}</a>
+        """)
+        return HTML.td(HTML.literal(anchor.substitute(
+            {'source': item['source'], 'span_class': span_class, 'format': format} )))
 
     def modified_td(self, col_num, i, item):
         if item.get('modified') is None:

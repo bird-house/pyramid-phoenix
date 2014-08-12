@@ -7,7 +7,7 @@
   <div metal:fill-slot="content">
 
      <ul class="breadcrumb">
-      <li><a href="/">Home</a> <span class="divider">/</span></li>
+       <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
        <li><a href="/settings">Settings</a> <span class="divider">/</span></li>
       <li class="active">Catalog</li>
     </ul>
