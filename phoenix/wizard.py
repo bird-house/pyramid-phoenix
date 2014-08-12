@@ -5,6 +5,8 @@ from deform import Form, Button
 
 from owslib.wps import WebProcessingService
 
+from string import Template
+
 import models
 from .views import MyView
 from .exceptions import MyProxyLogonFailure
@@ -280,6 +282,9 @@ class ComplexInputs(Wizard):
 
     def success(self, appstruct):
         self.wizard_state.set('complex_input_identifier', appstruct.get('identifier'))
+        for input in self.process.dataInputs:
+            if input.identifier == appstruct.get('identifier'):
+                self.wizard_state.set('mime_types', [value.mimeType for value in input.supportedValues])
 
     def previous_success(self, appstruct):
         self.success(appstruct)
@@ -351,9 +356,23 @@ class CatalogSearch(Wizard):
     def search_csw(self, query=''):
         keywords = [k for k in map(str.strip, str(query).split(' ')) if len(k)>0]
 
+        # TODO: search all formats
+        format = self.wizard_state.get('mime_types')[0]
+
+        cql_tmpl = Template("""\
+        dc:creator='${email}'\
+        and dc:format='${format}'
+        """)
+        cql = cql_tmpl.substitute({
+            'email': self.get_user().get('email'),
+            'format': format})
+        cql_keyword_tmpl = Template('and csw:AnyText like "%${keyword}%"')
+        for keyword in keywords:
+            cql += cql_keyword_tmpl.substitute({'keyword': keyword})
+
         results = []
         try:
-            self.csw.getrecords(keywords=keywords, esn="full")
+            self.csw.getrecords(esn="full", cql=cql)
             logger.debug('csw results %s', self.csw.results)
             for rec in self.csw.records:
                 myrec = self.csw.records[rec]
