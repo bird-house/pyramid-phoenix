@@ -477,6 +477,10 @@ class ESGFCredentials(Wizard):
     def success(self, appstruct):
         self.wizard_state.set('password', appstruct.get('password'))
         #TODO: update credentials
+        models.update_esgf_credentials(
+            self.request,
+            openid=self.get_user().get('openid'),
+            password=appstruct.get('password'))
 
     def previous_success(self, appstruct):
         self.success(appstruct)
@@ -539,8 +543,6 @@ class Done(Wizard):
         return nodes
 
     def execute_workflow(self, appstruct):
-       
-
         nodes = self.workflow_description()
         from .wps import execute_restflow
         return execute_restflow(self.request.wps, nodes)
