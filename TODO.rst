@@ -17,6 +17,13 @@ Catalog Service
 
 http://localhost:8082/csw?&service=CSW&version=2.0.2&request=GetRecords&typenames=csw:Record&elementsetname=full&resulttype=results&sortby=dc:title:D
 
+Deployment
+----------
+
+* with docker and salt:
+
+http://www.socallinuxexpo.org/scale12x/presentations/automated-deployment-django-docker-and-salt.html
+
 
 Helsinki
 --------
