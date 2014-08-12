@@ -31,6 +31,16 @@
       <tal:rows replace="structure grid" />
     </table>
 
+    <!-- Pagination for catalog search results -->
+    <div class="pagination pagination-centered pagination-large">
+      <ul>
+        <li class="disabled"><a href="#">&laquo;</a></li>
+        <li class="active"><a href="#">1</a></li>
+        <li class="active"><a href="#">2</a></li>
+        <li class="active"><a href="#">&raquo;</a></li>
+      </ul>
+    </div>
+
     <!-- Add form for service addition -->
     <div id="service-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="service-form-label" aria-hidden="true">
       <div class="modal-header">

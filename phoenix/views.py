@@ -786,7 +786,7 @@ class CatalogSettings(MyView):
         grid = CatalogGrid(
                 self.request,
                 items,
-                ['title', 'source', 'abstract', 'creator', 'subjects', 'modified', 'format', ''],
+                ['title', 'creator', 'modified', 'format', ''],
             )
         return dict(
             title=self.title,

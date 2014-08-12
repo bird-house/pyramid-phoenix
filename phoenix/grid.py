@@ -286,12 +286,29 @@ class UsersGrid(MyGrid):
 class CatalogGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(CatalogGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats['source'] = self.source_td
+        self.column_formats['title'] = self.title_td
+        self.column_formats['format'] = self.format_td
         self.column_formats['modified'] = self.modified_td
         self.column_formats[''] = self.action_td
-        self.exclude_ordering = ['source', 'abstract', 'subjects', '']
 
-    def source_td(self, col_num, i, item):
+    def title_td(self, col_num, i, item):
+        tag_links = []
+        for tag in item.get('subjects'):
+            anchor = HTML.tag("a", href="#", c=tag, class_="label label-info")
+            tag_links.append(anchor)
+        
+        div = Template("""\
+        <div class="">
+          <div class="">
+            <h3 class="">${title}</h3>
+            <div>${abstract}</div>
+          </div>
+          <div>${tags}</div>
+        </div>
+        """)
+        return HTML.td(HTML.literal(div.substitute( {'title': item['title'], 'abstract': item['abstract'], 'tags': ' '.join(tag_links)} )))
+
+    def format_td(self, col_num, i, item):
         format = item.get('format')
         span_class = 'label'
         if 'wps' in format.lower():
