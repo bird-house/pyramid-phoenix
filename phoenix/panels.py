@@ -37,6 +37,10 @@ def welcome(context, request, title):
 def sidebar(context, request):
     return dict(title="Sidebar...")
 
+@panel_config(name='footer', renderer='templates/panels/footer.pt')
+def footer(context, request):
+    return {}
+
 @panel_config(name='info',
               renderer='templates/panels/info.pt')
 def heading_info(context, request):
@@ -57,8 +61,5 @@ def headings(context, request):
              for name, args, kw in layout.headings])
     return ''
 
-@panel_config(name='footer')
-def footer(context, request):
-    return ''
-    #return '<footer>&copy; </footer>'
-    #return '<div class="well footer"><small>&copy; </small></div>'
+
+

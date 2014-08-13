@@ -68,9 +68,10 @@
           ${panel('navbar')}
         </div>
 
-        <div class="row-fluid">
           <div class="span9">
             <!-- breadcrumb navigation -->
+	    <ul></ul>
+
             <ul class="breadcrumb" tal:condition="view.title | None">
               <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
               <li tal:condition="view.top_title | None"><a href="${request.route_url(view.top_route_name)}">${view.top_title}</a> <span class="divider">/</span></li>
@@ -91,11 +92,10 @@
             ${panel('sidebar')}
           </div>
         </div>
-        
+
         <div class="span12">
           ${panel('footer')}
         </div>
-      </div>  
       
     </div> 
 
