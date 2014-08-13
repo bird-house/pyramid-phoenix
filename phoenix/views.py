@@ -216,9 +216,9 @@ class Dashboard(MyView):
             )
 
 @view_defaults(permission='edit', layout='default')
-class Processes(MyView):
+class ProcessList(MyView):
     def __init__(self, request):
-        super(Processes, self).__init__(request, 'WPS Processes')
+        super(ProcessList, self).__init__(request, 'Processes')
 
         self.wps = None
         if 'wps.url' in self.session:
@@ -265,7 +265,7 @@ class Processes(MyView):
             return dict(page_title=self.title, page_description=self.description, form=e.render())
         return HTTPFound(location=self.request.route_url('processes'))
 
-    @view_config(route_name='processes', renderer='templates/processes.pt')
+    @view_config(route_name='process_list', renderer='templates/process_list.pt')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
@@ -305,10 +305,12 @@ class Processes(MyView):
             form=form.render())
 
 @view_defaults(permission='edit', layout='default')
-class Execute(MyView):
+class ExecuteProcess(MyView):
     def __init__(self, request):
-        super(Execute, self).__init__(request, 'Execute')
-        
+        super(ExecuteProcess, self).__init__(request, 'Execute')
+        self.top_page_title = "Processes"
+        self.top_page_route_name = "process_list"
+
         self.db = self.request.db
        
         self.identifier = self.request.params.get('identifier', None)
@@ -349,7 +351,7 @@ class Execute(MyView):
             return dict(page_title=self.title, page_description=self.description, form = e.render())
         return HTTPFound(location=self.request.route_url('jobs'))
 
-    @view_config(route_name='execute', renderer='templates/execute.pt')
+    @view_config(route_name='execute_process', renderer='templates/execute_process.pt')
     def execute_view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
@@ -357,6 +359,8 @@ class Execute(MyView):
         return dict(
             page_title=self.title,
             page_description=self.description,
+            top_page_title = self.top_page_title,
+            top_page_route_name = self.top_page_route_name,
             form=form.render())
     
 @view_defaults(permission='edit', layout='default')

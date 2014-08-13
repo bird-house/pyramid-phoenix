@@ -68,10 +68,10 @@ def main(global_config, **settings):
     # routes 
     config.add_route('home', '/')
     config.add_route('dashboard', '/dashboard')
-    config.add_route('processes', '/processes')
+    config.add_route('process_list', '/process_list')
+    config.add_route('execute_process', '/execute_process')
     config.add_route('jobs', '/jobs')
     config.add_route('output_details', '/output_details')
-    config.add_route('execute', '/execute')
     config.add_route('map', '/map')
     config.add_route('myaccount', '/myaccount')
 

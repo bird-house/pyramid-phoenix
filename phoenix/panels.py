@@ -16,7 +16,7 @@ def navbar(context, request):
     nav = []
     nav.append( nav_item('Dashboard', request.route_url('dashboard')) )
     if has_permission('edit', request.context, request):
-        nav.append( nav_item('Processes', request.route_url('processes')) )
+        nav.append( nav_item('Processes', request.route_url('process_list')) )
         nav.append( nav_item('My Jobs', request.route_url('jobs')) )
         nav.append( nav_item('Wizard', request.route_url('wizard_wps')) )
         nav.append( nav_item('Map', request.route_url('map')) )
