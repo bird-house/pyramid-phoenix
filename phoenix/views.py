@@ -380,18 +380,6 @@ class MyJobs(MyView):
         order_dir = 1 if order_dir == 'asc' else -1
         return dict(order=order, order_dir=order_dir)
 
-    @view_config(renderer='json', name='update.jobs')
-    def update(self):
-        self.update_jobs()
-        jobs = list(self.db.jobs.find({'email': self.user_email(), 'is_user_notified':False}))
-        for job in jobs:
-            if job.get('is_complete', False) == True:
-                job['is_user_notified'] = True
-                logger.debug('job completed %s', job['identifier'])
-                self.db.jobs.update({'identifier': job['identifier']}, job)
-                self.session.flash("Job %s completed." % job['title'], queue='success')
-        return jobs
-
     def update_job(self, job):
         from owslib.wps import WPSExecution
         
@@ -404,6 +392,7 @@ class MyJobs(MyView):
             job['is_succeded'] = execution.isSucceded() 
             if execution.isSucceded():
                 job['progress'] = 100
+                self.session.flash("Job %s completed." % job['title'], queue='success')
             else:
                 job['progress'] = execution.percentCompleted
             # update db
@@ -411,9 +400,14 @@ class MyJobs(MyView):
         except:
             logger.exception("could not update job %s", job.get('identifier'))
     
+    @view_config(renderer='json', name='update.jobs')
     def update_jobs(self):
-        for job in self.db.jobs.find({'email': self.user_email(), 'is_user_notified':False}):
+        logger.debug('!!!!! update job !!!!')
+        jobs = list(self.db.jobs.find({'email': self.user_email(), 'is_complete':False}))
+        for job in jobs:
+            logger.debug('update job, %s', job.get('identifier'))
             self.update_job(job)
+        return jobs
 
     @view_config(renderer='json', name='deleteall.job')
     def delete_all(self):
@@ -425,7 +419,6 @@ class MyJobs(MyView):
         jobid = self.request.params.get('jobid', None)
         if jobid is not None:
             self.db.jobs.remove({'identifier': jobid})
-
         return {}
     
     @view_config(route_name='myjobs', renderer='templates/myjobs.pt')
@@ -443,10 +436,7 @@ class MyJobs(MyView):
                 items,
                 ['status', 'creation_time', 'title', 'status_message', 'status_location', 'progress', 'action'],
             )
-
-        return dict(
-            grid=grid,
-            items=items)
+        return dict(grid=grid, items=items)
 
 @view_defaults(permission='edit', layout='default')
 class ProcessOutputs(MyView):
