@@ -63,6 +63,8 @@ class Wizard(MyView):
         super(Wizard, self).__init__(request, title, description)
         self.csw = self.request.csw
         self.wizard_state = WizardState(self.session, 'wizard_wps')
+        self.top_page_title = "Wizard"
+        self.top_page_route_name = "wizard_wps"
         
     def buttons(self):
         prev_disabled = not self.prev_ok()
@@ -173,8 +175,10 @@ class Wizard(MyView):
         
         custom = self.custom_view()    
         result = dict(
-            title=self.title,
-            description=self.description,
+            page_title=self.title,
+            page_description=self.description,
+            top_page_title = self.top_page_title,
+            top_page_route_name = self.top_page_route_name,
             form=form.render(self.appstruct()))
 
         # custom overwrites result

@@ -73,8 +73,8 @@
             <!-- breadcrumb navigation -->
             <ul class="breadcrumb" tal:condition="page_title | None">
               <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
-              <li tal:condition="top_page_title | None"><a href="${request.route_url('all_settings')}">${top_page_title}</a> <span class="divider">/</span></li>
-              <li class="active">${page_title}</li>
+              <li tal:condition="top_page_title | None"><a href="${request.route_url(top_page_route_name)}">${top_page_title}</a> <span class="divider">/</span></li>
+              <li class="active"><a href="${request.current_route_url()}">${page_title}</a></li>
             </ul>
 
             <!-- Page Title -->
