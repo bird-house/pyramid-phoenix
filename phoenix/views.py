@@ -364,9 +364,9 @@ class ExecuteProcess(MyView):
             form=form.render())
     
 @view_defaults(permission='edit', layout='default')
-class Jobs(MyView):
+class MyJobs(MyView):
     def __init__(self, request):
-        super(Jobs, self).__init__(request, 'My Jobs')
+        super(MyJobs, self).__init__(request, 'My Jobs')
         self.db = self.request.db 
 
     def sort_order(self):
@@ -436,7 +436,7 @@ class Jobs(MyView):
 
         return {}
     
-    @view_config(route_name='jobs', renderer='templates/jobs.pt')
+    @view_config(route_name='myjobs', renderer='templates/myjobs.pt')
     def view(self):
         order = self.sort_order()
         key=order.get('order')
@@ -459,9 +459,12 @@ class Jobs(MyView):
             items=items)
 
 @view_defaults(permission='edit', layout='default')
-class OutputDetails(MyView):
+class ProcessOutputs(MyView):
     def __init__(self, request):
-        super(OutputDetails, self).__init__(request, 'Output Details')
+        super(ProcessOutputs, self).__init__(request, 'Process Outputs')
+        self.top_page_title = "My Jobs"
+        self.top_page_route_name = "myjobs"
+
         self.db = self.request.db
 
     def sort_order(self):
@@ -543,7 +546,7 @@ class OutputDetails(MyView):
 
         return result
         
-    @view_config(route_name='output_details', renderer='templates/output_details.pt')
+    @view_config(route_name='process_outputs', renderer='templates/process_outputs.pt')
     def view(self):
         form = self.generate_form()
 
@@ -572,6 +575,8 @@ class OutputDetails(MyView):
         return dict(
             page_title=self.title,
             page_description=self.description,
+            top_page_title = self.top_page_title,
+            top_page_route_name = self.top_page_route_name,
             grid=grid, items=items, form=form.render())
         
 @view_defaults(permission='edit', layout='default') 

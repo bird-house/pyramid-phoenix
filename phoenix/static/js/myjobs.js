@@ -77,7 +77,7 @@ $(function() {
   }).click(function( event ) {
     var jobid = $(this).attr('data-value');
     // TODO: fix the call
-    window.location.href = "/output_details?jobid=" + jobid;
+    window.location.href = "/process_outputs?jobid=" + jobid;
   });
  
 });
