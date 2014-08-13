@@ -6,7 +6,7 @@ $(function() {
     var email = $(this).attr('data-value');
     var row = $(this).closest('tr');
     $.getJSON(
-      '/delete.user',
+      '/settings/users/'+email+'/delete.json',
       {'email': email},
       function(json) {
         row.remove();
@@ -20,8 +20,8 @@ $(function() {
   }).click(function( event ) {
     var email = $(this).attr('data-value');
     $.getJSON(
-      '/activate.user',
-      {'email': email},
+      '/settings/users/'+email+'/activate.json',
+      {},
       function(json) {
         location.reload();
       }
@@ -34,8 +34,8 @@ $(function() {
   }).click(function( event ) {
     var email = $(this).attr('data-value');
     $.getJSON(
-      '/edit.user',
-      {'email': email},
+      '/settings/users/'+email+'/edit.json',
+      {},
       function(json) {
         if (json) {
           form = $('#user-form');

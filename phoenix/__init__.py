@@ -66,8 +66,8 @@ def main(global_config, **settings):
     #)
 
     # dummy view for testing
-    config.add_route('dummy', '/dummy/{identifier}')
-    config.add_route('dummy_json', '/dummy/{identifier}/edit.json')
+    config.add_route('dummy', '/dummy/{email}')
+    config.add_route('dummy_json', '/dummy/{email}/edit.json')
 
     # routes 
     config.add_route('home', '/')
@@ -87,6 +87,9 @@ def main(global_config, **settings):
     config.add_route('all_settings', '/settings/all')
     config.add_route('catalog_settings', '/settings/catalog')
     config.add_route('user_settings', '/settings/users')
+    config.add_route('edit_user', '/settings/users/{email}/edit.json')
+    config.add_route('delete_user', '/settings/users/{email}/delete.json')
+    config.add_route('activate_user', '/settings/users/{email}/activate.json')
     
     config.add_route('signin', '/signin')
     config.add_route('logout', '/logout')

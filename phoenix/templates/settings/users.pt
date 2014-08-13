@@ -1,26 +1,20 @@
 <metal:block use-macro="main_template">
 
   <div metal:fill-slot="javascript">
-    <script src="${request.static_url('phoenix:static/js/user.js')}"></script>
+    <script src="${request.static_url('phoenix:static/js/users.js')}"></script>
   </div>
         
   <div metal:fill-slot="content">
 
-    <!--! Button to trigger modal dialog for user addition -->
-    <a href="#user-form" role="button" class="btn btn-success" data-toggle="modal">
-      Add User
-    </a>
-    <br/><br />
-
-    <table class="table table-striped">
+    <table class="table table-striped" tal:condition="grid | None">
       <tal:rows replace="structure grid" />
     </table>
 
-    <!-- Add form for tasks -->
+    <!-- User edit form -->
     <div id="user-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="user-form-label" aria-hidden="true">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="user-form-label">Add User</h3>
+        <h3 id="user-form-label">Edit User</h3>
       </div>
       <div class="modal-body">
         <tal:form replace="structure form" />

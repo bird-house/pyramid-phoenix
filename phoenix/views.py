@@ -106,9 +106,9 @@ class PhoenixView(MyView):
     @view_config(route_name='dummy', renderer='templates/dummy.pt')
     @view_config(route_name='dummy_json', renderer='json')
     def dummy(self):
-        identifier = self.request.matchdict['identifier']
+        email = self.request.matchdict['email']
         now = datetime.datetime.now()
-        return dict(name="dummy", identifier=identifier, now=now)
+        return dict(name="dummy", email=email, now=now)
 
     @view_config(route_name='signin', renderer='templates/signin.pt')
     def signin(self):
@@ -811,30 +811,12 @@ class UserSettings(SettingsView):
         
 
     def generate_form(self, formid="deform"):
-        """This helper code generates the form that will be used to add
-        and edit a user based on the schema of the form.
-        """
         from .schema import UserSchema
         schema = UserSchema().bind()
-        options = """
-        {success:
-           function (rText, sText, xhr, form) {
-             deform.processCallbacks();
-             deform.focusFirstInput();
-             var loc = xhr.getResponseHeader('X-Relocate');
-                if (loc) {
-                  document.location = loc;
-                };
-             }
-        }
-        """
         return Form(
             schema,
             buttons=('submit',),
-            formid=formid,
-            use_ajax=False,
-            ajax_options=options,
-            )
+            formid=formid)
 
     def process_form(self, form):
         try:
@@ -848,28 +830,30 @@ class UserSettings(SettingsView):
         except ValidationFailure, e:
             logger.exception('validation of user form failed')
             return dict(form = e.render())
+        except Exception, e:
+            logger.exception('edit user failed')
+            self.session.flash('Edit user failed. %s' % (e), queue="error")
         return HTTPFound(location=self.request.route_url('user_settings'))
 
-    @view_config(renderer='json', name='delete.user')
+    @view_config(route_name='delete_user', renderer='json')
     def delete(self):
-        email = self.request.params.get('email', None)
+        email = self.request.matchdict.get('email')
         if email is not None:
             self.userdb.remove(dict(email=email))
         return {}
 
-    @view_config(renderer='json', name='activate.user')
+    @view_config(route_name='activate_user', renderer='json')
     def activate(self):
-        email = self.request.params.get('email')
-        logger.debug('activate %s', email)
+        email = self.request.matchdict.get('email')
         if email is not None:
             user = self.userdb.find_one({'email':email})
             user['activated'] = not user.get('activated', True)
             self.userdb.update({'email':email}, user)
         return {}
 
-    @view_config(renderer='json', name='edit.user')
+    @view_config(route_name='edit_user', renderer='json')
     def edit(self):
-        email = self.request.params.get('email', None)
+        email = self.request.matchdict.get('email')
         user = None
         if email is not None:
             user = self.userdb.find_one({'email':email})
