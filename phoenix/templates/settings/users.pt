@@ -6,16 +6,6 @@
         
   <div metal:fill-slot="content">
 
-    <ul class="breadcrumb">
-      <li><a href="/">Home</a> <span class="divider">/</span></li>
-      <li><a href="/settings">Settings</a> <span class="divider">/</span></li>
-      <li class="active">Users</li>
-    </ul>
-
-    <div class="page-header">
-      <h1>${title} <small>${description}</small></h1>
-    </div>    
-
     <!--! Button to trigger modal dialog for user addition -->
     <a href="#user-form" role="button" class="btn btn-success" data-toggle="modal">
       Add User

@@ -72,21 +72,22 @@ def main(global_config, **settings):
     config.add_route('jobs', '/jobs')
     config.add_route('output_details', '/output_details')
     config.add_route('execute', '/execute')
-  
-    config.add_route('wizard', '/wizard')
-    config.add_route('qc_wizard_check', '/qc_wizard_check')
-    config.add_route('qc_wizard_yaml', '/qc_wizard_yaml')
     config.add_route('map', '/map')
     config.add_route('myaccount', '/myaccount')
-    
-    config.add_route('settings', '/settings')
-    config.add_route('catalog', '/settings/catalog')
+
+    # qc qizards
+    config.add_route('qc_wizard_check', '/qc_wizard_check')
+    config.add_route('qc_wizard_yaml', '/qc_wizard_yaml')
+
+    # settings
+    config.add_route('all_settings', '/settings/all')
+    config.add_route('catalog_settings', '/settings/catalog')
     config.add_route('user_settings', '/settings/users')
     
     config.add_route('signin', '/signin')
     config.add_route('logout', '/logout')
     config.add_route('login_openid', '/login/openid')
-    # TODO: need some work work on local accounts
+    # TODO: need some work on local accounts
     config.add_route('login_local', '/login/local')
     config.add_route('register', '/register')
 

@@ -6,15 +6,6 @@
 
   <div metal:fill-slot="content">
 
-    <ul class="breadcrumb">
-      <li><a href="/">Home</a> <span class="divider">/</span></li>
-      <li class="active">My Jobs</li>
-    </ul>
-
-    <div class="page-header">
-      <h1>${title} <small>${description}</small></h1>
-    </div>    
-
     <!-- Button to remove jobs -->
     <a class="job-delete-all btn btn-danger" href="#" role="button">
       Remove all

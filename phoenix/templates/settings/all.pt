@@ -10,15 +10,6 @@
   
   <div metal:fill-slot="content">
 
-    <ul class="breadcrumb">
-      <li><a href="/">Home</a> <span class="divider">/</span></li>
-      <li class="active">Settings</li>
-    </ul>
-
-    <div class="page-header">
-      <h1>${title} <small>${description}</small></h1>
-    </div>    
-    
     <div tal:repeat="group buttongroups">
       <ul class="thumbnails">
      

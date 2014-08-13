@@ -211,8 +211,8 @@ class Dashboard(MyView):
         lm.layout.add_heading('dashboard_users')
 
         return dict(
-            title=self.title,
-            description=self.description,
+            page_title=self.title,
+            page_description=self.description,
             )
 
 @view_defaults(permission='edit', layout='default')
@@ -262,7 +262,7 @@ class Processes(MyView):
             session.changed()
         except ValidationFailure, e:
             logger.exception('validation of process view failed.')
-            return dict(title=self.title, description=self.description, form=e.render())
+            return dict(page_title=self.title, page_description=self.description, form=e.render())
         return HTTPFound(location=self.request.route_url('processes'))
 
     @view_config(route_name='processes', renderer='templates/processes.pt')
@@ -298,8 +298,8 @@ class Processes(MyView):
                 ['title', 'abstract', 'action'],
             )
         return dict(
-            title=self.title,
-            description=self.description,
+            page_title=self.title,
+            page_description=self.description,
             grid=grid,
             items=items,
             form=form.render())
@@ -346,7 +346,7 @@ class Execute(MyView):
                 tags = appstruct.get('info_tags', ''))
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
-            return dict(title=self.title, description=self.description, form = e.render())
+            return dict(page_title=self.title, page_description=self.description, form = e.render())
         return HTTPFound(location=self.request.route_url('jobs'))
 
     @view_config(route_name='execute', renderer='templates/execute.pt')
@@ -355,8 +355,8 @@ class Execute(MyView):
         if 'submit' in self.request.POST:
             return self.process_form(form)
         return dict(
-            title=self.title,
-            description=self.description,
+            page_title=self.title,
+            page_description=self.description,
             form=form.render())
     
 @view_defaults(permission='edit', layout='default')
@@ -448,7 +448,11 @@ class Jobs(MyView):
                 ['status', 'creation_time', 'title', 'status_message', 'status_location', 'progress', 'action'],
             )
 
-        return dict(title=self.title, description=self.description, grid=grid, items=items)
+        return dict(
+            page_title=self.title,
+            page_description=self.description,
+            grid=grid,
+            items=items)
 
 @view_defaults(permission='edit', layout='default')
 class OutputDetails(MyView):
@@ -491,7 +495,7 @@ class OutputDetails(MyView):
             self.request.csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
         except ValidationFailure, e:
             logger.exception('validation of publish form failed')
-            return dict(title=self.title, description=self.description, form=e.render())
+            return dict(page_title=self.title, page_description=self.description, form=e.render())
         except:
             msg = 'Publication failed.'
             logger.exception(msg)
@@ -561,8 +565,10 @@ class OutputDetails(MyView):
                 items,
                 ['identifier', 'title', 'data', 'reference', 'mime_type', 'action'],
             )
-        return dict(title=self.title, description=self.description,
-                    grid=grid, items=items, form=form.render())
+        return dict(
+            page_title=self.title,
+            page_description=self.description,
+            grid=grid, items=items, form=form.render())
         
 @view_defaults(permission='edit', layout='default') 
 class MyAccount(MyView):
@@ -587,7 +593,7 @@ class MyAccount(MyView):
             self.userdb.update({'email':self.user_email()}, user)
         except ValidationFailure, e:
             logger.exception('validation of form failed.')
-            return dict(title=self.title, description=self.description, form=e.render())
+            return dict(page_title=self.title, page_description=self.description, form=e.render())
         except Exception, e:
             logger.exception('update user failed.')
             self.session.flash('Update of your accound failed. %s' % (e), queue='error')
@@ -619,7 +625,7 @@ class MyAccount(MyView):
             self.userdb.update({'email':self.user_email()}, user)
         except ValidationFailure, e:
             logger.exception('Validation of credentials form failed.')
-            return dict(title=self.title, description=self.description, form=e.render())
+            return dict(page_title=self.title, page_description=self.description, form=e.render())
         except Exception, e:
             logger.exception("update credentials failed.")
             self.request.session.flash(
@@ -646,8 +652,8 @@ class MyAccount(MyView):
         if 'submit' in self.request.POST:
             return self.process_form(form)
         return dict(
-            title=self.title,
-            description=self.description,
+            page_title=self.title,
+            page_description=self.description,
             form=form.render(self.appstruct()),
             form_credentials=creds_form.render(self.appstruct()))
 
@@ -661,12 +667,19 @@ class Map:
         return dict()
 
 @view_defaults(permission='admin', layout='default')    
-class Settings(MyView):
+class SettingsView(MyView):
+    def __init__(self, request, title="Settings", description=''):
+        super(SettingsView, self).__init__(request, title, description)
+        self.settings = self.request.registry.settings
+        self.top_page_title = "Settings"
+        self.top_page_route_name = "all_settings"
+
+class AllSettings(SettingsView):
     def __init__(self, request):
-        super(Settings, self).__init__(request, 'Settings', "Configure Phoenix.")
+        super(AllSettings, self).__init__(request, 'All Settings', "Configure Phoenix")
         self.settings = self.request.registry.settings
 
-    @view_config(route_name='settings', renderer='templates/settings.pt')
+    @view_config(route_name='all_settings', renderer='templates/settings/all.pt')
     def view(self):
         buttongroups = []
         buttons = []
@@ -680,13 +693,13 @@ class Settings(MyView):
         buttongroups.append(dict(title='Settings', buttons=buttons))
 
         return dict(
-            title=self.title,
-            description=self.description,
+            page_title = self.title,
+            page_description = self.description,
+            top_page_title = self.top_page_title,
+            top_page_route_name = self.top_page_route_name,
             buttongroups=buttongroups)
 
-@view_defaults(permission='admin', layout='default')
-class CatalogSettings(MyView):
-    
+class CatalogSettings(SettingsView):
     def __init__(self, request):
         super(CatalogSettings, self).__init__(request, 'CSW Catalog Service')
         self.csw = self.request.csw
@@ -711,7 +724,7 @@ class CatalogSettings(MyView):
             self.session.flash('Added WPS %s' % (url), queue="success")
         except ValidationFailure, e:
             logger.exception('validation of catalog form failed')
-            return dict(title=self.title, description=self.description, form = e.render())
+            return dict(page_title=self.title, page_description=self.description, form = e.render())
         except Exception, e:
             logger.exception('could not harvest wps.')
             self.session.flash('Could not add WPS %s. %s' % (url, e), queue="error")
@@ -738,7 +751,7 @@ class CatalogSettings(MyView):
             self.session.flash('Added Dataset %s' % (appstruct.get('title')), queue="success")
         except ValidationFailure, e:
             logger.exception('validation of catalog form failed')
-            return dict(title=self.title, description=self.description, form = e.render())
+            return dict(page_title=self.title, page_description=self.description, form = e.render())
         except Exception, e:
             logger.exception('could not harvest wps.')
             self.session.flash('Could not add Dataset %s. %s' % (appstruct.get('source'), e), queue="error")
@@ -779,7 +792,7 @@ class CatalogSettings(MyView):
             logger.exception('could not get items for csw.')
         return results
  
-    @view_config(route_name="catalog", renderer='templates/settings/catalog.pt')
+    @view_config(route_name="catalog_settings", renderer='templates/settings/catalog.pt')
     def view(self):
         service_form = self.generate_service_form()
         dataset_form = self.generate_dataset_form()
@@ -796,15 +809,16 @@ class CatalogSettings(MyView):
                 ['title', 'creator', 'modified', 'format', ''],
             )
         return dict(
-            title=self.title,
-            description=self.description,
+            page_title=self.title,
+            page_description=self.description,
+            top_page_title = self.top_page_title,
+            top_page_route_name = self.top_page_route_name,
             grid=grid,
             items=items,
             service_form=service_form.render(),
             dataset_form=dataset_form.render())
 
-@view_defaults(permission='admin', layout='default')
-class UserSettings(MyView):
+class UserSettings(SettingsView):
     def __init__(self, request):
         super(UserSettings, self).__init__(request, 'Users', "Configure Phoenix Users.")
 
@@ -860,7 +874,7 @@ class UserSettings(MyView):
             self.userdb.update({'email':self.user_email()}, user)
         except ValidationFailure, e:
             logger.exception('validation of user form failed')
-            return dict(title=self.title, description=self.description, form = e.render())
+            return dict(page_title=self.title, page_description=self.description, form = e.render())
         return HTTPFound(location=self.request.route_url('user_settings'))
 
     @view_config(renderer='json', name='delete.user')
@@ -913,8 +927,10 @@ class UserSettings(MyView):
                 ['name', 'email', 'openid', 'organisation', 'notes', 'activated', ''],
             )
         return dict(
-            title=self.title,
-            description=self.description,
+            page_title=self.title,
+            page_description=self.description,
+            top_page_title = self.top_page_title,
+            top_page_route_name = self.top_page_route_name,
             grid=grid,
             items=user_items,
             form=form.render())

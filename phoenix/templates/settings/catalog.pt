@@ -6,16 +6,6 @@
         
   <div metal:fill-slot="content">
 
-     <ul class="breadcrumb">
-       <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
-       <li><a href="/settings">Settings</a> <span class="divider">/</span></li>
-      <li class="active">Catalog</li>
-    </ul>
-
-    <div class="page-header">
-      <h1>${title} <small>${description}</small></h1>
-    </div>    
-
     <!-- Button to trigger modal dialog for adding ogc service to catalog -->
     <a href="#service-form" role="button" class="btn btn-success" data-toggle="modal">
       Add Service

@@ -2,8 +2,7 @@ from pyramid_layout.panel import panel_config
 from pyramid.security import authenticated_userid, has_permission
 
 import logging
-
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 # navbar
 # ------
@@ -23,13 +22,12 @@ def navbar(context, request):
         nav.append( nav_item('Map', request.route_url('map')) )
         nav.append( nav_item('My Account', request.route_url('myaccount')) )
     if has_permission('admin', request.context, request):
-        nav.append( nav_item('Settings', request.route_url('settings')) )
+        nav.append( nav_item('Settings', request.route_url('all_settings')) )
     #nav.append( nav_item('Help', request.route_url('help')) )
 
     login = request.current_route_url() == request.route_url('signin')
 
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request), login=login)
-
 
 @panel_config(name='welcome', renderer='templates/panels/welcome.pt')
 def welcome(context, request, title):
