@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title><tal:title condition="page_title | None">${page_title} &mdash; </tal:title>Phoenix</title>
+    <title><tal:title condition="view.title | None">${view.title} &mdash; </tal:title>Phoenix</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Phoenix Pyramid app for Web Processing Services">
     <meta name="author" content="Birdhouse">
@@ -71,15 +71,15 @@
         <div class="row-fluid">
           <div class="span9">
             <!-- breadcrumb navigation -->
-            <ul class="breadcrumb" tal:condition="page_title | None">
+            <ul class="breadcrumb" tal:condition="view.title | None">
               <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
               <li tal:condition="top_page_title | None"><a href="${request.route_url(top_page_route_name)}">${top_page_title}</a> <span class="divider">/</span></li>
-              <li class="active"><a href="${request.current_route_url()}">${page_title}</a></li>
+              <li class="active"><a href="${request.current_route_url()}">${view.title}</a></li>
             </ul>
 
             <!-- Page Title -->
-            <div class="page-header" tal:condition="page_title | None">
-              <h1>${page_title} <small>${page_description}</small></h1>
+            <div class="page-header" tal:condition="view.title | None">
+              <h1>${view.title} <small>${view.description}</small></h1>
             </div>
 
             <metal:content define-slot="content">

@@ -145,7 +145,7 @@ class Wizard(MyView):
             result = success_method(appstruct)
         except ValidationFailure as e:
             logger.exception('Validation of wizard view failed.')
-            result = dict(title=self.title, description=self.description, form=e.render())
+            result = dict(form=e.render())
         return result
         
     def previous(self):
@@ -175,8 +175,6 @@ class Wizard(MyView):
         
         custom = self.custom_view()    
         result = dict(
-            page_title=self.title,
-            page_description=self.description,
             top_page_title = self.top_page_title,
             top_page_route_name = self.top_page_route_name,
             form=form.render(self.appstruct()))
