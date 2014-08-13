@@ -103,6 +103,12 @@ class PhoenixView(MyView):
         logger.debug('user=%s', user)
         self.userdb.update({'email':email}, user)
 
+    @view_config(route_name='dummy', renderer='templates/dummy.pt')
+    @view_config(route_name='dummy_json', renderer='json')
+    def dummy(self):
+        identifier = self.request.matchdict['identifier']
+        return dict(name="dummy", identifier=identifier)
+
     @view_config(route_name='signin', renderer='templates/signin.pt')
     def signin(self):
         return dict()
@@ -303,8 +309,8 @@ class ProcessList(MyView):
 class ExecuteProcess(MyView):
     def __init__(self, request):
         super(ExecuteProcess, self).__init__(request, 'Execute')
-        self.top_page_title = "Processes"
-        self.top_page_route_name = "process_list"
+        self.top_title = "Processes"
+        self.top_route_name = "process_list"
 
         self.db = self.request.db
        
@@ -351,10 +357,7 @@ class ExecuteProcess(MyView):
         form = self.generate_form()
         if 'submit' in self.request.POST:
             return self.process_form(form)
-        return dict(
-            top_page_title = self.top_page_title,
-            top_page_route_name = self.top_page_route_name,
-            form=form.render())
+        return dict(form=form.render())
     
 @view_defaults(permission='edit', layout='default')
 class MyJobs(MyView):
@@ -453,8 +456,8 @@ class MyJobs(MyView):
 class ProcessOutputs(MyView):
     def __init__(self, request):
         super(ProcessOutputs, self).__init__(request, 'Process Outputs')
-        self.top_page_title = "My Jobs"
-        self.top_page_route_name = "myjobs"
+        self.top_title = "My Jobs"
+        self.top_route_name = "myjobs"
 
         self.db = self.request.db
 
@@ -563,10 +566,7 @@ class ProcessOutputs(MyView):
                 items,
                 ['identifier', 'title', 'data', 'reference', 'mime_type', 'action'],
             )
-        return dict(
-            top_page_title = self.top_page_title,
-            top_page_route_name = self.top_page_route_name,
-            grid=grid, items=items, form=form.render())
+        return dict(grid=grid, items=items, form=form.render())
         
 @view_defaults(permission='edit', layout='default') 
 class MyAccount(MyView):
@@ -667,8 +667,8 @@ class SettingsView(MyView):
     def __init__(self, request, title="Settings", description=''):
         super(SettingsView, self).__init__(request, title, description)
         self.settings = self.request.registry.settings
-        self.top_page_title = "Settings"
-        self.top_page_route_name = "all_settings"
+        self.top_title = "Settings"
+        self.top_route_name = "all_settings"
 
 class AllSettings(SettingsView):
     def __init__(self, request):
@@ -688,10 +688,7 @@ class AllSettings(SettingsView):
                             icon="unidataLogo.png", title="Thredds", id="external-url"))
         buttongroups.append(dict(title='Settings', buttons=buttons))
 
-        return dict(
-            top_page_title = self.top_page_title,
-            top_page_route_name = self.top_page_route_name,
-            buttongroups=buttongroups)
+        return dict(buttongroups=buttongroups)
 
 class CatalogSettings(SettingsView):
     def __init__(self, request):
@@ -803,8 +800,6 @@ class CatalogSettings(SettingsView):
                 ['title', 'creator', 'modified', 'format', ''],
             )
         return dict(
-            top_page_title = self.top_page_title,
-            top_page_route_name = self.top_page_route_name,
             grid=grid,
             items=items,
             service_form=service_form.render(),
@@ -919,8 +914,6 @@ class UserSettings(SettingsView):
                 ['name', 'email', 'openid', 'organisation', 'notes', 'activated', ''],
             )
         return dict(
-            top_page_title = self.top_page_title,
-            top_page_route_name = self.top_page_route_name,
             grid=grid,
             items=user_items,
             form=form.render())

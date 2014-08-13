@@ -65,6 +65,10 @@ def main(global_config, **settings):
     #    cache_max_age=3600
     #)
 
+    # dummy view for testing
+    config.add_route('dummy', '/dummy/{identifier}')
+    config.add_route('dummy_json', '/dummy/{identifier}/edit.json')
+
     # routes 
     config.add_route('home', '/')
     config.add_route('dashboard', '/dashboard')

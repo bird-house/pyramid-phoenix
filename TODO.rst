@@ -24,6 +24,23 @@ Deployment
 
 http://www.socallinuxexpo.org/scale12x/presentations/automated-deployment-django-docker-and-salt.html
 
+Pyramid
+-------
+
+* use datetime json renderer:
+http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
+* use url dispatching for jobs, processes, outputs:
+http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/quick_tutorial/routing.html
+http://www.plope.com/weird_pyramid_urldispatch
+
+* csw, wps and mongo not always avail when starting app. configure when accessed.
+
+Map
+---
+
+* setup wms caching, maybe just caching via nginx
+
+
 
 Helsinki
 --------
