@@ -384,7 +384,6 @@ class MyJobs(MyView):
     def update(self):
         self.update_jobs()
         jobs = list(self.db.jobs.find({'email': self.user_email(), 'is_user_notified':False}))
-        # TODO: json does not like datetime
         for job in jobs:
             if job.get('is_complete', False) == True:
                 job['is_user_notified'] = True
@@ -886,13 +885,6 @@ class UserSettings(SettingsView):
             user = self.userdb.find_one({'email':email})
         if user is None:
             user = dict(email=email)
-        #TODO: datetime is not json serializable
-        if '_id' in user:
-            del user['_id']
-        if 'last_login' in user:
-            del user['last_login']
-        if 'creation_time' in user:
-            del user['creation_time']    
         return user
 
     @view_config(route_name='user_settings', renderer='templates/settings/users.pt')
