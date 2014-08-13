@@ -110,6 +110,16 @@ def main(global_config, **settings):
     # A quick access to the login button
     config.add_request_method(button, 'login_button', reify=True)
 
+    # use json_adapter for datetime
+    # http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
+    from pyramid.renderers import JSON
+    import datetime
+    json_renderer = JSON()
+    def datetime_adapter(obj, request):
+        return obj.isoformat()
+    json_renderer.add_adapter(datetime.datetime, datetime_adapter)
+    config.add_renderer('json', json_renderer)
+
     # MongoDB
     # TODO: maybe move this to models.py?
     def add_mongo_db(event):

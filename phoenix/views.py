@@ -107,7 +107,8 @@ class PhoenixView(MyView):
     @view_config(route_name='dummy_json', renderer='json')
     def dummy(self):
         identifier = self.request.matchdict['identifier']
-        return dict(name="dummy", identifier=identifier)
+        now = datetime.datetime.now()
+        return dict(name="dummy", identifier=identifier, now=now)
 
     @view_config(route_name='signin', renderer='templates/signin.pt')
     def signin(self):
