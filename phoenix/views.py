@@ -266,7 +266,7 @@ class ProcessList(MyView):
         except ValidationFailure, e:
             logger.exception('validation of process view failed.')
             return dict(form=e.render())
-        return HTTPFound(location=self.request.route_url('processes'))
+        return HTTPFound(location=self.request.route_url('process_list'))
 
     @view_config(route_name='process_list', renderer='templates/process_list.pt')
     def view(self):
@@ -350,7 +350,7 @@ class ExecuteProcess(MyView):
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
             return dict(form = e.render())
-        return HTTPFound(location=self.request.route_url('jobs'))
+        return HTTPFound(location=self.request.route_url('myjobs'))
 
     @view_config(route_name='execute_process', renderer='templates/execute_process.pt')
     def execute_view(self):
@@ -719,7 +719,7 @@ class CatalogSettings(SettingsView):
         except Exception, e:
             logger.exception('could not harvest wps.')
             self.session.flash('Could not add WPS %s. %s' % (url, e), queue="error")
-        return HTTPFound(location=self.request.route_url('catalog'))
+        return HTTPFound(location=self.request.route_url('catalog_settings'))
 
     def generate_dataset_form(self, formid="deform"):
         from .schema import PublishSchema
@@ -746,7 +746,7 @@ class CatalogSettings(SettingsView):
         except Exception, e:
             logger.exception('could not harvest wps.')
             self.session.flash('Could not add Dataset %s. %s' % (appstruct.get('source'), e), queue="error")
-        return HTTPFound(location=self.request.route_url('catalog'))
+        return HTTPFound(location=self.request.route_url('catalog_settings'))
 
     @view_config(renderer='json', name='catalog.edit')
     def delete(self):
