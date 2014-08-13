@@ -118,6 +118,10 @@ def main(global_config, **settings):
     def datetime_adapter(obj, request):
         return obj.isoformat()
     json_renderer.add_adapter(datetime.datetime, datetime_adapter)
+    import bson
+    def objectid_adapter(obj, request):
+        return str(obj)
+    json_renderer.add_adapter(bson.objectid.ObjectId, objectid_adapter)
     config.add_renderer('json', json_renderer)
 
     # MongoDB

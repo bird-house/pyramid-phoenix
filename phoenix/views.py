@@ -391,10 +391,6 @@ class MyJobs(MyView):
                 logger.debug('job completed %s', job['identifier'])
                 self.db.jobs.update({'identifier': job['identifier']}, job)
                 self.session.flash("Job %s completed." % job['title'], queue='success')
-            if 'creation_time' in job:
-                del job['creation_time']
-            if '_id' in job:
-                del job['_id']
         return jobs
 
     def update_job(self, job):
