@@ -61,7 +61,7 @@ def unknown_failure(request, exc):
     return response
 
 class MyView(object):
-    def __init__(self, request, title, description=''):
+    def __init__(self, request, title, description=None):
         self.request = request
         self.session = self.request.session
         self.title = title
@@ -650,7 +650,7 @@ class Map:
 
 @view_defaults(permission='admin', layout='default')    
 class SettingsView(MyView):
-    def __init__(self, request, title="Settings", description=''):
+    def __init__(self, request, title="Settings", description=None):
         super(SettingsView, self).__init__(request, title, description)
         self.settings = self.request.registry.settings
         self.top_title = "Settings"
@@ -658,7 +658,7 @@ class SettingsView(MyView):
 
 class AllSettings(SettingsView):
     def __init__(self, request):
-        super(AllSettings, self).__init__(request, 'All Settings', "Configure Phoenix")
+        super(AllSettings, self).__init__(request, 'All Settings')
         self.settings = self.request.registry.settings
 
     @view_config(route_name='all_settings', renderer='templates/settings/all.pt')
@@ -793,7 +793,7 @@ class CatalogSettings(SettingsView):
 
 class UserSettings(SettingsView):
     def __init__(self, request):
-        super(UserSettings, self).__init__(request, 'Users', "Configure Phoenix Users.")
+        super(UserSettings, self).__init__(request, 'Users')
 
     def sort_order(self):
         """Determine what the current sort parameters are.

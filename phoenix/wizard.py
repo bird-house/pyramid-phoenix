@@ -59,7 +59,7 @@ class WizardState(object):
 
 @view_defaults(permission='view', layout='default')
 class Wizard(MyView):
-    def __init__(self, request, title, description=''):
+    def __init__(self, request, title, description=None):
         super(Wizard, self).__init__(request, title, description)
         self.csw = self.request.csw
         self.wizard_state = WizardState(self.session, 'wizard_wps')

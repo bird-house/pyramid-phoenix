@@ -78,7 +78,7 @@
             </ul>
 
             <!-- Page Title -->
-            <div class="page-header" tal:condition="view.title | None">
+            <div class="page-header" tal:condition="view.description | None">
               <h1>${view.title} <small>${view.description}</small></h1>
             </div>
 
