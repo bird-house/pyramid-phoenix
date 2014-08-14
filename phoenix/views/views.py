@@ -464,14 +464,3 @@ class ProcessOutputs(MyView):
             )
         return dict(grid=grid, items=items, form=form.render())
         
-
-
-@view_defaults(permission='edit', layout='default') 
-class Map:
-    def __init__(self, request):
-        self.request = request
-
-    @view_config(route_name='map', renderer='phoenix:templates/map.pt')
-    def map(self):
-        return dict()
-
