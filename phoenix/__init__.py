@@ -84,7 +84,7 @@ def main(global_config, **settings):
     config.add_route('qc_wizard_yaml', '/qc_wizard_yaml')
 
     # settings
-    config.add_route('all_settings', '/settings/all')
+    config.add_route('settings', '/settings/overview')
     config.add_route('catalog_settings', '/settings/catalog')
     config.add_route('user_settings', '/settings/users')
     config.add_route('edit_user', '/settings/users/{email}/edit.json')

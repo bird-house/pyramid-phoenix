@@ -11,4 +11,4 @@ class SettingsView(MyView):
         super(SettingsView, self).__init__(request, title, description)
         self.settings = self.request.registry.settings
         self.top_title = "Settings"
-        self.top_route_name = "all_settings"
+        self.top_route_name = "settings"

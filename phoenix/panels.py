@@ -22,7 +22,7 @@ def navbar(context, request):
         nav.append( nav_item('Map', request.route_url('map')) )
         nav.append( nav_item('My Account', request.route_url('myaccount')) )
     if has_permission('admin', request.context, request):
-        nav.append( nav_item('Settings', request.route_url('all_settings')) )
+        nav.append( nav_item('Settings', request.route_url('settings')) )
     #nav.append( nav_item('Help', request.route_url('help')) )
 
     login = request.current_route_url() == request.route_url('signin')
