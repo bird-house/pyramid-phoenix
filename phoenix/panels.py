@@ -6,8 +6,7 @@ logger = logging.getLogger(__name__)
 
 # navbar
 # ------
-@panel_config(name='navbar',
-              renderer='phoenix:templates/panels/navbar.pt')
+@panel_config(name='navbar', renderer='phoenix:templates/panels/navbar.pt')
 def navbar(context, request):
     def nav_item(name, url):
         active = request.current_route_url() == url
@@ -33,16 +32,20 @@ def navbar(context, request):
 def welcome(context, request, title):
     return dict(title=title, logged_in=authenticated_userid(request))
 
+@panel_config(name='breadcrumbs', renderer='phoenix:templates/panels/breadcrumbs.pt')
+def breadcrumbs(context, request):
+    lm = request.layout_manager
+    return dict(breadcrumbs=lm.layout.breadcrumbs)
+
 @panel_config(name='sidebar', renderer='phoenix:templates/panels/sidebar.pt')
 def sidebar(context, request):
-    return dict(title="Sidebar...")
+    return dict()
 
 @panel_config(name='footer', renderer='phoenix:templates/panels/footer.pt')
 def footer(context, request):
     return {}
 
-@panel_config(name='dashboard_users',
-              renderer='phoenix:templates/panels/dashboard_users.pt')
+@panel_config(name='dashboard_users', renderer='phoenix:templates/panels/dashboard_users.pt')
 def heading_users(context, request):
     from .models import user_stats
     return user_stats(request)

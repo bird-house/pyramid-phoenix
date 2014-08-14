@@ -100,11 +100,9 @@
         <!-- main page -->
         <div class="span9">
           <!-- breadcrumb navigation -->
-          <ul class="breadcrumb" tal:condition="view.top_title | None">
-            <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
-            <li tal:condition="view.top_title | None"><a href="${request.route_url(view.top_route_name)}">${view.top_title}</a> <span class="divider">/</span></li>
-            <li class="active"><a href="${request.current_route_url()}">${view.title}</a></li>
-          </ul>
+          <div>
+            ${panel('breadcrumbs')}
+          </div>
 
           <!-- Page Title -->
           <div class="page-header" tal:condition="view.description | None">

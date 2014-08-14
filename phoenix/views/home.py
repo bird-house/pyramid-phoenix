@@ -13,5 +13,5 @@ class Home(MyView):
     @view_config(route_name='home', renderer='phoenix:templates/home.pt')
     def view(self):
         #lm = self.request.layout_manager
-        #lm.layout.add_heading('info')
-        return dict()
+        #lm.layout.add_breadcrumb(route_name="home", title="Home")
+        return {}

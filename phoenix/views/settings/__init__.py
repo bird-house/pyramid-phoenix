@@ -12,3 +12,8 @@ class SettingsView(MyView):
         self.settings = self.request.registry.settings
         self.top_title = "Settings"
         self.top_route_name = "settings"
+
+    def breadcrumbs(self):
+        breadcrumbs = super(SettingsView, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='settings', title="Settings"))
+        return breadcrumbs
