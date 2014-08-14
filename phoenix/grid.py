@@ -143,7 +143,7 @@ class JobsGrid(MyGrid):
         self.column_formats['status_message'] = self.message_td
         self.column_formats['status_location'] = self.status_location_td
         self.column_formats['progress'] = self.progress_td
-        self.column_formats['action'] = self.action_td
+        self.column_formats[''] = self.action_td
         self.exclude_ordering = ['status_message', 'action']
 
     def creation_time_td(self, col_num, i, item):
@@ -222,14 +222,18 @@ class JobsGrid(MyGrid):
             class_="progress progress-info")
        
         return HTML.td(div_progress)
-
+   
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
         """
         div = Template("""\
         <div class="btn-group">
-            <button class="btn btn-mini btn-primary show" data-value="${jobid}">Details</button>
-            <button class="btn btn-mini btn-danger delete" data-value="${jobid}">Delete</button>
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Action<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <!-- dropdown menu links -->
+            <li><a class="show" data-value="${jobid}"><i class="icon-th-list"></i> Show Outputs</a></li>
+            <li><a class="delete" data-value="${jobid}"><i class="icon-trash"></i> Delete</a></li>
+          </ul>
         </div>
         """)
         return HTML.td(HTML.literal(div.substitute({'jobid': item.get('identifier')} )))

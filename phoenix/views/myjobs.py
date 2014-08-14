@@ -75,6 +75,6 @@ class MyJobs(MyView):
         grid = JobsGrid(
                 self.request,
                 items,
-                ['status', 'creation_time', 'title', 'status_message', 'status_location', 'progress', 'action'],
+                ['status', 'creation_time', 'title', 'status_message', 'status_location', 'progress', ''],
             )
         return dict(grid=grid, items=items)
