@@ -203,8 +203,8 @@ class PhoenixView(MyView):
 
     @view_config(route_name='home', renderer='templates/home.pt')
     def home(self):
-        lm = self.request.layout_manager
-        lm.layout.add_heading('info')
+        #lm = self.request.layout_manager
+        #lm.layout.add_heading('info')
         return dict()
 
 @view_defaults(permission='view', layout='default')

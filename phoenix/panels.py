@@ -41,11 +41,6 @@ def sidebar(context, request):
 def footer(context, request):
     return {}
 
-@panel_config(name='info',
-              renderer='templates/panels/info.pt')
-def heading_info(context, request):
-    return dict(title='Info')
-
 @panel_config(name='dashboard_users',
               renderer='templates/panels/dashboard_users.pt')
 def heading_users(context, request):

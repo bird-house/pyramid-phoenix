@@ -1,8 +1,6 @@
 Todo list for Phoenix
 =====================
 
-* update configs to gunicorn 19.0 (catalog service fails with new gunicorn)
-
 
 Links
 -----

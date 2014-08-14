@@ -21,19 +21,22 @@
         group registration once.
       </li>
       <li>
-        Please send an eMail to Nils Hempelmann (<em>nils.hempelmann at hzg.de</em>)
-        from Climate Service Center (CSC) with the following information:
+        Login with OpenID Account on the <a href="/signin">sign in</a> page.
+      </li>
+      <li>
+        Your account needs be activated. For this please send an eMail to Nils Hempelmann (<em>hempelmann at ipsl.jussieu.fr</em>)
+        from <a href="http://www.lsce.ipsl.fr/en/index.php">Laboratoire des Sciences du Climat et de l'Environment</a> (LSCE/IPSL) with the following information:
         <ul>
           <li>The eMail address of your ESGF OpenID Account</li>
-          <li>Some words why you would like to use this ClimDaPs Demo</li>
-          <li>Where did you hear from this ClimDaPs Demo?</li>
+          <li>Some words why you would like to use ClimDaPs Demo</li>
+          <li>Where did you hear about ClimDaPs Demo?</li>
         </ul>
       </li>
       <li>
         We will inform you when you are added to the allowed users of this Demo.
       </li>
       <li>
-        Finally sign in with your OpenID Account on the <a href="/signin">sign in</a> page.
+        Finally sign in again with your OpenID Account on the <a href="/signin">sign in</a> page.
       </li>
     </ol>
 
