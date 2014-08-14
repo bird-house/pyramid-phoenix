@@ -3,11 +3,11 @@ from pyramid.events import subscriber
 from pyramid.events import NewRequest
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
-from .security import groupfinder, root_factory
+from phoenix.security import groupfinder, root_factory
 
 import pymongo
 
-from .helpers import button
+from phoenix.helpers import button
 import logging
 
 logger = logging.getLogger(__name__)

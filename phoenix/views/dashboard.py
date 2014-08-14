@@ -14,5 +14,6 @@ class Dashboard(MyView):
     def view(self):
         lm = self.request.layout_manager
         lm.layout.add_heading('dashboard_users')
+        lm.layout.add_heading('dashboard_jobs')
 
         return dict()

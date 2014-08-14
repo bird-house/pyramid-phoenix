@@ -41,7 +41,7 @@ class ExecuteProcess(MyView):
         try:
             appstruct = form.validate(controls)
 
-            from .helpers import execute_wps
+            from phoenix.helpers import execute_wps
             execution = execute_wps(self.wps, self.identifier, appstruct)
 
             from phoenix.models import add_job

@@ -46,9 +46,16 @@ def footer(context, request):
     return {}
 
 @panel_config(name='dashboard_users', renderer='phoenix:templates/panels/dashboard_users.pt')
-def heading_users(context, request):
+def dashboard_users(context, request):
     from .models import user_stats
     return user_stats(request)
+
+@panel_config(name='dashboard_jobs', renderer='phoenix:templates/panels/dashboard_jobs.pt')
+def dashboard_jobs(context, request):
+    return dict(total = request.db.jobs.count(),
+                running = request.db.jobs.find({"is_complete": False}).count(),
+                failed = request.db.jobs.find({"is_complete": True, "is_succeded": False}).count(),
+                succeded = request.db.jobs.find({"is_succeded": True}).count())
 
 @panel_config(name='headings')
 def headings(context, request):
