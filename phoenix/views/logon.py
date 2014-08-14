@@ -8,7 +8,7 @@ from pyramid.security import remember, forget, authenticated_userid
 from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
 
-from phoenix.view import MyView
+from phoenix.views import MyView
 
 import logging
 logger = logging.getLogger(__name__)

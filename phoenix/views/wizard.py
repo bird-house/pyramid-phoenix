@@ -8,7 +8,7 @@ from owslib.wps import WebProcessingService
 from string import Template
 
 from phoenix import models
-from phoenix.view import MyView
+from phoenix.views import MyView
 from phoenix.exceptions import MyProxyLogonFailure
 
 import logging
@@ -163,7 +163,7 @@ class Wizard(MyView):
 
     def breadcrumbs(self):
         breadcrumbs = super(Wizard, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='wizard_process', title="Wizard"))
+        breadcrumbs.append(dict(route_name='wizard_wps', title="Wizard"))
         return breadcrumbs
 
     def view(self):
