@@ -4,7 +4,7 @@ from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from deform import Form, Button
 from deform import ValidationFailure
 
-from phoenix.views.views import MyView
+from phoenix.view import MyView
 
 import logging
 logger = logging.getLogger(__name__)
@@ -20,12 +20,6 @@ class MyJobs(MyView):
         """
         order = self.request.GET.get('order_col', 'creation_time')
         order_dir = self.request.GET.get('order_dir', 'desc')
-        ## if order == 'due_date':
-        ##     # handle sorting of NULL values so they are always at the end
-        ##     order = 'CASE WHEN due_date IS NULL THEN 1 ELSE 0 END, due_date'
-        ## if order == 'task':
-        ##     # Sort ignoring case
-        ##     order += ' COLLATE NOCASE'
         order_dir = 1 if order_dir == 'asc' else -1
         return dict(order=order, order_dir=order_dir)
 

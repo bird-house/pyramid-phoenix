@@ -1,11 +1,6 @@
 import datetime
 
-from pyramid.view import (
-    view_config,
-    view_defaults,
-    forbidden_view_config,
-    notfound_view_config
-    )
+from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.response import Response
 from pyramid.renderers import render
@@ -13,7 +8,7 @@ from pyramid.security import remember, forget, authenticated_userid
 from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
 
-from phoenix.views.views import MyView
+from phoenix.view import MyView
 
 import logging
 logger = logging.getLogger(__name__)

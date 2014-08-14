@@ -4,15 +4,15 @@ from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from deform import Form, Button
 from deform import ValidationFailure
 
-from phoenix.views.views import MyView
+from phoenix.view import MyView
 
 import logging
 logger = logging.getLogger(__name__)
 
 @view_defaults(permission='edit', layout='default')
-class ProcessList(MyView):
+class Processes(MyView):
     def __init__(self, request):
-        super(ProcessList, self).__init__(request, 'Processes')
+        super(Processes, self).__init__(request, 'Processes')
 
         self.wps = None
         if 'wps.url' in self.session:

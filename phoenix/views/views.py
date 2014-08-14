@@ -1,12 +1,9 @@
 from pyramid.view import (
     view_config,
-    view_defaults,
     forbidden_view_config,
     notfound_view_config
     )
-from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.response import Response
-from pyramid.security import authenticated_userid
 from pyramid.events import subscriber, BeforeRender
 
 import logging
@@ -39,20 +36,4 @@ def unknown_failure(request, exc):
     response.status_int = 500
     return response
 
-class MyView(object):
-    def __init__(self, request, title, description=None):
-        self.request = request
-        self.session = self.request.session
-        self.title = title
-        self.description = description
-        # db access
-        self.userdb = self.request.db.users
-
-    def user_email(self):
-        return authenticated_userid(self.request)
-
-    def get_user(self, email=None):
-        if email is None:
-            email = self.user_email()
-        return self.userdb.find_one(dict(email=email))
 

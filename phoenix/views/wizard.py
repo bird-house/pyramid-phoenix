@@ -8,7 +8,7 @@ from owslib.wps import WebProcessingService
 from string import Template
 
 from phoenix import models
-from phoenix.views.views import MyView
+from phoenix.view import MyView
 from phoenix.exceptions import MyProxyLogonFailure
 
 import logging
