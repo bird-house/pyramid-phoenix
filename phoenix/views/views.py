@@ -207,18 +207,6 @@ class PhoenixView(MyView):
         #lm.layout.add_heading('info')
         return dict()
 
-@view_defaults(permission='view', layout='default')
-class Dashboard(MyView):
-    def __init__(self, request):
-        super(Dashboard, self).__init__(request, 'Dashboard')
-
-    @view_config(route_name='dashboard', renderer='phoenix:templates/dashboard.pt')
-    def view(self):
-        lm = self.request.layout_manager
-        lm.layout.add_heading('dashboard_users')
-
-        return dict()
-
 @view_defaults(permission='edit', layout='default')
 class ProcessList(MyView):
     def __init__(self, request):
