@@ -2,7 +2,7 @@ from pyramid_layout.layout import layout_config
 
 
 @layout_config(name='default',
-               template='templates/layouts/default.pt'
+               template='templates/layouts/bootstrap2.pt'
               )
 class AppLayout(object):
 
