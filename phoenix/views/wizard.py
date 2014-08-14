@@ -7,9 +7,9 @@ from owslib.wps import WebProcessingService
 
 from string import Template
 
-import models
-from .views import MyView
-from .exceptions import MyProxyLogonFailure
+from phoenix import models
+from phoenix.views.views import MyView
+from phoenix.exceptions import MyProxyLogonFailure
 
 import logging
 logger = logging.getLogger(__name__)
@@ -184,7 +184,7 @@ class ChooseWPS(Wizard):
         super(ChooseWPS, self).__init__(request, 'Choose WPS')
 
     def schema(self):
-        from .schema import ChooseWPSSchema
+        from phoenix.schema import ChooseWPSSchema
         return ChooseWPSSchema().bind(wps_list = models.get_wps_list(self.request))
 
     def success(self, appstruct):
@@ -201,7 +201,7 @@ class ChooseWPS(Wizard):
     def appstruct(self):
         return dict(url=self.wizard_state.get('wps_url'))
 
-    @view_config(route_name='wizard_wps', renderer='templates/wizard/default.pt')
+    @view_config(route_name='wizard_wps', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
         return super(ChooseWPS, self).view()
 
@@ -212,7 +212,7 @@ class ChooseWPSProcess(Wizard):
         self.description = self.wps.identification.title
 
     def schema(self):
-        from .schema import SelectProcessSchema
+        from phoenix.schema import SelectProcessSchema
         return SelectProcessSchema().bind(processes = self.wps.processes)
 
     def success(self, appstruct):
@@ -229,7 +229,7 @@ class ChooseWPSProcess(Wizard):
     def appstruct(self):
         return dict(identifier=self.wizard_state.get('process_identifier'))
 
-    @view_config(route_name='wizard_process', renderer='templates/wizard/default.pt')
+    @view_config(route_name='wizard_process', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
         return super(ChooseWPSProcess, self).view()
 
@@ -261,7 +261,7 @@ class LiteralInputs(Wizard):
     def appstruct(self):
         return self.wizard_state.get('literal_inputs', {})
 
-    @view_config(route_name='wizard_literal_inputs', renderer='templates/wizard/default.pt')
+    @view_config(route_name='wizard_literal_inputs', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
         return super(LiteralInputs, self).view()
 
@@ -276,7 +276,7 @@ class ComplexInputs(Wizard):
         self.description = "Process %s" % self.process.title
 
     def schema(self):
-        from .schema import ChooseInputParamterSchema
+        from phoenix.schema import ChooseInputParamterSchema
         return ChooseInputParamterSchema().bind(process=self.process)
 
     def success(self, appstruct):
@@ -296,7 +296,7 @@ class ComplexInputs(Wizard):
     def appstruct(self):
         return dict(identifier=self.wizard_state.get('complex_input_identifier'))
 
-    @view_config(route_name='wizard_complex_inputs', renderer='templates/wizard/default.pt')
+    @view_config(route_name='wizard_complex_inputs', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
         return super(ComplexInputs, self).view()
 
@@ -308,7 +308,7 @@ class ChooseSource(Wizard):
             "")
         self.description = self.wizard_state.get('complex_input_identifier')
     def schema(self):
-        from .schema import ChooseSourceSchema
+        from phoenix.schema import ChooseSourceSchema
         return ChooseSourceSchema()
 
     def success(self, appstruct):
@@ -325,7 +325,7 @@ class ChooseSource(Wizard):
     def appstruct(self):
         return dict(source=self.wizard_state.get('source'))
 
-    @view_config(route_name='wizard_source', renderer='templates/wizard/default.pt')
+    @view_config(route_name='wizard_source', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
         return super(ChooseSource, self).view()
     
@@ -337,7 +337,7 @@ class CatalogSearch(Wizard):
         self.description = self.wizard_state.get('complex_input_identifier')
 
     def schema(self):
-        from .schema import CatalogSearchSchema
+        from phoenix.schema import CatalogSearchSchema
         return CatalogSearchSchema()
 
     def success(self, appstruct):
@@ -418,7 +418,7 @@ class CatalogSearch(Wizard):
             else:
                 item['selected'] = False
 
-        from .grid import CatalogSearchGrid    
+        from phoenix.grid import CatalogSearchGrid    
         grid = CatalogSearchGrid(
                 self.request,
                 items,
@@ -426,7 +426,7 @@ class CatalogSearch(Wizard):
             )
         return dict(grid=grid, items=items)
 
-    @view_config(route_name='wizard_csw', renderer='templates/wizard/csw.pt')
+    @view_config(route_name='wizard_csw', renderer='phoenix:templates/wizard/csw.pt')
     def view(self):
         return super(CatalogSearch, self).view()
 
@@ -438,7 +438,7 @@ class ESGFSearch(Wizard):
             "")
 
     def schema(self):
-        from .schema import ESGFSearchSchema
+        from phoenix.schema import ESGFSearchSchema
         return ESGFSearchSchema()
 
     def success(self, appstruct):
@@ -455,7 +455,7 @@ class ESGFSearch(Wizard):
     def appstruct(self):
         return dict(selection=self.wizard_state.get('esgf_selection', {}))
 
-    @view_config(route_name='wizard_esgf', renderer='templates/wizard/esgf.pt')
+    @view_config(route_name='wizard_esgf', renderer='phoenix:templates/wizard/esgf.pt')
     def view(self):
         return super(ESGFSearch, self).view()
 
@@ -467,7 +467,7 @@ class ESGFFileSearch(Wizard):
             "")
 
     def schema(self):
-        from .schema import ESGFFilesSchema
+        from phoenix.schema import ESGFFilesSchema
         return ESGFFilesSchema().bind(selection=self.wizard_state.get('esgf_selection'))
 
     def success(self, appstruct):
@@ -484,7 +484,7 @@ class ESGFFileSearch(Wizard):
     def appstruct(self):
         return dict(url=self.wizard_state.get('esgf_files'))
 
-    @view_config(route_name='wizard_esgf_files', renderer='templates/wizard/esgf.pt')
+    @view_config(route_name='wizard_esgf_files', renderer='phoenix:templates/wizard/esgf.pt')
     def view(self):
         return super(ESGFFileSearch, self).view()
 
@@ -496,7 +496,7 @@ class ESGFCredentials(Wizard):
             "")
 
     def schema(self):
-        from .schema import CredentialsSchema
+        from phoenix.schema import CredentialsSchema
         return CredentialsSchema().bind()
 
     def success(self, appstruct):
@@ -531,7 +531,7 @@ class ESGFCredentials(Wizard):
             openid=self.get_user().get('openid'),
             password=self.wizard_state.get('password'))
 
-    @view_config(route_name='wizard_esgf_credentials', renderer='templates/wizard/esgf.pt')
+    @view_config(route_name='wizard_esgf_credentials', renderer='phoenix:templates/wizard/esgf.pt')
     def view(self):
         return super(ESGFCredentials, self).view()
 
@@ -545,7 +545,7 @@ class Done(Wizard):
         self.csw = self.request.csw
 
     def schema(self):
-        from .schema import DoneSchema
+        from phoenix.schema import DoneSchema
         return DoneSchema()
 
     def sources(self):
@@ -605,6 +605,6 @@ class Done(Wizard):
         self.wizard_state.clear()
         return HTTPFound(location=self.request.route_url('jobs'))
 
-    @view_config(route_name='wizard_done', renderer='templates/wizard/default.pt')
+    @view_config(route_name='wizard_done', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
         return super(Done, self).view()

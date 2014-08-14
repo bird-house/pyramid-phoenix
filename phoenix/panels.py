@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 # navbar
 # ------
 @panel_config(name='navbar',
-              renderer='templates/panels/navbar.pt')
+              renderer='phoenix:templates/panels/navbar.pt')
 def navbar(context, request):
     def nav_item(name, url):
         active = request.current_route_url() == url
@@ -29,20 +29,20 @@ def navbar(context, request):
 
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request), login=login)
 
-@panel_config(name='welcome', renderer='templates/panels/welcome.pt')
+@panel_config(name='welcome', renderer='phoenix:templates/panels/welcome.pt')
 def welcome(context, request, title):
     return dict(title=title, logged_in=authenticated_userid(request))
 
-@panel_config(name='sidebar', renderer='templates/panels/sidebar.pt')
+@panel_config(name='sidebar', renderer='phoenix:templates/panels/sidebar.pt')
 def sidebar(context, request):
     return dict(title="Sidebar...")
 
-@panel_config(name='footer', renderer='templates/panels/footer.pt')
+@panel_config(name='footer', renderer='phoenix:templates/panels/footer.pt')
 def footer(context, request):
     return {}
 
 @panel_config(name='dashboard_users',
-              renderer='templates/panels/dashboard_users.pt')
+              renderer='phoenix:templates/panels/dashboard_users.pt')
 def heading_users(context, request):
     from .models import user_stats
     return user_stats(request)

@@ -22,25 +22,25 @@ from owslib.wps import (
     WPSExecution,
     )
 
-import models
+from phoenix import models
 
 import logging
 logger = logging.getLogger(__name__)
 
-import config_public as config
+from phoenix import config_public as config
 authomatic = Authomatic(config=config.config,
                         secret=config.SECRET,
                         report_errors=True,
                         logging_level=logging.DEBUG)
 
-@notfound_view_config(renderer='templates/404.pt')
+@notfound_view_config(renderer='phoenix:templates/404.pt')
 def notfound(request):
     """This special view just renders a custom 404 page. We do this
     so that the 404 page fits nicely into our global layout.
     """
     return {}
 
-@forbidden_view_config(renderer='templates/forbidden.pt')
+@forbidden_view_config(renderer='phoenix:templates/forbidden.pt')
 def forbidden(request):
     request.response.status = 403
     return dict(message=None)
@@ -103,14 +103,14 @@ class PhoenixView(MyView):
         logger.debug('user=%s', user)
         self.userdb.update({'email':email}, user)
 
-    @view_config(route_name='dummy', renderer='templates/dummy.pt')
+    @view_config(route_name='dummy', renderer='phoenix:templates/dummy.pt')
     @view_config(route_name='dummy_json', renderer='json')
     def dummy(self):
         email = self.request.matchdict['email']
         now = datetime.datetime.now()
         return dict(name="dummy", email=email, now=now)
 
-    @view_config(route_name='signin', renderer='templates/signin.pt')
+    @view_config(route_name='signin', renderer='phoenix:templates/signin.pt')
     def signin(self):
         return dict()
 
@@ -119,7 +119,7 @@ class PhoenixView(MyView):
         headers = forget(self.request)
         return HTTPFound(location = self.request.route_url('home'), headers = headers)
 
-    @view_config(route_name='register', renderer='templates/register.pt')
+    @view_config(route_name='register', renderer='phoenix:templates/register.pt')
     def register(self):
         return dict(email=None)
 
@@ -201,7 +201,7 @@ class PhoenixView(MyView):
 
         return response
 
-    @view_config(route_name='home', renderer='templates/home.pt')
+    @view_config(route_name='home', renderer='phoenix:templates/home.pt')
     def home(self):
         #lm = self.request.layout_manager
         #lm.layout.add_heading('info')
@@ -212,7 +212,7 @@ class Dashboard(MyView):
     def __init__(self, request):
         super(Dashboard, self).__init__(request, 'Dashboard')
 
-    @view_config(route_name='dashboard', renderer='templates/dashboard.pt')
+    @view_config(route_name='dashboard', renderer='phoenix:templates/dashboard.pt')
     def view(self):
         lm = self.request.layout_manager
         lm.layout.add_heading('dashboard_users')
@@ -249,7 +249,7 @@ class ProcessList(MyView):
         return dict(order=order, order_dir=order_dir)
     
     def generate_form(self, formid='deform'):
-        from .schema import ChooseWPSSchema
+        from phoenix.schema import ChooseWPSSchema
         schema = ChooseWPSSchema().bind(wps_list = models.get_wps_list(self.request))
         return Form(
             schema,
@@ -269,7 +269,7 @@ class ProcessList(MyView):
             return dict(form=e.render())
         return HTTPFound(location=self.request.route_url('process_list'))
 
-    @view_config(route_name='process_list', renderer='templates/process_list.pt')
+    @view_config(route_name='process_list', renderer='phoenix:templates/process_list.pt')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
@@ -295,7 +295,7 @@ class ProcessList(MyView):
         import operator
         items.sort(key=operator.itemgetter(order['order']), reverse=order['order_dir']==-1)
 
-        from .grid import ProcessesGrid
+        from phoenix.grid import ProcessesGrid
         grid = ProcessesGrid(
                 self.request,
                 items,
@@ -353,7 +353,7 @@ class ExecuteProcess(MyView):
             return dict(form = e.render())
         return HTTPFound(location=self.request.route_url('myjobs'))
 
-    @view_config(route_name='execute_process', renderer='templates/execute_process.pt')
+    @view_config(route_name='execute_process', renderer='phoenix:templates/execute_process.pt')
     def execute_view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
@@ -421,7 +421,7 @@ class MyJobs(MyView):
             self.db.jobs.remove({'identifier': jobid})
         return {}
     
-    @view_config(route_name='myjobs', renderer='templates/myjobs.pt')
+    @view_config(route_name='myjobs', renderer='phoenix:templates/myjobs.pt')
     def view(self):
         order = self.sort_order()
         key=order.get('order')
@@ -430,7 +430,7 @@ class MyJobs(MyView):
         self.update_jobs()
         items = list(self.db.jobs.find({'email': self.user_email()}).sort(key, direction))
         
-        from .grid import JobsGrid
+        from phoenix.grid import JobsGrid
         grid = JobsGrid(
                 self.request,
                 items,
@@ -463,7 +463,7 @@ class ProcessOutputs(MyView):
 
     def generate_form(self, formid="deform"):
         """Generate form for publishing to catalog service"""
-        from .schema import PublishSchema
+        from phoenix.schema import PublishSchema
         schema = PublishSchema().bind()
         return Form(
             schema,
@@ -526,7 +526,7 @@ class ProcessOutputs(MyView):
 
         return result
         
-    @view_config(route_name='process_outputs', renderer='templates/process_outputs.pt')
+    @view_config(route_name='process_outputs', renderer='phoenix:templates/process_outputs.pt')
     def view(self):
         form = self.generate_form()
 
@@ -546,7 +546,7 @@ class ProcessOutputs(MyView):
                               data = output.data,
                               reference=output.reference))
 
-        from .grid import OutputDetailsGrid
+        from phoenix.grid import OutputDetailsGrid
         grid = OutputDetailsGrid(
                 self.request,
                 items,
@@ -560,7 +560,7 @@ class MyAccount(MyView):
         super(MyAccount, self).__init__(request, 'My Account', "Update your profile details.")
 
     def generate_form(self, formid="deform"):
-        from .schema import MyAccountSchema
+        from phoenix.schema import MyAccountSchema
         schema = MyAccountSchema().bind()
         return Form(
             schema=schema,
@@ -586,7 +586,7 @@ class MyAccount(MyView):
         return HTTPFound(location=self.request.route_url('myaccount'))
         
     def generate_creds_form(self, formid="deform"):
-        from .schema import CredentialsSchema
+        from phoenix.schema import CredentialsSchema
         schema = CredentialsSchema().bind()
         return Form(
             schema,
@@ -626,7 +626,7 @@ class MyAccount(MyView):
             appstruct = {}
         return appstruct
         
-    @view_config(route_name='myaccount', renderer='templates/myaccount.pt')
+    @view_config(route_name='myaccount', renderer='phoenix:templates/myaccount.pt')
     def view(self):
         form = self.generate_form()
         creds_form = self.generate_creds_form()
@@ -644,7 +644,7 @@ class Map:
     def __init__(self, request):
         self.request = request
 
-    @view_config(route_name='map', renderer='templates/map.pt')
+    @view_config(route_name='map', renderer='phoenix:templates/map.pt')
     def map(self):
         return dict()
 
@@ -661,7 +661,7 @@ class AllSettings(SettingsView):
         super(AllSettings, self).__init__(request, 'All Settings')
         self.settings = self.request.registry.settings
 
-    @view_config(route_name='all_settings', renderer='templates/settings/all.pt')
+    @view_config(route_name='all_settings', renderer='phoenix:templates/settings/all.pt')
     def view(self):
         buttongroups = []
         buttons = []
@@ -683,7 +683,7 @@ class CatalogSettings(SettingsView):
         self.description = "%s (%s)" % (self.csw.identification.title, self.csw.url)
         
     def generate_service_form(self, formid="deform"):
-        from .schema import CatalogAddServiceSchema
+        from phoenix.schema import CatalogAddServiceSchema
         schema = CatalogAddServiceSchema()
         return Form(
             schema,
@@ -708,7 +708,7 @@ class CatalogSettings(SettingsView):
         return HTTPFound(location=self.request.route_url('catalog_settings'))
 
     def generate_dataset_form(self, formid="deform"):
-        from .schema import PublishSchema
+        from phoenix.schema import PublishSchema
         schema = PublishSchema().bind(email=self.user_email())
         return Form(
             schema,
@@ -769,7 +769,7 @@ class CatalogSettings(SettingsView):
             logger.exception('could not get items for csw.')
         return results
  
-    @view_config(route_name="catalog_settings", renderer='templates/settings/catalog.pt')
+    @view_config(route_name="catalog_settings", renderer='phoenix:templates/settings/catalog.pt')
     def view(self):
         service_form = self.generate_service_form()
         dataset_form = self.generate_dataset_form()
@@ -777,7 +777,7 @@ class CatalogSettings(SettingsView):
             return self.process_service_form(service_form)
         elif 'add_dataset' in self.request.POST:
             return self.process_dataset_form(dataset_form)
-        from .grid import CatalogSettingsGrid
+        from phoenix.grid import CatalogSettingsGrid
         items = self.get_csw_items()
             
         grid = CatalogSettingsGrid(
@@ -809,9 +809,8 @@ class UserSettings(SettingsView):
         order_dir = 1 if order_dir == 'asc' else -1
         return dict(order=order, order_dir=order_dir)   
         
-
     def generate_form(self, formid="deform"):
-        from .schema import UserSchema
+        from phoenix.schema import UserSchema
         schema = UserSchema().bind()
         return Form(
             schema,
@@ -861,13 +860,13 @@ class UserSettings(SettingsView):
             user = dict(email=email)
         return user
 
-    @view_config(route_name='user_settings', renderer='templates/settings/users.pt')
+    @view_config(route_name='user_settings', renderer='phoenix:templates/settings/users.pt')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
             return self.process_form(form)
 
-        from .grid import UsersGrid
+        from phoenix.grid import UsersGrid
         order = self.sort_order()
         user_items = list(self.userdb.find().sort(order.get('order'), order.get('order_dir')))
         logger.debug('user_items: %s', user_items)
