@@ -38,6 +38,7 @@ def add_job(request, title, wps_url, status_location, abstract=None, keywords=No
         identifier = uuid.uuid4().get_hex(),
         title = title,
         abstract = abstract,
+        # TODO: keywords must be a list
         keywords = keywords,
         #TODO: dont use auth... userid=email ...
         email = authenticated_userid(request),

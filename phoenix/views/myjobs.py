@@ -66,6 +66,11 @@ class MyJobs(MyView):
         if jobid is not None:
             self.db.jobs.remove({'identifier': jobid})
         return {}
+
+    def breadcrumbs(self):
+        breadcrumbs = super(MyJobs, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='myjobs', title=self.title))
+        return breadcrumbs
     
     @view_config(route_name='myjobs', renderer='phoenix:templates/myjobs.pt')
     def view(self):
