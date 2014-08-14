@@ -244,7 +244,7 @@ class LiteralInputs(Wizard):
         self.description = "Process %s" % self.process.title
 
     def schema(self):
-        from .wps import WPSSchema
+        from phoenix.wps import WPSSchema
         return WPSSchema(info=True, hide_complex=True, process = self.process)
 
     def success(self, appstruct):
@@ -580,7 +580,7 @@ class Done(Wizard):
 
     def execute_workflow(self, appstruct):
         nodes = self.workflow_description()
-        from .wps import execute_restflow
+        from phoenix.wps import execute_restflow
         return execute_restflow(self.request.wps, nodes)
 
     def success(self, appstruct):
@@ -603,7 +603,7 @@ class Done(Wizard):
     def next_success(self, appstruct):
         self.success(appstruct)
         self.wizard_state.clear()
-        return HTTPFound(location=self.request.route_url('jobs'))
+        return HTTPFound(location=self.request.route_url('myjobs'))
 
     @view_config(route_name='wizard_done', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
