@@ -1,15 +1,15 @@
 <metal:block use-macro="main_template">
 
-    <div metal:fill-slot="content">
+  <div metal:fill-slot="content">
 
-        <!-- Main page with a welcome message -->
-        ${panel('welcome', title='Phoenix')}
+    <!-- Main page with a welcome message -->
+    ${panel('welcome', title='Phoenix')}
 
-        <!-- row columns -->
-        <div class="row">
-            ${panel('headings')}
-        </div>
-    
+    <!-- row columns -->
+    <div class="row">
+      ${panel('headings')}
     </div>
+    
+  </div>
 
 </metal:block>

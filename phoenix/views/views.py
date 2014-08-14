@@ -17,13 +17,6 @@ from deform import ValidationFailure
 from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
 
-from owslib.wps import (
-    WebProcessingService,
-    WPSExecution,
-    )
-
-from phoenix import models
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -201,9 +194,5 @@ class PhoenixView(MyView):
 
         return response
 
-    @view_config(route_name='home', renderer='phoenix:templates/home.pt')
-    def home(self):
-        #lm = self.request.layout_manager
-        #lm.layout.add_heading('info')
-        return dict()
+    
 
