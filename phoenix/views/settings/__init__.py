@@ -10,8 +10,6 @@ class SettingsView(MyView):
     def __init__(self, request, title="Settings", description=None):
         super(SettingsView, self).__init__(request, title, description)
         self.settings = self.request.registry.settings
-        self.top_title = "Settings"
-        self.top_route_name = "settings"
 
     def breadcrumbs(self):
         breadcrumbs = super(SettingsView, self).breadcrumbs()

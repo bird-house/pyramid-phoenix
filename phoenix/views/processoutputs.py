@@ -13,8 +13,6 @@ logger = logging.getLogger(__name__)
 class ProcessOutputs(MyView):
     def __init__(self, request):
         super(ProcessOutputs, self).__init__(request, 'Process Outputs')
-        self.top_title = "My Jobs"
-        self.top_route_name = "myjobs"
 
         self.db = self.request.db
 
