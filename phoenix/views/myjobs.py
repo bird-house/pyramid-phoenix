@@ -45,10 +45,8 @@ class MyJobs(MyView):
     
     @view_config(renderer='json', name='update.jobs')
     def update_jobs(self):
-        logger.debug('!!!!! update job !!!!')
         jobs = list(self.db.jobs.find({'email': self.user_email(), 'is_complete':False}))
         for job in jobs:
-            logger.debug('update job, %s', job.get('identifier'))
             self.update_job(job)
         return jobs
 

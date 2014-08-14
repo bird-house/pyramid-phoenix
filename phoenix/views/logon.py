@@ -34,10 +34,11 @@ class Logon(MyView):
         return user.get('activated', False)
 
     def login_success(self, email, openid=None, activated=False):
+        from phoenix.models import add_user
         logger.debug('login success: email=%s', email)
         user = self.get_user(email)
         if user is None:
-            user = models.add_user(self.request, email=email)
+            user = add_user(self.request, email=email)
         user['last_login'] = datetime.datetime.now()
         if openid is not None:
             user['openid'] = openid
