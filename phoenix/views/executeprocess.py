@@ -14,7 +14,7 @@ class ExecuteProcess(MyView):
     def __init__(self, request):
         super(ExecuteProcess, self).__init__(request, 'Execute')
         self.top_title = "Processes"
-        self.top_route_name = "process_list"
+        self.top_route_name = "processes"
 
         self.db = self.request.db
         self.identifier = self.request.params.get('identifier', None)

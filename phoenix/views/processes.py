@@ -53,9 +53,9 @@ class Processes(MyView):
         except ValidationFailure, e:
             logger.exception('validation of process view failed.')
             return dict(form=e.render())
-        return HTTPFound(location=self.request.route_url('process_list'))
+        return HTTPFound(location=self.request.route_url('processes'))
 
-    @view_config(route_name='process_list', renderer='phoenix:templates/process_list.pt')
+    @view_config(route_name='processes', renderer='phoenix:templates/processes.pt')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
