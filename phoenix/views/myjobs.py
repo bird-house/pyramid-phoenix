@@ -79,7 +79,7 @@ class MyJobs(MyView):
         grid = JobsGrid(
                 self.request,
                 items,
-                ['status', 'creation_time', 'title', 'status_message', 'status_location', 'progress', ''],
+                ['status', 'creation_time', 'title', 'status_message', 'progress', ''],
             )
         return dict(grid=grid, items=items)
 
@@ -89,8 +89,8 @@ class JobsGrid(MyGrid):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['creation_time'] = self.creation_time_td
         self.column_formats['status'] = self.status_td
+        self.column_formats['title'] = self.title_td
         self.column_formats['status_message'] = self.message_td
-        self.column_formats['status_location'] = self.status_location_td
         self.column_formats['progress'] = self.progress_td
         self.column_formats[''] = self.action_td
         self.exclude_ordering = ['status_message', 'action']
@@ -132,24 +132,35 @@ class JobsGrid(MyGrid):
             id_="status-%s" % item.get('identifier'))
         return HTML.td(span)
 
-    def message_td(self, col_num, i, item):
-        """Generates the column with job message.
-        """
-        message = item.get('status_message')
-        #for error in item.get('errors'):
-        #    message += ', Exception: %s' % str(error)
-        span = HTML.tag(
-            "span",
-            c=HTML.literal(message),
-            class_="",
-            id_="message-%s" % item.get('identifier'))
-        return HTML.td(span)
-
-    def status_location_td(self, col_num, i, item):
-        anchor = Template("""\
-        <a class="reference" href="${url}"><i class="icon-download"></i></a>
+    def title_td(self, col_num, i, item):
+        keyword_links = []
+        for keyword in item.get('tags').split(','):
+            anchor = HTML.tag("a", href="#", c=keyword, class_="label label-info")
+            keyword_links.append(anchor)
+        
+        div = Template("""\
+        <div class="">
+          <div class="">
+            <b>${title}</b>
+            <div>${abstract}</div>
+          </div>
+          <div>${keywords}</div>
+        </div>
         """)
-        return HTML.td(HTML.literal(anchor.substitute( {'url': item.get('status_location')} )))
+        return HTML.td(HTML.literal(div.substitute( {'title': item['title'], 'abstract': item['notes'], 'keywords': ' '.join(keyword_links)} )))
+
+    def message_td(self, col_num, i, item):
+        div = Template("""\
+        <div class="">
+          <div class="">
+            <div>${status_message}</div>
+          </div>
+          <div>
+             <a class="label label-warning" href="${status_location}" data-format="XML">XML</a>
+          </div>
+        </div>
+        """)
+        return HTML.td(HTML.literal(div.substitute( {'status_message': item['status_message'], 'status_location': item['status_location']} )))
 
     def progress_td(self, col_num, i, item):
         """Generate the column for the job progress.
