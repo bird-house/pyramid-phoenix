@@ -61,43 +61,44 @@
   </head>
 
   <body>
+    <div>
+      ${panel('navbar')}
+    </div>
+
+    <hr>
+
     <div class="container-fluid">
-
       <div class="row-fluid">
-        <div class="span12">
-          ${panel('navbar')}
-        </div>
+        <!-- main page -->
+        <div class="span9">
+          <!-- breadcrumb navigation -->
+          <ul class="breadcrumb" tal:condition="view.top_title | None">
+            <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
+            <li tal:condition="view.top_title | None"><a href="${request.route_url(view.top_route_name)}">${view.top_title}</a> <span class="divider">/</span></li>
+            <li class="active"><a href="${request.current_route_url()}">${view.title}</a></li>
+          </ul>
 
-          <div class="span9">
-            <!-- breadcrumb navigation -->
-	    <ul></ul>
-
-            <ul class="breadcrumb" tal:condition="view.top_title | None">
-              <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
-              <li tal:condition="view.top_title | None"><a href="${request.route_url(view.top_route_name)}">${view.top_title}</a> <span class="divider">/</span></li>
-              <li class="active"><a href="${request.current_route_url()}">${view.title}</a></li>
-            </ul>
-
-            <!-- Page Title -->
-            <div class="page-header" tal:condition="view.description | None">
-              <h1>${view.title} <small>${view.description}</small></h1>
-            </div>
-
-            <metal:content define-slot="content">
-              Site content goes here ...
-            </metal:content>
+          <!-- Page Title -->
+          <div class="page-header" tal:condition="view.description | None">
+            <h1>${view.title} <small>${view.description}</small></h1>
           </div>
 
-          <div class="span3">
-            ${panel('sidebar')}
-          </div>
+          <metal:content define-slot="content">
+            Site content goes here ...
+          </metal:content>
         </div>
+        
+        <!-- sidebar -->
+        <div class="span3">
+          ${panel('sidebar')}
+        </div>
+      </div><!-- row -->
+    </div><!-- fluid container -->
 
-        <div class="span12">
-          ${panel('footer')}
-        </div>
+    <!-- footer -->
+    <div>
+      ${panel('footer')}
+    </div>
       
-    </div> 
-
   </body>
 </html>

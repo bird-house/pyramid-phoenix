@@ -1,25 +1,27 @@
 <div class="navbar navbar-inverse navbar-fixed-top">
   <div class="navbar-inner">
+    <div class="container-fluid">
     
-    <!-- title -->
-    <a class="brand" href="/">${title}</a>
+      <!-- title -->
+      <a class="brand" href="/">${title}</a>
     
-    <!-- links -->
-    <ul class="nav">
-      <div tal:repeat="item nav" class="nav"> <!-- loop over navigation items -->
-        <li class="${'active' if item['active'] else ''}">
-          <a href="${item['url']}">${item['name']}</a>
-        <li>
-      </div> <!-- loop end -->
-    </ul>
-    
-    <!-- sign-in -->
-    <div class="pull-right">
-      <ul class="nav pull-right">
-        <li class="${'active' if login else ''}">
-          ${request.login_button}
-        </li>
+      <!-- links -->
+      <ul class="nav">
+        <div tal:repeat="item nav" class="nav"> <!-- loop over navigation items -->
+          <li class="${'active' if item['active'] else ''}">
+            <a href="${item['url']}">${item['name']}</a>
+          <li>
+        </div> <!-- loop end -->
       </ul>
+    
+      <!-- sign-in -->
+      <div class="pull-right">
+        <ul class="nav pull-right">
+          <li class="${'active' if login else ''}">
+            ${request.login_button}
+          </li>
+        </ul>
+      </div>
     </div>
    
   </div>
