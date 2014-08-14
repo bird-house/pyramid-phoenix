@@ -32,6 +32,14 @@ http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/quick_tutorial/rout
 http://www.plope.com/weird_pyramid_urldispatch
 
 * csw, wps and mongo not always avail when starting app. configure when accessed.
+* email notification: pyramid-mailer, repoze.sendmail
+* check *from pyramid.decorator import reify* for page_tile, breadcrumbs ... see kotti/views/utils.py
+
+Wizard
+--------
+
+* https://github.com/repoze/repoze.workflow (see koti example)
+
 
 Map
 ---
