@@ -63,8 +63,6 @@ class Wizard(MyView):
         super(Wizard, self).__init__(request, title, description)
         self.csw = self.request.csw
         self.wizard_state = WizardState(self.session, 'wizard_wps')
-        self.top_title = "Wizard"
-        self.top_route_name = "wizard_wps"
         
     def buttons(self):
         prev_disabled = not self.prev_ok()
@@ -163,6 +161,11 @@ class Wizard(MyView):
     def custom_view(self):
         return {}
 
+    def breadcrumbs(self):
+        breadcrumbs = super(Wizard, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='wizard_process', title="Wizard"))
+        return breadcrumbs
+
     def view(self):
         form = self.generate_form()
         
@@ -229,6 +232,11 @@ class ChooseWPSProcess(Wizard):
     def appstruct(self):
         return dict(identifier=self.wizard_state.get('process_identifier'))
 
+    def breadcrumbs(self):
+        breadcrumbs = super(ChooseWPSProcess, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='wizard_literal_inputs', title=self.title))
+        return breadcrumbs
+
     @view_config(route_name='wizard_process', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
         return super(ChooseWPSProcess, self).view()
@@ -260,6 +268,11 @@ class LiteralInputs(Wizard):
     
     def appstruct(self):
         return self.wizard_state.get('literal_inputs', {})
+
+    def breadcrumbs(self):
+        breadcrumbs = super(LiteralInputs, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='wizard_literal_inputs', title=self.title))
+        return breadcrumbs
 
     @view_config(route_name='wizard_literal_inputs', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
@@ -296,6 +309,11 @@ class ComplexInputs(Wizard):
     def appstruct(self):
         return dict(identifier=self.wizard_state.get('complex_input_identifier'))
 
+    def breadcrumbs(self):
+        breadcrumbs = super(ComplexInputs, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='wizard_complex_inputs', title=self.title))
+        return breadcrumbs
+
     @view_config(route_name='wizard_complex_inputs', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
         return super(ComplexInputs, self).view()
@@ -324,6 +342,11 @@ class ChooseSource(Wizard):
         
     def appstruct(self):
         return dict(source=self.wizard_state.get('source'))
+
+    def breadcrumbs(self):
+        breadcrumbs = super(ChooseSource, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='wizard_source', title=self.title))
+        return breadcrumbs
 
     @view_config(route_name='wizard_source', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
@@ -426,6 +449,11 @@ class CatalogSearch(Wizard):
             )
         return dict(grid=grid, items=items)
 
+    def breadcrumbs(self):
+        breadcrumbs = super(CatalogSearch, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='wizard_csw', title=self.title))
+        return breadcrumbs
+
     @view_config(route_name='wizard_csw', renderer='phoenix:templates/wizard/csw.pt')
     def view(self):
         return super(CatalogSearch, self).view()
@@ -455,6 +483,11 @@ class ESGFSearch(Wizard):
     def appstruct(self):
         return dict(selection=self.wizard_state.get('esgf_selection', {}))
 
+    def breadcrumbs(self):
+        breadcrumbs = super(ESGFSearch, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='wizard_esgf', title=self.title))
+        return breadcrumbs
+
     @view_config(route_name='wizard_esgf', renderer='phoenix:templates/wizard/esgf.pt')
     def view(self):
         return super(ESGFSearch, self).view()
@@ -483,6 +516,11 @@ class ESGFFileSearch(Wizard):
         
     def appstruct(self):
         return dict(url=self.wizard_state.get('esgf_files'))
+
+    def breadcrumbs(self):
+        breadcrumbs = super(ESGFFileSearch, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='wizard_esgf_files', title=self.title))
+        return breadcrumbs
 
     @view_config(route_name='wizard_esgf_files', renderer='phoenix:templates/wizard/esgf.pt')
     def view(self):
@@ -530,6 +568,11 @@ class ESGFCredentials(Wizard):
         return dict(
             openid=self.get_user().get('openid'),
             password=self.wizard_state.get('password'))
+
+    def breadcrumbs(self):
+        breadcrumbs = super(ESGFCredentials, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='wizard_esgf_credentials', title=self.title))
+        return breadcrumbs
 
     @view_config(route_name='wizard_esgf_credentials', renderer='phoenix:templates/wizard/esgf.pt')
     def view(self):
@@ -604,6 +647,11 @@ class Done(Wizard):
         self.success(appstruct)
         self.wizard_state.clear()
         return HTTPFound(location=self.request.route_url('myjobs'))
+
+    def breadcrumbs(self):
+        breadcrumbs = super(Done, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='wizard_done', title=self.title))
+        return breadcrumbs
 
     @view_config(route_name='wizard_done', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
