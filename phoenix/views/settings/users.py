@@ -4,7 +4,7 @@ from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from deform import Form, Button
 from deform import ValidationFailure
 
-from phoenix.views.settings.settings import SettingsView
+from phoenix.views.settings import SettingsView
 
 import logging
 logger = logging.getLogger(__name__)
