@@ -2,7 +2,7 @@
 
     <div metal:fill-slot="content">
 
-        <!-- Main hero unit for a primary marketing message or call to action -->
+        <!-- Main page with a welcome message -->
         ${panel('welcome', title='Phoenix')}
 
         <!-- row columns -->
