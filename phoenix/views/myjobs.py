@@ -79,7 +79,7 @@ class MyJobs(MyView):
         grid = JobsGrid(
                 self.request,
                 items,
-                ['status', 'creation_time', 'title', 'status_message', 'progress', ''],
+                ['title', 'status', 'creation_time', 'progress', ''],
             )
         return dict(grid=grid, items=items)
 
@@ -90,10 +90,8 @@ class JobsGrid(MyGrid):
         self.column_formats['creation_time'] = self.creation_time_td
         self.column_formats['status'] = self.status_td
         self.column_formats['title'] = self.title_td
-        self.column_formats['status_message'] = self.message_td
         self.column_formats['progress'] = self.progress_td
         self.column_formats[''] = self.action_td
-        self.exclude_ordering = ['status_message', 'action']
 
     def creation_time_td(self, col_num, i, item):
         if item.get('creation_time') is None:
@@ -110,8 +108,8 @@ class JobsGrid(MyGrid):
         return HTML.td(span)
 
     def status_td(self, col_num, i, item):
-        """Generate the column for the job status.
-        """
+        # TODO: status message is not updated by javascript
+
         status = item.get('status')
         if status is None:
             return HTML.td('')
@@ -124,17 +122,27 @@ class JobsGrid(MyGrid):
             span_class += ' label-important'
         else:
             span_class += ' label-info'
-            
-        span = HTML.tag(
-            "span",
-            c=HTML.literal(status),
-            class_=span_class,
-            id_="status-%s" % item.get('identifier'))
-        return HTML.td(span)
+        div = Template("""\
+        <div>
+          <div>
+            <span class="${span_class}" id="status-${jobid}">${status}</span>
+            <div id="message-${jobid}">${status_message}</div>
+          </div>
+          <div>
+             <a class="label label-warning" href="${status_location}" data-format="XML">XML</a>
+          </div>
+        </div>
+        """)
+        return HTML.td(HTML.literal(div.substitute( {
+            'jobid': item['identifier'],
+            'status': item['status'],
+            'span_class': span_class,
+            'status_message': item['status_message'], 
+            'status_location': item['status_location']} )))
 
     def title_td(self, col_num, i, item):
         keyword_links = []
-        for keyword in item.get('tags').split(','):
+        for keyword in item.get('keywords').split(','):
             anchor = HTML.tag("a", href="#", c=keyword, class_="label label-info")
             keyword_links.append(anchor)
         
@@ -147,20 +155,7 @@ class JobsGrid(MyGrid):
           <div>${keywords}</div>
         </div>
         """)
-        return HTML.td(HTML.literal(div.substitute( {'title': item['title'], 'abstract': item['notes'], 'keywords': ' '.join(keyword_links)} )))
-
-    def message_td(self, col_num, i, item):
-        div = Template("""\
-        <div class="">
-          <div class="">
-            <div>${status_message}</div>
-          </div>
-          <div>
-             <a class="label label-warning" href="${status_location}" data-format="XML">XML</a>
-          </div>
-        </div>
-        """)
-        return HTML.td(HTML.literal(div.substitute( {'status_message': item['status_message'], 'status_location': item['status_location']} )))
+        return HTML.td(HTML.literal(div.substitute( {'title': item['title'], 'abstract': item['abstract'], 'keywords': ' '.join(keyword_links)} )))
 
     def progress_td(self, col_num, i, item):
         """Generate the column for the job progress.

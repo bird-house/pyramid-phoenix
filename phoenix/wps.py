@@ -168,9 +168,8 @@ class WPSSchema(colander.SchemaNode):
         
         node = colander.SchemaNode(
             colander.String(),
-            name = 'info_notes',
-            title = 'Notes',
-            description = 'Enter some notes for your process',
+            name = 'abstract',
+            description = 'Describe your job.',
             default = 'test',
             missing = 'test',
             validator = colander.Length(max=150),
@@ -180,9 +179,8 @@ class WPSSchema(colander.SchemaNode):
 
         node = colander.SchemaNode(
             colander.String(),
-            name = 'info_tags',
-            title = 'Tags',
-            description = 'Enter some tags',
+            name = 'keywords',
+            description = 'Keywords for your job.',
             default = 'test',
             missing = 'test',
             widget = TagsWidget()

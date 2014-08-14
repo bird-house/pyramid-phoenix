@@ -50,8 +50,8 @@ class ExecuteProcess(MyView):
                 title = execution.process.title,
                 wps_url = execution.serviceInstance,
                 status_location = execution.statusLocation,
-                notes = appstruct.get('info_notes', ''),
-                tags = appstruct.get('info_tags', ''))
+                abstract = appstruct.get('abstract', ''),
+                keywords = appstruct.get('keywords', ''))
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
             return dict(form = e.render())

@@ -60,9 +60,9 @@ def execute_wps(wps, identifier, params):
     # TODO: dont append value if default
     for (key, value) in params.iteritems():
         # ignore info params
-        if 'info_tags' in key:
+        if 'keywords' in key:
             continue
-        if 'info_notes' in key:
+        if 'abstract' in key:
             continue
         
         values = []

@@ -628,8 +628,8 @@ class Done(Wizard):
 
     def success(self, appstruct):
         identifier = self.wizard_state.get('process_identifier')
-        notes = self.wizard_state.get('literal_inputs')['info_notes']
-        tags = self.wizard_state.get('literal_inputs')['info_tags']
+        abstract = self.wizard_state.get('literal_inputs')['abstract']
+        keywords = self.wizard_state.get('literal_inputs')['keywords']
         
         execution = self.execute_workflow(appstruct)
         models.add_job(
@@ -637,8 +637,8 @@ class Done(Wizard):
             title = identifier,
             wps_url = execution.serviceInstance,
             status_location = execution.statusLocation,
-            notes = notes,
-            tags = tags)
+            abstract = abstract,
+            keywords = keywords)
 
     def previous_success(self, appstruct):
         return self.previous()
