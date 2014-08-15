@@ -30,12 +30,10 @@ class MyGrid(Grid):
         return HTML.td(HTML.literal(mytemplate.render(**data)))
 
     def render_title_td(self, title, abstract="", keywords=[], format=None, source="#"):
-        return self.render_td(renderer="title_td",
-            title=title, 
-            abstract=abstract, 
-            keywords=keywords, 
-            format=format, 
-            source=source)
+        return self.render_td(renderer="title_td", title=title, abstract=abstract, keywords=keywords, format=format, source=source)
+
+    def render_action_td(self, buttongroup=[]):
+        return self.render_td(renderer="action_td", buttongroup=buttongroup)
 
     def generate_header_link(self, column_number, column, label_text):
         """Override of the ObjectGrid to customize the headers. This is

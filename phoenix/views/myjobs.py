@@ -170,17 +170,8 @@ class JobsGrid(MyGrid):
         return HTML.td(div_progress)
    
     def action_td(self, col_num, i, item):
-        """Generate the column that has the actions in it.
-        """
-        div = Template("""\
-        <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Action<span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <!-- dropdown menu links -->
-            <li><a class="show" data-value="${jobid}"><i class="icon-th-list"></i> Show Outputs</a></li>
-            <li><a class="delete" data-value="${jobid}"><i class="icon-trash"></i> Delete</a></li>
-          </ul>
-        </div>
-        """)
-        return HTML.td(HTML.literal(div.substitute({'jobid': item.get('identifier')} )))
+        buttongroup = []
+        buttongroup.append( ("show", item.get('identifier'), "icon-th-list", "Show Outputs") )
+        buttongroup.append( ("delete", item.get('identifier'), "icon-trash", "Delete") )
+        return self.render_action_td(buttongroup)
 
