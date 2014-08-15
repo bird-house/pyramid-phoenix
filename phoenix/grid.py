@@ -1,13 +1,19 @@
-import logging
-logger = logging.getLogger(__name__)
+from os.path import join, dirname
 
 from webhelpers.html.builder import HTML
 from webhelpers.html.grid import Grid
 
-from string import Template
+import string # TODO replace by mako template
+from mako.template import Template
+from mako.lookup import TemplateLookup
+mylookup = TemplateLookup([join(dirname(__file__), "templates", "grid")])
+
 from dateutil import parser as datetime_parser
 
 from .utils import localize_datetime
+
+import logging
+logger = logging.getLogger(__name__)
 
 class MyGrid(Grid):
     def __init__(self, request, *args, **kwargs):
@@ -19,23 +25,14 @@ class MyGrid(Grid):
          #self.user_tz = u'US/Eastern'
         self.user_tz = u'UTC'
 
-    def render_title_td(self, title, abstract, keywords=[]):
-        keyword_links = []
-        for keyword in keywords:
-            anchor = HTML.tag("a", href="#", c=keyword, class_="label label-info")
-            keyword_links.append(anchor)
-        
-        div = Template("""\
-        <div class="">
-          <div class="">
-            <b>${title}</b>
-            <div>${abstract}</div>
-          </div>
-          <div>${keywords}</div>
-        </div>
-        """)
-        return HTML.td(HTML.literal(div.substitute( {'title': title, 'abstract': abstract, 'keywords': ' '.join(keyword_links)} )))
-
+    def render_title_td(self, title, abstract=None, keywords=[], format=None, source=None):
+        mytemplate = mylookup.get_template("title_td.mako")
+        return HTML.td(HTML.literal(mytemplate.render(
+            title=title, 
+            abstract=abstract, 
+            keywords=keywords, 
+            format=format, 
+            source=source)))
 
     def generate_header_link(self, column_number, column, label_text):
         """Override of the ObjectGrid to customize the headers. This is
@@ -122,7 +119,7 @@ class OutputDetailsGrid(MyGrid):
     def reference_td(self, col_num, i, item):
         """Generates the column with a download reference.
         """
-        anchor = Template("""\
+        anchor = string.Template("""\
         <a class="reference" href="${reference}"><i class="icon-download"></i></a>
         """)
         return HTML.td(HTML.literal(anchor.substitute( {'reference': item.get('reference')} )))
@@ -130,7 +127,7 @@ class OutputDetailsGrid(MyGrid):
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
         """
-        div = Template("""\
+        div = string.Template("""\
         <div class="btn-group">
             <button class="btn btn-mini btn-primary publish" data-value="${outputid}">Publish</button>
             <button class="btn btn-mini btn-primary view" data-value="${outputid}">View</button>
@@ -151,7 +148,7 @@ class UsersGrid(MyGrid):
         icon_class = "icon-thumbs-down"
         if item.get('activated') == True:
             icon_class = "icon-thumbs-up"
-        div = Template("""\
+        div = string.Template("""\
         <a class="activate" data-value="${email}" href="#"><i class="${icon_class}"></i></a>
         """)
         return HTML.td(HTML.literal(div.substitute({'email': item['email'], 'icon_class': icon_class} )))
@@ -159,7 +156,7 @@ class UsersGrid(MyGrid):
     def action_td(self, col_num, i, item):
         """Generate the column that has the actions in it.
         """
-        div = Template("""\
+        div = string.Template("""\
         <div class="btn-group">
           <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Action<span class="caret"></span></a>
           <ul class="dropdown-menu">
@@ -184,7 +181,7 @@ class CatalogGrid(MyGrid):
             anchor = HTML.tag("a", href="#", c=tag, class_="label label-info")
             tag_links.append(anchor)
         
-        div = Template("""\
+        div = string.Template("""\
         <div class="">
           <div class="">
             <h3 class="">${title}</h3>
@@ -206,7 +203,7 @@ class CatalogGrid(MyGrid):
             span_class += ' label-success'
         else:
             span_class += ' label-default'
-        anchor = Template("""\
+        anchor = string.Template("""\
         <a class="${span_class}" href="${source}" data-format="${format}">${format}</a>
         """)
         return HTML.td(HTML.literal(anchor.substitute(
@@ -237,7 +234,7 @@ class CatalogSearchGrid(CatalogGrid):
         icon_class = "icon-thumbs-down"
         if item['selected'] == True:
             icon_class = "icon-thumbs-up"
-        div = Template("""\
+        div = string.Template("""\
         <button class="btn btn-mini select" data-value="${identifier}"><i class="${icon_class}"></i></button>
         """)
         return HTML.td(HTML.literal(div.substitute({'identifier': item['identifier'], 'icon_class': icon_class} )))
@@ -248,7 +245,7 @@ class CatalogSettingsGrid(CatalogGrid):
         self.column_formats[''] = self.action_td
 
     def action_td(self, col_num, i, item):
-        div = Template("""\
+        div = string.Template("""\
         <div class="btn-group">
           <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Action<span class="caret"></span></a>
           <ul class="dropdown-menu">
