@@ -29,7 +29,7 @@ class MyGrid(Grid):
         mytemplate = mylookup.get_template(renderer + ".mako")
         return HTML.td(HTML.literal(mytemplate.render(**data)))
 
-    def render_title_td(self, title, abstract=None, keywords=[], format=None, source=None):
+    def render_title_td(self, title, abstract="", keywords=[], format=None, source="#"):
         return self.render_td(renderer="title_td",
             title=title, 
             abstract=abstract, 

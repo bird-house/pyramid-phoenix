@@ -72,10 +72,12 @@ class Processes(MyView):
                 processVersion = ''
                 if hasattr(process, 'processVersion'):
                     processVersion = process.processVersion
+                source = "%s?version=1.0.0&service=WPS&request=describeprocess&identifier=%s" % (self.wps.url, process.identifier)
                 items.append(dict(title=process.title,
                                   identifier=process.identifier,
                                   abstract=abstract,
-                                  version=processVersion))
+                                  version=processVersion,
+                                  source=source))
 
         # sort items
         order = self.sort_order()
@@ -102,7 +104,11 @@ class ProcessesGrid(MyGrid):
         self.column_formats[''] = self.action_td
 
     def title_td(self, col_num, i, item):
-        return self.render_title_td(item.get('title'), item.get('abstract'))
+        return self.render_title_td(
+            title=item.get('title'), 
+            abstract=item.get('abstract'),
+            format="XML",
+            source=item.get('source'))
 
     def action_td(self, col_num, i, item):
         div = Template("""\
