@@ -85,7 +85,7 @@ class Processes(MyView):
         grid = ProcessesGrid(
                 self.request,
                 items,
-                ['title', 'abstract', 'action'],
+                ['title', ''],
             )
         return dict(
             grid=grid,
@@ -98,7 +98,11 @@ from string import Template
 class ProcessesGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(ProcessesGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats['action'] = self.action_td
+        self.column_formats['title'] = self.title_td
+        self.column_formats[''] = self.action_td
+
+    def title_td(self, col_num, i, item):
+        return self.render_title_td(item.get('title'), item.get('abstract'))
 
     def action_td(self, col_num, i, item):
         div = Template("""\
