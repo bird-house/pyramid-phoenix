@@ -5,7 +5,7 @@ from deform import Form, Button
 from deform import ValidationFailure
 
 from phoenix.views.settings import SettingsView
-from phoenix.grid import MyGrid
+from phoenix.grid import CatalogGrid
 
 import logging
 logger = logging.getLogger(__name__)
@@ -129,7 +129,7 @@ class CatalogService(SettingsView):
             service_form=service_form.render(),
             dataset_form=dataset_form.render())
 
-class CSWGrid(MyGrid):
+class CSWGrid(CatalogGrid):
     def __init__(self, request, *args, **kwargs):
         super(CSWGrid, self).__init__(request, *args, **kwargs)
         self.column_formats[''] = self.action_td

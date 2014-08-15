@@ -9,6 +9,7 @@ from string import Template
 
 from phoenix import models
 from phoenix.views import MyView
+from phoenix.grid import CatalogGrid
 from phoenix.exceptions import MyProxyLogonFailure
 
 import logging
@@ -441,7 +442,6 @@ class CatalogSearch(Wizard):
             else:
                 item['selected'] = False
 
-        from phoenix.grid import CatalogSearchGrid    
         grid = CatalogSearchGrid(
                 self.request,
                 items,
@@ -457,6 +457,23 @@ class CatalogSearch(Wizard):
     @view_config(route_name='wizard_csw', renderer='phoenix:templates/wizard/csw.pt')
     def view(self):
         return super(CatalogSearch, self).view()
+
+class CatalogSearchGrid(CatalogGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(CatalogSearchGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['selected'] = self.selected_td
+
+    def selected_td(self, col_num, i, item):
+        from string import Template
+        from webhelpers.html.builder import HTML
+
+        icon_class = "icon-thumbs-down"
+        if item['selected'] == True:
+            icon_class = "icon-thumbs-up"
+        div = Template("""\
+        <button class="btn btn-mini select" data-value="${identifier}"><i class="${icon_class}"></i></button>
+        """)
+        return HTML.td(HTML.literal(div.substitute({'identifier': item['identifier'], 'icon_class': icon_class} )))
 
 class ESGFSearch(Wizard):
     def __init__(self, request):

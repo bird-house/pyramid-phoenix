@@ -163,21 +163,7 @@ class CatalogGrid(MyGrid):
         )
         return HTML.td(span)
 
-class CatalogSearchGrid(CatalogGrid):
-    def __init__(self, request, *args, **kwargs):
-        super(CatalogSearchGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats['selected'] = self.selected_td
 
-    def selected_td(self, col_num, i, item):
-        """Generate the column for selecting items.
-        """
-        icon_class = "icon-thumbs-down"
-        if item['selected'] == True:
-            icon_class = "icon-thumbs-up"
-        div = string.Template("""\
-        <button class="btn btn-mini select" data-value="${identifier}"><i class="${icon_class}"></i></button>
-        """)
-        return HTML.td(HTML.literal(div.substitute({'identifier': item['identifier'], 'icon_class': icon_class} )))
 
 
 
