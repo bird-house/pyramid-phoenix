@@ -5,6 +5,7 @@ from deform import Form, Button
 from deform import ValidationFailure
 
 from phoenix.views.settings import SettingsView
+from phoenix.grid import MyGrid
 
 import logging
 logger = logging.getLogger(__name__)
@@ -83,10 +84,8 @@ class Users(SettingsView):
         if 'submit' in self.request.POST:
             return self.process_form(form)
 
-        from phoenix.grid import UsersGrid
         order = self.sort_order()
         user_items = list(self.userdb.find().sort(order.get('order'), order.get('order_dir')))
-        logger.debug('user_items: %s', user_items)
         grid = UsersGrid(
                 self.request,
                 user_items,
@@ -97,3 +96,27 @@ class Users(SettingsView):
             items=user_items,
             form=form.render())
 
+class UsersGrid(MyGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(UsersGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['activated'] = self.activated_td
+        self.column_formats[''] = self.action_td
+        self.exclude_ordering = ['notes', '']
+
+    def activated_td(self, col_num, i, item):
+        from string import Template
+        from webhelpers.html.builder import HTML
+
+        icon_class = "icon-thumbs-down"
+        if item.get('activated') == True:
+            icon_class = "icon-thumbs-up"
+        div = Template("""\
+        <a class="activate" data-value="${email}" href="#"><i class="${icon_class}"></i></a>
+        """)
+        return HTML.td(HTML.literal(div.substitute({'email': item['email'], 'icon_class': icon_class} )))
+
+    def action_td(self, col_num, i, item):
+        buttongroup = []
+        buttongroup.append( ("edit", item.get('email'), "icon-pencil", "Edit") )
+        buttongroup.append( ("delete", item.get('email'), "icon-trash", "Delete") )
+        return self.render_action_td(buttongroup)

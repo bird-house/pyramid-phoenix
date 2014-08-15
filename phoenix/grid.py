@@ -108,37 +108,6 @@ class MyGrid(Grid):
             records.append(r)
         return HTML(*records)
 
-class UsersGrid(MyGrid):
-    def __init__(self, request, *args, **kwargs):
-        super(UsersGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats['activated'] = self.activated_td
-        self.column_formats[''] = self.action_td
-        self.exclude_ordering = ['notes', '']
-
-    def activated_td(self, col_num, i, item):
-        icon_class = "icon-thumbs-down"
-        if item.get('activated') == True:
-            icon_class = "icon-thumbs-up"
-        div = string.Template("""\
-        <a class="activate" data-value="${email}" href="#"><i class="${icon_class}"></i></a>
-        """)
-        return HTML.td(HTML.literal(div.substitute({'email': item['email'], 'icon_class': icon_class} )))
-
-    def action_td(self, col_num, i, item):
-        """Generate the column that has the actions in it.
-        """
-        div = string.Template("""\
-        <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Action<span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <!-- dropdown menu links -->
-            <li><a class="edit" data-value="${email}"><i class="icon-pencil"></i> Edit</a></li>
-            <li><a class="delete" data-value="${email}"><i class="icon-trash"></i> Delete</a></li>
-          </ul>
-        </div>
-        """)
-        return HTML.td(HTML.literal(div.substitute({'email': item.get('email')} )))
-
 class CatalogGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(CatalogGrid, self).__init__(request, *args, **kwargs)
