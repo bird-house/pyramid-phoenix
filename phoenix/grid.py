@@ -19,6 +19,24 @@ class MyGrid(Grid):
          #self.user_tz = u'US/Eastern'
         self.user_tz = u'UTC'
 
+    def render_title_td(self, title, abstract, keywords=[]):
+        keyword_links = []
+        for keyword in keywords:
+            anchor = HTML.tag("a", href="#", c=keyword, class_="label label-info")
+            keyword_links.append(anchor)
+        
+        div = Template("""\
+        <div class="">
+          <div class="">
+            <b>${title}</b>
+            <div>${abstract}</div>
+          </div>
+          <div>${keywords}</div>
+        </div>
+        """)
+        return HTML.td(HTML.literal(div.substitute( {'title': title, 'abstract': abstract, 'keywords': ' '.join(keyword_links)} )))
+
+
     def generate_header_link(self, column_number, column, label_text):
         """Override of the ObjectGrid to customize the headers. This is
         mostly taken from the example code in ObjectGrid itself.
@@ -92,21 +110,7 @@ class MyGrid(Grid):
             records.append(r)
         return HTML(*records)
 
-class ProcessesGrid(MyGrid):
-    def __init__(self, request, *args, **kwargs):
-        super(ProcessesGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats['action'] = self.action_td
 
-    def action_td(self, col_num, i, item):
-        """Generate the column that has the actions in it.
-        """
-        div = Template("""\
-        <div class="btn-group">
-            <button class="btn btn-mini btn-success execute" data-value="${identifier}">Execute</button>
-        </div>
-        """)
-        return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))
-        
 
 class OutputDetailsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):

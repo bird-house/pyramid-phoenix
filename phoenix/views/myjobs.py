@@ -146,21 +146,7 @@ class JobsGrid(MyGrid):
             'status_location': item['status_location']} )))
 
     def title_td(self, col_num, i, item):
-        keyword_links = []
-        for keyword in item.get('keywords').split(','):
-            anchor = HTML.tag("a", href="#", c=keyword, class_="label label-info")
-            keyword_links.append(anchor)
-        
-        div = Template("""\
-        <div class="">
-          <div class="">
-            <b>${title}</b>
-            <div>${abstract}</div>
-          </div>
-          <div>${keywords}</div>
-        </div>
-        """)
-        return HTML.td(HTML.literal(div.substitute( {'title': item['title'], 'abstract': item['abstract'], 'keywords': ' '.join(keyword_links)} )))
+        return self.render_title_td(item['title'], item['abstract'], item['keywords'].split(','))
 
     def progress_td(self, col_num, i, item):
         """Generate the column for the job progress.

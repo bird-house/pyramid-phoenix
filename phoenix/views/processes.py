@@ -5,6 +5,7 @@ from deform import Form, Button
 from deform import ValidationFailure
 
 from phoenix.views import MyView
+from phoenix.grid import MyGrid
 
 import logging
 logger = logging.getLogger(__name__)
@@ -81,7 +82,6 @@ class Processes(MyView):
         import operator
         items.sort(key=operator.itemgetter(order['order']), reverse=order['order_dir']==-1)
 
-        from phoenix.grid import ProcessesGrid
         grid = ProcessesGrid(
                 self.request,
                 items,
@@ -92,3 +92,19 @@ class Processes(MyView):
             items=items,
             form=form.render())
 
+from webhelpers.html.builder import HTML
+from string import Template
+
+class ProcessesGrid(MyGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(ProcessesGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['action'] = self.action_td
+
+    def action_td(self, col_num, i, item):
+        div = Template("""\
+        <div class="btn-group">
+            <button class="btn btn-mini btn-success execute" data-value="${identifier}">Execute</button>
+        </div>
+        """)
+        return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))
+        
