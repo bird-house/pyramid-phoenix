@@ -116,21 +116,7 @@ class CatalogGrid(MyGrid):
         self.column_formats['modified'] = self.modified_td
 
     def title_td(self, col_num, i, item):
-        tag_links = []
-        for tag in item.get('subjects'):
-            anchor = HTML.tag("a", href="#", c=tag, class_="label label-info")
-            tag_links.append(anchor)
-        
-        div = string.Template("""\
-        <div class="">
-          <div class="">
-            <h3 class="">${title}</h3>
-            <div>${abstract}</div>
-          </div>
-          <div>${tags}</div>
-        </div>
-        """)
-        return HTML.td(HTML.literal(div.substitute( {'title': item['title'], 'abstract': item['abstract'], 'tags': ' '.join(tag_links)} )))
+        return self.render_title_td(item['title'], item['abstract'], item.get('subjects'))
 
     def format_td(self, col_num, i, item):
         format = item.get('format')

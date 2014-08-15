@@ -55,7 +55,10 @@ class CatalogService(SettingsView):
             appstruct = form.validate(controls)
 
             from mako.template import Template
-            templ_dc = Template(filename=os.path.join(os.path.dirname(__file__), "templates", "dc.xml"))
+            import os
+            # TODO: fix location and usage of publish templates
+            import phoenix
+            templ_dc = Template(filename=os.path.join(os.path.dirname(phoenix.__file__), "templates", "dc.xml"))
             record = templ_dc.render(**appstruct)
             logger.debug('record=%s', record)
             self.request.csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
