@@ -32,7 +32,7 @@ class MyGrid(Grid):
     def render_title_td(self, title, abstract="", keywords=[], format=None, source="#"):
         return self.render_td(renderer="title_td", title=title, abstract=abstract, keywords=keywords, format=format, source=source)
 
-    def render_datetime_td(self, timestamp):
+    def render_timestamp_td(self, timestamp):
         if timestamp is None:            
             return HTML.td('')
         mytimestamp = timestamp
@@ -151,7 +151,7 @@ class CatalogGrid(MyGrid):
             {'source': item['source'], 'span_class': span_class, 'format': format} )))
 
     def modified_td(self, col_num, i, item):
-        return self.render_datetime_td(timestamp=item.get('modified'))
+        return self.render_timestamp_td(timestamp=item.get('modified'))
 
 
 

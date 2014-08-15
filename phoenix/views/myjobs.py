@@ -99,7 +99,7 @@ class JobsGrid(MyGrid):
         self.column_formats[''] = self.action_td
 
     def creation_time_td(self, col_num, i, item):
-        return self.render_datetime_td(item.get('creation_time'))
+        return self.render_timestamp_td(item.get('creation_time'))
 
     def status_td(self, col_num, i, item):
         # TODO: status message is not updated by javascript
