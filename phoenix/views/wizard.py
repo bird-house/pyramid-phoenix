@@ -9,7 +9,7 @@ from string import Template
 
 from phoenix import models
 from phoenix.views import MyView
-from phoenix.grid import CatalogGrid
+from phoenix.grid import MyGrid
 from phoenix.exceptions import MyProxyLogonFailure
 
 import logging
@@ -458,10 +458,22 @@ class CatalogSearch(Wizard):
     def view(self):
         return super(CatalogSearch, self).view()
 
-class CatalogSearchGrid(CatalogGrid):
+class CatalogSearchGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(CatalogSearchGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['selected'] = self.selected_td
+        self.column_formats['title'] = self.title_td
+        self.column_formats['format'] = self.format_td
+        self.column_formats['modified'] = self.modified_td
+
+    def title_td(self, col_num, i, item):
+        return self.render_title_td(item['title'], item['abstract'], item.get('subjects'))
+
+    def format_td(self, col_num, i, item):
+        return self.render_format_td(item['format'], item['source'])
+
+    def modified_td(self, col_num, i, item):
+        return self.render_timestamp_td(timestamp=item.get('modified'))
 
     def selected_td(self, col_num, i, item):
         from string import Template

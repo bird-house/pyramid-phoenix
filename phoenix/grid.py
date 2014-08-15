@@ -8,10 +8,6 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 mylookup = TemplateLookup([join(dirname(__file__), "templates", "grid")])
 
-from dateutil import parser as datetime_parser
-
-from .utils import localize_datetime
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -22,7 +18,6 @@ class MyGrid(Grid):
             kwargs['url'] = request.current_route_url
         super(MyGrid, self).__init__(*args, **kwargs)
         self.exclude_ordering = ['', 'action', '_numbered']
-         #self.user_tz = u'US/Eastern'
         self.user_tz = u'UTC'
 
     def render_td(self, renderer, **data):
@@ -37,6 +32,7 @@ class MyGrid(Grid):
             return HTML.td('')
         mytimestamp = timestamp
         if type(timestamp) is str:
+            from dateutil import parser as datetime_parser
             mytimestamp = datetime_parser.parse(timestamp)
         span_class = 'due-date badge'
         
@@ -46,6 +42,22 @@ class MyGrid(Grid):
             class_=span_class,
         )
         return HTML.td(span)
+
+    def render_format_td(self, format, source):
+        span_class = 'label'
+        if 'wps' in format.lower():
+            span_class += ' label-warning'
+        elif 'wms' in format.lower():
+            span_class += ' label-info'
+        elif 'netcdf' in format.lower():
+            span_class += ' label-success'
+        else:
+            span_class += ' label-default'
+        anchor = string.Template("""\
+        <a class="${span_class}" href="${source}" data-format="${format}">${format}</a>
+        """)
+        return HTML.td(HTML.literal(anchor.substitute(
+            {'source': source, 'span_class': span_class, 'format': format} )))    
 
     def render_action_td(self, buttongroup=[]):
         return self.render_td(renderer="action_td", buttongroup=buttongroup)
@@ -123,35 +135,6 @@ class MyGrid(Grid):
             records.append(r)
         return HTML(*records)
 
-class CatalogGrid(MyGrid):
-    def __init__(self, request, *args, **kwargs):
-        super(CatalogGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats['title'] = self.title_td
-        self.column_formats['format'] = self.format_td
-        self.column_formats['modified'] = self.modified_td
-
-    def title_td(self, col_num, i, item):
-        return self.render_title_td(item['title'], item['abstract'], item.get('subjects'))
-
-    def format_td(self, col_num, i, item):
-        format = item.get('format')
-        span_class = 'label'
-        if 'wps' in format.lower():
-            span_class += ' label-warning'
-        elif 'wms' in format.lower():
-            span_class += ' label-info'
-        elif 'netcdf' in format.lower():
-            span_class += ' label-success'
-        else:
-            span_class += ' label-default'
-        anchor = string.Template("""\
-        <a class="${span_class}" href="${source}" data-format="${format}">${format}</a>
-        """)
-        return HTML.td(HTML.literal(anchor.substitute(
-            {'source': item['source'], 'span_class': span_class, 'format': format} )))
-
-    def modified_td(self, col_num, i, item):
-        return self.render_timestamp_td(timestamp=item.get('modified'))
 
 
 
