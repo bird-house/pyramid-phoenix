@@ -111,10 +111,8 @@ class ProcessesGrid(MyGrid):
             source=item.get('source'))
 
     def action_td(self, col_num, i, item):
-        div = Template("""\
-        <div class="btn-group">
-            <button class="btn btn-mini btn-success execute" data-value="${identifier}">Execute</button>
-        </div>
-        """)
-        return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))
-        
+        buttongroup = []
+        buttongroup.append( ("execute", item.get('identifier'), "icon-cog", "Execute") )
+        buttongroup.append( ("describe", item.get('identifier'), "icon-th-list", "Describe") )
+        return self.render_action_td(buttongroup)
+    
