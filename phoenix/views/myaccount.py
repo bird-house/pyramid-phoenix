@@ -54,7 +54,8 @@ class MyAccount(MyView):
             appstruct = form.validate(controls)
 
             user = self.get_user()
-            result = models.myproxy_logon(
+            from phoenix.models import myproxy_logon
+            result = myproxy_logon(
                 self.request,
                 openid = user.get('openid'),
                 password = appstruct.get('password'))
