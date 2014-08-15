@@ -57,8 +57,14 @@ class ExecuteProcess(MyView):
             return dict(form = e.render())
         return HTTPFound(location=self.request.route_url('myjobs'))
 
+    def breadcrumbs(self):
+        breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='processes', title="Processes"))
+        breadcrumbs.append(dict(route_name='execute_process', title=self.title))
+        return breadcrumbs
+
     @view_config(route_name='execute_process', renderer='phoenix:templates/execute_process.pt')
-    def execute_view(self):
+    def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
             return self.process_form(form)

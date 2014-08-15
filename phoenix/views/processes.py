@@ -56,6 +56,11 @@ class Processes(MyView):
             return dict(form=e.render())
         return HTTPFound(location=self.request.route_url('processes'))
 
+    def breadcrumbs(self):
+        breadcrumbs = super(Processes, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='processes', title=self.title))
+        return breadcrumbs
+
     @view_config(route_name='processes', renderer='phoenix:templates/processes.pt')
     def view(self):
         form = self.generate_form()
