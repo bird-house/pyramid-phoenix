@@ -25,14 +25,17 @@ class MyGrid(Grid):
          #self.user_tz = u'US/Eastern'
         self.user_tz = u'UTC'
 
+    def render_td(self, renderer, **data):
+        mytemplate = mylookup.get_template(renderer + ".mako")
+        return HTML.td(HTML.literal(mytemplate.render(**data)))
+
     def render_title_td(self, title, abstract=None, keywords=[], format=None, source=None):
-        mytemplate = mylookup.get_template("title_td.mako")
-        return HTML.td(HTML.literal(mytemplate.render(
+        return self.render_td(renderer="title_td",
             title=title, 
             abstract=abstract, 
             keywords=keywords, 
             format=format, 
-            source=source)))
+            source=source)
 
     def generate_header_link(self, column_number, column, label_text):
         """Override of the ObjectGrid to customize the headers. This is
