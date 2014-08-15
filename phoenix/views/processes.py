@@ -99,9 +99,6 @@ class Processes(MyView):
             items=items,
             form=form.render())
 
-from webhelpers.html.builder import HTML
-from string import Template
-
 class ProcessesGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(ProcessesGrid, self).__init__(request, *args, **kwargs)

@@ -5,6 +5,7 @@ from deform import Form, Button
 from deform import ValidationFailure
 
 from phoenix.views import MyView
+from phoenix.grid import MyGrid
 
 import logging
 logger = logging.getLogger(__name__)
@@ -117,11 +118,33 @@ class ProcessOutputs(MyView):
                               data = output.data,
                               reference=output.reference))
 
-        from phoenix.grid import OutputDetailsGrid
-        grid = OutputDetailsGrid(
+        grid = ProcessOutputsGrid(
                 self.request,
                 items,
-                ['identifier', 'title', 'data', 'reference', 'mime_type', 'action'],
+                ['identifier', 'title', 'data', 'reference', 'mime_type', ''],
             )
         return dict(grid=grid, items=items, form=form.render())
         
+class ProcessOutputsGrid(MyGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(ProcessOutputsGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['reference'] = self.reference_td
+        self.column_formats[''] = self.action_td
+        self.exclude_ordering = ['data', 'reference', 'action']
+
+    def reference_td(self, col_num, i, item):
+        from string import Template
+        from webhelpers.html.builder import HTML
+
+        anchor = Template("""\
+        <a class="reference" href="${reference}"><i class="icon-download"></i></a>
+        """)
+        return HTML.td(HTML.literal(anchor.substitute( {'reference': item.get('reference')} )))
+
+    def action_td(self, col_num, i, item):
+        buttongroup = []
+        buttongroup.append( ("publish", item.get('identifier'), "icon-th-list", "Publish") )
+        buttongroup.append( ("view", item.get('identifier'), "icon-eye-open", "View") )
+        buttongroup.append( ("mapit", item.get('identifier'), "icon-globe", "Show on Map") )
+        return self.render_action_td(buttongroup)
+
