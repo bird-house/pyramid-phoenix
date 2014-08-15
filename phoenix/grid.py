@@ -32,6 +32,21 @@ class MyGrid(Grid):
     def render_title_td(self, title, abstract="", keywords=[], format=None, source="#"):
         return self.render_td(renderer="title_td", title=title, abstract=abstract, keywords=keywords, format=format, source=source)
 
+    def render_datetime_td(self, timestamp):
+        if timestamp is None:            
+            return HTML.td('')
+        mytimestamp = timestamp
+        if type(timestamp) is str:
+            mytimestamp = datetime_parser.parse(timestamp)
+        span_class = 'due-date badge'
+        
+        span = HTML.tag(
+            "span",
+            c=HTML.literal(mytimestamp.strftime('%Y-%m-%d %H:%M:%S')),
+            class_=span_class,
+        )
+        return HTML.td(span)
+
     def render_action_td(self, buttongroup=[]):
         return self.render_td(renderer="action_td", buttongroup=buttongroup)
 
@@ -136,18 +151,7 @@ class CatalogGrid(MyGrid):
             {'source': item['source'], 'span_class': span_class, 'format': format} )))
 
     def modified_td(self, col_num, i, item):
-        if item.get('modified') is None:
-            return HTML.td('')
-        span_class = 'due-date badge'
-        #if item.start_time:
-        #    span_class += ' badge-important'
-        creation_time = datetime_parser.parse(item.get('modified'))
-        span = HTML.tag(
-            "span",
-            c=HTML.literal(creation_time.strftime('%Y-%m-%d %H:%M:%S')),
-            class_=span_class,
-        )
-        return HTML.td(span)
+        return self.render_datetime_td(timestamp=item.get('modified'))
 
 
 

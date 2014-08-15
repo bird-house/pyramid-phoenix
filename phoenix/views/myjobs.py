@@ -99,18 +99,7 @@ class JobsGrid(MyGrid):
         self.column_formats[''] = self.action_td
 
     def creation_time_td(self, col_num, i, item):
-        if item.get('creation_time') is None:
-            return HTML.td('')
-        span_class = 'due-date badge'
-        #if item.start_time:
-        #    span_class += ' badge-important'
-        creation_time = localize_datetime(item.get('creation_time'), self.user_tz)
-        span = HTML.tag(
-            "span",
-            c=HTML.literal(creation_time.strftime('%Y-%m-%d %H:%M:%S')),
-            class_=span_class,
-        )
-        return HTML.td(span)
+        return self.render_datetime_td(item.get('creation_time'))
 
     def status_td(self, col_num, i, item):
         # TODO: status message is not updated by javascript
