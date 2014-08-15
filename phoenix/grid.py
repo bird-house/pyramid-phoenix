@@ -179,22 +179,5 @@ class CatalogSearchGrid(CatalogGrid):
         """)
         return HTML.td(HTML.literal(div.substitute({'identifier': item['identifier'], 'icon_class': icon_class} )))
 
-class CatalogSettingsGrid(CatalogGrid):
-    def __init__(self, request, *args, **kwargs):
-        super(CatalogSettingsGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats[''] = self.action_td
 
-    def action_td(self, col_num, i, item):
-        div = string.Template("""\
-        <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Action<span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <!-- dropdown menu links -->
-            <li><a class="edit" data-value="${identifier}"><i class="icon-pencil"></i> Edit</a></li>
-            <li><a class="delete" data-value="${identifier}"><i class="icon-trash"></i> Delete</a></li>
-          </ul>
-        </div>
-        """)
-        return HTML.td(HTML.literal(div.substitute({'identifier': item.get('identifier')} )))
-       
 

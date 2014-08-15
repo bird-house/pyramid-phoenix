@@ -5,13 +5,14 @@ from deform import Form, Button
 from deform import ValidationFailure
 
 from phoenix.views.settings import SettingsView
+from phoenix.grid import MyGrid
 
 import logging
 logger = logging.getLogger(__name__)
 
 class CatalogService(SettingsView):
     def __init__(self, request):
-        super(CatalogService, self).__init__(request, 'CSW Catalog Service')
+        super(CatalogService, self).__init__(request, 'Catalog Service')
         self.csw = self.request.csw
         self.description = "%s (%s)" % (self.csw.identification.title, self.csw.url)
         
@@ -104,7 +105,7 @@ class CatalogService(SettingsView):
 
     def breadcrumbs(self):
         breadcrumbs = super(CatalogService, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='catalog_settings', title="Catalog Service"))
+        breadcrumbs.append(dict(route_name='catalog_settings', title=self.title))
         return breadcrumbs
  
     @view_config(route_name="catalog_settings", renderer='phoenix:templates/settings/catalog.pt')
@@ -115,10 +116,9 @@ class CatalogService(SettingsView):
             return self.process_service_form(service_form)
         elif 'add_dataset' in self.request.POST:
             return self.process_dataset_form(dataset_form)
-        from phoenix.grid import CatalogSettingsGrid
         items = self.get_csw_items()
             
-        grid = CatalogSettingsGrid(
+        grid = CSWGrid(
                 self.request,
                 items,
                 ['title', 'creator', 'modified', 'format', ''],
@@ -129,3 +129,14 @@ class CatalogService(SettingsView):
             service_form=service_form.render(),
             dataset_form=dataset_form.render())
 
+class CSWGrid(MyGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(CSWGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats[''] = self.action_td
+
+    def action_td(self, col_num, i, item):
+        buttongroup = []
+        buttongroup.append( ("edit", item.get('identifier'), "icon-pencil", "Edit") )
+        buttongroup.append( ("delete", item.get('identifier'), "icon-trash", "Delete") )
+        return self.render_action_td(buttongroup)
+       
