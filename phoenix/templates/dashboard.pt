@@ -1,6 +1,15 @@
 <metal:block use-macro="main_template">
 
   <div metal:fill-slot="content">
+    
+    <ul class="nav nav-tabs">
+      <li class="active">
+	<a href="#">Jobs</a>
+      </li>
+      <li><a href="#">Users</a></li>
+      <li><a href="#">Processes</a></li>
+      <li><a href="#">Downloads</a></li>
+    </ul>
 
      <!-- row columns -->
      <div class="row">
