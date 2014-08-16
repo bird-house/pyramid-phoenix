@@ -54,6 +54,7 @@ class ExecuteProcess(MyView):
                 keywords = appstruct.get('keywords', ''))
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
+            self.session.flash("There are errors on this page.", queue='error')
             return dict(form = e.render())
         return HTTPFound(location=self.request.route_url('myjobs'))
 

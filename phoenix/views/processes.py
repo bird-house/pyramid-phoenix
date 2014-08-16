@@ -71,12 +71,8 @@ class Processes(MyView):
         if self.wps is not None:
             for process in self.wps.processes:
                 # TODO: sometime no abstract avail. Fix handling this in owslib
-                abstract = ''
-                if hasattr(process, 'abstract'):
-                    abstract = process.abstract
-                processVersion = ''
-                if hasattr(process, 'processVersion'):
-                    processVersion = process.processVersion
+                abstract = getattr(process, 'abstract', "")
+                processVersion = getattr(process, 'processVersion', "")
                 source = "%s?version=1.0.0&service=WPS&request=describeprocess&identifier=%s" % (self.wps.url, process.identifier)
                 items.append(dict(title=process.title,
                                   identifier=process.identifier,

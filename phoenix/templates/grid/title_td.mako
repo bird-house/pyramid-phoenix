@@ -1,3 +1,6 @@
+<% 
+from os.path import join 
+%>
 <div>
   <div>
     <b>${title}</b>
@@ -8,6 +11,11 @@
   <div>
     % for keyword in keywords:
     <a href="#" class="label label-info">${keyword}</a>
+    % endfor
+  </div>
+  <div>
+    % for datum in data:
+    <span class="label">${datum}</span>
     % endfor
   </div>
   % if format != None:

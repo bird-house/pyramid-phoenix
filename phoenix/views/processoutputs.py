@@ -113,6 +113,7 @@ class ProcessOutputs(MyView):
         items = []
         for output in self.process_outputs(self.session.get('jobid')):
             items.append(dict(title=output.title,
+                              abstract=getattr(output, 'abstract', ""),
                               identifier=output.identifier,
                               mime_type = output.mimeType,
                               data = output.data,
@@ -133,13 +134,10 @@ class ProcessOutputsGrid(MyGrid):
         self.exclude_ordering = ['data']
 
     def output_td(self, col_num, i, item):
-        from os.path import join
-        abstract = "Data: "
-        if item.get('reference') is not None:
-            abstract = "Reference: "
         return self.render_title_td(
             title=item.get('title'), 
-            abstract=abstract + ", ".join(item.get('data')),
+            abstract=item.get('abstract', ""),
+            data=item.get('data', []),
             format=item.get('mime_type'),
             source=item.get('reference'))
 
