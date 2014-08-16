@@ -33,7 +33,7 @@ $(function() {
         });
 
         if (finished == true) {
-            clearInterval(timerId);
+          clearInterval(timerId);
         }
       }
     );
@@ -51,7 +51,7 @@ $(function() {
       '/deleteall.job',
       {},
       function(json) {
-        location.reload()
+        location.reload();
       }
     );
   });
@@ -67,6 +67,7 @@ $(function() {
       {'jobid': jobid},
       function(json) {
         row.remove();
+	location.reload();
       }
     );
   });

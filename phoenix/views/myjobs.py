@@ -53,18 +53,23 @@ class MyJobs(MyView):
         jobs = list(self.db.jobs.find({'email': self.user_email(), 'is_complete':False}))
         for job in jobs:
             self.update_job(job)
+            
         return jobs
 
     @view_config(renderer='json', name='deleteall.job')
     def delete_all(self):
+        count = self.db.jobs.find({'email': self.user_email()}).count()
         self.db.jobs.remove({'email': self.user_email()})
+        self.session.flash("%d Jobs deleted." % count, queue='info')
         return {}
 
     @view_config(renderer='json', name='delete.job')
     def delete(self):
         jobid = self.request.params.get('jobid', None)
         if jobid is not None:
+            job = self.db.jobs.find_one({'identifier': jobid})
             self.db.jobs.remove({'identifier': jobid})
+            self.session.flash("Job %s deleted." % job['title'], queue='info')
         return {}
 
     def breadcrumbs(self):

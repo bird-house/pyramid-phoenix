@@ -60,7 +60,7 @@ class MyGrid(Grid):
             {'source': source, 'span_class': span_class, 'format': format} )))    
 
     def render_action_td(self, buttongroup=[]):
-        return self.render_td(renderer="action_td", buttongroup=buttongroup)
+        return self.render_td(renderer="button_td", buttongroup=buttongroup)
 
     def generate_header_link(self, column_number, column, label_text):
         """Override of the ObjectGrid to customize the headers. This is
