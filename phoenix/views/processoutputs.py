@@ -134,9 +134,12 @@ class ProcessOutputsGrid(MyGrid):
 
     def output_td(self, col_num, i, item):
         from os.path import join
+        abstract = "Data: "
+        if item.get('reference') is not None:
+            abstract = "Reference: "
         return self.render_title_td(
             title=item.get('title'), 
-            abstract="Values: " + ', '.join(item.get('data')),
+            abstract=abstract + ", ".join(item.get('data')),
             format=item.get('mime_type'),
             source=item.get('reference'))
 
@@ -151,8 +154,9 @@ class ProcessOutputsGrid(MyGrid):
 
     def action_td(self, col_num, i, item):
         buttongroup = []
-        buttongroup.append( ("publish", item.get('identifier'), "icon-th-list", "Publish") )
-        buttongroup.append( ("view", item.get('identifier'), "icon-eye-open", "View") )
-        buttongroup.append( ("mapit", item.get('identifier'), "icon-globe", "Show on Map") )
+        if item.get('reference') is not None:
+            buttongroup.append( ("publish", item.get('identifier'), "icon-share", "Publish") )
+            buttongroup.append( ("view", item.get('identifier'), "icon-eye-open", "View") )
+            buttongroup.append( ("mapit", item.get('identifier'), "icon-globe", "Show on Map") )
         return self.render_action_td(buttongroup)
 
