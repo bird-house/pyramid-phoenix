@@ -1,6 +1,3 @@
-<% 
-from os.path import join 
-%>
 <div>
   <div>
     <b>${title}</b>
@@ -20,7 +17,7 @@ from os.path import join
   </div>
   % if format != None:
   <div>
-    <a class="label label-warning" href="${source}">${format}</a>
+    <a class="label label-warning" href="${source}" target="_blank">${format}</a>
   </div>
   % endif
 </div> 

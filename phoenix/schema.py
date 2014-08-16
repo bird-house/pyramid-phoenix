@@ -209,6 +209,10 @@ class PublishSchema(colander.MappingSchema):
     @colander.deferred
     def deferred_default_creator(node, kw):
         return kw.get('email')
+
+    @colander.deferred
+    def deferred_default_format(node, kw):
+        return kw.get('format', "application/x-netcdf")
         
     identifier = colander.SchemaNode(
         colander.String(),
@@ -230,9 +234,8 @@ class PublishSchema(colander.MappingSchema):
         validator = colander.url)
     format = colander.SchemaNode(
         colander.String(),
-        default = 'application/x-netcdf',
+        default = deferred_default_format,
         description = 'Format of your source. Example: NetCDF',
-        widget = SelectWidget(values=[('application/x-netcdf', "NetCDF")]) 
         )
     subjects = colander.SchemaNode(
         colander.String(),

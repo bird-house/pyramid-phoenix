@@ -38,22 +38,24 @@ class ProcessOutputs(MyView):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
-
+            
+            # TODO: fix template loading and location
             from mako.template import Template
-            templ_dc = Template(filename=os.path.join(os.path.dirname(__file__), "templates", "dc.xml"))
+            from os.path import join, dirname
+            import phoenix
+            templ_dc = Template(filename=join(dirname(phoenix.__file__), "templates", "dc.xml"))
 
             record=templ_dc.render(**appstruct)
             self.request.csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
         except ValidationFailure, e:
             logger.exception('validation of publish form failed')
             return dict(form=e.render())
-        except:
-            msg = 'Publication failed.'
-            logger.exception(msg)
-            self.session.flash(msg, queue='error')
+        except Exception,e:
+            logger.exception("publication failed.")
+            self.session.flash("Publication failed. %s" % e, queue='error')
         else:
             self.session.flash("Publication was successful", queue='success')
-        return HTTPFound(location=self.request.route_url('output_details'))
+        return HTTPFound(location=self.request.route_url('process_outputs'))
 
     def process_outputs(self, jobid):
         from owslib.wps import WPSExecution
@@ -76,14 +78,14 @@ class ProcessOutputs(MyView):
         # TODO: why use session for joid?
         jobid = self.session.get('jobid')
         result = dict()
-        if identifier is not None:
+        if outputid is not None:
             output = self.process_output(jobid, outputid)
 
-            # TODO: who about schema.bind?
+            # TODO: how about schema.bind?
             result = dict(
                 identifier = uuid.uuid4().get_urn(),
                 title = output.title,
-                abstract = 'nix',
+                abstract = getattr(output, "abstract", ""),
                 creator = self.user_email(),
                 source = output.reference,
                 format = output.mimeType,

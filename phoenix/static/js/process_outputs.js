@@ -1,10 +1,5 @@
 $(function() {
 
-  // open reference in new window
-  $("a.reference").click(function( event ) {
-    $(this).attr('target', '_blank');
-  });
-  
   // Open publish form when publish is clicked
   $(".publish").button({
     text: false,
