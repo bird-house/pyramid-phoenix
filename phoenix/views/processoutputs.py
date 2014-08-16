@@ -121,16 +121,24 @@ class ProcessOutputs(MyView):
         grid = ProcessOutputsGrid(
                 self.request,
                 items,
-                ['identifier', 'title', 'data', 'reference', 'mime_type', ''],
+                ['output', ''],
             )
         return dict(grid=grid, items=items, form=form.render())
         
 class ProcessOutputsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(ProcessOutputsGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats['reference'] = self.reference_td
+        self.column_formats['output'] = self.output_td
         self.column_formats[''] = self.action_td
-        self.exclude_ordering = ['data', 'reference', 'action']
+        self.exclude_ordering = ['data']
+
+    def output_td(self, col_num, i, item):
+        from os.path import join
+        return self.render_title_td(
+            title=item.get('title'), 
+            abstract="Values: " + ', '.join(item.get('data')),
+            format=item.get('mime_type'),
+            source=item.get('reference'))
 
     def reference_td(self, col_num, i, item):
         from string import Template
