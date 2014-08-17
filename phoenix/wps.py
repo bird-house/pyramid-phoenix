@@ -9,7 +9,7 @@ import urllib2
 import json
 import types
 
-from owslib.wps import WebProcessingService
+from owslib.wps import WebProcessingService, monitorExecution
 
 from .widget import TagsWidget
 
@@ -98,10 +98,15 @@ def execute_restflow(wps, nodes):
     nodes_json = json.dumps(nodes)
 
     # generate url for workflow description
-    wf_url = build_request_url(
-        wps.url,
-        identifier='restflow_generate',
-        inputs=[('nodes', nodes_json)])
+    identifier='restflow_generate'
+    inputs=[('nodes', nodes_json)]
+    outputs=[('output', True)]
+    execution = wps.execute(identifier, inputs=inputs, output=outputs)
+    logger.debug('restflow generation, statusLocation=%s', execution.statusLocation)
+    monitorExecution(execution)
+    if not execution.isSucceded():
+        raise Exception("Generation of workflow description failed.")
+    wf_url = execution.processOutputs[0].reference
     logger.debug('wf url: %s', wf_url)
 
     # run workflow
