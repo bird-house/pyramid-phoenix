@@ -60,10 +60,26 @@ class ProcessOutputs(MyView):
         from owslib.wps import WPSExecution
         
         job = self.db.jobs.find_one({'identifier': jobid})
-        execution = WPSExecution(url=job['wps_url'])
+        execution = WPSExecution()
         execution.checkStatus(url=job['status_location'], sleepSecs=0)
         self.description = execution.process.title
-        return execution.processOutputs
+        outputs = []
+        outputs.extend(execution.processOutputs)
+        # TODO: dirty hack for workflows ... not save and needs refactoring
+        if job['workflow']:
+            import urllib
+            import json
+            wf_result_url = execution.processOutputs[0].reference
+            wf_result_json = json.load(urllib.urlopen(wf_result_url))
+            for url in wf_result_json['worker']:
+                execution = WPSExecution()
+                execution.checkStatus(url, sleepSecs=0)
+                outputs.extend(execution.processOutputs)
+            for url in wf_result_json['source']:
+                execution = WPSExecution()
+                execution.checkStatus(url, sleepSecs=0)
+                outputs.extend(execution.processOutputs)
+        return outputs
 
     def process_output(self, jobid, outputid):
         process_outputs = self.process_outputs(jobid)
