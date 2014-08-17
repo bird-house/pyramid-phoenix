@@ -72,8 +72,10 @@ def main(global_config, **settings):
     # routes 
     config.add_route('home', '/')
     config.add_route('dashboard', '/dashboard')
+    
+    # processes
     config.add_route('processes', '/processes')
-    config.add_route('execute_process', '/execute_process')
+    config.add_route('execute_process', '/processes/{identifier}/execute')
 
     # myjobs
     config.add_route('myjobs', '/myjobs')

@@ -15,7 +15,7 @@ class ExecuteProcess(MyView):
         super(ExecuteProcess, self).__init__(request, 'Execute')
 
         self.db = self.request.db
-        self.identifier = self.request.params.get('identifier', None)
+        self.identifier = self.request.matchdict.get('identifier')
 
         from owslib.wps import WebProcessingService
         
