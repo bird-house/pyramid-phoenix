@@ -5,7 +5,6 @@ from deform import Form, Button
 from deform import ValidationFailure
 
 from phoenix.views import MyView
-from phoenix.grid import MyGrid
 
 import logging
 logger = logging.getLogger(__name__)
@@ -128,6 +127,8 @@ class ProcessOutputs(MyView):
             )
         return dict(grid=grid, items=items, form=form.render())
         
+from phoenix.grid import MyGrid
+
 class ProcessOutputsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(ProcessOutputsGrid, self).__init__(request, *args, **kwargs)
@@ -155,8 +156,9 @@ class ProcessOutputsGrid(MyGrid):
     def action_td(self, col_num, i, item):
         buttongroup = []
         if item.get('reference') is not None:
-            buttongroup.append( ("publish", item.get('identifier'), "icon-share", "Publish") )
-            buttongroup.append( ("view", item.get('identifier'), "icon-eye-open", "View") )
-            buttongroup.append( ("mapit", item.get('identifier'), "icon-globe", "Show on Map") )
+            buttongroup.append( ("publish", item.get('identifier'), "icon-share", "Publish", "#") )
+            buttongroup.append( ("view", item.get('identifier'), "icon-eye-open", "View", 
+                                 item.get('reference', "#")) )
+            buttongroup.append( ("mapit", item.get('identifier'), "icon-globe", "Show on Map", "#") )
         return self.render_action_td(buttongroup)
 

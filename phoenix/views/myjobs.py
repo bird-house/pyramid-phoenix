@@ -1,15 +1,7 @@
 from pyramid.view import view_config, view_defaults
-
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
-from deform import Form, Button
-from deform import ValidationFailure
 
-from string import Template
-from webhelpers.html.builder import HTML
-
-from phoenix.grid import MyGrid
 from phoenix.views import MyView
-from phoenix.utils import localize_datetime
 
 import logging
 logger = logging.getLogger(__name__)
@@ -94,6 +86,10 @@ class MyJobs(MyView):
         return dict(grid=grid, items=items)
 
 
+from string import Template
+from webhelpers.html.builder import HTML
+from phoenix.grid import MyGrid
+
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
@@ -165,7 +161,7 @@ class JobsGrid(MyGrid):
    
     def action_td(self, col_num, i, item):
         buttongroup = []
-        buttongroup.append( ("show", item.get('identifier'), "icon-th-list", "Show Outputs") )
-        buttongroup.append( ("delete", item.get('identifier'), "icon-trash", "Delete") )
+        buttongroup.append( ("show", item.get('identifier'), "icon-th-list", "Show Outputs", "#") )
+        buttongroup.append( ("delete", item.get('identifier'), "icon-trash", "Delete", "#") )
         return self.render_action_td(buttongroup)
 

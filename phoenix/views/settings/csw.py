@@ -151,7 +151,7 @@ class CSWGrid(MyGrid):
 
     def action_td(self, col_num, i, item):
         buttongroup = []
-        buttongroup.append( ("edit", item.get('identifier'), "icon-pencil", "Edit") )
-        buttongroup.append( ("delete", item.get('identifier'), "icon-trash", "Delete") )
+        buttongroup.append( ("edit", item.get('identifier'), "icon-pencil", "Edit", "#") )
+        buttongroup.append( ("delete", item.get('identifier'), "icon-trash", "Delete", "#") )
         return self.render_action_td(buttongroup)
        

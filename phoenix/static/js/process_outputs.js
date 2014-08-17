@@ -12,7 +12,7 @@ $(function() {
         if (json) {
           form = $('#publish-form');
           
-          // Set the title to Edit
+          // Set the title
           form.find('h3').text('Publish to Catalog Service');
           $.each(json, function(k, v) {
             // Set the value for each field from the returned json

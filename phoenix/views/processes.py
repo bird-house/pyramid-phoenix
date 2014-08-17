@@ -110,7 +110,7 @@ class ProcessesGrid(MyGrid):
 
     def action_td(self, col_num, i, item):
         buttongroup = []
-        buttongroup.append( ("execute", item.get('identifier'), "icon-cog", "Execute") )
-        buttongroup.append( ("describe", item.get('identifier'), "icon-th-list", "Describe") )
+        buttongroup.append( ("execute", item.get('identifier'), "icon-cog", "Execute", "#") )
+        buttongroup.append( ("describe", item.get('identifier'), "icon-th-list", "Describe", "#") )
         return self.render_action_td(buttongroup)
     
