@@ -55,9 +55,9 @@ class MyJobs(MyView):
         self.session.flash("%d Jobs deleted." % count, queue='info')
         return {}
 
-    @view_config(renderer='json', name='delete.job')
-    def delete(self):
-        jobid = self.request.params.get('jobid', None)
+    @view_config(renderer='json', route_name='remove_myjob')
+    def remove(self):
+        jobid = self.request.matchdict.get('jobid')
         if jobid is not None:
             job = self.db.jobs.find_one({'identifier': jobid})
             self.db.jobs.remove({'identifier': jobid})
@@ -162,6 +162,6 @@ class JobsGrid(MyGrid):
     def action_td(self, col_num, i, item):
         buttongroup = []
         buttongroup.append( ("show", item.get('identifier'), "icon-th-list", "Show Outputs", "#") )
-        buttongroup.append( ("delete", item.get('identifier'), "icon-trash", "Delete", "#") )
+        buttongroup.append( ("remove", item.get('identifier'), "icon-trash", "Delete", "#") )
         return self.render_action_td(buttongroup)
 

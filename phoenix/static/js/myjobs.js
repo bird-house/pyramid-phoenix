@@ -56,18 +56,18 @@ $(function() {
     );
   });
 
-  // delete job
-  $(".delete").button({
+  // remove job
+  $(".remove").button({
     text: false,
   }).click(function( event ) {
     var jobid = $(this).attr('data-value');
     var row = $(this).closest('tr');
     $.getJSON(
-      '/delete.job',
-      {'jobid': jobid},
+      '/myjobs/'+jobid+'/remove.json',
+      {},
       function(json) {
         row.remove();
-	location.reload();
+	//location.reload();
       }
     );
   });
