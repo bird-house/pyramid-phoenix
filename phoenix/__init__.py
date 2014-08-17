@@ -95,7 +95,7 @@ def main(global_config, **settings):
     config.add_route('catalog_settings', '/settings/catalog')
     config.add_route('user_settings', '/settings/users')
     config.add_route('edit_user', '/settings/users/{email}/edit.json')
-    config.add_route('delete_user', '/settings/users/{email}/delete.json')
+    config.add_route('remove_user', '/settings/users/{email}/remove')
     config.add_route('activate_user', '/settings/users/{email}/activate.json')
     
     config.add_route('signin', '/signin')

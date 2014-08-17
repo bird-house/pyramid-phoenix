@@ -47,12 +47,13 @@ class Users(SettingsView):
             self.session.flash('Edit user failed. %s' % (e), queue="error")
         return HTTPFound(location=self.request.route_url('user_settings'))
 
-    @view_config(route_name='delete_user', renderer='json')
-    def delete(self):
+    @view_config(route_name='remove_user')
+    def remove(self):
         email = self.request.matchdict.get('email')
         if email is not None:
             self.userdb.remove(dict(email=email))
-        return {}
+            self.session.flash('User %s removed' % (email), queue="info")
+        return HTTPFound(location=self.request.route_url('user_settings'))
 
     @view_config(route_name='activate_user', renderer='json')
     def activate(self):
@@ -117,6 +118,7 @@ class UsersGrid(MyGrid):
 
     def action_td(self, col_num, i, item):
         buttongroup = []
-        buttongroup.append( ("edit", item.get('email'), "icon-pencil", "Edit", "#") )
-        buttongroup.append( ("delete", item.get('email'), "icon-trash", "Delete", "#") )
+        buttongroup.append( ("edit", item.get('email'), "icon-pencil", "Edit", "#"))
+        buttongroup.append( ("remove", item.get('email'), "icon-trash", "Remove", 
+                             self.request.route_url('remove_user', email=item.get('email'))) )
         return self.render_action_td(buttongroup)

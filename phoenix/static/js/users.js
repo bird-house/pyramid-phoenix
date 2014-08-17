@@ -1,19 +1,4 @@
 $(function() {
-  // delete user
-  $(".delete").button({
-    text:false,
-  }).click(function( event ) {
-    var email = $(this).attr('data-value');
-    var row = $(this).closest('tr');
-    $.getJSON(
-      '/settings/users/'+email+'/delete.json',
-      {'email': email},
-      function(json) {
-        row.remove();
-      }
-    );
-  });
-
   // Activate user
   $(".activate").button({
     text: false,
