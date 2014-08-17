@@ -40,7 +40,6 @@ class ExecuteProcess(MyView):
         controls = self.request.POST.items()
         try:
             appstruct = form.validate(controls)
-
             from phoenix.wps import execute
             execution = execute(self.wps, self.identifier, appstruct)
 

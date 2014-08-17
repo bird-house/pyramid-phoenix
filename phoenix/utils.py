@@ -25,7 +25,7 @@ def localize_datetime(dt, tz_name):
     tz_aware_dt = aware.astimezone(timezone)
     return tz_aware_dt
 
-    
+
     
 
 

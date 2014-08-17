@@ -640,7 +640,9 @@ class Done(Wizard):
             complex_input = 'source',
             output = ['output'],
             sources = self.sources())
-        worker_inputs = map(lambda x: str(x[0]) + '=' + str(x[1]),  self.wizard_state.get('literal_inputs').items())
+        from phoenix.wps import appstruct_to_inputs
+        inputs = appstruct_to_inputs(self.wizard_state.get('literal_inputs'))
+        worker_inputs = ['%s=%s' % (key, value) for key,value in inputs]
         worker = dict(
             service = self.wps.url,
             identifier = self.wizard_state.get('process_identifier'),
