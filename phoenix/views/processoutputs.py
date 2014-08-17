@@ -107,8 +107,9 @@ class ProcessOutputs(MyView):
             return self.process_form(form)
 
         # TODO: this is a bit fishy ...
-        if self.request.params.get('jobid') is not None:
-            self.session['jobid'] = self.request.params.get('jobid')
+        jobid = self.request.matchdict.get('jobid')
+        if jobid is not None:
+            self.session['jobid'] = jobid
             self.session.changed()
 
         items = []

@@ -44,13 +44,4 @@ $(function() {
     updateJobs();
   }, 1000); 
 
-  // show details
-  $(".show").button({
-    text: false,
-  }).click(function( event ) {
-    var jobid = $(this).attr('data-value');
-    // TODO: fix the call
-    window.location.href = "/process_outputs?jobid=" + jobid;
-  });
- 
 });
