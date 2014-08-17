@@ -113,7 +113,7 @@ def execute_restflow(wps, nodes):
     # run workflow
     identifier = 'restflow_run'
     inputs = [("workflow_description", wf_url)]
-    outputs = [("output",True), ("status_location", True), ("source_status_locations", True)]
+    outputs = [("output",True)]
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
     return execution
