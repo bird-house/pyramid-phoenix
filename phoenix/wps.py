@@ -96,6 +96,7 @@ def execute_sync(service_url, identifier, inputs=[], output='output', format=RAW
 def execute_restflow(wps, nodes):
     import json
     nodes_json = json.dumps(nodes)
+    logger.debug("nodes: %s", nodes_json)
 
     # generate url for workflow description
     identifier='restflow_generate'
@@ -112,7 +113,7 @@ def execute_restflow(wps, nodes):
     # run workflow
     identifier = 'restflow_run'
     inputs = [("workflow_description", wf_url)]
-    outputs = [("output",True)]
+    outputs = [("output",True), ("status_location", True), ("source_status_locations", True)]
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
 
     return execution
