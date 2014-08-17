@@ -7,7 +7,7 @@
   <div metal:fill-slot="content">
 
     <!-- Button to remove jobs -->
-    <a class="job-delete-all btn btn-danger" href="#" role="button">
+    <a class="remove-myjobs btn btn-danger" href="#" role="button">
       Remove all
     </a>
     <br/><br/>

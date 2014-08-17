@@ -74,7 +74,11 @@ def main(global_config, **settings):
     config.add_route('dashboard', '/dashboard')
     config.add_route('processes', '/processes')
     config.add_route('execute_process', '/execute_process')
+
+    # myjobs
     config.add_route('myjobs', '/myjobs')
+    config.add_route('remove_myjobs', '/myjobs/remove_all.json')
+
     config.add_route('process_outputs', '/process_outputs')
     config.add_route('map', '/map')
     config.add_route('myaccount', '/myaccount')

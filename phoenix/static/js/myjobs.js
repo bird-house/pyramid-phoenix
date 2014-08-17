@@ -45,10 +45,10 @@ $(function() {
   }, 1000); 
 
   // Delete all jobs
-  $("a.job-delete-all").click(function(e) {
+  $("a.remove-myjobs").click(function(e) {
     e.preventDefault();
     $.getJSON(
-      '/deleteall.job',
+      '/myjobs/remove_all.json',
       {},
       function(json) {
         location.reload();
