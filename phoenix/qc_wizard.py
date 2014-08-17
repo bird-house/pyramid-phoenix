@@ -112,6 +112,7 @@ def qc_wizard_check(request):
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
         models.add_job(
             request = request,
+            workflow = False,
             title = execution.process.title,
             wps_url = execution.serviceInstance,
             status_location = execution.statusLocation,
@@ -272,6 +273,7 @@ def qc_wizard_yaml(request):
         execution = wps.execute(identifier, inputs=inputs, output=outputs)
         models.add_job(
             request = request,
+            workflow = False,
             title = execution.process.title,
             wps_url = execution.serviceInstance,
             status_location = execution.statusLocation,

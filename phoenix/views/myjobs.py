@@ -81,7 +81,7 @@ class MyJobs(MyView):
         grid = JobsGrid(
                 self.request,
                 items,
-                ['title', 'status', 'creation_time', 'progress', ''],
+                ['title', 'workflow', 'status', 'creation_time', 'progress', ''],
             )
         return dict(grid=grid, items=items)
 
@@ -93,6 +93,7 @@ from phoenix.grid import MyGrid
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
+        #self.column_formats['workflow'] = self.workflow_td
         self.column_formats['creation_time'] = self.creation_time_td
         self.column_formats['status'] = self.status_td
         self.column_formats['title'] = self.title_td

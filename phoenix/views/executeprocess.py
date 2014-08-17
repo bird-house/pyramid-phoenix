@@ -46,6 +46,7 @@ class ExecuteProcess(MyView):
             from phoenix.models import add_job
             add_job(
                 request = self.request,
+                workflow = False,
                 title = execution.process.title,
                 wps_url = execution.serviceInstance,
                 status_location = execution.statusLocation,

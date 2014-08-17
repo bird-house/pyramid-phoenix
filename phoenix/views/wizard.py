@@ -665,6 +665,7 @@ class Done(Wizard):
         execution = self.execute_workflow(appstruct)
         models.add_job(
             request = self.request,
+            workflow = True,
             title = identifier,
             wps_url = execution.serviceInstance,
             status_location = execution.statusLocation,

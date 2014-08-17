@@ -27,7 +27,7 @@ def add_user(
     request.db.users.save(user)
     return request.db.users.find_one({'email':email})
 
-def add_job(request, title, wps_url, status_location, abstract=None, keywords=None):
+def add_job(request, title, wps_url, status_location, workflow=False, abstract=None, keywords=None):
     from pyramid.security import authenticated_userid
 
     logger.debug("add job: status_location=%s", status_location)
@@ -36,6 +36,7 @@ def add_job(request, title, wps_url, status_location, abstract=None, keywords=No
         # TODO: need job name ...
         #identifier = uuid.uuid4().get_urn(), # TODO: urn does not work as id in javascript
         identifier = uuid.uuid4().get_hex(),
+        workflow = workflow,
         title = title,
         abstract = abstract,
         # TODO: keywords must be a list
