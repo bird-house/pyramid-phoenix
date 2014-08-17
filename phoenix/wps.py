@@ -113,6 +113,7 @@ def execute_restflow(wps, nodes):
     return execution
 
 def appstruct_to_inputs(appstruct):
+    logger.debug('execute appstruct: %s', appstruct)
     inputs = []
     for key,values in appstruct.items():
         if key == 'keywords':
@@ -123,6 +124,7 @@ def appstruct_to_inputs(appstruct):
             values = [values]
         for value in values:
             inputs.append( (str(key).strip(), str(value).strip()) )
+    logger.debug('execute inputs: %s', inputs)
     return inputs
 
 def execute(wps, identifier, appstruct):
@@ -130,7 +132,7 @@ def execute(wps, identifier, appstruct):
     # TODO: handle upload with base64 enconding
     # TODO: handle bbox
     process = wps.describeprocess(identifier)
-
+    
     inputs = appstruct_to_inputs(appstruct)
     outputs = []
     for output in process.processOutputs:
