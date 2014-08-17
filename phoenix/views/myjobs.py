@@ -48,12 +48,12 @@ class MyJobs(MyView):
             
         return jobs
 
-    @view_config(renderer='json', route_name='remove_myjobs')
+    @view_config(route_name='remove_myjobs')
     def remove_all(self):
         count = self.db.jobs.find({'email': self.user_email()}).count()
         self.db.jobs.remove({'email': self.user_email()})
         self.session.flash("%d Jobs deleted." % count, queue='info')
-        return {}
+        return HTTPFound(location=self.request.route_url('myjobs'))
 
     @view_config(renderer='json', route_name='remove_myjob')
     def remove(self):

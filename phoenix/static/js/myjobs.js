@@ -44,18 +44,6 @@ $(function() {
     updateJobs();
   }, 1000); 
 
-  // Delete all jobs
-  $("a.remove-myjobs").click(function(e) {
-    e.preventDefault();
-    $.getJSON(
-      '/myjobs/remove_all.json',
-      {},
-      function(json) {
-        location.reload();
-      }
-    );
-  });
-
   // remove job
   $(".remove").button({
     text: false,
