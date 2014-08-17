@@ -136,7 +136,6 @@ class ProcessOutputsGrid(MyGrid):
         self.column_formats['output'] = self.output_td
         self.column_formats['preview'] = self.preview_td
         self.column_formats[''] = self.action_td
-        self.exclude_ordering = ['data']
 
     def output_td(self, col_num, i, item):
         return self.render_title_td(
