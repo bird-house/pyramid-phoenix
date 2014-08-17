@@ -77,8 +77,8 @@ def main(global_config, **settings):
 
     # myjobs
     config.add_route('myjobs', '/myjobs')
-    config.add_route('remove_myjobs', '/myjobs/remove_all.json')
-    config.add_route('remove_myjob', '/myjobs/{jobid}/remove.json')
+    config.add_route('remove_myjobs', '/myjobs/remove_all')
+    config.add_route('remove_myjob', '/myjobs/{jobid}/remove')
 
     config.add_route('process_outputs', '/process_outputs')
     config.add_route('map', '/map')

@@ -55,14 +55,14 @@ class MyJobs(MyView):
         self.session.flash("%d Jobs deleted." % count, queue='info')
         return HTTPFound(location=self.request.route_url('myjobs'))
 
-    @view_config(renderer='json', route_name='remove_myjob')
+    @view_config(route_name='remove_myjob')
     def remove(self):
         jobid = self.request.matchdict.get('jobid')
         if jobid is not None:
             job = self.db.jobs.find_one({'identifier': jobid})
             self.db.jobs.remove({'identifier': jobid})
             self.session.flash("Job %s deleted." % job['title'], queue='info')
-        return {}
+        return HTTPFound(location=self.request.route_url('myjobs'))
 
     def breadcrumbs(self):
         breadcrumbs = super(MyJobs, self).breadcrumbs()
@@ -162,6 +162,7 @@ class JobsGrid(MyGrid):
     def action_td(self, col_num, i, item):
         buttongroup = []
         buttongroup.append( ("show", item.get('identifier'), "icon-th-list", "Show Outputs", "#") )
-        buttongroup.append( ("remove", item.get('identifier'), "icon-trash", "Delete", "#") )
+        buttongroup.append( ("remove", item.get('identifier'), "icon-trash", "Remove", 
+                             self.request.route_url('remove_myjob', jobid=item.get('identifier'))) )
         return self.render_action_td(buttongroup)
 

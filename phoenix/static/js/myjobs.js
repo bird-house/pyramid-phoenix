@@ -44,22 +44,6 @@ $(function() {
     updateJobs();
   }, 1000); 
 
-  // remove job
-  $(".remove").button({
-    text: false,
-  }).click(function( event ) {
-    var jobid = $(this).attr('data-value');
-    var row = $(this).closest('tr');
-    $.getJSON(
-      '/myjobs/'+jobid+'/remove.json',
-      {},
-      function(json) {
-        row.remove();
-	//location.reload();
-      }
-    );
-  });
- 
   // show details
   $(".show").button({
     text: false,
