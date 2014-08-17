@@ -1,20 +1,8 @@
 import types
-import markupsafe
 import urllib2
-from pyramid.security import authenticated_userid
 
 import logging
 logger = logging.getLogger(__name__)
-
-SIGNIN_HTML = '<a href="/signin"><i class="icon-user"></i> Sign in</a>'
-SIGNOUT_HTML = '<a href="/logout" id="signout" title="Logout %s"><i class="icon-off"></i> Sign out</a>'
-
-def button(request):
-    """If the user is logged in, returns the logout button, otherwise returns the login button"""
-    if not authenticated_userid(request):
-        return markupsafe.Markup(SIGNIN_HTML)
-    else:
-        return markupsafe.Markup(SIGNOUT_HTML) % (authenticated_userid(request))
 
 def quote_wps_params(params):
     return map(lambda(item): ( item[0], urllib2.quote(str(item[1])).decode('utf8') ), params)

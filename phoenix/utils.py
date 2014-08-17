@@ -1,3 +1,18 @@
+import logging
+logger = logging.getLogger(__name__)
+
+SIGNIN_HTML = '<a href="/signin"><i class="icon-user"></i> Sign in</a>'
+SIGNOUT_HTML = '<a href="/logout" id="signout" title="Logout %s"><i class="icon-off"></i> Sign out</a>'
+
+def button(request):
+    """If the user is logged in, returns the logout button, otherwise returns the login button"""
+    import markupsafe
+    from pyramid.security import authenticated_userid
+    if not authenticated_userid(request):
+        return markupsafe.Markup(SIGNIN_HTML)
+    else:
+        return markupsafe.Markup(SIGNOUT_HTML) % (authenticated_userid(request))
+
 
 def localize_datetime(dt, tz_name):
     """Provide a timzeone-aware object for a given datetime and timezone name
@@ -10,22 +25,6 @@ def localize_datetime(dt, tz_name):
     tz_aware_dt = aware.astimezone(timezone)
     return tz_aware_dt
 
-def wps_wget_url(wps_url, cert_url, file_url):
-    req_url = "{wps_url}?" +\
-    "request=Execute" +\
-    "&service=WPS" +\
-    "&version=1.0.0" +\
-    "&identifier={identifier}" +\
-    "&DataInputs={inputs}" +\
-    "&RawDataOutput={outputs};mimeType=application/x-netcdf"
-
-    import urllib
-    url = req_url.format(
-        wps_url=wps_url,
-        identifier="esgf_wget", 
-        inputs="credentials=%s;file_identifier=%s" % (urllib.quote(cert_url), urllib.quote(file_url)),
-        outputs="output")
-    print url  
     
     
 
