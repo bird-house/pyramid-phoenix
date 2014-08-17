@@ -53,7 +53,7 @@ def dashboard_users(context, request):
 @panel_config(name='dashboard_jobs', renderer='phoenix:templates/panels/dashboard_jobs.pt')
 def dashboard_jobs(context, request):
     return dict(total = request.db.jobs.count(),
-                running = request.db.jobs.find({"is_complete": False}).count(),
+                started = request.db.jobs.find({"is_complete": False}).count(),
                 failed = request.db.jobs.find({"is_complete": True, "is_succeded": False}).count(),
                 succeded = request.db.jobs.find({"is_succeded": True}).count())
 
