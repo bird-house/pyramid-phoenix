@@ -112,6 +112,6 @@ class ProcessesGrid(MyGrid):
         buttongroup = []
         buttongroup.append( ("execute", item.get('identifier'), "icon-cog", "Execute", 
                              self.request.route_url('execute_process', identifier=item.get('identifier'))) )
-        buttongroup.append( ("describe", item.get('identifier'), "icon-th-list", "Describe", "#") )
+        #buttongroup.append( ("describe", item.get('identifier'), "icon-th-list", "Describe", "#") )
         return self.render_action_td(buttongroup)
     

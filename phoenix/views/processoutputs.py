@@ -124,7 +124,7 @@ class ProcessOutputs(MyView):
         grid = ProcessOutputsGrid(
                 self.request,
                 items,
-                ['output', ''],
+                ['output', 'preview', ''],
             )
         return dict(grid=grid, items=items, form=form.render())
         
@@ -134,6 +134,7 @@ class ProcessOutputsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(ProcessOutputsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['output'] = self.output_td
+        self.column_formats['preview'] = self.preview_td
         self.column_formats[''] = self.action_td
         self.exclude_ordering = ['data']
 
@@ -145,14 +146,8 @@ class ProcessOutputsGrid(MyGrid):
             format=item.get('mime_type'),
             source=item.get('reference'))
 
-    def reference_td(self, col_num, i, item):
-        from string import Template
-        from webhelpers.html.builder import HTML
-
-        anchor = Template("""\
-        <a class="reference" href="${reference}"><i class="icon-download"></i></a>
-        """)
-        return HTML.td(HTML.literal(anchor.substitute( {'reference': item.get('reference')} )))
+    def preview_td(self, col_num, i, item):
+        return self.render_preview_td(format=item.get('mime_type'), source=item.get('reference'))
 
     def action_td(self, col_num, i, item):
         buttongroup = []
