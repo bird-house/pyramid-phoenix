@@ -12,8 +12,11 @@ class Dashboard(MyView):
 
     @view_config(route_name='dashboard', renderer='phoenix:templates/dashboard.pt')
     def view(self):
-        lm = self.request.layout_manager
-        lm.layout.add_heading('dashboard_users')
-        lm.layout.add_heading('dashboard_jobs')
+        tab = self.request.matchdict.get('tab', 'jobs')
 
-        return dict()
+        lm = self.request.layout_manager
+        if tab == 'jobs':
+             lm.layout.add_heading('dashboard_jobs')
+        elif tab == 'users':
+            lm.layout.add_heading('dashboard_users')
+        return dict(active=tab)

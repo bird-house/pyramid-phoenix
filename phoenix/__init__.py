@@ -71,7 +71,9 @@ def main(global_config, **settings):
 
     # routes 
     config.add_route('home', '/')
-    config.add_route('dashboard', '/dashboard')
+
+    # dashboard
+    config.add_route('dashboard', '/dashboard/{tab}')
     
     # processes
     config.add_route('processes', '/processes')
