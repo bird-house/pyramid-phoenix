@@ -125,7 +125,9 @@ class CatalogService(SettingsView):
                 items,
                 ['title', 'creator', 'modified', 'format', ''],
             )
+        self.csw.getrecords(maxrecords=0)
         return dict(
+            datasets_found=self.csw.results.get('matches'),
             grid=grid,
             items=items,
             service_form=service_form.render(),

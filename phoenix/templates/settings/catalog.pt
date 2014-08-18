@@ -12,7 +12,7 @@
     </a>
 
     <div>
-      <h2>42 Datasets found</h2>
+      <h2>${datasets_found} Datasets found</h2>
     </div>
 
     <br/><br />
