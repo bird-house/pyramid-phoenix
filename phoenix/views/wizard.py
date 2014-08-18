@@ -704,7 +704,7 @@ class Done(Wizard):
         models.add_job(
             request = self.request,
             workflow = True,
-            title = appstruct.get('title', identifier),
+            title = appstruct.get('title'),
             wps_url = execution.serviceInstance,
             status_location = execution.statusLocation,
             abstract = appstruct.get('abstract'),
@@ -720,7 +720,11 @@ class Done(Wizard):
         return HTTPFound(location=self.request.route_url('myjobs'))
 
     def appstruct(self):
-        return self.wizard_state.get('done', {})
+        default = dict(
+            title=self.wizard_state.get('process_identifier'),
+            abstract=self.wizard_state.get('literal_inputs'),
+            keywords="test")
+        return self.wizard_state.get('done', default)
 
     def breadcrumbs(self):
         breadcrumbs = super(Done, self).breadcrumbs()
