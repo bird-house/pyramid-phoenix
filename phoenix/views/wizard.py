@@ -675,15 +675,12 @@ class CheckParameters(Wizard):
         super(CheckParameters, self).__init__(
             request,
             "Check Parameters",
-            "",
-            readonly=False)
+            "")
         self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
         self.process = self.wps.describeprocess(self.wizard_state.get('process_identifier'))
         self.description = "Process %s" % self.process.title
 
     def schema(self):
-        #from phoenix.wps import WPSSchema
-        #return WPSSchema(info=False, hide_complex=False, process = self.process)
         from phoenix.schema import NoSchema
         return NoSchema()
 
@@ -704,9 +701,35 @@ class CheckParameters(Wizard):
         breadcrumbs.append(dict(route_name='wizard_check_parameters', title=self.title))
         return breadcrumbs
 
-    @view_config(route_name='wizard_check_parameters', renderer='phoenix:templates/wizard/default.pt')
+    def custom_view(self):
+        items = []
+        for identifier, value in self.wizard_state.get('literal_inputs').items():
+            items.append(dict(title=identifier, value=value))
+        identifier=self.wizard_state.get('complex_input_identifier')
+        items.append(dict(title=identifier, format="application/x-netcdf", value=[]))
+        grid = CheckParametersGrid(
+                self.request,
+                items,
+                ['input', 'value'],
+            )
+        return dict(grid=grid)
+
+    @view_config(route_name='wizard_check_parameters', renderer='phoenix:templates/wizard/check.pt')
     def view(self):
         return super(CheckParameters, self).view()
+        
+from phoenix.grid import MyGrid
+
+class CheckParametersGrid(MyGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(CheckParametersGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['input'] = self.input_td
+
+    def input_td(self, col_num, i, item):
+        return self.render_title_td(
+            title=item.get('title'),
+            format=item.get('format')
+            )
 
 class Done(Wizard):
     def __init__(self, request):
