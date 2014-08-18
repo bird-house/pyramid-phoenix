@@ -60,10 +60,11 @@ class WizardState(object):
 
 @view_defaults(permission='view', layout='default')
 class Wizard(MyView):
-    def __init__(self, request, title, description=None):
+    def __init__(self, request, title, description=None, readonly=False):
         super(Wizard, self).__init__(request, title, description)
         self.csw = self.request.csw
         self.wizard_state = WizardState(self.session, 'wizard_wps')
+        self.readonly = readonly
         
     def buttons(self):
         prev_disabled = not self.prev_ok()
@@ -178,7 +179,7 @@ class Wizard(MyView):
             return self.cancel()
         
         custom = self.custom_view()    
-        result = dict(form=form.render(self.appstruct()))
+        result = dict(form=form.render(self.appstruct(), readonly=self.readonly))
 
         # custom overwrites result
         return dict(result, **custom)
@@ -374,7 +375,7 @@ class CatalogSearch(Wizard):
 
     def next_success(self, appstruct):
         self.success(appstruct)
-        return self.next('wizard_done')
+        return self.next('wizard_check_parameters')
 
     def search_csw(self, query=''):
         keywords = [k for k in map(str.strip, str(query).split(' ')) if len(k)>0]
@@ -591,7 +592,7 @@ class ESGFCredentials(Wizard):
         
     def next_success(self, appstruct):
         self.success(appstruct)
-        return self.next('wizard_done')
+        return self.next('wizard_check_parameters')
         
     def appstruct(self):
         return dict(
@@ -607,12 +608,50 @@ class ESGFCredentials(Wizard):
     def view(self):
         return super(ESGFCredentials, self).view()
 
+class CheckParameters(Wizard):
+    def __init__(self, request):
+        super(CheckParameters, self).__init__(
+            request,
+            "Check Parameters",
+            "",
+            readonly=False)
+        self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
+        self.process = self.wps.describeprocess(self.wizard_state.get('process_identifier'))
+        self.description = "Process %s" % self.process.title
+
+    def schema(self):
+        #from phoenix.wps import WPSSchema
+        #return WPSSchema(info=False, hide_complex=False, process = self.process)
+        from phoenix.schema import NoSchema
+        return NoSchema()
+
+    def success(self, appstruct):
+        pass
+
+    def previous_success(self, appstruct):
+        return self.previous()
+        
+    def next_success(self, appstruct):
+        return self.next('wizard_done')
+        
+    def appstruct(self):
+        return dict(identifier=self.wizard_state.get('complex_input_identifier'))
+
+    def breadcrumbs(self):
+        breadcrumbs = super(CheckParameters, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='wizard_check_parameters', title=self.title))
+        return breadcrumbs
+
+    @view_config(route_name='wizard_check_parameters', renderer='phoenix:templates/wizard/default.pt')
+    def view(self):
+        return super(CheckParameters, self).view()
+
 class Done(Wizard):
     def __init__(self, request):
         super(Done, self).__init__(
             request,
             "Done",
-            "Check Parameters and start WPS Process")
+            "Describe your Job and start Workflow.")
         self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
         self.csw = self.request.csw
 

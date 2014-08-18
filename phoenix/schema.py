@@ -16,6 +16,9 @@ from .widget import (
 import logging
 logger = logging.getLogger(__name__)
 
+class NoSchema(colander.MappingSchema):
+    pass
+
 class CredentialsSchema(colander.MappingSchema):
     """
     ESGF user credentials schema
