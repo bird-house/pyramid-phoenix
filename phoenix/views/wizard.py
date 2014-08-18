@@ -657,7 +657,10 @@ class Done(Wizard):
 
     def schema(self):
         from phoenix.schema import JobSchema
-        return JobSchema()
+        return JobSchema().bind(
+            title=self.wizard_state.get('process_identifier'),
+            abstract=self.wizard_state.get('literal_inputs'),
+            keywords="test")
 
     def sources(self):
         sources = []
@@ -720,11 +723,7 @@ class Done(Wizard):
         return HTTPFound(location=self.request.route_url('myjobs'))
 
     def appstruct(self):
-        default = dict(
-            title=self.wizard_state.get('process_identifier'),
-            abstract=self.wizard_state.get('literal_inputs'),
-            keywords="test")
-        return self.wizard_state.get('done', default)
+        return self.wizard_state.get('done', {})
 
     def breadcrumbs(self):
         breadcrumbs = super(Done, self).breadcrumbs()

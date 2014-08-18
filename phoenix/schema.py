@@ -186,23 +186,31 @@ class CatalogSearchSchema(colander.MappingSchema):
     pass
     
 class JobSchema(colander.MappingSchema):
+    @colander.deferred
+    def deferred_title(node, kw):
+        return kw.get('title', 'test-job')
+
+    @colander.deferred
+    def deferred_abstract(node, kw):
+        return kw.get('abstract', 'test')
+
+    @colander.deferred
+    def deferred_keywords(node, kw):
+        return kw.get('keywords', 'test')
+    
     title = colander.SchemaNode(
         colander.String(),
-        default = 'test-job',
-        missing = 'test-job')
+        default = deferred_title)
     
     abstract = colander.SchemaNode(
         colander.String(),
-        name = 'abstract',
-        default = 'test',
-        missing = 'test',
+        default = deferred_abstract,
         validator = colander.Length(max=150),
         widget = TextAreaWidget(rows=2, cols=80))
     
     keywords = colander.SchemaNode(
         colander.String(),
-        default = 'test',
-        missing = 'test',
+        default = deferred_keywords,
         widget = TagsWidget())
 
 class CatalogAddServiceSchema(colander.MappingSchema):
