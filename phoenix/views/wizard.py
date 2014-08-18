@@ -15,13 +15,40 @@ from phoenix.exceptions import MyProxyLogonFailure
 import logging
 logger = logging.getLogger(__name__)
 
+class WizardFavorite(object):
+    session_name = "wizard_favorite"
+    
+    def __init__(self, session):
+        self.session = session
+        if not self.session_name in self.session:
+            self.clear()
+            
+    def get(self, key, default=None):
+        return self.session[self.session_name].get(key)
+
+    def names(self):
+        return self.session[self.session_name].keys()
+
+    def set(self, key, value):
+        self.session[self.session_name][key] = value
+        self.session.changed()
+        
+    def clear(self):
+        self.session[self.session_name] = {'No Favorite': {},}
+        self.session.changed()
+
 class WizardState(object):
-    def __init__(self, session, initial_step, final_step='wizard_done'):
+    def __init__(self, session, initial_step='wizard', final_step='wizard_done'):
         self.session = session
         self.initial_step = initial_step
         self.final_step = final_step
         if not 'wizard' in self.session:
             self.clear()
+
+    def load(self, state):
+        self.clear()
+        #self.session['wizard'] = state
+        self.session.changed()
             
     def current_step(self):
         step = self.initial_step
@@ -63,7 +90,8 @@ class Wizard(MyView):
     def __init__(self, request, title, description=None, readonly=False):
         super(Wizard, self).__init__(request, title, description)
         self.csw = self.request.csw
-        self.wizard_state = WizardState(self.session, 'wizard')
+        self.wizard_state = WizardState(self.session)
+        self.favorite = WizardFavorite(self.session)
         self.readonly = readonly
         
     def buttons(self):
@@ -188,12 +216,15 @@ class StartWizard(Wizard):
     def __init__(self, request):
         super(StartWizard, self).__init__(request, 'Wizard')
         self.description = "Choose Favorite or None."
+        self.wizard_state.clear()
 
     def schema(self):
         from phoenix.schema import WizardSchema
-        return WizardSchema().bind()
+        return WizardSchema().bind(favorites=self.favorite.names())
 
     def success(self, appstruct):
+        favorite_state = self.favorite.get(appstruct.get('favorite', 'None'))
+        self.wizard_state.load(favorite_state)
         self.wizard_state.set('wizard', appstruct)
 
     def previous_success(self, appstruct):
@@ -730,7 +761,9 @@ class Done(Wizard):
 
     def success(self, appstruct):
         self.wizard_state.set('done', appstruct)
-        identifier = self.wizard_state.get('process_identifier')
+        logger.debug("appstruct %s", appstruct)
+        if appstruct.get('is_favorite', False):
+            self.favorite.set(appstruct.get('favorite_name', 'unknown'), {})
         
         execution = self.execute_workflow(appstruct)
         models.add_job(

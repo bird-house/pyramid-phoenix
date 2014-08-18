@@ -100,7 +100,7 @@ class MyAccountSchema(colander.MappingSchema):
 class WizardSchema(colander.MappingSchema):
     @colander.deferred
     def deferred_favorite_widget(node, kw):
-        favorites = kw.get('favorites', ['None'])
+        favorites = kw.get('favorites', ['No Favorite'])
         choices = [(item, item) for item in favorites]
         return SelectWidget(values = choices)
 
