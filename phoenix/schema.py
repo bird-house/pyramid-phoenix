@@ -97,16 +97,27 @@ class MyAccountSchema(colander.MappingSchema):
         widget = TextInputWidget(template='readonly/textinput'),
         )
 
-@colander.deferred
-def deferred_wps_list_widget(node, kw):
-    wps_list = kw.get('wps_list', [])
-    choices = []
-    for wps in wps_list:
-        title = "%s (%s) [%s]" % (wps.get('title'), wps.get('abstract'), wps.get('source'))
-        choices.append((wps.get('source'), title))
-    return RadioChoiceWidget(values = choices)
+class WizardSchema(colander.MappingSchema):
+    @colander.deferred
+    def deferred_favorite_widget(node, kw):
+        favorites = kw.get('favorites', ['None'])
+        choices = [(item, item) for item in favorites]
+        return SelectWidget(values = choices)
+
+    favorite = colander.SchemaNode(
+        colander.String(),
+        widget = deferred_favorite_widget)
 
 class ChooseWPSSchema(colander.MappingSchema):
+    @colander.deferred
+    def deferred_wps_list_widget(node, kw):
+        wps_list = kw.get('wps_list', [])
+        choices = []
+        for wps in wps_list:
+            title = "%s (%s) [%s]" % (wps.get('title'), wps.get('abstract'), wps.get('source'))
+            choices.append((wps.get('source'), title))
+        return RadioChoiceWidget(values = choices)
+    
     url = colander.SchemaNode(
         colander.String(),
         title = 'WPS service',

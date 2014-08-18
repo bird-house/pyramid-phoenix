@@ -110,6 +110,7 @@ def main(global_config, **settings):
     config.add_route('register', '/register')
 
     # wizard
+    config.add_route('wizard', '/wizard/start')
     config.add_route('wizard_wps', '/wizard/wps')
     config.add_route('wizard_process', '/wizard/process')
     config.add_route('wizard_literal_inputs', '/wizard/literal_inputs')

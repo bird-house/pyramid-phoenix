@@ -63,7 +63,7 @@ class Wizard(MyView):
     def __init__(self, request, title, description=None, readonly=False):
         super(Wizard, self).__init__(request, title, description)
         self.csw = self.request.csw
-        self.wizard_state = WizardState(self.session, 'wizard_wps')
+        self.wizard_state = WizardState(self.session, 'wizard')
         self.readonly = readonly
         
     def buttons(self):
@@ -184,9 +184,37 @@ class Wizard(MyView):
         # custom overwrites result
         return dict(result, **custom)
 
+class StartWizard(Wizard):
+    def __init__(self, request):
+        super(StartWizard, self).__init__(request, 'Wizard')
+        self.description = "Choose Favorite or None."
+
+    def schema(self):
+        from phoenix.schema import WizardSchema
+        return WizardSchema().bind()
+
+    def success(self, appstruct):
+        self.wizard_state.set('wizard', appstruct)
+
+    def previous_success(self, appstruct):
+        self.success(appstruct)
+        return self.previous()
+
+    def next_success(self, appstruct):
+        self.success(appstruct)
+        return self.next('wizard_wps')
+
+    def appstruct(self):
+        return self.wizard_state.get('wizard', {})
+
+    @view_config(route_name='wizard', renderer='phoenix:templates/wizard/default.pt')
+    def view(self):
+        return super(StartWizard, self).view()
+
 class ChooseWPS(Wizard):
     def __init__(self, request):
-        super(ChooseWPS, self).__init__(request, 'Choose WPS')
+        super(ChooseWPS, self).__init__(request, 'WPS')
+        self.description = "Choose Web Processing Service"
 
     def schema(self):
         from phoenix.schema import ChooseWPSSchema
