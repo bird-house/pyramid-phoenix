@@ -79,6 +79,9 @@ http://deform.readthedocs.org/en/latest/interfaces.html
 Bugs
 ----
 
+* phoenix: enter "!" in text field breaks wps execution
+  seams to be an owslib wps bug, need test case
+* IE (at least some versions) do not work with Phoenix (pyramid framework)
 * does not automatically add phoenix.socket in /var/run/phoenix (phoenix folder is missing)
 Workaround: use /tmp/phoenix.socket
 * owslib wps uses literaldata for inline complexdata ...

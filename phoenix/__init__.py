@@ -97,6 +97,8 @@ def main(global_config, **settings):
     config.add_route('edit_user', '/settings/users/{email}/edit.json')
     config.add_route('remove_user', '/settings/users/{email}/remove')
     config.add_route('activate_user', '/settings/users/{email}/activate.json')
+    config.add_route('job_settings', '/settings/jobs')
+    config.add_route('remove_all_jobs', '/settings/jobs/remove_all')
     
     config.add_route('signin', '/signin')
     config.add_route('logout', '/logout')
