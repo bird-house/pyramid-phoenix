@@ -185,8 +185,25 @@ class ESGFFilesSchema(colander.MappingSchema):
 class CatalogSearchSchema(colander.MappingSchema):
     pass
     
-class DoneSchema(colander.MappingSchema):
-    pass
+class JobSchema(colander.MappingSchema):
+    title = colander.SchemaNode(
+        colander.String(),
+        default = 'test-job',
+        missing = 'test-job')
+    
+    abstract = colander.SchemaNode(
+        colander.String(),
+        name = 'abstract',
+        default = 'test',
+        missing = 'test',
+        validator = colander.Length(max=150),
+        widget = TextAreaWidget(rows=2, cols=80))
+    
+    keywords = colander.SchemaNode(
+        colander.String(),
+        default = 'test',
+        missing = 'test',
+        widget = TagsWidget())
 
 class CatalogAddServiceSchema(colander.MappingSchema):
     url = colander.SchemaNode(

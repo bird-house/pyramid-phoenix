@@ -255,7 +255,7 @@ class LiteralInputs(Wizard):
 
     def schema(self):
         from phoenix.wps import WPSSchema
-        return WPSSchema(info=True, hide_complex=True, process = self.process)
+        return WPSSchema(info=False, hide_complex=True, process = self.process)
 
     def success(self, appstruct):
         self.wizard_state.set('literal_inputs', appstruct)
@@ -656,8 +656,8 @@ class Done(Wizard):
         self.csw = self.request.csw
 
     def schema(self):
-        from phoenix.schema import DoneSchema
-        return DoneSchema()
+        from phoenix.schema import JobSchema
+        return JobSchema()
 
     def sources(self):
         sources = []
@@ -697,27 +697,30 @@ class Done(Wizard):
         return execute_restflow(self.request.wps, nodes)
 
     def success(self, appstruct):
+        self.wizard_state.set('done', appstruct)
         identifier = self.wizard_state.get('process_identifier')
-        abstract = self.wizard_state.get('literal_inputs')['abstract']
-        keywords = self.wizard_state.get('literal_inputs')['keywords']
         
         execution = self.execute_workflow(appstruct)
         models.add_job(
             request = self.request,
             workflow = True,
-            title = identifier,
+            title = appstruct.get('title', identifier),
             wps_url = execution.serviceInstance,
             status_location = execution.statusLocation,
-            abstract = abstract,
-            keywords = keywords)
+            abstract = appstruct.get('abstract'),
+            keywords = appstruct.get('keywords'))
 
     def previous_success(self, appstruct):
+        self.success(appstruct)
         return self.previous()
     
     def next_success(self, appstruct):
         self.success(appstruct)
         self.wizard_state.clear()
         return HTTPFound(location=self.request.route_url('myjobs'))
+
+    def appstruct(self):
+        return self.wizard_state.get('done', {})
 
     def breadcrumbs(self):
         breadcrumbs = super(Done, self).breadcrumbs()
