@@ -33,7 +33,7 @@ class ProcessOutputs(MyView):
             buttons=('publish',),
             formid=formid)
 
-    def process_form(self, form):
+    def process_form(self, form, jobid):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
@@ -54,47 +54,45 @@ class ProcessOutputs(MyView):
             self.session.flash("Publication failed. %s" % e, queue='error')
         else:
             self.session.flash("Publication was successful", queue='success')
-        return HTTPFound(location=self.request.route_url('process_outputs'))
+        return HTTPFound(location=self.request.route_url('process_outputs', jobid=jobid))
+
+    def collect_outputs(self, status_location):
+        from owslib.wps import WPSExecution
+        execution = WPSExecution()
+        execution.checkStatus(url=status_location, sleepSecs=0)
+        outputs = {}
+        for output in execution.processOutputs:
+            oid = "%s.%s" %( execution.process.identifier, output.identifier)
+            outputs[oid] = output
+        return outputs
 
     def process_outputs(self, jobid):
-        from owslib.wps import WPSExecution
-        
         job = self.db.jobs.find_one({'identifier': jobid})
+        outputs = self.collect_outputs(job['status_location'])
+        # TODO: dirty hack for workflows ... not save and needs refactoring
+        from owslib.wps import WPSExecution
         execution = WPSExecution()
         execution.checkStatus(url=job['status_location'], sleepSecs=0)
-        self.description = execution.process.title
-        outputs = []
-        outputs.extend(execution.processOutputs)
-        # TODO: dirty hack for workflows ... not save and needs refactoring
         if job['workflow']:
             import urllib
             import json
             wf_result_url = execution.processOutputs[0].reference
             wf_result_json = json.load(urllib.urlopen(wf_result_url))
             for url in wf_result_json['worker']:
-                execution = WPSExecution()
-                execution.checkStatus(url, sleepSecs=0)
-                outputs.extend(execution.processOutputs)
+                outputs.update( self.collect_outputs(url) )
             for url in wf_result_json['source']:
-                execution = WPSExecution()
-                execution.checkStatus(url, sleepSecs=0)
-                outputs.extend(execution.processOutputs)
+                outputs.update( self.collect_outputs(url) )
         return outputs
-
-    def process_output(self, jobid, outputid):
-        process_outputs = self.process_outputs(jobid)
-        output = next(o for o in process_outputs if o.identifier == outputid)
-        return output
-    
+ 
     @view_config(renderer='json', name='publish.output')
     def publish(self):
         import uuid
         outputid = self.request.params.get('outputid')
-        # TODO: why use session for joid?
+        # TODO: why use session for jobid?
         jobid = self.session.get('jobid')
         result = dict()
         if outputid is not None:
-            output = self.process_output(jobid, outputid)
+            output = self.process_outputs(jobid).get(outputid)
 
             # TODO: how about schema.bind?
             result = dict(
@@ -119,24 +117,24 @@ class ProcessOutputs(MyView):
     def view(self):
         form = self.generate_form()
 
-        if 'publish' in self.request.POST:
-            return self.process_form(form)
-
         # TODO: this is a bit fishy ...
         jobid = self.request.matchdict.get('jobid')
         if jobid is not None:
             self.session['jobid'] = jobid
             self.session.changed()
 
+        if 'publish' in self.request.POST:
+            return self.process_form(form, jobid)
+
         items = []
-        for output in self.process_outputs(self.session.get('jobid')):
+        for oid,output in self.process_outputs(self.session.get('jobid')).items():
             items.append(dict(title=output.title,
                               abstract=getattr(output, 'abstract', ""),
-                              identifier=output.identifier,
+                              identifier=oid,
                               mime_type = output.mimeType,
                               data = output.data,
                               reference=output.reference))
-
+            
         grid = ProcessOutputsGrid(
                 self.request,
                 items,
