@@ -61,7 +61,7 @@ class CatalogService(SettingsView):
             templ_dc = Template(filename=os.path.join(os.path.dirname(phoenix.__file__), "templates", "dc.xml"))
             record = templ_dc.render(**appstruct)
             logger.debug('record=%s', record)
-            self.request.csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
+            self.csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
             self.session.flash('Added Dataset %s' % (appstruct.get('title')), queue="success")
         except ValidationFailure, e:
             logger.exception('validation of catalog form failed')
@@ -73,8 +73,13 @@ class CatalogService(SettingsView):
  
     @view_config(route_name='remove_record')
     def remove(self):
-        recordid = self.request.matchdict.get('recordid')
-        self.session.flash('Delete catalog entry not implemented yet.', queue="error")
+        try:
+            recordid = self.request.matchdict.get('recordid')
+            self.csw.transaction(ttype='delete', typename='csw:Record', identifier=recordid )
+            self.session.flash('Removed record %s.' % recordid, queue="info")
+        except Exception,e:
+            logger.exception("Could not remove record")
+            self.session.flash('Could not remove record. %s' % e, queue="error")
         return HTTPFound(location=self.request.route_url('catalog_settings'))
 
     def get_csw_items(self):
