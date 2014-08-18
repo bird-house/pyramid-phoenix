@@ -213,6 +213,21 @@ class JobSchema(colander.MappingSchema):
         default = deferred_keywords,
         widget = TagsWidget())
 
+class DoneSchema(JobSchema):
+    @colander.deferred
+    def deferred_favorite_name(node, kw):
+        return kw.get('favorite_name', 'test')
+    
+    is_favorite = colander.SchemaNode(
+        colander.Boolean(),
+        title = "Save as Favorite",
+        default = False,
+        missing= False)
+    favorite_name = colander.SchemaNode(
+        colander.String(),
+        title = "Favorite Name",
+        default = deferred_favorite_name)
+
 class CatalogAddServiceSchema(colander.MappingSchema):
     url = colander.SchemaNode(
         colander.String(),

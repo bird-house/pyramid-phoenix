@@ -656,11 +656,12 @@ class Done(Wizard):
         self.csw = self.request.csw
 
     def schema(self):
-        from phoenix.schema import JobSchema
-        return JobSchema().bind(
+        from phoenix.schema import DoneSchema
+        return DoneSchema().bind(
             title=self.wizard_state.get('process_identifier'),
             abstract=self.wizard_state.get('literal_inputs'),
-            keywords="test")
+            keywords="test",
+            favorite_name=self.wizard_state.get('process_identifier'))
 
     def sources(self):
         sources = []
