@@ -93,6 +93,7 @@ def main(global_config, **settings):
     # settings
     config.add_route('settings', '/settings/overview')
     config.add_route('catalog_settings', '/settings/catalog')
+    config.add_route('remove_record', '/settings/catalog/{recordid}/remove')
     config.add_route('user_settings', '/settings/users')
     config.add_route('edit_user', '/settings/users/{email}/edit.json')
     config.add_route('remove_user', '/settings/users/{email}/remove')

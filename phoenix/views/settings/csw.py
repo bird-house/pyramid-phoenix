@@ -70,18 +70,12 @@ class CatalogService(SettingsView):
             logger.exception('could not harvest wps.')
             self.session.flash('Could not add Dataset %s. %s' % (appstruct.get('source'), e), queue="error")
         return HTTPFound(location=self.request.route_url('catalog_settings'))
-
-    @view_config(renderer='json', name='catalog.edit')
-    def delete(self):
-        identfier = self.request.params.get('identifier', None)
-        self.session.flash('Edit catalog entry not implemented yet.', queue="error")
-        return {}
-    
-    @view_config(renderer='json', name='catalog.delete')
-    def delete(self):
-        identfier = self.request.params.get('identifier', None)
+ 
+    @view_config(route_name='remove_record')
+    def remove(self):
+        recordid = self.request.matchdict.get('recordid')
         self.session.flash('Delete catalog entry not implemented yet.', queue="error")
-        return {}
+        return HTTPFound(location=self.request.route_url('catalog_settings'))
 
     def get_csw_items(self):
         results = []
@@ -151,7 +145,8 @@ class CSWGrid(MyGrid):
 
     def action_td(self, col_num, i, item):
         buttongroup = []
-        buttongroup.append( ("edit", item.get('identifier'), "icon-pencil", "Edit", "#") )
-        buttongroup.append( ("delete", item.get('identifier'), "icon-trash", "Delete", "#") )
+        buttongroup.append(
+            ("remove", item.get('identifier'), "icon-trash", "",
+            self.request.route_url('remove_record', recordid=item.get('identifier'))) )
         return self.render_action_td(buttongroup)
        
