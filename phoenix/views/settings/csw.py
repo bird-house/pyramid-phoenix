@@ -81,7 +81,7 @@ class CatalogService(SettingsView):
             self.session.flash("%d Records deleted." % count, queue='info')
         except Exception,e:
             logger.exception('could not remove datasets.')
-            self.session.flash('Could not remove datasets. %s' % e, queue="error")
+            self.session.flash('Ooops ... self destruction out of order. %s' % e, queue="error")
         return HTTPFound(location=self.request.route_url('catalog_settings'))
  
     @view_config(route_name='remove_record')
