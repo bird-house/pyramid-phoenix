@@ -34,7 +34,7 @@ class WizardFavorite(object):
         self.session.changed()
         
     def clear(self):
-        self.session[self.session_name] = {'No Favorite': {},}
+        self.session[self.session_name] = {'No Favorite': WizardState(self.session).state(),}
         self.session.changed()
 
 class WizardState(object):
@@ -47,8 +47,11 @@ class WizardState(object):
 
     def load(self, state):
         self.clear()
-        #self.session['wizard'] = state
+        self.session['wizard'] = state
         self.session.changed()
+
+    def state(self):
+        return self.session['wizard']
             
     def current_step(self):
         step = self.initial_step
@@ -763,7 +766,9 @@ class Done(Wizard):
         self.wizard_state.set('done', appstruct)
         logger.debug("appstruct %s", appstruct)
         if appstruct.get('is_favorite', False):
-            self.favorite.set(appstruct.get('favorite_name', 'unknown'), {})
+            self.favorite.set(
+                appstruct.get('favorite_name', 'unknown'),
+                self.wizard_state.state())
         
         execution = self.execute_workflow(appstruct)
         models.add_job(
