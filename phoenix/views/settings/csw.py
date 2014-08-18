@@ -70,6 +70,19 @@ class CatalogService(SettingsView):
             logger.exception('could not harvest wps.')
             self.session.flash('Could not add Dataset %s. %s' % (appstruct.get('source'), e), queue="error")
         return HTTPFound(location=self.request.route_url('catalog_settings'))
+
+    @view_config(route_name='remove_all_records')
+    def remove_all(self):
+        try:
+            self.csw.getrecords(maxrecords=0)
+            count = self.csw.results.get('matches'),
+            # TODO: self destruction is out of order ... see exception
+            self.csw.transaction(ttype='delete', typename='csw:Record')
+            self.session.flash("%d Records deleted." % count, queue='info')
+        except Exception,e:
+            logger.exception('could not remove datasets.')
+            self.session.flash('Could not remove datasets. %s' % e, queue="error")
+        return HTTPFound(location=self.request.route_url('catalog_settings'))
  
     @view_config(route_name='remove_record')
     def remove(self):

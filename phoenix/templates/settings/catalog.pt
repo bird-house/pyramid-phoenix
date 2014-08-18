@@ -10,6 +10,10 @@
     <a href="#dataset-form" role="button" class="btn btn-success" data-toggle="modal">
       Add Dataset
     </a>
+    <!-- Button to remove all records -->
+    <a href="${request.route_url('remove_all_records')}" role="button" class="btn btn-danger">
+      Remove all Datasets
+    </a>
 
     <div>
       <h2>${datasets_found} Datasets found</h2>
