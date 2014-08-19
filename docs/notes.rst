@@ -54,3 +54,4 @@ other web apps:
 
 * http://ipython.org/notebook.html
 * http://git-annex.branchable.com/assistant/
+* https://binstar.org/
