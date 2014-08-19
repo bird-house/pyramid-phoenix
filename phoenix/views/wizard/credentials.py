@@ -13,6 +13,9 @@ from phoenix.grid import MyGrid
 from phoenix.views.wizard import Wizard
 from phoenix.exceptions import MyProxyLogonFailure
 
+import logging
+logger = logging.getLogger(__name__)
+
 class ESGFCredentials(Wizard):
     def __init__(self, request):
         super(ESGFCredentials, self).__init__(

@@ -18,7 +18,7 @@ class MyGrid(Grid):
             kwargs['url'] = request.current_route_url
         super(MyGrid, self).__init__(*args, **kwargs)
         self.exclude_ordering = ['', 'preview', 'action', '_numbered']
-        self.user_tz = u'UTC'
+        #self.user_tz = u'UTC'
 
     def render_td(self, renderer, **data):
         mytemplate = mylookup.get_template(renderer + ".mako")

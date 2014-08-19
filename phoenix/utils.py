@@ -14,7 +14,7 @@ def button(request):
         return markupsafe.Markup(SIGNOUT_HTML) % (authenticated_userid(request))
 
 
-def localize_datetime(dt, tz_name):
+def localize_datetime(dt, tz_name='UTC'):
     """Provide a timzeone-aware object for a given datetime and timezone name
     """
     import pytz
