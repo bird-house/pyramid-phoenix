@@ -46,9 +46,9 @@ class CheckParameters(Wizard):
 
     def custom_view(self):
         items = []
-        for identifier, value in self.wizard_state.get('literal_inputs').items():
+        for identifier, value in self.wizard_state.get('literal_inputs', {}).items():
             items.append(dict(title=identifier, value=value))
-        identifier=self.wizard_state.get('complex_input_identifier')
+        identifier=self.wizard_state.get('complex_input_identifier', 'unknown')
         items.append(dict(title=identifier, format="application/x-netcdf", value=[]))
         grid = CheckParametersGrid(
                 self.request,
