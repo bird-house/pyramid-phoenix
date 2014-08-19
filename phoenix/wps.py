@@ -1,6 +1,5 @@
 import colander
 import deform
-import logging
 
 import dateutil
 import re
@@ -13,9 +12,16 @@ from owslib.wps import WebProcessingService, monitorExecution
 
 from .widget import TagsWidget
 
-__all__ = ['WPSSchema']
-
+import logging
 logger = logging.getLogger(__name__)
+
+def count_literal_inputs(wps, identifier):
+    process = wps.describeprocess(identifier)
+    literal_inputs = []
+    for input in process.dataInputs:
+        if input.dataType == 'ComplexData':
+            literal_inputs.append(input)
+    return len(literal_inputs)
 
 @property
 def RAW():
