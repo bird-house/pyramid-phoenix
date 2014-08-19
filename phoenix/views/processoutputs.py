@@ -78,9 +78,9 @@ class ProcessOutputs(MyView):
             import json
             wf_result_url = execution.processOutputs[0].reference
             wf_result_json = json.load(urllib.urlopen(wf_result_url))
-            for url in wf_result_json['worker']:
+            for url in wf_result_json.get('worker', []):
                 outputs.update( self.collect_outputs(url) )
-            for url in wf_result_json['source']:
+            for url in wf_result_json.get('source', []):
                 outputs.update( self.collect_outputs(url) )
         return outputs
  

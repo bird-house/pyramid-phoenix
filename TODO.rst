@@ -24,10 +24,19 @@ http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html
 * testing with curl, http (script): see fossgis geo python
 * make jobs repeateable 
 
+Outputs
+=======
+
+* update message text with js does not work
+* show wps error messages in output list
+* run same job again
+
 Wizard
 ======
 
 * https://github.com/repoze/repoze.workflow (see koti example)
+* esgf file list does not restore state
+* csw search does not restore state
 
 Map
 ===
