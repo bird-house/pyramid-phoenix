@@ -52,6 +52,7 @@ class Done(Wizard):
             input = ['credentials=%s' % (credentials)],
             complex_input = 'source',
             output = ['output'],
+            #output = ['output_path=False'], # if local
             sources = self.sources())
         from phoenix.wps import appstruct_to_inputs
         inputs = appstruct_to_inputs(self.wizard_state.get('literal_inputs'))
