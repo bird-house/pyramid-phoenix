@@ -173,11 +173,16 @@ class ProcessOutputsGrid(MyGrid):
         return self.render_preview_td(format=item.get('mime_type'), source=item.get('reference'))
 
     def action_td(self, col_num, i, item):
+        # TODO: dirty hack ...
+        wms_url = "http://localhost:8080/thredds/godiva2/godiva2.html?server=http://localhost:8080/thredds/wms/test"
+        
         buttongroup = []
         if item.get('reference') is not None:
+            wms_reference = wms_url + item.get('reference').split('wpsoutputs')[1]
             buttongroup.append( ("publish", item.get('identifier'), "icon-share", "Publish", "#") )
             buttongroup.append( ("view", item.get('identifier'), "icon-eye-open", "View", 
                                  item.get('reference', "#")) )
-            buttongroup.append( ("mapit", item.get('identifier'), "icon-globe", "Show on Map", "#") )
+            buttongroup.append( ("mapit", item.get('identifier'), "icon-globe", "Show on Map",
+                                 wms_reference) )
         return self.render_action_td(buttongroup)
 
