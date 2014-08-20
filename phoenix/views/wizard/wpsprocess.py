@@ -36,7 +36,7 @@ class ChooseWPSProcess(Wizard):
         # TODO: this code does not belong here
         from phoenix.wps import count_literal_inputs
         identifier = self.wizard_state.get('process_identifier')
-        if count_literal_inputs(self.wps, identifier) == 0:
+        if count_literal_inputs(self.wps, identifier) > 0:
             return self.next('wizard_literal_inputs')
         return self.next('wizard_complex_inputs')
         
