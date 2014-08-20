@@ -30,7 +30,7 @@ class MyJobs(MyView):
             job['status_message'] = execution.statusMessage
             job['is_complete'] = execution.isComplete()
             job['is_succeded'] = execution.isSucceded()
-            job['errors'] = execution.errors
+            job['errors'] = [ '%s %s\n: %s' % (error.code, error.locator, error.text.replace('\\','')) for error in execution.errors]
             if execution.isSucceded():
                 job['progress'] = 100
                 self.session.flash("Job %s completed." % job['title'], queue='success')

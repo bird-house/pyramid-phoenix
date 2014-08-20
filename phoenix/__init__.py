@@ -141,6 +141,11 @@ def main(global_config, **settings):
     def objectid_adapter(obj, request):
         return str(obj)
     json_renderer.add_adapter(bson.objectid.ObjectId, objectid_adapter)
+    ## def wpsexception_adapter(obj, request):
+    ##     logger.debug("mongo adapter wpsexception called")
+    ##     return '%s %s: %s' % (obj.code, obj.locator, obj.text)
+    ## from owslib import wps
+    ## json_renderer.add_adapter(wps.WPSException, wpsexception_adapter)
     config.add_renderer('json', json_renderer)
 
     # MongoDB

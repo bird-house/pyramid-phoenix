@@ -9,6 +9,7 @@ Bugs
 * IE (at least some versions) do not work with Phoenix (pyramid framework)
 * pywps/colander/form: allowedValues are interpreted with wrong type. "true" => True even though it
   should stay a string.
+* with gunicorn=19 no error messsages written to supervisor in case of error
 
 
 Common
