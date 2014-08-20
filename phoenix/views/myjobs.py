@@ -40,12 +40,11 @@ class MyJobs(MyView):
         except:
             logger.exception("could not update job %s", job.get('identifier'))
     
-    @view_config(renderer='json', name='update.jobs')
+    @view_config(renderer='json', route_name='update_myjobs')
     def update_jobs(self):
         jobs = list(self.db.jobs.find({'email': self.user_email(), 'is_complete':False}))
         for job in jobs:
             self.update_job(job)
-            
         return jobs
 
     @view_config(route_name='remove_myjobs')

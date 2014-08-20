@@ -27,7 +27,6 @@ http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html
 Outputs
 =======
 
-* update message text with js does not work
 * show wps error messages in output list
 * run same job again
 

@@ -5,7 +5,7 @@ $(function() {
   // update job table with current values
   var updateJobs = function() {
      $.getJSON(
-      '/update.jobs',
+      '/myjobs/update.json',
       {},
       function(json) {
         var finished = true;
@@ -27,7 +27,7 @@ $(function() {
 
             $("#status-"+job.identifier).attr('class', status_class);
             $("#status-"+job.identifier).text(job.status);
-            $("#message-"+job.identifier).text(job.message);
+            $("#message-"+job.identifier).text(job.status_message);
             $("#progress-"+job.identifier).attr('style', "width: "+job.progress+"%");
             $("#progress-"+job.identifier).text(job.progress);
         });
@@ -39,9 +39,9 @@ $(function() {
     );
   };
 
-  // refresh job list each sec ...
+  // refresh job list each 3 secs ...
   timerId = setInterval(function() {
     updateJobs();
-  }, 1000); 
+  }, 3000); 
 
 });
