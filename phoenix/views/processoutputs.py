@@ -56,13 +56,13 @@ class ProcessOutputs(MyView):
             self.session.flash("Publication was successful", queue='success')
         return HTTPFound(location=self.request.route_url('process_outputs', jobid=jobid))
 
-    def collect_outputs(self, status_location):
+    def collect_outputs(self, status_location, prefix="job"):
         from owslib.wps import WPSExecution
         execution = WPSExecution()
         execution.checkStatus(url=status_location, sleepSecs=0)
         outputs = {}
         for output in execution.processOutputs:
-            oid = "%s.%s" %( execution.process.identifier, output.identifier)
+            oid = "%s.%s" %(prefix, output.identifier)
             outputs[oid] = output
         return outputs
 
@@ -78,10 +78,14 @@ class ProcessOutputs(MyView):
             import json
             wf_result_url = execution.processOutputs[0].reference
             wf_result_json = json.load(urllib.urlopen(wf_result_url))
+            count = 0
             for url in wf_result_json.get('worker', []):
-                outputs.update( self.collect_outputs(url) )
+                count = count + 1
+                outputs.update( self.collect_outputs(url, prefix='worker%d' % count ))
+            count = 0
             for url in wf_result_json.get('source', []):
-                outputs.update( self.collect_outputs(url) )
+                count = count + 1
+                outputs.update( self.collect_outputs(url, prefix='source%d' % count ))
         return outputs
  
     @view_config(renderer='json', name='publish.output')
@@ -115,6 +119,10 @@ class ProcessOutputs(MyView):
         
     @view_config(route_name='process_outputs', renderer='phoenix:templates/process_outputs.pt')
     def view(self):
+        order = self.sort_order()
+        key=order.get('order')
+        direction=order.get('order_dir')
+        
         form = self.generate_form()
 
         # TODO: this is a bit fishy ...
@@ -138,7 +146,7 @@ class ProcessOutputs(MyView):
         grid = ProcessOutputsGrid(
                 self.request,
                 items,
-                ['output', 'preview', ''],
+                ['output', 'identifier', 'preview', ''],
             )
         return dict(grid=grid, items=items, form=form.render())
         
