@@ -37,6 +37,8 @@ Wizard
 * https://github.com/repoze/repoze.workflow (see koti example)
 * esgf file list does not restore state
 * csw search does not restore state
+* store favorites
+
 
 Map
 ===

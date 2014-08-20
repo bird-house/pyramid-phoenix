@@ -45,14 +45,22 @@ class Done(Wizard):
 
     def workflow_description(self):
         credentials = self.get_user().get('credentials')
-
+        # if source and worker are on the same machine use local output_path
+        # otherwise http url.
+        from urlparse import urlparse
+        source_hostname = urlparse(self.request.wps.url).netloc.split(':')[0]
+        worker_hostname = urlparse(self.wps.url).netloc.split(':')[0]
+        output = 'output'
+        if source_hostname == worker_hostname:
+            output = 'output_path'
+        logger.debug('source output identifier: %s', output)
+        
         source = dict(
             service = self.request.wps.url,
             identifier = 'esgf_wget',
             input = ['credentials=%s' % (credentials)],
             complex_input = 'source',
-            output = 'output',
-            #output = ['output_path=False'], # if local
+            output = output, # output for chaining to worker as input
             sources = self.sources())
         from phoenix.wps import appstruct_to_inputs
         inputs = appstruct_to_inputs(self.wizard_state.get('literal_inputs'))
@@ -61,8 +69,7 @@ class Done(Wizard):
             service = self.wps.url,
             identifier = self.wizard_state.get('process_identifier'),
             input = worker_inputs,
-            complex_input = self.wizard_state.get('complex_input_identifier'),
-            output = ['output'])
+            complex_input = self.wizard_state.get('complex_input_identifier'))
         nodes = dict(source=source, worker=worker)
         return nodes
 
