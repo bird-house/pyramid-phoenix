@@ -21,6 +21,7 @@ def count_literal_inputs(wps, identifier):
     for input in process.dataInputs:
         if input.dataType == 'ComplexData':
             literal_inputs.append(input)
+    logger.debug('num literal inputs: %d', len(literal_inputs))
     return len(literal_inputs)
 
 @property
@@ -151,7 +152,8 @@ tmpstore = MemoryTmpStore()
 # wps input schema
 # ----------------
 
-class WPSSchema(colander.SchemaNode):
+from phoenix.schema import JobSchema
+class WPSSchema(JobSchema):
     """ Build a Colander Schema based on the WPS data inputs.
 
     This Schema generator is based on:
@@ -209,33 +211,12 @@ class WPSSchema(colander.SchemaNode):
         self.unknown = unknown
         self.kwargs = kwargs or {}   
 
-        if info:
-            self.add_info_nodes()
+        if not info:
+            self.__delitem__('title')
+            self.__delitem__('abstract')
+            self.__delitem__('keywords')
         self.add_nodes(process)
 
-    def add_info_nodes(self):
-        #logger.debug("adding info nodes")
-        
-        node = colander.SchemaNode(
-            colander.String(),
-            name = 'abstract',
-            description = 'Describe your job.',
-            default = 'test',
-            missing = 'test',
-            validator = colander.Length(max=150),
-            widget = deform.widget.TextAreaWidget(rows=2, cols=80),
-            )
-        self.add(node)
-
-        node = colander.SchemaNode(
-            colander.String(),
-            name = 'keywords',
-            description = 'Keywords for your job.',
-            default = 'test',
-            missing = 'test',
-            widget = TagsWidget()
-            )
-        self.add(node)
         
     def add_nodes(self, process):
         if process is None:

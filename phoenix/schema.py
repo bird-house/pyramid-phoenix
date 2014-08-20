@@ -216,8 +216,8 @@ class JobSchema(colander.MappingSchema):
     abstract = colander.SchemaNode(
         colander.String(),
         default = deferred_abstract,
-        validator = colander.Length(max=150),
-        widget = TextAreaWidget(rows=2, cols=80))
+        validator = colander.Length(max=500),
+        widget = TextAreaWidget(rows=3, cols=120))
     
     keywords = colander.SchemaNode(
         colander.String(),

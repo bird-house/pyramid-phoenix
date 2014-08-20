@@ -32,6 +32,10 @@ Outputs
 Wizard
 ======
 
+* disable previous on first step
+* dont stop going to previous step
+* show only processes with complex parameters
+* use mimetype as filter in search
 * use workflow module:
 https://github.com/repoze/repoze.workflow (see koti example)
 * esgf file list does not restore state

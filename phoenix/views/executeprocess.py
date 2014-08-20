@@ -26,6 +26,12 @@ class ExecuteProcess(MyView):
         self.process = self.wps.describeprocess(self.identifier)
         self.description = self.process.title
 
+    def appstruct(self):
+        return dict(
+            title=self.process.title,
+            abstract = getattr(self.process, 'abstract', ""),
+            keywords = "test,%s" % self.process.identifier)
+
     def generate_form(self, formid='deform'):
         from phoenix.wps import WPSSchema
         # TODO: should be WPSSchema.bind() ...
@@ -69,5 +75,5 @@ class ExecuteProcess(MyView):
         form = self.generate_form()
         if 'submit' in self.request.POST:
             return self.process_form(form)
-        return dict(form=form.render())
+        return dict(form=form.render(self.appstruct()))
     
