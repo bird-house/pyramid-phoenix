@@ -16,33 +16,35 @@ Common
 ======
 
 * store timestamps in UTC. Handle user timezone.
-* use datetime json renderer:
+* DONE: use datetime json renderer:
 http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
 * csw, wps and mongo not always avail when starting app. configure when accessed.
 * email notification: pyramid-mailer, repoze.sendmail
 * check *from pyramid.decorator import reify* for page_tile, breadcrumbs ... see kotti/views/utils.py
 * enable bbox in ui
 * testing with curl, http (script): see fossgis geo python
-* make jobs repeateable 
 
 Outputs
 =======
 
-* show wps error messages in output list
 * run same job again
 
 Wizard
 ======
 
-* https://github.com/repoze/repoze.workflow (see koti example)
+* use workflow module:
+https://github.com/repoze/repoze.workflow (see koti example)
 * esgf file list does not restore state
 * csw search does not restore state
 * store favorites
+* refactor state storage in session
 
 
 Map
 ===
 
+* enable map again
+* add layers from catalog ... see catalog viewer
 * setup wms caching, maybe just caching via nginx
 
 ESGF Search
