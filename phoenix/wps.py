@@ -37,25 +37,6 @@ def quote_wps_params(params):
 def unquote_wps_params(params):
     return map(lambda(item): ( item[0], urllib2.unquote(item[1]) ), params)
 
-def is_url(text):
-    """Check wheather given text is url or not
-
-    TODO: code is taken from pywps. Maybe there is a better alternative.
-    """
-    logger.debug("check is_url, text=%s", text)
-        
-    try:
-        (urltype, opaquestring) = urllib2.splittype(text)
-        logger.debug('urltype=%s, str=%s', urltype, opaquestring)
-
-        if urltype in ["http","https","ftp"]:
-            return True
-        else:
-            return False
-    except Exception as e:
-        logger.error('error occured in is_url, error=%s', e.message)
-        return False
-
 def build_request_url(service_url, identifier, inputs=[], output='output'):
     """
     Builds wps request url for direct raw output. Just one output parameter allowed.

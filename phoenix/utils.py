@@ -25,7 +25,11 @@ def localize_datetime(dt, tz_name='UTC'):
     tz_aware_dt = aware.astimezone(timezone)
     return tz_aware_dt
 
-
+def is_url(url):
+    """Check wheather given text is url or not
+    """
+    from urlparse import urlparse
+    return bool(urlparse(url ).scheme)
     
 
 
