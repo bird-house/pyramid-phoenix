@@ -27,6 +27,21 @@ class MyGrid(Grid):
     def render_title_td(self, title, abstract="", keywords=[], data=[], format=None, source="#"):
         return self.render_td(renderer="title_td", title=title, abstract=abstract, keywords=keywords, data=data, format=format, source=source)
 
+    def render_status_td(self, item):
+        status = item.get('status')
+        if status is None:
+            return HTML.td('')
+        span_class = 'label'
+        if status == 'ProcessSucceeded':
+            span_class += ' label-success'
+        elif status == 'ProcessFailed':
+            span_class += ' label-warning'
+        elif status == 'Exception':
+            span_class += ' label-important'
+        else:
+            span_class += ' label-info'
+        return self.render_td(renderer="status_td", item=item, span_class=span_class)
+    
     def render_timestamp_td(self, timestamp):
         if timestamp is None:            
             return HTML.td('')

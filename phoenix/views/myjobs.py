@@ -29,7 +29,8 @@ class MyJobs(MyView):
             job['status'] = execution.getStatus()
             job['status_message'] = execution.statusMessage
             job['is_complete'] = execution.isComplete()
-            job['is_succeded'] = execution.isSucceded() 
+            job['is_succeded'] = execution.isSucceded()
+            job['errors'] = execution.errors
             if execution.isSucceded():
                 job['progress'] = 100
                 self.session.flash("Job %s completed." % job['title'], queue='success')
@@ -103,37 +104,7 @@ class JobsGrid(MyGrid):
         return self.render_timestamp_td(item.get('creation_time'))
 
     def status_td(self, col_num, i, item):
-        # TODO: status message is not updated by javascript
-
-        status = item.get('status')
-        if status is None:
-            return HTML.td('')
-        span_class = 'label'
-        if status == 'ProcessSucceeded':
-            span_class += ' label-success'
-        elif status == 'ProcessFailed':
-            span_class += ' label-warning'
-        elif status == 'Exception':
-            span_class += ' label-important'
-        else:
-            span_class += ' label-info'
-        div = Template("""\
-        <div>
-          <div>
-            <span class="${span_class}" id="status-${jobid}">${status}</span>
-            <div id="message-${jobid}">${status_message}</div>
-          </div>
-          <div>
-             <a class="label label-warning" href="${status_location}" data-format="XML">XML</a>
-          </div>
-        </div>
-        """)
-        return HTML.td(HTML.literal(div.substitute( {
-            'jobid': item['identifier'],
-            'status': item['status'],
-            'span_class': span_class,
-            'status_message': item['status_message'], 
-            'status_location': item['status_location']} )))
+        return self.render_status_td(item)
 
     def title_td(self, col_num, i, item):
         return self.render_title_td(item['title'], item['abstract'], item['keywords'].split(','))
