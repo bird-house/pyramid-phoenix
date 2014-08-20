@@ -19,7 +19,7 @@ class ProcessOutputs(MyView):
     def sort_order(self):
         """Determine what the current sort parameters are.
         """
-        order = self.request.GET.get('order_col', 'title')
+        order = self.request.GET.get('order_col', 'identifier')
         order_dir = self.request.GET.get('order_dir', 'asc')
         order_dir = 1 if order_dir == 'asc' else -1
         return dict(order=order, order_dir=order_dir)   
@@ -142,6 +142,7 @@ class ProcessOutputs(MyView):
                               mime_type = output.mimeType,
                               data = output.data,
                               reference=output.reference))
+        items = sorted(items, key=lambda item: item[key], reverse=direction==1)
             
         grid = ProcessOutputsGrid(
                 self.request,
@@ -158,6 +159,7 @@ class ProcessOutputsGrid(MyGrid):
         self.column_formats['output'] = self.output_td
         self.column_formats['preview'] = self.preview_td
         self.column_formats[''] = self.action_td
+        self.exclude_ordering = ['output', '', 'preview', 'action', '_numbered']
 
     def output_td(self, col_num, i, item):
         return self.render_title_td(
