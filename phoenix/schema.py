@@ -46,15 +46,13 @@ class MyAccountSchema(colander.MappingSchema):
     """
     name = colander.SchemaNode(
         colander.String(),
-        title = "Name",
-        description = "Your Name",
+        title = "Your Name",
         missing = '',
         default = '',
         )
     email = colander.SchemaNode(
         colander.String(),
         title = "EMail",
-        description = "eMail used for login",
         validator = colander.Email(),
         missing = '',
         widget = TextInputWidget(template='readonly/textinput'),
@@ -70,14 +68,12 @@ class MyAccountSchema(colander.MappingSchema):
     organisation = colander.SchemaNode(
         colander.String(),
         title = "Organisation",
-        description = "Your Organisation",
         missing = '',
         default = '',
         )
     notes = colander.SchemaNode(
         colander.String(),
-        title = "Notes",
-        description = "Some Notes about you",
+        title = "Notes:",
         missing = '',
         default = '',
         )

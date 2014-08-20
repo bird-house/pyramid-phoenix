@@ -27,11 +27,7 @@ class Done(Wizard):
 
     def schema(self):
         from phoenix.schema import DoneSchema
-        return DoneSchema().bind(
-            title=self.wizard_state.get('process_identifier'),
-            abstract=self.wizard_state.get('literal_inputs'),
-            keywords="test",
-            favorite_name=self.wizard_state.get('process_identifier'))
+        return DoneSchema()
 
     def sources(self):
         sources = []
@@ -106,7 +102,15 @@ class Done(Wizard):
         return HTTPFound(location=self.request.route_url('myjobs'))
 
     def appstruct(self):
-        return self.wizard_state.get('done', {})
+        appstruct = self.wizard_state.get('done', {})
+        params = ', '.join(['%s=%s' % item for item in self.wizard_state.get('literal_inputs').items()])
+        # TODO: add search facets to keywords
+        appstruct.update( dict(
+            title=self.wizard_state.get('process_identifier'),
+            abstract=params,
+            keywords="test,workflow,%s" % self.wizard_state.get('process_identifier'),
+            favorite_name=self.wizard_state.get('process_identifier')))
+        return appstruct
 
     def breadcrumbs(self):
         breadcrumbs = super(Done, self).breadcrumbs()

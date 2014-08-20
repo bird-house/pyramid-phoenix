@@ -28,10 +28,14 @@ Outputs
 =======
 
 * run same job again
+* show inputs and outpus (tab view)
 
 Wizard
 ======
 
+* dont make extra wps call to generate wf description
+* start restflow as service
+* add search facets to job keywords
 * disable previous on first step
 * dont stop going to previous step
 * show only processes with complex parameters
