@@ -51,7 +51,7 @@ class Done(Wizard):
             identifier = 'esgf_wget',
             input = ['credentials=%s' % (credentials)],
             complex_input = 'source',
-            output = ['output'],
+            output = 'output',
             #output = ['output_path=False'], # if local
             sources = self.sources())
         from phoenix.wps import appstruct_to_inputs
