@@ -94,7 +94,7 @@ class Done(Wizard):
 
     def appstruct(self):
         appstruct = super(Done, self).appstruct()
-        params = ', '.join(['%s=%s' % item for item in self.wizard_state.get('literal_inputs').items()])
+        params = ', '.join(['%s=%s' % item for item in self.wizard_state.get('wizard_literal_inputs').items()])
         identifier = self.wizard_state.get('wizard_process')['identifier']
         # TODO: add search facets to keywords
         appstruct.update( dict(

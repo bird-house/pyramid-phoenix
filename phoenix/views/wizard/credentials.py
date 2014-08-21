@@ -7,19 +7,28 @@ logger = logging.getLogger(__name__)
 
 class ESGFCredentials(Wizard):
     def __init__(self, request):
-        super(ESGFCredentials, self).__init__(request,
-                                              name='wizard_esgf_credentials',
-                                              title="ESGF Credentials")
+        super(ESGFCredentials, self).__init__(
+            request,
+            name='wizard_esgf_credentials',
+            title="ESGF Credentials")
 
     def schema(self):
         from phoenix.schema import CredentialsSchema
         return CredentialsSchema().bind()
 
+    def appstruct(self):
+        appstruct = super(ESGFCredentials, self).appstruct()
+        appstruct['openid'] = self.get_user().get('openid')
+        return appstruct
+
     def success(self, appstruct):
+        appstruct['openid'] = self.get_user().get('openid')
+        super(ESGFCredentials, self).success(appstruct)
+
         try:
-            appstruct['openid'] = self.get_user().get('openid')
             self.wizard_state.set('password', appstruct.get('password'))
-            result = models.myproxy_logon(
+            from phoenix.models import myproxy_logon
+            result = myproxy_logon(
                 self.request,
                 openid=appstruct.get('openid'),
                 password=appstruct.get('password'))

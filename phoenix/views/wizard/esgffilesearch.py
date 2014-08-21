@@ -28,9 +28,9 @@ class ESGFFileSearch(Wizard):
             logger.debug("timezone: %s", timestamp.tzname())
             import datetime
             now = localize_datetime(datetime.datetime.utcnow())
-            hours_3 = datetime.timedelta(hours=3)
-            # cert must be valid for three hours
-            if timestamp > now + hours_3:
+            valid_hours = datetime.timedelta(hours=8)
+            # cert must be valid for some hours
+            if timestamp > now + valid_hours:
                 return self.next('wizard_check_parameters')
         return self.next('wizard_esgf_credentials')
         
