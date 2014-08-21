@@ -33,7 +33,6 @@ Outputs
 Wizard
 ======
 
-* dont make extra wps call to generate wf description
 * start restflow as service
 * add search facets to job keywords
 * disable previous on first step
