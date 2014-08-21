@@ -24,6 +24,13 @@ http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html
 * enable bbox in ui
 * testing with curl, http (script): see fossgis geo python
 
+Login
+=====
+
+* simplified esgf logon
+* improve local login
+* configure admin (roles) with mongodb
+
 Outputs
 =======
 

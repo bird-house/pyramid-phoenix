@@ -39,18 +39,19 @@ class ESGFFileSearch(Wizard):
         
         # TODO: this is the wrong place to skip steps
         cert_expires = self.get_user().get('cert_expires')
-        logger.debug('cert_expires: %s', cert_expires)
-        from phoenix.utils import localize_datetime
-        from dateutil import parser as datetime_parser
-        timestamp = datetime_parser.parse(cert_expires)
-        logger.debug("timezone: %s", timestamp.tzname())
-        import datetime
-        now = localize_datetime(datetime.datetime.utcnow())
-        hours_3 = datetime.timedelta(hours=3)
-        # cert must be valid for three hours
-        if timestamp < now + hours_3:
-            return self.next('wizard_esgf_credentials')
-        return self.next('wizard_check_parameters')
+        if cert_expires != None:
+            logger.debug('cert_expires: %s', cert_expires)
+            from phoenix.utils import localize_datetime
+            from dateutil import parser as datetime_parser
+            timestamp = datetime_parser.parse(cert_expires)
+            logger.debug("timezone: %s", timestamp.tzname())
+            import datetime
+            now = localize_datetime(datetime.datetime.utcnow())
+            hours_3 = datetime.timedelta(hours=3)
+            # cert must be valid for three hours
+            if timestamp > now + hours_3:
+                return self.next('wizard_check_parameters')
+        return self.next('wizard_esgf_credentials')
         
     def appstruct(self):
         return dict(url=self.wizard_state.get('esgf_files'))
