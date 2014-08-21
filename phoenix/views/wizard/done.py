@@ -1,17 +1,6 @@
-from pyramid.view import view_config, view_defaults
-from pyramid.httpexceptions import HTTPFound
+from pyramid.view import view_config
 
-from deform import Form, Button
-
-from owslib.wps import WebProcessingService
-
-from string import Template
-
-from phoenix import models
-from phoenix.views import MyView
-from phoenix.grid import MyGrid
 from phoenix.views.wizard import Wizard
-from phoenix.exceptions import MyProxyLogonFailure
 
 import logging
 logger = logging.getLogger(__name__)
@@ -19,10 +8,10 @@ logger = logging.getLogger(__name__)
 class Done(Wizard):
     def __init__(self, request):
         super(Done, self).__init__(
-            request,
-            "Done",
-            "Describe your Job and start Workflow.")
-        self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
+            request, name='wizard_done', title="Done")
+        self.description = "Describe your Job and start Workflow."
+        from owslib.wps import WebProcessingService
+        self.wps = WebProcessingService(self.wizard_state.get('wizard_wps')['url'])
         self.csw = self.request.csw
 
     def schema(self):
@@ -31,12 +20,15 @@ class Done(Wizard):
 
     def sources(self):
         sources = []
-        source = self.wizard_state.get('source')
+        source = self.wizard_state.get('wizard_source')['source']
+        # TODO: refactore this ... there is a common way
         if source == 'wizard_csw':
-            self.csw.getrecordbyid(id=self.wizard_state.get('csw_selection', []))
+            selection = self.wizard_state.get(source).get('selection', [])
+            logger.debug("catalog selection: %s", selection)
+            self.csw.getrecordbyid(id=selection)
             sources = [[str(rec.source)] for rec in self.csw.records.values()]
         elif source == 'wizard_esgf':
-            sources = [[str(file_url)] for file_url in self.wizard_state.get('esgf_files')]
+            sources = [[str(file_url)] for file_url in self.wizard_state.get('wizard_esgf_files')['url']]
         return sources
 
     def workflow_description(self):
@@ -59,31 +51,33 @@ class Done(Wizard):
             output = output, # output for chaining to worker as input
             sources = self.sources())
         from phoenix.wps import appstruct_to_inputs
-        inputs = appstruct_to_inputs(self.wizard_state.get('literal_inputs'))
+        inputs = appstruct_to_inputs(self.wizard_state.get('wizard_literal_inputs'))
         worker_inputs = ['%s=%s' % (key, value) for key,value in inputs]
         worker = dict(
             service = self.wps.url,
-            identifier = self.wizard_state.get('process_identifier'),
+            identifier = self.wizard_state.get('wizard_process')['identifier'],
             input = worker_inputs,
-            complex_input = self.wizard_state.get('complex_input_identifier'))
+            complex_input = self.wizard_state.get('wizard_complex_inputs')['identifier'])
         nodes = dict(source=source, worker=worker)
         return nodes
 
     def execute_workflow(self, appstruct):
+        logger.debug('done appstruct = %s', appstruct)
         nodes = self.workflow_description()
+        logger.debug('done nodes = %s', nodes)
         from phoenix.wps import execute_restflow
         return execute_restflow(self.request.wps, nodes)
 
     def success(self, appstruct):
-        self.wizard_state.set('done', appstruct)
-        logger.debug("appstruct %s", appstruct)
+        super(Done, self).success(appstruct)
         if appstruct.get('is_favorite', False):
             self.favorite.set(
                 appstruct.get('favorite_name', 'unknown'),
                 self.wizard_state.state())
         
         execution = self.execute_workflow(appstruct)
-        models.add_job(
+        from phoenix.models import add_job
+        add_job(
             request = self.request,
             workflow = True,
             title = appstruct.get('title'),
@@ -92,30 +86,23 @@ class Done(Wizard):
             abstract = appstruct.get('abstract'),
             keywords = appstruct.get('keywords'))
 
-    def previous_success(self, appstruct):
-        self.success(appstruct)
-        return self.previous()
-    
     def next_success(self, appstruct):
+        from pyramid.httpexceptions import HTTPFound
         self.success(appstruct)
         self.wizard_state.clear()
         return HTTPFound(location=self.request.route_url('myjobs'))
 
     def appstruct(self):
-        appstruct = self.wizard_state.get('done', {})
+        appstruct = super(Done, self).appstruct()
         params = ', '.join(['%s=%s' % item for item in self.wizard_state.get('literal_inputs').items()])
+        identifier = self.wizard_state.get('wizard_process')['identifier']
         # TODO: add search facets to keywords
         appstruct.update( dict(
-            title=self.wizard_state.get('process_identifier'),
+            title=identifier,
             abstract=params,
-            keywords="test,workflow,%s" % self.wizard_state.get('process_identifier'),
-            favorite_name=self.wizard_state.get('process_identifier')))
+            keywords="test,workflow,%s" % identifier,
+            favorite_name=identifier))
         return appstruct
-
-    def breadcrumbs(self):
-        breadcrumbs = super(Done, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='wizard_done', title=self.title))
-        return breadcrumbs
 
     @view_config(route_name='wizard_done', renderer='phoenix:templates/wizard/default.pt')
     def view(self):

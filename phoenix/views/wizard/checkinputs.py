@@ -1,54 +1,28 @@
-from pyramid.view import view_config, view_defaults
-from pyramid.httpexceptions import HTTPFound
+from pyramid.view import view_config
 
-from deform import Form, Button
-
-from owslib.wps import WebProcessingService
-
-from string import Template
-
-from phoenix import models
-from phoenix.views import MyView
-from phoenix.grid import MyGrid
 from phoenix.views.wizard import Wizard
-from phoenix.exceptions import MyProxyLogonFailure
 
 class CheckParameters(Wizard):
     def __init__(self, request):
         super(CheckParameters, self).__init__(
-            request,
-            "Check Parameters",
-            "")
-        self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
-        self.process = self.wps.describeprocess(self.wizard_state.get('process_identifier'))
+            request, name='wizard_check_parameters', title="Check Parameters")
+        from owslib.wps import WebProcessingService
+        self.wps = WebProcessingService(self.wizard_state.get('wizard_wps')['url'])
+        self.process = self.wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
         self.description = "Process %s" % self.process.title
 
     def schema(self):
         from phoenix.schema import NoSchema
         return NoSchema()
 
-    def success(self, appstruct):
-        pass
-
-    def previous_success(self, appstruct):
-        return self.previous()
-        
     def next_success(self, appstruct):
         return self.next('wizard_done')
         
-    def appstruct(self):
-        return dict(identifier=self.wizard_state.get('complex_input_identifier'))
-
-    def breadcrumbs(self):
-        breadcrumbs = super(CheckParameters, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='wizard_check_parameters', title=self.title))
-        return breadcrumbs
-
     def custom_view(self):
         items = []
-        for identifier, value in self.wizard_state.get('literal_inputs', {}).items():
+        for identifier, value in self.wizard_state.get('wizard_literal_inputs').items():
             items.append(dict(title=identifier, value=value))
-        identifier=self.wizard_state.get('complex_input_identifier', 'unknown')
+        identifier=self.wizard_state.get('wizard_complex_inputs')['identifier']
         items.append(dict(title=identifier, format="application/x-netcdf", value=[]))
         grid = CheckParametersGrid(
                 self.request,

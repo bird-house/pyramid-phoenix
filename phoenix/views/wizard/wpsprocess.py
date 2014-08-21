@@ -1,56 +1,37 @@
-from pyramid.view import view_config, view_defaults
-from pyramid.httpexceptions import HTTPFound
+from pyramid.view import view_config
 
-from deform import Form, Button
-
-from owslib.wps import WebProcessingService
-
-from string import Template
-
-from phoenix import models
-from phoenix.views import MyView
-from phoenix.grid import MyGrid
 from phoenix.views.wizard import Wizard
-from phoenix.exceptions import MyProxyLogonFailure
 
 class ChooseWPSProcess(Wizard):
     def __init__(self, request):
-        super(ChooseWPSProcess, self).__init__(request, 'Choose WPS Process')
-        self.wps = WebProcessingService(self.wizard_state.get('wps_url'))
+        super(ChooseWPSProcess, self).__init__(
+            request,
+            name='wizard_process',
+            title='Choose WPS Process')
+        from owslib.wps import WebProcessingService
+        self.wps = WebProcessingService(self.wizard_state.get('wizard_wps')['url'])
         self.description = self.wps.identification.title
 
     def schema(self):
         from phoenix.schema import SelectProcessSchema
         return SelectProcessSchema().bind(processes = self.wps.processes)
 
-    def success(self, appstruct):
-        self.wizard_state.set('process_identifier', appstruct.get('identifier'))
-
-    def previous_success(self, appstruct):
-        self.success(appstruct)
-        return self.previous()
-        
     def next_success(self, appstruct):
         self.success(appstruct)
 
         # TODO: this code does not belong here
         from phoenix.wps import count_literal_inputs
-        identifier = self.wizard_state.get('process_identifier')
+        identifier = appstruct['identifier']
         if count_literal_inputs(self.wps, identifier) > 0:
             return self.next('wizard_literal_inputs')
         return self.next('wizard_complex_inputs')
         
-    def appstruct(self):
-        return dict(identifier=self.wizard_state.get('process_identifier'))
-
-    def breadcrumbs(self):
-        breadcrumbs = super(ChooseWPSProcess, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='wizard_literal_inputs', title=self.title))
-        return breadcrumbs
-
     @view_config(route_name='wizard_process', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
         return super(ChooseWPSProcess, self).view()
+
+from phoenix.grid import MyGrid
+from string import Template
 
 class CatalogSearchGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):

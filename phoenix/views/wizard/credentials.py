@@ -1,27 +1,15 @@
-from pyramid.view import view_config, view_defaults
-from pyramid.httpexceptions import HTTPFound
+from pyramid.view import view_config
 
-from deform import Form, Button
-
-from owslib.wps import WebProcessingService
-
-from string import Template
-
-from phoenix import models
-from phoenix.views import MyView
-from phoenix.grid import MyGrid
 from phoenix.views.wizard import Wizard
-from phoenix.exceptions import MyProxyLogonFailure
 
 import logging
 logger = logging.getLogger(__name__)
 
 class ESGFCredentials(Wizard):
     def __init__(self, request):
-        super(ESGFCredentials, self).__init__(
-            request,
-            "ESGF Credentials",
-            "")
+        super(ESGFCredentials, self).__init__(request,
+                                              name='wizard_esgf_credentials',
+                                              title="ESGF Credentials")
 
     def schema(self):
         from phoenix.schema import CredentialsSchema
@@ -29,10 +17,11 @@ class ESGFCredentials(Wizard):
 
     def success(self, appstruct):
         try:
+            appstruct['openid'] = self.get_user().get('openid')
             self.wizard_state.set('password', appstruct.get('password'))
             result = models.myproxy_logon(
                 self.request,
-                openid=self.get_user().get('openid'),
+                openid=appstruct.get('openid'),
                 password=appstruct.get('password'))
             user = self.get_user()
             user['credentials'] = result['credentials']
@@ -46,24 +35,10 @@ class ESGFCredentials(Wizard):
             self.request.session.flash(
                 'Credentials updated.', queue='success')
         
-    def previous_success(self, appstruct):
-        self.success(appstruct)
-        return self.previous()
-        
     def next_success(self, appstruct):
         self.success(appstruct)
         return self.next('wizard_check_parameters')
         
-    def appstruct(self):
-        return dict(
-            openid=self.get_user().get('openid'),
-            password=self.wizard_state.get('password'))
-
-    def breadcrumbs(self):
-        breadcrumbs = super(ESGFCredentials, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='wizard_esgf_credentials', title=self.title))
-        return breadcrumbs
-
     @view_config(route_name='wizard_esgf_credentials', renderer='phoenix:templates/wizard/esgf.pt')
     def view(self):
         return super(ESGFCredentials, self).view()

@@ -1,17 +1,6 @@
-from pyramid.view import view_config, view_defaults
-from pyramid.httpexceptions import HTTPFound
+from pyramid.view import view_config
 
-from deform import Form, Button
-
-from owslib.wps import WebProcessingService
-
-from string import Template
-
-from phoenix import models
-from phoenix.views import MyView
-from phoenix.grid import MyGrid
 from phoenix.views.wizard import Wizard
-from phoenix.exceptions import MyProxyLogonFailure
 
 import logging
 logger = logging.getLogger(__name__)
@@ -19,21 +8,12 @@ logger = logging.getLogger(__name__)
 class CatalogSearch(Wizard):
     def __init__(self, request):
         super(CatalogSearch, self).__init__(
-            request,
-            "CSW Catalog Search")
-        self.description = self.wizard_state.get('complex_input_identifier')
+            request, name='wizard_csw', title="CSW Catalog Search")
+        self.description = self.wizard_state.get('wizard_complex_inputs')['identifier']
 
     def schema(self):
         from phoenix.schema import CatalogSearchSchema
         return CatalogSearchSchema()
-
-    def success(self, appstruct):
-        #self.wizard_state.set('esgf_files', appstruct.get('url'))
-        pass
-
-    def previous_success(self, appstruct):
-        self.success(appstruct)
-        return self.previous()
 
     def next_success(self, appstruct):
         self.success(appstruct)
@@ -43,8 +23,9 @@ class CatalogSearch(Wizard):
         keywords = [k for k in map(str.strip, str(query).split(' ')) if len(k)>0]
 
         # TODO: search all formats
-        format = self.wizard_state.get('mime_types')[0]
+        format = self.wizard_state.get('wizard_complex_inputs')['mime_types'][0]
 
+        from string import Template
         cql_tmpl = Template("""\
         dc:creator='${email}'\
         and dc:format='${format}'
@@ -81,26 +62,28 @@ class CatalogSearch(Wizard):
     @view_config(renderer='json', name='select.csw')
     def select_csw(self):
         # TODO: refactor this ... not efficient
+        appstruct = self.appstruct()
         identifier = self.request.params.get('identifier', None)
         logger.debug('called with %s', identifier)
         if identifier is not None:
-            selection = self.wizard_state.get('csw_selection', [])
+            selection = appstruct.get('selection', [])
             if identifier in selection:
                 selection.remove(identifier)
             else:
                 selection.append(identifier)
-            self.wizard_state.set('csw_selection', selection)
+            appstruct['selection'] = selection
+            self.success(appstruct)
         return {}
 
-    def appstruct(self):
-        return dict(csw_selection=self.wizard_state.get('csw_selection'))
-
     def custom_view(self):
+        appstruct = self.appstruct()
+        
         query = self.request.params.get('query', None)
         checkbox = self.request.params.get('checkbox', None)
         items = self.search_csw(query)
-        for item in items:            
-            if item['identifier'] in self.wizard_state.get('csw_selection', []):
+        for item in items:
+            # TODO: refactor this
+            if item['identifier'] in appstruct.get('selection', []):
                 item['selected'] = True
             else:
                 item['selected'] = False
@@ -112,14 +95,11 @@ class CatalogSearch(Wizard):
             )
         return dict(grid=grid, items=items)
 
-    def breadcrumbs(self):
-        breadcrumbs = super(CatalogSearch, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='wizard_csw', title=self.title))
-        return breadcrumbs
-
     @view_config(route_name='wizard_csw', renderer='phoenix:templates/wizard/csw.pt')
     def view(self):
         return super(CatalogSearch, self).view()
+
+from phoenix.grid import MyGrid
 
 class CatalogSearchGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):

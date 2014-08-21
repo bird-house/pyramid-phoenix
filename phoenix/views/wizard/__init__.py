@@ -83,13 +83,13 @@ class WizardState(object):
 
 @view_defaults(permission='edit', layout='default')
 class Wizard(MyView):
-    def __init__(self, request, title, description=None, readonly=False):
+    def __init__(self, request, name, title, description=None):
         super(Wizard, self).__init__(request, title, description)
+        self.name = name
         self.csw = self.request.csw
         self.wizard_state = WizardState(self.session)
         self.favorite = WizardFavorite(self.session)
-        self.readonly = readonly
-        
+
     def buttons(self):
         prev_disabled = not self.prev_ok()
         next_disabled = not self.next_ok()
@@ -138,14 +138,18 @@ class Wizard(MyView):
         """
         return options
 
-    def appstruct(self):
-        return {}
+    def success(self, appstruct):
+        self.wizard_state.set(self.name, appstruct)
 
+    def appstruct(self):
+        return self.wizard_state.get(self.name, {})
+    
     def schema(self):
         raise NotImplementedError
 
     def previous_success(self, appstruct):
-        raise NotImplementedError
+        self.success(appstruct)
+        return self.previous()
     
     def next_success(self, appstruct):
         raise NotImplementedError
@@ -188,8 +192,8 @@ class Wizard(MyView):
         return {}
 
     def breadcrumbs(self):
-        breadcrumbs = super(Wizard, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='wizard_wps', title="Wizard"))
+        breadcrumbs = []
+        #breadcrumbs.append(dict(route_name=self.name, title=self.title))
         return breadcrumbs
 
     def view(self):
@@ -203,7 +207,7 @@ class Wizard(MyView):
             return self.cancel()
         
         custom = self.custom_view()    
-        result = dict(form=form.render(self.appstruct(), readonly=self.readonly))
+        result = dict(form=form.render(self.appstruct()))
 
         # custom overwrites result
         return dict(result, **custom)
