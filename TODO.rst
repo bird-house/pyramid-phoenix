@@ -31,6 +31,11 @@ Login
 * improve local login
 * configure admin (roles) with mongodb
 
+Settings
+========
+
+* refactor users view
+
 Outputs
 =======
 

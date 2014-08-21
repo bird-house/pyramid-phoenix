@@ -5,7 +5,7 @@ from phoenix.views import MyView
 import logging
 logger = logging.getLogger(__name__)
 
-@view_defaults(permission='admin', layout='default')
+@view_defaults(permission='edit', layout='default')
 class Dashboard(MyView):
     def __init__(self, request):
         super(Dashboard, self).__init__(request, 'Dashboard')
