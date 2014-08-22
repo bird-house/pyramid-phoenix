@@ -15,10 +15,10 @@ $(function() {
     text: false,
   }).click(function( event ) {
     event.preventDefault();
-    var identifier = $(this).attr('data-value');
+    var recordid = $(this).attr('data-value');
     $.getJSON(
-      '/select.csw',
-      {'identifier': identifier},
+      '/wizard/csw/'+recordid+'/select.json',
+      {},
       function(json) {
         location.reload();
       }

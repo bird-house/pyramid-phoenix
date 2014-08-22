@@ -62,18 +62,17 @@ class CatalogSearch(Wizard):
             logger.exception('could not get items for csw.')
         return results
         
-    @view_config(renderer='json', name='select.csw')
-    def select_csw(self):
+    @view_config(route_name='wizard_csw_select', renderer='json')
+    def select_record(self):
+        recordid = self.request.matchdict.get('recordid')
         # TODO: refactor this ... not efficient
         appstruct = self.appstruct()
-        identifier = self.request.params.get('identifier', None)
-        logger.debug('called with %s', identifier)
-        if identifier is not None:
+        if recordid is not None:
             selection = appstruct.get('selection', [])
-            if identifier in selection:
-                selection.remove(identifier)
+            if recordid in selection:
+                selection.remove(recordid)
             else:
-                selection.append(identifier)
+                selection.append(recordid)
             appstruct['selection'] = selection
             self.success(appstruct)
         return {}
@@ -84,7 +83,7 @@ class CatalogSearch(Wizard):
         items = self.search_csw(query)
         for item in items:
             # TODO: refactor this
-            if item['identifier'] in self.appstruct.get('selection', []):
+            if item['identifier'] in self.appstruct().get('selection', []):
                 item['selected'] = True
             else:
                 item['selected'] = False
@@ -124,11 +123,13 @@ class CatalogSearchGrid(MyGrid):
         from webhelpers.html.builder import HTML
 
         icon_class = "icon-thumbs-down"
-        if item['selected'] == True:
+        if item.get('selected') == True:
             icon_class = "icon-thumbs-up"
         div = Template("""\
-        <button class="btn btn-mini select" data-value="${identifier}"><i class="${icon_class}"></i></button>
+        <a class="select" data-value="${recordid}" href="#"><i class="${icon_class}"></i></a>
         """)
-        return HTML.td(HTML.literal(div.substitute({'identifier': item['identifier'], 'icon_class': icon_class} )))
+        return HTML.td(HTML.literal(div.substitute({'recordid': item['identifier'],
+                                                    'icon_class': icon_class} )))
+
 
     
