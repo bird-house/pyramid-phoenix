@@ -16,6 +16,7 @@ Common
 ======
 
 * set anaconda_home in user env
+* clean up view templates
 * download process (wget script generator)
 * loop workflow
 * need bootstrap module for install.sh etc ...
@@ -38,7 +39,7 @@ Login
 Settings
 ========
 
-* refactor users view
+* refactor users settings view (use title renderer)
 
 Outputs
 =======
