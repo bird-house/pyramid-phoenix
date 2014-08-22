@@ -4,13 +4,13 @@ from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from deform import Form, Button
 from deform import ValidationFailure
 
-from phoenix.views import MyView
+from phoenix.views.processes import Processes
 
 import logging
 logger = logging.getLogger(__name__)
 
 @view_defaults(permission='edit', layout='default')
-class ExecuteProcess(MyView):
+class ExecuteProcess(Processes):
     def __init__(self, request):
         super(ExecuteProcess, self).__init__(request, name='execute_process', title='Execute')
 
@@ -63,12 +63,6 @@ class ExecuteProcess(MyView):
             self.session.flash("There are errors on this page.", queue='error')
             return dict(form = e.render())
         return HTTPFound(location=self.request.route_url('myjobs'))
-
-    def breadcrumbs(self):
-        breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='processes', title="Processes"))
-        breadcrumbs.append(dict(route_name='execute_process', title=self.title))
-        return breadcrumbs
 
     @view_config(route_name='execute_process', renderer='phoenix:templates/execute_process.pt')
     def view(self):

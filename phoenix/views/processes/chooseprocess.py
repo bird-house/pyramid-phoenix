@@ -4,16 +4,16 @@ from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from deform import Form, Button
 from deform import ValidationFailure
 
-from phoenix.views import MyView
+from phoenix.views.processes import Processes
 from phoenix.grid import MyGrid
 
 import logging
 logger = logging.getLogger(__name__)
 
 @view_defaults(permission='edit', layout='default')
-class Processes(MyView):
+class ChooseProcess(Processes):
     def __init__(self, request):
-        super(Processes, self).__init__(request, name='processes', title='Processes')
+        super(Processes, self).__init__(request, name='processes', title='Choose Process')
 
         self.wps = None
         if 'wps.url' in self.session:
@@ -55,11 +55,6 @@ class Processes(MyView):
             logger.exception('validation of process view failed.')
             return dict(form=e.render())
         return HTTPFound(location=self.request.route_url('processes'))
-
-    def breadcrumbs(self):
-        breadcrumbs = super(Processes, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='processes', title=self.title))
-        return breadcrumbs
 
     @view_config(route_name='processes', renderer='phoenix:templates/processes.pt')
     def view(self):
