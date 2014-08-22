@@ -74,11 +74,6 @@ class Users(SettingsView):
             user = dict(email=email)
         return user
 
-    def breadcrumbs(self):
-        breadcrumbs = super(Users, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='user_settings', title="Users"))
-        return breadcrumbs
-
     @view_config(route_name='user_settings', renderer='phoenix:templates/settings/users.pt')
     def view(self):
         form = self.generate_form()

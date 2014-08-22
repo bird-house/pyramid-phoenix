@@ -15,11 +15,6 @@ class Jobs(SettingsView):
         super(Jobs, self).__init__(request, name='job_settings', title='Jobs')
         self.jobsdb = self.request.db.jobs 
 
-    def breadcrumbs(self):
-        breadcrumbs = super(Jobs, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='job_settings', title="Jobs"))
-        return breadcrumbs
-
     @view_config(route_name='remove_all_jobs')
     def remove(self):
         count = self.jobsdb.count()

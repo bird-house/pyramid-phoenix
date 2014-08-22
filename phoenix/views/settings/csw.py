@@ -119,11 +119,6 @@ class CatalogService(SettingsView):
             logger.exception('could not get items for csw.')
         return results
 
-    def breadcrumbs(self):
-        breadcrumbs = super(CatalogService, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='catalog_settings', title=self.title))
-        return breadcrumbs
- 
     @view_config(route_name="catalog_settings", renderer='phoenix:templates/settings/catalog.pt')
     def view(self):
         service_form = self.generate_service_form()
