@@ -4,7 +4,7 @@ from phoenix.views.wizard import Wizard
 
 class Start(Wizard):
     def __init__(self, request):
-        super(Start, self).__init__(request, name='wizard', title='Wizard')
+        super(Start, self).__init__(request, name='wizard', title='Start')
         self.description = "Choose Favorite or None."
         self.wizard_state.clear()
 
