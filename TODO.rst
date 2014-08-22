@@ -52,7 +52,6 @@ Wizard
 * if update creds fails dont go to next step
 * start restflow as service
 * add search facets to job keywords
-* disable previous on first step
 * show only processes with complex parameters
 * use mimetype as filter in search
 * use workflow module:
@@ -60,7 +59,7 @@ https://github.com/repoze/repoze.workflow (see koti example)
 * esgf file list does not restore state
 * csw search does not restore state
 * store favorites
-* refactor state storage (persist in mongodb)
+* refactor state storage 
 
 
 Map

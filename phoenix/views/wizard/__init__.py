@@ -8,26 +8,29 @@ from phoenix.views import MyView
 import logging
 logger = logging.getLogger(__name__)
 
+wizard_favorite = "wizard_favorite"
+no_favorite = "No Favorite"
+
 class WizardFavorite(object):
-    session_name = "wizard_favorite"
-    
     def __init__(self, session):
         self.session = session
-        if not self.session_name in self.session:
+        if not wizard_favorite in self.session:
             self.clear()
-            
-    def get(self, key, default=None):
-        return self.session[self.session_name].get(key)
+        self.session[wizard_favorite][no_favorite] = {}
 
     def names(self):
-        return self.session[self.session_name].keys()
+        return self.session[wizard_favorite].keys()
+            
+    def get(self, name, default=None):
+        return self.session[wizard_favorite].get(name)
 
-    def set(self, key, value):
-        self.session[self.session_name][key] = value
-        self.session.changed()
+    def set(self, name, state):
+        if name != no_favorite:
+            self.session[wizard_favorite][name] = state
+            self.session.changed()
         
     def clear(self):
-        self.session[self.session_name] = {'No Favorite': WizardState(self.session).state(),}
+        self.session[wizard_favorite] = {}
         self.session.changed()
 
 class WizardState(object):
@@ -39,12 +42,13 @@ class WizardState(object):
             self.clear()
 
     def load(self, state):
+        import copy
         self.clear()
-        self.session['wizard'] = state
+        self.session['wizard']['state'] = copy.deepcopy(state)
         self.session.changed()
 
-    def state(self):
-        return self.session['wizard']
+    def dump(self):
+        return self.session['wizard']['state']
             
     def current_step(self):
         step = self.initial_step

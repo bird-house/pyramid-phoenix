@@ -72,8 +72,8 @@ class Done(Wizard):
         super(Done, self).success(appstruct)
         if appstruct.get('is_favorite', False):
             self.favorite.set(
-                appstruct.get('favorite_name', 'unknown'),
-                self.wizard_state.state())
+                name=appstruct.get('favorite_name'),
+                state=self.wizard_state.dump())
         
         execution = self.execute_workflow(appstruct)
         from phoenix.models import add_job

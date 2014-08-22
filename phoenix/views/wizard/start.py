@@ -2,6 +2,9 @@ from pyramid.view import view_config
 
 from phoenix.views.wizard import Wizard
 
+import logging
+logger = logging.getLogger(__name__)
+
 class Start(Wizard):
     def __init__(self, request):
         super(Start, self).__init__(request, name='wizard', title='Start')
@@ -13,7 +16,9 @@ class Start(Wizard):
         return WizardSchema().bind(favorites=self.favorite.names())
 
     def success(self, appstruct):
-        favorite_state = self.favorite.get(appstruct.get('favorite', 'None'))
+        logger.debug('favorite: %s', appstruct.get('favorite'))
+        favorite_state = self.favorite.get(appstruct.get('favorite'))
+        logger.debug('favorite state: %s', favorite_state)
         self.wizard_state.load(favorite_state)
         super(Start, self).success(appstruct)
 
