@@ -149,9 +149,16 @@ class Wizard(MyView):
     def previous_success(self, appstruct):
         self.success(appstruct)
         return self.previous()
+
+    def previous_failure(self, validation_failure):
+        # dont stop previous in case of validation failure
+        return self.previous()
     
     def next_success(self, appstruct):
         raise NotImplementedError
+
+    def next_failure(self, validation_failure):
+        return dict(form=validation_failure.render())
 
     def generate_form(self, formid='deform'):
         return Form(
@@ -166,13 +173,14 @@ class Wizard(MyView):
         from deform import ValidationFailure
         
         success_method = getattr(self, '%s_success' % action)
+        failure_method = getattr(self, '%s_failure' % action)
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
             result = success_method(appstruct)
         except ValidationFailure as e:
             logger.exception('Validation of wizard view failed.')
-            result = dict(form=e.render())
+            result = failure_method(e)
         return result
         
     def previous(self):
