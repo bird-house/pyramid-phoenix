@@ -191,7 +191,6 @@ class Wizard(MyView):
         return {}
 
     def breadcrumbs(self):
-        logger.debug('breadcrumbs %s', self)
         breadcrumbs = super(Wizard, self).breadcrumbs()
         breadcrumbs.append(dict(route_name='wizard', title='Wizard'))
         breadcrumbs.append(dict(route_name=self.name, title=self.title))
