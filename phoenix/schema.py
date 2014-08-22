@@ -177,18 +177,6 @@ class ESGFSearchSchema(colander.MappingSchema):
         #default = '{"query": "project:CORDEX"}',
         widget = EsgSearchWidget(url="/esg-search"))
 
-@colander.deferred
-def deferred_esgf_files_widget(node, kw):
-    import json
-    selection = kw.get('selection', {})
-    search = json.loads(selection)
-    return EsgFilesWidget(url="/esg-search", search_type='File', search=search)
-class ESGFFilesSchema(colander.MappingSchema):
-    url = colander.SchemaNode(
-        colander.Set(),
-        description = 'URL',
-        widget = deferred_esgf_files_widget)
-
 class JobSchema(colander.MappingSchema):
     @colander.deferred
     def deferred_title(node, kw):

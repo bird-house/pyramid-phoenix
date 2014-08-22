@@ -49,6 +49,8 @@ Outputs
 Wizard
 ======
 
+* refactor appstruct handling ...
+* dont use default form buttons
 * replace esgf file widget
 * if update creds fails dont go to next step
 * start restflow as service
@@ -58,8 +60,7 @@ Wizard
 * use workflow module:
 https://github.com/repoze/repoze.workflow (see koti example)
 * esgf file list does not restore state
-* csw search does not restore state
-* store favorites
+* store favorites in mongodb
 * refactor state storage 
 
 

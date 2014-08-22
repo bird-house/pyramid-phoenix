@@ -79,14 +79,12 @@ class CatalogSearch(Wizard):
         return {}
 
     def custom_view(self):
-        appstruct = self.appstruct()
-        
         query = self.request.params.get('query', None)
         checkbox = self.request.params.get('checkbox', None)
         items = self.search_csw(query)
         for item in items:
             # TODO: refactor this
-            if item['identifier'] in appstruct.get('selection', []):
+            if item['identifier'] in self.appstruct.get('selection', []):
                 item['selected'] = True
             else:
                 item['selected'] = False
