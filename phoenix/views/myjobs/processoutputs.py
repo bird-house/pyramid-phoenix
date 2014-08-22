@@ -4,13 +4,13 @@ from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from deform import Form, Button
 from deform import ValidationFailure
 
-from phoenix.views import MyView
+from phoenix.views.myjobs import MyJobs
 
 import logging
 logger = logging.getLogger(__name__)
 
 @view_defaults(permission='edit', layout='default')
-class ProcessOutputs(MyView):
+class ProcessOutputs(MyJobs):
     def __init__(self, request):
         super(ProcessOutputs, self).__init__(
             request, name='process_outputs', title='Process Outputs')
@@ -111,12 +111,6 @@ class ProcessOutputs(MyView):
 
         return result
 
-    def breadcrumbs(self):
-        breadcrumbs = super(ProcessOutputs, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='myjobs', title="My Jobs"))
-        breadcrumbs.append(dict(route_name='process_outputs', title=self.title))
-        return breadcrumbs
-        
     @view_config(route_name='process_outputs', renderer='phoenix:templates/process_outputs.pt')
     def view(self):
         order = self.sort_order()

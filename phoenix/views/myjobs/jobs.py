@@ -1,15 +1,15 @@
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 
-from phoenix.views import MyView
+from phoenix.views.myjobs import MyJobs
 
 import logging
 logger = logging.getLogger(__name__)
 
 @view_defaults(permission='edit', layout='default')
-class MyJobs(MyView):
+class Jobs(MyJobs):
     def __init__(self, request):
-        super(MyJobs, self).__init__(request, name='myjobs', title='My Jobs')
+        super(Jobs, self).__init__(request, name='myjobs', title='Overview')
         self.db = self.request.db 
 
     def sort_order(self):
@@ -64,11 +64,6 @@ class MyJobs(MyView):
             self.session.flash("Job %s deleted." % job['title'], queue='info')
         return HTTPFound(location=self.request.route_url('myjobs'))
 
-    def breadcrumbs(self):
-        breadcrumbs = super(MyJobs, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='myjobs', title=self.title))
-        return breadcrumbs
-    
     @view_config(route_name='myjobs', renderer='phoenix:templates/myjobs.pt')
     def view(self):
         order = self.sort_order()
