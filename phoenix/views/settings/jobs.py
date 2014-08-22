@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class Jobs(SettingsView):
     def __init__(self, request):
-        super(Jobs, self).__init__(request, 'Jobs')
+        super(Jobs, self).__init__(request, name='job_settings', title='Jobs')
         self.jobsdb = self.request.db.jobs 
 
     def breadcrumbs(self):

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='edit', layout='default')
 class MyJobs(MyView):
     def __init__(self, request):
-        super(MyJobs, self).__init__(request, 'My Jobs')
+        super(MyJobs, self).__init__(request, name='myjobs', title='My Jobs')
         self.db = self.request.db 
 
     def sort_order(self):

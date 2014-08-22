@@ -1,7 +1,5 @@
 from pyramid.view import view_config, view_defaults
 
-from phoenix.views import MyView
-
 import logging
 logger = logging.getLogger(__name__)
 

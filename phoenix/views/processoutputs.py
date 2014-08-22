@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='edit', layout='default')
 class ProcessOutputs(MyView):
     def __init__(self, request):
-        super(ProcessOutputs, self).__init__(request, 'Process Outputs')
-
+        super(ProcessOutputs, self).__init__(
+            request, name='process_outputs', title='Process Outputs')
         self.db = self.request.db
 
     def sort_order(self):

@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class Users(SettingsView):
     def __init__(self, request):
-        super(Users, self).__init__(request, 'Users')
+        super(Users, self).__init__(request, name='user_settings', title='Users')
 
     def sort_order(self):
         """Determine what the current sort parameters are.

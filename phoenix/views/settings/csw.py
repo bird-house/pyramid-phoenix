@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 
 class CatalogService(SettingsView):
     def __init__(self, request):
-        super(CatalogService, self).__init__(request, 'Catalog Service')
+        super(CatalogService, self).__init__(
+            request, name='catalog_settings', title='Catalog Service')
         self.csw = self.request.csw
         self.description = "%s (%s)" % (self.csw.identification.title, self.csw.url)
         

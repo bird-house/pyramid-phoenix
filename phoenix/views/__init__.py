@@ -2,9 +2,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 class MyView(object):
-    def __init__(self, request, title, description=None):
+    def __init__(self, request, name, title, description=None):
         self.request = request
         self.session = self.request.session
+        self.name = name
         self.title = title
         self.description = description
         # db access

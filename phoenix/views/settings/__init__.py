@@ -7,8 +7,8 @@ logger = logging.getLogger(__name__)
 
 @view_defaults(permission='admin', layout='default')    
 class SettingsView(MyView):
-    def __init__(self, request, title="Settings", description=None):
-        super(SettingsView, self).__init__(request, title, description)
+    def __init__(self, request, name, title, description=None):
+        super(SettingsView, self).__init__(request, name, title, description)
         self.settings = self.request.registry.settings
 
     def breadcrumbs(self):

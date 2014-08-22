@@ -22,7 +22,7 @@ authomatic = Authomatic(config=config.config,
 @view_defaults(permission='view', layout='default')
 class Logon(MyView):
     def __init__(self, request):
-        super(Logon, self).__init__(request, 'Logon')
+        super(Logon, self).__init__(request, name="login_openid", title='Logon')
 
     def is_valid_user(self, email):
         from phoenix.security import admin_users

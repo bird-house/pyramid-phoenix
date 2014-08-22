@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='edit', layout='default')
 class Dashboard(MyView):
     def __init__(self, request):
-        super(Dashboard, self).__init__(request, 'Dashboard')
+        super(Dashboard, self).__init__(request, name='dashboard', title='Dashboard')
 
     @view_config(route_name='dashboard', renderer='phoenix:templates/dashboard.pt')
     def view(self):

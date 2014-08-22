@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='edit', layout='default')
 class Processes(MyView):
     def __init__(self, request):
-        super(Processes, self).__init__(request, 'Processes')
+        super(Processes, self).__init__(request, name='processes', title='Processes')
 
         self.wps = None
         if 'wps.url' in self.session:

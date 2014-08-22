@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='edit', layout='default')
 class ExecuteProcess(MyView):
     def __init__(self, request):
-        super(ExecuteProcess, self).__init__(request, 'Execute')
+        super(ExecuteProcess, self).__init__(request, name='execute_process', title='Execute')
 
         self.db = self.request.db
         self.identifier = self.request.matchdict.get('identifier')

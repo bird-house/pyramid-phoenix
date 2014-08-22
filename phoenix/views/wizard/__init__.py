@@ -84,8 +84,7 @@ class WizardState(object):
 @view_defaults(permission='edit', layout='default')
 class Wizard(MyView):
     def __init__(self, request, name, title, description=None):
-        super(Wizard, self).__init__(request, title, description)
-        self.name = name
+        super(Wizard, self).__init__(request, name, title, description)
         self.csw = self.request.csw
         self.wizard_state = WizardState(self.session)
         self.favorite = WizardFavorite(self.session)
@@ -192,8 +191,10 @@ class Wizard(MyView):
         return {}
 
     def breadcrumbs(self):
-        breadcrumbs = []
-        #breadcrumbs.append(dict(route_name=self.name, title=self.title))
+        logger.debug('breadcrumbs %s', self)
+        logger.debug('title=%s', self.title)
+        breadcrumbs = super(Wizard, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='wizard', title=self.title))
         return breadcrumbs
 
     def view(self):

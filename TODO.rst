@@ -48,6 +48,7 @@ Outputs
 Wizard
 ======
 
+* replace esgf file widget
 * if update creds fails dont go to next step
 * start restflow as service
 * add search facets to job keywords
@@ -60,7 +61,7 @@ https://github.com/repoze/repoze.workflow (see koti example)
 * esgf file list does not restore state
 * csw search does not restore state
 * store favorites
-* refactor state storage in session
+* refactor state storage (persist in mongodb)
 
 
 Map
