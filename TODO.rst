@@ -15,6 +15,7 @@ Bugs
 Common
 ======
 
+* set anaconda_home in user env
 * download process (wget script generator)
 * loop workflow
 * need bootstrap module for install.sh etc ...

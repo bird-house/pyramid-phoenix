@@ -5,6 +5,10 @@ from phoenix.views.wizard import Wizard
 import logging
 logger = logging.getLogger(__name__)
 
+import colander
+class CatalogSearchSchema(colander.MappingSchema):
+    pass
+
 class CatalogSearch(Wizard):
     def __init__(self, request):
         super(CatalogSearch, self).__init__(
@@ -12,11 +16,10 @@ class CatalogSearch(Wizard):
         self.description = self.wizard_state.get('wizard_complex_inputs')['identifier']
 
     def schema(self):
-        from phoenix.schema import CatalogSearchSchema
         return CatalogSearchSchema()
 
     def next_success(self, appstruct):
-        self.success(appstruct)
+        #self.success(appstruct)
         return self.next('wizard_check_parameters')
 
     def search_csw(self, query=''):
