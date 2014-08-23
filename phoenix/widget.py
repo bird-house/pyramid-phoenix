@@ -237,36 +237,3 @@ class EsgFilesWidget(Widget):
             return (pstruct,)
         return tuple(pstruct)
     
-class FileSearchWidget(Widget):
-    """
-    Renders an filter widget.
-    """
-    template = 'textinput'
-    size = None
-    style = None
-    mask = None
-    mask_placeholder = "_"
-    requirements = ()
-
-    def serialize(self, field, cstruct, **kw):
-        if cstruct in (null, None):
-            cstruct = ''
-        else:
-            search = json.loads(cstruct)
-            cstruct = search.get('filter', '')
-        values = self.get_template_values(field, cstruct, kw)
-        log.debug('filesearch values: %s', values)
-        return field.renderer(self.template, **values)
-
-    def deserialize(self, field, pstruct):
-        if pstruct is null:
-            return null
-        pstruct = pstruct.strip()
-        if not pstruct:
-            return null
-
-        result = {}
-        result['filter'] = pstruct
-        log.debug('filesearch: %s', result)
-        return json.dumps(result)
-
