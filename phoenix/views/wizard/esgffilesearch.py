@@ -34,9 +34,9 @@ class ESGFFileSearch(Wizard):
             title="ESGF File Search")
 
     def schema(self):
-        from phoenix.schema import NoSchema
-        return NoSchema()
-        #return ESGFFilesSchema().bind(selection=self.wizard_state.get('wizard_esgf')['selection'])
+        #from phoenix.schema import NoSchema
+        #return NoSchema()
+        return ESGFFilesSchema().bind(selection=self.wizard_state.get('wizard_esgf')['selection'])
 
     def cert_ok(self):
         # TODO: this is the wrong place to skip steps
@@ -87,7 +87,7 @@ class ESGFFileSearch(Wizard):
             result.append(dict(identifier=ds.get('id'), title=ds.get('title'), abstract=abstract, subjects=[]))
         return result
 
-    def custom_view(self):
+    def custom_view_disabled(self):
         query = self.request.params.get('query', None)
         checkbox = self.request.params.get('checkbox', None)
         #items = self.search_csw(query)

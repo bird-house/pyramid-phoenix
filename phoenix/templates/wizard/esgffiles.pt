@@ -7,23 +7,6 @@
         
   <div metal:fill-slot="content">
 
-    <!-- table -->
-    <div>
-      <table class="table table-bordered table-striped" id="table-esgffiles">
-        <tal:rows replace="structure grid" />
-      </table>
-    </div>
-
-    <!-- Pagination for catalog search results -->
-    <div class="pagination pagination-centered pagination-large">
-      <ul>
-        <li class="disabled"><a href="#">&laquo;</a></li>
-        <li class="active"><a href="#">1</a></li>
-        <li class="active"><a href="#">2</a></li>
-        <li class="active"><a href="#">&raquo;</a></li>
-      </ul>
-    </div>
-
     <tal:form replace="structure form">The form will render here</tal:form>
      
   </div>
