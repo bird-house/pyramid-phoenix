@@ -66,7 +66,7 @@ class ProcessOutputs(MyJobs):
             outputs[oid] = output
         return outputs
 
-    def process_outputs(self, jobid):
+    def process_outputs(self, jobid, tab='outputs'):
         job = self.db.jobs.find_one({'identifier': jobid})
         outputs = self.collect_outputs(job['status_location'])
         # TODO: dirty hack for workflows ... not save and needs refactoring
@@ -79,13 +79,19 @@ class ProcessOutputs(MyJobs):
             wf_result_url = execution.processOutputs[0].reference
             wf_result_json = json.load(urllib.urlopen(wf_result_url))
             count = 0
-            for url in wf_result_json.get('worker', []):
-                count = count + 1
-                outputs.update( self.collect_outputs(url, prefix='worker%d' % count ))
-            count = 0
-            for url in wf_result_json.get('source', []):
-                count = count + 1
-                outputs.update( self.collect_outputs(url, prefix='source%d' % count ))
+            if tab == 'outputs':
+                for url in wf_result_json.get('worker', []):
+                    count = count + 1
+                    outputs = self.collect_outputs(url, prefix='worker%d' % count )
+            elif tab == 'resources':
+                for url in wf_result_json.get('source', []):
+                    count = count + 1
+                    outputs = self.collect_outputs(url, prefix='source%d' % count )
+            elif tab == 'inputs':
+                outputs = {}
+        else:
+            if tab != 'outputs':
+                outputs = {}
         return outputs
  
     @view_config(renderer='json', name='publish.output')
@@ -130,7 +136,7 @@ class ProcessOutputs(MyJobs):
             return self.process_form(form, jobid)
 
         items = []
-        for oid,output in self.process_outputs(self.session.get('jobid')).items():
+        for oid,output in self.process_outputs(self.session.get('jobid'), tab).items():
             items.append(dict(title=output.title,
                               abstract=getattr(output, 'abstract', ""),
                               identifier=oid,
