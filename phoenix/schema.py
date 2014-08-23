@@ -1,4 +1,5 @@
 import colander
+from colander import Invalid
 
 from deform.widget import (
     RadioChoiceWidget,
