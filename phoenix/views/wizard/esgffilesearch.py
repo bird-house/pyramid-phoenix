@@ -59,7 +59,51 @@ class ESGFFileSearch(Wizard):
         if self.cert_ok():
             return self.next('wizard_check_parameters')
         return self.next('wizard_esgf_credentials')
+
+    def custom_view(self):
+        query = self.request.params.get('query', None)
+        checkbox = self.request.params.get('checkbox', None)
+        #items = self.search_csw(query)
+        items = []
+        for item in items:
+            # TODO: refactor this
+            if item['identifier'] in self.appstruct().get('selection', []):
+                item['selected'] = True
+            else:
+                item['selected'] = False
+
+        grid = ESGFFileSearchGrid(
+                self.request,
+                items,
+                ['title', 'selected'],
+            )
+        return dict(grid=grid, items=items)
         
-    @view_config(route_name='wizard_esgf_files', renderer='phoenix:templates/wizard/esgf.pt')
+    @view_config(route_name='wizard_esgf_files', renderer='phoenix:templates/wizard/esgffiles.pt')
     def view(self):
         return super(ESGFFileSearch, self).view()
+
+
+from phoenix.grid import MyGrid
+
+class ESGFFileSearchGrid(MyGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(ESGFFileSearchGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['selected'] = self.selected_td
+        self.column_formats['title'] = self.title_td
+
+    def title_td(self, col_num, i, item):
+        return self.render_title_td(item['title'], item['abstract'], item.get('subjects'))
+
+    def selected_td(self, col_num, i, item):
+        from string import Template
+        from webhelpers.html.builder import HTML
+
+        icon_class = "icon-thumbs-down"
+        if item.get('selected') == True:
+            icon_class = "icon-thumbs-up"
+        div = Template("""\
+        <a class="select" data-value="${recordid}" href="#"><i class="${icon_class}"></i></a>
+        """)
+        return HTML.td(HTML.literal(div.substitute({'recordid': item['identifier'],
+                                                    'icon_class': icon_class} )))
