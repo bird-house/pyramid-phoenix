@@ -45,7 +45,7 @@ Outputs
 =======
 
 * run same job again
-* show inputs and outpus (tab view)
+* show inputs, outpus, workflow and sources (tab view)
 
 Wizard
 ======

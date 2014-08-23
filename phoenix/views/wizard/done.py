@@ -26,9 +26,9 @@ class Done(Wizard):
             selection = self.wizard_state.get(source).get('selection', [])
             logger.debug("catalog selection: %s", selection)
             self.csw.getrecordbyid(id=selection)
-            sources = [[str(rec.source)] for rec in self.csw.records.values()]
+            sources = [str(rec.source) for rec in self.csw.records.values()]
         elif source == 'wizard_esgf':
-            sources = [[str(file_url)] for file_url in self.wizard_state.get('wizard_esgf_files')['url']]
+            sources = [str(file_url) for file_url in self.wizard_state.get('wizard_esgf_files')['url']]
         return sources
 
     def workflow_description(self):
@@ -38,18 +38,21 @@ class Done(Wizard):
         from urlparse import urlparse
         source_hostname = urlparse(self.request.wps.url).netloc.split(':')[0]
         worker_hostname = urlparse(self.wps.url).netloc.split(':')[0]
-        output = 'output'
+        output = 'output_external'
         if source_hostname == worker_hostname:
-            output = 'output_path'
+            output = 'output'
         logger.debug('source output identifier: %s', output)
+
+        inputs = ['credentials=%s' % (credentials)]
+        for url in self.sources():
+            inputs.append('resource=%s' % url)
         
         source = dict(
             service = self.request.wps.url,
-            identifier = 'esgf_wget',
-            input = ['credentials=%s' % (credentials)],
-            complex_input = 'source',
+            identifier = 'wget',
+            input = inputs,
             output = output, # output for chaining to worker as input
-            sources = self.sources())
+        )
         from phoenix.wps import appstruct_to_inputs
         inputs = appstruct_to_inputs(self.wizard_state.get('wizard_literal_inputs'))
         worker_inputs = ['%s=%s' % (key, value) for key,value in inputs]
