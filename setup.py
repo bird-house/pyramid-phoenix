@@ -30,6 +30,7 @@ requires = [
     'python-dateutil',
     'pytz',
     #'egenix-mx-base',
+    'esgf-pyclient',
     ]
 
 setup(name='Phoenix',
