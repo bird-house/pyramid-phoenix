@@ -6,6 +6,22 @@
         
   <div metal:fill-slot="content">
 
+    <ul class="nav nav-tabs">
+      <li class="${'active' if active=='outputs' else ''}">
+	<a href="${request.route_url('process_outputs', jobid=jobid, tab='outputs')}">Outputs</a>
+      </li>
+      <li class="${'active' if active=='inputs' else ''}">
+	<a href="${request.route_url('process_outputs', jobid=jobid, tab='inputs')}">Inputs</a>
+      </li>
+      <li class="${'active' if active=='resources' else ''}">
+	<a href="${request.route_url('process_outputs', jobid=jobid, tab='resources')}">Resources</a>
+      </li>
+      <li class="${'active' if active=='workflow' else ''}">
+	<a href="${request.route_url('process_outputs', jobid=jobid, tab='workflow')}">Workflow</a>
+      </li>
+    </ul>
+
+
     <table class="table table-striped">
       <tal:rows replace="structure grid" />
     </table>

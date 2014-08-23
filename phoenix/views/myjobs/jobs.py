@@ -128,7 +128,7 @@ class JobsGrid(MyGrid):
     def action_td(self, col_num, i, item):
         buttongroup = []
         buttongroup.append( ("show", item.get('identifier'), "icon-th-list", "Show", 
-                             self.request.route_url('process_outputs', jobid=item.get('identifier'))) )
+                             self.request.route_url('process_outputs', tab='outputs', jobid=item.get('identifier'))) )
         buttongroup.append( ("remove", item.get('identifier'), "icon-trash", "Remove", 
                              self.request.route_url('remove_myjob', jobid=item.get('identifier'))) )
         return self.render_action_td(buttongroup)

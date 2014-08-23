@@ -84,7 +84,7 @@ def main(global_config, **settings):
     config.add_route('update_myjobs', '/myjobs/update.json')
     config.add_route('remove_myjobs', '/myjobs/remove_all')
     config.add_route('remove_myjob', '/myjobs/{jobid}/remove')
-    config.add_route('process_outputs', '/myjobs/{jobid}/outputs')
+    config.add_route('process_outputs', '/myjobs/{jobid}/outputs/{tab}')
 
     config.add_route('map', '/map')
     config.add_route('myaccount', '/myaccount')

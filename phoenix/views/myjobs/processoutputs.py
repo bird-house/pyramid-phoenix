@@ -119,6 +119,7 @@ class ProcessOutputs(MyJobs):
         
         form = self.generate_form()
 
+        tab = self.request.matchdict.get('tab')
         # TODO: this is a bit fishy ...
         jobid = self.request.matchdict.get('jobid')
         if jobid is not None:
@@ -143,7 +144,7 @@ class ProcessOutputs(MyJobs):
                 items,
                 ['output', 'identifier', 'preview', ''],
             )
-        return dict(grid=grid, items=items, form=form.render())
+        return dict(active=tab, jobid=jobid, grid=grid, items=items, form=form.render())
         
 from phoenix.grid import MyGrid
 
