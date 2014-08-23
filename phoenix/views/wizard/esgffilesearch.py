@@ -34,7 +34,9 @@ class ESGFFileSearch(Wizard):
             title="ESGF File Search")
 
     def schema(self):
-        return ESGFFilesSchema().bind(selection=self.wizard_state.get('wizard_esgf')['selection'])
+        from phoenix.schema import NoSchema
+        return NoSchema()
+        #return ESGFFilesSchema().bind(selection=self.wizard_state.get('wizard_esgf')['selection'])
 
     def cert_ok(self):
         # TODO: this is the wrong place to skip steps
@@ -60,11 +62,36 @@ class ESGFFileSearch(Wizard):
             return self.next('wizard_check_parameters')
         return self.next('wizard_esgf_credentials')
 
+    def query_esgf_files(self):
+        selection = self.wizard_state.get('wizard_esgf')['selection']
+
+        import json
+        search = json.loads(selection)
+        constraints = {}
+        for facet in search.get('facets', '').split(','):
+            key,value = facet.split(':')
+            constraints[key] = value
+        constraints['start'] = search.get('start')
+        constraints['end'] = search.get('end')
+        constraints['bbox'] = search.get('bbox')
+
+        from phoenix.models import query_esgf_files
+        result_ds = query_esgf_files(
+            latest=search.get('latest'), 
+            replica=search.get('replica'),
+            distrib=search.get('distrib'),
+            **constraints)
+        result = []
+        for ds in result_ds:
+            abstract = 'size = %d MB, number of files = %d' % (ds.get('size')/1024.0/1024.0, ds.get('number_of_files'))
+            result.append(dict(identifier=ds.get('id'), title=ds.get('title'), abstract=abstract, subjects=[]))
+        return result
+
     def custom_view(self):
         query = self.request.params.get('query', None)
         checkbox = self.request.params.get('checkbox', None)
         #items = self.search_csw(query)
-        items = []
+        items = self.query_esgf_files()
         for item in items:
             # TODO: refactor this
             if item['identifier'] in self.appstruct().get('selection', []):

@@ -6,6 +6,26 @@ from .exceptions import MyProxyLogonFailure
 import logging
 logger = logging.getLogger(__name__)
 
+def query_esgf_files(latest=True, replica=False, distrib=True, **constraints):
+    logger.debug('latest=%s, replica=%s, distrib=%s', latest, replica, distrib)
+    logger.debug('constraints = %s', constraints)
+    from pyesgf.search import SearchConnection
+    # TODO: change esgf url
+    conn = SearchConnection('http://localhost:8081/esg-search', distrib=distrib)
+    fields = ['id', 'title', 'size', 'number_of_files', 'number_of_aggregations']
+    ctx = conn.new_context(latest=latest, replica=replica, **constraints)
+    logger.debug('datasets found %d', ctx.hit_count)
+    result = []
+    for ds in ctx.search():
+        result.append(ds.json)
+    #files = ds.file_context().search()
+    #logger.debug('num files = %d', len(files))
+    #for file in files:
+    #    print file.download_url
+    #    print file.filename
+    #    print file.size
+    return result
+
 def add_user(
     request,
     email,
