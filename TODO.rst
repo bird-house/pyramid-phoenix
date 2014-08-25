@@ -49,6 +49,7 @@ Outputs
 Wizard
 ======
 
+* maybe skip egsf file selection. do it in background (just get time-rage and variable).
 * refactor appstruct handling ...
 * dont use default form buttons
 * replace esgf file widget
