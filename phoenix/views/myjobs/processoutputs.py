@@ -33,7 +33,7 @@ class ProcessOutputs(MyJobs):
             buttons=('publish',),
             formid=formid)
 
-    def process_form(self, form, jobid):
+    def process_form(self, form, jobid, tab):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
@@ -54,7 +54,7 @@ class ProcessOutputs(MyJobs):
             self.session.flash("Publication failed. %s" % e, queue='error')
         else:
             self.session.flash("Publication was successful", queue='success')
-        return HTTPFound(location=self.request.route_url('process_outputs', jobid=jobid))
+        return HTTPFound(location=self.request.route_url('process_outputs', jobid=jobid, tab=tab))
 
     def collect_outputs(self, status_location, prefix="job"):
         from owslib.wps import WPSExecution
@@ -133,7 +133,7 @@ class ProcessOutputs(MyJobs):
             self.session.changed()
 
         if 'publish' in self.request.POST:
-            return self.process_form(form, jobid)
+            return self.process_form(form, jobid, tab)
 
         items = []
         for oid,output in self.process_outputs(self.session.get('jobid'), tab).items():
