@@ -45,47 +45,6 @@ class TagsWidget(Widget):
             return null
         return pstruct
 
-
-class WizardStatesWidget(TextInputWidget):
-    """
-    Renders a ``<textarea>`` widget.
-
-    **Attributes/Arguments**
-
-    cols
-        The size, in columns, of the text input field.  Defaults to
-        ``None``, meaning that the ``cols`` is not included in the
-        widget output (uses browser default cols).
-
-    rows
-        The size, in rows, of the text input field.  Defaults to
-        ``None``, meaning that the ``rows`` is not included in the
-        widget output (uses browser default cols).
-
-    style
-        A string that will be placed literally in a ``style`` attribute on
-        the textarea input tag.  For example, 'width:150px;'.  Default:
-        ``None``, meaning no style attribute will be added to the input tag.
-        
-    template
-        The template name used to render the widget.  Default:
-        ``textarea``.
-
-    readonly_template
-        The template name used to render the widget in read-only mode.
-        Default: ``readonly/textarea``.
-
-
-    strip
-        If true, during deserialization, strip the value of leading
-        and trailing whitespace (default ``True``).
-    """
-    template = 'wizard_states'
-    cols = None
-    rows = None
-    strip = True
-    style = None
-
 class EsgSearchWidget(Widget):
     """
     Renders an esg search widget
@@ -133,8 +92,8 @@ class EsgSearchWidget(Widget):
         kw.setdefault('temporal', self._bool(search.get('temporal', False)))
         kw.setdefault('spatial', self._bool(search.get('spatial', False)))
         
-        kw.setdefault('start', search.get('start', '1600-01-01T12:00:00Z'))
-        kw.setdefault('end', search.get('end', '2100-12-31T12:00:00Z'))
+        kw.setdefault('start', search.get('start', '2000-01-01T12:00:00Z'))
+        kw.setdefault('end', search.get('end', '2010-12-31T12:00:00Z'))
         kw.setdefault('bbox', search.get('bbox', '-180,-90,180,90'))
         values = self.get_template_values(field, cstruct, kw)
         log.debug('esgsearch values: %s', values)
