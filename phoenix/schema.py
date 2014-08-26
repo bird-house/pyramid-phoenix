@@ -193,17 +193,20 @@ class JobSchema(colander.MappingSchema):
     
     title = colander.SchemaNode(
         colander.String(),
-        default = deferred_title)
+        default = deferred_title,
+        missing = 'test')
     
     abstract = colander.SchemaNode(
         colander.String(),
         default = deferred_abstract,
+        missing = '',
         validator = colander.Length(max=500),
         widget = TextAreaWidget(rows=3, cols=120))
     
     keywords = colander.SchemaNode(
         colander.String(),
         default = deferred_keywords,
+        missing = 'test',
         widget = TagsWidget())
 
 class DoneSchema(JobSchema):
