@@ -64,6 +64,22 @@ ${field.start_mapping()}
          id="tm-facet"/>
   <p/>
 
+  <!--
+  <span>Start Year</span>
+  <input type="text" name="startyear" value="2000" class="input-small"
+         id="${oid}-startyear"/>
+
+  <span>Year Offset</span>
+  <select name="yearoffset" id="${oid}-yearoffset" class="input-small">
+    <option name="1" value="1" selected>1</option>
+    <option name="5" value="5">5</option>
+    <option name="10" value="10">10</option>
+    <option name="20" value="20">20</option>
+  </select>
+  -->
+
+  <p/>
+
   <span>Start</span>
   <input type="text" name="start" value="${start}"
          id="${oid}-start"/>
