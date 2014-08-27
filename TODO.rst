@@ -4,6 +4,8 @@ Todo list
 Bugs
 ====
 
+* conda wget build works only either for centos or debian
+* debian wget does not work for esgf downloads
 * phoenix: enter "!" in text field breaks wps execution
   seams to be an owslib wps bug, need test case
 * IE (at least some versions) do not work with Phoenix (pyramid framework)
