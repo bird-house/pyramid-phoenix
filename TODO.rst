@@ -17,6 +17,7 @@ Bugs
 Common
 ======
 
+* configure wpscache urls ...
 * set anaconda_home in user env
 * clean up view templates
 * download process (wget script generator)
