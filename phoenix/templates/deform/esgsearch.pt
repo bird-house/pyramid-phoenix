@@ -59,7 +59,7 @@ ${field.start_mapping()}
          id="tm-facets"/>
   <p/>
  
-  <label for="tm-facet" id="search-label-category">Institute</label>
+  <label for="tm-facet" id="search-label-category">Project</label>
   <input type="text" name="Categorie: xxx" class="tm-facet"
          id="tm-facet"/>
   <p/>

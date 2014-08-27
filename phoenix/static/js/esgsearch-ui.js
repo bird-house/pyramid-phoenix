@@ -8,7 +8,7 @@
         url: null,
       };
       var searchOptions = $.extend(defaults, options);
-      var selectedFacet = 'institute';
+      var selectedFacet = 'project';
       
       var init = function() {
         init_search_options();
