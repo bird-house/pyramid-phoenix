@@ -110,8 +110,8 @@ WpsClient.prototype.setWpsProgressValue = function(percentCompleted){
 
 WpsClient.prototype.showProcessStatus = function(responseText){
     $xml = $($.parseXML(responseText));
-    $progressElement = $xml.find("wps\\:ExecuteResponse wps\\:Status wps\\:ProcessStarted");
-    var percentCompleted = getAttribute($progressElement[0], "percentCompleted");
+    var progressElement = $xml.children("wps\\:ExecuteResponse").children("wps\\:Status").children("wps\\:ProcessStarted")[0];
+    var percentCompleted = getAttribute(progressElement, "percentCompleted");
     this.setWpsProgressValue(percentCompleted); 
 };
 

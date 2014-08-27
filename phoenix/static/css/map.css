@@ -24,7 +24,7 @@ input[type=text]{
     width:200px;
 }
 #startframe, #endframe{
-    width:200px;
+    width:170px;
 }
 input[type=range]{
     margin-left:0px;
@@ -48,3 +48,6 @@ input[type=range]{
     display: none;/*hide on start*/
 }
 
+select {
+    width: auto;
+}

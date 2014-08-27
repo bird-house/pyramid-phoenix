@@ -14,7 +14,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
             myMap = new MyMap();
-            wpsClient = new WpsClient("http://localhost:8081/wps", "8090", "8081", myMap);
+            wpsClient = new WpsClient("http://localhost:8081/malleefowl-wps", "8090", "8081", myMap);
             myMap.map.zoomToMaxExtent();
             myMap.map.zoomIn();
             $( "#tabs a" ).click(function(e){
@@ -26,25 +26,14 @@
   </div>
 
   <div metal:fill-slot="content">
-      <div id="map" class="smallmap"></div> 
-      <div id="mapcontrol">
-          <div id="globalvisible">
-              <div id="timeline"></div>
-              <input type="range" id="timeslider" min="0" max="0">
-              <button type="button" class="btn btn-default btn-lg" id="prevFrameButton">
-                  <span class="icon-step-backward"></span> 
-              </button>
-              <button type="button" class="btn btn-default btn-lg" id="nextFrameButton">
-                  <span class="icon-step-forward"></span> 
-              </button>
-              <div>Currently selected datetime: <span id="currentDateTime"></span> </div>
-          </div>
+     <div id="outerTabs">
           <!--tabs-->
           <div id="tabs">
               <ul id ="tabsul" class="nav nav-tabs" tole="tablist">
                   <li class="active"><a href="#addWMSdiv">Add Layer</a></li>
                   <li><a href="#removeWMSdiv">Remove Layer</a></li>
                   <li><a href="#animatediv">Animate</a></li>
+                  <li><a href="#mapdiv">Map</a></li>
               </ul>
               <div class="tab-content">
                   <!--Add WMS -->
@@ -68,14 +57,16 @@
                       <select id="removeMapLayerName"></select>
                       <input type="button" id="removewms" value="Remove WMS">
                   </div>
-                  <!-- Time control -->
+                  <!-- Animate -->
             
                   <div id="animatediv" class="tab-pane">
                       <div id="timeSelect">
-                          <span id="startspan">
-                              <input type="button" id="startframeButton" name="startframeButton" value="Start">
-                              <input type="text" id="startframe">
-                          </span>
+                          <div id="startspan" class="input-append">
+                            <button type="button" class="btn btn-default btn-lg" id="startframeButton">
+                               start 
+                            </button>
+                            <input type="text" id="startframe">
+                          </div>
                           <span id="endspan">
                               <input type="button" id="endframeButton" name="endframeButton" value="End">
                               <input type="text" id="endframe">
@@ -102,16 +93,30 @@
                               <!--Maximum gif frames: <input type="text" id="maxframes" value="40"-->
                           </div>
                           <div id="AnimateProgress" class="progress">
-                              <div id="WPSProgress" class="progress-bar" role="progressbar"
-                                   aria-valuemax="100" style="width: 0%">
-                                  0% Complete
+                              <div id="WPSProgress" class="bar" style="width: 100%">
+                                  100%
                               </div>
                             </div>
                       </div>
                   </div>
+                  <div id="mapdiv"></div>
               </div>
           </div>
       </div>
+      <div id="map" class="smallmap"></div> 
+      <div id="mapcontrol">
+          <div id="globalvisible">
+              <div id="timeline"></div>
+              <input type="range" id="timeslider" min="0" max="0">
+              <button type="button" class="btn btn-default btn-lg" id="prevFrameButton">
+                  <span class="icon-step-backward"></span> 
+              </button>
+              <button type="button" class="btn btn-default btn-lg" id="nextFrameButton">
+                  <span class="icon-step-forward"></span> 
+              </button>
+              <div>Currently selected datetime: <span id="currentDateTime"></span> </div>
+          </div>
+     </div>
   </div>
 
 </metal:block>
