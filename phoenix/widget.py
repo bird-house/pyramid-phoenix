@@ -89,7 +89,7 @@ class EsgSearchWidget(Widget):
             kw.setdefault('latest', self.true_val)
         else:
             kw.setdefault('latest', self.false_val)
-        kw.setdefault('temporal', self._bool(search.get('temporal', False)))
+        kw.setdefault('temporal', self._bool(search.get('temporal', True)))
         kw.setdefault('spatial', self._bool(search.get('spatial', False)))
         
         kw.setdefault('start', search.get('start', '2000-01-01T12:00:00Z'))
