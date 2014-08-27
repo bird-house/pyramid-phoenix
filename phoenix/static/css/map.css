@@ -7,7 +7,66 @@
     z-index: 0; /* Ensure pop-ups appear above the map! */ 
 }
 
-.slider {
-    width: 200px;
-    margin: 10px;
+input[type=text]{
+    width:40px;
 }
+
+#wmsurl{
+    width:400px;
+}
+#layername{
+    width:200px;
+}
+#imageLayerName{
+    width:200px;
+}
+#wmsLayerName {
+    width:200px;
+}
+#startframe, #endframe{
+    width:200px;
+}
+input[type=range]{
+    margin-left:0px;
+    width:100%;
+}
+
+#startspan, #endspan{
+    display:inline-block;
+    white-space:nowrap;
+}
+
+#globalvisible{
+    background-color: #ff0000;
+}
+#tabs{
+    padding: 0;
+    margin: 0;
+    border-radius: 6px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #eeeeee;
+}
+#mapcontrol{
+    width: 940px;
+}
+
+#tabs a{
+    background-color:#aaaaaa;
+    color:#000000;
+    outline:0;
+    margin-left:-1px;
+    /*border-color:#000000;*/
+}
+
+#tabs .active a{
+    background-color:#ffffff;
+}
+
+#realtimerender, #prerenderer{
+   border: 0px solid black;
+}
+
+#AnimateProgress{
+    display: none;/*hide on start*/
+}
+

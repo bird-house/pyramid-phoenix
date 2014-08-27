@@ -9,67 +9,104 @@
 
   <div metal:fill-slot="javascript">
     <script src="${request.static_url('phoenix:static/ol/OpenLayers.js')}"></script>
-    <script src="${request.static_url('phoenix:static/js/wps.js')}"></script>
-    <script src="${request.static_url('phoenix:static/js/map.js')}"></script>
+    <script src="${request.static_url('phoenix:static/js/mymap.js')}"></script>
+    <script src="${request.static_url('phoenix:static/js/minwpsclient.js')}"></script>
     <script type="text/javascript">
-      $(document).ready(function (e) {
-         initMap();
-      });
+        $(document).ready(function(){
+            myMap = new MyMap();
+            wpsClient = new WpsClient("http://localhost:8095/wps", myMap);
+            myMap.map.zoomToMaxExtent();
+            myMap.map.zoomIn();
+            $( "#tabs a" ).click(function(e){
+                e.preventDefault();
+                $(this).tab("show");
+            });
+        });
     </script>
   </div>
 
   <div metal:fill-slot="content">
-    <img id="loading-indicator" alt="Loading ..." src="/static/images/ajax-loader.gif"/>
-    <div id="map"></div>
-    <div id="animate">
-      <table>
-        <tr>
-          <td>
-            <label id="time">2006-01-01T12:00</label>
-          </td>
-          <td>
-            <div id="slider" class="slider"/>
-          </td>
-          <td>
-            <div class="btn-group">
-              <button class="btn" id="prev"><i class="icon-step-backward"></i> </button>
-              <button class="btn" id="next"><i class="icon-step-forward"></i> </button>
-              <button class="btn" id="play"><i class="icon-play"></i> </button>
-              <button class="btn" id="pause"><i class="icon-pause"></i> </button>
-              <button class="btn" id="stop"><i class="icon-stop"></i> </button>
-              <button class="btn" id="googleearth"><i class="icon-globe"></i> </button>
-            </div>
-          </td>
-          <td>
-            <select id="select"/>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label id="opacity-label">Opacity 100</label>
-          </td>
-          <td>
-            <div id="opacity-slider" class="slider"/>
-          </td>
-        </tr>
-      </table>
-      <div id="dialog-play" title="Run Animation?" style="display:none;">
-        <label for="select-resolution">Time Resolution</label>
-        <select id="select-resolution">
-          <option label="yearly" value="yearly">yearly</option>
-          <option label="monthly" value="monthly">monthly</option>
-          <option label="weekly" value="weekly">weekly</option>
-          <option label="daily" value="daily">daily</option>
-          <option label="all" value="all">all</option>
-        </select>
-        
-        <p/>
-
-        <label id="time-range">2006-01-01T12:00 - 2006-01-01T12:00</label>
-        <div id="slider-range"/>
-
+      <div id="map" class="smallmap"></div> 
+      <div id="mapcontrol">
+          <div id="globalvisible">
+              <div id="timeline"></div>
+              <input type="range" id="timeslider" min="0" max="0">
+              <input type="button" id="nextframeButton" name="nextframeButton" value="Next frame">
+              <div>Currently selected datetime: <span id="currentDateTime"></span> </div>
+          </div>
+          <!--tabs-->
+          <div id="tabs">
+              <ul id ="tabsul" class="nav nav-tabs" tole="tablist">
+                  <li class="active"><a href="#addWMSdiv">Add Layer</a></li>
+                  <li><a href="#removeWMSdiv">Remove Layer</a></li>
+                  <li><a href="#animatediv">Animate</a></li>
+              </ul>
+              <div class="tab-content">
+                  <!--Add WMS -->
+                  <div id="addWMSdiv" class="tab-pane active">
+                      <div>
+                          <label for="wmsurl">WMS URL:</label>
+                          <input type="text" id="wmsurl" name="wmsurl" value="http://localhost:8080/thredds/wms/test/tasmax_EUR-44_IPSL-IPSL-CM5A-MR_historical_r1i1p1_SMHI-RCA4_v1_day_20010101-20051231.nc">
+                      </div>
+                      <div>
+                          <label for="layer">WMS Layer name:</label>
+                          <select id="layer"></select>
+                      </div>
+                      <div>
+                          <label for="layername">Title:</label>
+                          <input type="text" id="layername" name="layername">
+                      </div>
+                      <input type="button" id="addwms" value="Add WMS">
+                  </div>
+                  <!--Remove WMS -->
+                  <div id="removeWMSdiv" class="tab-pane">
+                      <select id="removeMapLayerName"></select>
+                      <input type="button" id="removewms" value="Remove WMS">
+                  </div>
+                  <!-- Time control -->
+            
+                  <div id="animatediv" class="tab-pane">
+                      <div id="timeSelect">
+                          <span id="startspan">
+                              <input type="button" id="startframeButton" name="startframeButton" value="Start">
+                              <input type="text" id="startframe">
+                          </span>
+                          <span id="endspan">
+                              <input type="button" id="endframeButton" name="endframeButton" value="End">
+                              <input type="text" id="endframe">
+                          </span>
+                          Aggregation
+                          <select id=aggregation>
+                              <option value="daily">Daily</option>
+                              <option value="weekly">Weekly</option>
+                              <option value="monthly">Monthly</option>
+                              <option value="yearly">Yearly</option>
+                          </select>
+                          Time per frame (ms): <input type="text" id="period" value="1000">
+                          <br><br>
+                          <div id="realtimerender">
+                              Animate currently selected layer in live mode:<br>
+                              <input type="button" id="animate" name="animate" value="Animate">
+                          </div>
+                          <br>
+                          <div id="prerenderer">
+                              Generate an animated Image and add it as a layer:<br>
+                              WMS layer name:<input type="text" id="wmsLayerName" value="tasmax">
+                              Map layer name:<input type="text" id="imageLayerName" value="Animate">
+                              <input type="button" id="animateGif" name="animateGif" value="Animate">
+                              <!--Maximum gif frames: <input type="text" id="maxframes" value="40"-->
+                          </div>
+                          <div id="AnimateProgress" class="progress">
+                              <div id="WPSProgress" class="progress-bar" role="progressbar"
+                                   aria-valuemax="100" style="width: 0%">
+                                  0% Complete
+                              </div>
+                            </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
       </div>
-    </div>
   </div>
 
 </metal:block>
