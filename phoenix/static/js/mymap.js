@@ -178,6 +178,7 @@ MyMap.prototype.handleLiveAnimation = function(){
     else{
         clearInterval(this.animationTimer);
         $("#animate").val("Animate");
+        this.animationTimer=undefined;
     }
 };
 MyMap.prototype.getCapabilties = function(url){
@@ -240,83 +241,6 @@ MyMap.prototype.isWMSOverlayNameUsed = function(layername){
     return (layernames.indexOf(layername) >= 0);
 };
 
-////////MyMap.prototype.LayerFakeAnimation = function(){
-////////    var steps = [ "2001-01-01T12:00:00.000Z",
-////////                  "2001-01-02T12:00:00.000Z",
-////////                  "2001-01-03T12:00:00.000Z",
-////////                  "2001-01-04T12:00:00.000Z",
-////////                  "2001-01-05T12:00:00.000Z",
-////////                  "2001-01-06T12:00:00.000Z",
-////////                  "2001-01-07T12:00:00.000Z",
-////////                  "2001-01-08T12:00:00.000Z",
-////////                  "2001-01-09T12:00:00.000Z",
-////////                  "2001-01-10T12:00:00.000Z",
-////////                  "2001-01-11T12:00:00.000Z",
-////////                  "2001-01-12T12:00:00.000Z",
-////////                  "2001-01-13T12:00:00.000Z",
-////////                  "2001-01-14T12:00:00.000Z",
-////////                  "2001-01-15T12:00:00.000Z",
-////////                  "2001-01-16T12:00:00.000Z",
-////////                  "2001-01-17T12:00:00.000Z",
-////////                  "2001-01-18T12:00:00.000Z",
-////////                  "2001-01-19T12:00:00.000Z",
-////////                  "2001-01-20T12:00:00.000Z",
-////////                  "2001-01-21T12:00:00.000Z",
-////////                  "2001-01-22T12:00:00.000Z",
-////////                  "2001-01-23T12:00:00.000Z",
-////////                  "2001-01-24T12:00:00.000Z",
-////////                  "2001-01-25T12:00:00.000Z",
-////////                  "2001-01-26T12:00:00.000Z",
-////////                  "2001-01-27T12:00:00.000Z",
-////////                  "2001-01-28T12:00:00.000Z",
-////////                  "2001-01-29T12:00:00.000Z",
-////////                  "2001-01-30T12:00:00.000Z",
-////////                  "2001-01-31T12:00:00.000Z",
-////////                  ]
-////////    var name = "EUR-44-tasmax"
-////////    var url = "http://localhost:12345/thredds/wms/test/tasmax_EUR-44_IPSL-IPSL-CM5A-MR_historical_r1i1p1_SMHI-RCA4_v1_day_20010101-20051231.nc";
-////////    var layername = "tasmax";
-////////    var timeLayers = {};//map layername to a list of layers
-////////    for (var i = 0; i < steps.length; i++){timeLayers[steps[i]] = []}
-////////    //Create the Layers
-////////    for (var i = 0; i < steps.length; i++){
-////////        var time = steps[i];
-////////        var layer = new OpenLayers.Layer.WMS(name, url, {LAYERS:layername, transparent: true,
-////////                                             time:time}, {singleTile:true, isBaseLayer:false});
-////////        this.map.addLayer(layer);
-////////        layer.setVisibility(true);
-////////        timeLayers[time].push(layer); 
-////////        }
-////////    //Turn all layers invisible
-////////    for (var i = 0; i < steps.length; i++){
-////////        var layers = timeLayers[steps[i]];
-////////        for (var j=0; j < layers.length; j++){
-////////            layers[j].setVisibility(false);
-////////            }
-////////        }
-////////    //Initialize animation
-////////    var currentIndex = 0;
-////////    startLayers = timeLayers[steps[0]];
-////////    for (var i = 0; i < startLayers.length; i++){
-////////        startLayers[i].setVisibility(true);
-////////        }
-////////    //Define the method to run on timeout
-////////    function nextFrame(){
-////////        var oldLayers = timeLayers[steps[currentIndex]]
-////////        currentIndex++;
-////////        if(currentIndex >= steps.length){currentIndex = 0;}
-////////        var newLayers = timeLayers[steps[currentIndex]];
-////////        for (var i=0; i < newLayers.length; i++){
-////////            newLayers[i].setVisibility(true);
-////////            }
-////////        for (var i=0; i < oldLayers.length; i++){
-////////            oldLayers[i].setVisibility(false);
-////////            }
-////////        this.fakeAnimation = setTimeout(nextFrame, parseInt($("#period").val()))
-////////        }
-////////    
-////////    this.fakeAnimation = setTimeout(nextFrame, 1000);
-////////};
 
 MyMap.prototype.startAnimation = function(){
     start = $("#startframe").val();
@@ -340,23 +264,6 @@ MyMap.prototype.runAnimation = function(){
     this.animationValues.index = i;
 };
 
-//////MyMap.prototype.startGifAnimation = function(){
-//////    start = $("#startframevalue").html();
-//////    end = $("#endframevalue").html();
-//////    aggregation = $("#aggregation").val();
-//////    var times = this.filterTimesteps(this.frameTimes, aggregation, start, end);
-//////    var limitFrames = $("#maxframes").val();
-//////    times = times.slice(0,limitFrames);
-//////    var time = times.join(",");
-//////    for (var i = 0; i < this.visibleOverlays.length; i++){
-//////        var overlay = this.visibleOverlays[i];
-//////        //var animatedurl = overlay.url+"?"
-//////        //animatedurl += "TIME="+time;
-//////        //animatedurl += "&TRANSPARENT=true";
-//////        //animatedurl += "&FORMAT=image/gif";
-//////        overlay.mergeNewParams({'time':time, format:"image/gif"});
-//////    }
-//////};
 
 
 /*
@@ -599,94 +506,4 @@ MyMap.prototype.getVisibleWMSLayersUrls = function(){
     return visibleLayers;
     
 }
-
-/*
- * Build in self test will run some tests.
- * They can later be transferred to a real unittest/itegrationtest.
- */
-MyMap.prototype.bist = function(){
-    var testsOkay = 0;
-    var testsFail = 0;
-    function test(condition, errormessage){
-        if(condition) testsOkay++;
-        else{
-            testsFail++;
-            console.log(errormessage);}};
-    //quick and dirty equal for arrays of basic types
-    function arrayEqual(a1,a2){
-        if (a1.length == a2.length){
-            for (var i = 0; i < a1.length; i++){
-                if(a1[i] !== a2[i]) return false;}}
-        else return false;
-        return true;};
-     
-    //test arrayEqual
-    function testArrayEqual(x,y){test(arrayEqual(x,y), 
-                             ("Error in arrayEqual: " + x + " and " + y + " should be equal"))};
-    function testArrayNotEqual(x,y){test(!arrayEqual(x,y), 
-                             ("Error in arrayEqual: " + x + " and " + y + " should not be equal"))};
-    var a = [1,2];
-    var b = [2,3];
-    var c = [1,2];
-    var d = [1,2,3];
-    var e = [1,"2"];
-    testArrayNotEqual(a,b);
-    testArrayEqual(a,c);
-    testArrayNotEqual(a,d);
-    testArrayNotEqual(a,e);
-    //Test filter_timesteps
-    function testFilterTimesteps(filteredTimesteps, assumedFT){
-             if(arrayEqual(filteredTimesteps, assumedFT)) testsOkay++;
-             else{
-                 testsFail++;
-                 console.log("Error: MyMap.prototype.filter_timesteps returned "+
-                             "[" + filteredTimesteps.join(", ") + "]" +
-                             " instead of [" + assumedFT.join(", ") + "]");}};
-    var timesteps = ["2001-01-01T12:00:00.000Z", "2001-01-03T12:00:00.000Z","2001-01-05T12:00:00.000Z"];
-    //start and end do not match with a timestep
-    var filteredTimesteps = this.filterTimesteps(timesteps, "daily", "2001-01-02", "2001-01-04");
-    var assumedFT = [timesteps[1]];
-    testFilterTimesteps(filteredTimesteps, assumedFT);
-    //start is before the first timestep and end is before the last timestep but at the same day.
-    //the last element should not be part of the filterd items.
-    var filteredTimesteps2 = this.filterTimesteps(timesteps, "daily", "2001-01-01", "2001-01-05")
-    var assumedFT2 = [timesteps[0], timesteps[1]];
-    testFilterTimesteps(filteredTimesteps2, assumedFT2);
-    //test weekly (week 1,2,2,4,4,4)
-    var timestepsW = ["2001-01-01T12:00:00.000Z", "2001-01-13T12:00:00.000Z",
-                      "2001-01-14T12:00:00.000Z", "2001-01-22T12:00:00.000Z",
-                      "2001-01-23T12:00:00.000Z", "2001-01-24T12:00:00.000Z"];
-    var filteredTimestepsW = this.filterTimesteps(timestepsW, "weekly", "2001-01-01", "2001-08-05")
-    var assumedFTW = [timestepsW[0], timestepsW[1], timestepsW[3]];
-    testFilterTimesteps(filteredTimestepsW, assumedFTW);
-    //test monthly 
-    var timestepsM = ["2001-01-01T12:00:00.000Z", "2001-02-13T12:00:00.000Z",
-                      "2001-02-14T12:00:00.000Z", "2001-06-22T12:00:00.000Z",
-                      "2001-06-23T12:00:00.000Z", "2001-11-24T12:00:00.000Z"];
-    var filteredTimestepsM = this.filterTimesteps(timestepsM, "monthly", "2001-01-01", "2001-08-05")
-    var assumedFTM = [timestepsM[0], timestepsM[1], timestepsM[3]];//timestepsM[5] is after end
-    testFilterTimesteps(filteredTimestepsM, assumedFTM);
-    //test yearly 
-    var timestepsY = ["2001-01-01T12:00:00.000Z", "2001-02-13T12:00:00.000Z",
-                      "2002-02-14T12:00:00.000Z", "2002-06-22T12:00:00.000Z",
-                      "2006-06-23T12:00:00.000Z", "2007-11-24T12:00:00.000Z"];
-    var filteredTimestepsY = this.filterTimesteps(timestepsY, "yearly", "2001-01-01", "2011-08-05")
-    var assumedFTY = [timestepsY[0], timestepsY[2], timestepsY[4], timestepsY[5]];
-    testFilterTimesteps(filteredTimestepsY, assumedFTY);
-
-    function testEqual(a, b){
-             if(a === b) testsOkay++;
-             else{
-                 testsFail++;
-                 console.log(a + " is not equal to " + b);
-                 }
-             };
-
-
-
-    //Summary of all tests
-    console.log("=================================================");
-    console.log("PASSED: " + testsOkay);
-    console.log("FAILED: " + testsFail);
-};
 
