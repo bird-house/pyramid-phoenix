@@ -178,6 +178,7 @@ MyMap.prototype.handleLiveAnimation = function(){
     else{
         clearInterval(this.animationTimer);
         $("#animate").val("Animate");
+        this.animationTimer=undefined;
     }
 };
 MyMap.prototype.getCapabilties = function(url){
