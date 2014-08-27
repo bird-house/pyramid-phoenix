@@ -14,7 +14,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
             myMap = new MyMap();
-            wpsClient = new WpsClient("http://localhost:8081/wps", myMap);
+            wpsClient = new WpsClient("http://localhost:8081/wps", "8090", "8081", myMap);
             myMap.map.zoomToMaxExtent();
             myMap.map.zoomIn();
             $( "#tabs a" ).click(function(e){
