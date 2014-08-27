@@ -9,7 +9,7 @@
       tal:omit-tag="">
 
 ${field.start_mapping()}
-  <span id="tm-hit-count">Searching ...</span>
+  <strong id="tm-hit-count">Searching ...</strong>
   <input type="hidden" name="hit-count" value="0"
          id="${oid}-hit-count"/>
   <p/>
