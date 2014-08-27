@@ -19,7 +19,7 @@ def count_literal_inputs(wps, identifier):
     process = wps.describeprocess(identifier)
     literal_inputs = []
     for input in process.dataInputs:
-        if input.dataType == 'ComplexData':
+        if input.dataType != 'ComplexData':
             literal_inputs.append(input)
     logger.debug('num literal inputs: %d', len(literal_inputs))
     return len(literal_inputs)
