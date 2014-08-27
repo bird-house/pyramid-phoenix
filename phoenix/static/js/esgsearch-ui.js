@@ -17,7 +17,7 @@
         init_facets();
         init_facet_values();
         init_time_constraints();
-        init_spatial_constraints();
+        //init_spatial_constraints();
         search();
       };
 
@@ -92,9 +92,11 @@
           search();
         });
 
+	/*
         $('#' + searchOptions.oid + '-spatial').click(function () {
           search();
         });
+	*/
       };
 
       var init_query = function() {
@@ -215,8 +217,8 @@
           temporal: $('#' + searchOptions.oid + '-temporal').is(":checked"),
           start: $('#' + searchOptions.oid + '-start').val(),
           end: $('#' + searchOptions.oid + '-end').val(),
-          spatial: $('#' + searchOptions.oid + '-spatial').is(":checked"),
-          bbox: $('#' + searchOptions.oid + '-bbox').val(),
+          //spatial: $('#' + searchOptions.oid + '-spatial').is(":checked"),
+          //bbox: $('#' + searchOptions.oid + '-bbox').val(),
           callback: function(result) { callback(result); },
         });
       };
@@ -330,8 +332,8 @@
           temporal: searchOptions.temporal,
           start: searchOptions.start,
           end: searchOptions.end,
-          spatial: searchOptions.spatial,
-          bbox: searchOptions.bbox,
+          //spatial: searchOptions.spatial,
+          //bbox: searchOptions.bbox,
           callback: function(result) {  _execute(result) },
         });
       };

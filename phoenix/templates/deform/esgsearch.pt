@@ -35,10 +35,12 @@ ${field.start_mapping()}
          id="${oid}-temporal"/>
   <span>Temporal</span>
 
+  <!--
   <input type="checkbox" name="spatial" value="${true_val}"
          tal:attributes="checked spatial == true_val;"
          id="${oid}-spatial"/>
   <span>Spatial</span>
+  -->
 
   <p/>
 
@@ -87,10 +89,12 @@ ${field.start_mapping()}
   <input type="text" name="end" value="${end}"
          id="${oid}-end"/>
   
+  <!--
   <p/>
   <span>Bounding Box</span>
   <input type="text" name="bbox" value="${bbox}"
          id="${oid}-bbox"/>
+  -->
 
 ${field.end_mapping()}
 
