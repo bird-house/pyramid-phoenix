@@ -18,19 +18,6 @@ class Done(Wizard):
         from phoenix.schema import DoneSchema
         return DoneSchema()
 
-    def sources(self):
-        sources = []
-        source = self.wizard_state.get('wizard_source')['source']
-        # TODO: refactore this ... there is a common way
-        if source == 'wizard_csw':
-            selection = self.wizard_state.get(source).get('selection', [])
-            logger.debug("catalog selection: %s", selection)
-            self.csw.getrecordbyid(id=selection)
-            sources = [str(rec.source) for rec in self.csw.records.values()]
-        elif source == 'wizard_esgf':
-            sources = [str(file_url) for file_url in self.wizard_state.get('wizard_esgf_files')['url']]
-        return sources
-
     def workflow_description(self):
         credentials = self.get_user().get('credentials')
         # if source and worker are on the same machine use local output_path
@@ -44,7 +31,7 @@ class Done(Wizard):
         logger.debug('source output identifier: %s', output)
 
         inputs = ['credentials=%s' % (credentials)]
-        for url in self.sources():
+        for url in self.resources():
             inputs.append('resource=%s' % url)
         
         source = dict(
