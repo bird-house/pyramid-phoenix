@@ -14,7 +14,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
             myMap = new MyMap();
-            wpsClient = new WpsClient("http://localhost:8095/wps", myMap);
+            wpsClient = new WpsClient("http://localhost:8081/wps", myMap);
             myMap.map.zoomToMaxExtent();
             myMap.map.zoomIn();
             $( "#tabs a" ).click(function(e){
@@ -31,7 +31,12 @@
           <div id="globalvisible">
               <div id="timeline"></div>
               <input type="range" id="timeslider" min="0" max="0">
-              <input type="button" id="nextframeButton" name="nextframeButton" value="Next frame">
+              <button type="button" class="btn btn-default btn-lg" id="prevFrameButton">
+                  <span class="icon-step-backward"></span> 
+              </button>
+              <button type="button" class="btn btn-default btn-lg" id="nextFrameButton">
+                  <span class="icon-step-forward"></span> 
+              </button>
               <div>Currently selected datetime: <span id="currentDateTime"></span> </div>
           </div>
           <!--tabs-->
