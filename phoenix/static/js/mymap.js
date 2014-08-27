@@ -93,7 +93,8 @@ MyMap.prototype.addBaseLayers = function(){
  */
 MyMap.prototype.addInteraction = function(){
     var _this = this;
-    $("#nextframeButton").click(function(){_this.nextFrame();});
+    $("#nextFrameButton").click(function(){_this.nextFrame();});
+    $("#prevFrameButton").click(function(){_this.prevFrame();});
     $("#startframeButton").click(function(){_this.startFrameFromIndex();});
     $("#endframeButton").click(function(){_this.endFrameFromIndex();});
     this.animationTimer;
@@ -302,6 +303,13 @@ MyMap.prototype.nextFrame = function(){
     this.showFrame();
 };
 
+MyMap.prototype.prevFrame = function(){
+    this.frameIndex-=1;
+    if(this.frameIndex < 0){this.frameIndex = this.frameTimes.length-1;}
+    $("#timeslider").val(this.frameIndex);
+    $("#timeslider").attr("max",this.frameTimes.length);
+    this.showFrame();
+};
 /*
  * Select a frame from the complete list of available timeframes
  * in all visible overlays.

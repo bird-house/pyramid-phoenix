@@ -10,7 +10,7 @@ function getAttribute(attributesContainingNode, attributeName){
     var attributes = attributesContainingNode.attributes;
     for (var i = attributes.length-1; i >=0 ; i--){
         if (attributes[i].nodeName === attributeName){
-            var statusLocation = attributes[i].nodeValue;
+            var statusLocation = attributes[i].value;
             return statusLocation;
         }
     }
@@ -19,8 +19,10 @@ function getAttribute(attributesContainingNode, attributeName){
 
 
 
-function WpsClient(wpsUrl, myMap){
+function WpsClient(wpsUrl, wpsPort, proxyPort, myMap){
     this.wpsUrl = wpsUrl;
+    this.wpsPort = wpsPort;
+    this.proxyPort = proxyPort;
     this.timeout;
     this.myMap = myMap;
     this.delay = 2000;//time between request for WPS status in ms.
@@ -66,6 +68,7 @@ WpsClient.prototype.addAnimation = function(wmsUrls, startTime, endTime, frameDu
     //find status location
     var statusLocationContainingXML = getURL(url);
     var statusLocation = this.getStatusLocation(statusLocationContainingXML);
+    statusLocation = statusLocation.replace(":"+this.wpsPort, ":"+this.proxyPort);
     var finished = false;
     this.HandleProcessFinished(statusLocation, finished, imageLayerName);
 }
