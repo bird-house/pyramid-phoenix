@@ -20,7 +20,7 @@ class CheckParameters(Wizard):
         
     def custom_view(self):
         items = []
-        for identifier, value in self.wizard_state.get('wizard_literal_inputs').items():
+        for identifier, value in self.wizard_state.get('wizard_literal_inputs', {}).items():
             items.append(dict(title=identifier, value=value))
         identifier=self.wizard_state.get('wizard_complex_inputs')['identifier']
         items.append(dict(title=identifier, format="application/x-netcdf", value=self.resources()))

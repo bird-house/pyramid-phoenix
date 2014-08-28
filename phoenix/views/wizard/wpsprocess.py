@@ -24,6 +24,7 @@ class ChooseWPSProcess(Wizard):
         identifier = appstruct['identifier']
         if count_literal_inputs(self.wps, identifier) > 0:
             return self.next('wizard_literal_inputs')
+        self.wizard_state.set('wizard_literal_inputs', {})
         return self.next('wizard_complex_inputs')
         
     @view_config(route_name='wizard_process', renderer='phoenix:templates/wizard/default.pt')

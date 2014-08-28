@@ -47,11 +47,12 @@ WpsClient.prototype.addGifAnimation = function(){
 };
 
 WpsClient.prototype.addAnimation = function(wmsUrls, startTime, endTime, frameDuration,
-                                            aggregation, layerName, imageLayerName){
+                                            aggregation, layerName, imageLayerName, style){
     var wmsUrlsString = wmsUrls[0];
     for (var i = 1; i < wmsUrls.length; i++){
         wmsUrlsString += ";wms_urls=" + wmsUrls[i];
     }
+    if(style === undefined){style = "boxfill/rainbow";}
     wmsUrlsString += ";"
     var wpsurl = this.wpsUrl.split("?")[0]//use only the address and not the parameters
     var url = (wpsurl+"?request=execute&service=WPS&version=1.0.0"+
@@ -62,7 +63,8 @@ WpsClient.prototype.addAnimation = function(wmsUrls, startTime, endTime, frameDu
               ";end_time=" + endTime +
               ";frame_duration=" + frameDuration +
               ";aggregation=" + aggregation +
-              ";layer_name=" + layerName
+              ";layer_name=" + layerName + 
+              ";style=" + style 
               );
     url += "&storeExecuteResponse=true&status=true"//ensure it runs async
     //find status location
