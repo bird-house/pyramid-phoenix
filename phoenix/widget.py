@@ -93,7 +93,7 @@ class EsgSearchWidget(Widget):
         #kw.setdefault('spatial', self._bool(search.get('spatial', False)))
         kw.setdefault('spatial', self._bool(False))
         
-        kw.setdefault('start', search.get('start', '2000-01-01T12:00:00Z'))
+        kw.setdefault('start', search.get('start', '2001-01-01T12:00:00Z'))
         kw.setdefault('end', search.get('end', '2010-12-31T12:00:00Z'))
         #kw.setdefault('bbox', search.get('bbox', '-180,-90,180,90'))
         kw.setdefault('bbox', '-180,-90,180,90')
