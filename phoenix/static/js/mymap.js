@@ -107,6 +107,24 @@ MyMap.prototype.addInteraction = function(){
     $("#removewms").click(function(){ _this.removeSelectedMapLayer();});
 }
 
+/*
+ * Adding a WMS layer to the map will add a wmslayername property to the OpenLayers layer,
+ * which will be read here to update the list of selectable layers in the Animate tab.
+ */
+MyMap.prototype.updateActiveWMSLayerNames = function(){
+    var layers = this.map.layers;
+    var activeWmsLayersHtml = ""
+    for (var i=0; i <layers.length; i++){
+        if (layers[i].visibility === true){
+            var wmsLayerName = layers[i].wmslayername;
+            if(wmsLayerName !== undefined){
+                activeWmsLayersHtml += '<option value="' + wmsLayerName + '">' + wmsLayerName + '</option>';
+            }
+        }
+    }
+    $("#wmsLayerName").html(activeWmsLayersHtml)
+};
+
 MyMap.prototype.removeSelectedMapLayer = function(){
     var name = $("#removeMapLayerName").val();
     var _this = this;
@@ -139,26 +157,26 @@ MyMap.prototype.addWMSFromForm = function(){
     var layer = $("#layer").val();
     if (layer === null) return;
     //if the layer name is empty generate one
-    if ($("#layername").val() == ""){
-        $("#layername").val(this.suggestName(url));
+    if ($("#title").val() == ""){
+        $("#title").val(this.suggestName(url));
         }
-    var layername = $("#layername").val();
-    if (this.isWMSOverlayNameUsed(layername)){
-        alert("The name " + layername + " is aready in use.");
+    var title = $("#title").val();
+    if (this.isWMSOverlayNameUsed(title)){
+        alert("The name " + title + " is aready in use.");
         return;
         }
-    this.addWMSOverlay(layername, url, layer);
+    this.addWMSOverlay(title, url, layer);
     this.updateAvailableMapLayers();
 };
 
 MyMap.prototype.updateAvailableMapLayers = function(){
     var removeableLayers = this.getWMSOverlayNames();
-    var text="";
+    var removeableNames="";
     $(removeableLayers).each(function(){
         var name = this.name;
-        text+= '<option value="'+name+'">'+name+'</option>';
+        removeableNames+= '<option value="'+name+'">'+name+'</option>';
     });
-    $("#removeMapLayerName").html(text);
+    $("#removeMapLayerName").html(removeableNames);
 };
 
 
@@ -174,11 +192,11 @@ MyMap.prototype.handleLiveAnimation = function(){
         var _this = this;
         this.animationTimer = setInterval(function(){_this.runAnimation();},
                                           parseInt($("#period").val()));
-        $("#animate").val("Stop");
+        $("#animate").html("Stop (live)");
     }
     else{
         clearInterval(this.animationTimer);
-        $("#animate").val("Animate");
+        $("#animate").html("Animate (live)");
         this.animationTimer=undefined;
     }
 };
@@ -290,6 +308,7 @@ MyMap.prototype.updateOverlays = function(){
     }
     //update the sliders maximum value
     $("#timeslider").attr('max', this.frameTimes.length);
+    this.updateActiveWMSLayerNames();
 };
 
 /*
@@ -374,18 +393,19 @@ MyMap.prototype.addWMSBaseLayer = function(name, url, params, options){
 /*
  * Add an Overlay that contains timesteps. 
  * For now the timesteps will be extracted from the WMS file using an external process.
- * @param {string} name The name of the layer in the select list (e.g. EUR-44-tasmax)
+ * @param {string} title The title of the OpenLayers layer (e.g. EUR-44-tasmax)
  * @param {string} url The url to the WMS with the specific file. (e.g copy WMS line from THREDDS)
  * @param {string} layerName the name of Layer (e.g. tasmax)
  * @param {json} options For details see OpenLayers documentation. (Default = {}) 
  */
 
-MyMap.prototype.addWMSOverlay = function(name, url, layerName, options){
+MyMap.prototype.addWMSOverlay = function(title, url, layerName, options){
     if (options === undefined){
         options = {singleTile:true};};
     params = {layers: layerName, transparent:true};
     wmsLayer = new OpenLayers.Layer.WMS(name, url, params, options);
     wmsLayer.isBaseLayer = false;
+    wmsLayer.wmslayername=layerName;
     this.addTimesteps(wmsLayer);
     this.overlays[name] = wmsLayer;
     this.map.addLayer(wmsLayer);
