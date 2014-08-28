@@ -26,97 +26,184 @@
   </div>
 
   <div metal:fill-slot="content">
-     <div id="outerTabs">
-          <!--tabs-->
-          <div id="tabs">
-              <ul id ="tabsul" class="nav nav-tabs" tole="tablist">
-                  <li class="active"><a href="#addWMSdiv">Add Layer</a></li>
-                  <li><a href="#removeWMSdiv">Remove Layer</a></li>
-                  <li><a href="#animatediv">Animate</a></li>
-                  <li><a href="#mapdiv">Map</a></li>
-              </ul>
-              <div class="tab-content">
-                  <!--Add WMS -->
-                  <div id="addWMSdiv" class="tab-pane active">
-                      <div>
-                          <label for="wmsurl">WMS URL:</label>
-                          <input type="text" id="wmsurl" name="wmsurl" value="http://localhost:8080/thredds/wms/test/tasmax_EUR-44_IPSL-IPSL-CM5A-MR_historical_r1i1p1_SMHI-RCA4_v1_day_20010101-20051231.nc">
-                      </div>
-                      <div>
-                          <label for="layer">WMS Layer name:</label>
-                          <select id="layer"></select>
-                      </div>
-                      <div>
-                          <label for="layername">Title:</label>
-                          <input type="text" id="layername" name="layername">
-                      </div>
-                      <input type="button" id="addwms" value="Add WMS">
+      <!--tabs-->
+      <div id="tabs" class="mapwidth">
+          <ul id ="tabsul" class="nav nav-tabs" tole="tablist">
+              <li><a href="#addWMSdiv">Add Layer</a></li>
+              <li><a href="#removeWMSdiv">Remove Layer</a></li>
+              <li><a href="#animatediv">Animate</a></li>
+              <li class="active"><a href="#mapdiv">Map</a></li>
+              <li><a href="#quickguide">Quick Guide</a></li>
+          </ul>
+          <div class="tab-content">
+              <!--Add Layer -->
+              <div id="addWMSdiv" class="tab-pane">
+                  <div class="input-append">
+                      WMS URL:
+                      <input type="text" id="wmsurl" name="wmsurl" value="http://localhost:8080/thredds/wms/test/tasmax_EUR-44_IPSL-IPSL-CM5A-MR_historical_r1i1p1_SMHI-RCA4_v1_day_20010101-20051231.nc">
                   </div>
-                  <!--Remove WMS -->
-                  <div id="removeWMSdiv" class="tab-pane">
+                  <div class="input-append inline">
+                      <label for="title">Title:</label>
+                      <input type="text" class="nameField" id="title" name="title">
+                  </div>
+                  <div class="input-append inline">
+                      <label for="layer">WMS Layer Name:</label>
+                      <select id="layer"></select>
+                  </div>
+                  <div class="input-append inline">
+                      <button type="button" id="addwms">
+                          Add WMS
+                      </button>
+                  </div>
+              </div>
+              <!--Remove Layer -->
+              <div id="removeWMSdiv" class="tab-pane">
+                  <div class="input-append">
                       <select id="removeMapLayerName"></select>
-                      <input type="button" id="removewms" value="Remove WMS">
+                      <button id="removewms">
+                          Remove WMS Layer
+                      </button>
                   </div>
-                  <!-- Animate -->
-            
-                  <div id="animatediv" class="tab-pane">
-                      <div id="timeSelect">
-                          <div id="startspan" class="input-append">
-                            <button type="button" class="btn btn-default btn-lg" id="startframeButton">
-                               start 
-                            </button>
-                            <input type="text" id="startframe">
+              </div>
+              <!-- Animate -->
+              <div id="animatediv" class="tab-pane">
+                  <div id="timeSelect">
+                      <div class="input-append inline">
+                        <button type="button" class="btn btn-default btn-lg" id="startframeButton">
+                           First Frame
+                        </button>
+                        <input type="text" id="startframe" class="timeField">
+                      </div>
+                      <div class="input-append inline">
+                          <button type="button" class="btn btn-default btn-lg" id="endframeButton">
+                            Last Frame
+                          </button>
+                          <input type="text" id="endframe" class="timeField">
+                      </div>
+                      <div class="input-append inline">
+                      Aggregation
+                      <select id=aggregation>
+                          <option value="daily">Daily</option>
+                          <option value="weekly">Weekly</option>
+                          <option value="monthly">Monthly</option>
+                          <option value="yearly">Yearly</option>
+                      </select>
+                      </div> 
+                      <div class="input-append inline">
+                      Time per frame (ms): <input type="text" id="period" value="1000">
+                      </div>
+                      <br><br>
+                      <div id="realtimerender">
+                          <button id="animate" name="animate">
+                              Animate (live)
+                          </button>
+                      </div>
+                      <br>
+                      <div id="prerenderer">
+                          <div class="input-append inline">
+                              WMS Layer Name:
+                              <select id="wmsLayerName"></select>
                           </div>
-                          <span id="endspan">
-                              <input type="button" id="endframeButton" name="endframeButton" value="End">
-                              <input type="text" id="endframe">
-                          </span>
-                          Aggregation
-                          <select id=aggregation>
-                              <option value="daily">Daily</option>
-                              <option value="weekly">Weekly</option>
-                              <option value="monthly">Monthly</option>
-                              <option value="yearly">Yearly</option>
-                          </select>
-                          Time per frame (ms): <input type="text" id="period" value="1000">
-                          <br><br>
-                          <div id="realtimerender">
-                              Animate currently selected layer in live mode:<br>
-                              <input type="button" id="animate" name="animate" value="Animate">
+                          <div class="input-append inline">
+                              Title:
+                              <input type="text" id="imageLayerName" value="Animate" class="nameField">
+                              <!--
+                              <input type="text" id="imageLayerName" placeholder="Animate" class="nameField">
+                              -->
                           </div>
-                          <br>
-                          <div id="prerenderer">
-                              Generate an animated Image and add it as a layer:<br>
-                              WMS layer name:<input type="text" id="wmsLayerName" value="tasmax">
-                              Map layer name:<input type="text" id="imageLayerName" value="Animate">
-                              <input type="button" id="animateGif" name="animateGif" value="Animate">
-                              <!--Maximum gif frames: <input type="text" id="maxframes" value="40"-->
+                          <div class="input-append inline">
+                              <button id="animateGif" name="animateGif">
+                                  Animate (pre-rendered)
+                              </button>
                           </div>
-                          <div id="AnimateProgress" class="progress">
-                              <div id="WPSProgress" class="bar" style="width: 100%">
-                                  100%
-                              </div>
-                            </div>
+                          <!--Maximum gif frames: <input type="text" id="maxframes" value="40"-->
+                      </div>
+                      <div id="AnimateProgress" class="progress">
+                          <div id="WPSProgress" class="bar" style="width: 100%">
+                              100%
+                          </div>
                       </div>
                   </div>
-                  <div id="mapdiv"></div>
+              </div>
+              <!--Map-->
+              <div id="mapdiv" class="tab-pane active">
+              </div>
+              <!--Quick Guide-->
+              <div id="quickguide" class="tab-pane">
+                  <h1>Introduction</h1>
+                  <p>
+                      The map uses <a href="http://openlayers.org/">OpenLayers</a>. It was 
+                      tested with WMS generated by a slightly modified version of
+                      <a href="http://www.resc.rdg.ac.uk/trac/ncWMS/">ncWMS</a>. (The modification
+                      of ncWMS allows datetimes with format YYYY-MM-DDThh:mm:ssZ to be used)
+                  </p>
+                  <h1>Add Layer</h1>
+                  <p>
+                     <ul>
+                     <li>WMS URL: Enter the URL of the WMS.
+                         On leaving the field the available WMS layers will
+                         be searched for and displayed in "WMS Layer Name".
+                     <li>Title: Title for the OpenLayers layer. If left empty a name generator
+                         tries to generate a name. Title must be unique.</li>
+                     <li>WMS Layer Name: Select the desired layer. If there are no entries,
+                         then the entered URL does not match with the expected WMS format.</li>
+                     <li>Add WMS: Adds the WMS to the map if no rule violations occur.</li>
+                     </ul>
+                     
+                  </p>
+                  <h1>Remove Layer</h1>
+                  <p>
+                      The layers that can be removed are split into the WMS and Image categories.
+                      WMS layers are generated when using "Add Layer". Image layers are used 
+                      for the pre-rendered animation.
+                  </p>
+                  <h1>Animate</h1>
+                  <p>
+                      <ul>
+                      <li>First Frame: The first frame of the animation.</li>
+                      <li>Last Frame: The last frame of the animation.</li>
+                      <li>Aggregation: The desired step size. Timesteps may be non-equidistant.</li>
+                      <li>Time per frame: The duration for one frame in the animation in milliseconds.</li>
+                      <li>Animate (live): Using live rendering by using the active layers directly.
+                          Choose a long time per frame, to avoid the update stopping due to too many
+                          unfinished update requests.</li>
+                      <li>WMS Layer Name: For pre-rendered animation select the WMS layer name from the
+                          available active layers.</li>
+                      <li>Title: For pre-rendered animation enter a title for its OpenLayers Layer.</li>
+                      <li>Animate (pre-rendered): Calls an external server to generate an animated Image
+                          of all active WMS layers with the given "WMS Layer Name".</li> 
+                      </ul>
+                  </p>
+                  <h1>Map</h1>
+                  <p>
+                      Shows only the tabs and the map.
+                  <p>
+                  <h1>Additional Control</h1>
+                  <p>
+                      <ul>
+                      <li>The available points in time depend on the selected layers.
+                          Only the timesteps available in all selected layers are selectable.</li>
+                      <li>The silder at the bottom allows to select a specific point in time.</li>
+                      <li>The forward and backward buttons allow to move a single timestep.</li>
+                      </ul>
+                  </p>
               </div>
           </div>
       </div>
+      <!--MAP -->
       <div id="map" class="smallmap"></div> 
-      <div id="mapcontrol">
-          <div id="globalvisible">
-              <div id="timeline"></div>
-              <input type="range" id="timeslider" min="0" max="0">
-              <button type="button" class="btn btn-default btn-lg" id="prevFrameButton">
-                  <span class="icon-step-backward"></span> 
-              </button>
-              <button type="button" class="btn btn-default btn-lg" id="nextFrameButton">
-                  <span class="icon-step-forward"></span> 
-              </button>
-              <div>Currently selected datetime: <span id="currentDateTime"></span> </div>
-          </div>
-     </div>
+      <!-- MAP time control --> 
+      <div id="globalvisible" class="mapwidth">
+          <div id="timeline"></div>
+          <input type="range" id="timeslider" min="0" max="0">
+          <button type="button" class="btn btn-default btn-lg" id="prevFrameButton">
+              <span class="icon-step-backward"></span> 
+          </button>
+          <button type="button" class="btn btn-default btn-lg" id="nextFrameButton">
+              <span class="icon-step-forward"></span> 
+          </button>
+          <div>Currently selected datetime: <span id="currentDateTime"></span> </div>
+      </div>
   </div>
 
 </metal:block>

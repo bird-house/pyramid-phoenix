@@ -17,6 +17,7 @@ Bugs
 Common
 ======
 
+* install malleefowl with phoenix
 * configure wpscache urls ...
 * set anaconda_home in user env
 * clean up view templates
@@ -71,7 +72,6 @@ https://github.com/repoze/repoze.workflow (see koti example)
 Map
 ===
 
-* enable map again
 * add layers from catalog ... see catalog viewer
 * setup wms caching, maybe just caching via nginx
 

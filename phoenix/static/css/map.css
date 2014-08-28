@@ -2,9 +2,12 @@
     position: relative;
     left: 0px;
     top: 0px; 
-    width: 940px;
+    width: 900px;
     height: 500px;
     z-index: 0; /* Ensure pop-ups appear above the map! */ 
+}
+.mapwidth{
+    width: 900px;
 }
 
 input[type=text]{
@@ -12,36 +15,31 @@ input[type=text]{
 }
 
 #wmsurl{
-    width:400px;
+    width:760px;
 }
-#layername{
-    width:200px;
+
+.nameField
+{
+    width:200px !important;
 }
-#imageLayerName{
-    width:200px;
-}
-#wmsLayerName {
-    width:200px;
-}
-#startframe, #endframe{
-    width:170px;
+
+.timeField{
+    width:170px !important;
 }
 input[type=range]{
     margin-left:0px;
     width:100%;
 }
 
-#startspan, #endspan{
+.inline{
     display:inline-block;
-    white-space:nowrap;
 }
 
-#globalvisible{
-    background-color: #ff0000;
+label{
+    white-space:nowrap;
+    display:inline;
 }
-#mapcontrol{
-    width: 940px;
-}
+
 
 
 #AnimateProgress{
