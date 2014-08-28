@@ -79,7 +79,7 @@ function MyMap(){
 }
 
 MyMap.prototype.addTimeLabel = function(x, y, title, text, fontsize){
-    var vectorLayer = new OpenLayers.Layer.Vector("Vector", 
+    var vectorLayer = new OpenLayers.Layer.Vector(title, 
     {
         styleMap: new OpenLayers.StyleMap(            
         {
@@ -104,8 +104,14 @@ MyMap.prototype.addTimeLabel = function(x, y, title, text, fontsize){
 };
 
 MyMap.prototype.setTimeLabelText = function(text){
-    this.timeLabel.features[0].attributes.labelText=text;
-    this.timeLabel.drawFeature(myMap.timeLabel.features[0]);
+    var extent = this.map.getExtent();
+    var feature = this.timeLabel.features[0];
+    var dx = extent.left-feature.geometry.x;
+    var dy = extent.bottom-feature.geometry.y;
+    feature.geometry.move(dx,dy+5);
+    //feature.geometry.move(0,0);
+    feature.attributes.labelText=text;
+    this.timeLabel.redraw();
 };
 /*
  * Add the default BaseLayers to the map.
