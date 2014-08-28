@@ -75,8 +75,38 @@ function MyMap(){
     this.animationValues;
     this.addBaseLayers();
     this.addInteraction();
+    this.timeLabel = this.addTimeLabel(-150,-80, "Time", "", 12);
 }
 
+MyMap.prototype.addTimeLabel = function(x, y, title, text, fontsize){
+    var vectorLayer = new OpenLayers.Layer.Vector("Vector", 
+    {
+        styleMap: new OpenLayers.StyleMap(            
+        {
+            label : "${labelText}",                    
+            fontColor: "blue",
+            fontSize: fontsize+"px",
+            fontFamily: "Courier New, monospace",
+            fontWeight: "bold",
+            labelAlign: "lc",
+            labelXOffset: "14",
+            labelYOffset: "0",
+            labelOutlineColor: "white",
+            labelOutlineWidth: 3
+        })
+    });
+    var features = [];
+    var pt =  new OpenLayers.Geometry.Point(x,y);
+    features.push(new OpenLayers.Feature.Vector(pt, {labelText:text}));
+    vectorLayer.addFeatures(features);
+    this.map.addLayer(vectorLayer);
+    return vectorLayer;
+};
+
+MyMap.prototype.setTimeLabelText = function(text){
+    this.timeLabel.features[0].attributes.labelText=text;
+    this.timeLabel.drawFeature(myMap.timeLabel.features[0]);
+};
 /*
  * Add the default BaseLayers to the map.
  *
@@ -356,7 +386,7 @@ MyMap.prototype.showFrame = function(){
  * Note: Does not prevent using invalid time values. 
  */
 MyMap.prototype.showTimeFrame = function(time){
-    $("#currentDateTime").html(time);
+    this.setTimeLabelText(time);
     for (var i=0; i < this.visibleOverlays.length; i++){
         overlay = this.visibleOverlays[i];
         overlay.mergeNewParams({'time':time});
