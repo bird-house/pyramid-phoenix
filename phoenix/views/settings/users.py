@@ -113,7 +113,8 @@ class UsersGrid(MyGrid):
 
     def action_td(self, col_num, i, item):
         buttongroup = []
-        buttongroup.append( ("edit", item.get('email'), "icon-pencil", "Edit", "#"))
+        buttongroup.append( ("edit", item.get('email'), "icon-pencil", "Edit", "#", False))
         buttongroup.append( ("remove", item.get('email'), "icon-trash", "Remove", 
-                             self.request.route_url('remove_user', email=item.get('email'))) )
+                             self.request.route_url('remove_user', email=item.get('email')),
+                             False) )
         return self.render_action_td(buttongroup)

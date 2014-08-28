@@ -185,10 +185,10 @@ class ProcessOutputsGrid(MyGrid):
         if item.get('reference') is not None:
             # TODO: dirty hack for show on map
             wms_reference = self.wms_url + item.get('reference').split('wpsoutputs')[1]
-            buttongroup.append( ("publish", item.get('identifier'), "icon-share", "Publish", "#") )
+            buttongroup.append( ("publish", item.get('identifier'), "icon-share", "Publish", "#", False) )
             buttongroup.append( ("view", item.get('identifier'), "icon-eye-open", "View", 
-                                 item.get('reference', "#")) )
+                                 item.get('reference', "#"), True) )
             buttongroup.append( ("mapit", item.get('identifier'), "icon-globe", "Show on Map",
-                                 wms_reference) )
+                                 wms_reference, True) )
         return self.render_action_td(buttongroup)
 
