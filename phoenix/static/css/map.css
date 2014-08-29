@@ -43,11 +43,17 @@ input[type=range]{
 
 
 #maxcol,#mincol{
+   position:relative;
    margin-top:-15px;
    margin-bottom:0;
    z-index:1;
 }
+#p90col{
+   position:relative;
+   z-index:0;
+}
 .spacercol{
+    position:relative;
     height: 100px;
     line-height:100px;
     z-index: 0;
