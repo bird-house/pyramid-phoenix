@@ -2,12 +2,12 @@
     position: relative;
     left: 0px;
     top: 0px; 
-    width: 900px;
+    width: 850px;
     height: 500px;
     z-index: 0; /* Ensure pop-ups appear above the map! */ 
 }
-.mapwidth{
-    width: 900px;
+.totalwidth{
+    width: 950px;
 }
 
 input[type=text]{
@@ -31,9 +31,21 @@ input[type=range]{
     width:820px;
 }
 
-.inline{
+.horizontal{
     display:inline-block;
+    white-space:nowrap;
+    vertical-align:top;
 }
+.vertical{
+   float:left;
+   column-count:1;
+}
+
+
+#maxcol, #mincol{
+    margin-bottom:0;
+}
+
 
 label{
     white-space:nowrap;
@@ -49,3 +61,12 @@ label{
 select {
     width: auto;
 }
+
+.legend{
+    width: 50px;
+}
+
+#legendimg{
+    height: 440px;
+}
+
