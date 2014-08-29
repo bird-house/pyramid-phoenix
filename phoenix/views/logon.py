@@ -104,10 +104,6 @@ class Logon(MyView):
     @view_config(route_name='login_openid')
     def login_openid(self):
         """authomatic openid login"""
-        # Get the internal provider name URL variable.
-        provider_name = self.request.matchdict.get('provider_name', 'openid')
-        logger.debug('provider_name: %s', provider_name)
-
         username = self.request.params.get('username')
         if username is not None:
             provider = self.request.params.get('provider')

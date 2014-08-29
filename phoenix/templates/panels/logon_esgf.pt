@@ -1,11 +1,12 @@
-<div class="span6">
-  <h3><img src="${request.static_url('phoenix:static/images/Germany.png')}">DKRZ ESGF Node</h3>
+<div class="span8">
+  <h3>ESGF OpenID</h3>
   <form id="esgf" action="/login/openid">
+    <input type="radio" name="provider" value="dkrz" checked="checked"> <img src="${request.static_url('phoenix:static/images/flags/Germany.png')}"> DKRZ
+    <input type="radio" name="provider" value="ipsl"> <img src="${request.static_url('phoenix:static/images/flags/France.png')}"> IPSL<br>
     <input type="text" name="username" placeholder="Your username"/>
-    <input type="hidden" name="provider" value="dkrz"/>
-    <button type="submit" class="btn btn-primary">Sign in</button>
+    <button type="submit" class="btn btn-success">Sign in</button>
     <span class="help-block">
-      Enter your username of your DKRZ ESGF OpenID account
+      Choose your ESGF OpenID provider and enter your username
     </span>
   </form>
 </div>
