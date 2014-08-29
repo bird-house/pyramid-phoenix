@@ -29,7 +29,7 @@
 
   <div metal:fill-slot="content">
       <!--tabs-->
-      <div id="tabs" class="mapwidth">
+      <div id="tabs" class="totalwidth">
           <ul id ="tabsul" class="nav nav-tabs" tole="tablist">
               <li><a href="#addWMSdiv">Add Layer</a></li>
               <li><a href="#removeWMSdiv">Remove Layer</a></li>
@@ -44,15 +44,15 @@
                       WMS URL:
                       <input type="text" id="wmsurl" name="wmsurl" value="http://localhost:8080/thredds/wms/test/tasmax_EUR-44_IPSL-IPSL-CM5A-MR_historical_r1i1p1_SMHI-RCA4_v1_day_20010101-20051231.nc">
                   </div>
-                  <div class="input-append inline">
+                  <div class="input-append horizontal">
                       <label for="title">Title:</label>
                       <input type="text" class="nameField" id="title" name="title">
                   </div>
-                  <div class="input-append inline">
+                  <div class="input-append horizontal">
                       <label for="layer">WMS Layer Name:</label>
                       <select id="layer"></select>
                   </div>
-                  <div class="input-append inline">
+                  <div class="input-append horizontal">
                       <button type="button" id="addwms">
                           Add WMS
                       </button>
@@ -70,19 +70,19 @@
               <!-- Animate -->
               <div id="animatediv" class="tab-pane">
                   <div id="timeSelect">
-                      <div class="input-append inline">
+                      <div class="input-append horizontal">
                         <button type="button" class="btn btn-default btn-lg" id="startframeButton">
                            First Frame
                         </button>
                         <input type="text" id="startframe" class="timeField">
                       </div>
-                      <div class="input-append inline">
+                      <div class="input-append horizontal">
                           <button type="button" class="btn btn-default btn-lg" id="endframeButton">
                             Last Frame
                           </button>
                           <input type="text" id="endframe" class="timeField">
                       </div>
-                      <div class="input-append inline">
+                      <div class="input-append horizontal">
                       Aggregation
                       <select id=aggregation>
                           <option value="daily">Daily</option>
@@ -91,7 +91,7 @@
                           <option value="yearly">Yearly</option>
                       </select>
                       </div> 
-                      <div class="input-append inline">
+                      <div class="input-append horizontal">
                       Time per frame (ms): <input type="text" id="period" value="1000">
                       </div>
                       <br><br>
@@ -102,18 +102,18 @@
                       </div>
                       <br>
                       <div id="prerenderer">
-                          <div class="input-append inline">
+                          <div class="input-append horizontal">
                               WMS Layer Name:
                               <select id="wmsLayerName"></select>
                           </div>
-                          <div class="input-append inline">
+                          <div class="input-append horizontal">
                               Title:
                               <input type="text" id="imageLayerName" value="Animate" class="nameField">
                               <!--
                               <input type="text" id="imageLayerName" placeholder="Animate" class="nameField">
                               -->
                           </div>
-                          <div class="input-append inline">
+                          <div class="input-append horizontal">
                               <button id="animateGif" name="animateGif">
                                   Animate (pre-rendered)
                               </button>
@@ -193,16 +193,26 @@
           </div>
       </div>
       <!--MAP -->
-      <div id="map" class="smallmap"></div> 
+      <div class="totalwidth horizontal">
+          <div id="map" class="smallmap horizontal"></div> 
+          <div class="legend horizontal">
+              <input type=text id="maxcol" class="legend vertical">
+              <img id="legendimg" class="legend vertical"></img>
+              <input type="text" id="mincol" class="legend vertical">
+          </div>
+      </div>
       <!-- MAP time control --> 
-      <div id="globalvisible" class="mapwidth">
-          <button type="button" class="btn btn-default btn-lg" id="prevFrameButton">
+      <div id="globalvisible" class="mapwidth horizontal">
+          <button type="button" class="btn btn-default btn-lg horizontal" id="prevFrameButton">
               <span class="icon-step-backward"></span> 
           </button>
-          <button type="button" class="btn btn-default btn-lg" id="nextFrameButton">
+          <button type="button" class="btn btn-default btn-lg horizontal" id="nextFrameButton">
               <span class="icon-step-forward"></span> 
           </button>
-          <input type="range" id="timeslider" class="inline" min="0" max="0">
+          <input type="range" id="timeslider" class="horizontal" min="0" max="0">
+          <button id="colorscaleButton" class="horizontal">
+              Apply
+          </button>
       </div>
   </div>
 

@@ -55,7 +55,7 @@ WpsClient.prototype.addAnimation = function(wmsUrls, startTime, endTime, frameDu
     if(style === undefined){style = "boxfill/rainbow";}
     wmsUrlsString += ";"
     var wpsurl = this.wpsUrl.split("?")[0]//use only the address and not the parameters
-    var url = (wpsurl+"?request=execute&service=WPS&version=1.0.0"+
+    var url = (wpsurl+"?request=execute&service=WPS&version=1.0.0" +
               "&identifier=WMS.GifAnimationMultiWMS" +
               "&datainputs=" + 
               "wms_urls=" + wmsUrlsString +
@@ -66,6 +66,10 @@ WpsClient.prototype.addAnimation = function(wmsUrls, startTime, endTime, frameDu
               ";layer_name=" + layerName + 
               ";style=" + style 
               );
+    var colorscalerange = this.myMap.getMinMaxColorscalerangeString();
+    if (colorscalerange !== undefined){
+        url+= ";colorscalerange="+colorscalerange;
+    }
     url += "&storeExecuteResponse=true&status=true"//ensure it runs async
     //find status location
     var statusLocationContainingXML = getURL(url);

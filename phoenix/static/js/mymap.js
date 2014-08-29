@@ -1,3 +1,7 @@
+/*
+ * Author: Tobias Kipp (kipp@dkrz.de)
+ */
+
 /********************
  * HELPER FUNCTIONS *
  ********************/
@@ -78,6 +82,30 @@ function MyMap(){
     this.timeLabel = this.addTimeLabel(-150,-80, "Time", "", 12);
 }
 
+/*
+ * Adds The legend graphic to its reserved slot. The color scale range is 
+ * taken from the page. 
+ *
+ * If the pages values for minimum and maximum are not numbers the method will
+ * do nothing. 
+ *
+ * @param {OpenLayers.Layer.WMS} layer The layer to extract the legend from.
+ * @param {string} style A style that can be found in the WMS capabilities. (e.g. boxfill/rainbow)
+ * @param {int} width The width of the legend graphic.
+ * @param {int] height The height of the legend graphic.
+ */
+MyMap.prototype.addLegendGraphic = function(layer, style, width, height){
+    var colorscalerange = this.getMinMaxColorscalerangeString();
+    if (colorscalerange === undefined) {return}
+    var numColorBands = "50";
+    var legendUrl = (layer.url + "?REQUEST=GetLegendGraphic&COLORBARONLY=true" + 
+                     "&WIDTH=" + width + "&HEIGHT=" + height + "&PALETTE=" + style +
+                     "&NUMCOLORBANDS=" + numColorBands +
+                     "&COLORSCALERANGE="+ colorscalerange);
+    $("#legendimg")[0].src = legendUrl;
+
+};
+
 MyMap.prototype.addTimeLabel = function(x, y, title, text, fontsize){
     var vectorLayer = new OpenLayers.Layer.Vector(title, 
     {
@@ -108,7 +136,7 @@ MyMap.prototype.setTimeLabelText = function(text){
     var feature = this.timeLabel.features[0];
     var dx = extent.left-feature.geometry.x;
     var dy = extent.bottom-feature.geometry.y;
-    feature.geometry.move(dx,dy+5);
+    feature.geometry.move(dx,dy+6);
     //feature.geometry.move(0,0);
     feature.attributes.labelText=text;
     this.timeLabel.redraw();
@@ -141,8 +169,41 @@ MyMap.prototype.addInteraction = function(){
     $("#addwms").click(function(){ _this.addWMSFromForm();});
     $("#wmsurl").on("blur", function(){ _this.updateWMSForm();});
     $("#removewms").click(function(){ _this.removeSelectedMapLayer();});
+    $("#colorscaleButton").click(function(){_this.applyColorScale()});
 }
 
+MyMap.prototype.getMinMaxColorscalerangeString = function(){
+    var min = parseFloat($("#mincol").val());
+    var max = parseFloat($("#maxcol").val());
+    if (isNaN(min) || isNaN(max)){
+        return undefined;
+    }
+    if (max < min){
+        var min_old = min;
+        min = max;
+        max = min_old;
+    }
+    return  min + "," + max;
+
+}
+
+/*
+ * Applies the colorscalerange to all WMS layers. 
+ * It will do nothing if the colorscalerange can not be correctly generated from the pages values.
+ */
+MyMap.prototype.applyColorScale = function(){
+    
+   var colorscalerange = this.getMinMaxColorscalerangeString();
+   if (colorscalerange === undefined){return}
+   var layers = this.map.layers;
+   for (var i = 0; i < layers.length; i++){
+       var layer = layers[i];
+       if (layer.CLASS_NAME == "OpenLayers.Layer.WMS"){
+           layer.mergeNewParams({"colorscalerange": colorscalerange});
+           this.addLegendGraphic(layer, "boxfill/rainbow", 50, 500);//see map.css for height
+       }
+   }
+};
 /*
  * Adding a WMS layer to the map will add a wmslayername property to the OpenLayers layer,
  * which will be read here to update the list of selectable layers in the Animate tab.
@@ -439,7 +500,7 @@ MyMap.prototype.addWMSOverlay = function(title, url, layerName, options){
     if (options === undefined){
         options = {singleTile:true};};
     params = {layers: layerName, transparent:true};
-    wmsLayer = new OpenLayers.Layer.WMS(name, url, params, options);
+    wmsLayer = new OpenLayers.Layer.WMS(title, url, params, options);
     wmsLayer.isBaseLayer = false;
     wmsLayer.wmslayername=layerName;
     this.addTimesteps(wmsLayer);
