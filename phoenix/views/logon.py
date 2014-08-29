@@ -55,7 +55,13 @@ class Logon(MyView):
 
     @view_config(route_name='signin', renderer='phoenix:templates/signin.pt')
     def signin(self):
-        return dict()
+        tab = self.request.matchdict.get('tab', 'esgf')
+        lm = self.request.layout_manager
+        if tab == 'esgf':
+            lm.layout.add_heading('logon_esgf')
+        elif tab == 'openid':
+            lm.layout.add_heading('logon_openid')
+        return dict(active=tab)
 
     @view_config(route_name='logout', permission='edit')
     def logout(self):

@@ -105,7 +105,7 @@ def main(global_config, **settings):
     config.add_route('job_settings', '/settings/jobs')
     config.add_route('remove_all_jobs', '/settings/jobs/remove_all')
     
-    config.add_route('signin', '/signin')
+    config.add_route('signin', '/signin/{tab}')
     config.add_route('logout', '/logout')
     config.add_route('login_openid', '/login/openid')
     # TODO: need some work on local accounts

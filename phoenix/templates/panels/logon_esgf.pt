@@ -1,0 +1,10 @@
+<div class="span6">
+  <h3><img src="${request.static_url('phoenix:static/images/OpenID_24.png')}">OpenID</h3>
+  <form action="/login/openid">
+    <input type="text" name="id" placeholder="Your claimed OpenID"/>
+    <button type="submit" class="btn btn-primary">Sign in</button>
+    <span class="help-block">
+      Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname
+    </span>
+  </form>
+</div>

@@ -16,7 +16,7 @@ class Dashboard(MyView):
 
         lm = self.request.layout_manager
         if tab == 'jobs':
-             lm.layout.add_heading('dashboard_jobs')
+            lm.layout.add_heading('dashboard_jobs')
         elif tab == 'users':
             lm.layout.add_heading('dashboard_users')
         return dict(active=tab)
