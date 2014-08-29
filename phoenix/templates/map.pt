@@ -178,7 +178,11 @@
                   </p>
                   <h1>Map</h1>
                   <p>
-                      Shows only the tabs and the map.
+                      Shows only the tabs and the map with the legend.
+                      The legend has variable value ranges with above the color bar being the 
+                      maximum value and below the color bar the minimum value. It does not matter
+                      in which of the boxes minimum and maximum are written. If the order is swapped
+                      the colorbar will swap as well.
                   <p>
                   <h1>Additional Control</h1>
                   <p>
@@ -196,8 +200,35 @@
       <div class="totalwidth horizontal">
           <div id="map" class="smallmap horizontal"></div> 
           <div class="legend horizontal">
-              <input type=text id="maxcol" class="legend vertical">
               <img id="legendimg" class="legend vertical"></img>
+          </div>
+          <div class="legend horizontal">
+              <input type=text id="maxcol" class="legend vertical">
+              <div class="spacercol legend vertical">
+                  <span id="p90col">
+                  90%
+                  </span>
+              </div>
+              <div class="spacercol legend vertical">
+                  <span id="p70col">
+                  70%
+                  </span>
+              </div>
+              <div class="spacercol legend vertical">
+                  <span id="p50col">
+                  50%
+                  </span>
+              </div>
+              <div class="spacercol legend vertical">
+                  <span id="p30col">
+                  30%
+                  </span>
+              </div>
+              <div class="spacercol legend vertical">
+                  <span id="p10col">
+                  10%
+                  </span>
+              </div>
               <input type="text" id="mincol" class="legend vertical">
           </div>
       </div>

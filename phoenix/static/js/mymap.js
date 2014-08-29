@@ -169,7 +169,8 @@ MyMap.prototype.addInteraction = function(){
     $("#addwms").click(function(){ _this.addWMSFromForm();});
     $("#wmsurl").on("blur", function(){ _this.updateWMSForm();});
     $("#removewms").click(function(){ _this.removeSelectedMapLayer();});
-    $("#colorscaleButton").click(function(){_this.applyColorScale()});
+    $("#mincol").on("blur", function(){_this.applyColorScale()});
+    $("#maxcol").on("blur", function(){_this.applyColorScale()});
 }
 
 MyMap.prototype.getMinMaxColorscalerangeString = function(){
@@ -178,14 +179,39 @@ MyMap.prototype.getMinMaxColorscalerangeString = function(){
     if (isNaN(min) || isNaN(max)){
         return undefined;
     }
+    var direction = 1;
     if (max < min){
         var min_old = min;
         min = max;
         max = min_old;
+        $("#legendimg").addClass("mirrorimage");
+        direction = -1;
     }
+    else{
+        $("#legendimg").removeClass("mirrorimage");
+    }
+    this.updateLegendColorValue(min, max, direction);
     return  min + "," + max;
-
 }
+/*
+ * The map color values are for 10, 30, 50, 70 and 90 percent and dependent on the 
+ * direction they are up-down or down-up. The ids of the elements are px0col with x being
+ * the most significant digit.
+ * If the direction is -1 the identifiers are generated in inverse order to the value to fix the 
+ * naming issue.
+ */
+MyMap.prototype.updateLegendColorValue = function(min, max, direction){
+    var start = -50*(direction-1)
+    var cur = start + direction * 10; 
+    var dyPercent = (max-min)/100; //To calcuate the percentage only once it is added here.
+    for (var i = 0; i < 5; i++)
+    {
+        var id = "#p"+ (start + cur * direction )+"col";
+        var val = cur * dyPercent + min;
+        $(id).html(val);
+        cur = cur + direction * 20;
+    }
+};
 
 /*
  * Applies the colorscalerange to all WMS layers. 

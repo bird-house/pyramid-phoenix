@@ -2,12 +2,12 @@
     position: relative;
     left: 0px;
     top: 0px; 
-    width: 850px;
+    width: 800px;
     height: 500px;
     z-index: 0; /* Ensure pop-ups appear above the map! */ 
 }
 .totalwidth{
-    width: 950px;
+    width: 900px;
 }
 
 input[type=text]{
@@ -42,8 +42,23 @@ input[type=range]{
 }
 
 
-#maxcol, #mincol{
-    margin-bottom:0;
+#maxcol,#mincol{
+   margin-top:-15px;
+   margin-bottom:0;
+   z-index:1;
+}
+.spacercol{
+    height: 100px;
+    line-height:100px;
+    z-index: 0;
+}
+
+.spacercol:nth-of-type(1){
+    margin-top:-15px;
+}
+
+.spacercol span{
+    line-height:normal;
 }
 
 
@@ -67,6 +82,11 @@ select {
 }
 
 #legendimg{
-    height: 440px;
+    height: 500px;
 }
 
+.mirrorimage{
+    -moz-transform: scale(1, -1);
+    -webkit-transform: scale(1, -1);
+    transform: scale(1, -1);
+}
