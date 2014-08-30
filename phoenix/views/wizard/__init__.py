@@ -19,7 +19,8 @@ class WizardFavorite(object):
         self.session = session
         self.email = email
         self.favdb = self.request.db.favorites
-        self.load()
+        if not wizard_favorite in self.session:
+            self.load()
 
     def names(self):
         return self.session[wizard_favorite].keys()
@@ -41,6 +42,7 @@ class WizardFavorite(object):
         try:
             fav = dict(email=self.email, favorite=yaml.dump(self.session.get(wizard_favorite, {})))
             self.favdb.update({'email':self.email}, fav)
+            logger.debug('saved favorite for %s', self.email)
         except:
             logger.exception('saving favorite for %s failed.', self.email)
 
@@ -53,6 +55,7 @@ class WizardFavorite(object):
             self.session[wizard_favorite] = yaml.load(fav.get('favorite', '{}'))
             self.session[wizard_favorite][no_favorite] = {}
             self.session.changed()
+            logger.debug('loaded favorite for %s', self.email)
         except:
             self.clear()
             logger.exception('loading favorite for %s failed.', self.email)
