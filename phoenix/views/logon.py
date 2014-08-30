@@ -50,6 +50,8 @@ class Logon(MyView):
         user['activated'] = activated
         logger.debug('user=%s', user)
         self.userdb.update({'email':email}, user)
+        user_name = user.get('name', 'unknown')
+        self.session.flash("Welcome %s (%s)." % (user_name, email), queue='info')
 
     @view_config(route_name='dummy', renderer='phoenix:templates/dummy.pt')
     @view_config(route_name='dummy_json', renderer='json')

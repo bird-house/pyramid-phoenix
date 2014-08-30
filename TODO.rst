@@ -17,6 +17,8 @@ Bugs
 Common
 ======
 
+* add link to fatcow icons
+http://www.fatcow.com/free-icons
 * install malleefowl with phoenix
 * configure wpscache urls ...
 * set anaconda_home in user env
@@ -36,7 +38,6 @@ http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html
 Login
 =====
 
-* simplified esgf logon
 * improve local login
 * configure admin (roles) with mongodb
 
