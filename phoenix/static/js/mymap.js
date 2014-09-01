@@ -89,19 +89,21 @@ function MyMap(){
  * If the pages values for minimum and maximum are not numbers the method will
  * do nothing. 
  *
- * @param {OpenLayers.Layer.WMS} layer The layer to extract the legend from.
+ * @param {string} wmsurl The url to the WMS.
  * @param {string} style A style that can be found in the WMS capabilities. (e.g. boxfill/rainbow)
  * @param {int} width The width of the legend graphic.
  * @param {int] height The height of the legend graphic.
  */
-MyMap.prototype.addLegendGraphic = function(layer, style, width, height){
-    var colorscalerange = this.getMinMaxColorscalerangeString();
+MyMap.prototype.addLegendGraphic = function(wmsurl, colorscalerange, style, width, height){
+    console.log(colorscalerange);
     if (colorscalerange === undefined) {return}
-    var numColorBands = "50";
-    var legendUrl = (layer.url + "?REQUEST=GetLegendGraphic&COLORBARONLY=true" + 
+    var colorscalerangeString = colorscalerange[0] + "," + colorscalerange[1];
+    var numColorBands = "50";//TODO: extract from metadata
+    var legendUrl = (wmsurl + "?REQUEST=GetLegendGraphic&COLORBARONLY=true" + 
                      "&WIDTH=" + width + "&HEIGHT=" + height + "&PALETTE=" + style +
                      "&NUMCOLORBANDS=" + numColorBands +
                      "&COLORSCALERANGE="+ colorscalerange);
+    console.log(legendUrl);
     $("#legendimg")[0].src = legendUrl;
 
 };
@@ -171,9 +173,30 @@ MyMap.prototype.addInteraction = function(){
     $("#removewms").click(function(){ _this.removeSelectedMapLayer();});
     $("#mincol").on("blur", function(){_this.applyColorScale()});
     $("#maxcol").on("blur", function(){_this.applyColorScale()});
+    $("#wmsurlselect").click( function(){
+                                             $("#wmsurl").val($("#wmsurlselect").val())
+                                             _this.updateWMSForm();
+                                             $("#title").val("");
+                                        });
+    this.updateThreddsStructure("http://localhost:8080/thredds") 
 }
 
-MyMap.prototype.getMinMaxColorscalerangeString = function(){
+MyMap.prototype.updateThreddsStructure = function(thredds_url){
+    var url = ("http://localhost:8081/malleefowl-wps" +
+               "?service=WPS&request=execute&version=1.0.0&identifier=WMS.GetThreddsStructure&" +
+               "rawdataoutput=wms_json");
+    if (thredds_url !== undefined){
+        url += "&dataInputs=thredds_url=" + thredds_url;
+    }
+    var wms_urls = eval(getURL(url));
+    var select = ""
+    for (var i = 0; i < wms_urls.length ; i++){
+       var wms_url = wms_urls[i];
+       select += "<option value='" + wms_url + "'>" + wms_url.replace(thredds_url,"") + "</option>";
+    }
+    $("#wmsurlselect").html(select);
+};
+MyMap.prototype.getMinMaxColorscalerange = function(){
     var min = parseFloat($("#mincol").val());
     var max = parseFloat($("#maxcol").val());
     if (isNaN(min) || isNaN(max)){
@@ -191,7 +214,7 @@ MyMap.prototype.getMinMaxColorscalerangeString = function(){
         $("#legendimg").removeClass("mirrorimage");
     }
     this.updateLegendColorValue(min, max, direction);
-    return  min + "," + max;
+    return {min:min, max:max};
 }
 /*
  * The map color values are for 10, 30, 50, 70 and 90 percent and dependent on the 
@@ -201,12 +224,11 @@ MyMap.prototype.getMinMaxColorscalerangeString = function(){
  * naming issue.
  */
 MyMap.prototype.updateLegendColorValue = function(min, max, direction){
-    var start = -50*(direction-1)
+    var start = -50*(direction-1);//100 or 0
     var cur = start + direction * 10; 
     var dyPercent = (max-min)/100; //To calcuate the percentage only once it is added here.
-    for (var i = 0; i < 5; i++)
-    {
-        var id = "#p"+ (start + cur * direction )+"col";
+    for (var i = 0; i < 5; i++){
+        var id = "#p" + (start + cur * direction ) + "col";
         var val = cur * dyPercent + min;
         $(id).html(val);
         cur = cur + direction * 20;
@@ -218,18 +240,23 @@ MyMap.prototype.updateLegendColorValue = function(min, max, direction){
  * It will do nothing if the colorscalerange can not be correctly generated from the pages values.
  */
 MyMap.prototype.applyColorScale = function(){
-    
-   var colorscalerange = this.getMinMaxColorscalerangeString();
+   var colorscalerange = this.getMinMaxColorscalerange();
    if (colorscalerange === undefined){return}
+   this.setColorscaleRange(colorscalerange);
+  
+};
+
+MyMap.prototype.setColorScale = function(min, max){
+   colorscalerange = min + "," + max;
    var layers = this.map.layers;
    for (var i = 0; i < layers.length; i++){
        var layer = layers[i];
        if (layer.CLASS_NAME == "OpenLayers.Layer.WMS"){
            layer.mergeNewParams({"colorscalerange": colorscalerange});
-           this.addLegendGraphic(layer, "boxfill/rainbow", 50, 500);//see map.css for height
        }
    }
-};
+
+}
 /*
  * Adding a WMS layer to the map will add a wmslayername property to the OpenLayers layer,
  * which will be read here to update the list of selectable layers in the Animate tab.
@@ -237,7 +264,7 @@ MyMap.prototype.applyColorScale = function(){
 MyMap.prototype.updateActiveWMSLayerNames = function(){
     var layers = this.map.layers;
     var activeWmsLayersHtml = ""
-    for (var i=0; i <layers.length; i++){
+    for (var i=0; i < layers.length; i++){
         if (layers[i].visibility === true){
             var wmsLayerName = layers[i].wmslayername;
             if(wmsLayerName !== undefined){
@@ -413,6 +440,7 @@ MyMap.prototype.runAnimation = function(){
  * change of selected Overlays. 
  */
 MyMap.prototype.updateOverlays = function(){
+    this.frameTimes = [];
     this.visibleOverlays = [];
     for (name in this.overlays){
         var overlay = this.overlays[name];
@@ -425,9 +453,6 @@ MyMap.prototype.updateOverlays = function(){
         for (var i=1; i < this.visibleOverlays.length; i++){
             this.frameTimes = intersection(this.frameTimes, this.visibleOverlays[i].timesteps);
         }
-    }
-    else{//no visible frames => no timesteps to select from
-        this.frameTimes = [];
     }
     //update the sliders maximum value
     $("#timeslider").attr('max', this.frameTimes.length);
@@ -532,8 +557,42 @@ MyMap.prototype.addWMSOverlay = function(title, url, layerName, options){
     this.addTimesteps(wmsLayer);
     this.overlays[name] = wmsLayer;
     this.map.addLayer(wmsLayer);
+    this.legendRangeFromMetadata(url, layerName);
     };
+/* 
+ * The method relies on the GetMetadata request to the WMS. Derived from the GODIVA2 implementation
+ * the required additional parameters are item and layerName
+ *
+ * @param {string} url The url of the WMS to be used for the legend.
+ * @param {string} layerName The name of the WMS layer.
+ */
+MyMap.prototype.legendRangeFromMetadata = function(url, layerName ){
+    var data ="service=WMS&version=1.3.0&request=GetMetadata&item=layerDetails&layerName="+layerName;
+    var _this = this;
+    $.ajax({
+        type:"GET",
+        url: url,
+        data: data,
+        success: function(response){
+             layerDetails = JSON.parse(response);
+             var scalerange = layerDetails.scaleRange;
+             var colorscalerange = {min:scalerange[0], max:scalerange[1]};
+             _this.addLegendGraphic(url, colorscalerange,
+                                 "boxfill/rainbow", 50, 500);//see map.css for height
+             _this.setColorscaleRange(colorscalerange);
+        }
+    });
+ 
+};
 
+MyMap.prototype.setColorscaleRange = function(colorscalerange){
+   console.log(colorscalerange);
+   var min = parseFloat(colorscalerange.min);
+   var max = parseFloat(colorscalerange.max);
+   $("#mincol").val(min);
+   $("#maxcol").val(max);
+   this.setColorScale(min,max);
+}
 
 /*
  * Get capabilities, add the timesteps property to the overlay and then update the overlays.
