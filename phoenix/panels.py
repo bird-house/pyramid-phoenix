@@ -24,7 +24,7 @@ def navbar(context, request):
         nav.append( nav_item('Settings', request.route_url('settings')) )
     #nav.append( nav_item('Help', request.route_url('help')) )
 
-    login = request.current_route_url() == request.route_url('signin')
+    login = request.current_route_url() == request.route_url('signin', tab='esgf')
 
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request), login=login)
 
@@ -43,6 +43,14 @@ def sidebar(context, request):
 
 @panel_config(name='footer', renderer='phoenix:templates/panels/footer.pt')
 def footer(context, request):
+    return {}
+
+@panel_config(name='logon_openid', renderer='phoenix:templates/panels/logon_openid.pt')
+def logon_openid(context, request):
+    return {}
+
+@panel_config(name='logon_esgf', renderer='phoenix:templates/panels/logon_esgf.pt')
+def logon_esgf(context, request):
     return {}
 
 @panel_config(name='dashboard_users', renderer='phoenix:templates/panels/dashboard_users.pt')

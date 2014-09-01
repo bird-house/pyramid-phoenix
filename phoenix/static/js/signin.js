@@ -1,15 +1,4 @@
 
-/*
-$("#openid").submit( function(event) {
-  console.log($('#username').val());
-  var username = $('#username').val();
-  var id = $('#id').val();
-  $('#id').val(id+'/'+username);
-  console.log($('#id').val()); 
-  event.preventDefault();
-});
-*/
-
 $(document).ready(function (e) {
   authomatic.setup({
     backend: '/login/',

@@ -19,6 +19,11 @@ authomatic = Authomatic(config=config.config,
                         report_errors=True,
                         logging_level=logging.DEBUG)
 
+PROVIDER_URLS = dict(
+    dkrz='https://esgf-data.dkrz.de/esgf-idp/openid/%s',
+    ipsl='https://esgf-node.ipsl.fr/esgf-idp/openid/%s'
+)
+
 @view_defaults(permission='view', layout='default')
 class Logon(MyView):
     def __init__(self, request):
@@ -45,6 +50,8 @@ class Logon(MyView):
         user['activated'] = activated
         logger.debug('user=%s', user)
         self.userdb.update({'email':email}, user)
+        user_name = user.get('name', 'unknown')
+        self.session.flash("Welcome %s (%s)." % (user_name, email), queue='info')
 
     @view_config(route_name='dummy', renderer='phoenix:templates/dummy.pt')
     @view_config(route_name='dummy_json', renderer='json')
@@ -55,7 +62,13 @@ class Logon(MyView):
 
     @view_config(route_name='signin', renderer='phoenix:templates/signin.pt')
     def signin(self):
-        return dict()
+        tab = self.request.matchdict.get('tab', 'esgf')
+        lm = self.request.layout_manager
+        if tab == 'esgf':
+            lm.layout.add_heading('logon_esgf')
+        elif tab == 'openid':
+            lm.layout.add_heading('logon_openid')
+        return dict(active=tab)
 
     @view_config(route_name='logout', permission='edit')
     def logout(self):
@@ -93,15 +106,19 @@ class Logon(MyView):
     @view_config(route_name='login_openid')
     def login_openid(self):
         """authomatic openid login"""
-        # Get the internal provider name URL variable.
-        provider_name = self.request.matchdict.get('provider_name', 'openid')
-
-        logger.debug('provider_name: %s', provider_name)
-
+        username = self.request.params.get('username')
+        if username is not None:
+            provider = self.request.params.get('provider')
+            logger.debug('username=%s, provider=%s', username, provider)
+            openid = PROVIDER_URLS.get(provider) % username
+            self.request.GET['id'] = openid
+            del self.request.GET['username']
+            del self.request.GET['provider']
+            
         # Start the login procedure.
         response = Response()
         #response = request.response
-        result = authomatic.login(WebObAdapter(self.request, response), provider_name)
+        result = authomatic.login(WebObAdapter(self.request, response), "openid")
 
         logger.debug('authomatic login result: %s', result)
 

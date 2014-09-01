@@ -9,7 +9,7 @@
       tal:omit-tag="">
 
 ${field.start_mapping()}
-  <span id="tm-hit-count">Searching ...</span>
+  <strong id="tm-hit-count">Searching ...</strong>
   <input type="hidden" name="hit-count" value="0"
          id="${oid}-hit-count"/>
   <p/>
@@ -35,10 +35,12 @@ ${field.start_mapping()}
          id="${oid}-temporal"/>
   <span>Temporal</span>
 
+  <!--
   <input type="checkbox" name="spatial" value="${true_val}"
          tal:attributes="checked spatial == true_val;"
          id="${oid}-spatial"/>
   <span>Spatial</span>
+  -->
 
   <p/>
 
@@ -59,9 +61,25 @@ ${field.start_mapping()}
          id="tm-facets"/>
   <p/>
  
-  <label for="tm-facet" id="search-label-category">Institute</label>
+  <label for="tm-facet" id="search-label-category">Project</label>
   <input type="text" name="Categorie: xxx" class="tm-facet"
          id="tm-facet"/>
+  <p/>
+
+  <!--
+  <span>Start Year</span>
+  <input type="text" name="startyear" value="2000" class="input-small"
+         id="${oid}-startyear"/>
+
+  <span>Year Offset</span>
+  <select name="yearoffset" id="${oid}-yearoffset" class="input-small">
+    <option name="1" value="1" selected>1</option>
+    <option name="5" value="5">5</option>
+    <option name="10" value="10">10</option>
+    <option name="20" value="20">20</option>
+  </select>
+  -->
+
   <p/>
 
   <span>Start</span>
@@ -71,10 +89,12 @@ ${field.start_mapping()}
   <input type="text" name="end" value="${end}"
          id="${oid}-end"/>
   
+  <!--
   <p/>
   <span>Bounding Box</span>
   <input type="text" name="bbox" value="${bbox}"
          id="${oid}-bbox"/>
+  -->
 
 ${field.end_mapping()}
 

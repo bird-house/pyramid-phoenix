@@ -163,6 +163,7 @@ class CSWGrid(MyGrid):
         buttongroup = []
         buttongroup.append(
             ("remove", item.get('identifier'), "icon-trash", "",
-            self.request.route_url('remove_record', recordid=item.get('identifier'))) )
+            self.request.route_url('remove_record', recordid=item.get('identifier')),
+            False) )
         return self.render_action_td(buttongroup)
        

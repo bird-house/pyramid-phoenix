@@ -153,6 +153,8 @@ class ProcessOutputs(MyJobs):
         return dict(active=tab, jobid=jobid, grid=grid, items=items, form=form.render())
         
 from phoenix.grid import MyGrid
+from string import Template
+
 
 class ProcessOutputsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
@@ -161,6 +163,10 @@ class ProcessOutputsGrid(MyGrid):
         self.column_formats['preview'] = self.preview_td
         self.column_formats[''] = self.action_td
         self.exclude_ordering = ['output', '', 'preview', 'action', '_numbered']
+
+        url_templ = Template("${url}/godiva2/godiva2.html?server=${url}/wms/test")
+        thredds_url = request.registry.settings.get('thredds.url')
+        self.wms_url = url_templ.substitute({'url': thredds_url})
 
     def output_td(self, col_num, i, item):
         return self.render_title_td(
@@ -175,15 +181,14 @@ class ProcessOutputsGrid(MyGrid):
 
     def action_td(self, col_num, i, item):
         # TODO: dirty hack ...
-        wms_url = "http://localhost:8080/thredds/godiva2/godiva2.html?server=http://localhost:8080/thredds/wms/test"
-        
         buttongroup = []
         if item.get('reference') is not None:
-            wms_reference = wms_url + item.get('reference').split('wpsoutputs')[1]
-            buttongroup.append( ("publish", item.get('identifier'), "icon-share", "Publish", "#") )
+            # TODO: dirty hack for show on map
+            wms_reference = self.wms_url + item.get('reference').split('wpsoutputs')[1]
+            buttongroup.append( ("publish", item.get('identifier'), "icon-share", "Publish", "#", False) )
             buttongroup.append( ("view", item.get('identifier'), "icon-eye-open", "View", 
-                                 item.get('reference', "#")) )
+                                 item.get('reference', "#"), True) )
             buttongroup.append( ("mapit", item.get('identifier'), "icon-globe", "Show on Map",
-                                 wms_reference) )
+                                 wms_reference, True) )
         return self.render_action_td(buttongroup)
 

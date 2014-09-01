@@ -89,12 +89,14 @@ class EsgSearchWidget(Widget):
             kw.setdefault('latest', self.true_val)
         else:
             kw.setdefault('latest', self.false_val)
-        kw.setdefault('temporal', self._bool(search.get('temporal', False)))
-        kw.setdefault('spatial', self._bool(search.get('spatial', False)))
+        kw.setdefault('temporal', self._bool(search.get('temporal', True)))
+        #kw.setdefault('spatial', self._bool(search.get('spatial', False)))
+        kw.setdefault('spatial', self._bool(False))
         
-        kw.setdefault('start', search.get('start', '2000-01-01T12:00:00Z'))
+        kw.setdefault('start', search.get('start', '2001-01-01T12:00:00Z'))
         kw.setdefault('end', search.get('end', '2010-12-31T12:00:00Z'))
-        kw.setdefault('bbox', search.get('bbox', '-180,-90,180,90'))
+        #kw.setdefault('bbox', search.get('bbox', '-180,-90,180,90'))
+        kw.setdefault('bbox', '-180,-90,180,90')
         values = self.get_template_values(field, cstruct, kw)
         log.debug('esgsearch values: %s', values)
         return field.renderer(self.template, **values)
@@ -119,8 +121,10 @@ class EsgSearchWidget(Widget):
         result['start'] = pstruct['start'].strip()
         result['end'] = pstruct['end'].strip()
         result['temporal'] = pstruct.has_key('temporal')
-        result['spatial'] = pstruct.has_key('spatial')
-        result['bbox'] = pstruct['bbox'].strip()
+        #result['spatial'] = pstruct.has_key('spatial')
+        result['spatial'] = False
+        #result['bbox'] = pstruct['bbox'].strip()
+        result['bbox'] = '-180,-90,180,90'
         try:
             log.debug('hit count: %s', pstruct['hit-count'])
             result['hit-count'] = int(pstruct['hit-count'].strip())

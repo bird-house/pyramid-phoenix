@@ -17,6 +17,8 @@ Bugs
 Common
 ======
 
+* add link to fatcow icons
+http://www.fatcow.com/free-icons
 * install malleefowl with phoenix
 * configure wpscache urls ...
 * set anaconda_home in user env
@@ -36,7 +38,6 @@ http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html
 Login
 =====
 
-* simplified esgf logon
 * improve local login
 * configure admin (roles) with mongodb
 
@@ -53,7 +54,7 @@ Outputs
 Wizard
 ======
 
-* maybe skip egsf file selection. do it in background (just get time-rage and variable).
+* maybe skip egsf file selection. do it in background (just get time-range and variable).
 * refactor appstruct handling ...
 * dont use default form buttons
 * replace esgf file widget
@@ -65,7 +66,6 @@ Wizard
 * use workflow module:
 https://github.com/repoze/repoze.workflow (see koti example)
 * esgf file list does not restore state
-* store favorites in mongodb
 * refactor state storage 
 
 

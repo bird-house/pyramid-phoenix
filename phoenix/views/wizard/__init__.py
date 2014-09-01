@@ -5,6 +5,8 @@ from deform import Form, Button
 
 from phoenix.views import MyView
 
+import yaml
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -12,11 +14,13 @@ wizard_favorite = "wizard_favorite"
 no_favorite = "No Favorite"
 
 class WizardFavorite(object):
-    def __init__(self, session):
+    def __init__(self, request, session, email):
+        self.request = request
         self.session = session
+        self.email = email
+        self.favdb = self.request.db.favorites
         if not wizard_favorite in self.session:
-            self.clear()
-        self.session[wizard_favorite][no_favorite] = {}
+            self.load()
 
     def names(self):
         return self.session[wizard_favorite].keys()
@@ -31,7 +35,30 @@ class WizardFavorite(object):
         
     def clear(self):
         self.session[wizard_favorite] = {}
+        self.session[wizard_favorite][no_favorite] = {}
         self.session.changed()
+
+    def save(self):
+        try:
+            fav = dict(email=self.email, favorite=yaml.dump(self.session.get(wizard_favorite, {})))
+            self.favdb.update({'email':self.email}, fav)
+            logger.debug('saved favorite for %s', self.email)
+        except:
+            logger.exception('saving favorite for %s failed.', self.email)
+
+    def load(self):
+        try:
+            fav = self.favdb.find_one({'email': self.email})
+            if fav is None:
+                fav = dict(email=self.email)
+                self.favdb.save(fav)
+            self.session[wizard_favorite] = yaml.load(fav.get('favorite', '{}'))
+            self.session[wizard_favorite][no_favorite] = {}
+            self.session.changed()
+            logger.debug('loaded favorite for %s', self.email)
+        except:
+            self.clear()
+            logger.exception('loading favorite for %s failed.', self.email)
 
 class WizardState(object):
     def __init__(self, session, initial_step='wizard', final_step='wizard_done'):
@@ -91,7 +118,7 @@ class Wizard(MyView):
         super(Wizard, self).__init__(request, name, title, description)
         self.csw = self.request.csw
         self.wizard_state = WizardState(self.session)
-        self.favorite = WizardFavorite(self.session)
+        self.favorite = WizardFavorite(self.request, self.session, email=self.user_email())
 
     def buttons(self):
         prev_disabled = not self.prev_ok()
@@ -207,6 +234,19 @@ class Wizard(MyView):
         breadcrumbs.append(dict(route_name='wizard', title='Wizard'))
         breadcrumbs.append(dict(route_name=self.name, title=self.title))
         return breadcrumbs
+
+    def resources(self):
+        resources = []
+        resource = self.wizard_state.get('wizard_source')['source']
+        # TODO: refactore this ... there is a common way
+        if resource == 'wizard_csw':
+            selection = self.wizard_state.get(resource).get('selection', [])
+            logger.debug("catalog selection: %s", selection)
+            self.csw.getrecordbyid(id=selection)
+            resources = [str(rec.source) for rec in self.csw.records.values()]
+        elif resource == 'wizard_esgf':
+            resources = [str(file_url) for file_url in self.wizard_state.get('wizard_esgf_files')['url']]
+        return resources
 
     def view(self):
         form = self.generate_form()
