@@ -9,8 +9,9 @@ Pyramid Phoenix is a web-application build with the Python web-framework `Pyrami
 Installation
 ------------
 
-Check out code from the phoenix git repo (will be available on github). Then do the following::
+Check out code from the phoenix github repo and start the installation::
 
+   $ git clone https://github.com/bird-house/pyramid-phoenix.git
    $ cd pyramid-phoenix
    $ ./requirements.sh
    $ ./install.sh
@@ -64,6 +65,17 @@ When updating your installation you should run ``clean.sh`` to remove outdated P
 
 And then restart the ``supervisor`` and ``nginx`` service.
 
+You can also use the supervisor monitor on http://localhost:9001 to start services.
+
+Troubleshooting
+---------------
+
+Phoenix needs a running mongodb and pycsw service. Sometimes Phoenix is started when these service are not ready yet (will be fixed soon). In that case start theses services manually in the order mongodb, pycsw and Phoenix with::
+
+    $ ~/anaconda/etc/init.d/supervisor restart mongodb
+    $ ~/anaconda/etc/init.d/supervisor restart pycsw
+    $ ~/anaconda/etc/init.d/supervisor restart phoenix
+   
 
 Authors
 -------

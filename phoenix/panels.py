@@ -2,83 +2,68 @@ from pyramid_layout.panel import panel_config
 from pyramid.security import authenticated_userid, has_permission
 
 import logging
-
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 # navbar
 # ------
-@panel_config(name='navbar',
-              renderer='templates/panels/navbar.pt')
+@panel_config(name='navbar', renderer='phoenix:templates/panels/navbar.pt')
 def navbar(context, request):
-    def nav_item(name, url, icon, dropdowns=[]):
+    def nav_item(name, url):
         active = request.current_route_url() == url
-        return dict(name=name, url=url, active=active, icon=icon, dropdowns=dropdowns)
+        return dict(name=name, url=url, active=active)
 
     nav = []
-    nav.append( nav_item('Home', request.route_url('home'), 'icon-home') )
     if has_permission('edit', request.context, request):
-        nav.append( nav_item('Processes', request.route_url('processes'), 'icon-star') )
-        nav.append( nav_item('My Jobs', request.route_url('jobs'), 'icon-list') )
-        dropdowns = []
-        dropdowns.append(nav_item('Simple', request.route_url('wizard'), 'icon-star'))
-        dropdowns.append(nav_item('QC Full', request.route_url('qc_wizard_check'), 'icon-star'))
-        dropdowns.append(nav_item('QC YAML', request.route_url('qc_wizard_yaml'), 'icon-star'))
-        nav.append( nav_item('Wizard', None, 'icon-star', dropdowns) )
-        nav.append( nav_item('Map', request.route_url('map'), 'icon-globe') )
-        nav.append( nav_item('My Account', request.route_url('account'), 'icon-user') )
+        nav.append( nav_item('Dashboard', request.route_url('dashboard', tab='jobs')) )
+        nav.append( nav_item('Processes', request.route_url('processes')) )
+        nav.append( nav_item('My Jobs', request.route_url('myjobs')) )
+        nav.append( nav_item('Wizard', request.route_url('wizard')) )
+        nav.append( nav_item('Map', request.route_url('map')) )
+        nav.append( nav_item('My Account', request.route_url('myaccount')) )
     if has_permission('admin', request.context, request):
-        nav.append( nav_item('Settings', request.route_url('settings'), 'icon-edit') )
-    nav.append( nav_item('Help', request.route_url('help'), 'icon-question-sign') )
+        nav.append( nav_item('Settings', request.route_url('settings')) )
+    #nav.append( nav_item('Help', request.route_url('help')) )
 
-    login = request.current_route_url() == request.route_url('signin')
+    login = request.current_route_url() == request.route_url('signin', tab='esgf')
 
     return dict(title='Phoenix', nav=nav, username=authenticated_userid(request), login=login)
 
-
-#==============================================================================
-# user_statistic
-#==============================================================================
-
-# @panel_config(name='user_statistic',
-#               renderer='templates/panels/user_statistic.pt')
-# def user_statistic(context, request):
-#     userid = authenticated_userid(request)
-#     processes = []
-
-#     if userid:
-#         processes = ProcessHistory.status_count_by_userid(userid)
-
-#     lastlogin = 'first login'
-#     if 'lastlogin' in request.cookies:
-#         lastlogin = request.cookies['lastlogin']
-
-#     return dict(lastlogin=lastlogin, processes=processes)
-
-
-@panel_config(name='welcome', renderer='templates/panels/welcome.pt')
+@panel_config(name='welcome', renderer='phoenix:templates/panels/welcome.pt')
 def welcome(context, request, title):
     return dict(title=title, logged_in=authenticated_userid(request))
 
-@panel_config(name='heading_processes', renderer='templates/panels/heading_processes.pt')
-def heading_processes(context, request):
-    return dict(title='Run a process')
+@panel_config(name='breadcrumbs', renderer='phoenix:templates/panels/breadcrumbs.pt')
+def breadcrumbs(context, request):
+    lm = request.layout_manager
+    return dict(breadcrumbs=lm.layout.breadcrumbs)
 
-@panel_config(name='heading_jobs',
-              renderer='templates/panels/heading_jobs.pt')
-def heading_history(context, request):
-    return dict(title='Monitor processes')
+@panel_config(name='sidebar', renderer='phoenix:templates/panels/sidebar.pt')
+def sidebar(context, request):
+    return dict()
 
-@panel_config(name='heading_info',
-              renderer='templates/panels/heading_info.pt')
-def heading_info(context, request):
-    return dict(title='Info')
+@panel_config(name='footer', renderer='phoenix:templates/panels/footer.pt')
+def footer(context, request):
+    return {}
 
-@panel_config(name='heading_stats',
-              renderer='templates/panels/heading_stats.pt')
-def heading_statistics(context, request):
-    import models
-    userdb = models.User(request)
-    return userdb.count()
+@panel_config(name='logon_openid', renderer='phoenix:templates/panels/logon_openid.pt')
+def logon_openid(context, request):
+    return {}
+
+@panel_config(name='logon_esgf', renderer='phoenix:templates/panels/logon_esgf.pt')
+def logon_esgf(context, request):
+    return {}
+
+@panel_config(name='dashboard_users', renderer='phoenix:templates/panels/dashboard_users.pt')
+def dashboard_users(context, request):
+    from .models import user_stats
+    return user_stats(request)
+
+@panel_config(name='dashboard_jobs', renderer='phoenix:templates/panels/dashboard_jobs.pt')
+def dashboard_jobs(context, request):
+    return dict(total = request.db.jobs.count(),
+                started = request.db.jobs.find({"is_complete": False}).count(),
+                failed = request.db.jobs.find({"is_complete": True, "is_succeded": False}).count(),
+                succeded = request.db.jobs.find({"is_succeded": True}).count())
 
 @panel_config(name='headings')
 def headings(context, request):
@@ -89,8 +74,5 @@ def headings(context, request):
              for name, args, kw in layout.headings])
     return ''
 
-@panel_config(name='footer')
-def footer(context, request):
-    return ''
-    #return '<footer>&copy; </footer>'
-    #return '<div class="well footer"><small>&copy; </small></div>'
+
+

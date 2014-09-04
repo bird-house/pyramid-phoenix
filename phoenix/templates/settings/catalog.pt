@@ -1,0 +1,62 @@
+<metal:block use-macro="main_template">
+
+  <div metal:fill-slot="content">
+
+    <!-- Button to trigger modal dialog for adding ogc service to catalog -->
+    <a href="#service-form" role="button" class="btn btn-success" data-toggle="modal">
+      Add Service
+    </a>
+    <!-- Button to trigger modal dialog for adding dataset to catalog -->
+    <a href="#dataset-form" role="button" class="btn btn-success" data-toggle="modal">
+      Add Dataset
+    </a>
+    <!-- Button to remove all records -->
+    <a href="${request.route_url('remove_all_records')}" role="button" class="btn btn-danger">
+      Remove all Datasets
+    </a>
+
+    <div>
+      <h2>${datasets_found} Datasets found</h2>
+    </div>
+
+    <br/><br />
+
+    <table class="table table-striped">
+      <tal:rows replace="structure grid" />
+    </table>
+
+    <!-- Pagination for catalog search results -->
+    <div class="pagination pagination-centered pagination-large">
+      <ul>
+        <li class="disabled"><a href="#">&laquo;</a></li>
+        <li class="active"><a href="#">1</a></li>
+        <li class="active"><a href="#">2</a></li>
+        <li class="active"><a href="#">&raquo;</a></li>
+      </ul>
+    </div>
+
+    <!-- Add form for service addition -->
+    <div id="service-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="service-form-label" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="service-form-label">Add OGC Service to Catalog</h3>
+      </div>
+      <div class="modal-body">
+        <tal:form replace="structure service_form" />
+      </div>
+    </div>
+
+    <!-- Add form for dataset addition -->
+    <div id="dataset-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="dataset-form-label" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="dataset-form-label">Add Dataset to Catalog</h3>
+      </div>
+      <div class="modal-body">
+        <tal:form replace="structure dataset_form" />
+      </div>
+    </div>
+
+  </div>
+   
+</metal:block>

@@ -1,0 +1,59 @@
+<metal:block use-macro="main_template">
+
+  <div metal:fill-slot="css">
+    <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
+          href="${request.static_url('phoenix:static/css/csw.css')}" />
+  </div>
+
+  <div metal:fill-slot="javascript">
+    <!-- leaflet -->
+    <link rel="stylesheet" href="${request.static_url('phoenix:static/leaflet/leaflet.css')}" />
+    <!--[if lte IE 8]><link rel="stylesheet" href="${request.static_url('phoenix:static/leafletleaflet.ie.css')}" /><![endif]-->
+    <script type="text/javascript" src="${request.static_url('phoenix:static/leaflet/leaflet.js')}"></script>
+    <script src="${request.static_url('phoenix:static/js/csw.js')}"></script>
+    <script type="text/javascript">
+      $(document).ready(function (e) {
+         initMap();
+      });
+    </script>
+  </div>
+        
+  <div metal:fill-slot="content">
+
+    <div class="row-fluid">
+      <div class="span3" id="div-map">Map</div>
+        
+      <div class="span9">
+        <!-- search form -->
+        <div>
+          <form id="query" class="form-search">
+            <input type="text" name="query" class="input-medium search-query" placeholder="Search Terms">
+          </form>
+        </div>
+
+        <!-- table -->
+        <div>
+          <table class="table table-bordered table-striped" id="table-csw-results">
+            <tal:rows replace="structure grid" />
+          </table>
+        </div>
+
+        <!-- Pagination for catalog search results -->
+        <div class="pagination pagination-centered pagination-large">
+          <ul>
+            <li class="disabled"><a href="#">&laquo;</a></li>
+            <li class="active"><a href="#">1</a></li>
+            <li class="active"><a href="#">2</a></li>
+            <li class="active"><a href="#">&raquo;</a></li>
+          </ul>
+        </div>
+
+      </div>
+      
+    </div>
+
+    <tal:form replace="structure form">The form will render here</tal:form>
+
+  </div>
+   
+</metal:block>

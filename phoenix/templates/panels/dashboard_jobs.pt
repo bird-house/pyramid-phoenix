@@ -1,0 +1,16 @@
+<div class="span4">
+  <h3>Jobs</h3>
+  <p>
+    Number of Jobs: <span class="badge badge-inverse">${total}</span>
+  </p>
+  <p>
+    Started: <span class="badge badge-info">${started}</span>
+  </p>
+  <p>
+    Failed: <span class="badge badge-important">${failed}</span>
+  </p>
+  <p>
+    Succeded: <span class="badge badge-success">${succeded}</span>
+  </p>
+</div>
+

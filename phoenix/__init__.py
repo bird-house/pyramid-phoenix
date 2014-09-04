@@ -1,20 +1,13 @@
-# __init__.py
-# Copyright (C) 2013 the ClimDaPs/Phoenix authors and contributors
-# <see AUTHORS file>
-#
-# This module is part of ClimDaPs/Phoenix and is released under
-# the MIT License: http://www.opensource.org/licenses/mit-license.php
-
 from pyramid.config import Configurator
 from pyramid.events import subscriber
 from pyramid.events import NewRequest
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
-from .security import groupfinder, root_factory
+from phoenix.security import groupfinder, root_factory
 
 import pymongo
 
-from .helpers import button
+from phoenix.utils import button
 import logging
 
 logger = logging.getLogger(__name__)
@@ -72,35 +65,89 @@ def main(global_config, **settings):
     #    cache_max_age=3600
     #)
 
+    # dummy view for testing
+    config.add_route('dummy', '/dummy/{email}')
+    config.add_route('dummy_json', '/dummy/{email}/edit.json')
+
     # routes 
     config.add_route('home', '/')
+
+    # dashboard
+    config.add_route('dashboard', '/dashboard/{tab}')
+    
+    # processes
     config.add_route('processes', '/processes')
-    config.add_route('jobs', '/jobs')
-    config.add_route('jobsupdate', '/jobsupdate/{sortkey}/{type}')
-    config.add_route('output_details', '/output_details')
-    config.add_route('execute', '/execute')
-  
-    config.add_route('wizard', '/wizard')
+    config.add_route('execute_process', '/processes/{identifier}/execute')
+
+    # myjobs
+    config.add_route('myjobs', '/myjobs')
+    config.add_route('update_myjobs', '/myjobs/update.json')
+    config.add_route('remove_myjobs', '/myjobs/remove_all')
+    config.add_route('remove_myjob', '/myjobs/{jobid}/remove')
+    config.add_route('process_outputs', '/myjobs/{jobid}/outputs/{tab}')
+
+    config.add_route('map', '/map')
+    config.add_route('myaccount', '/myaccount')
+
+    # qc qizards
     config.add_route('qc_wizard_check', '/qc_wizard_check')
     config.add_route('qc_wizard_yaml', '/qc_wizard_yaml')
-    config.add_route('map', '/map')
-    config.add_route('account', '/account')
+
+    # settings
+    config.add_route('settings', '/settings/overview')
+    config.add_route('catalog_settings', '/settings/catalog')
+    config.add_route('remove_record', '/settings/catalog/{recordid}/remove')
+    config.add_route('remove_all_records', '/settings/catalog/remove_all')
+    config.add_route('user_settings', '/settings/users')
+    config.add_route('edit_user', '/settings/users/{email}/edit.json')
+    config.add_route('remove_user', '/settings/users/{email}/remove')
+    config.add_route('activate_user', '/settings/users/{email}/activate.json')
+    config.add_route('job_settings', '/settings/jobs')
+    config.add_route('remove_all_jobs', '/settings/jobs/remove_all')
     
-    config.add_route('settings', '/settings')
-    config.add_route('catalog', '/settings/catalog')
-    config.add_route('user', '/settings/user')
-    config.add_route('ipython', '/ipython')
-    
-    config.add_route('help', '/help')
-    config.add_route('signin', '/signin')
+    config.add_route('signin', '/signin/{tab}')
     config.add_route('logout', '/logout')
     config.add_route('login_openid', '/login/openid')
-    # TODO: need some work work on local accounts
+    # TODO: need some work on local accounts
     config.add_route('login_local', '/login/local')
     config.add_route('register', '/register')
 
+    # wizard
+    config.add_route('wizard', '/wizard/start')
+    config.add_route('wizard_wps', '/wizard/wps')
+    config.add_route('wizard_process', '/wizard/process')
+    config.add_route('wizard_literal_inputs', '/wizard/literal_inputs')
+    config.add_route('wizard_complex_inputs', '/wizard/complex_inputs')
+    config.add_route('wizard_source', '/wizard/source')
+    config.add_route('wizard_csw', '/wizard/csw')
+    config.add_route('wizard_csw_select', '/wizard/csw/{recordid}/select.json')
+    config.add_route('wizard_esgf', '/wizard/esgf')
+    config.add_route('wizard_esgf_files', '/wizard/esgf_files')
+    config.add_route('wizard_esgf_credentials', '/wizard/esgf_credentials')
+    config.add_route('wizard_check_parameters', '/wizard/check_parameters')
+    config.add_route('wizard_done', '/wizard/done')
+
     # A quick access to the login button
     config.add_request_method(button, 'login_button', reify=True)
+
+    # use json_adapter for datetime
+    # http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
+    from pyramid.renderers import JSON
+    import datetime
+    json_renderer = JSON()
+    def datetime_adapter(obj, request):
+        return obj.isoformat()
+    json_renderer.add_adapter(datetime.datetime, datetime_adapter)
+    import bson
+    def objectid_adapter(obj, request):
+        return str(obj)
+    json_renderer.add_adapter(bson.objectid.ObjectId, objectid_adapter)
+    ## def wpsexception_adapter(obj, request):
+    ##     logger.debug("mongo adapter wpsexception called")
+    ##     return '%s %s: %s' % (obj.code, obj.locator, obj.text)
+    ## from owslib import wps
+    ## json_renderer.add_adapter(wps.WPSException, wpsexception_adapter)
+    config.add_renderer('json', json_renderer)
 
     # MongoDB
     # TODO: maybe move this to models.py?

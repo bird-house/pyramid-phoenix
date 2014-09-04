@@ -1,10 +1,15 @@
-import logging
-logger = logging.getLogger(__name__)
+from os.path import join, dirname
 
 from webhelpers.html.builder import HTML
 from webhelpers.html.grid import Grid
 
-from .utils import localize_datetime
+import string # TODO replace by mako template
+from mako.template import Template
+from mako.lookup import TemplateLookup
+mylookup = TemplateLookup([join(dirname(__file__), "templates", "grid")])
+
+import logging
+logger = logging.getLogger(__name__)
 
 class MyGrid(Grid):
     def __init__(self, request, *args, **kwargs):
@@ -12,7 +17,68 @@ class MyGrid(Grid):
         if 'url' not in kwargs:
             kwargs['url'] = request.current_route_url
         super(MyGrid, self).__init__(*args, **kwargs)
-        self.exclude_ordering = ['_numbered']
+        self.exclude_ordering = ['', 'preview', 'action', '_numbered']
+        #self.user_tz = u'UTC'
+
+    def render_td(self, renderer, **data):
+        mytemplate = mylookup.get_template(renderer + ".mako")
+        return HTML.td(HTML.literal(mytemplate.render(**data)))
+
+    def render_title_td(self, title, abstract="", keywords=[], data=[], format=None, source="#"):
+        return self.render_td(renderer="title_td", title=title, abstract=abstract, keywords=keywords, data=data, format=format, source=source)
+
+    def render_status_td(self, item):
+        status = item.get('status')
+        if status is None:
+            return HTML.td('')
+        span_class = 'label'
+        if status == 'ProcessSucceeded':
+            span_class += ' label-success'
+        elif status == 'ProcessFailed':
+            span_class += ' label-warning'
+        elif status == 'Exception':
+            span_class += ' label-important'
+        else:
+            span_class += ' label-info'
+        return self.render_td(renderer="status_td", item=item, span_class=span_class)
+    
+    def render_timestamp_td(self, timestamp):
+        if timestamp is None:            
+            return HTML.td('')
+        mytimestamp = timestamp
+        if type(timestamp) is str:
+            from dateutil import parser as datetime_parser
+            mytimestamp = datetime_parser.parse(timestamp)
+        span_class = 'due-date badge'
+        
+        span = HTML.tag(
+            "span",
+            c=HTML.literal(mytimestamp.strftime('%Y-%m-%d %H:%M:%S')),
+            class_=span_class,
+        )
+        return HTML.td(span)
+
+    def render_format_td(self, format, source):
+        span_class = 'label'
+        if 'wps' in format.lower():
+            span_class += ' label-warning'
+        elif 'wms' in format.lower():
+            span_class += ' label-info'
+        elif 'netcdf' in format.lower():
+            span_class += ' label-success'
+        else:
+            span_class += ' label-default'
+        anchor = string.Template("""\
+        <a class="${span_class}" href="${source}" data-format="${format}">${format}</a>
+        """)
+        return HTML.td(HTML.literal(anchor.substitute(
+            {'source': source, 'span_class': span_class, 'format': format} )))  
+
+    def render_preview_td(self, format, source):
+        return self.render_td(renderer="preview_td", format=format, source=source)
+
+    def render_action_td(self, buttongroup=[]):
+        return self.render_td(renderer="button_td", buttongroup=buttongroup)
 
     def generate_header_link(self, column_number, column, label_text):
         """Override of the ObjectGrid to customize the headers. This is
@@ -87,176 +153,8 @@ class MyGrid(Grid):
             records.append(r)
         return HTML(*records)
 
-class ProcessesGrid(MyGrid):
-    def __init__(self, request, *args, **kwargs):
-        super(ProcessesGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats[''] = self.action_td
 
-    def action_td(self, col_num, i, item):
-        """Generate the column that has the actions in it.
-        """
-        return HTML.td(HTML.literal("""\
-        <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-          Action
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" id="%s">
-            <li><a class="process-execute" href="#">Execute</a></li>
-            <li><a class="process-execute" href="#">Info</a></li>
-            <li><a class="process-execute" href="#">Set Favorite</a></li>
-          </ul>
-        </div>
-        """ % item.get('identifier') ))
 
-class OutputDetailsGrid(MyGrid):
-    def __init__(self, request, *args, **kwargs):
-        super(OutputDetailsGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats[''] = self.action_td
 
-    def action_td(self, col_num, i, item):
-        """Generate the column that has the actions in it.
-        """
-        return HTML.td(HTML.literal("""\
-        <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-          Action
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" id="%s">
-            <li><a class="output-publish" href="#">Publish</a></li>
-            <li><a class="output-show" href="#">Show in Viewer</a></li>
-            <li><a class="output-map" href="#">Show on Map</a></li>
-          </ul>
-        </div>
-        """ % item.get('identifier')))
 
-class JobsGrid(MyGrid):
-    def __init__(self, request, *args, **kwargs):
-        super(JobsGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats['start_time'] = self.start_time_td
-        self.column_formats['status'] = self.status_td
-        self.column_formats['progress'] = self.progress_td
-        self.column_formats[''] = self.action_td
-        #self.user_tz = u'US/Eastern'
-        self.user_tz = u'UTC'
-
-    def start_time_td(self, col_num, i, item):
-        """Generate the column for the start time.
-        """
-        if item.get('start_time') is None:
-            return HTML.td('')
-        span_class = 'due-date badge'
-        #if item.start_time:
-        #    span_class += ' badge-important'
-        start_time = localize_datetime(item.get('start_time'), self.user_tz)
-        span = HTML.tag(
-            "span",
-            c=HTML.literal(start_time.strftime('%Y-%m-%d %H:%M:%S')),
-            class_=span_class,
-        )
-        return HTML.td(span)
-
-    def status_td(self, col_num, i, item):
-        """Generate the column for the job status.
-        """
-        status = item.get('status')
-        if status is None:
-            return HTML.td('')
-        span_class = 'label'
-        if status == 'ProcessSucceeded':
-            span_class += ' label-success'
-        elif status == 'ProcessFailed':
-            span_class += ' label-warning'
-        elif status == 'Exception':
-            span_class += ' label-important'
-        else:
-            span_class += ' label-info'
-            
-        span = HTML.tag(
-            "span",
-            c=HTML.literal(status),
-            class_=span_class,
-        )
-        return HTML.td(span)
-
-    def progress_td(self, col_num, i, item):
-        """Generate the column for the job progress.
-        """
-        progress = item.get('progress', 100)
-        if progress is None:
-            return HTML.td('')
-        span_class = 'progress progress-info bar'
-
-        div_bar = HTML.tag(
-            "div",
-            c=HTML.literal(progress),
-            class_="bar",
-            style_="width: %d%s" % (progress, '%'),
-        )
-        div_progress = HTML.tag(
-            "div",
-            c=div_bar,
-            class_="progress progress-info")
-       
-        return HTML.td(div_progress)
-
-    def action_td(self, col_num, i, item):
-        """Generate the column that has the actions in it.
-        """
-        return HTML.td(HTML.literal("""\
-        <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-          Action
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" id="%s">
-            <li><a class="job-show" href="#">Show Output Details</a></li>
-            <li><a class="job-delete" href="#">Delete</a></li>
-          </ul>
-        </div>
-        """ % item.get('uuid')))
-        
-class UsersGrid(MyGrid):
-    def __init__(self, request, *args, **kwargs):
-        super(UsersGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats[''] = self.action_td
-
-    def action_td(self, col_num, i, item):
-        """Generate the column that has the actions in it.
-        """
-        return HTML.td(HTML.literal("""\
-        <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-          Action
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" id="%s">
-            <li><a class="user-edit" href="#">Edit</a></li>
-            <li><a class="user-delete" href="#">Delete</a></li>
-            <li><a class="user-activate" href="#">Activate/Deactivate</a></li>
-          </ul>
-        </div>
-        """ % item.get('user_id')))
-
-class CatalogGrid(MyGrid):
-    def __init__(self, request, *args, **kwargs):
-        super(CatalogGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats[''] = self.action_td
-
-    def action_td(self, col_num, i, item):
-        """Generate the column that has the actions in it.
-        """
-        return HTML.td(HTML.literal("""\
-        <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-          Action
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" id="%s">
-            <li><a class="catalog-edit" href="#">Edit</a></li>
-            <li><a class="catalog-delete" href="#">Delete</a></li>
-          </ul>
-        </div>
-        """ % item.get('url')))
 

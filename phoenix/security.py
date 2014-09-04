@@ -1,5 +1,3 @@
-import models
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -10,23 +8,15 @@ def admin_users(request):
         return map(str.strip, re.split("\\s+", value.strip()))
     return []
 
-def is_valid_user(request, user_id):
-    if user_id in admin_users(request):
-        return True
-    userdb = models.User(request)
-    return userdb.is_activated(user_id)
-
-def groupfinder(user_id, request):
+def groupfinder(email, request):
     admins = admin_users(request)
-    userdb = models.User(request)
     
-    if user_id in admins:
+    if email in admins:
         return ['group:admins']
-    elif userdb.is_activated(user_id):
+    elif request.db.users.find_one({'email':email}).get('activated'):
         return ['group:editors']
     else:
         return ['group:views']
-
 
 from pyramid.security import (
         Allow, 

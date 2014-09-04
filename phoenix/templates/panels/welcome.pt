@@ -1,16 +1,13 @@
 <div class="hero-unit">
-    <h2>Welcome to ${title} !</h2>
-    <p>
-        ${title} is a <a href="http://www.pylonsproject.org/">Pyramid</a> Web Application. It gives you an easy access to Web Processing Services (
-        <a href="http://www.opengeospatial.org/standards/wps">WPS</a>). 
-    </p>
-    <p>
-        ${title} allows you to run and to monitor your WPS processes and to manage the process outputs.
-    </p>
-    <p>
-        ${title} is part of the <a href="/help">ClimDaPs</a> Project for Climate Data Processing.
-    </p>
-    <p>
-        <a class="btn btn-success btn-large" href="/register">Register</a>
-    </p>
+  <h2>Welcome to ${title}</h2>
+  <p>
+    This is a <b>Demo</b> installation. If you want to try it out please <a class="btn btn-mini btn-success" href="/register">register</a> and ask for account activation. 
+  </p>
+  <p>
+    This installation is only for testing. It might not be available, things may not always work ...
+  </p>
+  <p>
+    Be friendly :)
+  </p>
 </div>
+

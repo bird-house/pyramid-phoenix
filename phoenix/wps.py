@@ -1,10 +1,10 @@
 import colander
 import deform
-import logging
 
 import dateutil
 import re
 import urllib
+import urllib2
 import json
 import types
 
@@ -12,9 +12,17 @@ from owslib.wps import WebProcessingService, monitorExecution
 
 from .widget import TagsWidget
 
-__all__ = ['WPSSchema']
-
+import logging
 logger = logging.getLogger(__name__)
+
+def count_literal_inputs(wps, identifier):
+    process = wps.describeprocess(identifier)
+    literal_inputs = []
+    for input in process.dataInputs:
+        if input.dataType != 'ComplexData':
+            literal_inputs.append(input)
+    logger.debug('num literal inputs: %d', len(literal_inputs))
+    return len(literal_inputs)
 
 @property
 def RAW():
@@ -23,6 +31,12 @@ def RAW():
 @property
 def JSON():
     return 'json'
+
+def quote_wps_params(params):
+    return map(lambda(item): ( item[0], urllib2.quote(str(item[1])).decode('utf8') ), params)
+
+def unquote_wps_params(params):
+    return map(lambda(item): ( item[0], urllib2.unquote(item[1]) ), params)
 
 def build_request_url(service_url, identifier, inputs=[], output='output'):
     """
@@ -51,7 +65,7 @@ def execute_with_url(url, format=RAW):
         logger.error('wps execute failed! url=%s, err msg=%s' % (url, e.message))
     return result
 
-def execute(service_url, identifier, inputs=[], output='output', format=RAW):
+def execute_sync(service_url, identifier, inputs=[], output='output', format=RAW):
     result = None
     
     try:
@@ -67,53 +81,47 @@ def execute(service_url, identifier, inputs=[], output='output', format=RAW):
         raise
     return result
 
-def gen_token(wps, sys_token, userid):
-    # TODO: need token exception if not avail
-    token = None
-    try:
-        execution = wps.execute(
-            identifier='org.malleefowl.token.generate',
-            inputs=[('sys_token', sys_token.encode('ascii', 'ignore')),
-                    ('userid', userid.encode('ascii', 'ignore'))],
-            output=[('output', False)])
-        monitorExecution(execution, sleepSecs=1)
-        token = execution.processOutputs[0].data[0]
-    except Exception as e:
-        logger.error('generate token failed! userid=%s, error msg=%s' % (userid, e.message))
-    return token
-
 def execute_restflow(wps, nodes):
     import json
     nodes_json = json.dumps(nodes)
 
-    # generate url for workflow description
-    wf_url = build_request_url(
-        wps.url,
-        identifier='org.malleefowl.restflow.generate',
-        inputs=[('nodes', nodes_json)])
-    logger.debug('wf url: %s', wf_url)
-
-    # run workflow
-    identifier = 'org.malleefowl.restflow.run'
-    inputs = [("workflow_description", wf_url)]
-    outputs = [("output",True)]
+    # generate and run simple workflow
+    identifier='restflow_generate_and_run'
+    inputs=[('nodes', nodes_json)]
+    outputs=[('output', True)]
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
-
     return execution
 
-def search_local_files(wps, token, filter):
-    files = []
-    try:
-        files = execute(wps.url,
-                        identifier='org.malleefowl.listfiles',
-                        inputs=[('token', token), ('filter', filter)],
-                        format=JSON)
-        assert type(files) == types.ListType
-        logger.debug("num found local files: %d", len(files))
-    except Exception as e:
-        files = []
-        logger.error('retrieving files failed! token=%s, filter=%s, error msg=%s' % (token, filter, e.message))
-    return files
+def appstruct_to_inputs(appstruct):
+    logger.debug('execute appstruct: %s', appstruct)
+    inputs = []
+    for key,values in appstruct.items():
+        if key == 'keywords':
+            continue
+        if key == 'abstract':
+            continue
+        if type(values) != types.ListType:
+            values = [values]
+        for value in values:
+            inputs.append( (str(key).strip(), str(value).strip()) )
+    logger.debug('execute inputs: %s', inputs)
+    return inputs
+
+def execute(wps, identifier, appstruct):
+    # TODO: handle sync/async case, 
+    # TODO: handle upload with base64 enconding
+    # TODO: handle bbox
+    process = wps.describeprocess(identifier)
+    
+    inputs = appstruct_to_inputs(appstruct)
+    outputs = []
+    for output in process.processOutputs:
+        outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
+
+    execution = wps.execute(identifier, inputs=inputs, output=outputs)
+    logger.debug('status_location = %s', execution.statusLocation)
+
+    return execution
 
 # Memory tempstore for file uploads
 # ---------------------------------
@@ -130,7 +138,8 @@ tmpstore = MemoryTmpStore()
 # wps input schema
 # ----------------
 
-class WPSSchema(colander.SchemaNode):
+from phoenix.schema import JobSchema
+class WPSSchema(JobSchema):
     """ Build a Colander Schema based on the WPS data inputs.
 
     This Schema generator is based on:
@@ -143,7 +152,7 @@ class WPSSchema(colander.SchemaNode):
 
     appstruct = {}
 
-    def __init__(self, info=False, process=None, metadata=None, unknown='ignore', **kw):
+    def __init__(self, info=False, hide_complex=False, process=None, unknown='ignore', **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
@@ -156,9 +165,6 @@ class WPSSchema(colander.SchemaNode):
         process:
            An ``WPS`` process description that you want a ``Colander`` schema
            to be generated for.
-
-        metadata:
-           Additional metadata for wps process.
 
         unknown
            Represents the `unknown` argument passed to
@@ -186,42 +192,19 @@ class WPSSchema(colander.SchemaNode):
         # The default type of this SchemaNode is Mapping.
         colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
         self.info = info
+        self.hide_complex = hide_complex
         self.process = process
-        self.metadata = metadata
         self.unknown = unknown
         self.kwargs = kwargs or {}   
 
-        if info:
-            self.add_info_nodes()
-        self.add_nodes(process, metadata)
+        if not info:
+            self.__delitem__('title')
+            self.__delitem__('abstract')
+            self.__delitem__('keywords')
+        self.add_nodes(process)
 
-    def add_info_nodes(self):
-        #logger.debug("adding info nodes")
         
-        node = colander.SchemaNode(
-            colander.String(),
-            name = 'info_notes',
-            title = 'Notes',
-            description = 'Enter some notes for your process',
-            default = 'test',
-            missing = 'test',
-            validator = colander.Length(max=150),
-            widget = deform.widget.TextAreaWidget(rows=2, cols=80),
-            )
-        self.add(node)
-
-        node = colander.SchemaNode(
-            colander.String(),
-            name = 'info_tags',
-            title = 'Tags',
-            description = 'Enter some tags',
-            default = 'test',
-            missing = 'test',
-            widget = TagsWidget()
-            )
-        self.add(node)
-        
-    def add_nodes(self, process, metadata=None):
+    def add_nodes(self, process):
         if process is None:
             return
 
@@ -234,14 +217,12 @@ class WPSSchema(colander.SchemaNode):
                 node = self.boundingbox(data_input) 
             elif 'www.w3.org' in data_input.dataType:
                 node = self.literal_data(data_input)
-            elif 'ComplexData' in data_input.dataType:
-                node = self.complex_data(data_input, metadata)
+            elif not self.hide_complex and 'ComplexData' in data_input.dataType:
+                node = self.complex_data(data_input)
+            elif 'LiteralData' in data_input.dataType:# TODO: workaround for geoserver wps
+                node = self.literal_data(data_input)
             else:
-                #TODO: As workaround for geoserver wps.
-                if 'LiteralData' in data_input.dataType:#for geoserver wps
-                    node = self.literal_data(data_input)
-                else:
-                    raise Exception('unknown data type %s' % (data_input.dataType))
+                logger.warning('unknown data type %s', data_input.dataType)
 
             if node is None:
                 continue
@@ -346,27 +327,22 @@ class WPSSchema(colander.SchemaNode):
 
         logger.debug("choosen widget, identifier=%s, widget=%s", data_input.identifier, node.widget)
 
-    def complex_data(self, data_input, metadata):
-        # TODO: handle upload, url, direct input for complex data
-        node = None
-
-        # check if input is uploaded
+    def complex_data(self, data_input):
         # TODO: refactor upload, url, text-input choice ...
-        logger.debug('metadata=%s', self.metadata)
-        if metadata is None or metadata == {} or data_input.identifier in metadata.get('uploads', []):
-            node = colander.SchemaNode(
-                deform.FileData(),
-                name=data_input.identifier,
-                title=data_input.title,
-                widget=deform.widget.FileUploadWidget(tmpstore)
-                )
-        else:
-            node = colander.SchemaNode(
-                colander.String(),
-                name = data_input.identifier,
-                title = data_input.title,
-                widget = deform.widget.TextInputWidget(),
-                validator = colander.url)
+        ## if metadata is None or metadata == {} or data_input.identifier in metadata.get('uploads', []):
+        ##     node = colander.SchemaNode(
+        ##         deform.FileData(),
+        ##         name=data_input.identifier,
+        ##         title=data_input.title,
+        ##         widget=deform.widget.FileUploadWidget(tmpstore)
+        ##         )
+        ## else:
+        node = colander.SchemaNode(
+            colander.String(),
+            name = data_input.identifier,
+            title = data_input.title,
+            widget = deform.widget.TextInputWidget(),
+            validator = colander.url)
            
         # sometimes abstract is not set
         if hasattr(data_input, 'abstract'):
@@ -436,7 +412,6 @@ class WPSSchema(colander.SchemaNode):
         cloned = self.__class__(
             self.info,
             self.process,
-            self.metadata,
             self.unknown,
             **self.kwargs)
         cloned.__dict__.update(self.__dict__)

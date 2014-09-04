@@ -1,7 +1,24 @@
 import colander
-import deform
+from colander import Invalid
 
-from .widget import TagsWidget
+from deform.widget import (
+    RadioChoiceWidget,
+    TextInputWidget,
+    PasswordWidget,
+    TextAreaWidget,
+    SelectWidget 
+    )
+from .widget import (
+    TagsWidget,
+    EsgSearchWidget,
+    EsgFilesWidget
+    )
+
+import logging
+logger = logging.getLogger(__name__)
+
+class NoSchema(colander.MappingSchema):
+    pass
 
 class CredentialsSchema(colander.MappingSchema):
     """
@@ -14,7 +31,7 @@ class CredentialsSchema(colander.MappingSchema):
         validator = colander.url,
         missing = '',
         default = '',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget = TextInputWidget(template='readonly/textinput'),
         )
     password = colander.SchemaNode(
         colander.String(),
@@ -22,26 +39,24 @@ class CredentialsSchema(colander.MappingSchema):
         description = 'Password for this OpenID',
         missing = '',
         default = '',
-        widget = deform.widget.PasswordWidget(size=20))
+        widget = PasswordWidget(size=30))
 
-class AccountSchema(colander.MappingSchema):
+class MyAccountSchema(colander.MappingSchema):
     """
     User account schema
     """
     name = colander.SchemaNode(
         colander.String(),
-        title = "Name",
-        description = "Your Name",
+        title = "Your Name",
         missing = '',
         default = '',
         )
     email = colander.SchemaNode(
         colander.String(),
         title = "EMail",
-        description = "eMail used for login",
         validator = colander.Email(),
         missing = '',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget = TextInputWidget(template='readonly/textinput'),
         )
     openid = colander.SchemaNode(
         colander.String(),
@@ -54,23 +69,14 @@ class AccountSchema(colander.MappingSchema):
     organisation = colander.SchemaNode(
         colander.String(),
         title = "Organisation",
-        description = "Your Organisation",
         missing = '',
         default = '',
         )
     notes = colander.SchemaNode(
         colander.String(),
-        title = "Notes",
-        description = "Some Notes about you",
+        title = "Notes:",
         missing = '',
         default = '',
-        )
-    token = colander.SchemaNode(
-        colander.String(),
-        title = "Token",
-        description = "Access Token",
-        missing = '',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
     credentials = colander.SchemaNode(
         colander.String(),
@@ -78,93 +84,221 @@ class AccountSchema(colander.MappingSchema):
         description = "URL to ESGF Proxy Certificate",
         validator = colander.url,
         missing = '',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget = TextInputWidget(template='readonly/textinput'),
         )
     cert_expires = colander.SchemaNode(
         colander.String(),
         title = "Expires",
         description = "When your Proxy Certificate expires",
         missing = '',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget = TextInputWidget(template='readonly/textinput'),
         )
 
-@colander.deferred
-def deferred_wps_list_widget(node, kw):
-    wps_list = kw.get('wps_list', [])
-    return deform.widget.RadioChoiceWidget(values=wps_list)
+class WizardSchema(colander.MappingSchema):
+    @colander.deferred
+    def deferred_favorite_widget(node, kw):
+        favorites = kw.get('favorites', ['No Favorite'])
+        choices = [(item, item) for item in favorites]
+        return SelectWidget(values = choices)
 
-class SelectWPSSchema(colander.MappingSchema):
-   
+    favorite = colander.SchemaNode(
+        colander.String(),
+        widget = deferred_favorite_widget)
+
+class ChooseWPSSchema(colander.MappingSchema):
+    @colander.deferred
+    def deferred_wps_list_widget(node, kw):
+        wps_list = kw.get('wps_list', [])
+        choices = []
+        for wps in wps_list:
+            title = "%s (%s) [%s]" % (wps.get('title'), wps.get('abstract'), wps.get('source'))
+            choices.append((wps.get('source'), title))
+        return RadioChoiceWidget(values = choices)
+    
     url = colander.SchemaNode(
         colander.String(),
-        title = 'WPS',
+        title = 'WPS service',
         description = "Select WPS",
         widget = deferred_wps_list_widget
         )
 
-class CatalogSchema(colander.MappingSchema):
-    url = colander.SchemaNode(
+@colander.deferred
+def deferred_choose_process_widget(node, kw):
+    processes = kw.get('processes', [])
+
+    choices = []
+    for process in processes:
+        title = "%s [%s]" % (process.title, process.identifier)
+        choices.append( (process.identifier, title) )
+    return RadioChoiceWidget(values = choices)
+
+class SelectProcessSchema(colander.MappingSchema):
+    identifier = colander.SchemaNode(
         colander.String(),
-        title = 'URL',
-        description = 'Add WPS URL',
-        missing = '',
-        default = '',
-        validator = colander.url,
-        widget = deform.widget.TextInputWidget())
+        title = "WPS Process",
+        widget = deferred_choose_process_widget)
 
-    notes = colander.SchemaNode(
+@colander.deferred
+def deferred_choose_input_parameter_widget(node, kw):
+    process = kw.get('process', [])
+
+    choices = []
+    for dataInput in process.dataInputs:
+        if dataInput.dataType == 'ComplexData':
+            title = dataInput.title
+            title += " [%s]" % (', '.join([value.mimeType for value in dataInput.supportedValues]))
+            title += " (%d-%d)" % (dataInput.minOccurs, dataInput.maxOccurs)
+            choices.append( (dataInput.identifier, title) )
+    return RadioChoiceWidget(values = choices)
+
+class ChooseInputParamterSchema(colander.MappingSchema):
+    identifier = colander.SchemaNode(
         colander.String(),
-        title = 'Notes',
-        description = 'Add some notes for this WPS',
-        missing = '',
-        default = '',
-        widget = deform.widget.TextInputWidget())
+        title = "Input Parameter",
+        widget = deferred_choose_input_parameter_widget)
 
+class ChooseSourceSchema(colander.MappingSchema):
+    choices = [('wizard_csw', "CSW Catalog Search"), ('wizard_esgf', "ESGF Source")]
+    source = colander.SchemaNode(
+        colander.String(),
+        widget = RadioChoiceWidget(values = choices))
 
-class PublishSchema(colander.MappingSchema):
+def esgsearch_validator(node, value):
+    import json
+    search = json.loads(value)
+    if search.get('hit-count', 0) > 20:
+        raise Invalid(node, 'More than 20 datasets selected: %r.' %  search['hit-count'])
+
+class ESGFSearchSchema(colander.MappingSchema):
+    selection = colander.SchemaNode(
+        colander.String(),
+        validator = esgsearch_validator,
+        title = 'ESGF Search',
+        #missing = '{"query": "project:CORDEX"}',
+        #default = '{"query": "project:CORDEX"}',
+        widget = EsgSearchWidget(url="/esg-search"))
+
+class JobSchema(colander.MappingSchema):
+    @colander.deferred
+    def deferred_title(node, kw):
+        return kw.get('title', 'test-job')
+
+    @colander.deferred
+    def deferred_abstract(node, kw):
+        return kw.get('abstract', 'test')
+
+    @colander.deferred
+    def deferred_keywords(node, kw):
+        return kw.get('keywords', 'test')
+    
     title = colander.SchemaNode(
         colander.String(),
-        widget=deform.widget.TextInputWidget(),
+        default = deferred_title,
+        missing = 'test')
+    
+    abstract = colander.SchemaNode(
+        colander.String(),
+        default = deferred_abstract,
+        missing = '',
+        validator = colander.Length(max=500),
+        widget = TextAreaWidget(rows=3, cols=120))
+    
+    keywords = colander.SchemaNode(
+        colander.String(),
+        default = deferred_keywords,
+        missing = 'test',
+        widget = TagsWidget())
+
+class DoneSchema(JobSchema):
+    @colander.deferred
+    def deferred_favorite_name(node, kw):
+        return kw.get('favorite_name', 'test')
+    
+    is_favorite = colander.SchemaNode(
+        colander.Boolean(),
+        title = "Save as Favorite",
+        default = False,
+        missing= False)
+    favorite_name = colander.SchemaNode(
+        colander.String(),
+        title = "Favorite Name",
+        default = deferred_favorite_name)
+
+class CatalogAddServiceSchema(colander.MappingSchema):
+    url = colander.SchemaNode(
+        colander.String(),
+        title = 'Service URL',
+        description = 'Add URL of OGC service (WPS, WMS, ...). Example: http://localhost:8091/wps',
+        default = 'http://localhost:8091/wps',
+        validator = colander.url,
+        widget = TextInputWidget())
+    resource_type = colander.SchemaNode(
+        colander.String(),
+        description = "Choose OGC service resource type.",
+        default = 'http://www.opengis.net/wps/1.0.0',
+        widget = RadioChoiceWidget(
+            values=[('http://www.opengis.net/wps/1.0.0', "OGC:WPS 1.0.0"),
+                    ('http://www.opengis.net/wms', "OGC:WMS 1.1.1"),
+                    ('http://www.opengis.net/cat/csw/2.0.2', "OGC:CSW 2.0.2")])
         )
+
+class PublishSchema(colander.MappingSchema):
+    import uuid
+
+    @colander.deferred
+    def deferred_default_creator(node, kw):
+        return kw.get('email')
+
+    @colander.deferred
+    def deferred_default_format(node, kw):
+        return kw.get('format', "application/x-netcdf")
+        
+    identifier = colander.SchemaNode(
+        colander.String(),
+        default = uuid.uuid4().get_urn())
+    title = colander.SchemaNode(colander.String())
     abstract = colander.SchemaNode(
         colander.String(),
         missing = '',
         default = '',
         validator = colander.Length(max=150),
-        widget = deform.widget.TextAreaWidget(rows=2, cols=80),
-        )
+        widget = TextAreaWidget(rows=2, cols=80))
     creator = colander.SchemaNode(
         colander.String(),
         validator = colander.Email(),
-        widget=deform.widget.TextInputWidget(),
-        )
-    url = colander.SchemaNode(
+        default = deferred_default_creator,)
+    source = colander.SchemaNode(
         colander.String(),
-        title = 'URL',
-        validator = colander.url,
-        widget = deform.widget.TextInputWidget())
-    mime_type = colander.SchemaNode(
+        description = 'URL to the source',
+        validator = colander.url)
+    format = colander.SchemaNode(
         colander.String(),
-        widget=deform.widget.TextInputWidget(),
+        default = deferred_default_format,
+        description = 'Format of your source. Example: NetCDF',
         )
-    keywords = colander.SchemaNode(
+    subjects = colander.SchemaNode(
         colander.String(),
         default = 'test',
         missing = 'test',
+        description = "Keywords: tas, temperature, ...",
         widget = TagsWidget(),
         )
-            
+    rights = colander.SchemaNode(
+        colander.String(),
+        missing = 'Unknown',
+        default = 'Free for non-commercial use',
+        )
+
 class UserSchema(colander.MappingSchema):
     name = colander.SchemaNode(
         colander.String(),
         title = "Name",
         missing = colander.drop,
         )
-    user_id = colander.SchemaNode(
+    email = colander.SchemaNode(
         colander.String(),
-        title = "eMail",
         validator = colander.Email(),
-        widget=deform.widget.TextInputWidget(),
+        widget = TextInputWidget(),
         )
     openid = colander.SchemaNode(
         colander.String(),

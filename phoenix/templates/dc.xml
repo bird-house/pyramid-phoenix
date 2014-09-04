@@ -11,19 +11,21 @@
     from datetime import datetime
 %>
     
-  <dc:identifier>${url}</dc:identifier>
+  <dc:identifier>${identifier}</dc:identifier>
   <dc:title>${title}</dc:title>
   <dct:modified>${datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')}</dct:modified>
   <dct:abstract>${abstract}</dct:abstract>
   <dc:type>dataset</dc:type>
-  % for keyword in keywords.split(','):
-  <dc:subject>${keyword}</dc:subject>
+  % for subject in subjects.split(','):
+  <dc:subject>${subject}</dc:subject>
   % endfor
-  <dc:format>${mime_type}</dc:format>
+  <dc:format>${format}</dc:format>
   <dc:creator>${creator}</dc:creator>
   <dc:language>en</dc:language>
   <ows:BoundingBox crs="urn:x-ogc:def:crs:EPSG:6.11:4326">
     <ows:LowerCorner>-90 -180</ows:LowerCorner>
     <ows:UpperCorner>90 180</ows:UpperCorner>
   </ows:BoundingBox>
+  <dc:source>${source}</dc:source>
+  <dc:rights>${rights}</dc:rights>
 </csw:Record>

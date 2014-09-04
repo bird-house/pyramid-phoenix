@@ -35,6 +35,13 @@ function install_anaconda() {
     echo "Installing Anaconda ... Done"
 }
 
+function install_conda_pkgs() {
+    # install required conda pkgs (needed before buildout can start)
+    $ANACONDA_HOME/bin/conda install -c https://conda.binstar.org/pingucarsti --yes pyopenssl=0.13.1
+    echo "Installing conda packages ... Done"
+
+}
+
 # set default configurion file for buildout
 function setup_cfg() {
     if [ ! -d $DOWNLOAD_CACHE ]; then
@@ -70,6 +77,7 @@ function install() {
     popd || exit 1
 
     echo "Installing ... Done"
+    echo "See README.rst on how to start services."
 }
 
 function usage() {
@@ -78,6 +86,7 @@ function usage() {
 }
 
 install_anaconda
+install_conda_pkgs
 install
 
 exit 0
