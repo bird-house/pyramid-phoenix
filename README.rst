@@ -9,8 +9,9 @@ Pyramid Phoenix is a web-application build with the Python web-framework `Pyrami
 Installation
 ------------
 
-Check out code from the phoenix git repo (will be available on github). Then do the following::
+Check out code from the phoenix github repo and start the installation::
 
+   $ git clone https://github.com/bird-house/pyramid-phoenix.git
    $ cd pyramid-phoenix
    $ ./requirements.sh
    $ ./install.sh
