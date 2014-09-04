@@ -9,7 +9,11 @@ Pyramid Phoenix is a web-application build with the Python web-framework `Pyrami
 Installation
 ------------
 
-Check out code from the phoenix github repo and start the installation::
+Phoenix uses WPS processes provided by Malleefowl. As a requiste you should install a local Malleefowl WPS (this will become part of the Phoenix installer). Alternatively you could configure the WPS URL of a running Malleefowl WPS instance in the Phoenix ``custom.cfg``.
+
+To install Malleefowl follow the instructions given in the Malleefowl `Readme https://github.com/bird-house/malleefowl/blob/master/README.rst`_.
+
+Now start with installing Phoenix with sources from github::
 
    $ git clone https://github.com/bird-house/pyramid-phoenix.git
    $ cd pyramid-phoenix
