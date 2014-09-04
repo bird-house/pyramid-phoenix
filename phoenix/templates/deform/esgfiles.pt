@@ -1,0 +1,39 @@
+<div tal:define="css_class css_class|field.widget.css_class;
+                 oid oid|field.oid;
+                 url url|field.widget.url;"
+     tal:omit-tag="">
+
+  <div id="loading">
+    <b>Loading ...</b>
+    <img src="/static/images/ajax-loader.gif" id="loading-indicator" />
+  </div>
+
+  <div id="content"> 
+    ${field.start_sequence()}
+    <ul id="${oid}-choices" style="list-style-type: none;"></ul> 
+    ${field.end_sequence()}
+  </div> 
+
+  <script type="text/javascript">
+    deform.addCallback(
+      '${oid}',
+      function (oid) {
+        $.EsgFileSearch( {
+           oid: oid,
+           url: '${url}',
+           constraints: '${facets}',
+           query: '${query}',
+           distrib: '${distrib}' == 'true',
+           latest: '${latest}' == 'true',
+           replica: '${replica}' == 'true',
+           type: '${type}',
+           temporal: '${temporal}' == 'true',
+           spatial: '${spatial}' == 'true',
+           start: '${start}',
+           end: '${end}',
+           bbox: '${bbox}',
+           });
+    });
+  </script>
+</div>
+

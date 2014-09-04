@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <title>Register</title>
+  </head>
+  <body>
+    <a href="/signin">Sign in</a>
+
+    <h1>Please ask for registration</h1>
+    This is a demo installation of ClimDaPs. If you want to try it out please do the following steps:
+    <ol>
+      <li>
+        Get an OpenID Account at an ESGF Node, 
+        for example at <a href="http://esgf-data.dkrz.de">http://esgf-data.dkrz.de</a>
+      </li>
+      <li>
+        To be allowed to download data from ESGF (e.a. CORDEX) you
+        must be registered in the <em>non-commercial</em> ESGF
+        Group. You can register for this group by just downloading data
+        files from an <a href="http://esgf-data.dkrz.de">ESGF
+        Node</a>. When you are not registered you will be asked for
+        group registration once.
+      </li>
+      <li>
+        Please send an eMail to Nils Hempelmann (<em>nils.hempelmann at hzg.de</em>)
+        from Climate Service Center (CSC) with the following information:
+        <ul>
+          <li>The eMail address of your ESGF OpenID Account</li>
+          <li>Some words why you would like to use this ClimDaPs Demo</li>
+          <li>Where did you hear from this ClimDaPs Demo?</li>
+        </ul>
+      </li>
+      <li>
+        We will inform you when you are added to the allowed users of this Demo.
+      </li>
+      <li>
+        Finally sign in with your OpenID Account on the <a href="/signin">sign in</a> page.
+      </li>
+    </ol>
+
+    <div tal:condition="email">
+      <h2>Your email Address for registration is</h2>
+      ${email}<br/>
+    </div>
+  </body>
+</html>

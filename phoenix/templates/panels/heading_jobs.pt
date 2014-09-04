@@ -1,0 +1,14 @@
+<div class="span4">
+    <h3>${title}</h3>
+    <p>
+        Click on the <a href="/jobs">My Jobs</a> page to view the status of
+        all current and previous processes.
+    </p>
+    <p>
+        Here you can cancel a running process and view and delete process
+        outputs.
+    </p>
+    <p>
+        You must be logged in to view this page.
+    </p>
+</div>

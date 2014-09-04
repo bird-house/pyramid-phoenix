@@ -1,0 +1,51 @@
+<metal:block use-macro="main_template">
+ 
+  <div metal:fill-slot="content">
+  
+    <!--
+    <div>
+      <h3><img src="${request.static_url('phoenix:static/images/Germany.png')}">DKRZ ESGF Node</h3>
+      <form id="openid" action="/login/openid">
+        <input type="text" name="username" placeholder="Your username" value="pingutest"/>
+        <input type="hidden" name="id" value="https://esgf-data.dkrz.de/esgf-idp/openid"/>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+        <span class="help-block">
+          Enter your username of your DKRZ ESGF OpenID account
+        </span>
+      </form>
+    </div>
+    -->
+
+    <div>
+      <h3><img src="${request.static_url('phoenix:static/images/OpenID_24.png')}">OpenID</h3>
+      <form action="/login/openid">
+        <input type="text" name="id" placeholder="Your claimed OpenID"/>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+        <span class="help-block">
+          Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname
+        </span>
+      </form>
+    </div>
+
+    <!--
+    <div>
+      <h3>Demo Login</h3>
+      <form action="/login/local">
+        <input type="password" name="password"/>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+        <span class="help-block">
+          Enter Password of Demo Account
+        </span>
+      </form>
+    </div>
+    -->
+
+  </div>
+
+  <div metal:fill-slot="javascript">
+    <!-- Persona, loading at the bottom because it takes forever -->
+    <script src="https://login.persona.org/include.js" type="text/javascript"></script>
+    <script src="${request.static_url('phoenix:static/js/authomatic.js')}"></script>
+    <script src="${request.static_url('phoenix:static/js/auth.js')}"></script>
+  </div>
+</metal:block>

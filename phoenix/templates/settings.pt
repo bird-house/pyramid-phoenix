@@ -1,0 +1,34 @@
+<metal:block use-macro="main_template">
+
+  <div metal:fill-slot="javascript">
+    <script type="text/javascript">
+      $('a[id="external-url"]').live("click", function(){
+        $(this).attr('target','_blank');
+      });
+    </script>
+  </div>
+  
+  <div metal:fill-slot="content">
+
+    <!-- User -->
+    
+    <div tal:repeat="group buttongroups">
+      <h2 tal:content="group['title']">title</h2>
+      <ul class="thumbnails">
+     
+        <li class="span2" tal:repeat="button group['buttons']">
+          <a tal:attributes="href button['url'];id button.get('id')" class="thumbnail">
+            <img
+               tal:define="icon_url '/static/images/' + button['icon']"
+               tal:attributes="src icon_url" alt="" width="32">
+            <div align="center">
+              <h4 tal:content="button['title']">title</h4>
+            </div>
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+   
+</metal:block>

@@ -1,0 +1,54 @@
+$(function() {
+  // Delete user
+  $("a.user-delete").click(function(e) {
+    e.preventDefault();
+    var user_id = $(this).closest('ul').attr('id');
+    var row = $(this).closest('tr');
+    $.getJSON(
+      '/delete.user',
+      {'user_id': user_id},
+      function(json) {
+        row.remove();
+      }
+    );
+  });
+
+  // Activate user
+  $("a.user-activate").click(function(e) {
+    e.preventDefault();
+    var user_id = $(this).closest('ul').attr('id');
+    $.getJSON(
+      '/activate.user',
+      {'user_id': user_id},
+      function(json) {
+        //console.log('activate user');
+        location.reload();
+      }
+    );
+  });
+  
+  // Edit a user when the edit link is clicked in the actions dropdown
+  $("a.user-edit").click(function(e) {
+    e.preventDefault();
+    var user_id = $(this).closest('ul').attr('id');
+    $.getJSON(
+      '/edit.user',
+      {'user_id': user_id},
+      function(json) {
+        if (json) {
+          form = $('#user-form');
+          
+          // Set the title to Edit
+          form.find('h3').text('Edit User');
+          $.each(json, function(k, v) {
+            // Set the value for each field from the returned json
+            form.find('input[name="' + k + '"]').attr('value', v);
+          });
+          
+          form.modal('show');
+        }
+      }
+    );
+  });
+
+});

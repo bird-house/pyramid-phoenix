@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export PATH=${buildout:bin-directory}:$PATH
+
+pserve ${buildout:directory}/src/ClimdapsApp/development.ini --reload

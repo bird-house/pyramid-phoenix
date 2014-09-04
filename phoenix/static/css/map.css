@@ -1,0 +1,13 @@
+#map {
+    position: relative;
+    left: 0px;
+    top: 0px; 
+    width: 940px;
+    height: 500px;
+    z-index: 0; /* Ensure pop-ups appear above the map! */ 
+}
+
+.slider {
+    width: 200px;
+    margin: 10px;
+}

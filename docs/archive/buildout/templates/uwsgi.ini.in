@@ -1,0 +1,94 @@
+#------------------------------------------------------------------------------
+# uWSGI configuration
+#------------------------------------------------------------------------------
+
+[uwsgi]
+socket = ${socket}
+daemonize = ${daemonize}
+pidfile = ${pidfile}
+
+master = true
+auto-procname = true
+processes = 4
+enable-threads = true
+
+listen = 128
+max-requests = 1000
+
+reload-on-as = 128
+reload-on-rss = 96
+no-orphans = true
+
+log-slow = true
+
+env = ${env-pywps-cfg}
+env = ${env-pywps-proc}
+
+
+#------------------------------------------------------------------------------
+# production.ini
+#------------------------------------------------------------------------------
+
+[app:main]
+use = egg:climdapsapp
+
+pyramid.reload_templates = false
+pyramid.debug_authorization = false
+pyramid.debug_notfound = false
+pyramid.debug_routematch = false
+pyramid.default_locale_name = en
+pyramid.includes = 
+    pyramid_layout
+    pyramid_tm
+
+sqlalchemy.url = sqlite:///%(here)s/climdapsapp.sqlite
+
+#[server:main]
+#use = egg:waitress#main
+#host = 0.0.0.0
+#port = 8080
+
+# Begin logging configuration
+
+[loggers]
+keys = root, climdapsapp, sqlalchemy
+
+[handlers]
+keys = console, filelog
+
+[formatters]
+keys = generic
+
+[logger_root]
+level = DEBUG
+handlers = console,filelog
+
+[logger_climdapsapp]
+level = DEBUG
+handlers = filelog
+qualname = climdapsapp
+
+[logger_sqlalchemy]
+level = WARN
+handlers =
+qualname = sqlalchemy.engine
+# "level = INFO" logs SQL queries.
+# "level = DEBUG" logs SQL queries and results.
+# "level = WARN" logs neither.  (Recommended for production systems.)
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = NOTSET
+formatter = generic
+
+[handler_filelog]
+class = FileHandler
+args = ('/tmp/climdapsapp.log','a')
+level = DEBUG
+formatter = generic
+
+[formatter_generic]
+format = %(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s
+
+# End logging configuration

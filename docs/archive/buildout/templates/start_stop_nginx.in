@@ -1,0 +1,56 @@
+#!/bin/sh
+
+export PATH=${buildout:bin-directory}:$PATH
+export PYTHONPATH=$(${buildout:bin-directory}/python -c "import sys; print ':'.join([p for p in sys.path if not p.startswith('/usr')])")
+
+NGINX="${nginx}"
+NGINX_CONF="${nginx-conf}"
+
+start_nginx() {
+    echo -n "Starting nginx: "
+ 
+    # check config
+    $NGINX -c $NGINX_CONF -t &>/dev/null
+ 
+    # start
+    $NGINX -c $NGINX_CONF &>/dev/null
+
+    sleep 5;
+
+    if [ $? -eq 0 ]
+        then echo "OK"
+        else echo "FAILED"
+    fi
+}
+
+stop_nginx() {
+    echo -n "Stopping nginx: "
+ 
+    $NGINX -s stop &>/dev/null
+    
+    sleep 3;
+
+    if [ $? -eq 0 ]
+        then echo "OK"
+        else echo "FAILED"
+    fi
+}
+
+
+case "$1" in
+    start)
+        start_nginx
+        ;;
+    stop)
+        stop_nginx
+        ;;
+    restart)
+        stop_nginx
+        start_nginx
+        ;;
+    *)
+        echo $"Usage: $prog {start|stop|restart}"
+        RETVAL=2
+esac
+
+exit $RETVAL

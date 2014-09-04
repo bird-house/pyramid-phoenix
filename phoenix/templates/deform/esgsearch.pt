@@ -1,0 +1,93 @@
+<span tal:define="name name|field.name;
+                  size size|field.widget.size;
+                  true_val true_val|field.widget.true_val;
+                  css_class css_class|field.widget.css_class;
+                  oid oid|field.oid;
+                  style style|field.widget.style|None;
+                  url url|field.widget.url;"
+      i18n:domain="deform"
+      tal:omit-tag="">
+
+${field.start_mapping()}
+  <span id="tm-hit-count">Searching ...</span>
+  <input type="hidden" name="hit-count" value="0"
+         id="${oid}-hit-count"/>
+  <p/>
+
+  <span>Options:</span>
+  <input type="checkbox" name="distrib" value="${true_val}"
+         tal:attributes="checked distrib == true_val;"
+         id="${oid}-distrib"/>
+  <span>All Sites</span>
+
+  <input type="checkbox" name="replica" value="${true_val}"
+         tal:attributes="checked replica == true_val;"
+         id="${oid}-replica"/>
+  <span>Including Replicas</span>
+
+  <input type="checkbox" name="latest" value="${true_val}"
+         tal:attributes="checked latest == true_val;"
+         id="${oid}-latest"/>
+  <span>Latest Version</span>
+
+  <input type="checkbox" name="temporal" value="${true_val}"
+         tal:attributes="checked temporal == true_val;"
+         id="${oid}-temporal"/>
+  <span>Temporal</span>
+
+  <input type="checkbox" name="spatial" value="${true_val}"
+         tal:attributes="checked spatial == true_val;"
+         id="${oid}-spatial"/>
+  <span>Spatial</span>
+
+  <p/>
+
+  <label for="tm-facets">Query</label>
+  <input type="text" name="query" value="${query}"
+         id="${oid}-query"/>
+  <p/>
+   
+  <label for="tm-selection">Current Selection</label>
+  <input type="text" name="Current Selection" class="tm-selection" 
+         id="tm-selection"/>
+  <input type="hidden" name="facets" value="${facets}" 
+         id="${oid}-facets">
+  <p/>
+
+  <label for="tm-facets">Search Categories</label>
+  <input type="text" name="Search Categories" class="tm-facets"
+         id="tm-facets"/>
+  <p/>
+ 
+  <label for="tm-facet" id="search-label-category">Institute</label>
+  <input type="text" name="Categorie: xxx" class="tm-facet"
+         id="tm-facet"/>
+  <p/>
+
+  <span>Start</span>
+  <input type="text" name="start" value="${start}"
+         id="${oid}-start"/>
+  <span>End</span>
+  <input type="text" name="end" value="${end}"
+         id="${oid}-end"/>
+  
+  <p/>
+  <span>Bounding Box</span>
+  <input type="text" name="bbox" value="${bbox}"
+         id="${oid}-bbox"/>
+
+${field.end_mapping()}
+
+  <script type="text/javascript">
+    deform.addCallback(
+      '${oid}',
+      function (oid) {
+        $.EsgDatasetSearch( {
+           oid: oid,
+           url: '${url}',
+           });
+    });
+  </script>
+</span>
+
+

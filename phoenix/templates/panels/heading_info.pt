@@ -1,0 +1,12 @@
+<div class="span4">
+    <h3>${title}</h3>
+    <p>
+      This is a <b>Demo</b> installation. If you want to try it out please <a href="/register">register</a>. 
+    </p>
+    <p>
+      This installation is only for testing. It might not be available, things may not always work ...
+    </p>
+    <p>
+      Be friendly :)
+    </p>
+</div>

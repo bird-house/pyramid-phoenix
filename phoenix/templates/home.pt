@@ -1,0 +1,15 @@
+<metal:block use-macro="main_template">
+
+    <div metal:fill-slot="content">
+
+        <!-- Main hero unit for a primary marketing message or call to action -->
+        ${panel('welcome', title='Phoenix')}
+
+        <!-- row columns -->
+        <div class="row">
+            ${panel('headings')}
+        </div>
+    
+    </div>
+
+</metal:block>

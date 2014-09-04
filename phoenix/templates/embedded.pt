@@ -1,0 +1,9 @@
+<metal:block use-macro="main_template">
+
+    <div metal:fill-slot="content">
+
+        <iframe frameborder="0" height="500px" width="100%" src="${external_url}"></iframe>
+    
+    </div>
+
+</metal:block>
