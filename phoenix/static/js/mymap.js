@@ -292,24 +292,25 @@ MyMap.prototype.removeSelectedMapLayer = function(){
     this.updateAvailableMapLayers();
 };
 
-MyMap.prototype.updateWMSForm = function(){
-    var url = $("#wmsurl").val();
-    var names = this.getLayers(url)
-    var text = "";
-    for (var i = 0; i < names.length; i++){
-        var name = names[i];
-        if (["lon","lat"].indexOf(name) == -1){
-            text+= '<option value="'+name+'">'+name+'</option>';
-            }
-        }
-    $("#layer").html(text);
-};
- 
 MyMap.prototype.fixWMSService = function(url) {
   var index = url.indexOf('/thredds')
   return url.substring(index, url.length)
 }
 
+MyMap.prototype.updateWMSForm = function(){
+  var url = $("#wmsurl").val();
+  console.log('update wms layers, url=' + url)
+  var names = this.getLayers(this.fixWMSService(url));
+  var text = "";
+  for (var i = 0; i < names.length; i++){
+    var name = names[i];
+    if (["lon","lat"].indexOf(name) == -1){
+      text+= '<option value="'+name+'">'+name+'</option>';
+    }
+  }
+  $("#layer").html(text);
+};
+ 
 MyMap.prototype.addWMSFromForm = function(){
   //check if all important parameters are set
   var url = $("#wmsurl").val().split("?")[0];
@@ -559,17 +560,19 @@ MyMap.prototype.addWMSBaseLayer = function(name, url, params, options){
  */
 
 MyMap.prototype.addWMSOverlay = function(title, url, layerName, options){
-    if (options === undefined){
-        options = {singleTile:true};};
-    params = {layers: layerName, transparent:true};
-    wmsLayer = new OpenLayers.Layer.WMS(title, url, params, options);
-    wmsLayer.isBaseLayer = false;
-    wmsLayer.wmslayername=layerName;
-    this.addTimesteps(wmsLayer);
-    this.overlays[name] = wmsLayer;
-    this.map.addLayer(wmsLayer);
-    this.legendRangeFromMetadata(url, layerName);
-    };
+  console.log('add wms overlay url=' + url)
+  if (options === undefined){
+    options = {singleTile:true};};
+  params = {layers: layerName, transparent:true};
+  wmsLayer = new OpenLayers.Layer.WMS(title, url, params, options);
+  wmsLayer.isBaseLayer = false;
+  wmsLayer.wmslayername=layerName;
+  this.addTimesteps(wmsLayer);
+  this.overlays[name] = wmsLayer;
+  this.map.addLayer(wmsLayer);
+  this.legendRangeFromMetadata(url, layerName);
+};
+
 /* 
  * The method relies on the GetMetadata request to the WMS. Derived from the GODIVA2 implementation
  * the required additional parameters are item and layerName
