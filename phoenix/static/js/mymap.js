@@ -305,23 +305,29 @@ MyMap.prototype.updateWMSForm = function(){
     $("#layer").html(text);
 };
  
+MyMap.prototype.fixWMSService = function(url) {
+  var index = url.indexOf('/thredds')
+  return url.substring(index, url.length)
+}
+
 MyMap.prototype.addWMSFromForm = function(){
-    //check if all important parameters are set
-    var url = $("#wmsurl").val().split("?")[0];
-    if (url === "")return;
-    var layer = $("#layer").val();
-    if (layer === null) return;
-    //if the layer name is empty generate one
-    if ($("#title").val() == ""){
-        $("#title").val(this.suggestName(url));
-        }
-    var title = $("#title").val();
-    if (this.isWMSOverlayNameUsed(title)){
-        alert("The name " + title + " is aready in use.");
-        return;
-        }
-    this.addWMSOverlay(title, url, layer);
-    this.updateAvailableMapLayers();
+  //check if all important parameters are set
+  var url = $("#wmsurl").val().split("?")[0];
+  if (url === "")return;
+  var layer = $("#layer").val();
+  if (layer === null) return;
+  //if the layer name is empty generate one
+  if ($("#title").val() == ""){
+    $("#title").val(this.suggestName(url));
+  }
+  var title = $("#title").val();
+  if (this.isWMSOverlayNameUsed(title)){
+    alert("The name " + title + " is aready in use.");
+    return;
+  }
+  url = this.fixWMSService(url);
+  this.addWMSOverlay(title, url, layer);
+  this.updateAvailableMapLayers();
 };
 
 MyMap.prototype.updateAvailableMapLayers = function(){
