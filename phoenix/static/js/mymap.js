@@ -149,9 +149,11 @@ MyMap.prototype.setTimeLabelText = function(text){
  * Note: Currently there is no option to add further BaseLayers
  */
 MyMap.prototype.addBaseLayers = function(){
-    //Add the BaseLayer map
-    this.addWMSBaseLayer("Worldmap OSGeo", "http://vmap0.tiles.osgeo.org/wms/vmap0?",
-                         {layers: 'basic'}, {});
+  //Add the BaseLayer map
+  this.addWMSBaseLayer("Worldmap OSGeo", "http://vmap0.tiles.osgeo.org/wms/vmap0?",
+                       {layers: 'basic'}, {});
+  this.addWMSBaseLayer("Demis BlueMarble", "http://www2.demis.nl/wms/wms.ashx?WMS=BlueMarble", 
+                       {layers: 'Earth Image,Borders,Coastlines'}, {});
 };
 
 /*
@@ -178,24 +180,27 @@ MyMap.prototype.addInteraction = function(){
                                              _this.updateWMSForm();
                                              $("#title").val("");
                                         });
-    this.updateThreddsStructure("http://localhost:8080/thredds") 
+    // TODO: fix thredds url
+    this.updateThreddsStructure() 
 }
 
 MyMap.prototype.updateThreddsStructure = function(thredds_url){
-    var url = ("http://localhost:8081/malleefowl-wps" +
-               "?service=WPS&request=execute&version=1.0.0&identifier=WMS.GetThreddsStructure&" +
-               "rawdataoutput=wms_json");
-    if (thredds_url !== undefined){
-        url += "&dataInputs=thredds_url=" + thredds_url;
-    }
-    var wms_urls = eval(getURL(url));
-    var select = ""
-    for (var i = 0; i < wms_urls.length ; i++){
-       var wms_url = wms_urls[i];
-       select += "<option value='" + wms_url + "'>" + wms_url.replace(thredds_url,"") + "</option>";
-    }
-    $("#wmsurlselect").html(select);
+  // TODO: fix wps url
+  var url = ("/malleefowl-wps" +
+             "?service=WPS&request=execute&version=1.0.0&identifier=WMS.GetThreddsStructure&" +
+             "rawdataoutput=wms_json");
+  if (thredds_url !== undefined){
+    url += "&dataInputs=thredds_url=" + thredds_url;
+  }
+  var wms_urls = eval(getURL(url));
+  var select = ""
+  for (var i = 0; i < wms_urls.length ; i++){
+    var wms_url = wms_urls[i];
+    select += "<option value='" + wms_url + "'>" + wms_url.replace(thredds_url,"") + "</option>";
+  }
+  $("#wmsurlselect").html(select);
 };
+
 MyMap.prototype.getMinMaxColorscalerange = function(){
     var min = parseFloat($("#mincol").val());
     var max = parseFloat($("#maxcol").val());
