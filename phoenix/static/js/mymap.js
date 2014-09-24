@@ -195,7 +195,7 @@ MyMap.prototype.updateThreddsStructure = function(thredds_url){
   var wms_urls = eval(getURL(url));
   var select = ""
   for (var i = 0; i < wms_urls.length ; i++){
-    var wms_url = wms_urls[i];
+    var wms_url = this.fixWMSService(wms_urls[i]);
     select += "<option value='" + wms_url + "'>" + wms_url.replace(thredds_url,"") + "</option>";
   }
   $("#wmsurlselect").html(select);
