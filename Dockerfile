@@ -1,8 +1,17 @@
 FROM ubuntu:14.04
-MAINTAINER Carsten Ehbrecht <ehbrecht@dkrz.de>
+MAINTAINER Phoenix WPS Application
 
 # Add user phoenix
 RUN useradd -d /home/phoenix -m phoenix
+
+# Add bootstrap and application requirements
+ADD ./bootstrap.sh /tmp/bootstrap.sh
+ADD ./requirements.sh /tmp/requirements.sh
+
+WORKDIR /tmp
+
+# Install system dependencies
+RUN bash bootstrap.sh -i && bash requirements.sh
 
 # Add application sources
 ADD . /home/phoenix/src
@@ -13,17 +22,11 @@ RUN chown -R phoenix /home/phoenix/src
 # cd into application
 WORKDIR /home/phoenix/src
 
-# Run bootstrap to install system dependencies for build
-RUN bash bootstrap.sh -i
-
-# Install application specfic system dependencies
-RUN make sysinstall
-
 # Remaining tasks run as user phoenix
 USER phoenix
 
 # Update makefile and run install
-RUN bash bootstrap.sh -u && make all
+RUN bash bootstrap.sh -u && make clean build
 
 # cd into anaconda
 WORKDIR /home/phoenix/anaconda
