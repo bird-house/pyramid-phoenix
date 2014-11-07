@@ -3,7 +3,7 @@
     <title>Register</title>
   </head>
   <body>
-    <a href="/signin">Sign in</a>
+    <a href="/signin/esgf">Sign in</a>
 
     <h1>Please ask for registration</h1>
     This is a demo installation of ClimDaPs. If you want to try it out please do the following steps:
@@ -21,7 +21,7 @@
         group registration once.
       </li>
       <li>
-        Login with OpenID Account on the <a href="/signin">sign in</a> page.
+        Login with OpenID Account on the <a href="/signin/esgf">sign in</a> page.
       </li>
       <li>
         Your account needs be activated. For this please send an eMail to Nils Hempelmann (<em>hempelmann at ipsl.jussieu.fr</em>)
@@ -36,7 +36,7 @@
         We will inform you when you are added to the allowed users of this Demo.
       </li>
       <li>
-        Finally sign in again with your OpenID Account on the <a href="/signin">sign in</a> page.
+        Finally sign in again with your OpenID Account on the <a href="/signin/esgf">sign in</a> page.
       </li>
     </ol>
 
