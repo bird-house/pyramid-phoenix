@@ -2,26 +2,27 @@ Phoenix
 =======
 
 Phoenix (the bird)
-  *Phoenix is a long-lived bird that is cyclically regenerated or reborn.* (`Wikipedia https://en.wikipedia.org/wiki/Phoenix_%28mythology%29`_). [..]
+  *Phoenix is a long-lived bird that is cyclically regenerated or reborn.* (`Wikipedia <https://en.wikipedia.org/wiki/Phoenix_%28mythology%29>`_). [..]
 
-Pyramid Phoenix is a web-application build with the Python web-framework `Pyramid http://www.pylonsproject.org/`_. Phoenix makes it easy to interact with Web Processing Services (WPS).
+Pyramid Phoenix is a web-application build with the Python web-framework `Pyramid <http://www.pylonsproject.org/>`_. Phoenix makes it easy to interact with Web Processing Services (WPS).
 
 Installation
 ------------
 
 Phoenix uses WPS processes provided by Malleefowl. As a requiste you should install a local Malleefowl WPS (this will become part of the Phoenix installer). Alternatively you could configure the WPS URL of a running Malleefowl WPS instance in the Phoenix ``custom.cfg``.
 
-To install Malleefowl follow the instructions given in the Malleefowl `Readme https://github.com/bird-house/malleefowl/blob/master/README.rst`_.
+To install Malleefowl follow the instructions given in the Malleefowl `Readme <https://github.com/bird-house/malleefowl/blob/master/README.rst>`_.
 
 Now start with installing Phoenix with sources from github::
 
    $ git clone https://github.com/bird-house/pyramid-phoenix.git
    $ cd pyramid-phoenix
-   $ ./requirements.sh
-   $ ./install.sh
+   $ make
+
+For other install options run ``make help`` and read the documention for the `Makefile <https://github.com/bird-house/birdhousebuilder.bootstrap/blob/master/README.rst>`_.
 
 
-After successful installation you need to start the services. Phoenix is using `Anaconda http://www.continuum.io/`_ Python distribution system. All installed files (config etc ...) are below the anaconda root folder which is by default in your home directory ``~/anaconda``. Now, start the services::
+After successful installation you need to start the services. Phoenix is using `Anaconda <http://www.continuum.io/>`_ Python distribution system. All installed files (config etc ...) are below the anaconda root folder which is by default in your home directory ``~/anaconda``. Now, start the services::
 
    $ cd ~/anaconda
    $ etc/init.d/supervisor start
@@ -50,26 +51,11 @@ Add your email of your OpenID account to the ``admin-users`` (space seperated).
 
 If you want to run on a different hostname or port then change the default values in ``custom.cfg``. 
 
-After any change to your ``custom.cfg`` you **need** to run ``install.sh`` again and restart the ``supervisor`` service::
+After any change to your ``custom.cfg`` you **need** to run ``make install`` again and restart the ``supervisor`` service::
 
-  $ ./install.sh
+  $ make install
   $  ~/anaconda/etc/init.d/supervisor restart
 
-
-Update
-------
-
-When updating your installation you should run ``clean.sh`` to remove outdated Python dependencies::
-
-   $ cd pyramid-phoenix
-   $ git pull
-   $ ./clean.sh
-   $ ./requirement.sh
-   $ ./install.sh
-
-And then restart the ``supervisor`` and ``nginx`` service.
-
-You can also use the supervisor monitor on http://localhost:9001 to start services.
 
 Troubleshooting
 ---------------
@@ -80,13 +66,6 @@ Phoenix needs a running mongodb and pycsw service. Sometimes Phoenix is started 
     $ ~/anaconda/etc/init.d/supervisor restart pycsw
     $ ~/anaconda/etc/init.d/supervisor restart phoenix
    
-
-Authors
--------
-
-* `DKRZ http://www.dkrz.de`_
-* `Climate Service Center http://www.climate-service-center.de/`_
-* `IPSL http://www.ipsl.fr/`_
 
 
 
