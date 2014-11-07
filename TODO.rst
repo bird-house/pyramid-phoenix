@@ -38,6 +38,7 @@ http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html
 Login
 =====
 
+* use User(name) from openid parameters
 * improve local login
 * configure admin (roles) with mongodb
 
