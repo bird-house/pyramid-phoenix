@@ -24,9 +24,8 @@ For other install options run ``make help`` and read the documention for the `Ma
 
 After successful installation you need to start the services. Phoenix is using `Anaconda <http://www.continuum.io/>`_ Python distribution system. All installed files (config etc ...) are below the anaconda root folder which is by default in your home directory ``~/anaconda``. Now, start the services::
 
-   $ cd ~/anaconda
-   $ etc/init.d/supervisor start
-   $ etc/init.d/nginx start
+   $ make start    # starts supervisor services
+   $ make status   # shows status of supervisor services
 
 Phoenix web application is available on http://localhost:8081. You will need an OpenID to login to Phoenix.
 
@@ -54,18 +53,39 @@ If you want to run on a different hostname or port then change the default value
 After any change to your ``custom.cfg`` you **need** to run ``make install`` again and restart the ``supervisor`` service::
 
   $ make install
-  $  ~/anaconda/etc/init.d/supervisor restart
+  $ make restart
 
 
 Troubleshooting
 ---------------
 
+Phoenix does not start:
+
 Phoenix needs a running mongodb and pycsw service. Sometimes Phoenix is started when these service are not ready yet (will be fixed soon). In that case start theses services manually in the order mongodb, pycsw and Phoenix with::
 
-    $ ~/anaconda/etc/init.d/supervisor restart mongodb
-    $ ~/anaconda/etc/init.d/supervisor restart pycsw
-    $ ~/anaconda/etc/init.d/supervisor restart phoenix
+    $ ~/anaconda/bin/supervisorctl restart mongodb
+    $ ~/anaconda/bin/supervisorctl restart pycsw
+    $ ~/anaconda/bin/supervisorctl restart phoenix
+
+You can also try to restart all services with::
+
+    $ ~/anaconda/bin/supervisorctl restart all
+
+or::
+
+    $ make restart
    
+
+Nginx does not start:
+
+From a former installation there might be nginx files with false permissions. Remove those files::
+
+   $ ~/anaconda/etc/init.d/supervisord stop
+   $ sudo rm -rf ~/anaconda/var/run
+   $ sudo rm -rf ~/anaconda/var/log
+   $ ~/anaconda/etc/init.d/supervisord start
+   
+
 
 
 
