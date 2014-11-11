@@ -38,13 +38,21 @@ http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html
 Login
 =====
 
+* add more esgf providers to esgf login
+* trust by default esgf openids
 * use User(name) from openid parameters
 * improve local login
 * configure admin (roles) with mongodb
 
+Views
+=====
+
+* show unregistered users in dashboard
+
 Settings
 ========
 
+* show jobs by user
 * refactor users settings view (use title renderer)
 
 Outputs
