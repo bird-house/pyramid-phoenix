@@ -34,7 +34,7 @@ requires = [
     ]
 
 setup(name='Phoenix',
-      version='0.2',
+      version='0.2.1',
       description='Phoenix',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
