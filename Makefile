@@ -33,7 +33,8 @@ DOCKER_CONTAINER := $(APP_NAME)
 
 .PHONY: all
 all: sysinstall clean install
-	@echo "\nCall 'make help' for a description of all make targets."
+	@echo "\nRun 'make help' for a description of all make targets."
+	@echo "Read also the README.rst on GitHub: https://github.com/bird-house/birdhousebuilder.bootstrap"
 
 .PHONY: help
 help:
@@ -44,11 +45,17 @@ help:
 	@echo "\t info        \t- Prints information about your system."
 	@echo "\t install     \t- Installs your application by running 'bin/buildout -c custom.cfg'."
 	@echo "\t clean       \t- Deletes all files that are created by running buildout."
-	@echo "\t distclean   \t- Removes *all* files that are not controlled by 'git'.\n\t\tWARNING: use it *only* if you know what you do!"
+	@echo "\t distclean   \t- Removes *all* files that are not controlled by 'git'.\n\t\t\tWARNING: use it *only* if you know what you do!"
 	@echo "\t sysinstall  \t- Installs system packages from requirements.sh. You can also call 'bash requirements.sh' directly."
+	@echo "\t selfupdate  \t- Updates this Makefile."
+	@echo "\nSupervisor targets:\n"
+	@echo "\t start       \t- Starts supervisor service: $(ANACONDA_HOME)/etc/init.d/supervisord start"
+	@echo "\t stop        \t- Stops supervisor service: $(ANACONDA_HOME)/etc/init.d/supervisord stop"
+	@echo "\t restart     \t- Restarts supervisor service: $(ANACONDA_HOME)/etc/init.d/supervisord restart"
+	@echo "\t status      \t- Supervisor status: $(ANACONDA_HOME)/bin/supervisorctl status"
+	@echo "\nDocker targets:\n"
 	@echo "\t Dockerfile  \t- Generates a Dockerfile for this application."
 	@echo "\t dockerbuild \t- Build a docker image for this application."
-	@echo "\t selfupdate  \t- Updates this makefile."
 
 .PHONY: info
 info:
@@ -83,11 +90,6 @@ requirements.sh:
 	@echo "Setup default requirements.sh ..."
 	@wget -q --no-check-certificate -O requirements.sh "https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/master/requirements.sh"
 	@chmod 755 requirements.sh
-
-.PHONY: Makefile
-Makefile: bootstrap.sh
-	@echo "Update Makefile ..."
-	@bash bootstrap.sh -u
 
 custom.cfg:
 	@echo "Using custom.cfg for buildout ..."
@@ -160,8 +162,31 @@ buildclean:
 	@test -e bootstrap.sh && rm -v bootstrap.sh
 
 .PHONY: selfupdate
-selfupdate: Makefile
-	@echo "Selfupdate done"
+selfupdate: bootstrap.sh
+	@bash bootstrap.sh -u
+
+## Supervisor targets
+
+.PHONY: start
+start:
+	@echo "Starting supervisor service ..."
+	$(ANACONDA_HOME)/etc/init.d/supervisord start
+
+.PHONY: stop
+stop:
+	@echo "Stopping supervisor service ..."
+	$(ANACONDA_HOME)/etc/init.d/supervisord stop
+
+.PHONY: restart
+restart:
+	@echo "Restarting supervisor service ..."
+	$(ANACONDA_HOME)/etc/init.d/supervisord restart
+
+.PHONY: status
+status:
+	@echo "Supervisor status ..."
+	$(ANACONDA_HOME)/bin/supervisorctl status
+
 
 ## Docker targets
 
