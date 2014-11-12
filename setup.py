@@ -16,6 +16,7 @@ requires = [
     'pyramid_layout',
     'pyramid_deform',
     'pyramid_beaker',
+    'pyramid_mailer',
     'deform',
     'deform_bootstrap',
     #'deform_bootstrap_extra',
