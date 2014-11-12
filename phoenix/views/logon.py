@@ -109,6 +109,7 @@ class Logon(MyView):
     def login_openid(self):
         """authomatic openid login"""
         username = self.request.params.get('username')
+        # esgf openid login with username and provider
         if username is not None:
             provider = self.request.params.get('provider')
             logger.debug('username=%s, provider=%s', username, provider)
