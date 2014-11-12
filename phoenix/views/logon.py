@@ -21,7 +21,9 @@ authomatic = Authomatic(config=config.config,
 
 PROVIDER_URLS = dict(
     dkrz='https://esgf-data.dkrz.de/esgf-idp/openid/%s',
-    ipsl='https://esgf-node.ipsl.fr/esgf-idp/openid/%s'
+    ipsl='https://esgf-node.ipsl.fr/esgf-idp/openid/%s',
+    pcmdi='https://pcmdi9.llnl.gov/esgf-idp/openid/%s',
+    smhi='https://esg-dn1.nsc.liu.se/esgf-idp/openid/%s'
 )
 
 @view_defaults(permission='view', layout='default')
