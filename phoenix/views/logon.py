@@ -19,6 +19,7 @@ authomatic = Authomatic(config=config.config,
                         report_errors=True,
                         logging_level=logging.DEBUG)
 
+# TODO: make this configurable
 PROVIDER_URLS = dict(
     dkrz='https://esgf-data.dkrz.de/esgf-idp/openid/%s',
     ipsl='https://esgf-node.ipsl.fr/esgf-idp/openid/%s',
