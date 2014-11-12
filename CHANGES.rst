@@ -4,6 +4,7 @@ Changes
 0.2.2 (current)
 ==================
 
+* uses user name from openid parameters.
 * pcmdi and smhi added to esgf login page.
 * shows last login in users settings.
 * shows unregistered users in dashboard.

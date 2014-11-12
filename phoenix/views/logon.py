@@ -41,7 +41,7 @@ class Logon(MyView):
             return False
         return user.get('activated', False)
 
-    def login_success(self, email, openid=None, activated=False):
+    def login_success(self, email, openid=None, name="Unknown", activated=False):
         from phoenix.models import add_user
         logger.debug('login success: email=%s', email)
         user = self.get_user(email)
@@ -51,10 +51,10 @@ class Logon(MyView):
         if openid is not None:
             user['openid'] = openid
         user['activated'] = activated
+        user['name'] = name
         logger.debug('user=%s', user)
         self.userdb.update({'email':email}, user)
-        user_name = user.get('name', 'unknown')
-        self.session.flash("Welcome %s (%s)." % (user_name, email), queue='info')
+        self.session.flash("Welcome %s (%s)." % (name, email), queue='info')
 
     @view_config(route_name='dummy', renderer='phoenix:templates/dummy.pt')
     @view_config(route_name='dummy_json', renderer='json')
@@ -86,7 +86,7 @@ class Logon(MyView):
     def login_local(self):
         """local login for admin and demo user"""
         
-        # TODO: need some work work on local accounts
+        # TODO: need some work on local accounts
         if (True):
             email = "admin@malleefowl.org"
             if self.is_valid_user(email):
@@ -147,6 +147,7 @@ class Logon(MyView):
                     self.login_success(
                         email=result.user.email,
                         openid=result.user.id,
+                        name=result.user.name,
                         activated=True)
                     response.text = render('phoenix:templates/openid_success.pt',
                                            {'result': result},
@@ -158,6 +159,7 @@ class Logon(MyView):
                     self.login_success(
                         email=result.user.email,
                         openid=result.user.id,
+                        name=result.user.name,
                         activated=False)
                     response.text = render('phoenix:templates/register.pt',
                                            {'email': result.user.email}, request=self.request)
