@@ -4,6 +4,7 @@ Changes
 0.2.2 (current)
 ==================
 
+* sends email to admin users on user login failure.
 * uses user name from openid parameters.
 * pcmdi and smhi added to esgf login page.
 * shows last login in users settings.

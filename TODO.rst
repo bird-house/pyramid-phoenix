@@ -29,7 +29,6 @@ http://www.fatcow.com/free-icons
 * DONE: use datetime json renderer:
 http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
 * csw, wps and mongo not always avail when starting app. configure when accessed.
-* email notification: pyramid-mailer, repoze.sendmail
 * check *from pyramid.decorator import reify* for page_tile, breadcrumbs ... see kotti/views/utils.py
 * enable bbox in ui
 * testing with curl, http (script): see fossgis geo python
