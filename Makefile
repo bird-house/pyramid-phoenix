@@ -1,3 +1,5 @@
+VERSION := 0.1.0
+
 # Application
 APP_ROOT := $(CURDIR)
 APP_NAME := $(shell basename $(APP_ROOT))
@@ -42,6 +44,7 @@ help:
 	@echo "targets:\n"
 	@echo "\t all         \t- Does a complete installation. Shortcut for 'make sysinstall clean install.' (Default)"
 	@echo "\t help        \t- Prints this help message."
+	@echo "\t version     \t- Prints version number of this Makefile."
 	@echo "\t info        \t- Prints information about your system."
 	@echo "\t install     \t- Installs your application by running 'bin/buildout -c custom.cfg'."
 	@echo "\t clean       \t- Deletes all files that are created by running buildout."
@@ -56,6 +59,10 @@ help:
 	@echo "\nDocker targets:\n"
 	@echo "\t Dockerfile  \t- Generates a Dockerfile for this application."
 	@echo "\t dockerbuild \t- Build a docker image for this application."
+
+.PHONY: version
+version:
+	@echo "Version: $(VERSION)"
 
 .PHONY: info
 info:
