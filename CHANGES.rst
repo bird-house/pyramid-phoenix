@@ -1,6 +1,13 @@
 Changes
 *******
 
+0.2.2 (current)
+==================
+
+* pcmdi and smhi added to esgf login page.
+* shows last login in users settings.
+* shows unregistered users in dashboard.
+
 0.2.1 (2014-11-11)
 ==================
 
@@ -14,6 +21,7 @@ Changes
 Paris Release
 
 
+* moved code to github
 * choose licence: apache license version 2.0
   http://www.apache.org/licenses/
 * setup proxy for openlayers and js to access thredds, esgf-search ...

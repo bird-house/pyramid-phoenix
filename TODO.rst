@@ -25,7 +25,6 @@ http://www.fatcow.com/free-icons
 * clean up view templates
 * download process (wget script generator)
 * loop workflow
-* need bootstrap module for install.sh etc ...
 * store timestamps in UTC. Handle user timezone.
 * DONE: use datetime json renderer:
 http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
@@ -47,7 +46,7 @@ Login
 Views
 =====
 
-* show unregistered users in dashboard
+* ...
 
 Settings
 ========
