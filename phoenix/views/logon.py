@@ -41,6 +41,33 @@ class Logon(MyView):
             return False
         return user.get('activated', False)
 
+    def notify_login_failure(self, user_email):
+        """Notifies about user login failure via email.
+        
+        Sends email with the pyramid_mailer module.
+        For configuration look at documentation http://pythonhosted.org//pyramid_mailer/
+        """
+        logger.debug("notify login failure for %s", user_email)
+        
+        from pyramid_mailer import get_mailer
+        mailer = get_mailer(self.request)
+
+        sender = "noreply@%s" % (self.request.server_name)
+        subject = "User %s failed to login on %s" % (user_email, self.request.server_name)
+        body = """User %s is not registered at Phoenix server on %s:%s.
+        """ % (user_email, self.request.server_name, self.request.server_port)
+
+        from phoenix.security import admin_users
+        recipients = admin_users(self.request)
+        
+        from pyramid_mailer.message import Message
+        message = Message(subject=subject,
+                          sender=sender,
+                          recipients=recipients,
+                          body=body)
+        #mailer.send(message)
+        mailer.send_immediately(message, fail_silently=True)
+
     def login_success(self, email, openid=None, name="Unknown", activated=False):
         from phoenix.models import add_user
         logger.debug('login success: email=%s', email)
@@ -156,6 +183,7 @@ class Logon(MyView):
                     response.headers.extend(remember(self.request, result.user.email))
                 else:
                     logger.info("openid login: user %s is not registered", result.user.email)
+                    self.notify_login_failure(result.user.email)
                     self.login_success(
                         email=result.user.email,
                         openid=result.user.id,
@@ -163,6 +191,7 @@ class Logon(MyView):
                         activated=False)
                     response.text = render('phoenix:templates/register.pt',
                                            {'email': result.user.email}, request=self.request)
+
         #logger.debug('response: %s', response)
 
         return response

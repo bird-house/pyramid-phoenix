@@ -46,6 +46,9 @@ def main(global_config, **settings):
     config.include('deform_bootstrap')
     #config.include('deform_bootstrap_extra')
 
+    # mailer
+    config.include('pyramid_mailer')
+
     # add my own templates
     # TODO: improve config of my own templates
     # see also: http://docs.pylonsproject.org/projects/deform/en/latest/templates.html#overriding-for-all-forms
