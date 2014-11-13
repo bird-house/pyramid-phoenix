@@ -171,7 +171,7 @@ buildclean:
 
 .PHONY: selfupdate
 selfupdate: bootstrap.sh
-	@wget -q --no-check-certificate -O requirements.sh "https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/$(RELEASE)/Makefile"
+	@wget -q --no-check-certificate -O Makefile "https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/$(RELEASE)/Makefile"
 
 ## Supervisor targets
 
