@@ -4,11 +4,18 @@ Changes
 0.2.2 (current)
 ==================
 
+Utrecht Release
+
 * sends email to admin users on user login failure.
 * uses user name from openid parameters.
 * pcmdi and smhi added to esgf login page.
 * shows last login in users settings.
 * shows unregistered users in dashboard.
+
+Bugs:
+
+* Fixed start problems with supervisor: 
+csw, wps and mongodb are now initialized on first request (not on start time)
 
 0.2.1 (2014-11-11)
 ==================
