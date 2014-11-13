@@ -192,14 +192,18 @@ def main(global_config, **settings):
     # catalog service
     def add_csw(event):
         settings = event.request.registry.settings
+        if settings.get('csw') is None:
+            try:
+                from owslib.csw import CatalogueServiceWeb
+                settings['csw'] = CatalogueServiceWeb(url=settings['csw.url'])
+                logger.debug('Connected to catalog service %s', settings['csw.url'])
+            except:
+                logger.exception('Could not connect catalog service %s', settings['csw.url'])
+                settings['csw'] = None
         event.request.csw = settings['csw']
 
-    try:
-        from owslib.csw import CatalogueServiceWeb
-        config.registry.settings['csw'] = CatalogueServiceWeb(url=settings['csw.url'])
-        config.add_subscriber(add_csw, NewRequest)
-    except:
-        logger.exception('Could not connect catalog service %s', settings['csw.url'])
+    config.registry.settings['csw.url'] = settings['csw.url']
+    config.add_subscriber(add_csw, NewRequest)
     
     config.scan('phoenix')
 
