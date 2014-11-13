@@ -166,21 +166,28 @@ def main(global_config, **settings):
         class MongoDB(pymongo.Connection):
             def __html__(self):
                 return 'MongoDB: <b>{}></b>'.format(self)
-    conn = MongoDB(db_uri)
-    config.registry.settings['mongodb_conn'] = conn
-    config.add_subscriber(add_mongo_db, NewRequest)
+    try:
+        conn = MongoDB(db_uri)
+        config.registry.settings['mongodb_conn'] = conn
+        config.add_subscriber(add_mongo_db, NewRequest)
+    except:
+        logger.exception('Could not connect to mongodb.')
 
     # malleefowl wps
     def add_wps(event):
         settings = event.request.registry.settings
+        if settings.get('wps') is None:
+            try:
+                from owslib.wps import WebProcessingService
+                settings['wps'] = WebProcessingService(url=settings['wps.url'])
+                logger.debug('Connected to malleefowl wps %s', settings['wps.url'])
+            except:
+                logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
+                settings['wps'] = None
         event.request.wps = settings['wps']
 
-    try:
-        from owslib.wps import WebProcessingService
-        config.registry.settings['wps'] = WebProcessingService(url=settings['wps.url'])
-        config.add_subscriber(add_wps, NewRequest)
-    except:
-        logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
+    config.registry.settings['wps.url'] = settings['wps.url']
+    config.add_subscriber(add_wps, NewRequest)
 
     # catalog service
     def add_csw(event):
