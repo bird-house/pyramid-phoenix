@@ -8,7 +8,7 @@ Utrecht Release
 
 * sends email to admin users on user login failure.
 * uses user name from openid parameters.
-* pcmdi and smhi added to esgf login page.
+* added provider for each contry to esgf login page.
 * shows last login in users settings.
 * shows unregistered users in dashboard.
 

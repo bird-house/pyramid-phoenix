@@ -34,7 +34,7 @@ http://www.fatcow.com/free-icons
 Login
 =====
 
-* add more esgf providers to esgf login
+* make esgf providers configurable
 * trust by default esgf openids
 * improve local login
 * configure admin (roles) with mongodb
