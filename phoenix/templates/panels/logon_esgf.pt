@@ -1,9 +1,15 @@
 <div class="span8">
   <h3>ESGF OpenID</h3>
   <form id="esgf" action="/login/openid">
-    <input type="radio" name="provider" value="dkrz" checked="checked"> <img src="${request.static_url('phoenix:static/images/flags/flag_germany.png')}"> DKRZ
-    <input type="radio" name="provider" value="ipsl"> <img src="${request.static_url('phoenix:static/images/flags/flag_france.png')}"> IPSL
-    <input type="radio" name="provider" value="pcmdi"> <img src="${request.static_url('phoenix:static/images/flags/flag_usa.png')}"> PCMDI
+    
+    <input type="radio" name="provider" value="badc"> <img src="${request.static_url('phoenix:static/images/flags/flag_great_britain.png')}"> BADC /
+    <input type="radio" name="provider" value="bnu"> <img src="${request.static_url('phoenix:static/images/flags/flag_china.png')}"> BNU /
+    <input type="radio" name="provider" value="cmcc"> <img src="${request.static_url('phoenix:static/images/flags/flag_italy.png')}"> CMCC /
+    <input type="radio" name="provider" value="dkrz" checked="checked"> <img src="${request.static_url('phoenix:static/images/flags/flag_germany.png')}"> DKRZ<br>
+
+    <input type="radio" name="provider" value="ipsl"> <img src="${request.static_url('phoenix:static/images/flags/flag_france.png')}"> IPSL /
+    <input type="radio" name="provider" value="nci"> <img src="${request.static_url('phoenix:static/images/flags/flag_australia.png')}"> NCI /
+    <input type="radio" name="provider" value="pcmdi"> <img src="${request.static_url('phoenix:static/images/flags/flag_usa.png')}"> PCMDI /
     <input type="radio" name="provider" value="smhi"> <img src="${request.static_url('phoenix:static/images/flags/flag_sweden.png')}"> SMHI<br>
     <input type="text" name="username" placeholder="Your username"/>
     <button type="submit" class="btn btn-success">Sign in</button>

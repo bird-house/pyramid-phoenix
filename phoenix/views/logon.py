@@ -21,10 +21,13 @@ authomatic = Authomatic(config=config.config,
 
 # TODO: make this configurable
 PROVIDER_URLS = dict(
+    badc='https://ceda.ac.uk/openid/%s',
+    bnu='https://esg.bnu.edu.cn/esgf-idp/openid/%s',
     dkrz='https://esgf-data.dkrz.de/esgf-idp/openid/%s',
     ipsl='https://esgf-node.ipsl.fr/esgf-idp/openid/%s',
+    nci='https://esg2.nci.org.au/esgf-idp/openid/%s',
     pcmdi='https://pcmdi9.llnl.gov/esgf-idp/openid/%s',
-    smhi='https://esg-dn1.nsc.liu.se/esgf-idp/openid/%s'
+    smhi='https://esg-dn1.nsc.liu.se/esgf-idp/openid/%s',
 )
 
 @view_defaults(permission='view', layout='default')
