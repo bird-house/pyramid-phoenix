@@ -156,52 +156,49 @@ def main(global_config, **settings):
     # TODO: maybe move this to models.py?
     #@subscriber(NewRequest)
     def add_mongodb(event):
-        if hasattr( event.request, "db"):
-            logger.debug("mongodb is available")
-        else:
+        settings = event.request.registry.settings
+        if settings.get('db') is None:
             try:
-                settings = event.request.registry.settings
                 MongoDB = pymongo.Connection
                 if 'pyramid_debugtoolbar' in set(settings.values()):
                     class MongoDB(pymongo.Connection):
                         def __html__(self):
                             return 'MongoDB: <b>{}></b>'.format(self)
                 conn = MongoDB(settings['mongodb.url'])
-                event.request.db = conn[settings['mongodb.db_name']]
+                settings['db'] = conn[settings['mongodb.db_name']]
                 logger.debug("Connected to mongodb %s.", settings['mongodb.url'])
             except:
                 logger.exception('Could not connect to mongodb %s.', settings['mongodb.url'])
+        event.request.db = settings.get('db')
     config.add_subscriber(add_mongodb, NewRequest)
     
     # malleefowl wps
     # TODO: subscriber annotation does not work
     #@subscriber(NewRequest)
     def add_wps(event):
-        if hasattr(event.request, 'wps'):
-            logger.debug("wps is available")
-        else:
+        settings = event.request.registry.settings
+        if settings.get('wps') is None:
             try:
-                settings = event.request.registry.settings
                 from owslib.wps import WebProcessingService
-                event.request.wps = WebProcessingService(url=settings['wps.url'])
+                settings['wps'] = WebProcessingService(url=settings['wps.url'])
                 logger.debug('Connected to malleefowl wps %s', settings['wps.url'])
             except:
                 logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
+        event.request.wps = settings.get('wps')
     config.add_subscriber(add_wps, NewRequest)
         
     # catalog service
     #@subscriber(NewRequest)
     def add_csw(event):
-        if hasattr(event.request, 'csw'):
-            logger.debug("csw is available")
-        else:
+        settings = event.request.registry.settings
+        if settings.get('csw') is None:
             try:
-                settings = event.request.registry.settings
                 from owslib.csw import CatalogueServiceWeb
-                event.request.csw = CatalogueServiceWeb(url=settings['csw.url'])
+                settings['csw'] = CatalogueServiceWeb(url=settings['csw.url'])
                 logger.debug('Connected to catalog service %s', settings['csw.url'])
             except:
                 logger.exception('Could not connect catalog service %s', settings['csw.url'])
+        event.request.csw = settings.get('csw')
     config.add_subscriber(add_csw, NewRequest)
     
     config.scan('phoenix')
