@@ -34,6 +34,10 @@ Paris Release
 * use simple wps calls in wizard for listings etc ...
 * use wps chain for restflow process
 * reduce number of wps initialisations in wizard
+* uses datetime json renderer:
+http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
+* dashboard added
+* refactored wizard
 
 Bugs
 
@@ -47,8 +51,10 @@ Bugs
 
 Helsinki Release
 
+* added ipython notebook tutorials
+
 0.1.0 (2013-12-10)
 ==================
 
-Initial Hamburg Release
+Hamburg Release
 
