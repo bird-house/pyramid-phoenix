@@ -85,7 +85,7 @@ class Users(SettingsView):
         grid = UsersGrid(
                 self.request,
                 user_items,
-                ['name', 'email', 'openid', 'organisation', 'notes', 'activated', ''],
+                ['name', 'email', 'openid', 'organisation', 'notes', 'last_login', 'activated', ''],
             )
         return dict(
             grid=grid,
@@ -95,9 +95,13 @@ class Users(SettingsView):
 class UsersGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(UsersGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['last_login'] = self.last_login_td
         self.column_formats['activated'] = self.activated_td
         self.column_formats[''] = self.action_td
         self.exclude_ordering = ['notes', '']
+
+    def last_login_td(self, col_num, i, item):
+        return self.render_timestamp_td(item.get('last_login'))
 
     def activated_td(self, col_num, i, item):
         from string import Template

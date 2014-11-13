@@ -19,9 +19,12 @@ authomatic = Authomatic(config=config.config,
                         report_errors=True,
                         logging_level=logging.DEBUG)
 
+# TODO: make this configurable
 PROVIDER_URLS = dict(
     dkrz='https://esgf-data.dkrz.de/esgf-idp/openid/%s',
-    ipsl='https://esgf-node.ipsl.fr/esgf-idp/openid/%s'
+    ipsl='https://esgf-node.ipsl.fr/esgf-idp/openid/%s',
+    pcmdi='https://pcmdi9.llnl.gov/esgf-idp/openid/%s',
+    smhi='https://esg-dn1.nsc.liu.se/esgf-idp/openid/%s'
 )
 
 @view_defaults(permission='view', layout='default')
@@ -38,7 +41,34 @@ class Logon(MyView):
             return False
         return user.get('activated', False)
 
-    def login_success(self, email, openid=None, activated=False):
+    def notify_login_failure(self, user_email):
+        """Notifies about user login failure via email.
+        
+        Sends email with the pyramid_mailer module.
+        For configuration look at documentation http://pythonhosted.org//pyramid_mailer/
+        """
+        logger.debug("notify login failure for %s", user_email)
+        
+        from pyramid_mailer import get_mailer
+        mailer = get_mailer(self.request)
+
+        sender = "noreply@%s" % (self.request.server_name)
+        subject = "User %s failed to login on %s" % (user_email, self.request.server_name)
+        body = """User %s is not registered at Phoenix server on %s:%s.
+        """ % (user_email, self.request.server_name, self.request.server_port)
+
+        from phoenix.security import admin_users
+        recipients = admin_users(self.request)
+        
+        from pyramid_mailer.message import Message
+        message = Message(subject=subject,
+                          sender=sender,
+                          recipients=recipients,
+                          body=body)
+        #mailer.send(message)
+        mailer.send_immediately(message, fail_silently=True)
+
+    def login_success(self, email, openid=None, name="Unknown", activated=False):
         from phoenix.models import add_user
         logger.debug('login success: email=%s', email)
         user = self.get_user(email)
@@ -48,10 +78,10 @@ class Logon(MyView):
         if openid is not None:
             user['openid'] = openid
         user['activated'] = activated
+        user['name'] = name
         logger.debug('user=%s', user)
         self.userdb.update({'email':email}, user)
-        user_name = user.get('name', 'unknown')
-        self.session.flash("Welcome %s (%s)." % (user_name, email), queue='info')
+        self.session.flash("Welcome %s (%s)." % (name, email), queue='info')
 
     @view_config(route_name='dummy', renderer='phoenix:templates/dummy.pt')
     @view_config(route_name='dummy_json', renderer='json')
@@ -83,7 +113,7 @@ class Logon(MyView):
     def login_local(self):
         """local login for admin and demo user"""
         
-        # TODO: need some work work on local accounts
+        # TODO: need some work on local accounts
         if (True):
             email = "admin@malleefowl.org"
             if self.is_valid_user(email):
@@ -107,6 +137,7 @@ class Logon(MyView):
     def login_openid(self):
         """authomatic openid login"""
         username = self.request.params.get('username')
+        # esgf openid login with username and provider
         if username is not None:
             provider = self.request.params.get('provider')
             logger.debug('username=%s, provider=%s', username, provider)
@@ -143,6 +174,7 @@ class Logon(MyView):
                     self.login_success(
                         email=result.user.email,
                         openid=result.user.id,
+                        name=result.user.name,
                         activated=True)
                     response.text = render('phoenix:templates/openid_success.pt',
                                            {'result': result},
@@ -151,12 +183,15 @@ class Logon(MyView):
                     response.headers.extend(remember(self.request, result.user.email))
                 else:
                     logger.info("openid login: user %s is not registered", result.user.email)
+                    self.notify_login_failure(result.user.email)
                     self.login_success(
                         email=result.user.email,
                         openid=result.user.id,
+                        name=result.user.name,
                         activated=False)
                     response.text = render('phoenix:templates/register.pt',
                                            {'email': result.user.email}, request=self.request)
+
         #logger.debug('response: %s', response)
 
         return response

@@ -1,6 +1,22 @@
 Changes
 *******
 
+0.2.2 (current)
+==================
+
+Utrecht Release
+
+* sends email to admin users on user login failure.
+* uses user name from openid parameters.
+* pcmdi and smhi added to esgf login page.
+* shows last login in users settings.
+* shows unregistered users in dashboard.
+
+Bugs:
+
+* Fixed start problems with supervisor: 
+csw, wps and mongodb are now initialized on first request (not on start time)
+
 0.2.1 (2014-11-11)
 ==================
 
@@ -14,6 +30,7 @@ Changes
 Paris Release
 
 
+* moved code to github
 * choose licence: apache license version 2.0
   http://www.apache.org/licenses/
 * setup proxy for openlayers and js to access thredds, esgf-search ...
@@ -24,6 +41,10 @@ Paris Release
 * use simple wps calls in wizard for listings etc ...
 * use wps chain for restflow process
 * reduce number of wps initialisations in wizard
+* uses datetime json renderer:
+http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
+* dashboard added
+* refactored wizard
 
 Bugs
 
@@ -37,8 +58,10 @@ Bugs
 
 Helsinki Release
 
+* added ipython notebook tutorials
+
 0.1.0 (2013-12-10)
 ==================
 
-Initial Hamburg Release
+Hamburg Release
 

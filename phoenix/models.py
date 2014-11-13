@@ -70,6 +70,8 @@ def add_job(request, title, wps_url, status_location, workflow=False, abstract=N
     request.db.jobs.save(job)
 
 def user_stats(request):
+    num_unregistered = request.db.users.find({"activated": False}).count()
+    
     d = datetime.datetime.now() - datetime.timedelta(hours=3)
     num_logins_3h = request.db.users.find({"last_login": {"$gt": d}}).count()
 
@@ -77,6 +79,7 @@ def user_stats(request):
     num_logins_7d = request.db.users.find({"last_login": {"$gt": d}}).count()
 
     return dict(num_users=request.db.users.count(),
+                num_unregistered=num_unregistered,
                 num_logins_3h=num_logins_3h,
                 num_logins_7d=num_logins_7d)
 

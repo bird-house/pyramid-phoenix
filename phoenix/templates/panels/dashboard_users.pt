@@ -4,6 +4,9 @@
     Number of Users: <span class="badge badge-success">${num_users}</span>
   </p>
   <p>
+    Users waiting for Activation: <span class="badge badge-success">${num_unregistered}</span>
+  </p>
+  <p>
     Logins last 3 Hours: <span class="badge badge-success">${num_logins_3h}</span>
   </p>
   <p>

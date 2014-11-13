@@ -17,6 +17,7 @@ Bugs
 Common
 ======
 
+* upgrade to buildout 2
 * add link to fatcow icons
 http://www.fatcow.com/free-icons
 * install malleefowl with phoenix
@@ -25,12 +26,7 @@ http://www.fatcow.com/free-icons
 * clean up view templates
 * download process (wget script generator)
 * loop workflow
-* need bootstrap module for install.sh etc ...
 * store timestamps in UTC. Handle user timezone.
-* DONE: use datetime json renderer:
-http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
-* csw, wps and mongo not always avail when starting app. configure when accessed.
-* email notification: pyramid-mailer, repoze.sendmail
 * check *from pyramid.decorator import reify* for page_tile, breadcrumbs ... see kotti/views/utils.py
 * enable bbox in ui
 * testing with curl, http (script): see fossgis geo python
@@ -40,14 +36,13 @@ Login
 
 * add more esgf providers to esgf login
 * trust by default esgf openids
-* use User(name) from openid parameters
 * improve local login
 * configure admin (roles) with mongodb
 
 Views
 =====
 
-* show unregistered users in dashboard
+* ...
 
 Settings
 ========

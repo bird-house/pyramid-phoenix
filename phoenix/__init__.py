@@ -46,6 +46,9 @@ def main(global_config, **settings):
     config.include('deform_bootstrap')
     #config.include('deform_bootstrap_extra')
 
+    # mailer
+    config.include('pyramid_mailer')
+
     # add my own templates
     # TODO: improve config of my own templates
     # see also: http://docs.pylonsproject.org/projects/deform/en/latest/templates.html#overriding-for-all-forms
@@ -151,45 +154,55 @@ def main(global_config, **settings):
 
     # MongoDB
     # TODO: maybe move this to models.py?
-    def add_mongo_db(event):
-        settings = event.request.registry.settings
-        url = settings['mongodb.url']
-        db_name = settings['mongodb.db_name']
-        db = settings['mongodb_conn'][db_name]
-        event.request.db = db
-    db_uri = settings['mongodb.url']
-    MongoDB = pymongo.Connection
-    if 'pyramid_debugtoolbar' in set(settings.values()):
-        class MongoDB(pymongo.Connection):
-            def __html__(self):
-                return 'MongoDB: <b>{}></b>'.format(self)
-    conn = MongoDB(db_uri)
-    config.registry.settings['mongodb_conn'] = conn
-    config.add_subscriber(add_mongo_db, NewRequest)
-
+    #@subscriber(NewRequest)
+    def add_mongodb(event):
+        if hasattr( event.request, "db"):
+            logger.debug("mongodb is available")
+        else:
+            try:
+                settings = event.request.registry.settings
+                MongoDB = pymongo.Connection
+                if 'pyramid_debugtoolbar' in set(settings.values()):
+                    class MongoDB(pymongo.Connection):
+                        def __html__(self):
+                            return 'MongoDB: <b>{}></b>'.format(self)
+                conn = MongoDB(settings['mongodb.url'])
+                event.request.db = conn[settings['mongodb.db_name']]
+                logger.debug("Connected to mongodb %s.", settings['mongodb.url'])
+            except:
+                logger.exception('Could not connect to mongodb %s.', settings['mongodb.url'])
+    config.add_subscriber(add_mongodb, NewRequest)
+    
     # malleefowl wps
+    # TODO: subscriber annotation does not work
+    #@subscriber(NewRequest)
     def add_wps(event):
-        settings = event.request.registry.settings
-        event.request.wps = settings['wps']
-
-    try:
-        from owslib.wps import WebProcessingService
-        config.registry.settings['wps'] = WebProcessingService(url=settings['wps.url'])
-        config.add_subscriber(add_wps, NewRequest)
-    except:
-        logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
-
+        if hasattr(event.request, 'wps'):
+            logger.debug("wps is available")
+        else:
+            try:
+                settings = event.request.registry.settings
+                from owslib.wps import WebProcessingService
+                event.request.wps = WebProcessingService(url=settings['wps.url'])
+                logger.debug('Connected to malleefowl wps %s', settings['wps.url'])
+            except:
+                logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
+    config.add_subscriber(add_wps, NewRequest)
+        
     # catalog service
+    #@subscriber(NewRequest)
     def add_csw(event):
-        settings = event.request.registry.settings
-        event.request.csw = settings['csw']
-
-    try:
-        from owslib.csw import CatalogueServiceWeb
-        config.registry.settings['csw'] = CatalogueServiceWeb(url=settings['csw.url'])
-        config.add_subscriber(add_csw, NewRequest)
-    except:
-        logger.exception('Could not connect catalog service %s', settings['csw.url'])
+        if hasattr(event.request, 'csw'):
+            logger.debug("csw is available")
+        else:
+            try:
+                settings = event.request.registry.settings
+                from owslib.csw import CatalogueServiceWeb
+                event.request.csw = CatalogueServiceWeb(url=settings['csw.url'])
+                logger.debug('Connected to catalog service %s', settings['csw.url'])
+            except:
+                logger.exception('Could not connect catalog service %s', settings['csw.url'])
+    config.add_subscriber(add_csw, NewRequest)
     
     config.scan('phoenix')
 
