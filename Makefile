@@ -105,7 +105,7 @@ init: .gitignore custom.cfg downloads
 
 bootstrap.py:
 	@echo "Update buildout bootstrap.py ..."
-	@test -f boostrap.py || wget -O bootstrap.py http://downloads.buildout.org/1/bootstrap.py
+	@test -f boostrap.py || wget -O bootstrap.py http://downloads.buildout.org/2/bootstrap.py
 
 ## Anaconda targets
 
@@ -125,7 +125,7 @@ conda_pkgs: anaconda
 .PHONY: bootstrap
 bootstrap: init anaconda bootstrap.py
 	@echo "Bootstrap buildout ..."
-	@test -f bin/buildout || $(ANACONDA_HOME)/bin/python bootstrap.py -c custom.cfg
+	@test -f bin/buildout || $(ANACONDA_HOME)/bin/python bootstrap.py -c custom.cfg --allow-site-packages
 
 .PHONY: sysinstall
 sysinstall: bootstrap.sh requirements.sh
