@@ -154,25 +154,25 @@ def main(global_config, **settings):
 
     # MongoDB
     # TODO: maybe move this to models.py?
-    def add_mongo_db(event):
-        settings = event.request.registry.settings
-        url = settings['mongodb.url']
-        db_name = settings['mongodb.db_name']
-        db = settings['mongodb_conn'][db_name]
-        event.request.db = db
-    db_uri = settings['mongodb.url']
-    MongoDB = pymongo.Connection
-    if 'pyramid_debugtoolbar' in set(settings.values()):
-        class MongoDB(pymongo.Connection):
-            def __html__(self):
-                return 'MongoDB: <b>{}></b>'.format(self)
-    try:
-        conn = MongoDB(db_uri)
-        config.registry.settings['mongodb_conn'] = conn
-        config.add_subscriber(add_mongo_db, NewRequest)
-    except:
-        logger.exception('Could not connect to mongodb.')
-
+    #@subscriber(NewRequest)
+    def add_mongodb(event):
+        if hasattr( event.request, "db"):
+            logger.debug("mongodb is available")
+        else:
+            try:
+                settings = event.request.registry.settings
+                MongoDB = pymongo.Connection
+                if 'pyramid_debugtoolbar' in set(settings.values()):
+                    class MongoDB(pymongo.Connection):
+                        def __html__(self):
+                            return 'MongoDB: <b>{}></b>'.format(self)
+                conn = MongoDB(settings['mongodb.url'])
+                event.request.db = conn[settings['mongodb.db_name']]
+                logger.debug("Connected to mongodb %s.", settings['mongodb.url'])
+            except:
+                logger.exception('Could not connect to mongodb %s.', settings['mongodb.url'])
+    config.add_subscriber(add_mongodb, NewRequest)
+    
     # malleefowl wps
     # TODO: subscriber annotation does not work
     #@subscriber(NewRequest)
