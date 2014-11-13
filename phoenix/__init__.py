@@ -185,8 +185,7 @@ def main(global_config, **settings):
                 logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
                 settings['wps'] = None
         event.request.wps = settings['wps']
-
-    config.registry.settings['wps.url'] = settings['wps.url']
+        
     config.add_subscriber(add_wps, NewRequest)
 
     # catalog service
@@ -202,7 +201,6 @@ def main(global_config, **settings):
                 settings['csw'] = None
         event.request.csw = settings['csw']
 
-    config.registry.settings['csw.url'] = settings['csw.url']
     config.add_subscriber(add_csw, NewRequest)
     
     config.scan('phoenix')
