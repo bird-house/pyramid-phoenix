@@ -27,7 +27,11 @@ After successful installation you need to start the services. Phoenix is using `
    $ make start    # starts supervisor services
    $ make status   # shows status of supervisor services
 
-Phoenix web application is available on http://localhost:8081. You will need an OpenID to login to Phoenix.
+Phoenix web application is available on http://localhost:8081. You will need an OpenID to login to Phoenix. Admin users are configured in the ``custom.cfg`` file (see Configuration). Normal Users need to be registered on the Settings/User page. By default there is a local admin user (admin@malleefowl.org) with no OpenID. To login with this user open 
+
+http://localhost:8081/login/local
+
+The local admin user can be deactivated by removing it from the admin users list in ``custom.cfg``.
 
 Check the log file for errors::
 
