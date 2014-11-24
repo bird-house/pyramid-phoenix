@@ -1,7 +1,7 @@
 Changes
 *******
 
-0.2.2 (current)
+0.2.2 (2014-11-24)
 ==================
 
 Utrecht Release
@@ -11,6 +11,7 @@ Utrecht Release
 * added provider for each contry to esgf login page.
 * shows last login in users settings.
 * shows unregistered users in dashboard.
+* using buildout 2.x.
 
 Bugs:
 
