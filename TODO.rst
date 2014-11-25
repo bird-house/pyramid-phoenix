@@ -17,7 +17,9 @@ Bugs
 Common
 ======
 
-* upgrade to buildout 2
+* enabled opendap search 
+* add esgf search for local files
+* add solr search for miklip
 * add link to fatcow icons
 http://www.fatcow.com/free-icons
 * install malleefowl with phoenix
