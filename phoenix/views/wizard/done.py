@@ -36,6 +36,7 @@ class Done(Wizard):
         
         source = dict(
             service = self.request.wps.url,
+            credentials=credentials,
             identifier = 'wget',
             input = inputs,
             output = output, # output for chaining to worker as input
@@ -47,6 +48,8 @@ class Done(Wizard):
             service = self.wps.url,
             identifier = self.wizard_state.get('wizard_process')['identifier'],
             input = worker_inputs,
+            inputs = [(key, value) for key,value in inputs],
+            resource = self.wizard_state.get('wizard_complex_inputs')['identifier'],
             complex_input = self.wizard_state.get('wizard_complex_inputs')['identifier'])
         nodes = dict(source=source, worker=worker)
         return nodes
