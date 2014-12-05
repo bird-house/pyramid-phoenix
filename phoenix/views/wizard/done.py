@@ -31,8 +31,13 @@ class Done(Wizard):
         logger.debug('source output identifier: %s', output)
 
         inputs = []
-        for url in self.resources():
-            inputs.append('resource=%s' % url)
+        # TODO: maybe needed for csw search again
+        #for url in self.resources():
+        #    inputs.append('resource=%s' % url)
+        
+        selection = self.wizard_state.get('wizard_esgf')['selection']
+        import json
+        esgsearch = json.loads(selection)
         
         source = dict(
             service = self.request.wps.url,
@@ -47,7 +52,7 @@ class Done(Wizard):
             inputs = [(key, value) for key,value in inputs],
             resource = self.wizard_state.get('wizard_complex_inputs')['identifier'],
             )
-        nodes = dict(source=source, worker=worker)
+        nodes = dict(esgsearch=esgsearch, source=source, worker=worker)
         return nodes
 
     def execute_workflow(self, appstruct):
