@@ -46,7 +46,7 @@ class ESGFCredentials(Wizard):
         
     def next_success(self, appstruct):
         self.success(appstruct)
-        return self.next('wizard_check_parameters')
+        return self.next('wizard_done')
         
     @view_config(route_name='wizard_esgf_credentials', renderer='phoenix:templates/wizard/esgf.pt')
     def view(self):
