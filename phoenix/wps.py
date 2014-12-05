@@ -82,6 +82,9 @@ def execute_sync(service_url, identifier, inputs=[], output='output', format=RAW
     return result
 
 def execute_restflow(wps, nodes):
+    """
+    execute restflow workflow on given wps and with given nodes
+    """
     import json
     nodes_json = json.dumps(nodes)
 
@@ -93,6 +96,9 @@ def execute_restflow(wps, nodes):
     return execution
 
 def execute_dispel(wps, nodes):
+    """
+    execute dispel workflow on given wps and with given nodes
+    """
     import json
     nodes_json = json.dumps(nodes)
 
