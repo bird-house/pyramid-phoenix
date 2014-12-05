@@ -158,7 +158,11 @@ class ChooseInputParamterSchema(colander.MappingSchema):
         widget = deferred_choose_input_parameter_widget)
 
 class ChooseSourceSchema(colander.MappingSchema):
-    choices = [('wizard_csw', "CSW Catalog Search"), ('wizard_esgf', "ESGF Source")]
+    choices = [
+        # TODO: enable csw again
+        #('wizard_csw', "CSW Catalog Search"),
+        ('wizard_esgf', "ESGF Files"),
+        ]
     source = colander.SchemaNode(
         colander.String(),
         widget = RadioChoiceWidget(values = choices))
