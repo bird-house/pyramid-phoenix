@@ -30,16 +30,13 @@ class Done(Wizard):
             output = 'output'
         logger.debug('source output identifier: %s', output)
 
-        inputs = ['credentials=%s' % (credentials)]
+        inputs = []
         for url in self.resources():
             inputs.append('resource=%s' % url)
         
         source = dict(
             service = self.request.wps.url,
             credentials=credentials,
-            identifier = 'wget',
-            input = inputs,
-            output = output, # output for chaining to worker as input
         )
         from phoenix.wps import appstruct_to_inputs
         inputs = appstruct_to_inputs(self.wizard_state.get('wizard_literal_inputs', {}))
@@ -47,10 +44,9 @@ class Done(Wizard):
         worker = dict(
             service = self.wps.url,
             identifier = self.wizard_state.get('wizard_process')['identifier'],
-            input = worker_inputs,
             inputs = [(key, value) for key,value in inputs],
             resource = self.wizard_state.get('wizard_complex_inputs')['identifier'],
-            complex_input = self.wizard_state.get('wizard_complex_inputs')['identifier'])
+            )
         nodes = dict(source=source, worker=worker)
         return nodes
 
@@ -58,8 +54,8 @@ class Done(Wizard):
         logger.debug('done appstruct = %s', appstruct)
         nodes = self.workflow_description()
         logger.debug('done nodes = %s', nodes)
-        from phoenix.wps import execute_restflow
-        return execute_restflow(self.request.wps, nodes)
+        from phoenix.wps import execute_dispel
+        return execute_dispel(self.request.wps, nodes)
 
     def success(self, appstruct):
         super(Done, self).success(appstruct)

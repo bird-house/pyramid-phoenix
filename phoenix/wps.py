@@ -92,6 +92,17 @@ def execute_restflow(wps, nodes):
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     return execution
 
+def execute_dispel(wps, nodes):
+    import json
+    nodes_json = json.dumps(nodes)
+
+    # generate and run dispel workflow
+    identifier='dispel'
+    inputs=[('nodes', nodes_json)]
+    outputs=[('output', True)]
+    execution = wps.execute(identifier, inputs=inputs, output=outputs)
+    return execution
+
 def appstruct_to_inputs(appstruct):
     logger.debug('execute appstruct: %s', appstruct)
     inputs = []
