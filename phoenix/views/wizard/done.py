@@ -20,15 +20,6 @@ class Done(Wizard):
 
     def workflow_description(self):
         credentials = self.get_user().get('credentials')
-        # if source and worker are on the same machine use local output_path
-        # otherwise http url.
-        from urlparse import urlparse
-        source_hostname = urlparse(self.request.wps.url).netloc.split(':')[0]
-        worker_hostname = urlparse(self.wps.url).netloc.split(':')[0]
-        output = 'output_external'
-        if source_hostname == worker_hostname:
-            output = 'output'
-        logger.debug('source output identifier: %s', output)
 
         inputs = []
         # TODO: maybe needed for csw search again
