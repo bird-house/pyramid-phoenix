@@ -1,6 +1,13 @@
 Changes
 *******
 
+0.2.3 (current)
+==================
+
+* map disabled (needs refactoring)
+* calling dispel workflow on malleefowl
+* skipped esgf file selection ... file search is done in dispel workflow  
+
 0.2.2 (2014-11-24)
 ==================
 
