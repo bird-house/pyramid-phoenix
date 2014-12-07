@@ -17,6 +17,7 @@ Bugs
 Common
 ======
 
+* refactor map and enable it again
 * enabled opendap search 
 * add esgf search for local files
 * add solr search for miklip

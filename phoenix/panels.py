@@ -18,7 +18,8 @@ def navbar(context, request):
         nav.append( nav_item('Processes', request.route_url('processes')) )
         nav.append( nav_item('My Jobs', request.route_url('myjobs')) )
         nav.append( nav_item('Wizard', request.route_url('wizard')) )
-        nav.append( nav_item('Map', request.route_url('map')) )
+        # TODO: enable map again when it is working
+        #nav.append( nav_item('Map', request.route_url('map')) )
         nav.append( nav_item('My Account', request.route_url('myaccount')) )
     if has_permission('admin', request.context, request):
         nav.append( nav_item('Settings', request.route_url('settings')) )
