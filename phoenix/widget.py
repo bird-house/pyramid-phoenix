@@ -77,7 +77,7 @@ class EsgSearchWidget(Widget):
         kw['url'] = kw.get('url', self.url)
         kw.setdefault('facets', search.get('facets', ''))
         kw.setdefault('query', search.get('query', '*'))
-        kw.setdefault('distrib', self._bool( search.get('distrib', True)))
+        kw.setdefault('distrib', self._bool( search.get('distrib', False)))
         replica = search.get('replica', False)
         if replica == None:
             kw.setdefault('replica', self.true_val)

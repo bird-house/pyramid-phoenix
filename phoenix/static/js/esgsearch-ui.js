@@ -92,11 +92,11 @@
           search();
         });
 
-	/*
+        /*
         $('#' + searchOptions.oid + '-spatial').click(function () {
           search();
         });
-	*/
+        */
       };
 
       var init_query = function() {
@@ -253,7 +253,7 @@
       var defaults = {
         oid: null,
         url: null,
-        distrib: true,
+        distrib: false,
         latest: true,
         replica: false,
         query: '*',
