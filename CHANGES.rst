@@ -4,6 +4,8 @@ Changes
 0.2.3 (current)
 ==================
 
+* esgf search is by default not distributed.
+* default log-level set to info.
 * map disabled (needs refactoring)
 * calling dispel workflow on malleefowl
 * skipped esgf file selection ... file search is done in dispel workflow  
