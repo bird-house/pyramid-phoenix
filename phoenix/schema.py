@@ -170,8 +170,8 @@ class ChooseSourceSchema(colander.MappingSchema):
 def esgsearch_validator(node, value):
     import json
     search = json.loads(value)
-    if search.get('hit-count', 0) > 20:
-        raise Invalid(node, 'More than 20 datasets selected: %r.' %  search['hit-count'])
+    if search.get('hit-count', 0) > 100:
+        raise Invalid(node, 'More than 100 datasets selected: %r.' %  search['hit-count'])
 
 class ESGFSearchSchema(colander.MappingSchema):
     selection = colander.SchemaNode(
