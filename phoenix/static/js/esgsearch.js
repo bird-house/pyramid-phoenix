@@ -69,7 +69,7 @@ $.extend(EsgSearchResult.prototype, {
     EsgSearch: function(options) {
       var defaults = {
         url: null,
-        query: '*', // TODO: rename query to freetext
+        query: '*:*', // TODO: rename query to freetext
         datasetId: null,
         constraints: null,
         limit: 0,

@@ -76,7 +76,7 @@ class EsgSearchWidget(Widget):
             search = json.loads(cstruct)
         kw['url'] = kw.get('url', self.url)
         kw.setdefault('facets', search.get('facets', ''))
-        kw.setdefault('query', search.get('query', '*'))
+        kw.setdefault('query', search.get('query', '*:*'))
         kw.setdefault('distrib', self._bool( search.get('distrib', False)))
         replica = search.get('replica', False)
         if replica == None:
