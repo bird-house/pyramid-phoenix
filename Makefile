@@ -1,4 +1,4 @@
-VERSION := 0.1.1
+VERSION := 0.1.2
 RELEASE := master
 
 # Application
@@ -24,7 +24,7 @@ endif
 
 # Buildout files and folders
 DOWNLOAD_CACHE := $(APP_ROOT)/downloads
-BUILDOUT_FILES := parts eggs develop-eggs bin .installed.cfg .mr.developer.cfg *.egg-info bootstrap.py *.bak.* $(DOWNLOAD_CACHE)
+BUILDOUT_FILES := parts eggs develop-eggs bin .installed.cfg .mr.developer.cfg *.egg-info bootstrap-buildout.py *.bak.* $(DOWNLOAD_CACHE)
 
 # Docker
 DOCKER_IMAGE := $(APP_NAME)
@@ -112,9 +112,9 @@ downloads:
 .PHONY: init
 init: .gitignore custom.cfg downloads
 
-bootstrap.py:
-	@echo "Update buildout bootstrap.py ..."
-	@test -f boostrap.py || wget --no-check-certificate -O bootstrap.py http://downloads.buildout.org/2/bootstrap.py
+bootstrap-buildout.py:
+	@echo "Update buildout bootstrap-buildout.py ..."
+	@test -f boostrap-buildout.py || wget --no-check-certificate -O bootstrap-buildout.py https://bootstrap.pypa.io/bootstrap-buildout.py
 
 ## Anaconda targets
 
@@ -125,6 +125,11 @@ anaconda:
 	@test -d $(ANACONDA_HOME) || bash "$(DOWNLOAD_CACHE)/$(FN)" -b -p $(ANACONDA_HOME)   
 	@echo "Add '$(ANACONDA_HOME)/bin' to your PATH variable in '.bashrc'."
 
+.PHONY: conda_pinned
+conda_pinned:
+	@echo "Update pinned conda packages ..."
+	@test -d $(ANACONDA_HOME) && wget -q -c -O "$(ANACONDA_HOME)/conda-meta/pinned" https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/master/conda_pinned 
+
 .PHONY: conda_pkgs
 conda_pkgs: anaconda
 	"$(ANACONDA_HOME)/bin/conda" install --yes pyopenssl
@@ -132,9 +137,9 @@ conda_pkgs: anaconda
 ## Build targets
 
 .PHONY: bootstrap
-bootstrap: init anaconda bootstrap.py
+bootstrap: init anaconda bootstrap-buildout.py
 	@echo "Bootstrap buildout ..."
-	@test -f bin/buildout || $(ANACONDA_HOME)/bin/python bootstrap.py -c custom.cfg --allow-site-packages
+	@test -f bin/buildout || $(ANACONDA_HOME)/bin/python bootstrap-buildout.py -c custom.cfg --allow-site-packages --version=2.2.5 --setuptools-version=7.0
 
 .PHONY: sysinstall
 sysinstall: bootstrap.sh requirements.sh
@@ -144,7 +149,7 @@ sysinstall: bootstrap.sh requirements.sh
 	@bash requirements.sh
 
 .PHONY: install
-install: bootstrap conda_pkgs
+install: bootstrap conda_pinned conda_pkgs
 	@echo "Installing application with buildout ..."
 	bin/buildout -c custom.cfg
 
