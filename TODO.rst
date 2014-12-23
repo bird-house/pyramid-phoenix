@@ -17,6 +17,7 @@ Bugs
 Common
 ======
 
+* logrotate for phoenix.log
 * refactor map and enable it again
 * enabled opendap search 
 * add esgf search for local files
