@@ -17,6 +17,10 @@ Bugs
 Common
 ======
 
+* supervisor monitor behind proxy
+* ipython websocket:
+http://nginx.com/blog/websocket-nginx/
+http://stackoverflow.com/questions/22665809/how-to-configure-ipython-behind-nginx-in-a-subpath
 * refactor map and enable it again
 * enabled opendap search 
 * add esgf search for local files
