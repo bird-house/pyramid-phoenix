@@ -4,6 +4,7 @@ Changes
 0.2.3 (current)
 ==================
 
+* using TimedRotatingFileHandler for logging.
 * esgf search is by default not distributed.
 * default log-level set to info.
 * map disabled (needs refactoring)
