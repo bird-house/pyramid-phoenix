@@ -27,7 +27,7 @@ DOWNLOAD_CACHE := $(APP_ROOT)/downloads
 BUILDOUT_FILES := parts eggs develop-eggs bin .installed.cfg .mr.developer.cfg *.egg-info bootstrap-buildout.py *.bak.* $(DOWNLOAD_CACHE)
 
 # Docker
-DOCKER_IMAGE := $(APP_NAME)
+DOCKER_IMAGE := birdhouse/$(APP_NAME)
 DOCKER_CONTAINER := $(APP_NAME)
 
 # end of configuration
@@ -132,7 +132,12 @@ conda_pinned:
 
 .PHONY: conda_pkgs
 conda_pkgs: anaconda
-	"$(ANACONDA_HOME)/bin/conda" install --yes pyopenssl
+	"$(ANACONDA_HOME)/bin/conda" install -c https://conda.binstar.org/birdhouse --yes pyopenssl genshi
+
+.PHONY: conda_config
+conda_config: anaconda
+	@echo "Update ~/.condarc"
+	@"$(ANACONDA_HOME)/bin/conda" config --add channels https://conda.binstar.org/birdhouse
 
 ## Build targets
 
@@ -149,7 +154,7 @@ sysinstall: bootstrap.sh requirements.sh
 	@bash requirements.sh
 
 .PHONY: install
-install: bootstrap conda_pinned conda_pkgs
+install: bootstrap conda_pinned conda_config conda_pkgs
 	@echo "Installing application with buildout ..."
 	bin/buildout -c custom.cfg
 
