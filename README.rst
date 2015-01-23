@@ -11,7 +11,11 @@ Installation
 
 Phoenix uses WPS processes provided by Malleefowl. As a requiste you should install a local Malleefowl WPS (this will become part of the Phoenix installer). Alternatively you could configure the WPS URL of a running Malleefowl WPS instance in the Phoenix ``custom.cfg``.
 
-To install Malleefowl follow the instructions given in the Malleefowl `Readme <https://github.com/bird-house/malleefowl/blob/master/README.rst>`_.
+To install Malleefowl follow the instructions given in the Malleefowl `Readme <https://github.com/bird-house/malleefowl/blob/master/README.rst>`_. In short:
+
+   $ git clone https://github.com/bird-house/malleefowl.git
+   $ cd malleefowl
+   $ make
 
 Now start with installing Phoenix with sources from github::
 
@@ -58,6 +62,20 @@ After any change to your ``custom.cfg`` you **need** to run ``make install`` aga
 
   $ make install
   $ make restart
+
+Register WPS services
+---------------------
+
+When Phoenix is started and you are logged-in as admin user you can register WPS services in ``Settings/Catalog``:
+
+http://localhost:8081/settings/catalog 
+
+Use the ``Add Service`` button and enter the WPS url as ``Service URL``, for example Malleefowl WPS: http://localhost:8081/settings/catalog
+
+Run a WPS Process
+-----------------
+
+When you have registered WPS services you can run a process. Go to the ``Processes`` tab and use the ``Choose WPS`` button to choose one of your registered WPS servces. You will get a list of available processes (WPS ``GetCapabilities`` request). Choose one of these processes by using the ``Execute`` button. In case of Malleefowl you may try the ``Logon with ESGF OpenID`` process. You will then be prompted to enter your ESGF OpenID and password. Press the ``Submit`` button. When the process is submitted you will be shown your job list in ``My Jobs``. The list shows the status and progress of your jobs. When a job has finished with success you can see the results by using the ``Show`` button. In case of the ``Logon`` process you should have as output a link to your X509 proxy certificate. You can open the link by pressing ``View``.
 
 
 Troubleshooting
