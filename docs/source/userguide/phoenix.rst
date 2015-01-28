@@ -30,7 +30,7 @@ database ... don't worry about it ;)
 Monitor
 -------
 
-On this tab you can see if all Climdaps services are running. You can
+On this tab you can see if all Birdhouse services are running. You can
 also restart Phoenix (in case of config change) and PyWPS (in case of
 changes to the WPS processes).
 

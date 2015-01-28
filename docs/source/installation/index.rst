@@ -9,7 +9,7 @@ Prerequirements
 ===============
     
 * Currently the buildout installation works *only on the 64 Bit version of Ubuntu 12.04* or above.
-* Installing and running ClimDaPs requires some resources. So you should *have a recent machine* (2 Cores, 4 GB).
+* Installing and running Birdhouse requires some resources. So you should *have a recent machine* (2 Cores, 4 GB).
 * The buildout installation process will install required system packages. Therefore *you need sudo rights*. 
 
 .. _malleefowl:
@@ -101,10 +101,10 @@ Debian/Ubuntu or yum on RedHat/CentOS).
  
 .. _starting:
 =================
-Starting ClimDaPs
+Starting Birdhouse
 =================
 
-The ClimDaPs services are monitored with supervisor. ClimDaPs uses
+The Birdhouse services are monitored with supervisor. Birdhouse uses
 the `nginx` webserver which is installed during buildout installation.
 
 First make sure that `nginx` is running (it is started automatically)::
@@ -121,7 +121,7 @@ Check that supervisor is running::
 
 and start supervisor if necessary.
 
-Check the status of ClimDaPs services with supervisor monitor::
+Check the status of Birdhouse services with supervisor monitor::
 
        $ sudo supervisorctl
 
@@ -176,14 +176,14 @@ If you want to *keep your changes* you might use the `git stash` command::
         $ git stash            # just move your changes into stash
         $ git help stash       # see further options
 
-After you successfully got the current version of ClimDaPs from `git` run buildout again::
+After you successfully got the current version of Birdhouse from `git` run buildout again::
 
         $ ./install.sh
         
-Then restart your ClimDaPs services with `supervisor`::
+Then restart your Birdhouse services with `supervisor`::
 
         $ sudo supervisorctl
         > status
         > restart all
 
-See (starting climdaps) for further instructions.
+See (starting Birdhouse) for further instructions.

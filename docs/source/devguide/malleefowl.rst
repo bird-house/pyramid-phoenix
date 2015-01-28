@@ -2,11 +2,11 @@
 Malleefowl WPS Processes
 ========================
 
-Malleefowl is the server part of ClimDaPs for WPS web processing
-processes. ClimDaPs uses PyWPS as the default web processing server
+Malleefowl is the server part of Birdhouse for WPS web processing
+processes. Birdhouse uses PyWPS as the default web processing server
 (There are alternatives like GeoServer, Cows, deegree, 52-North). The
 Malleefowl component contains the currently available processes for
-ClimDaPs. Malleefowl has also some Python classes to simplify the
+Birdhouse. Malleefowl has also some Python classes to simplify the
 creation of new WPS processes and to define `source` and `worker`
 processes which are used by the `Wizard` component in Phoenix. The
 `Wizard` of Phoenix builds a workflow script with a `source` process
@@ -30,7 +30,7 @@ float, string, boolean, ... and a complex data type which we use for
 file input and output. Read the docs for details :)
 
 One more remark. WPS processes might be run synchronosly ore
-asynchronosly. In ClimDaPs we currently assume that all process are
+asynchronosly. In Birdhouse we currently assume that all process are
 async. This will change in the future.
 
 Creating a WPS Process
@@ -41,7 +41,7 @@ pywps.Process.WPSProcess. But it is recommended to use the adapted
 Malleefowl class malleefowl.WPSProcess which simplifies the creation
 of a new process.
 
-Currently the ClimDaPs components assumes that all process are run
+Currently the Birdhouse components assumes that all process are run
 asynchronus (read more about this in the WPS and PyWPS
 documentation). The malleefowl WPSProcess class sets this by default.
 
@@ -58,7 +58,7 @@ PyWPS.
 Creating a Source WPS Process
 -----------------------------
 
-The Wizard component of Phoenix (ClimDaPs wedb-interface) generates a
+The Wizard component of Phoenix (Birdhouse web-interface) generates a
 workflow script with an Source process and an Worker process. The
 Source process provides data files (for example netcdf files from
 ESGF). The Worker process works on these data files (one or more) and
