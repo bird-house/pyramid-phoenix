@@ -53,3 +53,6 @@ docs/html/
 
 # External Sources
 src/
+
+# IPython
+.ipynb_checkpoints
