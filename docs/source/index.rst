@@ -1,11 +1,12 @@
-.. Birdhouse documentation master file, created by
+.. Phoenix documentation master file, created by
    sphinx-quickstart on Wed Jul 10 17:08:00 2013.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Birdhouse |version| Documentation
+Phoenix |version| Documentation
 ================================
-Documentation for `Birdhouse <http://bird-house.github.io/>`_. Birdhouse is a Project for Climate Data Processing with `OGC Web Processing Service (WPS) <http://opengeospatil.org/standards/wps>`_. 
+
+Documentation for `Phoenix <http://bird-house.github.io/>`_. Phoenix is a web-application build with the Python web-framework Pyramid. Phoenix makes it easy to interact with `Web Processing Service (WPS) <http://opengeospatil.org/standards/wps>`_. 
 
 Contents:
 
