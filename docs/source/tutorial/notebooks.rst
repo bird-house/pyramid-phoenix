@@ -6,6 +6,10 @@ IPython Notebooks
 
 Using IPython Notebook http://ipython.org/notebook.html and notebook viewer http://nbviewer.ipython.org/.
 
+You need a running Emu WPS service with some test process. See documentation on how to install Emu WPS:
+
+http://emu.readthedocs.org/en/latest/
+
 WPS Standard Documentation
 ------------------------------
 
