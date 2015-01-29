@@ -6,11 +6,11 @@ User Guide
 
 The user guide explains how to use the Phoenix web UI and which process are currently available.
 
-.. toctree::
-   :maxdepth: 1
+[documenation missing]
 
-   phoenix
-   processes/index.rst
+Please check the `Readme <https://github.com/bird-house/pyramid-phoenix/blob/master/README.rst>`_.
+
+
 
 
 
