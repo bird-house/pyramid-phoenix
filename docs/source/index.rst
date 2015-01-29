@@ -14,9 +14,7 @@ Contents:
 
    installation/index
    tutorial/index
-..   userguide/index
    devguide/index
-..   releases/index
    appendix/index
 
 Indices and tables
