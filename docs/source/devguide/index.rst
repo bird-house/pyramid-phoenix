@@ -6,7 +6,7 @@ Developer Guide
 
 *Please* read the documentation of `PyWPS Tutorial`_, `OWSLib WPS`_ and `OGC WPS`_.
 
-To set up PyWPS with a example processes you can use the `Emu WPS`_ from Birdhouse.
+To set up PyWPS with example processes you can use the `Emu WPS`_ from Birdhouse.
  
 .. _`OGC WPS`: http://www.opengeospatial.org/standards/wps
 .. _`PyWPS`: http://pywps.wald.intevation.org/index.html
