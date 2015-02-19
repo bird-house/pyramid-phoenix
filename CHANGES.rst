@@ -4,6 +4,7 @@ Changes
 0.2.3 (current)
 ==================
 
+* sets x509 proxy certificate in processes.
 * using TimedRotatingFileHandler for logging.
 * esgf search is by default not distributed.
 * default log-level set to info.
