@@ -56,7 +56,7 @@ class ExecuteProcess(Processes):
                 title = execution.process.title,
                 wps_url = execution.serviceInstance,
                 status_location = execution.statusLocation,
-                abstract = appstruct.get('abstract', ''),
+                abstract = execution.process.abstract,
                 keywords = appstruct.get('keywords', ''))
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')

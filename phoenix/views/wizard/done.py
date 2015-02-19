@@ -63,13 +63,18 @@ class Done(Wizard):
         
         execution = self.execute_workflow(appstruct)
         from phoenix.models import add_job
+        # TODO: cache process description
+        process = self.wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
+        abstract = None
+        if hasattr(process, 'abstract'):
+            abstract = process.abstract
         add_job(
             request = self.request,
             workflow = True,
-            title = appstruct.get('title'),
+            title = process.title,
             wps_url = execution.serviceInstance,
             status_location = execution.statusLocation,
-            abstract = appstruct.get('abstract'),
+            abstract = abstract,
             keywords = appstruct.get('keywords'))
 
     def next_success(self, appstruct):
@@ -80,12 +85,10 @@ class Done(Wizard):
 
     def appstruct(self):
         appstruct = super(Done, self).appstruct()
-        params = ', '.join(['%s=%s' % item for item in self.wizard_state.get('wizard_literal_inputs', {}).items()])
+        #params = ', '.join(['%s=%s' % item for item in self.wizard_state.get('wizard_literal_inputs', {}).items()])
         identifier = self.wizard_state.get('wizard_process')['identifier']
         # TODO: add search facets to keywords
         appstruct.update( dict(
-            title=identifier,
-            abstract=params,
             keywords="test,workflow,%s" % identifier,
             favorite_name=identifier))
         return appstruct

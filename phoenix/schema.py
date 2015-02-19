@@ -183,29 +183,29 @@ class ESGFSearchSchema(colander.MappingSchema):
         widget = EsgSearchWidget(url="/esg-search"))
 
 class JobSchema(colander.MappingSchema):
-    @colander.deferred
-    def deferred_title(node, kw):
-        return kw.get('title', 'test-job')
+    ## @colander.deferred
+    ## def deferred_title(node, kw):
+    ##     return kw.get('title', 'test-job')
 
-    @colander.deferred
-    def deferred_abstract(node, kw):
-        return kw.get('abstract', 'test')
+    ## @colander.deferred
+    ## def deferred_abstract(node, kw):
+    ##     return kw.get('abstract', 'test')
 
     @colander.deferred
     def deferred_keywords(node, kw):
         return kw.get('keywords', 'test')
     
-    title = colander.SchemaNode(
-        colander.String(),
-        default = deferred_title,
-        missing = 'test')
+    ## title = colander.SchemaNode(
+    ##     colander.String(),
+    ##     default = deferred_title,
+    ##     missing = 'test')
     
-    abstract = colander.SchemaNode(
-        colander.String(),
-        default = deferred_abstract,
-        missing = '',
-        validator = colander.Length(max=500),
-        widget = TextAreaWidget(rows=3, cols=120))
+    ## abstract = colander.SchemaNode(
+    ##     colander.String(),
+    ##     default = deferred_abstract,
+    ##     missing = '',
+    ##     validator = colander.Length(max=500),
+    ##     widget = TextAreaWidget(rows=3, cols=120))
     
     keywords = colander.SchemaNode(
         colander.String(),

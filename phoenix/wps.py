@@ -213,11 +213,9 @@ class WPSSchema(JobSchema):
         self.process = process
         self.unknown = unknown
         self.user = user
-        self.kwargs = kwargs or {}   
+        self.kwargs = kwargs or {}
 
         if not info:
-            self.__delitem__('title')
-            self.__delitem__('abstract')
             self.__delitem__('keywords')
         self.add_nodes(process)
 
