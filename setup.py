@@ -35,7 +35,7 @@ requires = [
     ]
 
 setup(name='Phoenix',
-      version='0.2.2',
+      version='0.3.0',
       description='Phoenix',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
@@ -46,7 +46,7 @@ setup(name='Phoenix',
         ],
       author='Birdhouse',
       url='https://github.com/bird-house/pyramid-phoenix.git',
-      keywords='web wsgi bfg pylons pyramid',
+      keywords='web wsgi buildout pylons pyramids phoenix birdhouse malleefowl wps pywps esgf',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,

@@ -1,7 +1,12 @@
 Changes
 *******
 
-0.2.3 (current)
+0.3.0 (2015-02-24)
+==================
+
+* Now possible to use shared anaconda installation.
+
+0.2.3 (2015-02-23)
 ==================
 
 * sets x509 proxy certificate in processes.
