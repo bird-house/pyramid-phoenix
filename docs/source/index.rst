@@ -3,8 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Phoenix |version| Documentation
-================================
+.. _introduction:
+
+Introduction
+============
 
 Documentation for `Phoenix <http://bird-house.github.io/>`_. Phoenix is a web-application build with the Python web-framework Pyramid. Phoenix makes it easy to interact with `Web Processing Service (WPS) <http://opengeospatil.org/standards/wps>`_. 
 

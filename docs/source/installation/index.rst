@@ -1,10 +1,12 @@
 .. _installation:
+
 ************
 Installation
 ************
 
 
 .. _phoenix:
+
 ==========================
 Installing Phoenix (WPS web client)
 ==========================
