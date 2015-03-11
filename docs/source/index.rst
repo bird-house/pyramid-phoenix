@@ -3,15 +3,24 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Phoenix's documentation!
-===================================
+Introduction
+============
+
+Phoenix (the bird)
+  *Phoenix is a long-lived bird that is cyclically regenerated or reborn.* (`Wikipedia <https://en.wikipedia.org/wiki/Phoenix_%28mythology%29>`_). [..]
+
+Pyramid Phoenix is a web-application build with the Python web-framework `Pyramid <http://www.pylonsproject.org/>`_. Phoenix makes it easy to interact with Web Processing Services (WPS).
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
-
-
+              
+   installation
+   configuration
+   userguide
+   tutorial/index
+   troubleshooting
 
 Indices and tables
 ==================
