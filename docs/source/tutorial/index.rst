@@ -12,7 +12,6 @@ examples.
    :maxdepth: 1
 
    phoenix-tutorial
-   notebooks
 
 
 
