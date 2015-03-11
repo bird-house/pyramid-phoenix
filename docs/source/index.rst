@@ -18,7 +18,7 @@ Contents:
               
    installation
    configuration
-   userguide
+   user_guide
    tutorial
    troubleshooting
 
