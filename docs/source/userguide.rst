@@ -3,6 +3,42 @@
 User Guide
 ==========
 
+The user guide explains how to use the Phoenix web application to interact with Web Processing Services.
+
+.. _`Mozilla Persona`: https://login.persona.org/
+
+Login
+-----
+
+You need a `Mozilla Persona`_ account to login to Phoenix.
+
+If you want to give access to someone with a Mozilla Persona ID for your
+Phoenix instance you must add the Persona ID (email Address) to the
+whitelist of the Phoenix configuration file. For this edit the
+Phoenix configuration file:
+
+.. code-block:: bash
+            
+        $ cd $HOME/sandbox/climdaps/parts/phoenix
+        $ vim phoenix.ini
+        $ cat phoenix.ini
+        phoenix.login.whitelist = tux@linux.org, pingu@antarctica.org
+
+Currently a login is only necessary for the Admin and Monitor tab in Phoenix.
+
+Admin
+-----
+
+On the tab you can delete the Phoenix database ... the whole Phoenix
+database ... don't worry about it ;)
+
+Monitor
+-------
+
+On this tab you can see if all Birdhouse services are running. You can
+also restart Phoenix (in case of config change) and PyWPS (in case of
+changes to the WPS processes).
+
 Register WPS services
 ---------------------
 
@@ -17,9 +53,38 @@ http://localhost:8091/wps
 Run a WPS Process
 -----------------
 
-When you have registered WPS services you can run a process. Go to the ``Processes`` tab and use the ``Choose WPS`` button to choose one of your registered WPS servces. You will get a list of available processes (WPS ``GetCapabilities`` request). Choose one of these processes by using the ``Execute`` button. In case of Malleefowl you may try the ``Logon with ESGF OpenID`` process. You will then be prompted to enter your ESGF OpenID (e.a. https://esgf-data.dkrz.de/esgf-idp/openid/myname) and password. Press the ``Submit`` button. When the process is submitted you will be shown your job list in ``My Jobs``. The list shows the status and progress of your jobs. When a job has finished with success you can see the results by using the ``Show`` button. In case of the ``Logon`` process you should have as output a link to your X509 proxy certificate. You can open the link by pressing ``View``.
+When you have registered WPS services you can run a process. Go to the
+``Processes`` tab and use the ``Choose WPS`` button to choose one of
+your registered WPS servces. You will get a list of available
+processes (WPS ``GetCapabilities`` request). Choose one of these
+processes by using the ``Execute`` button. In case of Malleefowl you
+may try the ``Logon with ESGF OpenID`` process. You will then be
+prompted to enter your ESGF OpenID
+(e.a. https://esgf-data.dkrz.de/esgf-idp/openid/myname) and
+password. Press the ``Submit`` button. When the process is submitted
+you will be shown your job list in ``My Jobs``. The list shows the
+status and progress of your jobs. When a job has finished with success
+you can see the results by using the ``Show`` button. In case of the
+``Logon`` process you should have as output a link to your X509 proxy
+certificate. You can open the link by pressing ``View``.
 
 Using the Wizard
 ----------------
 
-The wizard is used to chain WPS processes and to collect the input parameters. Currently the wizard chains a user WPS process with a WPS process to retrieve ESGF data. Go to the ``Wizard`` tab. Enter the appropiate parameters and use ``Next`` to get to the next wizard page. You need to choose a WPS service (e.a. Malleefowl), a process (in case of Malleefowl only ``Dummy``), select the input parameter of the choosen process (mime-type application/netcdf), select the input source (ESGF), select an ESGF dataset (select categorie (blue) and values of this category (orange), current selection (green)). Please select **only one Dataset**! You might be prompted for your password for your OpenID. On the final page you can enter some keywords for your process and mark it as favorite (when using a favorite you don't need to enter all parameters again). Press ``Done`` and the job will be started and shown in your job list ``My Jobs``. When the job has finished you can see the results by pressing ``View``. The input files can be seen on the ``Resources`` tab. Also use ``View`` to open the file list.
+The wizard is used to chain WPS processes and to collect the input
+parameters. Currently the wizard chains a user WPS process with a WPS
+process to retrieve ESGF data. Go to the ``Wizard`` tab. Enter the
+appropiate parameters and use ``Next`` to get to the next wizard
+page. You need to choose a WPS service (e.a. Malleefowl), a process
+(in case of Malleefowl only ``Dummy``), select the input parameter of
+the choosen process (mime-type application/netcdf), select the input
+source (ESGF), select an ESGF dataset (select categorie (blue) and
+values of this category (orange), current selection (green)). Please
+select **only one Dataset**! You might be prompted for your password
+for your OpenID. On the final page you can enter some keywords for
+your process and mark it as favorite (when using a favorite you don't
+need to enter all parameters again). Press ``Done`` and the job will
+be started and shown in your job list ``My Jobs``. When the job has
+finished you can see the results by pressing ``View``. The input files
+can be seen on the ``Resources`` tab. Also use ``View`` to open the
+file list.
