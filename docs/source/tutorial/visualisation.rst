@@ -1,4 +1,4 @@
-.. _Creating a timeseries plot: 
+.. _tutorial_timeseries_plot: 
 
 --------------------------------
 **Creating a timeseries plot**
@@ -14,7 +14,7 @@ or
 
 While with *Processes* you can select single operational processes the *Wizard* is guiding you through the necessary stepps to submit a job. For getting an idea of the operation procedure choose the *Wizard* menue and select **simple**: 
 
-.. image:: wizard.png
+.. image:: ../_images/wizard.png
 
 The following steps are necessary to submit a job: 
 
@@ -33,7 +33,7 @@ And check the listed *PyWPS Server on mouflon.dkrz.de (mouflon)* .
 With clicking on *Next* you'll find the list of available processes. 
 Check the **Visualisation of data** and klick on *Next* which guides you to the process parameter: 
 
-.. image:: processparameter.png
+.. image:: ../_images/processparameter.png
 
 The values in the data files are stored with defined varable names. Here are the most common ones: 
 
@@ -51,7 +51,7 @@ A list of available variable names used for CMPI5 and CORDEX experiment can be f
 In the next step you will choose the data source. 
 Basically you can choose between the ESGF Data archive (with two different download options:
 
-.. image:: source.png
+.. image:: ../_images/source.png
 
 **Search Input Files**
 
@@ -86,14 +86,14 @@ End:   2005-12-31T12:00:00Z
 
 The Selection should look similar to:
 
-.. image:: currentselection.png
+.. image:: ../_images/currentselection.png
 
 **Select Files**
 
 After submitting the *Search Input Files* a serach process will give you a list of all suitable Datasets with the appropriate files. 
 Here you can do the final selection of the data files to be processed. In this example we select the first five files: 
 
-.. image:: selectfiles.png
+.. image:: ../_images/selectfiles.png
 
 **Access Parameters** 
 
@@ -102,22 +102,22 @@ The job can be submitted with pressing *Done*
 
 The job is now submitted and can be monitored in the *My Jobs* menue: 
 
-.. image:: myjobs.png
+.. image:: ../_images/myjobs.png
 
 Now starts the current Job. The date will be downloaded (and automatically stored in your personal folder). 
 The data will be anaysed, due to the process. In this case, a field mean over the whole domain will be performed and an appropriate timeline drawn. 
 
 If the job is finished, the staus bar is tuning into green: 
 
-.. image:: statussucceeded.png
+.. image:: ../_images/statussucceeded.png
 
-.. image:: valuedownload.png
+.. image:: ../_images/valuedownload.png
 
 Klick on the green *status succeeded* to get to the result of the submitted process.
 In this case, it is an html Url. 
 Opening it in a new browser tab gives the following result: 
 
-.. image:: finalplot.png
+.. image:: ../_images/finalplot.png
 
 
 

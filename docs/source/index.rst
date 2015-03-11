@@ -19,7 +19,7 @@ Contents:
    installation
    configuration
    userguide
-   tutorial/index
+   tutorial
    troubleshooting
 
 Indices and tables
