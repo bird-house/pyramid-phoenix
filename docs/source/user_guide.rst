@@ -81,18 +81,26 @@ If you have a valid ESGF OpenID you can update your X509 credentials. This is a 
 
 .. image:: _images/update_creds.png
 
-Settings (admin)
-----------------
+Settings (admins only)
+----------------------
 
-* Register WPS services
+When you are logged-in as admin user you have the ``Settings`` page. Here you can make administrative changes and monitor services. 
 
-When Phoenix is started and you are logged-in as admin user you can register WPS services in ``Settings/Catalog``:
+.. image:: _images/settings.png
 
-http://localhost:8081/settings/catalog 
+Register a WPS service
+~~~~~~~~~~~~~~~~~~~~~~
 
-Use the ``Add Service`` button and enter the WPS url as ``Service URL``, for example Malleefowl WPS:
+Open the ``Settings/Catalog`` page. Here you can see which services are registered in the catalog service (we are using `PyCSW <http://pycsw.org/>`_). All theses services are known and useable by Phoenix.
+
+.. image:: _images/catalog.png
+
+To add a new WPS service press the ``Add Service`` button and enter the WPS URL in the field ``Service URL``, for example Malleefowl WPS:
 
 http://localhost:8091/wps
+
+.. image:: _images/add_service.png
+
 
 
 
