@@ -11,9 +11,9 @@ To be able to login to Phoenix as admin you need to edit the ``custom.cfg`` in t
    [settings]
    hostname = localhost
    http-port = 8081
-   admin-users = admin@malleefowl.org
+   admin-users = admin@malleefowl.org pingu@antartica.earth
 
-Add your email of your OpenID account to the ``admin-users`` (space seperated).
+Add your email of your OpenID account to the ``admin-users`` (space separated).
 
 If you want to run on a different hostname or port then change the default values in ``custom.cfg``. 
 

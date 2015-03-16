@@ -5,39 +5,26 @@ User Guide
 
 The user guide explains how to use the Phoenix web application to interact with Web Processing Services.
 
-.. _`Mozilla Persona`: https://login.persona.org/
-
 Login
 -----
 
-You need a `Mozilla Persona`_ account to login to Phoenix.
+You need an OpenID account to login to Phoenix. You should use a `ESGF OpenID <https://github.com/ESGF/esgf.github.io/wiki/ESGF_Data_Download>`_ which is used later to access files from ESGF.
 
-If you want to give access to someone with a Mozilla Persona ID for your
-Phoenix instance you must add the Persona ID (email Address) to the
-whitelist of the Phoenix configuration file. For this edit the
-Phoenix configuration file:
+Now, press the ``Sign in`` button in the upper right corner.
 
-.. code-block:: bash
-            
-        $ cd $HOME/sandbox/climdaps/parts/phoenix
-        $ vim phoenix.ini
-        $ cat phoenix.ini
-        phoenix.login.whitelist = tux@linux.org, pingu@antarctica.org
+.. image:: _images/signin.png
 
-Currently a login is only necessary for the Admin and Monitor tab in Phoenix.
+Next you will have a page where you can enter the account name of you ESGF OpenID. Choose the according ESGF OpenID provider (by default this is DKRZ).
 
-Admin
------
+.. image:: _images/openid.png 
 
-On the tab you can delete the Phoenix database ... the whole Phoenix
-database ... don't worry about it ;)
 
-Monitor
--------
+Dashboard
+---------
 
-On this tab you can see if all Birdhouse services are running. You can
-also restart Phoenix (in case of config change) and PyWPS (in case of
-changes to the WPS processes).
+The dashboard shows some statistics about jobs and users. Currently there is not that much to see.
+
+.. image:: _images/dashboard.png
 
 Register WPS services
 ---------------------
