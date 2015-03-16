@@ -5,6 +5,10 @@ User Guide
 
 The user guide explains how to use the Phoenix web application to interact with Web Processing Services.
 
+.. contents::
+    :local:
+    :depth: 2
+
 Login
 -----
 
