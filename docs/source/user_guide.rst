@@ -60,15 +60,16 @@ Press the ``Submit`` button. When the process is submitted you will be shown you
 My Jobs
 -------
 
-When the job has finished you can see the results by pressing ``View``. The input files
-can be seen on the ``Resources`` tab. Also use ``View`` to open the file list.
+In ``My Jobs`` all your running or finished jobs are listed. 
+The list shows the status and progress of your jobs. 
 
-The list shows the
-status and progress of your jobs. When a job has finished with success
-you can see the results by using the ``Show`` button. In case of the
-``Logon`` process you should have as output a link to your X509 proxy
-certificate. You can open the link by pressing ``View``.
+.. image:: _images/myjobs.png
 
+When a job has finished with success you can see the results by using the ``Show`` button.  
+
+.. image:: _images/myjobs_output.png
+
+If the result has a document (XML, text, NetCDF, ...) you can view or download this document with the ``View`` button.
 
 Wizard
 ------
