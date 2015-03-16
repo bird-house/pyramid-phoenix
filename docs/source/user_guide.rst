@@ -26,6 +26,23 @@ The dashboard shows some statistics about jobs and users. Currently there is not
 
 .. image:: _images/dashboard.png
 
+Processes
+---------
+
+My Jobs
+-------
+
+Wizard
+------
+
+My Account
+----------
+
+Settings (admin)
+----------------
+
+
+
 Register WPS services
 ---------------------
 
