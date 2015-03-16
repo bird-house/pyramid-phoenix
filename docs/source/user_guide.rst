@@ -48,6 +48,10 @@ certificate. You can open the link by pressing ``View``.
 My Jobs
 -------
 
+When the job has finished you can see the results by pressing ``View``. The input files
+can be seen on the ``Resources`` tab. Also use ``View`` to open the file list.
+
+
 Wizard
 ------
 
@@ -55,19 +59,40 @@ The wizard is used to chain WPS processes and to collect the input
 parameters. Currently the wizard chains a user WPS process with a WPS
 process to retrieve ESGF data. Go to the ``Wizard`` tab. Enter the
 appropiate parameters and use ``Next`` to get to the next wizard
-page. You need to choose a WPS service (e.a. Malleefowl), a process
-(in case of Malleefowl only ``Dummy``), select the input parameter of
-the choosen process (mime-type application/netcdf), select the input
-source (ESGF), select an ESGF dataset (select categorie (blue) and
-values of this category (orange), current selection (green)). Please
-select **only one Dataset**! You might be prompted for your password
-for your OpenID. On the final page you can enter some keywords for
-your process and mark it as favorite (when using a favorite you don't
-need to enter all parameters again). Press ``Done`` and the job will
-be started and shown in your job list ``My Jobs``. When the job has
-finished you can see the results by pressing ``View``. The input files
-can be seen on the ``Resources`` tab. Also use ``View`` to open the
-file list.
+page. 
+
+.. image:: _images/wizard.png
+
+You need to choose a WPS service (e.a. Malleefowl). 
+
+.. image:: _images/wizard_wps.png
+
+Choose a process (in case of Malleefowl only ``Dummy``).
+
+.. image:: _images/wizard_process.png
+
+Select the input parameter of the choosen process (mime-type application/netcdf). 
+
+.. image:: _images/wizard_complexinput.png
+
+Select the input source (ESGF). 
+
+.. image:: _images/wizard_source.png
+
+Select an ESGF dataset (select categorie (blue) and values of this category (orange), current selection (green)). 
+
+.. image:: _images/wizard_search.png
+
+Please select **only one Dataset**! 
+
+You will be prompted for your password of your OpenID if your certificate is not valid anymore. 
+
+.. image:: _images/wizard_credentials.png
+
+On the final page you can enter some keywords for your process and mark it as favorite (when using a favorite you don't
+need to enter all parameters again). Press ``Done`` and the job will be started and shown in your job list ``My Jobs``. 
+
+.. image:: _images/wizard_done.png
 
 
 My Account
@@ -91,7 +116,7 @@ When you are logged-in as admin user you have the ``Settings`` page. Here you ca
 Register a WPS service
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Open the ``Settings/Catalog`` page. Here you can see which services are registered in the catalog service (we are using `PyCSW <http://pycsw.org/>`_). All theses services are known and useable by Phoenix.
+Open the ``Settings/Catalog`` page. Here you can see which services are registered in the catalog service (we are using :term:`birdhouse:PyCSW`). All theses services are known and useable by Phoenix.
 
 .. image:: _images/catalog.png
 
