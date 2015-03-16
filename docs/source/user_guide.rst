@@ -29,42 +29,6 @@ The dashboard shows some statistics about jobs and users. Currently there is not
 Processes
 ---------
 
-My Jobs
--------
-
-Wizard
-------
-
-My Account
-----------
-
-In ``My Account`` you can change your user settings (user name, organisation, openid, ...).
-
-.. image:: _images/myaccount.png
-
-If you have a valid ESGF OpenID you can update your X509 credentials. This is a X509 proxy certificate which is used to access ESGF data. To update press the button ``Update Credentials`` and enter your OpenID password in the dialog.
-
-.. image:: _images/update_creds.png
-
-Settings (admin)
-----------------
-
-
-
-Register WPS services
----------------------
-
-When Phoenix is started and you are logged-in as admin user you can register WPS services in ``Settings/Catalog``:
-
-http://localhost:8081/settings/catalog 
-
-Use the ``Add Service`` button and enter the WPS url as ``Service URL``, for example Malleefowl WPS:
-
-http://localhost:8091/wps
-
-Run a WPS Process
------------------
-
 When you have registered WPS services you can run a process. Go to the
 ``Processes`` tab and use the ``Choose WPS`` button to choose one of
 your registered WPS servces. You will get a list of available
@@ -80,8 +44,12 @@ you can see the results by using the ``Show`` button. In case of the
 ``Logon`` process you should have as output a link to your X509 proxy
 certificate. You can open the link by pressing ``View``.
 
-Using the Wizard
-----------------
+
+My Jobs
+-------
+
+Wizard
+------
 
 The wizard is used to chain WPS processes and to collect the input
 parameters. Currently the wizard chains a user WPS process with a WPS
@@ -100,3 +68,33 @@ be started and shown in your job list ``My Jobs``. When the job has
 finished you can see the results by pressing ``View``. The input files
 can be seen on the ``Resources`` tab. Also use ``View`` to open the
 file list.
+
+
+My Account
+----------
+
+In ``My Account`` you can change your user settings (user name, organisation, openid, ...).
+
+.. image:: _images/myaccount.png
+
+If you have a valid ESGF OpenID you can update your X509 credentials. This is a X509 proxy certificate which is used to access ESGF data. To update press the button ``Update Credentials`` and enter your OpenID password in the dialog.
+
+.. image:: _images/update_creds.png
+
+Settings (admin)
+----------------
+
+* Register WPS services
+
+When Phoenix is started and you are logged-in as admin user you can register WPS services in ``Settings/Catalog``:
+
+http://localhost:8081/settings/catalog 
+
+Use the ``Add Service`` button and enter the WPS url as ``Service URL``, for example Malleefowl WPS:
+
+http://localhost:8091/wps
+
+
+
+
+
