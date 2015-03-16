@@ -38,6 +38,14 @@ Wizard
 My Account
 ----------
 
+In ``My Account`` you can change your user settings (user name, organisation, openid, ...).
+
+.. image:: _images/myaccount.png
+
+If you have a valid ESGF OpenID you can update your X509 credentials. This is a X509 proxy certificate which is used to access ESGF data. To update press the button ``Update Credentials`` and enter your OpenID password in the dialog.
+
+.. image:: _images/update_creds.png
+
 Settings (admin)
 ----------------
 
