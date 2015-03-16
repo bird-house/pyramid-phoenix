@@ -12,15 +12,18 @@ The user guide explains how to use the Phoenix web application to interact with 
 Login
 -----
 
-You need an OpenID account to login to Phoenix. You should use a `ESGF OpenID <https://github.com/ESGF/esgf.github.io/wiki/ESGF_Data_Download>`_ which is used later to access files from ESGF.
+You need an :term:`birdhouse:OpenID` account to login to Phoenix. You should use a `ESGF OpenID <https://github.com/ESGF/esgf.github.io/wiki/ESGF_Data_Download>`_ which is used later to access files from :term:`birdhouse:ESGF`. Make sure, that you have a valid OpenID of one of the ESGF datanodes (http://esgf-data.dkrz.de/esgf-web-fe/) and that you are able to download a datafile. 
 
 Now, press the ``Sign in`` button in the upper right corner.
 
 .. image:: _images/signin.png
 
-Next you will have a page where you can enter the account name of you ESGF OpenID. Choose the according ESGF OpenID provider (by default this is DKRZ).
+Next you will have a page where you can enter the account name of you ESGF OpenID. 
+Choose the according ESGF OpenID provider (by default this is DKRZ).
 
 .. image:: _images/openid.png 
+
+In the current state of Phoenix (March 2015) you have to be personally activated in the Phoenix web application. 
 
 
 Dashboard
@@ -124,6 +127,8 @@ In ``My Account`` you can change your user settings (user name, organisation, op
 If you have a valid ESGF OpenID you can update your X509 credentials. This is a X509 proxy certificate which is used to access ESGF data. To update press the button ``Update Credentials`` and enter your OpenID password in the dialog.
 
 .. image:: _images/update_creds.png
+
+For security reasons the X509 proxy certificate is time limited. But don't worry; Phoenix will remind you to update if necessary.
 
 Settings (admins only)
 ----------------------

@@ -8,7 +8,6 @@ In the following tutorial will guide you though the first steps to get familliar
 .. toctree::
    :maxdepth: 1
 
-   tutorial/login
    tutorial/visualisation
 
    
