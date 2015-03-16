@@ -34,19 +34,27 @@ Processes
 ---------
 
 When you have registered WPS services you can run a process. Go to the
-``Processes`` tab and use the ``Choose WPS`` button to choose one of
-your registered WPS servces. You will get a list of available
-processes (WPS ``GetCapabilities`` request). Choose one of these
-processes by using the ``Execute`` button. In case of Malleefowl you
-may try the ``Logon with ESGF OpenID`` process. You will then be
-prompted to enter your ESGF OpenID
-(e.a. https://esgf-data.dkrz.de/esgf-idp/openid/myname) and
-password. Press the ``Submit`` button. When the process is submitted
-you will be shown your job list in ``My Jobs``. The list shows the
-status and progress of your jobs. When a job has finished with success
-you can see the results by using the ``Show`` button. In case of the
-``Logon`` process you should have as output a link to your X509 proxy
-certificate. You can open the link by pressing ``View``.
+``Processes`` tab. 
+
+.. image:: _images/processes.png
+
+Use the ``Choose WPS`` button to choose one of your registered WPS services. 
+
+.. image:: _images/processes_choose.png
+
+You will get a list of available processes (WPS ``GetCapabilities`` request). 
+
+.. image:: _images/processes_list.png
+
+Choose one of these processes by using the ``Execute`` button. 
+
+In case of Malleefowl you may try the ``Logon with ESGF OpenID`` process. You will then be
+prompted to enter your ESGF OpenID (e.a. https://esgf-data.dkrz.de/esgf-idp/openid/justatest) and
+password. 
+
+.. image:: _images/processes_execute.png
+
+Press the ``Submit`` button. When the process is submitted you will be shown your job list in ``My Jobs``. 
 
 
 My Jobs
@@ -54,6 +62,12 @@ My Jobs
 
 When the job has finished you can see the results by pressing ``View``. The input files
 can be seen on the ``Resources`` tab. Also use ``View`` to open the file list.
+
+The list shows the
+status and progress of your jobs. When a job has finished with success
+you can see the results by using the ``Show`` button. In case of the
+``Logon`` process you should have as output a link to your X509 proxy
+certificate. You can open the link by pressing ``View``.
 
 
 Wizard
