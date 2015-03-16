@@ -9,6 +9,8 @@ The user guide explains how to use the Phoenix web application to interact with 
     :local:
     :depth: 2
 
+.. _login:
+
 Login
 -----
 

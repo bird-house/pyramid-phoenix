@@ -1,39 +1,44 @@
 .. _tutorial_timeseries_plot: 
 
---------------------------------
-**Creating a timeseries plot**
---------------------------------
+Creating a timeseries plot
+==========================
+
+First you need login. Please Follow the login instructions in the :ref:`user guide <login>`.
 
 Once the login procedure is done, processes are operable and data search and download within the ESGF data archive is possible. 
 There are two ways to submit a process: 
 
 - Processes
+
 or 
 
 - Wizard
 
-While with *Processes* you can select single operational processes the *Wizard* is guiding you through the necessary stepps to submit a job. For getting an idea of the operation procedure choose the *Wizard* menue and select **simple**: 
+While with *Processes* you can select single operational processes the *Wizard* is guiding you through the necessary steps to submit a job. For getting an idea of the operation procedure choose the *Wizard* tab: 
 
 .. image:: ../_images/wizard.png
 
 The following steps are necessary to submit a job: 
 
-* selection of WPS Node
-* Select Process
+* Selection of WPS Service
+* Select a Process
 * Process Parameters
 * Select Data Source
 * Search Input Files
-* Select Files
 * Access Parameters
 
-and 
+For this example choose the Flyingpigeon WPS service which has process for the climate impact community.
 
+.. image:: ../_images/tutorial/choose_flyingpigeon.png 
 
-And check the listed *PyWPS Server on mouflon.dkrz.de (mouflon)* . 
 With clicking on *Next* you'll find the list of available processes. 
-Check the **Visualisation of data** and klick on *Next* which guides you to the process parameter: 
+Check the **Visualisation of NetCDF files**.
 
-.. image:: ../_images/processparameter.png
+.. image:: ../_images/tutorial/choose_visualisation.png
+
+Click on *Next* which guides you to the process parameter: 
+
+.. image:: ../_images/tutorial/visualisation_params.png
 
 The values in the data files are stored with defined varable names. Here are the most common ones: 
 
@@ -87,13 +92,6 @@ End:   2005-12-31T12:00:00Z
 The Selection should look similar to:
 
 .. image:: ../_images/currentselection.png
-
-**Select Files**
-
-After submitting the *Search Input Files* a serach process will give you a list of all suitable Datasets with the appropriate files. 
-Here you can do the final selection of the data files to be processed. In this example we select the first five files: 
-
-.. image:: ../_images/selectfiles.png
 
 **Access Parameters** 
 
