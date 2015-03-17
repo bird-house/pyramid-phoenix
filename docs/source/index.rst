@@ -25,6 +25,18 @@ data retrieval with
 another WPS process which needs NetCDF data as input. Phoenix has a :ref:`wizard` to collect the parameters to run 
 such a workflow with a process of a registered WPS. 
 
+Phoenix should help developers of WPS processes to use their processes more conveniently, especially for feeding
+their processes with different data sources (like ESGF data archive). Phoenix is also used for demonstration of 
+available WPS processes. 
+
+Phoenix has a more generic and technical user interface. To use Phoenix successfully you need to have some 
+knowledge about WPS and the existing data archives. So, Phoenix might not become a good choice for 
+scientists users who just want to run a specific analyses job. There are other climate portals available which address these users.
+But Phoenix should at least become *developer friendly*. 
+
+Phoenix is easy to install using the :term:`birdhouse:anaconda` python distribution and :term:`birdhouse:buildout`. 
+So, Phoenix is not only available on production sites where it is close to data archives. You can also install it on your developer machine to make testing and working with your developed WPS processes easier.   
+
 Contents:
 
 .. toctree::
