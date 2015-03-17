@@ -25,7 +25,7 @@ Choose the according ESGF OpenID provider (by default this is DKRZ).
 
 .. image:: _images/openid.png 
 
-In the current state of Phoenix (March 2015) you have to be personally activated in the Phoenix web application. 
+In the current state of Phoenix (March 2015) you have to be :ref:`personally activated <activate_users>` in the Phoenix web application. 
 
 Dashboard
 ---------
@@ -54,6 +54,8 @@ You will get a list of available processes (WPS ``GetCapabilities`` request).
 
 Choose one of these processes by using the ``Execute`` button. 
 
+.. _execute:
+
 In case of Malleefowl you may try the ``Logon with ESGF OpenID`` process. You will then be
 prompted to enter your ESGF OpenID (e.a. https://esgf-data.dkrz.de/esgf-idp/openid/justatest) and
 password. 
@@ -62,6 +64,7 @@ password.
 
 Press the ``Submit`` button. When the process is submitted you will be shown your job list in ``My Jobs``. 
 
+.. _myjobs:
 
 My Jobs
 -------
@@ -150,13 +153,23 @@ Register a WPS service
 
 Open the ``Settings/Catalog`` page. Here you can see which services are registered in the catalog service (we are using :term:`birdhouse:PyCSW`). All theses services are known and useable by Phoenix.
 
-.. image:: _images/catalog.png
+.. image:: _images/settings_catalog.png
 
 To add a new WPS service press the ``Add Service`` button and enter the WPS URL in the field ``Service URL``, for example Malleefowl WPS:
 
 http://localhost:8091/wps
 
 .. image:: _images/add_service.png
+
+
+.. _activate_users:
+
+Activate Users
+~~~~~~~~~~~~~~
+
+Open the ``Settings/Users`` page. Here you activate/deactivate users and also remove them. When a user has registerd to the Phoenix web application the user needs to be activated before the user can login.
+
+.. image:: _images/settings_users.png
 
 
 
