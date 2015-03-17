@@ -27,13 +27,14 @@ Choose the according ESGF OpenID provider (by default this is DKRZ).
 
 In the current state of Phoenix (March 2015) you have to be personally activated in the Phoenix web application. 
 
-
 Dashboard
 ---------
 
 The dashboard shows some statistics about jobs and users. Currently there is not that much to see.
 
 .. image:: _images/dashboard.png
+
+.. _processes:
 
 Processes
 ---------
@@ -75,6 +76,8 @@ When a job has finished with success you can see the results by using the ``Show
 .. image:: _images/myjobs_output.png
 
 If the result has a document (XML, text, NetCDF, ...) you can view or download this document with the ``View`` button.
+
+.. _wizard:
 
 Wizard
 ------
@@ -139,6 +142,8 @@ Settings (admins only)
 When you are logged-in as admin user you have the ``Settings`` page. Here you can make administrative changes and monitor services. 
 
 .. image:: _images/settings.png
+
+.. _register_wps:
 
 Register a WPS service
 ~~~~~~~~~~~~~~~~~~~~~~

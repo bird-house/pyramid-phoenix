@@ -6,7 +6,10 @@ Creating a timeseries plot
 First you need to login. Please follow the login instructions in the :ref:`user guide <login>`.
 
 Once the login procedure is done, processes are operable and data search and download within the ESGF data archive is possible. 
-There are two ways to submit a process: *Processes* or *Wizard*
+
+In this timeseries plot example we will use the :ref:`Flyingpigeon WPS <flyingpigeon:introduction>`. Make sure Flyingpigeon is installed and running and check that it is :ref:`registered in Phoenix <register_wps>`.
+
+There are two ways to submit a job: either with :ref:`processes` or :ref:`wizard`.
 
 While with *Processes* you can select single operational processes the *Wizard* is guiding you through the necessary steps to submit a job. For getting an idea of the operation procedure choose the *Wizard* tab: 
 

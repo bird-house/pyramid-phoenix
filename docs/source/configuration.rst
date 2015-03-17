@@ -15,7 +15,7 @@ To be able to login to Phoenix as admin you need to edit the ``custom.cfg`` in t
 
 Add your email of your OpenID account to the ``admin-users`` (space separated).
 
-If you want to run on a different hostname or port then change the default values in ``custom.cfg``. 
+If you want to use a different hostname/port then edit the default values in ``custom.cfg``. 
 
 After any change to your ``custom.cfg`` you **need** to run ``make install`` again and restart the ``supervisor`` service::
 
