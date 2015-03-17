@@ -12,7 +12,9 @@ While with *Processes* you can select single operational processes the *Wizard* 
 
 .. image:: ../_images/wizard.png
 
-The following steps are necessary to submit a job: 
+You could choose a favorite here of a previous run job but in this case please choose *No Favorite* and click *Next*.
+
+The following steps are necessary to run a visualisation job: 
 
 .. contents::
    :local:
@@ -23,7 +25,7 @@ The following steps are necessary to submit a job:
 Select WPS Service
 ------------------
 
-For this example choose the Flyingpigeon WPS service which has process for the climate impact community.
+For this example choose the Flyingpigeon WPS service which has processes for the climate impact community.
 
 .. image:: ../_images/tutorial/choose_flyingpigeon.png 
 
@@ -31,7 +33,7 @@ Choose Process
 --------------
 
 With clicking on *Next* you'll find the list of available processes. 
-Check the **Visualisation of NetCDF files**.
+Check the *Visualisation of NetCDF files*.
 
 .. image:: ../_images/tutorial/choose_visualisation.png
 
@@ -42,7 +44,7 @@ Click on *Next* which guides you to the process parameter:
 
 .. image:: ../_images/tutorial/visualisation_params.png
 
-The values in the data files are stored with defined varable names. Here are the most common ones: 
+The values in the data files are stored with defined variable names. Here are the most common ones: 
 
 * tas -- mean air temperaure at 2m (in Kelvin)
 * tasmin -- minimum air temperaure at 2m (in Kelvin)  
@@ -51,12 +53,12 @@ The values in the data files are stored with defined varable names. Here are the
 * ps -- air pressure at surface
 * huss -- specific humidiy (in Kg/Kg)
 
-A list of available variable names used for CMPI5 and CORDEX experiment can be found here in the Appendix B of this document: http://cordex.dmi.dk/joomla/images/CORDEX/cordex_archive_specifications.pdf . 
+A list of available variable names used for :term:`birdhouse:CMIP5` and :term:`birdhouse:CORDEX` experiment can be found in the `Appendix B of the CORDEX archive design <http://cordex.dmi.dk/joomla/images/CORDEX/cordex_archive_specifications.pdf>`_. 
 
 Select Data Source
 ------------------
 
-In the next step you will choose the data source. Currently this is only the ESGF data archive:
+In the next step you will choose the data source. Currently there is only the ESGF data archive:
 
 .. image:: ../_images/tutorial/choose_source.png
 
@@ -64,7 +66,7 @@ Search Input Files
 ------------------
 
 This is a search GUI to find appropriate files stored in ESGF data archive. 
-By selecting a Search Categorie (blue buttons), you can choose the appropriate options (in orange). 
+By selecting a *Search Categorie* (blue buttons), you can choose the appropriate options (in orange). 
 
 In this example select the following parameter: 
 
@@ -93,29 +95,47 @@ And optionally you can set the time bounds::
     Start: 2005-01-01T12:00:00Z
     End:   2010-12-31T12:00:00Z 
 
-The Selection should look similar to:
+The Selection should look similar to the following screenshot:
 
 .. image:: ../_images/tutorial/esgf_search.png
 
+Check your credentials
+----------------------
+
+To access ESGF data you need an x509 proxy certificate from ESGF. You can update your certificate in :ref:`My Account <myaccount>`. The x509 proxy certificate is valid only for a few hours. The wizard checks if your certificate is still valid and if not you will be asked to update it on the following wizard page.
+
+.. image:: ../_images/tutorial/esgf_creds.png
+
+Start the process
+-----------------
+
+On the final page *Done* of the wizard you can give some descriptive keywords for your process. You can also save it as a favorite so that later you can run the same job again.
+
+.. image:: ../_images/tutorial/wizard_done.png
+
+Press *Done* and the job will start.
 
 Monitor running Job
 -------------------
 
-The job is now submitted and can be monitored in the *My Jobs* menue: 
+The job is now submitted and can be monitored on the *My Jobs* page: 
 
 .. image:: ../_images/tutorial/running_job.png
 
-Now starts the current Job. The data will be downloaded. 
-The data will be analyzed, due to the process. In this case, a field mean over the whole domain will be performed and an appropriate timeline drawn. 
+The job is running ... data will be downloaded and the analyzing of the data starts. In this case, a field mean over the several experiments will be performed and an appropriate timeline drawn. 
 
-When the job is finished, the status bar is tuning into green: 
+When the job has finished, the status bar is turning into green: 
 
-.. image:: ../_images/statussucceeded.png
+.. image:: ../_images/tutorial/status_success.png
 
-.. image:: ../_images/valuedownload.png
+Display the outputs
+-------------------
 
-Click on the green *status succeeded* to get to the result of the submitted process.
-In this case, it is an html Url. 
+Click on the *Show* button to get to the result of the submitted process.
+
+.. image:: ../_images/tutorial/vis_outputs.png
+
+In this case, it is an URL pointing to a HTML page with an embedded interactive plot using :term:`birdhouse:bokeh`. 
 Opening it in a new browser tab gives the following result: 
 
 .. image:: ../_images/tutorial/vis_plot.png

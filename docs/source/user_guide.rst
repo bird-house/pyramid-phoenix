@@ -118,6 +118,7 @@ need to enter all parameters again). Press ``Done`` and the job will be started 
 
 .. image:: _images/wizard_done.png
 
+.. _myaccount:
 
 My Account
 ----------
