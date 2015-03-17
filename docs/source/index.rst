@@ -35,7 +35,7 @@ scientists users who just want to run a specific analyses job. There are other c
 But Phoenix should at least become *developer friendly*. 
 
 Phoenix is easy to install using the :term:`birdhouse:anaconda` python distribution and :term:`birdhouse:buildout`. 
-So, Phoenix is not only available on production sites where it is close to data archives. You can also install it on your developer machine to make testing and working with your developed WPS processes easier.   
+So, Phoenix is not only available on production sites where it is close to data archives. You can also install it on your developer machine to make testing of your developed WPS processes easier and to present them to other people.   
 
 Contents:
 
