@@ -20,7 +20,7 @@ Now, press the ``Sign in`` button in the upper right corner.
 
 .. image:: _images/signin.png
 
-Next you will have a page where you can enter the account name of you ESGF OpenID. 
+Next you will have a page where you can enter the account name of your ESGF OpenID. 
 Choose the according ESGF OpenID provider (by default this is DKRZ).
 
 .. image:: _images/openid.png 
@@ -86,8 +86,12 @@ Wizard
 ------
 
 The wizard is used to chain WPS processes and to collect the input
-parameters. Currently the wizard chains a user WPS process with a WPS
-process to retrieve ESGF data. Go to the ``Wizard`` tab. Enter the
+parameters for the processes. Currently the wizard chains a user WPS process with a WPS
+process to retrieve ESGF data. The chained processes are run 
+with :term:`a workflow management system <birdhouse:workflow>` which is available as WPS process in
+:ref:`Malleefowl <malleefowl:introduction>`. 
+
+Go to the ``Wizard`` tab. Enter the
 appropiate parameters and use ``Next`` to get to the next wizard
 page. 
 
