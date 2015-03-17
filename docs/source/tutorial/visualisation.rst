@@ -58,7 +58,7 @@ A list of available variable names used for :term:`birdhouse:CMIP5` and :term:`b
 Select Data Source
 ------------------
 
-In the next step you will choose the data source. Currently there is only the ESGF data archive:
+In the next step you will choose the data source. Currently there is only the :term:`birdhouse:ESGF` data archive:
 
 .. image:: ../_images/tutorial/choose_source.png
 
@@ -102,7 +102,7 @@ The Selection should look similar to the following screenshot:
 Check your credentials
 ----------------------
 
-To access ESGF data you need an x509 proxy certificate from ESGF. You can update your certificate in :ref:`My Account <myaccount>`. The x509 proxy certificate is valid only for a few hours. The wizard checks if your certificate is still valid and if not you will be asked to update it on the following wizard page.
+To access ESGF data you need an :term:`birdhouse:x509` proxy certificate from ESGF. You can update your certificate in :ref:`My Account <myaccount>`. The x509 proxy certificate is valid only for a few hours. The wizard checks if your certificate is still valid and if not you will be asked to update it on the following wizard page.
 
 .. image:: ../_images/tutorial/esgf_creds.png
 
