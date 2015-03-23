@@ -19,6 +19,7 @@ requires = [
     'pyramid_mailer',
     'deform',
     'deform_bootstrap',
+    'PasteDeploy',
     #'deform_bootstrap_extra',
     #'pyramid_persona',
     'authomatic',
