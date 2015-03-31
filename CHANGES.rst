@@ -1,6 +1,11 @@
 Changes
 *******
 
+0.3.1 (2015-mm-dd)
+==================
+
+* Add help button pointing to phoenix documentation on readthedocs.
+
 0.3.0 (2015-02-24)
 ==================
 
