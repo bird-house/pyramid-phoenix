@@ -23,7 +23,7 @@ def navbar(context, request):
         nav.append( nav_item('My Account', request.route_url('myaccount')) )
     if has_permission('admin', request.context, request):
         nav.append( nav_item('Settings', request.route_url('settings')) )
-    #nav.append( nav_item('Help', request.route_url('help')) )
+    nav.append( nav_item('Help', request.registry.settings.get('help.url')) )
 
     login = request.current_route_url() == request.route_url('signin', tab='esgf')
 
