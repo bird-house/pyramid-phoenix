@@ -126,6 +126,7 @@ def main(global_config, **settings):
     config.add_route('wizard_csw_select', '/wizard/csw/{recordid}/select.json')
     config.add_route('wizard_esgf', '/wizard/esgf')
     config.add_route('wizard_esgf_files', '/wizard/esgf_files')
+    config.add_route('wizard_cloud', '/wizard/cloud')
     config.add_route('wizard_esgf_credentials', '/wizard/esgf_credentials')
     config.add_route('wizard_check_parameters', '/wizard/check_parameters')
     config.add_route('wizard_done', '/wizard/done')

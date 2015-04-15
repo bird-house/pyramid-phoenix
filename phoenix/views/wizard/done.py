@@ -18,22 +18,35 @@ class Done(Wizard):
         from phoenix.schema import DoneSchema
         return DoneSchema()
 
-    def workflow_description(self):
-        credentials = self.get_user().get('credentials')
-
-        inputs = []
+    def workflow_description(self, name):
+        nodes = {}
         # TODO: maybe needed for csw search again
+        # inputs = []
         #for url in self.resources():
         #    inputs.append('resource=%s' % url)
         
-        selection = self.wizard_state.get('wizard_esgf')['selection']
-        import json
-        esgsearch = json.loads(selection)
-        
-        source = dict(
-            service = self.request.wps.url,
-            credentials=credentials,
-        )
+        if 'cloud' in name:
+            source = dict(
+                service = self.request.wps.url,
+                storage_url = self.wizard_state.get('wizard_cloud')['storage_url'],
+                auth_token = self.wizard_state.get('wizard_cloud')['auth_token'],
+                container = self.wizard_state.get('wizard_cloud')['container'],
+            )
+            nodes['source'] = source
+        else: # esgsearch
+            credentials = self.get_user().get('credentials')
+
+            selection = self.wizard_state.get('wizard_esgf')['selection']
+            import json
+            esgsearch = json.loads(selection)
+            nodes['esgsearch'] = esgsearch
+            
+            source = dict(
+                service = self.request.wps.url,
+                credentials=credentials,
+            )
+            nodes['source'] = source
+
         from phoenix.wps import appstruct_to_inputs
         inputs = appstruct_to_inputs(self.wizard_state.get('wizard_literal_inputs', {}))
         worker_inputs = ['%s=%s' % (key, value) for key,value in inputs]
@@ -43,15 +56,18 @@ class Done(Wizard):
             inputs = [(key, value) for key,value in inputs],
             resource = self.wizard_state.get('wizard_complex_inputs')['identifier'],
             )
-        nodes = dict(esgsearch=esgsearch, source=source, worker=worker)
+        nodes['worker'] = worker
         return nodes
 
     def execute_workflow(self, appstruct):
-        logger.debug('done appstruct = %s', appstruct)
-        nodes = self.workflow_description()
-        logger.debug('done nodes = %s', nodes)
         from phoenix.wps import execute_dispel
-        return execute_dispel(self.request.wps, nodes)
+        source = self.wizard_state.get('wizard_source')['source']
+        if 'cloud' in source:
+            name = 'cloud_workflow'
+        else:
+            name = 'esgsearch_workflow'
+        nodes = self.workflow_description(name)
+        return execute_dispel(self.request.wps, nodes=nodes, name=name)
 
     def success(self, appstruct):
         super(Done, self).success(appstruct)

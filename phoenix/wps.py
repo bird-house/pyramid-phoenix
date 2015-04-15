@@ -95,7 +95,7 @@ def execute_restflow(wps, nodes):
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     return execution
 
-def execute_dispel(wps, nodes):
+def execute_dispel(wps, nodes, name='esgsearch_workflow'):
     """
     execute dispel workflow on given wps and with given nodes
     """
@@ -104,7 +104,7 @@ def execute_dispel(wps, nodes):
 
     # generate and run dispel workflow
     identifier='dispel'
-    inputs=[('nodes', nodes_json)]
+    inputs=[('nodes', nodes_json), ('name', name)]
     outputs=[('output', True)]
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     return execution
