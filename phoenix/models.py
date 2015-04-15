@@ -128,6 +128,28 @@ def myproxy_logon(request, openid, password):
     logger.debug('cert expires %s', cert_expires)
     return dict(credentials=credentials, cert_expires=cert_expires)
 
+def cloud_logon(request, username, password):
+    inputs = []
+    inputs.append( ('username', username.encode('ascii', 'ignore')) )
+    inputs.append( ('password', password.encode('ascii', 'ignore')) )
+
+    execution = request.wps.execute(
+        identifier='cloud_login',
+        inputs=inputs,
+        output=[('storage_url',False),('auth_token',False)])
+    logger.debug('wps url=%s', execution.url)
+    
+    from owslib.wps import monitorExecution
+    monitorExecution(execution)
+    
+    if not execution.isSucceded():
+        raise Exception('logon process failed.',
+                        execution.status,
+                        execution.statusMessage)
+    storage_url = execution.processOutputs[0].data[0]
+    auth_token = execution.processOutputs[1].data[0]
+    return dict(storage_url=storage_url, auth_token=auth_token)
+
 
 
 

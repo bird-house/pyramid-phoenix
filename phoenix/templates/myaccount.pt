@@ -3,21 +3,36 @@
   <div metal:fill-slot="content">
 
     <!-- Button to trigger modal dialog for credentials update -->
-    <a href="#account-form" role="button" class="btn btn-success" data-toggle="modal">
-      Update Credentials
+    <a href="#esgf-form" role="button" class="btn btn-success" data-toggle="modal">
+      Update ESGF Credentials
+    </a>
+    <!-- Button to trigger modal dialog for swift token update -->
+    <a href="#cloud-form" role="button" class="btn btn-success" data-toggle="modal">
+      Update Cloud Token
     </a>
     <br/><br/>
 
     <tal:form replace="structure form">The form will render here</tal:form>
 
-    <!-- Add form for Credentials -->
-    <div id="account-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="task-form-label" aria-hidden="true">
+    <!-- Add form for ESGF Credentials -->
+    <div id="esgf-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="task-form-label" aria-hidden="true">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="task-form-label">Update your ESGF Credentials</h3>
       </div>
       <div class="modal-body">
         <tal:form replace="structure form_credentials" />
+      </div>
+    </div>
+
+    <!-- Add form for Cloud token -->
+    <div id="cloud-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="task-form-label" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="task-form-label">Update your Cloud Token</h3>
+      </div>
+      <div class="modal-body">
+        <tal:form replace="structure form_cloud" />
       </div>
     </div>
   </div>

@@ -77,6 +77,42 @@ class MyAccount(MyView):
                 queue='success')
         return HTTPFound(location=self.request.route_url('myaccount'))
 
+    def generate_cloud_form(self, formid="deform"):
+        from phoenix.schema import CloudSchema
+        schema = CloudSchema().bind()
+        return Form(
+            schema,
+            buttons=('update_cloud',),
+            formid=formid)
+
+    def process_cloud_form(self, form):
+        try:
+            controls = self.request.POST.items()
+            appstruct = form.validate(controls)
+
+            user = self.get_user()
+            from phoenix.models import cloud_logon
+            result = cloud_logon(
+                self.request,
+                username = appstruct.get('username'),
+                password = appstruct.get('password'))
+            
+            user['swift_storage_url'] = result['storage_url']
+            user['swift_auth_token'] = result['auth_token'] 
+            self.userdb.update({'email':self.user_email()}, user)
+        except ValidationFailure, e:
+            logger.exception('Validation of cloud form failed.')
+            return dict(form=e.render())
+        except Exception, e:
+            logger.exception("update cloud token failed.")
+            self.request.session.flash(
+                "Could not update your cloud token. %s" % (e), queue='error')
+        else:
+            self.request.session.flash(
+                'Cloud token updated.',
+                queue='success')
+        return HTTPFound(location=self.request.route_url('myaccount'))
+
     def appstruct(self):
         appstruct = self.get_user()
         if appstruct is None:
@@ -87,11 +123,15 @@ class MyAccount(MyView):
     def view(self):
         form = self.generate_form()
         creds_form = self.generate_creds_form()
+        cloud_form = self.generate_cloud_form()
 
         if 'update' in self.request.POST:
             return self.process_creds_form(creds_form)
+        if 'update_cloud' in self.request.POST:
+            return self.process_cloud_form(cloud_form)
         if 'submit' in self.request.POST:
             return self.process_form(form)
         return dict(
             form=form.render(self.appstruct()),
-            form_credentials=creds_form.render(self.appstruct()))
+            form_credentials=creds_form.render(self.appstruct()),
+            form_cloud=cloud_form.render(self.appstruct()))

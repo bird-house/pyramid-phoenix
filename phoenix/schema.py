@@ -41,6 +41,24 @@ class CredentialsSchema(colander.MappingSchema):
         default = '',
         widget = PasswordWidget(size=30))
 
+class CloudSchema(colander.MappingSchema):
+    """
+    Swift cloud login schema
+    """
+    username = colander.SchemaNode(
+        colander.String(),
+        title = "Username",
+        description = "Your Cloud Username: account:user",
+        missing = '',
+        default = '',
+        )
+    password = colander.SchemaNode(
+        colander.String(),
+        title = 'Password',
+        missing = '',
+        default = '',
+        widget = PasswordWidget(size=30))
+
 class MyAccountSchema(colander.MappingSchema):
     """
     User account schema
@@ -90,6 +108,18 @@ class MyAccountSchema(colander.MappingSchema):
         colander.String(),
         title = "Expires",
         description = "When your Proxy Certificate expires",
+        missing = '',
+        widget = TextInputWidget(template='readonly/textinput'),
+        )
+    swift_storage_url = colander.SchemaNode(
+        colander.String(),
+        title = "Cloud Storage URL",
+        missing = '',
+        widget = TextInputWidget(template='readonly/textinput'),
+        )
+    swift_auth_token = colander.SchemaNode(
+        colander.String(),
+        title = "Cloud Auth Token",
         missing = '',
         widget = TextInputWidget(template='readonly/textinput'),
         )
