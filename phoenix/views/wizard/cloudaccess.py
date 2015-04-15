@@ -13,6 +13,12 @@ class CloudAccess(Wizard):
         from phoenix.wps import WPSSchema
         return WPSSchema(info=False, hide_complex=True, process = self.process)
 
+    def appstruct(self):
+        appstruct = super(CloudAccess, self).appstruct()
+        appstruct['storage_url'] = self.get_user().get('swift_storage_url')
+        appstruct['auth_token'] = self.get_user().get('swift_auth_token')
+        return appstruct
+
     def next_success(self, appstruct):
         self.success(appstruct)
         return self.next('wizard_done')
