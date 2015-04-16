@@ -59,6 +59,22 @@ class CloudLoginSchema(colander.MappingSchema):
         default = '',
         widget = PasswordWidget(size=30))
 
+class CloudAccessSchema(colander.MappingSchema):
+    """
+    swift cloud container
+    """
+
+    @colander.deferred
+    def deferred_container_widget(node, kw):
+        favorites = kw.get('container', [])
+        choices = [(item, item) for item in favorites]
+        return SelectWidget(values = choices)
+
+    container = colander.SchemaNode(
+        colander.String(),
+        widget = deferred_container_widget
+        )
+
 class MyAccountSchema(colander.MappingSchema):
     """
     User account schema

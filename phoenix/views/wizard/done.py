@@ -24,17 +24,19 @@ class Done(Wizard):
         # inputs = []
         #for url in self.resources():
         #    inputs.append('resource=%s' % url)
+
+        user = self.get_user()
         
         if 'cloud' in name:
             source = dict(
                 service = self.request.wps.url,
-                storage_url = self.wizard_state.get('wizard_cloud')['storage_url'],
-                auth_token = self.wizard_state.get('wizard_cloud')['auth_token'],
-                container = self.wizard_state.get('wizard_cloud')['container'],
+                storage_url = user.get('storage_url'),
+                auth_token = user.get('auth_token'),
+                container = self.wizard_state.get('wizard_cloud_access')['container'],
             )
             nodes['source'] = source
         else: # esgsearch
-            credentials = self.get_user().get('credentials')
+            credentials = user.get('credentials')
 
             selection = self.wizard_state.get('wizard_esgf')['selection']
             import json
