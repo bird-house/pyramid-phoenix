@@ -41,7 +41,7 @@ class CredentialsSchema(colander.MappingSchema):
         default = '',
         widget = PasswordWidget(size=30))
 
-class CloudSchema(colander.MappingSchema):
+class CloudLoginSchema(colander.MappingSchema):
     """
     Swift cloud login schema
     """
@@ -192,7 +192,7 @@ class ChooseSourceSchema(colander.MappingSchema):
         # TODO: enable csw again
         #('wizard_csw', "CSW Catalog Search"),
         ('wizard_esgf', "ESGF Files"),
-        ('wizard_cloud', "Swift Cloud")
+        ('wizard_cloud_login', "Swift Cloud")
         ]
     source = colander.SchemaNode(
         colander.String(),

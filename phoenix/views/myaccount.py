@@ -78,8 +78,8 @@ class MyAccount(MyView):
         return HTTPFound(location=self.request.route_url('myaccount'))
 
     def generate_cloud_form(self, formid="deform"):
-        from phoenix.schema import CloudSchema
-        schema = CloudSchema().bind()
+        from phoenix.schema import CloudLoginSchema
+        schema = CloudLoginSchema().bind()
         return Form(
             schema,
             buttons=('update_cloud',),

@@ -23,7 +23,7 @@ class CloudAccess(Wizard):
         self.success(appstruct)
         return self.next('wizard_done')
     
-    @view_config(route_name='wizard_cloud', renderer='phoenix:templates/wizard/default.pt')
+    @view_config(route_name='wizard_cloud_access', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
         return super(CloudAccess, self).view()
     
