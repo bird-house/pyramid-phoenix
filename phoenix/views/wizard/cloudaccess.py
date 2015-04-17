@@ -20,6 +20,14 @@ class CloudAccess(Wizard):
 
     def next_success(self, appstruct):
         self.success(appstruct)
+        container = appstruct['container']
+        parts = container.split('/')
+        container = parts[0]
+        value = dict(container=container)
+        if len(parts) > 1:
+            prefix = '/'.join(parts[1:])
+            value['prefix'] = prefix
+        #self.wizard_state.set('wizard_cloud_access') = value
         return self.next('wizard_done')
     
     @view_config(route_name='wizard_cloud_access', renderer='phoenix:templates/wizard/default.pt')
