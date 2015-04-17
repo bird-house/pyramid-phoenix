@@ -1,7 +1,7 @@
 from pyramid.view import view_config
 
 from phoenix.views.wizard import Wizard
-from phoenix.models import get_containers
+from phoenix.models import get_folders
 
 class CloudAccess(Wizard):
     def __init__(self, request):
@@ -13,11 +13,10 @@ class CloudAccess(Wizard):
     def schema(self):
         from phoenix.schema import CloudAccessSchema
         user = self.get_user()
-        containers = get_containers(
-            self.request,
-            user.get('swift_storage_url'),
-            user.get('swift_auth_token'))
-        return CloudAccessSchema().bind(containers=[container['name'] for container in containers])
+        storage_url = user.get('swift_storage_url')
+        auth_token = user.get('swift_auth_token')
+            
+        return CloudAccessSchema().bind(containers=get_folders(storage_url, auth_token))
 
     def next_success(self, appstruct):
         self.success(appstruct)

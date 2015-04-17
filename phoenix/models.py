@@ -150,7 +150,16 @@ def cloud_logon(request, username, password):
     auth_token = execution.processOutputs[1].data[0]
     return dict(storage_url=storage_url, auth_token=auth_token)
 
-def get_containers(request, storage_url, auth_token):
+def get_folders(storage_url, auth_token):
+    folders = []
+    containers = get_containers(storage_url, auth_token)
+    for container in containers:
+        folders.append(container['name'])
+        myfolders, objs = get_objects(storage_url, auth_token, container['name'])
+        folders.extend([container['name'] + '/' + folder for folder in myfolders])
+    return folders
+
+def get_containers(storage_url, auth_token):
     from swiftclient import client
 
     containers = []
@@ -162,6 +171,42 @@ def get_containers(request, storage_url, auth_token):
             logger.warn("Container listing failed")
     return containers
 
+def get_objects(storage_url, auth_token, container, prefix=None):
+    from swiftclient import client
+
+    folders = []
+    objs = []
+    
+    try:
+        meta, objects = client.get_container(storage_url, auth_token,
+                                             container,
+                                             delimiter=None,
+                                             prefix=prefix)
+        folders, objs = pseudofolder_object_list(objects, prefix)
+    except client.ClientException:
+        logger.exception("Access denied.")
+    return folders, objs
+
+def pseudofolder_object_list(objects, prefix):
+    pseudofolders = []
+    objs = []
+
+    duplist = []
+
+    for obj in objects:
+        # Rackspace Cloudfiles uses application/directory
+        # Cyberduck uses application/x-directory
+        if obj.get('content_type') in ('application/directory', 'application/x-directory'):
+            # make sure that there is a single slash at the end
+            # Cyberduck appends a slash to the name of a pseudofolder
+            entry = obj['name'].strip('/') + '/'
+            if entry != prefix and entry not in duplist:
+                duplist.append(entry)
+                pseudofolders.append(entry)
+        else:
+            objs.append(obj['name'])
+
+    return (pseudofolders, objs)
 
 
 
