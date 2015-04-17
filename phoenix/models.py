@@ -150,6 +150,18 @@ def cloud_logon(request, username, password):
     auth_token = execution.processOutputs[1].data[0]
     return dict(storage_url=storage_url, auth_token=auth_token)
 
+def get_containers(request, storage_url, auth_token):
+    from swiftclient import client
+
+    containers = []
+    try:
+        account_stat, containers = client.get_account(storage_url, auth_token)
+    except client.ClientException as exc:
+        logger.exception("Could not get containers")
+        if exc.http_status == 403:
+            logger.warn("Container listing failed")
+    return containers
+
 
 
 

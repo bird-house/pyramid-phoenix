@@ -66,8 +66,8 @@ class CloudAccessSchema(colander.MappingSchema):
 
     @colander.deferred
     def deferred_container_widget(node, kw):
-        favorites = kw.get('container', [])
-        choices = [(item, item) for item in favorites]
+        containers = kw.get('containers', [])
+        choices = [(item, item) for item in containers]
         return SelectWidget(values = choices)
 
     container = colander.SchemaNode(

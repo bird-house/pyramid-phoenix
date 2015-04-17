@@ -33,6 +33,7 @@ requires = [
     'pytz',
     #'egenix-mx-base',
     'esgf-pyclient',
+    'python-swiftclient',
     ]
 
 setup(name='Phoenix',
