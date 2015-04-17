@@ -107,6 +107,7 @@ def execute_dispel(wps, nodes, name='esgsearch_workflow'):
     inputs=[('nodes', nodes_json), ('name', name)]
     outputs=[('output', True)]
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
+    logger.debug("inputs=%s", inputs)
     return execution
 
 def appstruct_to_inputs(appstruct):

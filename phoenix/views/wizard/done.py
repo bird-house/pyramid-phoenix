@@ -28,11 +28,13 @@ class Done(Wizard):
         user = self.get_user()
         
         if 'cloud' in name:
+            container = self.wizard_state.get('wizard_cloud_access')['container']
+            logger.debug('cloud source container = %s', container)
             source = dict(
                 service = self.request.wps.url,
-                storage_url = user.get('storage_url'),
-                auth_token = user.get('auth_token'),
-                container = self.wizard_state.get('wizard_cloud_access')['container'],
+                storage_url = user.get('swift_storage_url'),
+                auth_token = user.get('swift_auth_token'),
+                container = container
             )
             nodes['source'] = source
         else: # esgsearch
