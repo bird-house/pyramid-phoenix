@@ -7,7 +7,7 @@ class SwiftAccess(Wizard):
     def __init__(self, request):
         super(SwiftAccess, self).__init__(
             request, name='wizard_swift_access', title="Swift Cloud Access")
-        self.process = request.wps.describeprocess(identifier='cloud_download')
+        self.process = request.wps.describeprocess(identifier='swift_download')
         self.description = None
 
     def schema(self):

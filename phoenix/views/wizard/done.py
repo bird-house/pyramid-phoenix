@@ -26,7 +26,7 @@ class Done(Wizard):
         #    inputs.append('resource=%s' % url)
 
         user = self.get_user()
-        if 'cloud' in name:
+        if 'swift' in name:
             source = dict(
                 service = self.request.wps.url,
                 storage_url = user.get('swift_storage_url'),
@@ -64,7 +64,7 @@ class Done(Wizard):
         from phoenix.wps import execute_dispel
         source = self.wizard_state.get('wizard_source')['source']
         if 'swift' in source:
-            name = 'cloud_workflow'
+            name = 'swift_workflow'
         else:
             name = 'esgsearch_workflow'
         nodes = self.workflow_description(name)
