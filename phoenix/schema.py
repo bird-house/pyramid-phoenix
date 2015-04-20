@@ -41,14 +41,11 @@ class CredentialsSchema(colander.MappingSchema):
         default = '',
         widget = PasswordWidget(size=30))
 
-class CloudLoginSchema(colander.MappingSchema):
-    """
-    Swift cloud login schema
-    """
+class SwiftLoginSchema(colander.MappingSchema):
     username = colander.SchemaNode(
         colander.String(),
         title = "Username",
-        description = "Your Cloud Username: account:user",
+        description = "Your Swift Username: account:user",
         missing = '',
         default = '',
         )
@@ -59,11 +56,7 @@ class CloudLoginSchema(colander.MappingSchema):
         default = '',
         widget = PasswordWidget(size=30))
 
-class CloudAccessSchema(colander.MappingSchema):
-    """
-    swift cloud container
-    """
-
+class SwiftAccessSchema(colander.MappingSchema):
     @colander.deferred
     def deferred_container_widget(node, kw):
         containers = kw.get('containers', [])
@@ -129,13 +122,13 @@ class MyAccountSchema(colander.MappingSchema):
         )
     swift_storage_url = colander.SchemaNode(
         colander.String(),
-        title = "Cloud Storage URL",
+        title = "Swift Storage URL",
         missing = '',
         widget = TextInputWidget(template='readonly/textinput'),
         )
     swift_auth_token = colander.SchemaNode(
         colander.String(),
-        title = "Cloud Auth Token",
+        title = "Swift Auth Token",
         missing = '',
         widget = TextInputWidget(template='readonly/textinput'),
         )
@@ -208,7 +201,7 @@ class ChooseSourceSchema(colander.MappingSchema):
         # TODO: enable csw again
         #('wizard_csw', "CSW Catalog Search"),
         ('wizard_esgf', "ESGF Files"),
-        ('wizard_cloud_login', "Swift Cloud")
+        ('wizard_swift_login', "Swift Cloud")
         ]
     source = colander.SchemaNode(
         colander.String(),

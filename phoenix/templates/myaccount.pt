@@ -7,8 +7,8 @@
       Update ESGF Credentials
     </a>
     <!-- Button to trigger modal dialog for swift token update -->
-    <a href="#cloud-form" role="button" class="btn btn-success" data-toggle="modal">
-      Update Cloud Token
+    <a href="#swift-form" role="button" class="btn btn-success" data-toggle="modal">
+      Update Swift Token
     </a>
     <br/><br/>
 
@@ -26,13 +26,13 @@
     </div>
 
     <!-- Add form for Cloud token -->
-    <div id="cloud-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="task-form-label" aria-hidden="true">
+    <div id="swift-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="task-form-label" aria-hidden="true">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="task-form-label">Update your Cloud Token</h3>
+        <h3 id="task-form-label">Update your Swift Token</h3>
       </div>
       <div class="modal-body">
-        <tal:form replace="structure form_cloud" />
+        <tal:form replace="structure form_swift" />
       </div>
     </div>
   </div>

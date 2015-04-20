@@ -31,8 +31,7 @@ class Done(Wizard):
                 service = self.request.wps.url,
                 storage_url = user.get('swift_storage_url'),
                 auth_token = user.get('swift_auth_token'),
-                container = self.wizard_state.get('wizard_cloud_access')['container']
-                #prefix = self.wizard_state.get('wizard_cloud_access')['prefix']
+                container = self.wizard_state.get('wizard_swift_access')['container']
             )
             nodes['source'] = source
         else: # esgsearch
@@ -64,7 +63,7 @@ class Done(Wizard):
     def execute_workflow(self, appstruct):
         from phoenix.wps import execute_dispel
         source = self.wizard_state.get('wizard_source')['source']
-        if 'cloud' in source:
+        if 'swift' in source:
             name = 'cloud_workflow'
         else:
             name = 'esgsearch_workflow'

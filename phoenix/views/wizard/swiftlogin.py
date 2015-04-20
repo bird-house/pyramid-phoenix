@@ -5,23 +5,23 @@ from phoenix.views.wizard import Wizard
 import logging
 logger = logging.getLogger(__name__)
 
-class CloudLogin(Wizard):
+class SwiftLogin(Wizard):
     def __init__(self, request):
-        super(CloudLogin, self).__init__(
+        super(SwiftLogin, self).__init__(
             request,
-            name='wizard_cloud_login',
+            name='wizard_swift_login',
             title="Swift Cloud Login")
 
     def schema(self):
-        from phoenix.schema import CloudLoginSchema
-        return CloudLoginSchema().bind()
+        from phoenix.schema import SwiftLoginSchema
+        return SwiftLoginSchema().bind()
 
     def success(self, appstruct):
-        super(CloudLogin, self).success(appstruct)
+        super(SwiftLogin, self).success(appstruct)
 
         try:
-            from phoenix.models import cloud_logon
-            result = cloud_logon(
+            from phoenix.models import swift_login
+            result = swift_login(
                 self.request,
                 username = appstruct.get('username'),
                 password = appstruct.get('password'))
@@ -31,17 +31,17 @@ class CloudLogin(Wizard):
             user['swift_auth_token'] = result['auth_token'] 
             self.userdb.update({'email':self.user_email()}, user)
         except Exception, e:
-            logger.exception("update cloud token failed.")
+            logger.exception("update swift token failed.")
             self.request.session.flash(
-                "Could not update your cloud token. %s" % (e), queue='error')
+                "Could not update your swift token. %s" % (e), queue='error')
         else:
             self.request.session.flash(
-                'Cloud token updated.', queue='success')
+                'Swift token updated.', queue='success')
         
     def next_success(self, appstruct):
         self.success(appstruct)
-        return self.next('wizard_cloud_access')
+        return self.next('wizard_swift_access')
         
-    @view_config(route_name='wizard_cloud_login', renderer='phoenix:templates/wizard/default.pt')
+    @view_config(route_name='wizard_swift_login', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
-        return super(CloudLogin, self).view()
+        return super(SwiftLogin, self).view()

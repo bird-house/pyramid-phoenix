@@ -2,6 +2,7 @@ import uuid
 import datetime
 
 from .exceptions import MyProxyLogonFailure
+from swiftclient import client, ClientException
 
 import logging
 logger = logging.getLogger(__name__)
@@ -128,26 +129,18 @@ def myproxy_logon(request, openid, password):
     logger.debug('cert expires %s', cert_expires)
     return dict(credentials=credentials, cert_expires=cert_expires)
 
-def cloud_logon(request, username, password):
-    inputs = []
-    inputs.append( ('username', username.encode('ascii', 'ignore')) )
-    inputs.append( ('password', password.encode('ascii', 'ignore')) )
+def swift_login(request, username, password):
+    storage_url = auth_token = None
 
-    execution = request.wps.execute(
-        identifier='cloud_login',
-        inputs=inputs,
-        output=[('storage_url',False),('auth_token',False)])
-    logger.debug('wps url=%s', execution.url)
-    
-    from owslib.wps import monitorExecution
-    monitorExecution(execution)
-    
-    if not execution.isSucceded():
-        raise Exception('logon process failed.',
-                        execution.status,
-                        execution.statusMessage)
-    storage_url = execution.processOutputs[0].data[0]
-    auth_token = execution.processOutputs[1].data[0]
+    settings = request.registry.settings
+    auth_url = settings.get('swift.auth.url')
+    auth_version = int(settings.get('swith.auth.version', 1))
+    logger.debug('auth_url = %s', auth_url)
+
+    try:
+        (storage_url, auth_token) = client.get_auth(auth_url, username, password, auth_version=auth_version)
+    except ClientException:
+        raise Exception('swift login failed for user %s' % username)
     return dict(storage_url=storage_url, auth_token=auth_token)
 
 def get_folders(storage_url, auth_token):
@@ -160,20 +153,16 @@ def get_folders(storage_url, auth_token):
     return folders
 
 def get_containers(storage_url, auth_token):
-    from swiftclient import client
-
     containers = []
     try:
         account_stat, containers = client.get_account(storage_url, auth_token)
-    except client.ClientException as exc:
+    except ClientException as exc:
         logger.exception("Could not get containers")
         if exc.http_status == 403:
             logger.warn("Container listing failed")
     return containers
 
 def get_objects(storage_url, auth_token, container, prefix=None):
-    from swiftclient import client
-
     folders = []
     objs = []
     
@@ -183,7 +172,7 @@ def get_objects(storage_url, auth_token, container, prefix=None):
                                              delimiter=None,
                                              prefix=prefix)
         folders, objs = pseudofolder_object_list(objects, prefix)
-    except client.ClientException:
+    except ClientException:
         logger.exception("Access denied.")
     return folders, objs
 
