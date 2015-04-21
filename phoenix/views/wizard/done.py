@@ -27,13 +27,20 @@ class Done(Wizard):
 
         user = self.get_user()
         if 'swift' in name:
+            path_elements = self.wizard_state.get('wizard_swift_access')['container'].split('/')
+            container = path_elements[0]
+            prefix = None
+            if len(path_elements) > 1:
+                prefix = '/'.join(path_elements[1:])
             source = dict(
                 service = self.request.wps.url,
                 storage_url = user.get('swift_storage_url'),
                 auth_token = user.get('swift_auth_token'),
-                container = self.wizard_state.get('wizard_swift_access')['container']
+                container = container,
+                prefix = prefix
             )
             nodes['source'] = source
+            logger.debug('source = %s', source)
         else: # esgsearch
             credentials = user.get('credentials')
 
