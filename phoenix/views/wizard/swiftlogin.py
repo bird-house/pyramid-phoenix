@@ -40,7 +40,7 @@ class SwiftLogin(Wizard):
         
     def next_success(self, appstruct):
         self.success(appstruct)
-        return self.next('wizard_swift_access')
+        return self.next('wizard_swiftbrowser')
         
     @view_config(route_name='wizard_swift_login', renderer='phoenix:templates/wizard/default.pt')
     def view(self):

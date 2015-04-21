@@ -27,7 +27,7 @@ class Done(Wizard):
 
         user = self.get_user()
         if 'swift' in name:
-            path_elements = self.wizard_state.get('wizard_swift_access')['container'].split('/')
+            path_elements = self.wizard_state.get('wizard_swiftbrowser')['container'].split('/')
             container = path_elements[0]
             prefix = None
             if len(path_elements) > 1:

@@ -3,20 +3,19 @@ from pyramid.view import view_config
 from phoenix.views.wizard import Wizard
 from phoenix.models import get_folders
 
-class SwiftAccess(Wizard):
+class SwiftBrowser(Wizard):
     def __init__(self, request):
-        super(SwiftAccess, self).__init__(
-            request, name='wizard_swift_access', title="Swift Cloud Access")
-        self.process = request.wps.describeprocess(identifier='swift_download')
+        super(SwiftBrowser, self).__init__(
+            request, name='wizard_swiftbrowser', title="Swiftbrowser")
         self.description = None
 
     def schema(self):
-        from phoenix.schema import SwiftAccessSchema
+        from phoenix.schema import SwiftBrowserSchema
         user = self.get_user()
         storage_url = user.get('swift_storage_url')
         auth_token = user.get('swift_auth_token')
             
-        return SwiftAccessSchema().bind(containers=get_folders(storage_url, auth_token))
+        return SwiftBrowserSchema().bind(containers=get_folders(storage_url, auth_token))
 
     def next_success(self, appstruct):
         self.success(appstruct)
@@ -29,7 +28,7 @@ class SwiftAccess(Wizard):
             value['prefix'] = prefix
         return self.next('wizard_done')
     
-    @view_config(route_name='wizard_swift_access', renderer='phoenix:templates/wizard/default.pt')
+    @view_config(route_name='wizard_swiftbrowser', renderer='phoenix:templates/wizard/swiftbrowser.pt')
     def view(self):
-        return super(SwiftAccess, self).view()
+        return super(SwiftBrowser, self).view()
     

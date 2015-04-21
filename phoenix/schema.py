@@ -56,7 +56,7 @@ class SwiftLoginSchema(colander.MappingSchema):
         default = '',
         widget = PasswordWidget(size=30))
 
-class SwiftAccessSchema(colander.MappingSchema):
+class SwiftBrowserSchema(colander.MappingSchema):
     @colander.deferred
     def deferred_container_widget(node, kw):
         containers = kw.get('containers', [])
