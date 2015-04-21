@@ -56,7 +56,7 @@ class SwiftBrowserGrid(MyGrid):
         self.column_formats[''] = self.action_td
 
     def name_td(self, col_num, i, item):
-        return self.render_title_td(item['name'])
+        return self.render_td(renderer="folder_element_td", name=item['name'])
 
     def created_td(self, col_num, i, item):
         return self.render_timestamp_td(item.get('last_modified'))
