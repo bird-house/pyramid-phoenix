@@ -8,6 +8,9 @@ class SwiftBrowser(Wizard):
         super(SwiftBrowser, self).__init__(
             request, name='wizard_swiftbrowser', title="Swiftbrowser")
         self.description = None
+        user = self.get_user()
+        self.storage_url = user.get('swift_storage_url')
+        self.auth_token = user.get('swift_auth_token')
 
     def schema(self):
         from phoenix.schema import SwiftBrowserSchema
@@ -31,10 +34,7 @@ class SwiftBrowser(Wizard):
     @view_config(route_name='wizard_swiftbrowser', renderer='phoenix:templates/wizard/swiftbrowser.pt')
     def view(self):
         #return super(SwiftBrowser, self).view()
-        user = self.get_user()
-        storage_url = user.get('swift_storage_url')
-        auth_token = user.get('swift_auth_token')
-        items = get_containers(storage_url, auth_token)
+        items = get_containers(self.storage_url, self.auth_token)
         grid = SwiftBrowserGrid(
             self.request,
             items,
@@ -56,7 +56,8 @@ class SwiftBrowserGrid(MyGrid):
         self.column_formats[''] = self.action_td
 
     def name_td(self, col_num, i, item):
-        return self.render_td(renderer="folder_element_td", name=item['name'])
+        return self.render_td(renderer="folder_element_td", name=item['name'],
+                              content_type=item.get('content_type', 'application/directory'))
 
     def created_td(self, col_num, i, item):
         return self.render_timestamp_td(item.get('last_modified'))
