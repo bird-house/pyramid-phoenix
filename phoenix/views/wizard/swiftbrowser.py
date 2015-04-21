@@ -1,7 +1,7 @@
 from pyramid.view import view_config
 
 from phoenix.views.wizard import Wizard
-from phoenix.models import get_folders
+from phoenix.models import get_folders, get_containers
 
 class SwiftBrowser(Wizard):
     def __init__(self, request):
@@ -30,5 +30,46 @@ class SwiftBrowser(Wizard):
     
     @view_config(route_name='wizard_swiftbrowser', renderer='phoenix:templates/wizard/swiftbrowser.pt')
     def view(self):
-        return super(SwiftBrowser, self).view()
+        #return super(SwiftBrowser, self).view()
+        user = self.get_user()
+        storage_url = user.get('swift_storage_url')
+        auth_token = user.get('swift_auth_token')
+        items = get_containers(storage_url, auth_token)
+        grid = SwiftBrowserGrid(
+            self.request,
+            items,
+            ['name', 'created', 'size', ''],
+            )
+        return dict(grid=grid, items=items)
+
+
+from string import Template
+from webhelpers.html.builder import HTML
+from phoenix.grid import MyGrid
+
+class SwiftBrowserGrid(MyGrid):
+    def __init__(self, request, *args, **kwargs):
+        super(SwiftBrowserGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['name'] = self.name_td
+        self.column_formats['created'] = self.created_td
+        self.column_formats['size'] = self.size_td
+        self.column_formats[''] = self.action_td
+
+    def name_td(self, col_num, i, item):
+        return self.render_title_td(item['name'])
+
+    def created_td(self, col_num, i, item):
+        return self.render_timestamp_td(item.get('last_modified'))
+
+    def size_td(self, col_num, i, item):
+        return self.render_title_td(item['bytes'])
+
+    def action_td(self, col_num, i, item):
+        buttongroup = []
+    ##     buttongroup.append( ("show", item.get('identifier'), "icon-th-list", "Show", 
+    ##                          self.request.route_url('process_outputs', tab='outputs', jobid=item.get('identifier')), False) )
+    ##     buttongroup.append( ("remove", item.get('identifier'), "icon-trash", "Remove", 
+    ##                          self.request.route_url('remove_myjob', jobid=item.get('identifier')), False) )
+        return self.render_action_td(buttongroup)
+
     

@@ -2,7 +2,9 @@
         
   <div metal:fill-slot="content">
 
-    <tal:form replace="structure form">The form will render here</tal:form>
+    <table class="table table-striped">
+      <tal:rows replace="structure grid" />
+    </table>
      
   </div>
    
