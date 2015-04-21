@@ -1,7 +1,12 @@
 from pyramid.view import view_config
 
+from swiftclient import client, ClientException
+
 from phoenix.views.wizard import Wizard
 from phoenix.models import get_folders, get_containers
+
+import logging
+logger = logging.getLogger(__name__)
 
 class SwiftBrowser(Wizard):
     def __init__(self, request):
@@ -34,9 +39,24 @@ class SwiftBrowser(Wizard):
     @view_config(route_name='wizard_swiftbrowser', renderer='phoenix:templates/wizard/swiftbrowser.pt')
     def view(self):
         #return super(SwiftBrowser, self).view()
-        items = get_containers(self.storage_url, self.auth_token)
+        container = self.request.params.get('container')
+        prefix = self.request.params.get('prefix')
+        element = self.request.params.get('element')
+        logger.debug('container=%s, prefix=%s, element=%s', container, prefix, element)
+        if container is None:
+            container = element
+        else:
+            prefix = element
+        
+        items = []
+        if container is None:
+            items = get_containers(self.storage_url, self.auth_token)
+        else:
+            headers, items = client.get_container(self.storage_url, self.auth_token, container, delimiter="/", prefix=prefix)
         grid = SwiftBrowserGrid(
             self.request,
+            container,
+            prefix,
             items,
             ['name', 'created', 'size', ''],
             )
@@ -48,22 +68,37 @@ from webhelpers.html.builder import HTML
 from phoenix.grid import MyGrid
 
 class SwiftBrowserGrid(MyGrid):
-    def __init__(self, request, *args, **kwargs):
+    def __init__(self, request, container, prefix, *args, **kwargs):
         super(SwiftBrowserGrid, self).__init__(request, *args, **kwargs)
+        self.container = container
+        self.prefix = prefix
         self.column_formats['name'] = self.name_td
         self.column_formats['created'] = self.created_td
         self.column_formats['size'] = self.size_td
         self.column_formats[''] = self.action_td
 
     def name_td(self, col_num, i, item):
-        return self.render_td(renderer="folder_element_td", name=item['name'],
-                              content_type=item.get('content_type', 'application/directory'))
+        name = content_type = None
+        if item.has_key('subdir'):
+            name = item['subdir']
+            content_type = 'application/directory'
+        else:
+            name = item['name']
+            content_type = item.get('content_type', 'application/directory')
+        url = self.request.route_url('wizard_swiftbrowser')
+        url = url + '?'
+        if self.container is not None:
+            url = url + "container=%s" % self.container
+            if self.prefix is not None:
+                url = url + "&prefix=%s" % self.prefix
+        url = url + "&element="
+        return self.render_td(renderer="folder_element_td", url=url, name=name, content_type=content_type)
 
     def created_td(self, col_num, i, item):
         return self.render_timestamp_td(item.get('last_modified'))
 
     def size_td(self, col_num, i, item):
-        return self.render_title_td(item['bytes'])
+        return self.render_title_td(item.get('bytes'))
 
     def action_td(self, col_num, i, item):
         buttongroup = []
