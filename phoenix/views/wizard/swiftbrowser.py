@@ -50,16 +50,19 @@ class SwiftBrowser(Wizard):
     def custom_view(self):
         container = self.request.params.get('container')
         prefix = self.request.params.get('prefix')
-        items = []
-        if container is None:
-            items = get_containers(self.storage_url, self.auth_token)
-        else:
+        items = fields = []
+        if container:
             items = get_objects(self.storage_url, self.auth_token, container, prefix=prefix)
+            fields = ['name', 'created', 'size', '']
+        else:
+            items = get_containers(self.storage_url, self.auth_token)
+            fields = ['name', 'objects', 'size', '']
+
         grid = SwiftBrowserGrid(
             self.request,
             container,
             items,
-            ['name', 'created', 'size', ''],
+            fields,
             )
         return dict(grid=grid, items=items, container=container, prefixes=prefix_list(prefix))
 
@@ -76,6 +79,7 @@ class SwiftBrowserGrid(MyGrid):
         self.container = container
         self.column_formats['name'] = self.name_td
         self.column_formats['created'] = self.created_td
+        self.column_formats['objects'] = self.objects_td
         self.column_formats['size'] = self.size_td
         self.column_formats[''] = self.action_td
 
@@ -100,6 +104,9 @@ class SwiftBrowserGrid(MyGrid):
 
     def created_td(self, col_num, i, item):
         return self.render_timestamp_td(item.get('last_modified'))
+
+    def objects_td(self, col_num, i, item):
+        return self.render_title_td(item.get('count') )
 
     def size_td(self, col_num, i, item):
         from phoenix.utils import filesizeformat
