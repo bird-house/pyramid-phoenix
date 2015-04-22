@@ -92,7 +92,7 @@ def main(global_config, **settings):
     config.add_route('map', '/map')
     config.add_route('myaccount', '/myaccount')
 
-    # qc qizards
+    # TODO: disable qc wizards
     config.add_route('qc_wizard_check', '/qc_wizard_check')
     config.add_route('qc_wizard_yaml', '/qc_wizard_yaml')
 

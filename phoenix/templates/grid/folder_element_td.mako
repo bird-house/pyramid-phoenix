@@ -1,7 +1,7 @@
 <div>
   <div> 
     % if content_type == 'application/directory':
-    <strong><a href="${url+name}" class="block">${name}</a></strong>
+    <strong><a href="${url}" class="block">${name}</a></strong>
     % else:       
     <b>${name}</b>
     % endif

@@ -85,13 +85,12 @@ class SwiftBrowserGrid(MyGrid):
         else:
             name = item['name']
             content_type = item.get('content_type', 'application/directory')
-        url = self.request.route_url('wizard_swiftbrowser')
-        url = url + '?'
+        query = [ ('element', name) ]
         if self.container is not None:
-            url = url + "container=%s" % self.container
+            query.append( ('container', self.container))
             if self.prefix is not None:
-                url = url + "&prefix=%s" % self.prefix
-        url = url + "&element="
+                query.append( ('prefix', self.prefix) )
+        url = self.request.route_url('wizard_swiftbrowser', _query=query)
         return self.render_td(renderer="folder_element_td", url=url, name=name, content_type=content_type)
 
     def created_td(self, col_num, i, item):
