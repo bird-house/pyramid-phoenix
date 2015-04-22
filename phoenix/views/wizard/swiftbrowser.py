@@ -41,13 +41,6 @@ class SwiftBrowser(Wizard):
         #return super(SwiftBrowser, self).view()
         container = self.request.params.get('container')
         prefix = self.request.params.get('prefix')
-        element = self.request.params.get('element')
-        logger.debug('container=%s, prefix=%s, element=%s', container, prefix, element)
-        if container is None:
-            container = element
-        else:
-            prefix = element
-        
         items = []
         if container is None:
             items = get_containers(self.storage_url, self.auth_token)
@@ -56,7 +49,6 @@ class SwiftBrowser(Wizard):
         grid = SwiftBrowserGrid(
             self.request,
             container,
-            prefix,
             items,
             ['name', 'created', 'size', ''],
             )
@@ -68,10 +60,9 @@ from webhelpers.html.builder import HTML
 from phoenix.grid import MyGrid
 
 class SwiftBrowserGrid(MyGrid):
-    def __init__(self, request, container, prefix, *args, **kwargs):
+    def __init__(self, request, container, *args, **kwargs):
         super(SwiftBrowserGrid, self).__init__(request, *args, **kwargs)
         self.container = container
-        self.prefix = prefix
         self.column_formats['name'] = self.name_td
         self.column_formats['created'] = self.created_td
         self.column_formats['size'] = self.size_td
@@ -85,11 +76,12 @@ class SwiftBrowserGrid(MyGrid):
         else:
             name = item['name']
             content_type = item.get('content_type', 'application/directory')
-        query = [ ('element', name) ]
+        query = []
         if self.container is not None:
             query.append( ('container', self.container))
-            if self.prefix is not None:
-                query.append( ('prefix', self.prefix) )
+            query.append( ('prefix', name) )
+        else:
+            query.append( ('container', name))
         url = self.request.route_url('wizard_swiftbrowser', _query=query)
         return self.render_td(renderer="folder_element_td", url=url, name=name, content_type=content_type)
 
