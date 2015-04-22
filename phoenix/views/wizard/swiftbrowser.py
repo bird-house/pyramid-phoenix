@@ -9,15 +9,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 import colander
-from deform.widget import TextInputWidget
+from deform.widget import HiddenWidget
 class SwiftBrowserSchema(colander.MappingSchema):
     container = colander.SchemaNode(
         colander.String(),
-        widget = TextInputWidget(hidden=True)
+        widget = HiddenWidget()
         )
     prefix = colander.SchemaNode(
         colander.String(),
-        widget = TextInputWidget(hidden=True)
+        widget = HiddenWidget()
         )
 
 class SwiftBrowser(Wizard):
