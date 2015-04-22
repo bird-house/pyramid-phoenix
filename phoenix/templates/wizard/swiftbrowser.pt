@@ -7,7 +7,7 @@
       
       <div tal:condition="container">
         <li><span class="divider">/</span>
-          <a class="u" href="${request.route_url('wizard_swiftbrowser', _query=[('container', container)])}">container</a>
+          <a class="u" href="${request.route_url('wizard_swiftbrowser', _query=[('container', container)])}">${container}</a>
         </li>
 
         <li>
