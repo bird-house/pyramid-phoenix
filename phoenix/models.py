@@ -143,15 +143,6 @@ def swift_login(request, username, password):
         raise Exception('swift login failed for user %s' % username)
     return dict(storage_url=storage_url, auth_token=auth_token)
 
-def get_folders(storage_url, auth_token):
-    folders = []
-    containers = get_containers(storage_url, auth_token)
-    for container in containers:
-        folders.append(container['name'])
-        myfolders, objs = get_objects(storage_url, auth_token, container['name'])
-        folders.extend([container['name'] + '/' + folder for folder in myfolders])
-    return folders
-
 def get_containers(storage_url, auth_token):
     containers = []
     try:

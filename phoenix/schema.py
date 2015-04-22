@@ -56,18 +56,6 @@ class SwiftLoginSchema(colander.MappingSchema):
         default = '',
         widget = PasswordWidget(size=30))
 
-class SwiftBrowserSchema(colander.MappingSchema):
-    @colander.deferred
-    def deferred_container_widget(node, kw):
-        containers = kw.get('containers', [])
-        choices = [(item, item) for item in containers]
-        return SelectWidget(values = choices)
-
-    container = colander.SchemaNode(
-        colander.String(),
-        widget = deferred_container_widget
-        )
-
 class MyAccountSchema(colander.MappingSchema):
     """
     User account schema

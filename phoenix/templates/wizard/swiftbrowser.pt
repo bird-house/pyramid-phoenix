@@ -18,6 +18,8 @@
     <table class="table table-striped">
       <tal:rows replace="structure grid" />
     </table>
+
+    <tal:form replace="structure form">The form will render here</tal:form>
      
   </div>
    
