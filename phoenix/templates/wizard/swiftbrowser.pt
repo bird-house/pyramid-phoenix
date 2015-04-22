@@ -2,6 +2,21 @@
         
   <div metal:fill-slot="content">
 
+    <ul class="breadcrumb">
+      <li><a href="${request.route_url('wizard_swiftbrowser')}">Containers</a></li> 
+      
+      <div tal:condition="container">
+        <li><span class="divider">/</span>
+          <a class="u" href="${request.route_url('wizard_swiftbrowser', _query=[('container', container)])}">container</a>
+        </li>
+
+        <li>
+          <span class="divider">/</span>
+          <a href="#">prefix</a>
+        </li>
+      </div>
+    </ul> 
+
     <table class="table table-striped">
       <tal:rows replace="structure grid" />
     </table>

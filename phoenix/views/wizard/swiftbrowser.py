@@ -52,7 +52,7 @@ class SwiftBrowser(Wizard):
             items,
             ['name', 'created', 'size', ''],
             )
-        return dict(grid=grid, items=items)
+        return dict(grid=grid, items=items, container=container)
 
 
 from string import Template
