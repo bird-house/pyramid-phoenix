@@ -3,7 +3,7 @@ from pyramid.view import view_config
 from swiftclient import client, ClientException
 
 from phoenix.views.wizard import Wizard
-from phoenix.models import get_folders, get_containers, prefix_list
+from phoenix.models import get_folders, get_containers, get_objects, prefix_list
 
 import logging
 logger = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ class SwiftBrowser(Wizard):
         if container is None:
             items = get_containers(self.storage_url, self.auth_token)
         else:
-            headers, items = client.get_container(self.storage_url, self.auth_token, container, delimiter="/", prefix=prefix)
+            items = get_objects(self.storage_url, self.auth_token, container, prefix=prefix)
         grid = SwiftBrowserGrid(
             self.request,
             container,

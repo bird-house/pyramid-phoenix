@@ -163,18 +163,20 @@ def get_containers(storage_url, auth_token):
     return containers
 
 def get_objects(storage_url, auth_token, container, prefix=None):
-    folders = []
-    objs = []
+    objects = []
     
     try:
         meta, objects = client.get_container(storage_url, auth_token,
                                              container,
-                                             delimiter=None,
+                                             delimiter='/',
                                              prefix=prefix)
-        folders, objs = pseudofolder_object_list(objects, prefix)
+        # filter directory
+        for obj in objects:
+            if obj.get('content_type') in ('application/directory', 'application/x-directory'):
+                objects.remove(obj)
     except ClientException:
         logger.exception("Access denied.")
-    return folders, objs
+    return objects
 
 def prefix_list(prefix):
     prefixes = []
@@ -188,29 +190,5 @@ def prefix_list(prefix):
             prefixes.append({'display_name': element, 'full_name': prefix})
 
     return prefixes
-
-def pseudofolder_object_list(objects, prefix):
-    pseudofolders = []
-    objs = []
-
-    duplist = []
-
-    for obj in objects:
-        # Rackspace Cloudfiles uses application/directory
-        # Cyberduck uses application/x-directory
-        if obj.get('content_type') in ('application/directory', 'application/x-directory'):
-            # make sure that there is a single slash at the end
-            # Cyberduck appends a slash to the name of a pseudofolder
-            entry = obj['name'].strip('/') + '/'
-            if entry != prefix and entry not in duplist:
-                duplist.append(entry)
-                pseudofolders.append(entry)
-        else:
-            objs.append(obj['name'])
-
-    return (pseudofolders, objs)
-
-
-
 
     
