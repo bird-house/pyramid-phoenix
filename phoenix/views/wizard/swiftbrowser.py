@@ -37,6 +37,8 @@ class SwiftBrowser(Wizard):
         return SwiftBrowserSchema()
 
     def next_success(self, appstruct):
+        appstruct['container'] = self.request.params.get('container')
+        appstruct['prefix'] = self.request.params.get('prefix')
         self.success(appstruct)
         return self.next('wizard_done')
 
