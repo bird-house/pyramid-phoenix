@@ -3,7 +3,7 @@ from pyramid.view import view_config
 from swiftclient import client, ClientException
 
 from phoenix.views.wizard import Wizard
-from phoenix.models import get_folders, get_containers
+from phoenix.models import get_folders, get_containers, prefix_list
 
 import logging
 logger = logging.getLogger(__name__)
@@ -52,7 +52,7 @@ class SwiftBrowser(Wizard):
             items,
             ['name', 'created', 'size', ''],
             )
-        return dict(grid=grid, items=items, container=container)
+        return dict(grid=grid, items=items, container=container, prefixes=prefix_list(prefix))
 
 
 from string import Template

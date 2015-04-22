@@ -176,6 +176,19 @@ def get_objects(storage_url, auth_token, container, prefix=None):
         logger.exception("Access denied.")
     return folders, objs
 
+def prefix_list(prefix):
+    prefixes = []
+
+    if prefix:
+        elements = prefix.split('/')
+        elements = filter(None, elements)
+        prefix = ""
+        for element in elements:
+            prefix += element + '/'
+            prefixes.append({'display_name': element, 'full_name': prefix})
+
+    return prefixes
+
 def pseudofolder_object_list(objects, prefix):
     pseudofolders = []
     objs = []
