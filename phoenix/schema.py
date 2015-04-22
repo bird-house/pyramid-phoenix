@@ -121,17 +121,6 @@ class MyAccountSchema(colander.MappingSchema):
         widget = TextInputWidget(template='readonly/textinput'),
         )
 
-class WizardSchema(colander.MappingSchema):
-    @colander.deferred
-    def deferred_favorite_widget(node, kw):
-        favorites = kw.get('favorites', ['No Favorite'])
-        choices = [(item, item) for item in favorites]
-        return SelectWidget(values = choices)
-
-    favorite = colander.SchemaNode(
-        colander.String(),
-        widget = deferred_favorite_widget)
-
 class ChooseWPSSchema(colander.MappingSchema):
     @colander.deferred
     def deferred_wps_list_widget(node, kw):

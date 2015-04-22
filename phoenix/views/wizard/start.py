@@ -5,6 +5,19 @@ from phoenix.views.wizard import Wizard
 import logging
 logger = logging.getLogger(__name__)
 
+import colander
+from deform.widget import SelectWidget
+class WizardSchema(colander.MappingSchema):
+    @colander.deferred
+    def deferred_favorite_widget(node, kw):
+        favorites = kw.get('favorites', ['No Favorite'])
+        choices = [(item, item) for item in favorites]
+        return SelectWidget(values = choices)
+
+    favorite = colander.SchemaNode(
+        colander.String(),
+        widget = deferred_favorite_widget)
+
 class Start(Wizard):
     def __init__(self, request):
         super(Start, self).__init__(request, name='wizard', title='Start')
@@ -12,7 +25,6 @@ class Start(Wizard):
         self.wizard_state.clear()
 
     def schema(self):
-        from phoenix.schema import WizardSchema
         return WizardSchema().bind(favorites=self.favorite.names())
 
     def success(self, appstruct):
