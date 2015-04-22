@@ -37,9 +37,13 @@ class SwiftBrowser(Wizard):
         container = self.request.params.get('container')
         if container:
             appstruct['container'] = container
+        else:
+            appstruct['container'] = colander.null
         prefix = self.request.params.get('prefix')
         if prefix:
             appstruct['prefix'] = prefix
+        else:
+            appstruct['prefix'] = colander.null
         logger.debug("appstruct = %s", appstruct)
         return appstruct
 
