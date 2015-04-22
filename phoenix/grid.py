@@ -144,7 +144,7 @@ class MyGrid(Grid):
         records.append(HTML.tag('thead', r))
         # now lets render the actual item grid
         for i, record in enumerate(self.itemlist):
-            logger.debug('item %s %s', i, record)
+            #logger.debug('item %s %s', i, record)
             columns = self.make_columns(i, record)
             if hasattr(self, 'custom_record_format'):
                 r = self.custom_record_format(i + 1, record, columns)

@@ -13,14 +13,10 @@ from deform.widget import TextInputWidget
 class SwiftBrowserSchema(colander.MappingSchema):
     container = colander.SchemaNode(
         colander.String(),
-        missing = '',
-        default = '',
         widget = TextInputWidget(hidden=True)
         )
     prefix = colander.SchemaNode(
         colander.String(),
-        missing = '',
-        default = '',
         widget = TextInputWidget(hidden=True)
         )
 
@@ -36,9 +32,18 @@ class SwiftBrowser(Wizard):
     def schema(self):
         return SwiftBrowserSchema()
 
+    def appstruct(self):
+        appstruct = super(SwiftBrowser, self).appstruct()
+        container = self.request.params.get('container')
+        if container:
+            appstruct['container'] = container
+        prefix = self.request.params.get('prefix')
+        if prefix:
+            appstruct['prefix'] = prefix
+        logger.debug("appstruct = %s", appstruct)
+        return appstruct
+
     def next_success(self, appstruct):
-        appstruct['container'] = self.request.params.get('container')
-        appstruct['prefix'] = self.request.params.get('prefix')
         self.success(appstruct)
         return self.next('wizard_done')
 

@@ -27,9 +27,9 @@ class Done(Wizard):
                 service = self.request.wps.url,
                 storage_url = user.get('swift_storage_url'),
                 auth_token = user.get('swift_auth_token'),
-                container = self.wizard_state.get('wizard_swiftbrowser')['container'],
-                prefix = self.wizard_state.get('wizard_swiftbrowser')['prefix']
             )
+            source['container'] = self.wizard_state.get('wizard_swiftbrowser')['container']
+            source['prefix'] = self.wizard_state.get('wizard_swiftbrowser')['prefix']
             nodes['source'] = source
             logger.debug('source = %s', source)
         else: # esgsearch

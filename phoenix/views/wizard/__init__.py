@@ -250,16 +250,14 @@ class Wizard(MyView):
 
     def view(self):
         form = self.generate_form()
-        
+
         if 'previous' in self.request.POST:
             return self.process_form(form, 'previous')
         elif 'next' in self.request.POST:
             return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
-        
-        custom = self.custom_view()    
+    
         result = dict(form=form.render(self.appstruct()))
-
-        # custom overwrites result
+        custom = self.custom_view()    
         return dict(result, **custom)
