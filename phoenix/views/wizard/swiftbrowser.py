@@ -69,19 +69,21 @@ class SwiftBrowserGrid(MyGrid):
         self.column_formats[''] = self.action_td
 
     def name_td(self, col_num, i, item):
-        name = content_type = None
+        prefix = content_type = None
         if item.has_key('subdir'):
-            name = item['subdir']
+            prefix = item['subdir']
             content_type = 'application/directory'
         else:
-            name = item['name']
+            prefix = item['name']
             content_type = item.get('content_type', 'application/directory')
         query = []
-        if self.container is not None:
-            query.append( ('container', self.container))
-            query.append( ('prefix', name) )
+        if self.container is None:
+            query.append( ('container', prefix))
         else:
-            query.append( ('container', name))
+            query.append( ('container', self.container))
+            query.append( ('prefix', prefix) )
+        name = prefix.strip('/')
+        name = name.split('/')[-1]
         url = self.request.route_url('wizard_swiftbrowser', _query=query)
         return self.render_td(renderer="folder_element_td", url=url, name=name, content_type=content_type)
 
