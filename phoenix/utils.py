@@ -33,11 +33,16 @@ def is_url(url):
 
 
 def filesizeformat(bytes, precision=2):
-    """Returns a humanized string for a given amount of bytes"""
+    """Returns a humanized string for a given amount of bytes
+       Based on http://python.todaysummary.com/q_python_11123.html
+    """
     import math
-    
-    bytes = int(bytes)
-    if bytes is 0:
+
+    try:
+        bytes = int(bytes)
+    except:
+        bytes = 0
+    if bytes == 0:
         return '0 Bytes'
     log = math.floor(math.log(bytes, 1024))
     
