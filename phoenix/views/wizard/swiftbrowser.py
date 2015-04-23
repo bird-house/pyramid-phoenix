@@ -61,11 +61,29 @@ class SwiftBrowser(Wizard):
         else:
             items = get_containers(self.storage_url, self.auth_token)
             fields = ['name', 'objects', 'size', '']
+        filtered_items = []
+        for item in items:
+            logger.debug(item)
+            if item.has_key('subdir'):
+                # always show directories
+                filtered_items.append(item)
+            elif item['name'].startswith('.'):
+                # don't show hidden files
+                continue
+            elif item.has_key('count'):
+                # always show container
+                filtered_items.append(item)
+            elif item['content_type'] in ['application/directory', 'application/x-directory']:
+                # always show directories
+                filtered_items.append(item)
+            elif item['content_type'] in ['application/x-netcdf']:
+                # show only netcdf files
+                filtered_items.append(item)
 
         grid = SwiftBrowserGrid(
             self.request,
             container,
-            items,
+            filtered_items,
             fields,
             )
         return dict(grid=grid, items=items, container=container, prefixes=prefix_list(prefix))
