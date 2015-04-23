@@ -110,11 +110,14 @@ class SwiftBrowserGrid(MyGrid):
         return self.render_timestamp_td(item.get('last_modified'))
 
     def objects_td(self, col_num, i, item):
-        return self.render_title_td(item.get('count') )
+        return self.render_label_td(item.get('count') )
 
     def size_td(self, col_num, i, item):
         from phoenix.utils import filesizeformat
-        return self.render_title_td(filesizeformat( item.get('bytes') ))
+        size = filesizeformat( item.get('bytes') )
+        if item.has_key('subdir'):
+            size = ''
+        return self.render_label_td(size)
 
     def action_td(self, col_num, i, item):
         buttongroup = []
