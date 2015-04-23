@@ -226,6 +226,10 @@ class Wizard(MyView):
         self.wizard_state.clear()
         return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
 
+    def flash(self, message, queue):
+        self.session.flash(message, queue=queue)
+        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
+
     def custom_view(self):
         return {}
 
