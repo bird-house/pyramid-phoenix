@@ -56,7 +56,7 @@ class SwiftBrowser(Wizard):
             self.success(appstruct)
             return self.next('wizard_done')
         else:
-            return self.flash("Please choose container and prefix.", queue='error')
+            return self.flash_error("Please choose container and prefix.")
 
     def custom_view(self):
         container = self.request.params.get('container')

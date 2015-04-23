@@ -16,31 +16,28 @@ class SwiftLogin(Wizard):
         from phoenix.schema import SwiftLoginSchema
         return SwiftLoginSchema().bind()
 
-    def success(self, appstruct):
-        super(SwiftLogin, self).success(appstruct)
+    def login(self, appstruct):
+        from phoenix.models import swift_login
+        result = swift_login(
+            self.request,
+            username = appstruct.get('username'),
+            password = appstruct.get('password'))
 
-        try:
-            from phoenix.models import swift_login
-            result = swift_login(
-                self.request,
-                username = appstruct.get('username'),
-                password = appstruct.get('password'))
-
-            user = self.get_user()
-            user['swift_storage_url'] = result['storage_url']
-            user['swift_auth_token'] = result['auth_token'] 
-            self.userdb.update({'email':self.user_email()}, user)
-        except Exception, e:
-            logger.exception("update swift token failed.")
-            self.request.session.flash(
-                "Could not update your swift token. %s" % (e), queue='error')
-        else:
-            self.request.session.flash(
-                'Swift token updated.', queue='success')
+        user = self.get_user()
+        user['swift_storage_url'] = result['storage_url']
+        user['swift_auth_token'] = result['auth_token'] 
+        self.userdb.update({'email':self.user_email()}, user)
         
     def next_success(self, appstruct):
-        self.success(appstruct)
-        return self.next('wizard_swiftbrowser')
+        try:
+            self.login(appstruct)
+        except Exception, e:
+            logger.exception("update of swift token failed.")
+            return self.flash_error("Could not update your Swift token. %s" % (e))
+        else:
+            super(SwiftLogin, self).success(appstruct)
+            self.flash_success('Swift token was updated.')
+            return self.next('wizard_swiftbrowser')
         
     @view_config(route_name='wizard_swift_login', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
