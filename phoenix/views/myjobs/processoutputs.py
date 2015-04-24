@@ -24,7 +24,7 @@ class ProcessOutputs(MyJobs):
         order_dir = 1 if order_dir == 'asc' else -1
         return dict(order=order, order_dir=order_dir)   
 
-    def generate_form(self, formid="deform"):
+    def generate_publish_form(self, formid="deform"):
         """Generate form for publishing to catalog service"""
         from phoenix.schema import PublishSchema
         schema = PublishSchema().bind()
@@ -33,7 +33,7 @@ class ProcessOutputs(MyJobs):
             buttons=('publish',),
             formid=formid)
 
-    def process_form(self, form, jobid, tab):
+    def process_publish_form(self, form, jobid, tab):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
@@ -123,7 +123,7 @@ class ProcessOutputs(MyJobs):
         key=order.get('order')
         direction=order.get('order_dir')
         
-        form = self.generate_form()
+        publish_form = self.generate_publish_form()
 
         tab = self.request.matchdict.get('tab')
         # TODO: this is a bit fishy ...
@@ -133,7 +133,7 @@ class ProcessOutputs(MyJobs):
             self.session.changed()
 
         if 'publish' in self.request.POST:
-            return self.process_form(form, jobid, tab)
+            return self.process_publish_form(publish_form, jobid, tab)
 
         items = []
         for oid,output in self.process_outputs(self.session.get('jobid'), tab).items():
@@ -150,7 +150,7 @@ class ProcessOutputs(MyJobs):
                 items,
                 ['output', 'identifier', 'preview', ''],
             )
-        return dict(active=tab, jobid=jobid, grid=grid, items=items, form=form.render())
+        return dict(active=tab, jobid=jobid, grid=grid, items=items, publish_form=publish_form.render())
         
 from phoenix.grid import MyGrid
 from string import Template
@@ -190,5 +190,7 @@ class ProcessOutputsGrid(MyGrid):
                                  item.get('reference', "#"), True) )
             buttongroup.append( ("mapit", item.get('identifier'), "icon-globe", "Show on Map",
                                  wms_reference, True) )
+            buttongroup.append( ("upload", item.get('identifier'), "icon-upload", "Upload",
+                                 "#", False) )
         return self.render_action_td(buttongroup)
 
