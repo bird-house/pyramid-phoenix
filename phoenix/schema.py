@@ -108,6 +108,12 @@ class MyAccountSchema(colander.MappingSchema):
         missing = '',
         widget = TextInputWidget(template='readonly/textinput'),
         )
+    swift_username = colander.SchemaNode(
+        colander.String(),
+        title = "Swift Username",
+        missing = '',
+        widget = TextInputWidget(template='readonly/textinput'),
+        )
     swift_storage_url = colander.SchemaNode(
         colander.String(),
         title = "Swift Storage URL",
