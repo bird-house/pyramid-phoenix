@@ -129,6 +129,27 @@ def myproxy_logon(request, openid, password):
     logger.debug('cert expires %s', cert_expires)
     return dict(credentials=credentials, cert_expires=cert_expires)
 
+def swift_upload(request, storage_url, auth_token, container, prefix, source):
+    inputs = []
+    inputs.append( ('storage_url', storage_url.encode('ascii', 'ignore')) )
+    inputs.append( ('auth_token', auth_token.encode('ascii', 'ignore')) )
+    inputs.append( ('container', container.encode('ascii', 'ignore')) )
+    inputs.append( ('prefix', prefix.encode('ascii', 'ignore')) )
+    inputs.append( ('resource', source.encode('ascii', 'ignore')) )
+
+    logger.debug("inputs = %s", inputs)
+
+    execution = request.wps.execute(
+        identifier='swift_upload',
+        inputs=inputs,
+        output=[('output',True)])
+    
+    from owslib.wps import monitorExecution
+    monitorExecution(execution)
+    
+    if not execution.isSucceded():
+        raise Exception('swift upload failed')
+
 def swift_login(request, username, password):
     storage_url = auth_token = None
 
