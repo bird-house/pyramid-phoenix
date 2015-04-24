@@ -263,13 +263,8 @@ class CatalogAddServiceSchema(colander.MappingSchema):
                     ('http://www.opengis.net/cat/csw/2.0.2', "OGC:CSW 2.0.2")])
         )
 
-class UploadSchema(colander.MappingSchema):
-    @colander.deferred
-    def deferred_default_format(node, kw):
-        return kw.get('format', "application/x-netcdf")
+class UploadSchema(SwiftLoginSchema):
     
-    storage_url = colander.SchemaNode(colander.String())
-    auth_token = colander.SchemaNode(colander.String())
     container = colander.SchemaNode(colander.String())
     prefix = colander.SchemaNode(colander.String())
     #object_name = colander.SchemaNode(colander.String())
@@ -277,11 +272,6 @@ class UploadSchema(colander.MappingSchema):
         colander.String(),
         description = 'URL to the source',
         validator = colander.url)
-    format = colander.SchemaNode(
-        colander.String(),
-        default = deferred_default_format,
-        description = 'Format of your source. Example: NetCDF',
-        )
 
 class PublishSchema(colander.MappingSchema):
     import uuid

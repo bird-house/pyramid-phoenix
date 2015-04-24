@@ -16,6 +16,12 @@ class SwiftLogin(Wizard):
         from phoenix.schema import SwiftLoginSchema
         return SwiftLoginSchema().bind()
 
+    def appstruct(self):
+        appstruct = super(SwiftLogin, self).appstruct()
+        user = self.get_user()
+        appstruct['username'] = appstruct.get('username', user.get('swift_username'))
+        return appstruct
+
     def login(self, appstruct):
         from phoenix.models import swift_login
         result = swift_login(
@@ -24,6 +30,7 @@ class SwiftLogin(Wizard):
             password = appstruct.get('password'))
 
         user = self.get_user()
+        user['swift_username'] = appstruct.get('username')
         user['swift_storage_url'] = result['storage_url']
         user['swift_auth_token'] = result['auth_token'] 
         self.userdb.update({'email':self.user_email()}, user)

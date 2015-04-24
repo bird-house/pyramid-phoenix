@@ -66,14 +66,18 @@ class ProcessOutputs(MyJobs):
             formid=formid)
 
     def process_upload_form(self, form, jobid, tab):
-        from phoenix.models import swift_upload
+        from phoenix.models import swift_upload, swift_login
         
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
+
+            login = swift_login(self.request,
+                                username = appstruct.get('username'),
+                                password = appstruct.get('password'))
             swift_upload(self.request,
-                         storage_url = appstruct.get('storage_url'),
-                         auth_token = appstruct.get('auth_token'),
+                         storage_url = login.get('storage_url'),
+                         auth_token = login.get('auth_token'),
                          container = appstruct.get('container'),
                          prefix = appstruct.get('prefix'),
                          source = appstruct.get('source'))
@@ -158,12 +162,10 @@ class ProcessOutputs(MyJobs):
             output = self.process_outputs(jobid).get(outputid)
             user = self.get_user()
 
-            # TODO: how about schema.bind?
             result = dict(
-                storage_url = user.get('swift_storage_url'),
-                auth_token = user.get('swift_auth_token'),
-                container = '',
-                prefix = '',
+                username = user.get('swift_username'),
+                container = 'WPS Outputs',
+                prefix = jobid,
                 source = output.reference,
                 format = output.mimeType,
                 )
