@@ -46,17 +46,17 @@ class MyGrid(Grid):
         return self.render_td(renderer="status_td", item=item, span_class=span_class)
     
     def render_timestamp_td(self, timestamp):
+        import datetime
         if timestamp is None:            
             return HTML.td('')
-        mytimestamp = timestamp
-        if type(timestamp) is str:
+        if type(timestamp) is not datetime.datetime:
             from dateutil import parser as datetime_parser
-            mytimestamp = datetime_parser.parse(timestamp)
+            timestamp = datetime_parser.parse(str(timestamp))
         span_class = 'due-date badge'
         
         span = HTML.tag(
             "span",
-            c=HTML.literal(mytimestamp.strftime('%Y-%m-%d %H:%M:%S')),
+            c=HTML.literal(timestamp.strftime('%Y-%m-%d %H:%M:%S')),
             class_=span_class,
         )
         return HTML.td(span)
