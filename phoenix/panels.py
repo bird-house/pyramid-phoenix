@@ -24,7 +24,7 @@ def navbar(context, request):
         nav.append( nav_item('Wizard', request.route_url('wizard')) )
         # TODO: enable map again when it is working
         #nav.append( nav_item('Map', request.route_url('map')) )
-        nav.append( nav_item('My Account', request.route_url('myaccount')) )
+        nav.append( nav_item('My Account', request.route_url('myaccount', tab='profile')) )
     if has_permission('admin', request.context, request):
         nav.append( nav_item('Settings', request.route_url('settings')) )
     nav.append( nav_item('Help', request.registry.settings.get('help.url')) )
@@ -109,7 +109,30 @@ class MyAccoutProfile(object):
         form = self.generate_form()
         if 'update' in self.request.POST:
             self.process_form(form)
-        return dict(form=form.render( self.appstruct() )) 
+        return dict(form=form.render( self.appstruct() ))
+
+class MyAccountESGF(object):
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+
+    def generate_form(self):
+        from phoenix.schema import ESGFCredentialsSchema
+        form = Form(schema=ESGFCredentialsSchema(), buttons=('update',), formid='deform')
+        return form
+
+    def appstruct(self):
+        appstruct = models.get_user(self.request)
+        if appstruct is None:
+            appstruct = {}
+        return appstruct
+
+    @panel_config(name='myaccount_esgf', renderer='phoenix:templates/panels/myaccount_esgf.pt')
+    def panel(self):
+        form = self.generate_form()
+        if 'update' in self.request.POST:
+            self.process_form(form)
+        return dict(form=form.render( self.appstruct() ))
 
 @panel_config(name='headings')
 def headings(context, request):

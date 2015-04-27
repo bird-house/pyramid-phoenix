@@ -89,8 +89,11 @@ def main(global_config, **settings):
     config.add_route('remove_myjob', '/myjobs/{jobid}/remove')
     config.add_route('process_outputs', '/myjobs/{jobid}/outputs/{tab}')
 
+    # map
     config.add_route('map', '/map')
-    config.add_route('myaccount', '/myaccount')
+
+    # my account
+    config.add_route('myaccount', '/myaccount/{tab}')
 
     # TODO: disable qc wizards
     config.add_route('qc_wizard_check', '/qc_wizard_check')

@@ -20,10 +20,7 @@ logger = logging.getLogger(__name__)
 class NoSchema(colander.MappingSchema):
     pass
 
-class CredentialsSchema(colander.MappingSchema):
-    """
-    ESGF user credentials schema
-    """
+class EsgfLoginSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
         colander.String(),
         title = "OpenID",
@@ -81,6 +78,31 @@ class UserProfileSchema(colander.MappingSchema):
         title = "Notes:",
         missing = '',
         default = '',
+        )
+
+class ESGFCredentialsSchema(colander.MappingSchema):
+    openid = colander.SchemaNode(
+        colander.String(),
+        title = "OpenID",
+        description = "OpenID to access ESGF data",
+        validator = colander.url,
+        missing = '',
+        default = '',
+        )
+    credentials = colander.SchemaNode(
+        colander.String(),
+        title = "Credentials",
+        description = "URL to ESGF Proxy Certificate",
+        validator = colander.url,
+        missing = '',
+        widget = TextInputWidget(template='readonly/textinput'),
+        )
+    cert_expires = colander.SchemaNode(
+        colander.String(),
+        title = "Expires",
+        description = "When your Proxy Certificate expires",
+        missing = '',
+        widget = TextInputWidget(template='readonly/textinput'),
         )
 
 class MyAccountSchema(colander.MappingSchema):

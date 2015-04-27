@@ -15,32 +15,6 @@ class MyAccount(MyView):
         super(MyAccount, self).__init__(request, name='myaccount', title='My Account')
         self.description = "Update your profile details."
 
-    def generate_form(self, formid="deform"):
-        from phoenix.schema import MyAccountSchema
-        schema = MyAccountSchema().bind()
-        return Form(
-            schema=schema,
-            buttons=('submit',),
-            formid=formid)
-
-    def process_form(self, form):
-        try:
-            controls = self.request.POST.items()
-            appstruct = form.validate(controls)
-            user = self.get_user()
-            for key in ['name', 'openid', 'organisation', 'notes']:
-                user[key] = appstruct.get(key)
-            self.userdb.update({'email':self.user_email()}, user)
-        except ValidationFailure, e:
-            logger.exception('validation of form failed.')
-            return dict(form=e.render())
-        except Exception, e:
-            logger.exception('update user failed.')
-            self.session.flash('Update of your accound failed. %s' % (e), queue='error')
-        else:
-            self.session.flash("Your account was updated.", queue='success')
-        return HTTPFound(location=self.request.route_url('myaccount'))
-        
     def generate_creds_form(self, formid="deform"):
         from phoenix.schema import CredentialsSchema
         schema = CredentialsSchema().bind()
@@ -122,12 +96,9 @@ class MyAccount(MyView):
         
     @view_config(route_name='myaccount', renderer='phoenix:templates/myaccount.pt')
     def view(self):
-        #form = self.generate_form()
         ## creds_form = self.generate_creds_form()
         ## swift_form = self.generate_swift_form()
 
-        ## if 'update' in self.request.POST:
-        ##     return self.process_creds_form(creds_form)
         ## if 'update_token' in self.request.POST:
         ##     return self.process_swift_form(swift_form)
         ## if 'submit' in self.request.POST:
@@ -138,14 +109,12 @@ class MyAccount(MyView):
         ##     form_credentials=creds_form.render(self.appstruct()),
         ##     form_swift=swift_form.render(self.appstruct()))
 
-        logger.debug('myaccount update=%s', 'update' in self.request.POST)
-
         tab = self.request.matchdict.get('tab', 'profile')
     
         lm = self.request.layout_manager
         if tab == 'profile':
             lm.layout.add_heading('myaccount_profile')
-        elif tab == 'esg':
+        elif tab == 'esgf':
             lm.layout.add_heading('myaccount_esgf')
         elif tab == 'swift':
             lm.layout.add_heading('myaccount_swift')

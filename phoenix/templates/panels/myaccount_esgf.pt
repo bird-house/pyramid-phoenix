@@ -1,0 +1,4 @@
+<div>
+  <h3>ESGF Credentials</h3>
+  <tal:form replace="structure form">The form will render here</tal:form>
+</div>
