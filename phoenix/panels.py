@@ -67,39 +67,42 @@ def dashboard_jobs(context, request):
                 failed = request.db.jobs.find({"is_complete": True, "is_succeded": False}).count(),
                 succeded = request.db.jobs.find({"is_succeded": True}).count())
 
-def process_form(request, form):
-    from phoenix.models import get_user, user_email
-    from deform import ValidationFailure
-    try:
-        controls = request.POST.items()
-        appstruct = form.validate(controls)
-        user = get_user(request)
-        for key in ['name', 'organisation', 'notes']:
-            user[key] = appstruct.get(key)
-        request.db.users.update({'email':user_email(request)}, user)
-    except ValidationFailure, e:
-        logger.exception('validation of form failed.')
-        return dict(form=e.render())
-    except Exception, e:
-        logger.exception('update user failed.')
-        request.session.flash('Update of your accound failed. %s' % (e), queue='error')
-    else:
-        request.session.flash("Your account was updated.", queue='success')
-    #return HTTPFound(location=request.route_url('myaccount', tab='profile'))
+class MyAccoutProfile():
+    def __init__(self, context, request):
+        self.request = request
+    
+    def process_form(self, form):
+        from phoenix.models import get_user, user_email
+        from deform import ValidationFailure
+        try:
+            controls = self.request.POST.items()
+            appstruct = form.validate(controls)
+            user = get_user(self.request)
+            for key in ['name', 'organisation', 'notes']:
+                user[key] = appstruct.get(key)
+            self.request.db.users.update({'email':user_email(self.request)}, user)
+        except ValidationFailure, e:
+            logger.exception('validation of form failed.')
+            return dict(form=e.render())
+        except Exception, e:
+            logger.exception('update user failed.')
+            self.request.session.flash('Update of your accound failed. %s' % (e), queue='error')
+        else:
+            self.request.session.flash("Your account was updated.", queue='success')
+        #return HTTPFound(location=request.route_url('myaccount', tab='profile'))
 
-@panel_config(name='myaccount_profile', renderer='phoenix:templates/panels/myaccount_profile.pt')
-def myaccount_profile(context, request):
-    from phoenix.schema import UserProfileSchema
-    from phoenix.models import get_user
-    from deform import Form
-    form = Form(schema=UserProfileSchema(), buttons=('update',), formid='deform')
-    logger.debug('myaccount_profile update=%s', 'update' in request.POST)
-    if 'update' in request.POST:
-        process_form(request, form)
-    appstruct = get_user(request)
-    if appstruct is None:
-        appstruct = {}
-    return dict(form=form.render( appstruct )) 
+    @panel_config(name='myaccount_profile', renderer='phoenix:templates/panels/myaccount_profile.pt')
+    def panel(self):
+        from phoenix.schema import UserProfileSchema
+        from phoenix.models import get_user
+        from deform import Form
+        form = Form(schema=UserProfileSchema(), buttons=('update',), formid='deform')
+        if 'update' in self.request.POST:
+            self.process_form(form)
+        appstruct = get_user(self.request)
+        if appstruct is None:
+            appstruct = {}
+        return dict(form=form.render( appstruct )) 
 
 @panel_config(name='headings')
 def headings(context, request):
