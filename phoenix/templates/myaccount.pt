@@ -2,39 +2,23 @@
 
   <div metal:fill-slot="content">
 
-    <!-- Button to trigger modal dialog for credentials update -->
-    <a href="#esgf-form" role="button" class="btn btn-success" data-toggle="modal">
-      Update ESGF Credentials
-    </a>
-    <!-- Button to trigger modal dialog for swift token update -->
-    <a href="#swift-form" role="button" class="btn btn-success" data-toggle="modal">
-      Update Swift Token
-    </a>
-    <br/><br/>
-
-    <tal:form replace="structure form">The form will render here</tal:form>
-
-    <!-- Add form for ESGF Credentials -->
-    <div id="esgf-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="task-form-label" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="task-form-label">Update your ESGF Credentials</h3>
-      </div>
-      <div class="modal-body">
-        <tal:form replace="structure form_credentials" />
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span2">
+          <!--Sidebar content-->
+           <ul class="nav nav-pills nav-stacked">
+             <li class="${'active' if active=='profile' else ''}"><a href="${request.route_url('myaccount', tab='profile')}">Profile</a></li>
+             <li class="${'active' if active=='esgf' else ''}"><a href="${request.route_url('myaccount', tab='esgf')}">ESGF</a></li>
+             <li class="${'active' if active=='swift' else ''}"><a href="${request.route_url('myaccount', tab='swift')}">Swift</a></li>
+           </ul>
+        </div>
+        <div class="span10">
+          <!--Body content-->
+          ${panel('headings')}
+        </div>
       </div>
     </div>
 
-    <!-- Add form for Cloud token -->
-    <div id="swift-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="task-form-label" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="task-form-label">Update your Swift Token</h3>
-      </div>
-      <div class="modal-body">
-        <tal:form replace="structure form_swift" />
-      </div>
-    </div>
   </div>
    
 </metal:block>

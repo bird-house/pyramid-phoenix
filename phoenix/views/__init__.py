@@ -1,3 +1,5 @@
+from phoenix import models
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -19,13 +21,10 @@ class MyView(object):
                 title=item.get('title'))
 
     def user_email(self):
-        from pyramid.security import authenticated_userid
-        return authenticated_userid(self.request)
+        return models.user_email(self.request)
 
     def get_user(self, email=None):
-        if email is None:
-            email = self.user_email()
-        return self.userdb.find_one(dict(email=email))
+        return models.get_user(self.request, email)
 
     def breadcrumbs(self):
         return [dict(route_name="home", title="Home")]

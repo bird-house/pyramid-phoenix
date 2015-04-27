@@ -56,10 +56,34 @@ class SwiftLoginSchema(colander.MappingSchema):
         default = '',
         widget = PasswordWidget(size=30))
 
+class UserProfileSchema(colander.MappingSchema):
+    name = colander.SchemaNode(
+        colander.String(),
+        title = "Your Name",
+        missing = '',
+        default = '',
+        )
+    email = colander.SchemaNode(
+        colander.String(),
+        title = "EMail",
+        validator = colander.Email(),
+        missing = '',
+        widget = TextInputWidget(template='readonly/textinput'),
+        )
+    organisation = colander.SchemaNode(
+        colander.String(),
+        title = "Organisation",
+        missing = '',
+        default = '',
+        )
+    notes = colander.SchemaNode(
+        colander.String(),
+        title = "Notes:",
+        missing = '',
+        default = '',
+        )
+
 class MyAccountSchema(colander.MappingSchema):
-    """
-    User account schema
-    """
     name = colander.SchemaNode(
         colander.String(),
         title = "Your Name",

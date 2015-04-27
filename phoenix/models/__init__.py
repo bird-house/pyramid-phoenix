@@ -4,6 +4,15 @@ import datetime
 import logging
 logger = logging.getLogger(__name__)
 
+def user_email(request):
+    from pyramid.security import authenticated_userid
+    return authenticated_userid(request)
+
+def get_user(request, email=None):
+    if email is None:
+        email = user_email(request)
+    return request.db.users.find_one(dict(email=email))
+
 def add_user(
     request,
     email,

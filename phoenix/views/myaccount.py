@@ -122,17 +122,31 @@ class MyAccount(MyView):
         
     @view_config(route_name='myaccount', renderer='phoenix:templates/myaccount.pt')
     def view(self):
-        form = self.generate_form()
-        creds_form = self.generate_creds_form()
-        swift_form = self.generate_swift_form()
+        #form = self.generate_form()
+        ## creds_form = self.generate_creds_form()
+        ## swift_form = self.generate_swift_form()
 
-        if 'update' in self.request.POST:
-            return self.process_creds_form(creds_form)
-        if 'update_token' in self.request.POST:
-            return self.process_swift_form(swift_form)
-        if 'submit' in self.request.POST:
-            return self.process_form(form)
-        return dict(
-            form=form.render(self.appstruct()),
-            form_credentials=creds_form.render(self.appstruct()),
-            form_swift=swift_form.render(self.appstruct()))
+        ## if 'update' in self.request.POST:
+        ##     return self.process_creds_form(creds_form)
+        ## if 'update_token' in self.request.POST:
+        ##     return self.process_swift_form(swift_form)
+        ## if 'submit' in self.request.POST:
+        ##     return self.process_form(form)
+        ## return dict(
+        ##     active='profile',
+        ##     form=form.render(self.appstruct()),
+        ##     form_credentials=creds_form.render(self.appstruct()),
+        ##     form_swift=swift_form.render(self.appstruct()))
+
+        logger.debug('myaccount update=%s', 'update' in self.request.POST)
+
+        tab = self.request.matchdict.get('tab', 'profile')
+    
+        lm = self.request.layout_manager
+        if tab == 'profile':
+            lm.layout.add_heading('myaccount_profile')
+        elif tab == 'esg':
+            lm.layout.add_heading('myaccount_esgf')
+        elif tab == 'swift':
+            lm.layout.add_heading('myaccount_swift')
+        return dict(active=tab)
