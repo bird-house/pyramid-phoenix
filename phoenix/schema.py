@@ -105,55 +105,7 @@ class ESGFCredentialsSchema(colander.MappingSchema):
         widget = TextInputWidget(template='readonly/textinput'),
         )
 
-class MyAccountSchema(colander.MappingSchema):
-    name = colander.SchemaNode(
-        colander.String(),
-        title = "Your Name",
-        missing = '',
-        default = '',
-        )
-    email = colander.SchemaNode(
-        colander.String(),
-        title = "EMail",
-        validator = colander.Email(),
-        missing = '',
-        widget = TextInputWidget(template='readonly/textinput'),
-        )
-    openid = colander.SchemaNode(
-        colander.String(),
-        title = "OpenID",
-        description = "OpenID to access ESGF data",
-        validator = colander.url,
-        missing = '',
-        default = '',
-        )
-    organisation = colander.SchemaNode(
-        colander.String(),
-        title = "Organisation",
-        missing = '',
-        default = '',
-        )
-    notes = colander.SchemaNode(
-        colander.String(),
-        title = "Notes:",
-        missing = '',
-        default = '',
-        )
-    credentials = colander.SchemaNode(
-        colander.String(),
-        title = "Credentials",
-        description = "URL to ESGF Proxy Certificate",
-        validator = colander.url,
-        missing = '',
-        widget = TextInputWidget(template='readonly/textinput'),
-        )
-    cert_expires = colander.SchemaNode(
-        colander.String(),
-        title = "Expires",
-        description = "When your Proxy Certificate expires",
-        missing = '',
-        widget = TextInputWidget(template='readonly/textinput'),
-        )
+class SwiftSchema(colander.MappingSchema):
     swift_username = colander.SchemaNode(
         colander.String(),
         title = "Swift Username",
