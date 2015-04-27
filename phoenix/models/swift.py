@@ -11,18 +11,18 @@ def swift_upload(request, storage_url, auth_token, container, prefix, source):
     inputs.append( ('prefix', prefix.encode('ascii', 'ignore')) )
     inputs.append( ('resource', source.encode('ascii', 'ignore')) )
 
-    logger.debug("inputs = %s", inputs)
-
     execution = request.wps.execute(
         identifier='swift_upload',
         inputs=inputs,
         output=[('output',True)])
-    
-    from owslib.wps import monitorExecution
-    monitorExecution(execution)
-    
-    if not execution.isSucceded():
-        raise Exception('swift upload failed')
+
+    from phoenix.models import add_job
+    add_job(request,
+            title="Swift Upload",
+            abstract='Added by My Account',
+            wps_url=execution.serviceInstance,
+            status_location=execution.statusLocation,
+            keywords='swift,upload')
 
 def swift_login(request, username, password):
     storage_url = auth_token = None

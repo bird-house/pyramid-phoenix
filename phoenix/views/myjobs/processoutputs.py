@@ -88,7 +88,7 @@ class ProcessOutputs(MyJobs):
             logger.exception("upload failed.")
             self.session.flash("Upload failed. %s" % e, queue='error')
         else:
-            self.session.flash("Upload was successful", queue='success')
+            self.session.flash("Swift upload added to Jobs.", queue='info')
         return HTTPFound(location=self.request.route_url('process_outputs', jobid=jobid, tab=tab))
 
     def collect_outputs(self, status_location, prefix="job"):
