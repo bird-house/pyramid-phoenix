@@ -56,7 +56,7 @@ def logon_esgf(context, request):
 
 @panel_config(name='dashboard_users', renderer='phoenix:templates/panels/dashboard_users.pt')
 def dashboard_users(context, request):
-    from .models import user_stats
+    from phoenix.models import user_stats
     return user_stats(request)
 
 @panel_config(name='dashboard_jobs', renderer='phoenix:templates/panels/dashboard_jobs.pt')

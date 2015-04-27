@@ -1,7 +1,7 @@
 import uuid
 import datetime
 
-from .exceptions import MyProxyLogonFailure
+from phoenix.exceptions import MyProxyLogonFailure
 from swiftclient import client, ClientException
 
 import logging
