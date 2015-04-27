@@ -13,8 +13,8 @@ class ESGFCredentials(Wizard):
             title="ESGF Credentials")
 
     def schema(self):
-        from phoenix.schema import CredentialsSchema
-        return CredentialsSchema().bind()
+        from phoenix.schema import ESGFLoginSchema
+        return ESGFLoginSchema()
 
     def appstruct(self):
         appstruct = super(ESGFCredentials, self).appstruct()

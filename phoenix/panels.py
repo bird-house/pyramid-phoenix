@@ -70,11 +70,18 @@ def dashboard_jobs(context, request):
                 failed = request.db.jobs.find({"is_complete": True, "is_succeded": False}).count(),
                 succeded = request.db.jobs.find({"is_succeded": True}).count())
 
-class MyAccoutProfile(object):
+class MyAccountPanel(object):
     def __init__(self, context, request):
         self.context = context
         self.request = request
 
+    def appstruct(self):
+        appstruct = models.get_user(self.request)
+        if appstruct is None:
+            appstruct = {}
+        return appstruct
+
+class MyAccoutProfile(MyAccountPanel):
     def generate_form(self):
         from phoenix.schema import UserProfileSchema
         form = Form(schema=UserProfileSchema(), buttons=('update',), formid='deform')
@@ -98,12 +105,6 @@ class MyAccoutProfile(object):
             self.request.session.flash("Your account was updated.", queue='success')
         #return HTTPFound(location=request.route_url('myaccount', tab='profile'))
 
-    def appstruct(self):
-        appstruct = models.get_user(self.request)
-        if appstruct is None:
-            appstruct = {}
-        return appstruct
-
     @panel_config(name='myaccount_profile', renderer='phoenix:templates/panels/myaccount_default.pt')
     def panel(self):
         form = self.generate_form()
@@ -111,42 +112,22 @@ class MyAccoutProfile(object):
             self.process_form(form)
         return dict(title="Profile", form=form.render( self.appstruct() ))
 
-class MyAccountESGF(object):
-    def __init__(self, context, request):
-        self.context = context
-        self.request = request
-
+class MyAccountESGF(MyAccountPanel):
     def generate_form(self):
         from phoenix.schema import ESGFCredentialsSchema
         form = Form(schema=ESGFCredentialsSchema(), formid='deform')
         return form
-
-    def appstruct(self):
-        appstruct = models.get_user(self.request)
-        if appstruct is None:
-            appstruct = {}
-        return appstruct
 
     @panel_config(name='myaccount_esgf', renderer='phoenix:templates/panels/myaccount_default.pt')
     def panel(self):
         form = self.generate_form()
         return dict(title="ESGF Access", form=form.render( self.appstruct() ))
 
-class MyAccountSwift(object):
-    def __init__(self, context, request):
-        self.context = context
-        self.request = request
-
+class MyAccountSwift(MyAccountPanel):
     def generate_form(self):
         from phoenix.schema import SwiftSchema
         form = Form(schema=SwiftSchema(), formid='deform')
         return form
-
-    def appstruct(self):
-        appstruct = models.get_user(self.request)
-        if appstruct is None:
-            appstruct = {}
-        return appstruct
 
     @panel_config(name='myaccount_swift', renderer='phoenix:templates/panels/myaccount_default.pt')
     def panel(self):

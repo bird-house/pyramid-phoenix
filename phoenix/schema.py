@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class NoSchema(colander.MappingSchema):
     pass
 
-class EsgfLoginSchema(colander.MappingSchema):
+class ESGFLoginSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
         colander.String(),
         title = "OpenID",
@@ -28,7 +28,7 @@ class EsgfLoginSchema(colander.MappingSchema):
         validator = colander.url,
         missing = '',
         default = '',
-        widget = TextInputWidget(template='readonly/textinput'),
+        #widget = TextInputWidget(template='readonly/textinput'),
         )
     password = colander.SchemaNode(
         colander.String(),
