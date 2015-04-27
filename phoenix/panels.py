@@ -118,7 +118,7 @@ class MyAccountESGF(object):
 
     def generate_form(self):
         from phoenix.schema import ESGFCredentialsSchema
-        form = Form(schema=ESGFCredentialsSchema(), buttons=('update',), formid='deform')
+        form = Form(schema=ESGFCredentialsSchema(), formid='deform')
         return form
 
     def appstruct(self):
@@ -141,7 +141,7 @@ class MyAccountSwift(object):
 
     def generate_form(self):
         from phoenix.schema import SwiftSchema
-        form = Form(schema=SwiftSchema(), buttons=('update',), formid='deform')
+        form = Form(schema=SwiftSchema(), formid='deform')
         return form
 
     def appstruct(self):

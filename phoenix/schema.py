@@ -87,7 +87,7 @@ class ESGFCredentialsSchema(colander.MappingSchema):
         description = "OpenID to access ESGF data",
         validator = colander.url,
         missing = '',
-        default = '',
+        widget = TextInputWidget(template='readonly/textinput'),
         )
     credentials = colander.SchemaNode(
         colander.String(),
