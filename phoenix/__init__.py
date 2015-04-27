@@ -44,6 +44,7 @@ def main(global_config, **settings):
     
     # deform
     config.include('pyramid_deform')
+    config.include('js.deform')
     config.include('deform_bootstrap')
     #config.include('deform_bootstrap_extra')
 

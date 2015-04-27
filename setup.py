@@ -20,6 +20,8 @@ requires = [
     'pyramid_deform',
     'deform',
     'deform_bootstrap',
+    'js.deform',
+    'js.bootstrap',
     'PasteDeploy',
     #'deform_bootstrap_extra',
     #'pyramid_persona',
