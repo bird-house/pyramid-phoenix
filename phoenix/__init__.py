@@ -43,6 +43,7 @@ def main(global_config, **settings):
     config.include('pyramid_chameleon')
     
     # deform
+    config.include('pyramid_deform')
     config.include('deform_bootstrap')
     #config.include('deform_bootstrap_extra')
 
