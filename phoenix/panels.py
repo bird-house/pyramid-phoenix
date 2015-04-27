@@ -2,6 +2,9 @@ from pyramid_layout.panel import panel_config
 from pyramid.security import authenticated_userid, has_permission
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 
+from deform import Form, ValidationFailure
+from phoenix import models
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -67,20 +70,24 @@ def dashboard_jobs(context, request):
                 failed = request.db.jobs.find({"is_complete": True, "is_succeded": False}).count(),
                 succeded = request.db.jobs.find({"is_succeded": True}).count())
 
-class MyAccoutProfile():
+class MyAccoutProfile(object):
     def __init__(self, context, request):
+        self.context = context
         self.request = request
+
+    def generate_form(self):
+        from phoenix.schema import UserProfileSchema
+        form = Form(schema=UserProfileSchema(), buttons=('update',), formid='deform')
+        return form
     
     def process_form(self, form):
-        from phoenix.models import get_user, user_email
-        from deform import ValidationFailure
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
-            user = get_user(self.request)
+            user = models.get_user(self.request)
             for key in ['name', 'organisation', 'notes']:
                 user[key] = appstruct.get(key)
-            self.request.db.users.update({'email':user_email(self.request)}, user)
+            self.request.db.users.update({'email':models.user_email(self.request)}, user)
         except ValidationFailure, e:
             logger.exception('validation of form failed.')
             return dict(form=e.render())
@@ -91,18 +98,18 @@ class MyAccoutProfile():
             self.request.session.flash("Your account was updated.", queue='success')
         #return HTTPFound(location=request.route_url('myaccount', tab='profile'))
 
-    @panel_config(name='myaccount_profile', renderer='phoenix:templates/panels/myaccount_profile.pt')
-    def panel(self):
-        from phoenix.schema import UserProfileSchema
-        from phoenix.models import get_user
-        from deform import Form
-        form = Form(schema=UserProfileSchema(), buttons=('update',), formid='deform')
-        if 'update' in self.request.POST:
-            self.process_form(form)
-        appstruct = get_user(self.request)
+    def appstruct(self):
+        appstruct = models.get_user(self.request)
         if appstruct is None:
             appstruct = {}
-        return dict(form=form.render( appstruct )) 
+        return appstruct
+
+    @panel_config(name='myaccount_profile', renderer='phoenix:templates/panels/myaccount_profile.pt')
+    def panel(self):
+        form = self.generate_form()
+        if 'update' in self.request.POST:
+            self.process_form(form)
+        return dict(form=form.render( self.appstruct() )) 
 
 @panel_config(name='headings')
 def headings(context, request):
