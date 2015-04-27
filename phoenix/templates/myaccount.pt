@@ -4,15 +4,15 @@
 
     <div class="container-fluid">
       <div class="row-fluid">
-        <div class="span2">
+        <div class="span3">
           <!--Sidebar content-->
            <ul class="nav nav-pills nav-stacked">
              <li class="${'active' if active=='profile' else ''}"><a href="${request.route_url('myaccount', tab='profile')}">Profile</a></li>
-             <li class="${'active' if active=='esgf' else ''}"><a href="${request.route_url('myaccount', tab='esgf')}">ESGF</a></li>
-             <li class="${'active' if active=='swift' else ''}"><a href="${request.route_url('myaccount', tab='swift')}">Swift</a></li>
+             <li class="${'active' if active=='esgf' else ''}"><a href="${request.route_url('myaccount', tab='esgf')}">ESGF Access</a></li>
+             <li class="${'active' if active=='swift' else ''}"><a href="${request.route_url('myaccount', tab='swift')}">Swift Access</a></li>
            </ul>
         </div>
-        <div class="span10">
+        <div class="span9">
           <!--Body content-->
           ${panel('headings')}
         </div>

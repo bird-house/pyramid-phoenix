@@ -1,4 +1,0 @@
-<div>
-  <h3>Profile</h3>
-  <tal:form replace="structure form">The form will render here</tal:form>
-</div>

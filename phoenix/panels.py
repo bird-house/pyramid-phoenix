@@ -104,12 +104,12 @@ class MyAccoutProfile(object):
             appstruct = {}
         return appstruct
 
-    @panel_config(name='myaccount_profile', renderer='phoenix:templates/panels/myaccount_profile.pt')
+    @panel_config(name='myaccount_profile', renderer='phoenix:templates/panels/myaccount_default.pt')
     def panel(self):
         form = self.generate_form()
         if 'update' in self.request.POST:
             self.process_form(form)
-        return dict(form=form.render( self.appstruct() ))
+        return dict(title="Profile", form=form.render( self.appstruct() ))
 
 class MyAccountESGF(object):
     def __init__(self, context, request):
@@ -127,12 +127,10 @@ class MyAccountESGF(object):
             appstruct = {}
         return appstruct
 
-    @panel_config(name='myaccount_esgf', renderer='phoenix:templates/panels/myaccount_esgf.pt')
+    @panel_config(name='myaccount_esgf', renderer='phoenix:templates/panels/myaccount_default.pt')
     def panel(self):
         form = self.generate_form()
-        if 'update' in self.request.POST:
-            self.process_form(form)
-        return dict(form=form.render( self.appstruct() ))
+        return dict(title="ESGF Access", form=form.render( self.appstruct() ))
 
 class MyAccountSwift(object):
     def __init__(self, context, request):
@@ -150,12 +148,10 @@ class MyAccountSwift(object):
             appstruct = {}
         return appstruct
 
-    @panel_config(name='myaccount_swift', renderer='phoenix:templates/panels/myaccount_swift.pt')
+    @panel_config(name='myaccount_swift', renderer='phoenix:templates/panels/myaccount_default.pt')
     def panel(self):
         form = self.generate_form()
-        if 'update' in self.request.POST:
-            self.process_form(form)
-        return dict(form=form.render( self.appstruct() ))
+        return dict(title="Swift Access", form=form.render( self.appstruct() ))
 
 @panel_config(name='headings')
 def headings(context, request):
