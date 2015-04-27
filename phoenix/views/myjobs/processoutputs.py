@@ -66,16 +66,16 @@ class ProcessOutputs(MyJobs):
             formid=formid)
 
     def process_upload_form(self, form, jobid, tab):
-        from phoenix.models import swift_upload, swift_login
+        from phoenix.models import swift
         
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
 
-            login = swift_login(self.request,
+            login = swift.swift_login(self.request,
                                 username = appstruct.get('username'),
                                 password = appstruct.get('password'))
-            swift_upload(self.request,
+            swift.swift_upload(self.request,
                          storage_url = login.get('storage_url'),
                          auth_token = login.get('auth_token'),
                          container = appstruct.get('container'),

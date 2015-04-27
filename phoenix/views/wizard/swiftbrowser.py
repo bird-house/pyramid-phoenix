@@ -3,7 +3,7 @@ from pyramid.view import view_config
 from swiftclient import client, ClientException
 
 from phoenix.views.wizard import Wizard
-from phoenix.models import get_containers, get_objects, prefix_list
+from phoenix.models import swift
 
 import logging
 logger = logging.getLogger(__name__)
@@ -63,10 +63,10 @@ class SwiftBrowser(Wizard):
         prefix = self.request.params.get('prefix')
         items = fields = []
         if container:
-            items = get_objects(self.storage_url, self.auth_token, container, prefix=prefix)
+            items = swift.get_objects(self.storage_url, self.auth_token, container, prefix=prefix)
             fields = ['name', 'created', 'size', '']
         else:
-            items = get_containers(self.storage_url, self.auth_token)
+            items = swift.get_containers(self.storage_url, self.auth_token)
             fields = ['name', 'objects', 'size', '']
         filtered_items = []
         for item in items:
@@ -93,7 +93,7 @@ class SwiftBrowser(Wizard):
             filtered_items,
             fields,
             )
-        return dict(grid=grid, items=items, container=container, prefixes=prefix_list(prefix))
+        return dict(grid=grid, items=items, container=container, prefixes=swift.prefix_list(prefix))
 
     @view_config(route_name='wizard_swiftbrowser', renderer='phoenix:templates/wizard/swiftbrowser.pt')
     def view(self):

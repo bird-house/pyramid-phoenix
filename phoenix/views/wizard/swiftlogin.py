@@ -23,8 +23,8 @@ class SwiftLogin(Wizard):
         return appstruct
 
     def login(self, appstruct):
-        from phoenix.models import swift_login
-        result = swift_login(
+        from phoenix.models import swift
+        result = swift.swift_login(
             self.request,
             username = appstruct.get('username'),
             password = appstruct.get('password'))
