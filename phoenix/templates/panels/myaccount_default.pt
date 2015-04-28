@@ -1,4 +1,6 @@
-<div>
-  <h3>${title}</h3>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    ${title}
+  </div>
   <tal:form replace="structure form">The form will render here</tal:form>
 </div>

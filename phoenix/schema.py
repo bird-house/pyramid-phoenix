@@ -75,7 +75,7 @@ class UserProfileSchema(colander.MappingSchema):
         )
     notes = colander.SchemaNode(
         colander.String(),
-        title = "Notes:",
+        title = "Notes",
         missing = '',
         default = '',
         )
