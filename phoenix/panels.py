@@ -16,22 +16,22 @@ def navbar(context, request):
         active = request.current_route_url() == url
         return dict(name=name, url=url, active=active)
 
-    nav = []
+    items = []
     if has_permission('edit', request.context, request):
-        nav.append( nav_item('Dashboard', request.route_url('dashboard', tab='jobs')) )
-        nav.append( nav_item('Processes', request.route_url('processes')) )
-        nav.append( nav_item('My Jobs', request.route_url('myjobs')) )
-        nav.append( nav_item('Wizard', request.route_url('wizard')) )
+        items.append( nav_item('Dashboard', request.route_url('dashboard', tab='jobs')) )
+        items.append( nav_item('Processes', request.route_url('processes')) )
+        items.append( nav_item('My Jobs', request.route_url('myjobs')) )
+        items.append( nav_item('Wizard', request.route_url('wizard')) )
         # TODO: enable map again when it is working
-        #nav.append( nav_item('Map', request.route_url('map')) )
-        nav.append( nav_item('My Account', request.route_url('myaccount', tab='profile')) )
+        #items.append( nav_item('Map', request.route_url('map')) )
+        items.append( nav_item('My Account', request.route_url('myaccount', tab='profile')) )
     if has_permission('admin', request.context, request):
-        nav.append( nav_item('Settings', request.route_url('settings')) )
-    nav.append( nav_item('Help', request.registry.settings.get('help.url')) )
+        items.append( nav_item('Settings', request.route_url('settings')) )
+    items.append( nav_item('Help', request.registry.settings.get('help.url')) )
 
     login = request.current_route_url() == request.route_url('signin', tab='esgf')
 
-    return dict(title='Phoenix', nav=nav, username=authenticated_userid(request), login=login)
+    return dict(title='Phoenix', items=items, username=authenticated_userid(request), login=login)
 
 @panel_config(name='welcome', renderer='phoenix:templates/panels/welcome.pt')
 def welcome(context, request, title):
