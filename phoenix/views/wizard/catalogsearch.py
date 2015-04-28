@@ -122,9 +122,9 @@ class CatalogSearchGrid(MyGrid):
         from string import Template
         from webhelpers.html.builder import HTML
 
-        icon_class = "icon-thumbs-down"
+        icon_class = "glyphicon glyphicon-thumbs-down"
         if item.get('selected') == True:
-            icon_class = "icon-thumbs-up"
+            icon_class = "glyphicon glyphicon-thumbs-up"
         div = Template("""\
         <a class="select" data-value="${recordid}" href="#"><i class="${icon_class}"></i></a>
         """)

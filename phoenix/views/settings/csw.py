@@ -162,7 +162,7 @@ class CSWGrid(MyGrid):
     def action_td(self, col_num, i, item):
         buttongroup = []
         buttongroup.append(
-            ("remove", item.get('identifier'), "icon-trash", "",
+            ("remove", item.get('identifier'), "glyphicon glyphicon-trash", "",
             self.request.route_url('remove_record', recordid=item.get('identifier')),
             False) )
         return self.render_action_td(buttongroup)

@@ -55,9 +55,9 @@ class CatalogSearchGrid(MyGrid):
         from string import Template
         from webhelpers.html.builder import HTML
 
-        icon_class = "icon-thumbs-down"
+        icon_class = "glyphicon glyphicon-thumbs-down"
         if item['selected'] == True:
-            icon_class = "icon-thumbs-up"
+            icon_class = "glyphicon glyphicon-thumbs-up"
         div = Template("""\
         <button class="btn btn-mini select" data-value="${identifier}"><i class="${icon_class}"></i></button>
         """)

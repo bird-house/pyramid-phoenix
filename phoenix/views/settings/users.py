@@ -107,7 +107,7 @@ class UsersGrid(MyGrid):
         from string import Template
         from webhelpers.html.builder import HTML
 
-        icon_class = "icon-thumbs-down"
+        icon_class = "glyphicon glyphicon-thumbs-down"
         if item.get('activated') == True:
             icon_class = "icon-thumbs-up"
         div = Template("""\
@@ -117,8 +117,8 @@ class UsersGrid(MyGrid):
 
     def action_td(self, col_num, i, item):
         buttongroup = []
-        buttongroup.append( ("edit", item.get('email'), "icon-pencil", "Edit", "#", False))
-        buttongroup.append( ("remove", item.get('email'), "icon-trash", "Remove", 
+        buttongroup.append( ("edit", item.get('email'), "glyphicon glyphicon-pencil", "Edit", "#", False))
+        buttongroup.append( ("remove", item.get('email'), "glyphicon glyphicon-trash", "Remove", 
                              self.request.route_url('remove_user', email=item.get('email')),
                              False) )
         return self.render_action_td(buttongroup)
