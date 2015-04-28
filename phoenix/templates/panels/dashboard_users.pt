@@ -1,4 +1,4 @@
-<div class="span4">
+<div class="col-md-4">
   <h3>Users</h3>
   <p>
     Number of Users: <span class="badge badge-success">${num_users}</span>

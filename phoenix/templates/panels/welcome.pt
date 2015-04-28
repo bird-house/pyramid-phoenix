@@ -1,4 +1,4 @@
-<div class="hero-unit">
+<div class="jumbotron">
   <h2>Welcome to ${title}</h2>
   <p>
     This is a <b>Demo</b> installation. If you want to try it out please <a class="btn btn-mini btn-success" href="/register">register</a> and ask for account activation. 

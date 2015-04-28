@@ -7,19 +7,19 @@ README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
 requires = [
-    'pyramid',
+    'pyramid>=1.5.6',
     'pyramid-chameleon',
     'pyramid-mako',
     'pymongo',
     #'pyramid_debugtoolbar',
-    'waitress',
+    #'waitress',
     'pyramid_layout',
     'pyramid_deform',
     'pyramid_beaker',
     'pyramid_mailer',
     'pyramid_deform',
-    'deform',
-    'deform_bootstrap',
+    'deform>=2.0a2',
+    #'deform_bootstrap',
     'js.deform',
     'js.bootstrap',
     'PasteDeploy',

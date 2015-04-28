@@ -3,16 +3,16 @@
   <div metal:fill-slot="content">
 
     <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span3">
+      <div class="row">
+        <div class="col-md-3">
           <!--Sidebar content-->
-           <ul class="nav nav-pills nav-stacked">
-             <li class="${'active' if active=='profile' else ''}"><a href="${request.route_url('myaccount', tab='profile')}">Profile</a></li>
-             <li class="${'active' if active=='esgf' else ''}"><a href="${request.route_url('myaccount', tab='esgf')}">ESGF Access</a></li>
-             <li class="${'active' if active=='swift' else ''}"><a href="${request.route_url('myaccount', tab='swift')}">Swift Access</a></li>
-           </ul>
+          <ul class="nav nav-pills nav-stacked">
+            <li class="${'active' if active=='profile' else ''}"><a href="${request.route_url('myaccount', tab='profile')}">Profile</a></li>
+            <li class="${'active' if active=='esgf' else ''}"><a href="${request.route_url('myaccount', tab='esgf')}">ESGF Access</a></li>
+            <li class="${'active' if active=='swift' else ''}"><a href="${request.route_url('myaccount', tab='swift')}">Swift Access</a></li>
+          </ul>
         </div>
-        <div class="span9">
+        <div class="col-md-9">
           <!--Body content-->
           ${panel('headings')}
         </div>

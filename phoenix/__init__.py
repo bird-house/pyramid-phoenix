@@ -45,7 +45,7 @@ def main(global_config, **settings):
     # deform
     config.include('pyramid_deform')
     config.include('js.deform')
-    config.include('deform_bootstrap')
+    #config.include('deform_bootstrap')
 
     # mailer
     config.include('pyramid_mailer')
@@ -60,10 +60,7 @@ def main(global_config, **settings):
     # static views (stylesheets etc)
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_static_view('deform_static', 'deform:static', cache_max_age=3600)
-    config.add_static_view(
-        'deform_bootstrap_static', 'deform_bootstrap:static',
-        cache_max_age=3600
-    )
+    #config.add_static_view('deform_bootstrap_static', 'deform_bootstrap:static', cache_max_age=3600)
 
     # dummy view for testing
     config.add_route('dummy', '/dummy/{email}')
