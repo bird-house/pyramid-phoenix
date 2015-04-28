@@ -75,7 +75,10 @@ class MyGrid(Grid):
         <a class="${span_class}" href="${source}" data-format="${format}">${format}</a>
         """)
         return HTML.td(HTML.literal(anchor.substitute(
-            {'source': source, 'span_class': span_class, 'format': format} )))  
+            {'source': source, 'span_class': span_class, 'format': format} )))
+
+    def render_progress_td(self, progress=0):
+        return self.render_td(renderer="progress_td", progress=progress)
 
     def render_preview_td(self, format, source):
         return self.render_td(renderer="preview_td", format=format, source=source)

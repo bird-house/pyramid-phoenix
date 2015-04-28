@@ -105,31 +105,13 @@ class JobsGrid(MyGrid):
         return self.render_title_td(item['title'], item['abstract'], item['keywords'].split(','))
 
     def progress_td(self, col_num, i, item):
-        """Generate the column for the job progress.
-        """
-        progress = item.get('progress', 100)
-        if progress is None:
-            return HTML.td('')
-        span_class = 'progress progress-info bar'
-
-        div_bar = HTML.tag(
-            "div",
-            c=HTML.literal(progress),
-            class_="bar",
-            style_="width: %d%s" % (progress, '%'),
-            id_="progress-%s" % item.get('identifier'))
-        div_progress = HTML.tag(
-            "div",
-            c=div_bar,
-            class_="progress progress-info")
-       
-        return HTML.td(div_progress)
-   
+        return self.render_progress_td(progress = item.get('progress', 0))
+        
     def action_td(self, col_num, i, item):
         buttongroup = []
-        buttongroup.append( ("show", item.get('identifier'), "icon-th-list", "Show", 
+        buttongroup.append( ("show", item.get('identifier'), "glyphicon glyphicon-th-list", "Show", 
                              self.request.route_url('process_outputs', tab='outputs', jobid=item.get('identifier')), False) )
-        buttongroup.append( ("remove", item.get('identifier'), "icon-trash", "Remove", 
+        buttongroup.append( ("remove", item.get('identifier'), "glyphicon glyphicon-trash", "Remove", 
                              self.request.route_url('remove_myjob', jobid=item.get('identifier')), False) )
         return self.render_action_td(buttongroup)
 
