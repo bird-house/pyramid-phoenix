@@ -23,6 +23,8 @@
       }
     </style>
 
+    <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
+          href="${request.static_url('phoenix:static/css/deform_phoenix.css')}" />
 
     <!-- tagmanager -->
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
@@ -36,6 +38,13 @@
             type="text/javascript"></script>
     <script src="${request.static_url('deform:static/scripts/bootstrap.min.js')}"
             type="text/javascript"></script>
+
+    <!-- deform used for own widget ... TODO: add on demand -->
+    <script src="${request.static_url('deform:static/scripts/deform.js')}"
+            type="text/javascript"></script>
+    <script src="${request.static_url('deform:static/scripts/jquery.form.js')}"
+            type="text/javascript"></script>
+
     <tal:block repeat="reqt js_links|[]">
       <script type="text/javascript" src="${request.static_url(reqt)}"></script>
     </tal:block>

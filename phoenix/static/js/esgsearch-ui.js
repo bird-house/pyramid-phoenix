@@ -133,7 +133,8 @@
 
       var init_time_constraints = function() {
         var options = { 'format': date_format, 'parse': parse_date };
-        $('#' + searchOptions.oid + '-start').datepicker(options);
+        // TODO: fix jquery pickadate
+        //$('#' + searchOptions.oid + '-start').pickadate(options);
         $('#' + searchOptions.oid + '-start').keypress(function(e) {
           // disable ENTER
           if (e.which == 13) {
@@ -144,7 +145,7 @@
           search();
         });
 
-        $('#' + searchOptions.oid + '-end').datepicker(options);
+        //$('#' + searchOptions.oid + '-end').pickadate(options);
         $('#' + searchOptions.oid + '-end').keypress(function(e) {
           // disable ENTER
           if (e.which == 13) {

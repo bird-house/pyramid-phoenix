@@ -30,7 +30,7 @@ def main(global_config, **settings):
 
     # security
     authn_policy = AuthTktAuthenticationPolicy(
-        'sosecret', callback=groupfinder, hashalg='sha512')
+        'tellnoone', callback=groupfinder, hashalg='sha512')
     authz_policy = ACLAuthorizationPolicy()
     config = Configurator(root_factory=root_factory, settings=settings)
     config.set_authentication_policy(authn_policy)
@@ -43,8 +43,8 @@ def main(global_config, **settings):
     config.include('pyramid_chameleon')
     
     # deform
-    config.include('pyramid_deform')
-    config.include('js.deform')
+    #config.include('pyramid_deform')
+    #config.include('js.deform')
 
     # mailer
     config.include('pyramid_mailer')
@@ -53,7 +53,7 @@ def main(global_config, **settings):
     # TODO: improve config of my own templates
     # see also: http://docs.pylonsproject.org/projects/deform/en/latest/templates.html#overriding-for-all-forms
     # register template search path
-    add_search_path()
+    #add_search_path()
     #logger.debug('search path= %s', Form.default_renderer.loader.search_path)
 
     # static views (stylesheets etc)
