@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <title>Login was Successful</title>
 
-    <script src="${request.static_url('deform_bootstrap:static/jquery-1.7.1.min.js')}"></script>
+    <script src="${request.static_url('deform:static/scripts/jquery-2.0.3.min.js')}" 
+            type="text/javascript"></script>
     <script>
        $( document ).ready(function() {
            console.log( "redirect after successful login" );
