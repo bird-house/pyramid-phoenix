@@ -13,7 +13,7 @@
     <div tal:repeat="group buttongroups">
       <ul class="row">
      
-        <div class="col-md-2" tal:repeat="button group['buttons']">
+        <div class="col-2 col-lg-2 col-sm-2" tal:repeat="button group['buttons']">
           <a tal:attributes="href button['url'];id button.get('id')" class="thumbnail">
             <img
                tal:define="icon_url '/static/images/' + button['icon']"

@@ -20,10 +20,10 @@
         
   <div metal:fill-slot="content">
 
-    <div class="row-fluid">
-      <div class="col-md-3" id="div-map">Map</div>
+    <div class="row">
+      <div class="col-3 col-lg-3 col-sm-3" id="div-map">Map</div>
         
-      <div class="col-md-9">
+      <div class="col-9 col-lg-9 col-sm-9">
         <!-- search form -->
         <div>
           <form id="query" class="form-search">

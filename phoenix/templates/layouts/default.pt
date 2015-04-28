@@ -53,9 +53,9 @@
     </div>
 
     <div class="container-fluid">
-      <div class="row">
+      <div class="row" style="margin-top: 10px">
         <!-- main page -->
-        <div class="col-md-9">
+        <div class="col-9 col-lg-9 col-sm-9">
           <!-- breadcrumb navigation -->
           <div>
             ${panel('breadcrumbs')}
@@ -72,7 +72,7 @@
         </div>
         
         <!-- sidebar -->
-        <div class="col-md-3">
+        <div class="col-3 col-lg-3 col-sm-3">
           ${panel('sidebar')}
         </div>
       </div><!-- row -->
