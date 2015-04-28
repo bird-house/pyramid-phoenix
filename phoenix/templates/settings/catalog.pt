@@ -36,24 +36,32 @@
     </div>
 
     <!-- Add form for service addition -->
-    <div id="service-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="service-form-label" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="service-form-label">Add OGC Service to Catalog</h3>
-      </div>
-      <div class="modal-body">
-        <tal:form replace="structure service_form" />
+    <div id="service-form" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="service-form-label">Add OGC Service to Catalog</h4>
+          </div>
+          <div class="modal-body">
+            <tal:form replace="structure service_form" />
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Add form for dataset addition -->
-    <div id="dataset-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="dataset-form-label" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="dataset-form-label">Add Dataset to Catalog</h3>
-      </div>
-      <div class="modal-body">
-        <tal:form replace="structure dataset_form" />
+    <div id="dataset-form" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="dataset-form-label">Add Dataset to Catalog</h4>
+          </div>
+          <div class="modal-body">
+            <tal:form replace="structure dataset_form" />
+          </div>
+        </div>
       </div>
     </div>
 

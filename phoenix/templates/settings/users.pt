@@ -11,13 +11,17 @@
     </table>
 
     <!-- User edit form -->
-    <div id="user-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="user-form-label" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="user-form-label">Edit User</h3>
-      </div>
-      <div class="modal-body">
-        <tal:form replace="structure form" />
+    <div id="user-form" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="user-form-label">Edit User</h4>
+          </div>
+          <div class="modal-body">
+            <tal:form replace="structure form" />
+          </div>
+        </div>
       </div>
     </div>
 
