@@ -21,9 +21,9 @@
   <div metal:fill-slot="content">
 
     <div class="row-fluid">
-      <div class="span3" id="div-map">Map</div>
+      <div class="col-md-3" id="div-map">Map</div>
         
-      <div class="span9">
+      <div class="col-md-9">
         <!-- search form -->
         <div>
           <form id="query" class="form-search">
