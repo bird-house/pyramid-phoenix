@@ -29,7 +29,7 @@ $(function() {
             $("#status-"+job.identifier).text(job.status);
             $("#message-"+job.identifier).text(job.status_message);
             $("#progress-"+job.identifier).attr('style', "width: "+job.progress+"%");
-            $("#progress-"+job.identifier).text(job.progress);
+            $("#progress-"+job.identifier).text(job.progress + "%");
         });
 
         if (finished == true) {
