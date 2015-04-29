@@ -132,9 +132,10 @@
       };
 
       var init_time_constraints = function() {
-        var options = { 'format': date_format, 'parse': parse_date };
+        //var options = { 'format': date_format, 'parse': parse_date };
         // TODO: fix jquery pickadate
-        //$('#' + searchOptions.oid + '-start').pickadate(options);
+        var options = {'format': 'yyyy-mm-dd'}
+        $('#' + searchOptions.oid + '-start').pickadate(options);
         $('#' + searchOptions.oid + '-start').keypress(function(e) {
           // disable ENTER
           if (e.which == 13) {
@@ -145,7 +146,7 @@
           search();
         });
 
-        //$('#' + searchOptions.oid + '-end').pickadate(options);
+        $('#' + searchOptions.oid + '-end').pickadate(options);
         $('#' + searchOptions.oid + '-end').keypress(function(e) {
           // disable ENTER
           if (e.which == 13) {
@@ -216,8 +217,8 @@
           constraints: $("#" + searchOptions.oid + '-facets').val(),
           type: 'Dataset',
           temporal: $('#' + searchOptions.oid + '-temporal').is(":checked"),
-          start: $('#' + searchOptions.oid + '-start').val(),
-          end: $('#' + searchOptions.oid + '-end').val(),
+          start: $('#' + searchOptions.oid + '-start').val() + 'T12:00:00Z',
+          end: $('#' + searchOptions.oid + '-end').val()  + 'T12:00:00Z',
           //spatial: $('#' + searchOptions.oid + '-spatial').is(":checked"),
           //bbox: $('#' + searchOptions.oid + '-bbox').val(),
           callback: function(result) { callback(result); },

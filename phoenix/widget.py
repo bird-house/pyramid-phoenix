@@ -1,3 +1,5 @@
+from dateutil import parser as datetime_parser
+
 from colander import (
     Invalid,
     null,
@@ -92,9 +94,17 @@ class EsgSearchWidget(Widget):
         kw.setdefault('temporal', self._bool(search.get('temporal', True)))
         #kw.setdefault('spatial', self._bool(search.get('spatial', False)))
         kw.setdefault('spatial', self._bool(False))
+
+        start = search.get('start', '2001-01-01')
+        timestamp = datetime_parser.parse(start)
+        start = timestamp.isoformat().split('T')[0]
+        kw.setdefault('start', start)
+
+        end = search.get('end', '2010-12-31')
+        timestamp = datetime_parser.parse(end)
+        end = timestamp.isoformat().split('T')[0]
+        kw.setdefault('end', end)
         
-        kw.setdefault('start', search.get('start', '2001-01-01T12:00:00Z'))
-        kw.setdefault('end', search.get('end', '2010-12-31T12:00:00Z'))
         #kw.setdefault('bbox', search.get('bbox', '-180,-90,180,90'))
         kw.setdefault('bbox', '-180,-90,180,90')
         values = self.get_template_values(field, cstruct, kw)
