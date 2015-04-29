@@ -61,13 +61,11 @@
     
   </head>
 
-  <body>
-    <div>
-      ${panel('navbar')}
-    </div>
+  <body style="padding-top: 0px;">
+    ${panel('navbar')}
 
-    <div class="container-fluid">
-      <div class="row" style="margin-top: 10px">
+    <div class="container clearfix">
+      <div class="row">
         <!-- main page -->
         <div class="col-9 col-lg-9 col-sm-9">
           <!-- breadcrumb navigation -->
@@ -93,9 +91,7 @@
     </div><!-- fluid container -->
 
     <!-- footer -->
-    <div>
-      ${panel('footer')}
-    </div>
+    ${panel('footer')}
       
   </body>
 </html>
