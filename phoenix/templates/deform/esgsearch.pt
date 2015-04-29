@@ -1,4 +1,4 @@
-<span tal:define="name name|field.name;
+<div tal:define="name name|field.name;
                   size size|field.widget.size;
                   true_val true_val|field.widget.true_val;
                   css_class css_class|field.widget.css_class;
@@ -7,33 +7,43 @@
                   url url|field.widget.url;"
       i18n:domain="deform"
       tal:omit-tag="">
-
-${field.start_mapping()}
-  <strong id="tm-hit-count">Searching ...</strong>
-  <input type="hidden" name="hit-count" value="0"
-         id="${oid}-hit-count"/>
+  ${field.start_mapping()}
+  <p/>
+  <label for="${oid}-hit-count" id="tm-hit-count">
+    <input type="hidden" name="hit-count" value="0"
+           id="${oid}-hit-count"/>
+    Searching ...
+  </label>
   <p/>
 
-  <span>Options:</span>
-  <input type="checkbox" name="distrib" value="${true_val}"
-         tal:attributes="checked distrib == true_val;"
-         id="${oid}-distrib"/>
-  <span>All Sites</span>
+  <label for="" class="control-label">Options</label>
+  <label for="${oid}-distrib" class="checkbox-inline">
+    <input type="checkbox" name="distrib" value="${true_val}"
+           tal:attributes="checked distrib == true_val;"
+           id="${oid}-distrib"/>
+    All Sites
+  </label>
 
-  <input type="checkbox" name="replica" value="${true_val}"
-         tal:attributes="checked replica == true_val;"
-         id="${oid}-replica"/>
-  <span>Including Replicas</span>
+  <label for="${oid}-relica" class="checkbox-inline">
+    <input type="checkbox" name="replica" value="${true_val}"
+           tal:attributes="checked replica == true_val;"
+           id="${oid}-replica"/>
+    Including Replicas
+  </label>
+    
+  <label for="${oid}-latest" class="checkbox-inline">
+    <input type="checkbox" name="latest" value="${true_val}"
+           tal:attributes="checked latest == true_val;"
+           id="${oid}-latest"/>
+    Latest Version
+  </label>
 
-  <input type="checkbox" name="latest" value="${true_val}"
-         tal:attributes="checked latest == true_val;"
-         id="${oid}-latest"/>
-  <span>Latest Version</span>
-
-  <input type="checkbox" name="temporal" value="${true_val}"
-         tal:attributes="checked temporal == true_val;"
-         id="${oid}-temporal"/>
-  <span>Temporal</span>
+  <label for="${oid}-temporal" class="checkbox-inline">
+    <input type="checkbox" name="temporal" value="${true_val}"
+           tal:attributes="checked temporal == true_val;"
+           id="${oid}-temporal"/>
+    Temporal
+  </label>
 
   <!--
   <input type="checkbox" name="spatial" value="${true_val}"
@@ -44,26 +54,35 @@ ${field.start_mapping()}
 
   <p/>
 
-  <label for="tm-facets">Query</label>
+  <label for="${oid}-query" class="control-label">Query</label>
   <input type="text" name="query" value="${query}"
          id="${oid}-query"/>
   <p/>
    
-  <label for="tm-selection">Current Selection</label>
-  <input type="text" name="Current Selection" class="tm-selection" 
-         id="tm-selection"/>
-  <input type="hidden" name="facets" value="${facets}" 
-         id="${oid}-facets">
+  <label for="tm-selection" class="control-label">Current Selection</label>
+  <div>
+    <input type="text" name="Current Selection" class="tm-selection" 
+           id="tm-selection"/>
+    <input type="hidden" name="facets" value="${facets}" 
+           id="${oid}-facets">
+  </div>
   <p/>
 
-  <label for="tm-facets">Search Categories</label>
-  <input type="text" name="Search Categories" class="tm-facets"
-         id="tm-facets"/>
+  <label for="tm-facets" class="control-label">Search Categories</label>
+  <div>
+    <input type="text" name="Search Categories" class="tm-facets"
+           id="tm-facets"/>
+  </div>
   <p/>
  
-  <label for="tm-facet" id="search-label-category">Project</label>
-  <input type="text" name="Categorie: xxx" class="tm-facet"
-         id="tm-facet"/>
+  <label for="tm-facet" class="control-label" 
+         id="search-label-category">
+    Project
+  </label>
+  <div>
+    <input type="text" name="Categorie: xxx" class="tm-facet"
+           id="tm-facet"/>
+  </div>
   <p/>
 
   <!--
@@ -82,22 +101,23 @@ ${field.start_mapping()}
 
   <p/>
 
-  <span>Start</span>
+  <label for="${oid}-start" class="control-label">
+    Start
+  </label>
   <input type="text" name="start" value="${start}" class="form-control hasDatepicker"
          id="${oid}-start"/>
-  <span>End</span>
+  <label for="${oid}-end" class="control-label">
+    End
+  </label>
   <input type="text" name="end" value="${end}" class="form-control hasDatepicker"
          id="${oid}-end"/>
-  
   <!--
   <p/>
   <span>Bounding Box</span>
   <input type="text" name="bbox" value="${bbox}"
          id="${oid}-bbox"/>
   -->
-
-${field.end_mapping()}
-
+  ${field.end_mapping()}
   <script type="text/javascript">
     deform.addCallback(
       '${oid}',
@@ -108,6 +128,6 @@ ${field.end_mapping()}
            });
     });
   </script>
-</span>
+</div>
 
 

@@ -199,8 +199,6 @@ class ESGFSearchSchema(colander.MappingSchema):
         colander.String(),
         validator = esgsearch_validator,
         title = 'ESGF Search',
-        #missing = '{"query": "project:CORDEX"}',
-        #default = '{"query": "project:CORDEX"}',
         widget = EsgSearchWidget(url="/esg-search"))
 
 class JobSchema(colander.MappingSchema):
