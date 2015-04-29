@@ -118,7 +118,7 @@ def main(global_config, **settings):
     config.add_route('wizard_esgf', '/wizard/esgf')
     config.add_route('wizard_swift_login', '/wizard/swift_login')
     config.add_route('wizard_swiftbrowser', '/wizard/swiftbrowser')
-    config.add_route('wizard_esgf_credentials', '/wizard/esgf_credentials')
+    config.add_route('wizard_esgf_login', '/wizard/esgf_login')
     config.add_route('wizard_done', '/wizard/done')
 
     # A quick access to the login button

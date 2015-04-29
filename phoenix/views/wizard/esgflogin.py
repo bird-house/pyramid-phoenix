@@ -5,25 +5,25 @@ from phoenix.views.wizard import Wizard
 import logging
 logger = logging.getLogger(__name__)
 
-class ESGFCredentials(Wizard):
+class ESGFLogin(Wizard):
     def __init__(self, request):
-        super(ESGFCredentials, self).__init__(
+        super(ESGFLogin, self).__init__(
             request,
-            name='wizard_esgf_credentials',
-            title="ESGF Credentials")
+            name='wizard_esgf_login',
+            title="ESGF Login")
 
     def schema(self):
         from phoenix.schema import ESGFLoginSchema
         return ESGFLoginSchema()
 
     def appstruct(self):
-        appstruct = super(ESGFCredentials, self).appstruct()
+        appstruct = super(ESGFLogin, self).appstruct()
         appstruct['openid'] = self.get_user().get('openid')
         return appstruct
 
     def success(self, appstruct):
         appstruct['openid'] = self.get_user().get('openid')
-        super(ESGFCredentials, self).success(appstruct)
+        super(ESGFLogin, self).success(appstruct)
 
         try:
             self.wizard_state.set('password', appstruct.get('password'))
@@ -39,15 +39,15 @@ class ESGFCredentials(Wizard):
         except Exception, e:
             logger.exception("update credentials failed.")
             self.request.session.flash(
-                "Could not update your credentials. %s" % (e), queue='error')
+                "ESGF Login failed. %s" % (e), queue='error')
         else:
             self.request.session.flash(
-                'Credentials updated.', queue='success')
+                'ESGF Login was successful.', queue='success')
         
     def next_success(self, appstruct):
         self.success(appstruct)
         return self.next('wizard_done')
         
-    @view_config(route_name='wizard_esgf_credentials', renderer='phoenix:templates/wizard/default.pt')
+    @view_config(route_name='wizard_esgf_login', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
-        return super(ESGFCredentials, self).view()
+        return super(ESGFLogin, self).view()
