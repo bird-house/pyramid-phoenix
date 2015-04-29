@@ -20,7 +20,7 @@ class CatalogSearch(Wizard):
 
     def next_success(self, appstruct):
         #self.success(appstruct)
-        return self.next('wizard_check_parameters')
+        return self.next('wizard_done')
 
     def search_csw(self, query=''):
         keywords = [k for k in map(str.strip, str(query).split(' ')) if len(k)>0]
