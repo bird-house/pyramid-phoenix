@@ -95,6 +95,7 @@ class EsgSearchWidget(Widget):
         #kw.setdefault('spatial', self._bool(search.get('spatial', False)))
         kw.setdefault('spatial', self._bool(False))
 
+        # TODO: quick hack for date format used in esgsearch
         start = search.get('start', '2001-01-01')
         timestamp = datetime_parser.parse(start)
         start = timestamp.isoformat().split('T')[0]
@@ -128,8 +129,9 @@ class EsgSearchWidget(Widget):
             result['latest'] = True
         else:
             result['latest'] = None
-        result['start'] = pstruct['start'].strip()
-        result['end'] = pstruct['end'].strip()
+        # TODO: quick hack for date format used in esgsearch
+        result['start'] = pstruct['start'].strip() + "T12:00:00Z"
+        result['end'] = pstruct['end'].strip() + "T12:00:00Z"
         result['temporal'] = pstruct.has_key('temporal')
         #result['spatial'] = pstruct.has_key('spatial')
         result['spatial'] = False
