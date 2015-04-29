@@ -134,7 +134,7 @@
       var init_time_constraints = function() {
         //var options = { 'format': date_format, 'parse': parse_date };
         // TODO: fix jquery pickadate
-        var options = {'format': 'yyyy-mm-dd'}
+        var options = {"selectMonths": true, "submitFormat": "yyyy-mm-dd", "selectYears": true, "format": "yyyy-mm-dd"};
         $('#' + searchOptions.oid + '-start').pickadate(options);
         $('#' + searchOptions.oid + '-start').keypress(function(e) {
           // disable ENTER
