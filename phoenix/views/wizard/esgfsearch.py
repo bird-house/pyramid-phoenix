@@ -33,8 +33,8 @@ class ESGFSearch(Wizard):
     def next_success(self, appstruct):
         self.success(appstruct)
         
-        if self.cert_ok():
-            return self.next('wizard_done')
+        #if self.cert_ok():
+        #    return self.next('wizard_done')
         return self.next('wizard_esgf_credentials')
 
     @view_config(route_name='wizard_esgf', renderer='phoenix:templates/wizard/esgf.pt')

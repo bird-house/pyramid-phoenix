@@ -48,6 +48,6 @@ class ESGFCredentials(Wizard):
         self.success(appstruct)
         return self.next('wizard_done')
         
-    @view_config(route_name='wizard_esgf_credentials', renderer='phoenix:templates/wizard/esgf.pt')
+    @view_config(route_name='wizard_esgf_credentials', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
         return super(ESGFCredentials, self).view()

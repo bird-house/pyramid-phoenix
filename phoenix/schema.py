@@ -8,7 +8,7 @@ from deform.widget import (
     TextAreaWidget,
     SelectWidget 
     )
-from .widget import (
+from phoenix.widget import (
     TagsWidget,
     EsgSearchWidget,
     )
@@ -23,19 +23,15 @@ class ESGFLoginSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
         colander.String(),
         title = "OpenID",
-        description = "OpenID from your ESGF provider",
-        validator = colander.url,
-        missing = '',
-        default = '',
-        #widget = TextInputWidget(template='readonly/textinput'),
+        description = "Type your OpenID from your ESGF provider",
+        validator = colander.url
         )
     password = colander.SchemaNode(
         colander.String(),
         title = 'Password',
-        description = 'Password for this OpenID',
-        missing = '',
-        default = '',
-        widget = PasswordWidget(size=30))
+        description = 'Type your password for your ESGF OpenID',
+        validator = colander.Length(min=6),
+        widget = PasswordWidget())
 
 class SwiftLoginSchema(colander.MappingSchema):
     username = colander.SchemaNode(
