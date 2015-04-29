@@ -87,10 +87,6 @@ def main(global_config, **settings):
     # my account
     config.add_route('myaccount', '/myaccount/{tab}')
 
-    # TODO: disable qc wizards
-    config.add_route('qc_wizard_check', '/qc_wizard_check')
-    config.add_route('qc_wizard_yaml', '/qc_wizard_yaml')
-
     # settings
     config.add_route('settings', '/settings/overview')
     config.add_route('catalog_settings', '/settings/catalog')
