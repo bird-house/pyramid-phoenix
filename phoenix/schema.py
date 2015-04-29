@@ -10,7 +10,7 @@ from deform.widget import (
     )
 from phoenix.widget import (
     TagsWidget,
-    EsgSearchWidget,
+    ESGFSearchWidget,
     )
 
 import logging
@@ -172,18 +172,7 @@ class ChooseInputParamterSchema(colander.MappingSchema):
         title = "Input Parameter",
         widget = deferred_choose_input_parameter_widget)
 
-class ChooseSourceSchema(colander.MappingSchema):
-    choices = [
-        # TODO: enable csw again
-        #('wizard_csw', "CSW Catalog Search"),
-        ('wizard_esgf', "ESGF Files"),
-        ('wizard_swift_login', "Swift Cloud")
-        ]
-    source = colander.SchemaNode(
-        colander.String(),
-        widget = RadioChoiceWidget(values = choices))
-
-def esgsearch_validator(node, value):
+def esgfsearch_validator(node, value):
     import json
     search = json.loads(value)
     if search.get('hit-count', 0) > 100:
@@ -192,9 +181,9 @@ def esgsearch_validator(node, value):
 class ESGFSearchSchema(colander.MappingSchema):
     selection = colander.SchemaNode(
         colander.String(),
-        validator = esgsearch_validator,
+        validator = esgfsearch_validator,
         title = 'ESGF Search',
-        widget = EsgSearchWidget(url="/esg-search"))
+        widget = ESGFSearchWidget(url="/esg-search"))
 
 class JobSchema(colander.MappingSchema):
     ## @colander.deferred

@@ -47,7 +47,7 @@ class TagsWidget(Widget):
             return null
         return pstruct
 
-class EsgSearchWidget(Widget):
+class ESGFSearchWidget(Widget):
     """
     Renders an esg search widget
 

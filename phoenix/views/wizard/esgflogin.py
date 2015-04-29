@@ -38,11 +38,9 @@ class ESGFLogin(Wizard):
             self.userdb.update({'email':self.user_email()}, user)
         except Exception, e:
             logger.exception("update credentials failed.")
-            self.request.session.flash(
-                "ESGF Login failed. %s" % (e), queue='error')
+            self.flash_error("ESGF Login failed.")
         else:
-            self.request.session.flash(
-                'ESGF Login was successful.', queue='success')
+            self.flash_success('ESGF Login was successful.')
         
     def next_success(self, appstruct):
         self.success(appstruct)

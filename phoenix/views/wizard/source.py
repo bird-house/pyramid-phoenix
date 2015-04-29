@@ -2,6 +2,20 @@ from pyramid.view import view_config
 
 from phoenix.views.wizard import Wizard
 
+import colander
+from deform.widget import RadioChoiceWidget
+
+class ChooseSourceSchema(colander.MappingSchema):
+    choices = [
+        # TODO: enable csw again
+        #('wizard_csw', "CSW Catalog Search"),
+        ('wizard_esgf_search', "ESGF Files"),
+        ('wizard_swift_login', "Swift Cloud")
+        ]
+    source = colander.SchemaNode(
+        colander.String(),
+        widget = RadioChoiceWidget(values = choices))
+
 class ChooseSource(Wizard):
     def __init__(self, request):
         super(ChooseSource, self).__init__(
@@ -9,7 +23,6 @@ class ChooseSource(Wizard):
         self.description = self.wizard_state.get('wizard_complex_inputs')['identifier']
         
     def schema(self):
-        from phoenix.schema import ChooseSourceSchema
         return ChooseSourceSchema()
 
     def next_success(self, appstruct):

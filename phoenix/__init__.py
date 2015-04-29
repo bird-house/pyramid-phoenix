@@ -115,10 +115,10 @@ def main(global_config, **settings):
     config.add_route('wizard_source', '/wizard/source')
     config.add_route('wizard_csw', '/wizard/csw')
     config.add_route('wizard_csw_select', '/wizard/csw/{recordid}/select.json')
-    config.add_route('wizard_esgf', '/wizard/esgf')
+    config.add_route('wizard_esgf_search', '/wizard/esgf_search')
+    config.add_route('wizard_esgf_login', '/wizard/esgf_login')
     config.add_route('wizard_swift_login', '/wizard/swift_login')
     config.add_route('wizard_swiftbrowser', '/wizard/swiftbrowser')
-    config.add_route('wizard_esgf_login', '/wizard/esgf_login')
     config.add_route('wizard_done', '/wizard/done')
 
     # A quick access to the login button

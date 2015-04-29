@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class ESGFSearch(Wizard):
     def __init__(self, request):
-        super(ESGFSearch, self).__init__(request, name='wizard_esgf', title="ESGF Search")
+        super(ESGFSearch, self).__init__(request, name='wizard_esgf_search', title="ESGF Search")
 
     def schema(self):
         from phoenix.schema import ESGFSearchSchema
@@ -37,6 +37,6 @@ class ESGFSearch(Wizard):
         #    return self.next('wizard_done')
         return self.next('wizard_esgf_login')
 
-    @view_config(route_name='wizard_esgf', renderer='phoenix:templates/wizard/esgf.pt')
+    @view_config(route_name='wizard_esgf_search', renderer='phoenix:templates/wizard/esgfsearch.pt')
     def view(self):
         return super(ESGFSearch, self).view()
