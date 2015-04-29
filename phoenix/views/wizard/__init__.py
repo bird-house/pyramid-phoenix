@@ -256,8 +256,6 @@ class Wizard(MyView):
             logger.debug("catalog selection: %s", selection)
             self.csw.getrecordbyid(id=selection)
             resources = [str(rec.source) for rec in self.csw.records.values()]
-        elif resource == 'wizard_esgf':
-            resources = [str(file_url) for file_url in self.wizard_state.get('wizard_esgf_files')['url']]
         return resources
 
     def view(self):

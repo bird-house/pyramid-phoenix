@@ -11,7 +11,6 @@ from deform.widget import (
 from .widget import (
     TagsWidget,
     EsgSearchWidget,
-    EsgFilesWidget
     )
 
 import logging
