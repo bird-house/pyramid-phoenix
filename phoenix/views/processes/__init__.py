@@ -12,6 +12,6 @@ class Processes(MyView):
 
     def breadcrumbs(self):
         breadcrumbs = super(Processes, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='processes', title='Processes'))
+        breadcrumbs.append(dict(route_name='processes_overview', title='Processes'))
         breadcrumbs.append(dict(route_name=self.name, title=self.title))
         return breadcrumbs

@@ -74,8 +74,6 @@ def main(global_config, **settings):
     config.add_route('processes_overview', '/processes/overview')
     config.add_route('processes_list', '/processes/list')
     config.add_route('processes_execute', '/processes/execute')
-    config.add_route('processes', '/processes')
-    #config.add_route('execute_process', '/processes/{identifier}/execute')
 
     # myjobs
     config.add_route('myjobs', '/myjobs')
