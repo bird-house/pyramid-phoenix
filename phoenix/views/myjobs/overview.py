@@ -110,8 +110,8 @@ class JobsGrid(MyGrid):
     def action_td(self, col_num, i, item):
         buttongroup = []
         buttongroup.append( ("show", item.get('identifier'), "glyphicon glyphicon-th-list", "Show", 
-                             self.request.route_url('process_outputs', tab='outputs', jobid=item.get('identifier')), False) )
+                             self.request.route_path('myjobs_details', tab='outputs', jobid=item.get('identifier')), False) )
         buttongroup.append( ("remove", item.get('identifier'), "glyphicon glyphicon-trash", "Remove", 
-                             self.request.route_url('remove_myjob', jobid=item.get('identifier')), False) )
+                             self.request.route_path('remove_myjob', jobid=item.get('identifier')), False) )
         return self.render_action_td(buttongroup)
 

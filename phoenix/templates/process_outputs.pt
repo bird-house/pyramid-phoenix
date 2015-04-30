@@ -8,16 +8,16 @@
 
     <ul class="nav nav-tabs">
       <li class="${'active' if active=='outputs' else ''}">
-        <a href="${request.route_url('process_outputs', jobid=jobid, tab='outputs')}">Outputs</a>
+        <a href="${request.route_path('myjobs_details', jobid=jobid, tab='outputs')}">Outputs</a>
       </li>
       <li class="${'active' if active=='inputs' else ''}">
-        <a href="${request.route_url('process_outputs', jobid=jobid, tab='inputs')}">Inputs</a>
+        <a href="${request.route_path('myjobs_details', jobid=jobid, tab='inputs')}">Inputs</a>
       </li>
       <li class="${'active' if active=='resources' else ''}">
-        <a href="${request.route_url('process_outputs', jobid=jobid, tab='resources')}">Resources</a>
+        <a href="${request.route_path('myjobs_details', jobid=jobid, tab='resources')}">Resources</a>
       </li>
       <li class="${'active' if active=='workflow' else ''}">
-        <a href="${request.route_url('process_outputs', jobid=jobid, tab='workflow')}">Workflow</a>
+        <a href="${request.route_path('myjobs_details', jobid=jobid, tab='workflow')}">Workflow</a>
       </li>
     </ul>
 

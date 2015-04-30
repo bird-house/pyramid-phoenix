@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class ProcessOutputs(MyJobs):
     def __init__(self, request):
         super(ProcessOutputs, self).__init__(
-            request, name='process_outputs', title='Process Outputs')
+            request, name='myjobs_details', title='Process Outputs')
         self.db = self.request.db
 
     def sort_order(self):
@@ -54,7 +54,7 @@ class ProcessOutputs(MyJobs):
             self.session.flash("Publication failed. %s" % e, queue='error')
         else:
             self.session.flash("Publication was successful", queue='success')
-        return HTTPFound(location=self.request.route_url('process_outputs', jobid=jobid, tab=tab))
+        return HTTPFound(location=self.request.route_url('myjobs_details', jobid=jobid, tab=tab))
 
     def generate_upload_form(self, formid="deform"):
         """Generate form for upload to swift cloud"""
@@ -89,7 +89,7 @@ class ProcessOutputs(MyJobs):
             self.session.flash("Upload failed. %s" % e, queue='error')
         else:
             self.session.flash("Swift upload added to Jobs.", queue='info')
-        return HTTPFound(location=self.request.route_url('process_outputs', jobid=jobid, tab=tab))
+        return HTTPFound(location=self.request.route_url('myjobs_details', jobid=jobid, tab=tab))
 
     def collect_outputs(self, status_location, prefix="job"):
         from owslib.wps import WPSExecution
@@ -172,7 +172,7 @@ class ProcessOutputs(MyJobs):
 
         return result
 
-    @view_config(route_name='process_outputs', renderer='phoenix:templates/process_outputs.pt')
+    @view_config(route_name='myjobs_details', renderer='phoenix:templates/process_outputs.pt')
     def view(self):
         order = self.sort_order()
         key=order.get('order')
