@@ -15,18 +15,14 @@ logger = logging.getLogger(__name__)
 class ExecuteProcess(Processes):
     def __init__(self, request):
         self.wps = WebProcessingService(url=request.params.get('url'))
-        super(ExecuteProcess, self).__init__(request, name='processes_execute', title='Execute')
+        identifier = request.params.get('identifier')
+        logger.debug("execute identifier = %s", identifier)
+        # TODO: need to fix owslib to handle special identifiers
+        self.process = self.wps.describeprocess(identifier)
+        super(ExecuteProcess, self).__init__(request, name='processes_execute', title=self.process.title)
+        self.description = getattr(self.process, 'abstract', '')
 
         self.db = self.request.db
-        self.identifier = self.request.params.get('identifier')
-        logger.debug("execute identifier = %s", self.identifier)
-        # TODO: need to fix owslib to handle special identifiers
-        ## import urllib2
-        ## self.identifier = urllib2.quote(self.identifier)
-        ## logger.debug("execute identifier quoted = %s", self.identifier)
-
-        self.process = self.wps.describeprocess(self.identifier)
-        self.description = self.process.title
 
     def appstruct(self):
         return dict(
@@ -49,7 +45,7 @@ class ExecuteProcess(Processes):
         try:
             appstruct = form.validate(controls)
             from phoenix.wps import execute
-            execution = execute(self.wps, self.identifier, appstruct)
+            execution = execute(self.wps, self.process.identifier, appstruct)
 
             from phoenix.models import add_job
             add_job(
