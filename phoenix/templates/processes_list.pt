@@ -1,0 +1,11 @@
+<metal:block use-macro="main_template">
+
+  <div metal:fill-slot="content">
+
+    <table class="table table-striped">
+      <tal:rows replace="structure grid" />
+    </table>
+
+  </div>
+   
+</metal:block>

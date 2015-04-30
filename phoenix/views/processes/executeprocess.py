@@ -6,34 +6,31 @@ from deform import ValidationFailure
 
 from phoenix.views.processes import Processes
 
+from owslib.wps import WebProcessingService
+
 import logging
 logger = logging.getLogger(__name__)
 
 @view_defaults(permission='edit', layout='default')
 class ExecuteProcess(Processes):
     def __init__(self, request):
-        super(ExecuteProcess, self).__init__(request, name='execute_process', title='Execute')
+        self.wps = WebProcessingService(url=request.params.get('url'))
+        super(ExecuteProcess, self).__init__(request, name='processes_execute', title='Execute')
 
         self.db = self.request.db
-        self.identifier = self.request.matchdict.get('identifier')
+        self.identifier = self.request.params.get('identifier')
         logger.debug("execute identifier = %s", self.identifier)
         # TODO: need to fix owslib to handle special identifiers
         ## import urllib2
         ## self.identifier = urllib2.quote(self.identifier)
         ## logger.debug("execute identifier quoted = %s", self.identifier)
 
-        from owslib.wps import WebProcessingService
-        
-        self.wps = self.request.wps
-        if 'wps.url' in self.session:
-            url = self.session['wps.url']
-            self.wps = WebProcessingService(url)
         self.process = self.wps.describeprocess(self.identifier)
         self.description = self.process.title
 
     def appstruct(self):
         return dict(
-            title=self.process.title,
+            title = self.process.title,
             abstract = getattr(self.process, 'abstract', ""),
             keywords = "test,%s" % self.process.identifier)
 
@@ -69,7 +66,7 @@ class ExecuteProcess(Processes):
             return dict(form = e.render())
         return HTTPFound(location=self.request.route_url('myjobs'))
 
-    @view_config(route_name='execute_process', renderer='phoenix:templates/execute_process.pt')
+    @view_config(route_name='processes_execute', renderer='phoenix:templates/execute_process.pt')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:

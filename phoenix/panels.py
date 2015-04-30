@@ -19,7 +19,7 @@ def navbar(context, request):
     items = []
     if has_permission('edit', request.context, request):
         items.append( nav_item('Dashboard', request.route_url('dashboard', tab='jobs')) )
-        items.append( nav_item('Processes', request.route_url('processes')) )
+        items.append( nav_item('Processes', request.route_url('processes_overview')) )
         items.append( nav_item('My Jobs', request.route_url('myjobs')) )
         items.append( nav_item('Wizard', request.route_url('wizard')) )
         # TODO: enable map again when it is working
