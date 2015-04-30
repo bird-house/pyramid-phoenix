@@ -13,7 +13,7 @@ class Layouts(object):
 
     @property
     def project_title(self):
-        return 'Phoenix - A Pyramid WPS Application for Climate Data'
+        return 'Phoenix - A Pyramid WPS Application for Climate Science'
 
     def add_breadcrumb(self, route_name, title):
         self.breadcrumbs.append(dict(route_name=route_name, title=title))

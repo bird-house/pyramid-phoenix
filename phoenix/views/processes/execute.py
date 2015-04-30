@@ -22,7 +22,12 @@ class ExecuteProcess(Processes):
         super(ExecuteProcess, self).__init__(request, name='processes_execute', title=self.process.title)
         self.description = getattr(self.process, 'abstract', '')
 
-        self.db = self.request.db
+    def breadcrumbs(self):
+        breadcrumbs = super(Processes, self).breadcrumbs()
+        breadcrumbs.append(dict(route_name='processes_overview', title='Processes'))
+        breadcrumbs.append(dict(route_name='processes_list', title=self.wps.identification.title))
+        breadcrumbs.append(dict(route_name=self.name, title=self.title))
+        return breadcrumbs
 
     def appstruct(self):
         return dict(
