@@ -76,7 +76,7 @@ class Jobs(MyJobs):
         grid = JobsGrid(
                 self.request,
                 items,
-                ['title', 'workflow', 'status', 'creation_time', 'progress', ''],
+                ['title', 'status', 'creation_time', 'progress', ''],
             )
         return dict(grid=grid, items=items)
 
