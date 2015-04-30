@@ -82,9 +82,6 @@ def main(global_config, **settings):
     config.add_route('remove_myjob', '/myjobs/{jobid}/remove')
     config.add_route('process_outputs', '/myjobs/{jobid}/outputs/{tab}')
 
-    # map
-    config.add_route('map', '/map')
-
     # my account
     config.add_route('myaccount', '/myaccount/{tab}')
 
