@@ -7,9 +7,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 @view_defaults(permission='edit', layout='default')
-class Jobs(MyJobs):
+class Overview(MyJobs):
     def __init__(self, request):
-        super(Jobs, self).__init__(request, name='myjobs', title='Overview')
+        super(Overview, self).__init__(request, name='myjobs_overview', title='Overview')
         self.db = self.request.db 
 
     def sort_order(self):
@@ -64,7 +64,7 @@ class Jobs(MyJobs):
             self.session.flash("Job %s deleted." % job['title'], queue='info')
         return HTTPFound(location=self.request.route_url('myjobs'))
 
-    @view_config(route_name='myjobs', renderer='phoenix:templates/myjobs.pt')
+    @view_config(route_name='myjobs_overview', renderer='phoenix:templates/myjobs.pt')
     def view(self):
         order = self.sort_order()
         key=order.get('order')

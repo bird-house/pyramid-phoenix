@@ -76,11 +76,12 @@ def main(global_config, **settings):
     config.add_route('processes_execute', '/processes/execute')
 
     # myjobs
-    config.add_route('myjobs', '/myjobs')
+    config.add_route('myjobs_overview', '/myjobs/overview')
+    config.add_route('process_outputs', '/myjobs/{jobid}/outputs/{tab}')
     config.add_route('update_myjobs', '/myjobs/update.json')
     config.add_route('remove_myjobs', '/myjobs/remove_all')
     config.add_route('remove_myjob', '/myjobs/{jobid}/remove')
-    config.add_route('process_outputs', '/myjobs/{jobid}/outputs/{tab}')
+    
 
     # my account
     config.add_route('myaccount', '/myaccount/{tab}')
