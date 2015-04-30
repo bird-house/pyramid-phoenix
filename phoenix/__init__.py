@@ -14,13 +14,13 @@ logger = logging.getLogger(__name__)
 
 from deform import Form
 
-def add_search_path():
-    # register templates
-    loader = Form.default_renderer.loader
+## def add_search_path():
+##     # register templates
+##     loader = Form.default_renderer.loader
    
-    from os.path import dirname, join
-    path = join(dirname(__file__), 'templates', 'deform')
-    loader.search_path = (path,) + loader.search_path
+##     from os.path import dirname, join
+##     path = join(dirname(__file__), 'templates', 'deform')
+##     loader.search_path = (path,) + loader.search_path
 
 
 def main(global_config, **settings):
