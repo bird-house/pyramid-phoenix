@@ -243,8 +243,8 @@ class Wizard(MyView):
 
     def breadcrumbs(self):
         breadcrumbs = super(Wizard, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='wizard', title='Wizard'))
-        breadcrumbs.append(dict(route_name=self.name, title=self.title))
+        breadcrumbs.append(dict(route_path=self.request.route_path('wizard'), title='Wizard'))
+        breadcrumbs.append(dict(route_path='', title=self.title))
         return breadcrumbs
 
     def resources(self):
