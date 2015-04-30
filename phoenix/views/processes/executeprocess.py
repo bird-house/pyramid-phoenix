@@ -16,6 +16,11 @@ class ExecuteProcess(Processes):
 
         self.db = self.request.db
         self.identifier = self.request.matchdict.get('identifier')
+        logger.debug("execute identifier = %s", self.identifier)
+        # TODO: need to fix owslib to handle special identifiers
+        ## import urllib2
+        ## self.identifier = urllib2.quote(self.identifier)
+        ## logger.debug("execute identifier quoted = %s", self.identifier)
 
         from owslib.wps import WebProcessingService
         

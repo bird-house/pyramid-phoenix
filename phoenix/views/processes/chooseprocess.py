@@ -104,10 +104,12 @@ class ProcessesGrid(MyGrid):
             source=item.get('source'))
 
     def action_td(self, col_num, i, item):
+        route_path = self.request.route_path('execute_process', identifier=item.get('identifier'))
+        logger.debug('route path = %s', route_path)
+        
         buttongroup = []
-        buttongroup.append( ("execute", item.get('identifier'), "glyphicon glyphicon-cog", "Execute", 
-                             self.request.route_url('execute_process', identifier=item.get('identifier')),
-                             False) )
+        buttongroup.append( ("execute", '', "glyphicon glyphicon-cog", "Execute", 
+                             route_path, False) )
         #buttongroup.append( ("describe", item.get('identifier'), "glyphicon glyphicon-th-list", "Describe", "#") )
         return self.render_action_td(buttongroup)
     
