@@ -26,14 +26,22 @@
     </table>
 
     <!-- Pagination for catalog search results -->
-    <div class="pagination pagination-centered pagination-large">
-      <ul>
-        <li class="disabled"><a href="#">&laquo;</a></li>
+    <nav>
+      <ul class="pagination">
+        <li class="disabled">
+          <a href="#" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
         <li class="active"><a href="#">1</a></li>
-        <li class="active"><a href="#">2</a></li>
-        <li class="active"><a href="#">&raquo;</a></li>
+        <li><a href="#">2</a></li>
+        <li>
+          <a href="#" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
       </ul>
-    </div>
+    </nav>
 
     <!-- Add form for service addition -->
     <div id="service-form" class="modal fade">
