@@ -53,7 +53,7 @@ class Overview(MyJobs):
         count = self.db.jobs.find({'email': self.user_email()}).count()
         self.db.jobs.remove({'email': self.user_email()})
         self.session.flash("%d Jobs deleted." % count, queue='info')
-        return HTTPFound(location=self.request.route_url('myjobs'))
+        return HTTPFound(location=self.request.route_path('myjobs_overview'))
 
     @view_config(route_name='remove_myjob')
     def remove(self):
@@ -62,9 +62,9 @@ class Overview(MyJobs):
             job = self.db.jobs.find_one({'identifier': jobid})
             self.db.jobs.remove({'identifier': jobid})
             self.session.flash("Job %s deleted." % job['title'], queue='info')
-        return HTTPFound(location=self.request.route_url('myjobs'))
+        return HTTPFound(location=self.request.route_path('myjobs_overview'))
 
-    @view_config(route_name='myjobs_overview', renderer='phoenix:templates/myjobs.pt')
+    @view_config(route_name='myjobs_overview', renderer='phoenix:templates/myjobs/overview.pt')
     def view(self):
         order = self.sort_order()
         key=order.get('order')
