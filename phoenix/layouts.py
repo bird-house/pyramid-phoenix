@@ -15,8 +15,8 @@ class Layouts(object):
     def project_title(self):
         return 'Phoenix - A Pyramid WPS Application for Climate Science'
 
-    def add_breadcrumb(self, route_name, title):
-        self.breadcrumbs.append(dict(route_name=route_name, title=title))
+    def add_breadcrumb(self, route_path, title):
+        self.breadcrumbs.append(dict(route_path=route_path, title=title))
 
     def add_heading(self, name, *args, **kw):
         self.headings.append((name, args, kw))

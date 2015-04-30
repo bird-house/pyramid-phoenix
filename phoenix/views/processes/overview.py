@@ -10,12 +10,12 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='edit', layout='default')
 class Overview(Processes):
     def __init__(self, request):
-        super(Processes, self).__init__(request, name='processes', title='Overview')
+        super(Processes, self).__init__(request, name='processes_overview', title='Overview')
         self.description = 'Choose a WPS'
 
     def breadcrumbs(self):
         breadcrumbs = super(Overview, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name=self.name, title=self.title))
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
     @view_config(route_name='processes_overview', renderer='phoenix:templates/processes_overview.pt')

@@ -17,7 +17,7 @@ class MyView(object):
         for item in self.breadcrumbs():
             lm = self.request.layout_manager
             lm.layout.add_breadcrumb(
-                route_name=item.get('route_name'),
+                route_path=item.get('route_path'),
                 title=item.get('title'))
 
     def user_email(self):
@@ -27,7 +27,7 @@ class MyView(object):
         return models.get_user(self.request, email)
 
     def breadcrumbs(self):
-        return [dict(route_name="home", title="Home")]
+        return [dict(route_path=self.request.route_path("home"), title="Home")]
 
 from pyramid.view import (
     view_config,

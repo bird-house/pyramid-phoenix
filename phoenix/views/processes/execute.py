@@ -24,8 +24,9 @@ class ExecuteProcess(Processes):
 
     def breadcrumbs(self):
         breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='processes_list', title=self.wps.identification.title))
-        breadcrumbs.append(dict(route_name=self.name, title=self.title))
+        route_path = self.request.route_path('processes_list', _query=[('url', self.wps.url)] )
+        breadcrumbs.append(dict(route_path=route_path, title=self.wps.identification.title))
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
     def appstruct(self):
