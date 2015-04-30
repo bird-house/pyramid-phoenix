@@ -172,7 +172,7 @@ class ProcessOutputs(MyJobs):
 
         return result
 
-    @view_config(route_name='myjobs_details', renderer='phoenix:templates/process_outputs.pt')
+    @view_config(route_name='myjobs_details', renderer='phoenix:templates/myjobs/details.pt')
     def view(self):
         order = self.sort_order()
         key=order.get('order')
