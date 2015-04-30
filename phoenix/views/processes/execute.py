@@ -32,7 +32,7 @@ class ExecuteProcess(Processes):
         return dict(
             title = self.process.title,
             abstract = getattr(self.process, 'abstract', ""),
-            keywords = "test,%s" % self.process.identifier)
+            keywords = "test,%s,%s" % (self.wps.identification.title, self.process.identifier))
 
     def generate_form(self, formid='deform'):
         from phoenix.wps import WPSSchema
