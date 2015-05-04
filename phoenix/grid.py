@@ -31,7 +31,7 @@ class MyGrid(Grid):
         return self.render_td(renderer="title_td", title=title, abstract=abstract, keywords=keywords, data=data, format=format, source=source)
 
     def render_status_td(self, item):
-        return self.render_td(renderer="status_td", item=item)
+        return self.render_td(renderer="status_td", status=item.get('status'))
     
     def render_timestamp_td(self, timestamp):
         import datetime

@@ -49,7 +49,7 @@ class OverviewGrid(MyGrid):
         logger.debug('route path = %s', route_path)
         
         buttongroup = []
-        buttongroup.append( ("submit", "", "glyphicon glyphicon-play", "", 
+        buttongroup.append( ("submit", "", "glyphicon glyphicon-play", "Show Processes", 
                              route_path, False) )
         return self.render_action_td(buttongroup)
     

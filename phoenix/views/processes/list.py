@@ -57,7 +57,7 @@ class ProcessGrid(MyGrid):
         logger.debug('route path = %s', route_path)
         
         buttongroup = []
-        buttongroup.append( ("execute", "", "glyphicon glyphicon-cog", "", 
+        buttongroup.append( ("execute", "", "glyphicon glyphicon-cog", "Execute Process", 
                              route_path, False) )
         return self.render_action_td(buttongroup)
     
