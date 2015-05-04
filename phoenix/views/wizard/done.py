@@ -96,7 +96,7 @@ class Done(Wizard):
         from pyramid.httpexceptions import HTTPFound
         self.success(appstruct)
         self.wizard_state.clear()
-        return HTTPFound(location=self.request.route_url('myjobs'))
+        return HTTPFound(location=self.request.route_url('myjobs_overview'))
 
     def appstruct(self):
         appstruct = super(Done, self).appstruct()
