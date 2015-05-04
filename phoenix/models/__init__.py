@@ -52,7 +52,7 @@ def add_job(request, title, wps_url, status_location, workflow=False, abstract=N
         email = authenticated_userid(request),
         wps_url = wps_url,
         status_location = status_location,
-        creation_time = datetime.datetime.now(),
+        created = datetime.datetime.now(),
         is_complete = False)
     request.db.jobs.save(job)
 
