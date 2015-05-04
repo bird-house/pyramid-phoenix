@@ -14,14 +14,6 @@ class Overview(MyJobs):
         super(Overview, self).__init__(request, name='myjobs_overview', title='Overview')
         self.db = self.request.db 
 
-    def sort_order(self):
-        """Determine what the current sort parameters are.
-        """
-        order = self.request.GET.get('order_col', 'created')
-        order_dir = self.request.GET.get('order_dir', 'desc')
-        order_dir = 1 if order_dir == 'asc' else -1
-        return dict(order=order, order_dir=order_dir)
-
     def update_job(self, job):
         from owslib.wps import WPSExecution
         
@@ -70,12 +62,8 @@ class Overview(MyJobs):
 
     @view_config(route_name='myjobs_overview', renderer='phoenix:templates/myjobs/overview.pt')
     def view(self):
-        order = self.sort_order()
-        key=order.get('order')
-        direction=order.get('order_dir')
-
         self.update_jobs()
-        items = list(self.db.jobs.find({'email': self.user_email()}).sort(key, direction))
+        items = list(self.db.jobs.find({'email': self.user_email()}).sort('created', -1))
         
         grid = JobsGrid(
                 self.request,
