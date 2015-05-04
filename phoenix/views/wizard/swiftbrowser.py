@@ -138,8 +138,8 @@ class SwiftBrowserGrid(MyGrid):
         return self.render_label_td(item.get('count') )
 
     def size_td(self, col_num, i, item):
-        from phoenix.utils import filesizeformat
-        size = filesizeformat( item.get('bytes') )
+        from webhelpers2.number import format_byte_size
+        size = format_byte_size( item.get('bytes') )
         if item.has_key('subdir'):
             size = ''
         return self.render_label_td(size)
