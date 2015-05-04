@@ -68,7 +68,7 @@ class Overview(MyJobs):
         grid = JobsGrid(
                 self.request,
                 items,
-                ['title', 'status', 'duration', 'finished', 'progress', ''],
+                ['status', 'title', 'duration', 'finished', 'progress', ''],
             )
         return dict(grid=grid, items=items)
 
@@ -78,13 +78,16 @@ from phoenix.grid import MyGrid
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['status'] = self.status_td
         self.column_formats['duration'] = self.duration_td
         self.column_formats['finished'] = self.finished_td
-        self.column_formats['status'] = self.status_td
         self.column_formats['title'] = self.title_td
         self.column_formats['progress'] = self.progress_td
         self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
+
+    def status_td(self, col_num, i, item):
+        return self.render_status_td(item)
 
     def duration_td(self, col_num, i, item):
         try:
@@ -104,9 +107,6 @@ class JobsGrid(MyGrid):
             time_ago = '???'
         finally:
             return self.render_label_td(time_ago)
-
-    def status_td(self, col_num, i, item):
-        return self.render_status_td(item)
 
     def title_td(self, col_num, i, item):
         return self.render_title_td(item['title'], '', item['keywords'].split(','))

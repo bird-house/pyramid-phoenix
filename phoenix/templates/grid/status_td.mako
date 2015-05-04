@@ -1,14 +1,13 @@
 <div>
-  <div>
-    <span class="${span_class}" id="status-${item.get('identifier')}">${item.get('status')}</span>
-    <div id="message-${item.get('identifier')}">${item.get('status_message')}</div>
-  </div>
-  <div>
-    % for error in item.get('errors', []):
-    <div>${error}</div>
-    % endfor
-  </div>
-  <div>
-    <a class="label label-warning" href="${item.get('status_location')}" data-format="XML">XML</a>
-  </div>
+  % if item['status'] == 'ProcessSucceeded':
+  <i class="glyphicon glyphicon-ok-sign text-success"></i>
+  % elif item['status'] == 'ProcessFailed':
+  <i class="glyphicon glyphicon-remove-sign text-danger"></i>
+  % elif item['status'] == 'ProcessPaused':
+  <i class="glyphicon glyphicon-paused text-muted"></i>
+  % elif item['status'] == 'ProcessStarted' or item['status'] == 'ProcessAccepted':
+  <i class="glyphicon glyphicon-cog text-muted"></i>
+  % else:
+  <i class="glyphicon glyphicon-question-sign text-danger"></i>
+  % endif
 </div>

@@ -139,9 +139,9 @@ class SwiftBrowserGrid(MyGrid):
 
     def size_td(self, col_num, i, item):
         from webhelpers2.number import format_byte_size
-        size = format_byte_size( item.get('bytes') )
-        if item.has_key('subdir'):
-            size = ''
+        size = ''
+        if not item.has_key('subdir'):
+            size = format_byte_size( item.get('bytes') )
         return self.render_label_td(size)
 
     def action_td(self, col_num, i, item):
