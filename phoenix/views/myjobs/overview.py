@@ -25,6 +25,8 @@ class Overview(MyJobs):
             job['is_complete'] = execution.isComplete()
             job['is_succeded'] = execution.isSucceded()
             job['errors'] = [ '%s %s\n: %s' % (error.code, error.locator, error.text.replace('\\','')) for error in execution.errors]
+            duration = datetime.now() - job.get('created', datetime.now())
+            job['duration'] = str(duration).split('.')[0]
             if execution.isComplete():
                 job['finished'] = datetime.now()
             if execution.isSucceded():
@@ -93,13 +95,9 @@ class JobsGrid(MyGrid):
         return self.render_label_td(item['title'])
 
     def duration_td(self, col_num, i, item):
-        try:
-            duration = item.get('finished', datetime.now()) - item.get('created')
-            duration = str(duration).split('.')[0]
-        except:
-            duration = "???"
-        finally:
-            return self.render_label_td(duration)
+        return self.render_td(renderer="duration_td",
+                              duration=item.get('duration', "???"),
+                              identifier=item.get('identifier'))
         
     def finished_td(self, col_num, i, item):
         try:

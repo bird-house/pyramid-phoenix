@@ -10,24 +10,27 @@ $(function() {
       function(json) {
         var finished = true;
         $.each(json, function(index, job) {
-            var status_class = 'label'
+            var status_class = ''
             if (job.status == 'ProcessSucceeded') {
-              status_class += ' label-success';
+              status_class = 'glyphicon glyphicon-ok-sign text-success';
             }
             else if (job.status == 'ProcessFailed') {
-              status_class += ' label-warning';
+              status_class = 'glyphicon glyphicon-remove-sign text-danger';
             }
-            else if (job.status == 'Exception') {
-              status_class += ' label-important';
+            else if (job.status == 'ProcessPaused') {
+              status_class = 'glyphicon glyphicon-paused text-muted';
+            }
+            else if (job.status == 'ProcessStarted' || job.status == 'ProcessAccepted') {
+              status_class = 'glyphicon glyphicon-cog text-muted';
+              finished = false;
             }
             else {
-              status_class += ' label-info';
-              finished = false;
+              status_class = 'glyphicon glyphicon-question-sign text-danger';
             }
 
             $("#status-"+job.identifier).attr('class', status_class);
-            $("#status-"+job.identifier).text(job.status);
-            $("#message-"+job.identifier).text(job.status_message);
+            $("#status-"+job.identifier).attr('title', job.status);
+            $("#duration-"+job.identifier).text(job.duration);
             $("#progress-"+job.identifier).attr('style', "width: "+job.progress+"%");
             $("#progress-"+job.identifier).text(job.progress + "%");
         });
