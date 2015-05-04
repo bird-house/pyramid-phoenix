@@ -122,7 +122,7 @@ class JobsGrid(MyGrid):
         return self.render_status_td(item)
 
     def title_td(self, col_num, i, item):
-        return self.render_title_td(item['title'], item['abstract'], item['keywords'].split(','))
+        return self.render_title_td(item['title'], '', item['keywords'].split(','))
 
     def progress_td(self, col_num, i, item):
         return self.render_progress_td(identifier=item.get('identifier'), progress = item.get('progress', 0))
