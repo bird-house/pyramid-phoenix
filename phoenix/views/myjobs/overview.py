@@ -85,9 +85,6 @@ class Overview(MyJobs):
         return dict(grid=grid, items=items)
 
 
-from string import Template
-from webhelpers2.html.builder import HTML
-from webhelpers2.date import time_ago_in_words
 from phoenix.grid import MyGrid
 
 class JobsGrid(MyGrid):
@@ -99,6 +96,7 @@ class JobsGrid(MyGrid):
         self.column_formats['title'] = self.title_td
         self.column_formats['progress'] = self.progress_td
         self.column_formats[''] = self.action_td
+        self.exclude_ordering = self.columns
 
     def duration_td(self, col_num, i, item):
         try:
@@ -111,6 +109,7 @@ class JobsGrid(MyGrid):
         
     def finished_td(self, col_num, i, item):
         try:
+            from webhelpers2.date import time_ago_in_words
             time_ago = time_ago_in_words(item.get('finished'), granularity='minute')
             time_ago = time_ago + " ago"
         except:
