@@ -25,7 +25,6 @@ requires = [
     #'pyramid_persona',
     'authomatic',
     'python-openid',
-    'webhelpers',
     'webhelpers2',
     'webhelpers2_grid',
     'mako',

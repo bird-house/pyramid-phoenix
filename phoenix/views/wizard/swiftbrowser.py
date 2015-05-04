@@ -99,7 +99,7 @@ class SwiftBrowser(Wizard):
     def view(self):
         return super(SwiftBrowser, self).view()
 
-from webhelpers.html.builder import HTML
+from webhelpers2.html.builder import HTML
 from phoenix.grid import MyGrid
 
 class SwiftBrowserGrid(MyGrid):

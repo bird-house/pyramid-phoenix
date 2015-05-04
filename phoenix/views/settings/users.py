@@ -105,7 +105,7 @@ class UsersGrid(MyGrid):
 
     def activated_td(self, col_num, i, item):
         from string import Template
-        from webhelpers.html.builder import HTML
+        from webhelpers2.html.builder import HTML
 
         icon_class = "glyphicon glyphicon-thumbs-down"
         if item.get('activated') == True:

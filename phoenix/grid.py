@@ -1,7 +1,7 @@
 from os.path import join, dirname
 
-from webhelpers.html.builder import HTML
-from webhelpers.html.grid import Grid
+from webhelpers2.html.builder import HTML
+from webhelpers2_grid import Grid
 
 import string # TODO replace by mako template
 from mako.template import Template
