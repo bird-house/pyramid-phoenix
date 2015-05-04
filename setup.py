@@ -26,6 +26,8 @@ requires = [
     'authomatic',
     'python-openid',
     'webhelpers',
+    'webhelpers2',
+    'webhelpers2_grid',
     'mako',
     'pyyaml',
     'owslib',

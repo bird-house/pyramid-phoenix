@@ -87,7 +87,7 @@ class Overview(MyJobs):
 
 from string import Template
 from webhelpers.html.builder import HTML
-from webhelpers.date import time_ago_in_words
+from webhelpers2.date import time_ago_in_words
 from phoenix.grid import MyGrid
 
 class JobsGrid(MyGrid):
