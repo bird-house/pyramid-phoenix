@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class Overview(Processes):
     def __init__(self, request):
         super(Processes, self).__init__(request, name='processes_overview', title='Overview')
-        self.description = 'Choose a WPS'
+        self.description = 'Choose a Web Processing Service'
 
     def breadcrumbs(self):
         breadcrumbs = super(Overview, self).breadcrumbs()
@@ -34,8 +34,10 @@ class Overview(Processes):
 class OverviewGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(OverviewGrid, self).__init__(request, *args, **kwargs)
+        self.labels['Web Processing Service'] = ''
         self.column_formats['Web Processing Service'] = self.title_td
         self.column_formats[''] = self.action_td
+        self.exclude_ordering = self.columns
 
     def title_td(self, col_num, i, item):
         return self.render_title_td(

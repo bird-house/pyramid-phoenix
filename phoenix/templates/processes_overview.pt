@@ -2,9 +2,16 @@
 
   <div metal:fill-slot="content">
 
-    <table class="table table-striped">
-      <tal:rows replace="structure grid" />
-    </table>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2 class="panel-title">Web Processing Services</h2>
+      </div>
+      <div class="panel-body">
+        <table class="table table-striped">
+          <tal:rows replace="structure grid" />
+        </table>
+      </div>
+    </div>
 
   </div>
    

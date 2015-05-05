@@ -12,7 +12,6 @@
         </div>
         <div>
           <a class="label label-warning" href="${url}" target="_blank">XML</a>
-          <span class="label label-info">Version: ${version}</span>
           <a tal:condition="provider_site" tal:condition="provider_name" class="label label-info" href="${provider_site}" target="_blank">Provider: ${provider_name}</a>
         </div>
       </div>
