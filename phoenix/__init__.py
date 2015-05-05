@@ -60,10 +60,6 @@ def main(global_config, **settings):
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_static_view('deform_static', 'deform:static', cache_max_age=3600)
 
-    # dummy view for testing
-    config.add_route('dummy', '/dummy/{email}')
-    config.add_route('dummy_json', '/dummy/{email}/edit.json')
-
     # routes 
     config.add_route('home', '/')
 

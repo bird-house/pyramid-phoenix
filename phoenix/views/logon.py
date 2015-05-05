@@ -86,13 +86,6 @@ class Logon(MyView):
         self.userdb.update({'email':email}, user)
         self.session.flash("Welcome %s (%s)." % (name, email), queue='info')
 
-    @view_config(route_name='dummy', renderer='phoenix:templates/dummy.pt')
-    @view_config(route_name='dummy_json', renderer='json')
-    def dummy(self):
-        email = self.request.matchdict['email']
-        now = datetime.datetime.now()
-        return dict(name="dummy", email=email, now=now)
-
     @view_config(route_name='signin', renderer='phoenix:templates/signin.pt')
     def signin(self):
         tab = self.request.matchdict.get('tab', 'esgf')
