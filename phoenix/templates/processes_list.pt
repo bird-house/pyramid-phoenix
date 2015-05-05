@@ -2,9 +2,32 @@
 
   <div metal:fill-slot="content">
 
-    <table class="table table-striped">
-      <tal:rows replace="structure grid" />
-    </table>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2 class="panel-title">Description</h2>
+      </div>
+      <div class="panel-body">
+        <div>
+          ${description}
+        </div>
+        <div>
+          <a class="label label-warning" href="${url}" target="_blank">XML</a>
+          <span class="label label-info">Version: ${version}</span>
+          <a tal:condition="provider_site" tal:condition="provider_name" class="label label-info" href="${provider_site}" target="_blank">Provider: ${provider_name}</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2 class="panel-title">Processes</h2>
+      </div>
+      <div class="panel-body">
+        <table class="table table-striped">
+          <tal:rows replace="structure grid" />
+        </table>
+      </div>
+    </div>
 
   </div>
    

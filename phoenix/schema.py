@@ -16,8 +16,6 @@ from phoenix.widget import (
 import logging
 logger = logging.getLogger(__name__)
 
-class NoSchema(colander.MappingSchema):
-    pass
 
 class ESGFLoginSchema(colander.MappingSchema):
     openid = colander.SchemaNode(

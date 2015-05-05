@@ -121,7 +121,7 @@ class MyAccountESGF(MyAccountPanel):
     @panel_config(name='myaccount_esgf', renderer='phoenix:templates/panels/myaccount_default.pt')
     def panel(self):
         form = self.generate_form()
-        return dict(title="ESGF Access", form=form.render( self.appstruct() ))
+        return dict(title="ESGF access token", form=form.render( self.appstruct() ))
 
 class MyAccountSwift(MyAccountPanel):
     def generate_form(self):
@@ -132,7 +132,7 @@ class MyAccountSwift(MyAccountPanel):
     @panel_config(name='myaccount_swift', renderer='phoenix:templates/panels/myaccount_default.pt')
     def panel(self):
         form = self.generate_form()
-        return dict(title="Swift Access", form=form.render( self.appstruct() ))
+        return dict(title="Swift access token", form=form.render( self.appstruct() ))
 
 @panel_config(name='headings')
 def headings(context, request):
