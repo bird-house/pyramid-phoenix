@@ -10,19 +10,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 @view_defaults(permission='edit', layout='default')
-class ProcessOutputs(MyJobs):
+class JobDetails(MyJobs):
     def __init__(self, request):
-        super(ProcessOutputs, self).__init__(
-            request, name='myjobs_details', title='Process Outputs')
+        super(JobDetails, self).__init__(
+            request, name='myjobs_details', title='Job Details')
         self.db = self.request.db
-
-    def sort_order(self):
-        """Determine what the current sort parameters are.
-        """
-        order = self.request.GET.get('order_col', 'identifier')
-        order_dir = self.request.GET.get('order_dir', 'asc')
-        order_dir = 1 if order_dir == 'asc' else -1
-        return dict(order=order, order_dir=order_dir)   
 
     def generate_publish_form(self, formid="deform"):
         """Generate form for publishing to catalog service"""
@@ -174,10 +166,6 @@ class ProcessOutputs(MyJobs):
 
     @view_config(route_name='myjobs_details', renderer='phoenix:templates/myjobs/details.pt')
     def view(self):
-        order = self.sort_order()
-        key=order.get('order')
-        direction=order.get('order_dir')
-        
         publish_form = self.generate_publish_form()
         upload_form = self.generate_upload_form()
 
@@ -201,29 +189,29 @@ class ProcessOutputs(MyJobs):
                               mime_type = output.mimeType,
                               data = output.data,
                               reference=output.reference))
-        items = sorted(items, key=lambda item: item[key], reverse=direction==1)
+        items = sorted(items, key=lambda item: item['identifier'], reverse=1)
             
         grid = ProcessOutputsGrid(
                 self.request,
                 items,
-                ['output', 'identifier', 'preview', ''],
+                ['output', 'value', ''],
             )
         return dict(active=tab, jobid=jobid, grid=grid, items=items,
                     publish_form=publish_form.render(),
                     upload_form=upload_form.render())
         
 from phoenix.grid import MyGrid
-from string import Template
-
 
 class ProcessOutputsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(ProcessOutputsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['output'] = self.output_td
-        self.column_formats['preview'] = self.preview_td
+        self.column_formats['value'] = self.value_td
+        #self.column_formats['preview'] = self.preview_td
         self.column_formats[''] = self.action_td
-        self.exclude_ordering = ['output', '', 'preview', 'action', '_numbered']
+        self.exclude_ordering = self.columns
 
+        from string import Template
         url_templ = Template("${url}/godiva2/godiva2.html?server=${url}/wms/test")
         thredds_url = request.registry.settings.get('thredds.url')
         self.wms_url = url_templ.substitute({'url': thredds_url})
@@ -231,10 +219,13 @@ class ProcessOutputsGrid(MyGrid):
     def output_td(self, col_num, i, item):
         return self.render_title_td(
             title=item.get('title'), 
-            abstract=item.get('abstract', ""),
-            data=item.get('data', []),
-            format=item.get('mime_type'),
-            source=item.get('reference'))
+            abstract=item.get('abstract', ""))
+
+    def value_td(self, col_num, i, item):
+        return self.render_td(renderer="value_td",
+                data=item.get('data', []),
+                format=item.get('mime_type'),
+                source=item.get('reference'))
 
     def preview_td(self, col_num, i, item):
         return self.render_preview_td(format=item.get('mime_type'), source=item.get('reference'))

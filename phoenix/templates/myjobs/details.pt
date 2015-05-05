@@ -21,9 +21,13 @@
       </li>
     </ul>
 
-    <table class="table table-striped">
-      <tal:rows replace="structure grid" />
-    </table>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <table class="table table-striped">
+          <tal:rows replace="structure grid" />
+        </table>
+      </div>
+    </div>
 
     <!-- Add form for publishing to csw -->
     <div id="publish-form" class="modal fade">
