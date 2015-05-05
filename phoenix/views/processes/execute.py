@@ -69,7 +69,7 @@ class ExecuteProcess(Processes):
             return dict(form = e.render())
         return HTTPFound(location=self.request.route_url('myjobs_overview'))
 
-    @view_config(route_name='processes_execute', renderer='phoenix:templates/processes_execute.pt')
+    @view_config(route_name='processes_execute', renderer='phoenix:templates/processes/execute.pt')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:

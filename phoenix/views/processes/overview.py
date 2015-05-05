@@ -18,7 +18,7 @@ class Overview(Processes):
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
-    @view_config(route_name='processes_overview', renderer='phoenix:templates/processes_overview.pt')
+    @view_config(route_name='processes_overview', renderer='phoenix:templates/processes/overview.pt')
     def view(self):
         items = models.get_wps_list(self.request)
 
