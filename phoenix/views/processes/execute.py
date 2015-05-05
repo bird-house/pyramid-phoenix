@@ -14,9 +14,12 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='edit', layout='default')
 class ExecuteProcess(Processes):
     def __init__(self, request):
-        self.wps = WebProcessingService(url=request.params.get('url'))
+        url = request.params.get('url')
+        # TODO: fix owslib.wps url handling
+        url = url.split('?')[0]
+        self.wps = WebProcessingService(url)
         identifier = request.params.get('identifier')
-        logger.debug("execute identifier = %s", identifier)
+        logger.debug("execute: url=%s, identifier=%s", url, identifier)
         # TODO: need to fix owslib to handle special identifiers
         self.process = self.wps.describeprocess(identifier)
         super(ExecuteProcess, self).__init__(request, name='processes_execute', title=self.process.title)
@@ -37,7 +40,6 @@ class ExecuteProcess(Processes):
 
     def generate_form(self, formid='deform'):
         from phoenix.wps import WPSSchema
-        # TODO: should be WPSSchema.bind() ...
         schema = WPSSchema(info=True, process = self.process, user=self.get_user())
         return Form(
             schema,
