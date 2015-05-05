@@ -24,7 +24,7 @@ class ProcessOutputs(MyJobs):
         order_dir = 1 if order_dir == 'asc' else -1
         return dict(order=order, order_dir=order_dir)   
 
-    def generate_form(self, formid="deform"):
+    def generate_publish_form(self, formid="deform"):
         """Generate form for publishing to catalog service"""
         from phoenix.schema import PublishSchema
         schema = PublishSchema().bind()
@@ -33,7 +33,7 @@ class ProcessOutputs(MyJobs):
             buttons=('publish',),
             formid=formid)
 
-    def process_form(self, form, jobid, tab):
+    def process_publish_form(self, form, jobid, tab):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
@@ -54,6 +54,41 @@ class ProcessOutputs(MyJobs):
             self.session.flash("Publication failed. %s" % e, queue='error')
         else:
             self.session.flash("Publication was successful", queue='success')
+        return HTTPFound(location=self.request.route_url('process_outputs', jobid=jobid, tab=tab))
+
+    def generate_upload_form(self, formid="deform"):
+        """Generate form for upload to swift cloud"""
+        from phoenix.schema import UploadSchema
+        schema = UploadSchema().bind()
+        return Form(
+            schema,
+            buttons=('upload',),
+            formid=formid)
+
+    def process_upload_form(self, form, jobid, tab):
+        from phoenix.models import swift
+        
+        try:
+            controls = self.request.POST.items()
+            appstruct = form.validate(controls)
+
+            login = swift.swift_login(self.request,
+                                username = appstruct.get('username'),
+                                password = appstruct.get('password'))
+            swift.swift_upload(self.request,
+                         storage_url = login.get('storage_url'),
+                         auth_token = login.get('auth_token'),
+                         container = appstruct.get('container'),
+                         prefix = appstruct.get('prefix'),
+                         source = appstruct.get('source'))
+        except ValidationFailure, e:
+            logger.exception('validation of upload form failed')
+            return dict(form=e.render())
+        except Exception,e:
+            logger.exception("upload failed.")
+            self.session.flash("Upload failed. %s" % e, queue='error')
+        else:
+            self.session.flash("Swift upload added to Jobs.", queue='info')
         return HTTPFound(location=self.request.route_url('process_outputs', jobid=jobid, tab=tab))
 
     def collect_outputs(self, status_location, prefix="job"):
@@ -117,13 +152,34 @@ class ProcessOutputs(MyJobs):
 
         return result
 
+    @view_config(renderer='json', name='upload.output')
+    def upload(self):
+        outputid = self.request.params.get('outputid')
+        # TODO: why use session for jobid?
+        jobid = self.session.get('jobid')
+        result = dict()
+        if outputid is not None:
+            output = self.process_outputs(jobid).get(outputid)
+            user = self.get_user()
+
+            result = dict(
+                username = user.get('swift_username'),
+                container = 'WPS Outputs',
+                prefix = jobid,
+                source = output.reference,
+                format = output.mimeType,
+                )
+
+        return result
+
     @view_config(route_name='process_outputs', renderer='phoenix:templates/process_outputs.pt')
     def view(self):
         order = self.sort_order()
         key=order.get('order')
         direction=order.get('order_dir')
         
-        form = self.generate_form()
+        publish_form = self.generate_publish_form()
+        upload_form = self.generate_upload_form()
 
         tab = self.request.matchdict.get('tab')
         # TODO: this is a bit fishy ...
@@ -133,7 +189,9 @@ class ProcessOutputs(MyJobs):
             self.session.changed()
 
         if 'publish' in self.request.POST:
-            return self.process_form(form, jobid, tab)
+            return self.process_publish_form(publish_form, jobid, tab)
+        elif 'upload' in self.request.POST:
+            return self.process_upload_form(upload_form, jobid, tab)
 
         items = []
         for oid,output in self.process_outputs(self.session.get('jobid'), tab).items():
@@ -150,7 +208,9 @@ class ProcessOutputs(MyJobs):
                 items,
                 ['output', 'identifier', 'preview', ''],
             )
-        return dict(active=tab, jobid=jobid, grid=grid, items=items, form=form.render())
+        return dict(active=tab, jobid=jobid, grid=grid, items=items,
+                    publish_form=publish_form.render(),
+                    upload_form=upload_form.render())
         
 from phoenix.grid import MyGrid
 from string import Template
@@ -190,5 +250,7 @@ class ProcessOutputsGrid(MyGrid):
                                  item.get('reference', "#"), True) )
             buttongroup.append( ("mapit", item.get('identifier'), "icon-globe", "Show on Map",
                                  wms_reference, True) )
+            buttongroup.append( ("upload", item.get('identifier'), "icon-upload", "Upload",
+                                 "#", False) )
         return self.render_action_td(buttongroup)
 

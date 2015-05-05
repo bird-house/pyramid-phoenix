@@ -1,4 +1,4 @@
-VERSION := 0.1.2
+VERSION := 0.2.2
 RELEASE := master
 
 # Application
@@ -10,7 +10,10 @@ OS_NAME := $(shell uname -s 2>/dev/null || echo "unknown")
 CPU_ARCH := $(shell uname -m 2>/dev/null || uname -p 2>/dev/null || echo "unknown")
 
 # Anaconda 
-ANACONDA_HOME := $(HOME)/anaconda
+ANACONDA_HOME ?= $(HOME)/anaconda
+CONDA_ENV := birdhouse
+CONDA_ENVS_DIR := $(HOME)/.conda/envs
+PREFIX := $(CONDA_ENVS_DIR)/$(CONDA_ENV)
 
 # choose anaconda installer depending on your OS
 ANACONDA_URL = http://repo.continuum.io/miniconda
@@ -27,7 +30,7 @@ DOWNLOAD_CACHE := $(APP_ROOT)/downloads
 BUILDOUT_FILES := parts eggs develop-eggs bin .installed.cfg .mr.developer.cfg *.egg-info bootstrap-buildout.py *.bak.* $(DOWNLOAD_CACHE)
 
 # Docker
-DOCKER_IMAGE := $(APP_NAME)
+DOCKER_IMAGE := birdhouse/$(APP_NAME)
 DOCKER_CONTAINER := $(APP_NAME)
 
 # end of configuration
@@ -48,16 +51,18 @@ help:
 	@echo "\t version     \t- Prints version number of this Makefile."
 	@echo "\t info        \t- Prints information about your system."
 	@echo "\t install     \t- Installs your application by running 'bin/buildout -c custom.cfg'."
+	@echo "\t test        \t- Run tests (but skip long running tests)."
+	@echo "\t testall     \t- Run all tests (including long running tests)."
 	@echo "\t clean       \t- Deletes all files that are created by running buildout."
 	@echo "\t distclean   \t- Removes *all* files that are not controlled by 'git'.\n\t\t\tWARNING: use it *only* if you know what you do!"
 	@echo "\t sysinstall  \t- Installs system packages from requirements.sh. You can also call 'bash requirements.sh' directly."
-	@echo "\t docs        \t- Generates HTML documentation with Sphinx. Open in you browser: docs/build/html/index.html"
+	@echo "\t docs        \t- Generates HTML documentation with Sphinx."
 	@echo "\t selfupdate  \t- Updates this Makefile."
 	@echo "\nSupervisor targets:\n"
-	@echo "\t start       \t- Starts supervisor service: $(ANACONDA_HOME)/etc/init.d/supervisord start"
-	@echo "\t stop        \t- Stops supervisor service: $(ANACONDA_HOME)/etc/init.d/supervisord stop"
-	@echo "\t restart     \t- Restarts supervisor service: $(ANACONDA_HOME)/etc/init.d/supervisord restart"
-	@echo "\t status      \t- Supervisor status: $(ANACONDA_HOME)/bin/supervisorctl status"
+	@echo "\t start       \t- Starts supervisor service: $(PREFIX)/etc/init.d/supervisord start"
+	@echo "\t stop        \t- Stops supervisor service: $(PREFIX)/etc/init.d/supervisord stop"
+	@echo "\t restart     \t- Restarts supervisor service: $(PREFIX)/etc/init.d/supervisord restart"
+	@echo "\t status      \t- Supervisor status: $(PREFIX)/bin/supervisorctl status"
 	@echo "\nDocker targets:\n"
 	@echo "\t Dockerfile  \t- Generates a Dockerfile for this application."
 	@echo "\t dockerbuild \t- Build a docker image for this application."
@@ -73,6 +78,7 @@ info:
 	@echo "\t CPU_ARCH         \t= $(CPU_ARCH)"
 	@echo "\t Anaconda         \t= $(FN)"
 	@echo "\t Anaconda Home    \t= $(ANACONDA_HOME)"
+	@echo "\t Birdhouse Env    \t= $(PREFIX)"
 	@echo "\t APP_NAME         \t= $(APP_NAME)"
 	@echo "\t APP_ROOT         \t= $(APP_ROOT)"
 	@echo "\t DOWNLOAD_CACHE   \t= $(DOWNLOAD_CACHE)"
@@ -90,6 +96,7 @@ backup:
 	@echo "Setup default .gitignore ..."
 	@wget -q --no-check-certificate -O .gitignore "https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/$(RELEASE)/dot_gitignore"
 
+.PHONY: bootstrap.sh
 bootstrap.sh:
 	@echo "Update bootstrap.sh ..."
 	@wget -q --no-check-certificate -O bootstrap.sh "https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/$(RELEASE)/bootstrap.sh"
@@ -125,21 +132,34 @@ anaconda:
 	@test -d $(ANACONDA_HOME) || bash "$(DOWNLOAD_CACHE)/$(FN)" -b -p $(ANACONDA_HOME)   
 	@echo "Add '$(ANACONDA_HOME)/bin' to your PATH variable in '.bashrc'."
 
-.PHONY: conda_pinned
-conda_pinned:
-	@echo "Update pinned conda packages ..."
-	@test -d $(ANACONDA_HOME) && wget -q -c -O "$(ANACONDA_HOME)/conda-meta/pinned" https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/master/conda_pinned 
+.PHONY: conda_config
+conda_config: anaconda
+	@echo "Update ~/.condarc"
+	@"$(ANACONDA_HOME)/bin/conda" config --add envs_dirs $(CONDA_ENVS_DIR)
+	@"$(ANACONDA_HOME)/bin/conda" config --set ssl_verify false
+	@"$(ANACONDA_HOME)/bin/conda" config --add channels defaults
+	@"$(ANACONDA_HOME)/bin/conda" config --add channels birdhouse
+	@"$(ANACONDA_HOME)/bin/conda" config --add channels pingucarsti
 
-.PHONY: conda_pkgs
-conda_pkgs: anaconda
-	"$(ANACONDA_HOME)/bin/conda" install --yes pyopenssl
+.PHONY: conda_env
+conda_env: anaconda conda_config
+	@test -d $(PREFIX) || "$(ANACONDA_HOME)/bin/conda" create -m -p $(PREFIX) -c birdhouse --yes python=2.7.8 setuptools=14.3 curl pyopenssl genshi mako
+
+.PHONY: conda_pinned
+conda_pinned: conda_env
+	@echo "Update pinned conda packages ..."
+	@test -d $(PREFIX) && wget -q -c -O "$(PREFIX)/conda-meta/pinned" https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/master/conda_pinned 
+
+.PHONY: conda_clean
+conda_clean: anaconda conda_config
+	@test -d $(PREFIX) && "$(ANACONDA_HOME)/bin/conda" env remove -n $(CONDA_ENV) 
 
 ## Build targets
 
 .PHONY: bootstrap
-bootstrap: init anaconda bootstrap-buildout.py
+bootstrap: init conda_env conda_pinned bootstrap-buildout.py
 	@echo "Bootstrap buildout ..."
-	@test -f bin/buildout || $(ANACONDA_HOME)/bin/python bootstrap-buildout.py -c custom.cfg --allow-site-packages --version=2.2.5 --setuptools-version=7.0
+	@test -f bin/buildout || bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);python bootstrap-buildout.py -c custom.cfg --allow-site-packages --setuptools-version 14.3 --version 2.3.1"
 
 .PHONY: sysinstall
 sysinstall: bootstrap.sh requirements.sh
@@ -149,9 +169,9 @@ sysinstall: bootstrap.sh requirements.sh
 	@bash requirements.sh
 
 .PHONY: install
-install: bootstrap conda_pinned conda_pkgs
+install: bootstrap
 	@echo "Installing application with buildout ..."
-	bin/buildout -c custom.cfg
+	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout -c custom.cfg"
 
 .PHONY: build
 build: install
@@ -177,13 +197,20 @@ buildclean:
 
 .PHONY: test
 test:
+	@echo "Running tests (skip slow tests) ..."
+	bin/nosetests -a '!slow' unit_tests
+
+.PHONY: testall
+testall:
+	@echo "Running all tests (include slow tests) ..."
 	@echo "Running tests ..."
 	bin/nosetests unit_tests
 
 .PHONY: docs
 docs:
 	@echo "Generating docs with Sphinx ..."
-	bin/buildout -c custom.cfg install sphinx_build
+	$(MAKE) -C $@ clean html
+	@echo "open your browser: firefox docs/build/html/index.html"
 
 .PHONY: selfupdate
 selfupdate: bootstrap.sh
@@ -194,22 +221,22 @@ selfupdate: bootstrap.sh
 .PHONY: start
 start:
 	@echo "Starting supervisor service ..."
-	$(ANACONDA_HOME)/etc/init.d/supervisord start
+	$(PREFIX)/etc/init.d/supervisord start
 
 .PHONY: stop
 stop:
 	@echo "Stopping supervisor service ..."
-	$(ANACONDA_HOME)/etc/init.d/supervisord stop
+	$(PREFIX)/etc/init.d/supervisord stop
 
 .PHONY: restart
 restart:
 	@echo "Restarting supervisor service ..."
-	$(ANACONDA_HOME)/etc/init.d/supervisord restart
+	$(PREFIX)/etc/init.d/supervisord restart
 
 .PHONY: status
 status:
 	@echo "Supervisor status ..."
-	$(ANACONDA_HOME)/bin/supervisorctl status
+	$(PREFIX)/bin/supervisorctl status
 
 
 ## Docker targets

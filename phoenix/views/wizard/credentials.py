@@ -13,8 +13,8 @@ class ESGFCredentials(Wizard):
             title="ESGF Credentials")
 
     def schema(self):
-        from phoenix.schema import CredentialsSchema
-        return CredentialsSchema().bind()
+        from phoenix.schema import ESGFLoginSchema
+        return ESGFLoginSchema()
 
     def appstruct(self):
         appstruct = super(ESGFCredentials, self).appstruct()
@@ -27,8 +27,8 @@ class ESGFCredentials(Wizard):
 
         try:
             self.wizard_state.set('password', appstruct.get('password'))
-            from phoenix.models import myproxy_logon
-            result = myproxy_logon(
+            from phoenix.models import esgf
+            result = esgf.myproxy_logon(
                 self.request,
                 openid=appstruct.get('openid'),
                 password=appstruct.get('password'))

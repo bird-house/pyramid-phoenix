@@ -226,6 +226,18 @@ class Wizard(MyView):
         self.wizard_state.clear()
         return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
 
+    def flash(self, message, queue='info'):
+        self.session.flash(message, queue=queue)
+        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
+
+    def flash_success(self, message):
+        logger.info(message)
+        return self.flash(message, queue='success')
+
+    def flash_error(self, message):
+        logger.error(message)
+        return self.flash(message, queue='error')
+
     def custom_view(self):
         return {}
 
@@ -250,16 +262,14 @@ class Wizard(MyView):
 
     def view(self):
         form = self.generate_form()
-        
+
         if 'previous' in self.request.POST:
             return self.process_form(form, 'previous')
         elif 'next' in self.request.POST:
             return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
-        
-        custom = self.custom_view()    
+    
         result = dict(form=form.render(self.appstruct()))
-
-        # custom overwrites result
+        custom = self.custom_view()    
         return dict(result, **custom)

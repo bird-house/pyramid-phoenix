@@ -8,32 +8,42 @@
 
     <ul class="nav nav-tabs">
       <li class="${'active' if active=='outputs' else ''}">
-	<a href="${request.route_url('process_outputs', jobid=jobid, tab='outputs')}">Outputs</a>
+        <a href="${request.route_url('process_outputs', jobid=jobid, tab='outputs')}">Outputs</a>
       </li>
       <li class="${'active' if active=='inputs' else ''}">
-	<a href="${request.route_url('process_outputs', jobid=jobid, tab='inputs')}">Inputs</a>
+        <a href="${request.route_url('process_outputs', jobid=jobid, tab='inputs')}">Inputs</a>
       </li>
       <li class="${'active' if active=='resources' else ''}">
-	<a href="${request.route_url('process_outputs', jobid=jobid, tab='resources')}">Resources</a>
+        <a href="${request.route_url('process_outputs', jobid=jobid, tab='resources')}">Resources</a>
       </li>
       <li class="${'active' if active=='workflow' else ''}">
-	<a href="${request.route_url('process_outputs', jobid=jobid, tab='workflow')}">Workflow</a>
+        <a href="${request.route_url('process_outputs', jobid=jobid, tab='workflow')}">Workflow</a>
       </li>
     </ul>
-
 
     <table class="table table-striped">
       <tal:rows replace="structure grid" />
     </table>
 
-     <!-- Add form for publishing to csw -->
+    <!-- Add form for publishing to csw -->
     <div id="publish-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="user-form-label" aria-hidden="true">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="publish-form-label">Publish to Catalog Service</h3>
       </div>
       <div class="modal-body">
-        <tal:form replace="structure form" />
+        <tal:form replace="structure publish_form" />
+      </div>
+    </div>
+
+    <!-- Add form for upload to swift cloud -->
+    <div id="upload-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="user-form-label" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="upload-form-label">Upload to Swift Cloud</h3>
+      </div>
+      <div class="modal-body">
+        <tal:form replace="structure upload_form" />
       </div>
     </div>
 

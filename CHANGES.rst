@@ -1,9 +1,20 @@
 Changes
 *******
 
-0.2.3 (current)
+0.3.1 (2015-mm-dd)
 ==================
 
+* Add help button pointing to phoenix documentation on readthedocs.
+
+0.3.0 (2015-02-24)
+==================
+
+* Now possible to use shared anaconda installation.
+
+0.2.3 (2015-02-23)
+==================
+
+* sets x509 proxy certificate in processes.
 * using TimedRotatingFileHandler for logging.
 * esgf search is by default not distributed.
 * default log-level set to info.

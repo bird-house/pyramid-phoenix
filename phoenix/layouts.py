@@ -1,7 +1,7 @@
 from pyramid_layout.layout import layout_config
 
 
-@layout_config(name='default', template='phoenix:templates/layouts/bootstrap2.pt')
+@layout_config(name='default', template='phoenix:templates/layouts/default.pt')
 class Layouts(object):
 
     def __init__(self, context, request):

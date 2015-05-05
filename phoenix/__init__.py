@@ -43,8 +43,9 @@ def main(global_config, **settings):
     config.include('pyramid_chameleon')
     
     # deform
+    config.include('pyramid_deform')
+    config.include('js.deform')
     config.include('deform_bootstrap')
-    #config.include('deform_bootstrap_extra')
 
     # mailer
     config.include('pyramid_mailer')
@@ -63,10 +64,6 @@ def main(global_config, **settings):
         'deform_bootstrap_static', 'deform_bootstrap:static',
         cache_max_age=3600
     )
-    #config.add_static_view(
-    #    'deform_bootstrap_extra_static', 'deform_bootstrap_extra:static',
-    #    cache_max_age=3600
-    #)
 
     # dummy view for testing
     config.add_route('dummy', '/dummy/{email}')
@@ -89,10 +86,13 @@ def main(global_config, **settings):
     config.add_route('remove_myjob', '/myjobs/{jobid}/remove')
     config.add_route('process_outputs', '/myjobs/{jobid}/outputs/{tab}')
 
+    # map
     config.add_route('map', '/map')
-    config.add_route('myaccount', '/myaccount')
 
-    # qc qizards
+    # my account
+    config.add_route('myaccount', '/myaccount/{tab}')
+
+    # TODO: disable qc wizards
     config.add_route('qc_wizard_check', '/qc_wizard_check')
     config.add_route('qc_wizard_yaml', '/qc_wizard_yaml')
 
@@ -126,6 +126,8 @@ def main(global_config, **settings):
     config.add_route('wizard_csw_select', '/wizard/csw/{recordid}/select.json')
     config.add_route('wizard_esgf', '/wizard/esgf')
     config.add_route('wizard_esgf_files', '/wizard/esgf_files')
+    config.add_route('wizard_swift_login', '/wizard/swift_login')
+    config.add_route('wizard_swiftbrowser', '/wizard/swiftbrowser')
     config.add_route('wizard_esgf_credentials', '/wizard/esgf_credentials')
     config.add_route('wizard_check_parameters', '/wizard/check_parameters')
     config.add_route('wizard_done', '/wizard/done')

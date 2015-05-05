@@ -10,5 +10,6 @@ wps-url = http://localhost:8091/wps
 csw-url = http://localhost:8082/csw
 thredds-url = http://localhost:8080/thredds
 admin-users = admin@malleefowl.org
-
+swift-auth-url = http://localhost/auth/v1.0
+swift-auth-version = 1
 

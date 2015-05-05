@@ -95,7 +95,7 @@ def execute_restflow(wps, nodes):
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     return execution
 
-def execute_dispel(wps, nodes):
+def execute_dispel(wps, nodes, name='esgsearch_workflow'):
     """
     execute dispel workflow on given wps and with given nodes
     """
@@ -104,9 +104,10 @@ def execute_dispel(wps, nodes):
 
     # generate and run dispel workflow
     identifier='dispel'
-    inputs=[('nodes', nodes_json)]
+    inputs=[('nodes', nodes_json), ('name', name)]
     outputs=[('output', True)]
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
+    logger.debug("inputs=%s", inputs)
     return execution
 
 def appstruct_to_inputs(appstruct):
@@ -169,7 +170,7 @@ class WPSSchema(JobSchema):
 
     appstruct = {}
 
-    def __init__(self, info=False, hide_complex=False, process=None, unknown='ignore', **kw):
+    def __init__(self, info=False, hide_complex=False, process=None, unknown='ignore', user=None, **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
@@ -212,11 +213,10 @@ class WPSSchema(JobSchema):
         self.hide_complex = hide_complex
         self.process = process
         self.unknown = unknown
-        self.kwargs = kwargs or {}   
+        self.user = user
+        self.kwargs = kwargs or {}
 
         if not info:
-            self.__delitem__('title')
-            self.__delitem__('abstract')
             self.__delitem__('keywords')
         self.add_nodes(process)
 
@@ -368,6 +368,16 @@ class WPSSchema(JobSchema):
         # optional value?
         if data_input.minOccurs == 0:
             node.missing = colander.drop
+
+        # check mime-type
+        mime_types = []
+        if len(data_input.supportedValues) > 0: 
+            mime_types = [str(value.mimeType) for value in data_input.supportedValues]
+        logger.debug("mime-types: %s", mime_types)
+        # set current proxy certificate
+        if 'application/x-pkcs7-mime' in mime_types and self.user is not None:
+            # TODO: check if certificate is still valid
+            node.default = self.user.get('credentials')
 
         # finally add node to root schema
         # sequence of nodes ...

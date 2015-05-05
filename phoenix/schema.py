@@ -20,10 +20,7 @@ logger = logging.getLogger(__name__)
 class NoSchema(colander.MappingSchema):
     pass
 
-class CredentialsSchema(colander.MappingSchema):
-    """
-    ESGF user credentials schema
-    """
+class ESGFLoginSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
         colander.String(),
         title = "OpenID",
@@ -31,7 +28,7 @@ class CredentialsSchema(colander.MappingSchema):
         validator = colander.url,
         missing = '',
         default = '',
-        widget = TextInputWidget(template='readonly/textinput'),
+        #widget = TextInputWidget(template='readonly/textinput'),
         )
     password = colander.SchemaNode(
         colander.String(),
@@ -41,10 +38,22 @@ class CredentialsSchema(colander.MappingSchema):
         default = '',
         widget = PasswordWidget(size=30))
 
-class MyAccountSchema(colander.MappingSchema):
-    """
-    User account schema
-    """
+class SwiftLoginSchema(colander.MappingSchema):
+    username = colander.SchemaNode(
+        colander.String(),
+        title = "Username",
+        description = "Your Swift Username: account:user",
+        missing = '',
+        default = '',
+        )
+    password = colander.SchemaNode(
+        colander.String(),
+        title = 'Password',
+        missing = '',
+        default = '',
+        widget = PasswordWidget(size=30))
+
+class UserProfileSchema(colander.MappingSchema):
     name = colander.SchemaNode(
         colander.String(),
         title = "Your Name",
@@ -58,14 +67,6 @@ class MyAccountSchema(colander.MappingSchema):
         missing = '',
         widget = TextInputWidget(template='readonly/textinput'),
         )
-    openid = colander.SchemaNode(
-        colander.String(),
-        title = "OpenID",
-        description = "OpenID to access ESGF data",
-        validator = colander.url,
-        missing = '',
-        default = '',
-        )
     organisation = colander.SchemaNode(
         colander.String(),
         title = "Organisation",
@@ -77,6 +78,16 @@ class MyAccountSchema(colander.MappingSchema):
         title = "Notes:",
         missing = '',
         default = '',
+        )
+
+class ESGFCredentialsSchema(colander.MappingSchema):
+    openid = colander.SchemaNode(
+        colander.String(),
+        title = "OpenID",
+        description = "OpenID to access ESGF data",
+        validator = colander.url,
+        missing = '',
+        widget = TextInputWidget(template='readonly/textinput'),
         )
     credentials = colander.SchemaNode(
         colander.String(),
@@ -94,16 +105,25 @@ class MyAccountSchema(colander.MappingSchema):
         widget = TextInputWidget(template='readonly/textinput'),
         )
 
-class WizardSchema(colander.MappingSchema):
-    @colander.deferred
-    def deferred_favorite_widget(node, kw):
-        favorites = kw.get('favorites', ['No Favorite'])
-        choices = [(item, item) for item in favorites]
-        return SelectWidget(values = choices)
-
-    favorite = colander.SchemaNode(
+class SwiftSchema(colander.MappingSchema):
+    swift_username = colander.SchemaNode(
         colander.String(),
-        widget = deferred_favorite_widget)
+        title = "Swift Username",
+        missing = '',
+        widget = TextInputWidget(template='readonly/textinput'),
+        )
+    swift_storage_url = colander.SchemaNode(
+        colander.String(),
+        title = "Swift Storage URL",
+        missing = '',
+        widget = TextInputWidget(template='readonly/textinput'),
+        )
+    swift_auth_token = colander.SchemaNode(
+        colander.String(),
+        title = "Swift Auth Token",
+        missing = '',
+        widget = TextInputWidget(template='readonly/textinput'),
+        )
 
 class ChooseWPSSchema(colander.MappingSchema):
     @colander.deferred
@@ -162,6 +182,7 @@ class ChooseSourceSchema(colander.MappingSchema):
         # TODO: enable csw again
         #('wizard_csw', "CSW Catalog Search"),
         ('wizard_esgf', "ESGF Files"),
+        ('wizard_swift_login', "Swift Cloud")
         ]
     source = colander.SchemaNode(
         colander.String(),
@@ -183,29 +204,29 @@ class ESGFSearchSchema(colander.MappingSchema):
         widget = EsgSearchWidget(url="/esg-search"))
 
 class JobSchema(colander.MappingSchema):
-    @colander.deferred
-    def deferred_title(node, kw):
-        return kw.get('title', 'test-job')
+    ## @colander.deferred
+    ## def deferred_title(node, kw):
+    ##     return kw.get('title', 'test-job')
 
-    @colander.deferred
-    def deferred_abstract(node, kw):
-        return kw.get('abstract', 'test')
+    ## @colander.deferred
+    ## def deferred_abstract(node, kw):
+    ##     return kw.get('abstract', 'test')
 
     @colander.deferred
     def deferred_keywords(node, kw):
         return kw.get('keywords', 'test')
     
-    title = colander.SchemaNode(
-        colander.String(),
-        default = deferred_title,
-        missing = 'test')
+    ## title = colander.SchemaNode(
+    ##     colander.String(),
+    ##     default = deferred_title,
+    ##     missing = 'test')
     
-    abstract = colander.SchemaNode(
-        colander.String(),
-        default = deferred_abstract,
-        missing = '',
-        validator = colander.Length(max=500),
-        widget = TextAreaWidget(rows=3, cols=120))
+    ## abstract = colander.SchemaNode(
+    ##     colander.String(),
+    ##     default = deferred_abstract,
+    ##     missing = '',
+    ##     validator = colander.Length(max=500),
+    ##     widget = TextAreaWidget(rows=3, cols=120))
     
     keywords = colander.SchemaNode(
         colander.String(),
@@ -245,6 +266,16 @@ class CatalogAddServiceSchema(colander.MappingSchema):
                     ('http://www.opengis.net/wms', "OGC:WMS 1.1.1"),
                     ('http://www.opengis.net/cat/csw/2.0.2', "OGC:CSW 2.0.2")])
         )
+
+class UploadSchema(SwiftLoginSchema):
+    
+    container = colander.SchemaNode(colander.String())
+    prefix = colander.SchemaNode(colander.String())
+    #object_name = colander.SchemaNode(colander.String())
+    source = colander.SchemaNode(
+        colander.String(),
+        description = 'URL to the source',
+        validator = colander.url)
 
 class PublishSchema(colander.MappingSchema):
     import uuid
