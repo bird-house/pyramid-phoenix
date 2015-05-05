@@ -35,7 +35,7 @@ class Done(Wizard):
         else: # esgsearch
             credentials = user.get('credentials')
 
-            selection = self.wizard_state.get('wizard_esgf')['selection']
+            selection = self.wizard_state.get('wizard_esgf_search')['selection']
             import json
             esgsearch = json.loads(selection)
             nodes['esgsearch'] = esgsearch

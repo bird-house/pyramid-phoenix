@@ -82,8 +82,9 @@ def get_wps_list(request):
     items = []
     for rec in csw.records:
         source=csw.records[rec].source
-        if not '?' in source.lower():
-            source = utils.build_url(source, [('service', 'WPS'), ('version', '1.0.0'), ('request', 'GetCapabilities')])
+        # TODO: fix owslib url handling and wps caps url
+        #if not '?' in source.lower():
+        #    source = utils.build_url(source, [('service', 'WPS'), ('version', '1.0.0'), ('request', 'GetCapabilities')])
         
         items.append(dict(
             identifier=csw.records[rec].identifier,
