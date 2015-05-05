@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="${request.static_url('phoenix:static/leaflet/leaflet.css')}" />
     <!--[if lte IE 8]><link rel="stylesheet" href="${request.static_url('phoenix:static/leafletleaflet.ie.css')}" /><![endif]-->
     <script type="text/javascript" src="${request.static_url('phoenix:static/leaflet/leaflet.js')}"></script>
-    <script src="${request.static_url('phoenix:static/js/csw.js')}"></script>
+    <script src="${request.static_url('phoenix:static/scripts/csw.js')}"></script>
     <script type="text/javascript">
       $(document).ready(function (e) {
          initMap();

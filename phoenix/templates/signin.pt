@@ -15,7 +15,7 @@
   </div>
 
   <div metal:fill-slot="javascript">
-    <script src="${request.static_url('phoenix:static/js/authomatic.js')}"></script>
-    <script src="${request.static_url('phoenix:static/js/signin.js')}"></script>
+    <script src="${request.static_url('phoenix:static/scripts/authomatic.js')}"></script>
+    <script src="${request.static_url('phoenix:static/scripts/signin.js')}"></script>
   </div>
 </metal:block>
