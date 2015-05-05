@@ -23,7 +23,7 @@ class ExecuteProcess(Processes):
         # TODO: need to fix owslib to handle special identifiers
         self.process = self.wps.describeprocess(identifier)
         super(ExecuteProcess, self).__init__(request, name='processes_execute', title=self.process.title)
-        self.description = getattr(self.process, 'abstract', '')
+        self.description = "Enter inputs and execute process."
 
     def breadcrumbs(self):
         breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
@@ -69,10 +69,12 @@ class ExecuteProcess(Processes):
             return dict(form = e.render())
         return HTTPFound(location=self.request.route_url('myjobs_overview'))
 
-    @view_config(route_name='processes_execute', renderer='phoenix:templates/execute_process.pt')
+    @view_config(route_name='processes_execute', renderer='phoenix:templates/processes_execute.pt')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
             return self.process_form(form)
-        return dict(form=form.render(self.appstruct()))
+        return dict(
+            description=getattr(self.process, 'abstract', ''),
+            form=form.render(self.appstruct()))
     

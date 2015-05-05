@@ -1,7 +1,0 @@
-<metal:block use-macro="main_template">
-        
-  <div metal:fill-slot="content">
-    <tal:form replace="structure form">The form will render here</tal:form>
-  </div>
-   
-</metal:block>
