@@ -3,10 +3,10 @@
   <div metal:fill-slot="content">
     
     <ul class="nav nav-tabs">
-      <li class="${'active' if active=='jobs' else ''}"><a href="${request.route_url('dashboard', tab='jobs')}">Jobs</a></li>
-      <li class="${'active' if active=='users' else ''}"><a href="${request.route_url('dashboard', tab='users')}">Users</a></li>
-      <li class="${'active' if active=='processes' else ''}"><a href="${request.route_url('dashboard', tab='processes')}">Processes</a></li>
-      <li class="${'active' if active=='downloads' else ''}"><a href="${request.route_url('dashboard', tab='downloads')}">Downloads</a></li>
+      <li class="${'active' if active=='jobs' else ''}"><a href="${request.route_path('dashboard', tab='jobs')}">Jobs</a></li>
+      <li class="${'active' if active=='users' else ''}"><a href="${request.route_path('dashboard', tab='users')}">Users</a></li>
+      <li class="${'active' if active=='processes' else ''}"><a href="${request.route_path('dashboard', tab='processes')}">Processes</a></li>
+      <li class="${'active' if active=='downloads' else ''}"><a href="${request.route_path('dashboard', tab='downloads')}">Downloads</a></li>
     </ul>
 
      <!-- row columns -->

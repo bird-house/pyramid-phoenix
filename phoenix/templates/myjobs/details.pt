@@ -19,7 +19,15 @@
       <li class="${'active' if active=='workflow' else ''}">
         <a href="${request.route_path('myjobs_details', jobid=jobid, tab='workflow')}">Workflow</a>
       </li>
+      <li class="${'active' if active=='log' else ''}">
+        <a href="${request.route_path('myjobs_details', jobid=jobid, tab='log')}">Log</a>
+      </li>
     </ul>
+
+    <!-- row columns -->
+    <div class="row-fluid offset1">
+      ${panel('headings')}
+    </div>
 
     <div class="panel panel-default">
       <div class="panel-body">

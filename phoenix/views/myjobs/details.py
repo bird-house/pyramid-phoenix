@@ -176,6 +176,12 @@ class JobDetails(MyJobs):
             self.session['jobid'] = jobid
             self.session.changed()
 
+        lm = self.request.layout_manager
+        if tab == 'log':
+            lm.layout.add_heading('myjobs_log')
+        else:
+            lm.layout.add_heading('myjobs_outputs')
+
         if 'publish' in self.request.POST:
             return self.process_publish_form(publish_form, jobid, tab)
         elif 'upload' in self.request.POST:

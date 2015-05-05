@@ -70,6 +70,14 @@ def dashboard_jobs(context, request):
                 failed = request.db.jobs.find({"is_complete": True, "is_succeded": False}).count(),
                 succeded = request.db.jobs.find({"is_succeded": True}).count())
 
+@panel_config(name='myjobs_outputs', renderer='phoenix:templates/panels/myjobs_outputs.pt')
+def myjobs_output(context, request):
+    return {}
+
+@panel_config(name='myjobs_log', renderer='phoenix:templates/panels/myjobs_log.pt')
+def myjobs_log(context, request):
+    return {}
+
 class MyAccountPanel(object):
     def __init__(self, context, request):
         self.context = context
