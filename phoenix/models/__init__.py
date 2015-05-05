@@ -1,6 +1,8 @@
 import uuid
 import datetime
 
+from phoenix import utils
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -79,6 +81,10 @@ def get_wps_list(request):
         keywords=['WPS'])
     items = []
     for rec in csw.records:
+        source=csw.records[rec].source
+        if not '?' in source.lower():
+            source = utils.build_url(source, [('service', 'WPS'), ('version', '1.0.0'), ('request', 'GetCapabilities')])
+        
         items.append(dict(
             identifier=csw.records[rec].identifier,
             title=csw.records[rec].title,
@@ -86,7 +92,7 @@ def get_wps_list(request):
             abstract=csw.records[rec].abstract,
             references=csw.records[rec].references,
             format=csw.records[rec].format,
-            source=csw.records[rec].source,
+            source=source,
             rights=csw.records[rec].rights))
     return items
 

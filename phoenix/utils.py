@@ -31,6 +31,14 @@ def is_url(url):
     from urlparse import urlparse
     return bool(urlparse(url ).scheme)
 
+def build_url(url, query):
+    import urllib
+    if not url.endswith('?'):
+        url = url + '?'
+    return url + urllib.urlencode(query)
+    
+    
+
 
 
 
