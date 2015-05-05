@@ -6,6 +6,42 @@
         
   <div metal:fill-slot="content">
 
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3>Job</h3>
+      </div>
+      <div class="panel-body">
+        <div id="buildDetails">
+          <div class="col-xs-6 col-md-3">
+            <dl>
+              <dt>Status</dt>
+              <dd class="success">
+                success
+              </dd>
+              <dt>Duration</dt>
+              <dd  >
+                02:13
+              </dd>
+              <dt>Finished</dt>
+              <dd>4 hours ago</dd>
+            </dl>
+          </div>
+          <div class="col-xs-6 col-md-3">
+            <dl>
+              <dt>Queue</dt>
+              <dd>build/binstar/public</dd>
+              <dt>Platform</dt>
+              <dd>linux-64</dd>
+              <dt>Engine</dt>
+              <dd>python=2</dd>
+              <dt>Environment</dt>
+              <dd>None</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <ul class="nav nav-tabs">
       <li class="${'active' if active=='outputs' else ''}">
         <a href="${request.route_path('myjobs_details', jobid=jobid, tab='outputs')}">Outputs</a>
