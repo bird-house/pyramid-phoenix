@@ -1,14 +1,3 @@
-/* loading indicator */
-
-#loading-indicator {
-    position: absolute;
-    left: 470px;
-    top: 200px;
-    /*visibility: hidden;*/
-    z-index: 100; /* Must appear on top */ 
-}
-
-
 /* hits */
 
 .hits {
