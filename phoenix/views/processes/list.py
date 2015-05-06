@@ -57,7 +57,7 @@ class ProcessGrid(MyGrid):
     def title_td(self, col_num, i, item):
         query = dict(service='wps', version='1.0.0', request='describeprocess', identifier=item.identifier)
         return self.render_title_td(
-            title=item.title, 
+            title="%s %s" % (item.title, item.processVersion), 
             abstract=getattr(item, 'abstract', ''),
             format='XML',
             source=build_get_url(self.wps.url, query))
