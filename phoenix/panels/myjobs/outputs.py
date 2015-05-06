@@ -16,11 +16,8 @@ class MyJobsOutputs(object):
     def generate_publish_form(self, formid="deform"):
         """Generate form for publishing to catalog service"""
         from phoenix.schema import PublishSchema
-        schema = PublishSchema().bind()
-        return Form(
-            schema,
-            buttons=('publish',),
-            formid=formid)
+        schema = PublishSchema()
+        return Form(schema, buttons=('publish',), formid=formid)
 
     def process_publish_form(self, form, jobid, tab):
         try:
@@ -111,4 +108,6 @@ class MyJobsOutputs(object):
                 ['output', 'value', ''],
             )
 
-        return dict(grid=grid, items=items, publish_form=publish_form, upload_form=upload_form)
+        return dict(grid=grid, items=items,
+                    publish_form=publish_form.render(),
+                    upload_form=upload_form.render())

@@ -34,7 +34,6 @@ class JobDetails(MyJobs):
                 format = output.mimeType,
                 keywords = 'one,two,three',
                 )
-
         return result
 
     @view_config(renderer='json', name='upload.output')
