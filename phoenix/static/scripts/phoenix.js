@@ -106,20 +106,6 @@ $(function() {
   // Settings
   // --------
   
-  // Activate user
-  $(".activate").button({
-    text: false,
-  }).click(function( event ) {
-    var email = $(this).attr('data-value');
-    $.getJSON(
-      '/settings/users/'+email+'/activate.json',
-      {},
-      function(json) {
-        location.reload();
-      }
-    );
-  });
-  
   // edit user
   $(".edit").button({
     text: false,

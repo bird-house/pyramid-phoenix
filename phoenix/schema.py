@@ -1,6 +1,7 @@
 import colander
 from colander import Invalid
 
+import deform
 from deform.widget import (
     RadioChoiceWidget,
     TextInputWidget,
@@ -331,9 +332,10 @@ class UserSchema(colander.MappingSchema):
         title = "Notes",
         missing = colander.drop,
         )
-    ## activated = colander.SchemaNode(
-    ##     colander.Bool(),
-    ##     missing.colander.drop
-    ##     )
+    activated = colander.SchemaNode(
+        colander.Boolean(),
+        description='Check to activate user.',
+        widget=deform.widget.CheckboxWidget(),
+        title='Activated')
 
 
