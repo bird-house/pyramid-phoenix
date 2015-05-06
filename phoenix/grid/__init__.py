@@ -32,6 +32,10 @@ class MyGrid(Grid):
 
     def render_status_td(self, item):
         return self.render_td(renderer="status_td", status=item.get('status'), identifier=item.get('identifier'))
+
+    def render_time_ago_td(self, from_time):
+        from phoenix.utils import time_ago_in_words
+        return self.render_label_td(time_ago_in_words(from_time))
     
     def render_timestamp_td(self, timestamp):
         import datetime

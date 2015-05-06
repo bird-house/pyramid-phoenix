@@ -100,8 +100,7 @@ class JobsGrid(MyGrid):
                               identifier=item.get('identifier'))
         
     def finished_td(self, col_num, i, item):
-        from phoenix.utils import time_ago_in_words
-        return self.render_label_td(time_ago_in_words(item.get('finished')))
+        return self.render_time_ago_td(item.get('finished'))
 
     def progress_td(self, col_num, i, item):
         return self.render_progress_td(identifier=item.get('identifier'), progress = item.get('progress', 0))

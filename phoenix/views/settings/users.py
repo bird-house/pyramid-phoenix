@@ -101,7 +101,7 @@ class UsersGrid(MyGrid):
         self.exclude_ordering = self.columns
 
     def last_login_td(self, col_num, i, item):
-        return self.render_timestamp_td(item.get('last_login'))
+        return self.render_time_ago_td(item.get('last_login'))
 
     def activated_td(self, col_num, i, item):
         from string import Template
