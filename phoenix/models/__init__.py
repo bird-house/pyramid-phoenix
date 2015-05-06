@@ -136,13 +136,7 @@ def process_outputs(request, jobid, tab='outputs'):
 
 def job_details(request, jobid):
     job = request.db.jobs.find_one({'identifier': jobid})
-    details = {}
-    details['title'] = job.get('title')
-    details['description'] = job.get('abstract')
-    details['status'] = job.get('status')
-    details['status_location'] = job.get('status_location')
-    details['message'] = job.get('message')
-    details['duration'] = job.get('duration')
-    details['finished'] = job.get('finished')
-    details['progress'] = job.get('progress')
+    details = job.copy()
+    from phoenix.utils import time_ago_in_words
+    details['finished'] = time_ago_in_words(job.get('finished'))
     return details

@@ -100,14 +100,8 @@ class JobsGrid(MyGrid):
                               identifier=item.get('identifier'))
         
     def finished_td(self, col_num, i, item):
-        try:
-            from webhelpers2.date import time_ago_in_words
-            time_ago = time_ago_in_words(item.get('finished'), granularity='minute')
-            time_ago = time_ago + " ago"
-        except:
-            time_ago = '???'
-        finally:
-            return self.render_label_td(time_ago)
+        from phoenix.utils import time_ago_in_words
+        return self.render_label_td(time_ago_in_words(item.get('finished')))
 
     def progress_td(self, col_num, i, item):
         return self.render_progress_td(identifier=item.get('identifier'), progress = item.get('progress', 0))

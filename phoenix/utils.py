@@ -36,6 +36,16 @@ def build_url(url, query):
     if not url.endswith('?'):
         url = url + '?'
     return url + urllib.urlencode(query)
+
+def time_ago_in_words(from_time):
+    try:
+        from webhelpers2 import date
+        time_ago = date.time_ago_in_words(from_time, granularity='minute')
+        time_ago = time_ago + " ago"
+    except:
+        time_ago = '???'
+    finally:
+        return time_ago
     
     
 

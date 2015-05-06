@@ -4,29 +4,35 @@
 
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title">${details.title}</h3>
+        <h3 class="panel-title">${job.title}</h3>
       </div>
       <div class="panel-body">
-        ${details.description}
+        ${job.abstract}
         <div>
           <div class="col-xs-6 col-md-3">
             <dl>
               <dt>Status</dt>
-              <dd class="success">${details.status}</dd>
+              <dd class="success">${job.status}</dd>
               <dt>Duration</dt>
-              <dd>${details.duration}</dd>
+              <dd>${job.duration}</dd>
               <dt>Finished</dt>
-              <dd>${details.finished}</dd>
+              <dd>${job.finished}</dd>
             </dl>
           </div>
           <div class="col-xs-6 col-md-3">
             <dl>
-              <dt>Message</dt>
-              <dd>${details.message}</dd>
               <dt>Progress</dt>
-              <dd>${details.progress}</dd>
+              <dd>${job.progress}%</dd>
               <dt>Status Location</dt>
-              <dd>${details.status_location}</dd>
+              <dd>
+                <a class="label label-warning" href="${job.status_location}" target="_blank">XML</a>
+              </dd>
+            </dl>
+          </div>
+          <div class="col-xs-6 col-md-3">
+            <dl>
+              <dt>Status Message</dt>
+              <dd>${job.status_message}</dd>
             </dl>
           </div>
         </div>
