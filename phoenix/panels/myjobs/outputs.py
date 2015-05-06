@@ -16,8 +16,7 @@ class MyJobsOutputs(object):
     def generate_publish_form(self, formid="deform"):
         """Generate form for publishing to catalog service"""
         from phoenix.schema import PublishSchema
-        schema = PublishSchema()
-        return Form(schema, buttons=('publish',), formid=formid)
+        return Form(schema=PublishSchema(), buttons=('publish',), formid=formid)
 
     def process_publish_form(self, form, jobid):
         try:
@@ -45,11 +44,7 @@ class MyJobsOutputs(object):
     def generate_upload_form(self, formid="deform"):
         """Generate form for upload to swift cloud"""
         from phoenix.schema import UploadSchema
-        schema = UploadSchema().bind()
-        return Form(
-            schema,
-            buttons=('upload',),
-            formid=formid)
+        return Form(schema = UploadSchema(), buttons=('upload',), formid=formid)
 
     def process_upload_form(self, form, jobid):
         from phoenix.models import swift
