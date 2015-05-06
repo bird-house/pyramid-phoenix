@@ -11,6 +11,45 @@ class MyJobsOutputs(object):
     def __init__(self, context, request):
         self.context = context
         self.request = request
+        self.db = self.request.db
+
+    def collect_outputs(self, status_location, prefix="job"):
+        from owslib.wps import WPSExecution
+        execution = WPSExecution()
+        execution.checkStatus(url=status_location, sleepSecs=0)
+        outputs = {}
+        for output in execution.processOutputs:
+            oid = "%s.%s" %(prefix, output.identifier)
+            outputs[oid] = output
+        return outputs
+
+    def process_outputs(self, jobid, tab='outputs'):
+        job = self.db.jobs.find_one({'identifier': jobid})
+        outputs = self.collect_outputs(job['status_location'])
+        # TODO: dirty hack for workflows ... not save and needs refactoring
+        from owslib.wps import WPSExecution
+        execution = WPSExecution()
+        execution.checkStatus(url=job['status_location'], sleepSecs=0)
+        if job['workflow']:
+            import urllib
+            import json
+            wf_result_url = execution.processOutputs[0].reference
+            wf_result_json = json.load(urllib.urlopen(wf_result_url))
+            count = 0
+            if tab == 'outputs':
+                for url in wf_result_json.get('worker', []):
+                    count = count + 1
+                    outputs = self.collect_outputs(url, prefix='worker%d' % count )
+            elif tab == 'resources':
+                for url in wf_result_json.get('source', []):
+                    count = count + 1
+                    outputs = self.collect_outputs(url, prefix='source%d' % count )
+            elif tab == 'inputs':
+                outputs = {}
+        else:
+            if tab != 'outputs':
+                outputs = {}
+        return outputs
 
     def generate_publish_form(self, formid="deform"):
         """Generate form for publishing to catalog service"""
@@ -89,4 +128,21 @@ class MyJobsOutputs(object):
         ## elif 'upload' in self.request.POST:
         ##     return self.process_upload_form(upload_form, jobid, tab)
 
-        return {}
+        items = []
+        ## for oid,output in self.process_outputs(self.session.get('jobid'), tab).items():
+        ##     items.append(dict(title=output.title,
+        ##                       abstract=getattr(output, 'abstract', ""),
+        ##                       identifier=oid,
+        ##                       mime_type = output.mimeType,
+        ##                       data = output.data,
+        ##                       reference=output.reference))
+        items = sorted(items, key=lambda item: item['identifier'], reverse=1)
+
+        from phoenix.grid.processoutputs import ProcessOutputsGrid
+        grid = ProcessOutputsGrid(
+                self.request,
+                items,
+                ['output', 'value', ''],
+            )
+
+        return dict(grid=grid, items=items)

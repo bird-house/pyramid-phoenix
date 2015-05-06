@@ -1,6 +1,14 @@
 <div class="col-9 col-lg-9 col-sm-9">
   <h3>Jobs</h3>
 
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <table class="table table-striped">
+        <tal:rows replace="structure grid" />
+      </table>
+    </div>
+  </div>
+
   <!-- Add form for publishing to csw -->
   <div id="publish-form" class="modal fade">
     <div class="modal-dialog">
