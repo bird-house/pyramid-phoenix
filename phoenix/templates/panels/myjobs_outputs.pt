@@ -17,7 +17,7 @@
           <h4 class="modal-title" id="publish-form-label">Publish to Catalog Service</h4>
         </div>
         <div class="modal-body">
-          <!-- tal:form replace="structure publish_form"/-->
+          <tal:form replace="structure publish_form"/>
         </div>
       </div>
     </div>
@@ -32,7 +32,7 @@
           <h4 class="modal-title" id="upload-form-label">Upload to Swift Cloud</h4>
         </div>
         <div class="modal-body">
-          <!-- tal:form replace="structure upload_form" /-->
+          <tal:form replace="structure upload_form"/>
         </div>
       </div>
     </div>

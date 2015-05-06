@@ -12,46 +12,7 @@ class MyJobsOutputs(object):
         self.context = context
         self.request = request
         self.session = self.request.session
-        self.db = self.request.db
-
-    def collect_outputs(self, status_location, prefix="job"):
-        from owslib.wps import WPSExecution
-        execution = WPSExecution()
-        execution.checkStatus(url=status_location, sleepSecs=0)
-        outputs = {}
-        for output in execution.processOutputs:
-            oid = "%s.%s" %(prefix, output.identifier)
-            outputs[oid] = output
-        return outputs
-
-    def process_outputs(self, jobid, tab='outputs'):
-        job = self.db.jobs.find_one({'identifier': jobid})
-        outputs = self.collect_outputs(job['status_location'])
-        # TODO: dirty hack for workflows ... not save and needs refactoring
-        from owslib.wps import WPSExecution
-        execution = WPSExecution()
-        execution.checkStatus(url=job['status_location'], sleepSecs=0)
-        if job['workflow']:
-            import urllib
-            import json
-            wf_result_url = execution.processOutputs[0].reference
-            wf_result_json = json.load(urllib.urlopen(wf_result_url))
-            count = 0
-            if tab == 'outputs':
-                for url in wf_result_json.get('worker', []):
-                    count = count + 1
-                    outputs = self.collect_outputs(url, prefix='worker%d' % count )
-            elif tab == 'resources':
-                for url in wf_result_json.get('source', []):
-                    count = count + 1
-                    outputs = self.collect_outputs(url, prefix='source%d' % count )
-            elif tab == 'inputs':
-                outputs = {}
-        else:
-            if tab != 'outputs':
-                outputs = {}
-        return outputs
-
+    
     def generate_publish_form(self, formid="deform"):
         """Generate form for publishing to catalog service"""
         from phoenix.schema import PublishSchema
@@ -133,7 +94,8 @@ class MyJobsOutputs(object):
             return self.process_upload_form(upload_form, jobid, tab)
 
         items = []
-        for oid,output in self.process_outputs(jobid, tab).items():
+        from phoenix.models import process_outputs
+        for oid,output in process_outputs(self.request, jobid, tab).items():
             items.append(dict(title=output.title,
                               abstract=getattr(output, 'abstract', ""),
                               identifier=oid,
@@ -149,4 +111,4 @@ class MyJobsOutputs(object):
                 ['output', 'value', ''],
             )
 
-        return dict(grid=grid, items=items)
+        return dict(grid=grid, items=items, publish_form=publish_form, upload_form=upload_form)

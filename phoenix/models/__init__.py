@@ -97,3 +97,41 @@ def get_wps_list(request):
             rights=csw.records[rec].rights))
     return items
 
+def collect_outputs(status_location, prefix="job"):
+    from owslib.wps import WPSExecution
+    execution = WPSExecution()
+    execution.checkStatus(url=status_location, sleepSecs=0)
+    outputs = {}
+    for output in execution.processOutputs:
+        oid = "%s.%s" %(prefix, output.identifier)
+        outputs[oid] = output
+    return outputs
+
+def process_outputs(request, jobid, tab='outputs'):
+    job = request.db.jobs.find_one({'identifier': jobid})
+    outputs = collect_outputs(job['status_location'])
+    # TODO: dirty hack for workflows ... not save and needs refactoring
+    from owslib.wps import WPSExecution
+    execution = WPSExecution()
+    execution.checkStatus(url=job['status_location'], sleepSecs=0)
+    if job['workflow']:
+        import urllib
+        import json
+        wf_result_url = execution.processOutputs[0].reference
+        wf_result_json = json.load(urllib.urlopen(wf_result_url))
+        count = 0
+        if tab == 'outputs':
+            for url in wf_result_json.get('worker', []):
+                count = count + 1
+                outputs = collect_outputs(url, prefix='worker%d' % count )
+        elif tab == 'resources':
+            for url in wf_result_json.get('source', []):
+                count = count + 1
+                outputs = collect_outputs(url, prefix='source%d' % count )
+        elif tab == 'inputs':
+            outputs = {}
+    else:
+        if tab != 'outputs':
+            outputs = {}
+    return outputs
+

@@ -2,6 +2,7 @@ from pyramid.view import view_config, view_defaults
 
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 
+from phoenix.models import process_outputs
 from phoenix.views.myjobs import MyJobs
 
 import logging
@@ -21,7 +22,7 @@ class JobDetails(MyJobs):
         jobid = self.session.get('jobid')
         result = dict()
         if outputid is not None:
-            output = self.process_outputs(jobid).get(outputid)
+            output = process_outputs(self.request, jobid).get(outputid)
 
             # TODO: how about schema.bind?
             result = dict(
@@ -43,7 +44,7 @@ class JobDetails(MyJobs):
         jobid = self.session.get('jobid')
         result = dict()
         if outputid is not None:
-            output = self.process_outputs(jobid).get(outputid)
+            output = process_outputs(self.request, jobid).get(outputid)
             user = self.get_user()
 
             result = dict(
