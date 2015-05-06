@@ -19,7 +19,7 @@ class MyJobsOutputs(object):
         schema = PublishSchema()
         return Form(schema, buttons=('publish',), formid=formid)
 
-    def process_publish_form(self, form, jobid, tab):
+    def process_publish_form(self, form, jobid):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
@@ -40,7 +40,7 @@ class MyJobsOutputs(object):
             self.session.flash("Publication failed. %s" % e, queue='error')
         else:
             self.session.flash("Publication was successful", queue='success')
-        return HTTPFound(location=self.request.route_url('myjobs_details', jobid=jobid, tab=tab))
+        return HTTPFound(location=self.request.route_path('myjobs_details', jobid=jobid, tab='outputs'))
 
     def generate_upload_form(self, formid="deform"):
         """Generate form for upload to swift cloud"""
@@ -51,7 +51,7 @@ class MyJobsOutputs(object):
             buttons=('upload',),
             formid=formid)
 
-    def process_upload_form(self, form, jobid, tab):
+    def process_upload_form(self, form, jobid):
         from phoenix.models import swift
         
         try:
@@ -75,24 +75,23 @@ class MyJobsOutputs(object):
             self.session.flash("Upload failed. %s" % e, queue='error')
         else:
             self.session.flash("Swift upload added to Jobs.", queue='info')
-        return HTTPFound(location=self.request.route_url('myjobs_details', jobid=jobid, tab=tab))
+        return HTTPFound(location=self.request.route_path('myjobs_details', jobid=jobid, tab='outputs'))
     
     @panel_config(name='myjobs_outputs', renderer='phoenix:templates/panels/myjobs_outputs.pt')
     def panel(self):
-        tab = 'outputs'
         jobid = self.session.get('jobid')
         
         publish_form = self.generate_publish_form()
         upload_form = self.generate_upload_form()
 
         if 'publish' in self.request.POST:
-            return self.process_publish_form(publish_form, jobid, tab)
+            return self.process_publish_form(publish_form, jobid)
         elif 'upload' in self.request.POST:
-            return self.process_upload_form(upload_form, jobid, tab)
+            return self.process_upload_form(upload_form, jobid)
 
         items = []
         from phoenix.models import process_outputs
-        for oid,output in process_outputs(self.request, jobid, tab).items():
+        for oid,output in process_outputs(self.request, jobid).items():
             items.append(dict(title=output.title,
                               abstract=getattr(output, 'abstract', ""),
                               identifier=oid,
