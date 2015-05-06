@@ -2,42 +2,7 @@
 
   <div metal:fill-slot="content">
 
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">${job.title}</h3>
-      </div>
-      <div class="panel-body">
-        ${job.abstract}
-        <div>
-          <div class="col-xs-6 col-md-3">
-            <dl>
-              <dt>Status</dt>
-              <dd class="success">${job.status}</dd>
-              <dt>Duration</dt>
-              <dd>${job.duration}</dd>
-              <dt>Finished</dt>
-              <dd>${job.finished}</dd>
-            </dl>
-          </div>
-          <div class="col-xs-6 col-md-3">
-            <dl>
-              <dt>Progress</dt>
-              <dd>${job.progress}%</dd>
-              <dt>Status Location</dt>
-              <dd>
-                <a class="label label-warning" href="${job.status_location}" target="_blank">XML</a>
-              </dd>
-            </dl>
-          </div>
-          <div class="col-xs-6 col-md-3">
-            <dl>
-              <dt>Status Message</dt>
-              <dd>${job.status_message}</dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-    </div>
+    ${panel('myjobs_details')}
 
     <ul class="nav nav-tabs">
       <li class="${'active' if active=='outputs' else ''}">
