@@ -70,6 +70,8 @@ class JobDetails(MyJobs):
             lm.layout.add_heading('myjobs_log')
         elif tab == 'inputs':
             lm.layout.add_heading('myjobs_inputs')
+        elif tab == 'resources':
+            lm.layout.add_heading('myjobs_resources')
         else:
             lm.layout.add_heading('myjobs_outputs')
 
