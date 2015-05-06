@@ -36,6 +36,9 @@ class MyGrid(Grid):
     def render_time_ago_td(self, from_time):
         from phoenix.utils import time_ago_in_words
         return self.render_label_td(time_ago_in_words(from_time))
+
+    def render_flag_td(self, flag=False, tooltip=''):
+        return self.render_td(renderer="flag_td", flag=flag, tooltip=tooltip)
     
     def render_timestamp_td(self, timestamp):
         import datetime

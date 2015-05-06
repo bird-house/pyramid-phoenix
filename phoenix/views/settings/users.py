@@ -24,11 +24,7 @@ class Users(SettingsView):
         
     def generate_form(self, formid="deform"):
         from phoenix.schema import UserSchema
-        schema = UserSchema().bind()
-        return Form(
-            schema,
-            buttons=('submit',),
-            formid=formid)
+        return Form(schema=UserSchema(), buttons=('submit',), formid=formid)
 
     def process_form(self, form):
         try:
@@ -45,7 +41,7 @@ class Users(SettingsView):
         except Exception, e:
             logger.exception('edit user failed')
             self.session.flash('Edit user failed. %s' % (e), queue="error")
-        return HTTPFound(location=self.request.route_url('user_settings'))
+        return HTTPFound(location=self.request.route_path('user_settings'))
 
     @view_config(route_name='remove_user')
     def remove(self):
@@ -53,16 +49,7 @@ class Users(SettingsView):
         if email is not None:
             self.userdb.remove(dict(email=email))
             self.session.flash('User %s removed' % (email), queue="info")
-        return HTTPFound(location=self.request.route_url('user_settings'))
-
-    @view_config(route_name='activate_user', renderer='json')
-    def activate(self):
-        email = self.request.matchdict.get('email')
-        if email is not None:
-            user = self.userdb.find_one({'email':email})
-            user['activated'] = not user.get('activated', True)
-            self.userdb.update({'email':email}, user)
-        return {}
+        return HTTPFound(location=self.request.route_path('user_settings'))
 
     @view_config(route_name='edit_user', renderer='json')
     def edit(self):
@@ -104,21 +91,12 @@ class UsersGrid(MyGrid):
         return self.render_time_ago_td(item.get('last_login'))
 
     def activated_td(self, col_num, i, item):
-        from string import Template
-        from webhelpers2.html.builder import HTML
-
-        icon_class = "glyphicon glyphicon-thumbs-down"
-        if item.get('activated') == True:
-            icon_class = "icon-thumbs-up"
-        div = Template("""\
-        <a class="activate" data-value="${email}" href="#"><i class="${icon_class}"></i></a>
-        """)
-        return HTML.td(HTML.literal(div.substitute({'email': item['email'], 'icon_class': icon_class} )))
+        return self.render_flag_td(item.get('activated'))
 
     def action_td(self, col_num, i, item):
         buttongroup = []
         buttongroup.append( ("edit", item.get('email'), "glyphicon glyphicon-pencil", "Edit", "#", False))
-        buttongroup.append( ("remove", item.get('email'), "glyphicon glyphicon-trash", "Remove", 
-                             self.request.route_url('remove_user', email=item.get('email')),
+        buttongroup.append( ("remove", item.get('email'), "glyphicon glyphicon-trash text-danger", "Remove", 
+                             self.request.route_path('remove_user', email=item.get('email')),
                              False) )
         return self.render_action_td(buttongroup)
