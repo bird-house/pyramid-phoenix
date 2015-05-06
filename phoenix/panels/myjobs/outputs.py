@@ -11,6 +11,7 @@ class MyJobsOutputs(object):
     def __init__(self, context, request):
         self.context = context
         self.request = request
+        self.session = self.request.session
         self.db = self.request.db
 
     def collect_outputs(self, status_location, prefix="job"):
@@ -120,22 +121,25 @@ class MyJobsOutputs(object):
     
     @panel_config(name='myjobs_outputs', renderer='phoenix:templates/panels/myjobs_outputs.pt')
     def panel(self):
+        tab = 'outputs'
+        jobid = self.session.get('jobid')
+        
         publish_form = self.generate_publish_form()
         upload_form = self.generate_upload_form()
 
-        ## if 'publish' in self.request.POST:
-        ##     return self.process_publish_form(publish_form, jobid, tab)
-        ## elif 'upload' in self.request.POST:
-        ##     return self.process_upload_form(upload_form, jobid, tab)
+        if 'publish' in self.request.POST:
+            return self.process_publish_form(publish_form, jobid, tab)
+        elif 'upload' in self.request.POST:
+            return self.process_upload_form(upload_form, jobid, tab)
 
         items = []
-        ## for oid,output in self.process_outputs(self.session.get('jobid'), tab).items():
-        ##     items.append(dict(title=output.title,
-        ##                       abstract=getattr(output, 'abstract', ""),
-        ##                       identifier=oid,
-        ##                       mime_type = output.mimeType,
-        ##                       data = output.data,
-        ##                       reference=output.reference))
+        for oid,output in self.process_outputs(jobid, tab).items():
+            items.append(dict(title=output.title,
+                              abstract=getattr(output, 'abstract', ""),
+                              identifier=oid,
+                              mime_type = output.mimeType,
+                              data = output.data,
+                              reference=output.reference))
         items = sorted(items, key=lambda item: item['identifier'], reverse=1)
 
         from phoenix.grid.processoutputs import ProcessOutputsGrid
