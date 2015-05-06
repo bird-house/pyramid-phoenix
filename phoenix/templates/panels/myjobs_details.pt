@@ -1,6 +1,27 @@
+<?python
+   if job.get('status') == 'ProcessSucceeded':
+     icon_class="glyphicon glyphicon-ok-sign text-success"
+     status_class="text-success"
+   elif job.get('status') == 'ProcessFailed':
+     icon_class="glyphicon glyphicon-remove-sign text-danger"
+     status_class="text-danger"
+   elif job.get('status') == 'ProcessPaused':
+     icon_class="glyphicon glyphicon-paused text-muted"
+     status_class="text-muted"
+   elif job.get('status') == 'ProcessStarted' or job.get('status') == 'ProcessAccepted':
+     icon_class="glyphicon glyphicon-cog text-muted"
+     status_class="text-muted"
+   else:
+     icon_class="glyphicon glyphicon-question-sign text-danger"
+     status_class="text-danger"
+?>
+
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">${job.title}</h3>
+    <h3 class="panel-title">
+      ${job.title}
+      <i class="${icon_class}" data-toggle="tooltip" title="${job.status}"></i>
+    </h3>
   </div>
   <div class="panel-body">
     ${job.abstract}
@@ -8,7 +29,7 @@
       <div class="col-xs-6 col-md-3">
         <dl>
           <dt>Status</dt>
-          <dd class="success">${job.status}</dd>
+          <dd class="${status_class}">${job.status}</dd>
           <dt>Duration</dt>
           <dd>${job.duration}</dd>
           <dt>Finished</dt>
