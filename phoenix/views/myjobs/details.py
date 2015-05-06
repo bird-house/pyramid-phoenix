@@ -74,11 +74,8 @@ class JobDetails(MyJobs):
         else:
             lm.layout.add_heading('myjobs_outputs')
 
-        details = dict(title='title', description='description',
-                       status='status', status_location='status_location', message='message',
-                       progress='progress', finished='finished', duration='duration')
-            
-        return dict(active=tab, jobid=jobid, details=details)
+        from phoenix.models import job_details
+        return dict(active=tab, jobid=jobid, details=job_details(self.request, jobid=jobid))
 
         
 

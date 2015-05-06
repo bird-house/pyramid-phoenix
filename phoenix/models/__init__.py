@@ -109,7 +109,7 @@ def collect_outputs(status_location, prefix="job"):
 
 def process_outputs(request, jobid, tab='outputs'):
     job = request.db.jobs.find_one({'identifier': jobid})
-    outputs = collect_outputs(job['status_location'])
+    outputs = {}
     # TODO: dirty hack for workflows ... not save and needs refactoring
     from owslib.wps import WPSExecution
     execution = WPSExecution()
@@ -130,8 +130,19 @@ def process_outputs(request, jobid, tab='outputs'):
                 outputs = collect_outputs(url, prefix='source%d' % count )
         elif tab == 'inputs':
             outputs = {}
-    else:
-        if tab != 'outputs':
-            outputs = {}
+    elif tab == 'outputs':
+        outputs = collect_outputs(job['status_location'])
     return outputs
 
+def job_details(request, jobid):
+    job = request.db.jobs.find_one({'identifier': jobid})
+    details = {}
+    details['title'] = job.get('title')
+    details['description'] = job.get('abstract')
+    details['status'] = job.get('status')
+    details['status_location'] = job.get('status_location')
+    details['message'] = job.get('message')
+    details['duration'] = job.get('duration')
+    details['finished'] = job.get('finished')
+    details['progress'] = job.get('progress')
+    return details
