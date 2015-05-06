@@ -17,7 +17,7 @@ class Users(SettingsView):
     def sort_order(self):
         """Determine what the current sort parameters are.
         """
-        order = self.request.GET.get('order_col', 'activated')
+        order = self.request.GET.get('order_col', 'last_login')
         order_dir = self.request.GET.get('order_dir', 'asc')
         order_dir = 1 if order_dir == 'asc' else -1
         return dict(order=order, order_dir=order_dir)   
@@ -98,7 +98,7 @@ class UsersGrid(MyGrid):
         self.column_formats['last_login'] = self.last_login_td
         self.column_formats['activated'] = self.activated_td
         self.column_formats[''] = self.action_td
-        self.exclude_ordering = ['notes', '']
+        self.exclude_ordering = self.columns
 
     def last_login_td(self, col_num, i, item):
         return self.render_timestamp_td(item.get('last_login'))

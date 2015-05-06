@@ -2,9 +2,13 @@
 
   <div metal:fill-slot="content">
 
-    <table class="table table-striped" tal:condition="grid | None">
-      <tal:rows replace="structure grid" />
-    </table>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <table class="table table-striped" tal:condition="grid | None">
+          <tal:rows replace="structure grid" />
+        </table>
+      </div>
+    </div>
 
     <!-- User edit form -->
     <div id="user-form" class="modal fade">
