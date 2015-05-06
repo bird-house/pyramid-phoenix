@@ -4,34 +4,29 @@
 
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3>Job</h3>
+        <h3 class="panel-title">${details.title}</h3>
       </div>
       <div class="panel-body">
-        <div id="buildDetails">
+        ${details.description}
+        <div>
           <div class="col-xs-6 col-md-3">
             <dl>
               <dt>Status</dt>
-              <dd class="success">
-                success
-              </dd>
+              <dd class="success">${details.status}</dd>
               <dt>Duration</dt>
-              <dd  >
-                02:13
-              </dd>
+              <dd>${details.duration}</dd>
               <dt>Finished</dt>
-              <dd>4 hours ago</dd>
+              <dd>${details.finished}</dd>
             </dl>
           </div>
           <div class="col-xs-6 col-md-3">
             <dl>
-              <dt>Queue</dt>
-              <dd>build/binstar/public</dd>
-              <dt>Platform</dt>
-              <dd>linux-64</dd>
-              <dt>Engine</dt>
-              <dd>python=2</dd>
-              <dt>Environment</dt>
-              <dd>None</dd>
+              <dt>Message</dt>
+              <dd>${details.message}</dd>
+              <dt>Progress</dt>
+              <dd>${details.progress}</dd>
+              <dt>Status Location</dt>
+              <dd>${details.status_location}</dd>
             </dl>
           </div>
         </div>

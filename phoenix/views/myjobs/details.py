@@ -73,8 +73,12 @@ class JobDetails(MyJobs):
             lm.layout.add_heading('myjobs_workflow')
         else:
             lm.layout.add_heading('myjobs_outputs')
+
+        details = dict(title='title', description='description',
+                       status='status', status_location='status_location', message='message',
+                       progress='progress', finished='finished', duration='duration')
             
-        return dict(active=tab, jobid=jobid)
+        return dict(active=tab, jobid=jobid, details=details)
 
         
 
