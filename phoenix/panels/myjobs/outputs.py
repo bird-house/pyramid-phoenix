@@ -107,6 +107,6 @@ class MyJobsOutputs(object):
                 ['output', 'value', ''],
             )
 
-        return dict(grid=grid, items=items,
+        return dict(grid=grid,
                     publish_form=publish_form.render(),
                     upload_form=upload_form.render())
