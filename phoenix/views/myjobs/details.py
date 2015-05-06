@@ -32,8 +32,7 @@ class JobDetails(MyJobs):
                 creator = self.user_email(),
                 source = output.reference,
                 format = output.mimeType,
-                keywords = 'one,two,three',
-                )
+                keywords = 'one,two,three')
         return result
 
     @view_config(renderer='json', name='upload.output')
@@ -51,9 +50,7 @@ class JobDetails(MyJobs):
                 container = 'WPS Outputs',
                 prefix = jobid,
                 source = output.reference,
-                format = output.mimeType,
-                )
-
+                format = output.mimeType)
         return result
 
     @view_config(route_name='myjobs_details', renderer='phoenix:templates/myjobs/details.pt')
@@ -72,9 +69,11 @@ class JobDetails(MyJobs):
             lm.layout.add_heading('myjobs_inputs')
         elif tab == 'resources':
             lm.layout.add_heading('myjobs_resources')
+        elif tab == 'workflow':
+            lm.layout.add_heading('myjobs_workflow')
         else:
             lm.layout.add_heading('myjobs_outputs')
-
+            
         return dict(active=tab, jobid=jobid)
 
         
