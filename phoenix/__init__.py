@@ -96,8 +96,6 @@ def main(global_config, **settings):
     config.add_route('signin', '/signin/{tab}')
     config.add_route('logout', '/logout')
     config.add_route('login_openid', '/login/openid')
-    # TODO: need some work on local accounts
-    config.add_route('login_local', '/login/local')
     config.add_route('register', '/register')
 
     # wizard

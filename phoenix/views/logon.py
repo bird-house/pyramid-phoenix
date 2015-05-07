@@ -92,35 +92,11 @@ class Logon(MyView):
     @view_config(route_name='logout', permission='edit')
     def logout(self):
         headers = forget(self.request)
-        return HTTPFound(location = self.request.route_url('home'), headers = headers)
+        return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
     @view_config(route_name='register', renderer='phoenix:templates/register.pt')
     def register(self):
         return dict(email=None)
-
-    @view_config(route_name='login_local')
-    def login_local(self):
-        """local login for admin and demo user"""
-        
-        # TODO: need some work on local accounts
-        if (True):
-            email = "admin@malleefowl.org"
-            if self.is_valid_user(email):
-                self.request.response.text = render('phoenix:templates/openid_success.pt',
-                                               {'result': email},
-                                               request=self.request)
-                # Add the headers required to remember the user to the response
-                self.request.response.headers.extend(remember(self.request, email))
-                self.login_success(email=email)
-            else:
-                self.request.response.text = render('phoenix:templates/register.pt',
-                                               {'email': email}, request=self.request)
-        else:
-            self.request.response.text = render('phoenix:templates/forbidden.pt',
-                                           {'message': 'Wrong Password'},
-                                           request=self.request)
-
-        return self.request.response
 
     @view_config(route_name='login_openid')
     def login_openid(self):
