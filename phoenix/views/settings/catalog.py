@@ -1,11 +1,8 @@
 from pyramid.view import view_config
 
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
-from deform import Form, Button
-from deform import ValidationFailure
 
 from phoenix.views.settings import SettingsView
-from phoenix.grid import MyGrid
 
 import logging
 logger = logging.getLogger(__name__)
@@ -22,36 +19,6 @@ class Catalog(SettingsView):
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
         
-    def generate_dataset_form(self, formid="deform"):
-        from phoenix.schema import PublishSchema
-        schema = PublishSchema().bind(email=self.user_email())
-        return Form(
-            schema,
-            buttons=(Button(name='add_dataset', title='Add Dataset'),),
-            formid=formid)
-
-    def process_dataset_form(self, form):
-        try:
-            controls = self.request.POST.items()
-            appstruct = form.validate(controls)
-
-            from mako.template import Template
-            import os
-            # TODO: fix location and usage of publish templates
-            import phoenix
-            templ_dc = Template(filename=os.path.join(os.path.dirname(phoenix.__file__), "templates", "dc.xml"))
-            record = templ_dc.render(**appstruct)
-            logger.debug('record=%s', record)
-            self.csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
-            self.session.flash('Added Dataset %s' % (appstruct.get('title')), queue="success")
-        except ValidationFailure, e:
-            logger.exception('validation of catalog form failed')
-            return dict(form = e.render())
-        except Exception, e:
-            logger.exception('could not harvest wps.')
-            self.session.flash('Could not add Dataset %s. %s' % (appstruct.get('source'), e), queue="error")
-        return HTTPFound(location=self.request.route_url(self.name))
-
     @view_config(route_name='remove_all_records')
     def remove_all(self):
         try:
@@ -101,9 +68,6 @@ class Catalog(SettingsView):
 
     @view_config(route_name="settings_catalog", renderer='phoenix:templates/settings/catalog.pt')
     def view(self):
-        dataset_form = self.generate_dataset_form()
-        if 'add_dataset' in self.request.POST:
-            return self.process_dataset_form(dataset_form)
         items = self.get_csw_items()
             
         grid = CSWGrid(
@@ -112,12 +76,9 @@ class Catalog(SettingsView):
                 ['title', 'creator', 'modified', 'format', ''],
             )
         self.csw.getrecords(maxrecords=0)
-        return dict(
-            datasets_found=self.csw.results.get('matches'),
-            grid=grid,
-            items=items,
-            dataset_form=dataset_form.render())
+        return dict(datasets_found=self.csw.results.get('matches'), grid=grid)
 
+from phoenix.grid import MyGrid
 class CSWGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(CSWGrid, self).__init__(request, *args, **kwargs)

@@ -6,8 +6,8 @@
     <a href="${request.route_path('settings_add_service')}" role="button" class="btn btn-success">
       Add Service
     </a>
-    <!-- Button to trigger modal dialog for adding dataset to catalog -->
-    <a href="#dataset-form" role="button" class="btn btn-success" data-toggle="modal">
+    <!-- Button to add a dataset -->
+    <a href="${request.route_path('settings_add_dataset')}" role="button" class="btn btn-success">
       Add Dataset
     </a>
     <!-- Button to remove all records -->
@@ -26,21 +26,6 @@
         <table class="table table-striped" tal:condition="grid | None">
           <tal:rows replace="structure grid" />
         </table>
-      </div>
-    </div>
-
-    <!-- Add form for dataset addition -->
-    <div id="dataset-form" class="modal fade">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4 class="modal-title" id="dataset-form-label">Add Dataset to Catalog</h4>
-          </div>
-          <div class="modal-body">
-            <tal:form replace="structure dataset_form" />
-          </div>
-        </div>
       </div>
     </div>
 

@@ -91,6 +91,7 @@ def main(global_config, **settings):
     config.add_route('settings', '/settings/overview')
     config.add_route('settings_catalog', '/settings/catalog')
     config.add_route('settings_add_service', '/settings/catalog/add_service')
+    config.add_route('settings_add_dataset', '/settings/catalog/add_dataset')
     config.add_route('remove_record', '/settings/catalog/{recordid}/remove')
     config.add_route('remove_all_records', '/settings/catalog/remove_all')
     config.add_route('settings_users', '/settings/users')
