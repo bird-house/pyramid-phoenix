@@ -28,22 +28,20 @@ class EditUser(SettingsView):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
-            logger.debug('users appstruct: %s', appstruct)
-            # TODO: fix update user ... email is readonly
-            user = self.get_user(appstruct.get('email'))
+            user = self.get_user(self.email)
             for key in ['name', 'openid', 'organisation', 'notes', 'group']:
                 user[key] = appstruct.get(key)
             self.userdb.update({'email':self.user_email()}, user)
         except ValidationFailure, e:
             logger.exception('validation of user form failed')
-            return dict(form = e.render())
+            return dict(title=self.title, form = e.render())
         except Exception, e:
             logger.exception('edit user failed')
             self.session.flash('Edit user failed. %s' % (e), queue="error")
         return HTTPFound(location=self.request.route_path('user_settings'))
 
     def appstruct(self):
-        return dict()
+        return self.get_user(self.email)
 
     @view_config(route_name='settings_edit_user', renderer='phoenix:templates/settings/edit_user.pt')
     def view(self):
@@ -51,4 +49,4 @@ class EditUser(SettingsView):
         if 'submit' in self.request.POST:
             return self.process_form(form)
 
-        return dict(title="Edit ...", form=form.render(self.appstruct()))
+        return dict(title=self.title, form=form.render(self.appstruct()))

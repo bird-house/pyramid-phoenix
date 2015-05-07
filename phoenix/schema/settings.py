@@ -18,7 +18,8 @@ class UserSchema(colander.MappingSchema):
     email = colander.SchemaNode(
         colander.String(),
         validator = colander.Email(),
-        widget = deform.widget.TextInputWidget(),
+        missing = colander.drop,
+        widget = deform.widget.TextInputWidget(readonly=True),
         )
     openid = colander.SchemaNode(
         colander.String(),
