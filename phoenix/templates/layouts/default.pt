@@ -20,12 +20,14 @@
       <link rel="stylesheet" href="${request.static_url(reqt)}" type="text/css" />
     </tal:block>
 
+    <!--
     <style type="text/css">
       .linenodiv pre {
       word-break: normal;
       }
     </style>
-
+    -->
+    
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
           href="${request.static_url('phoenix:static/css/phoenix.css')}" />
 
@@ -64,10 +66,10 @@
     
   </head>
 
-  <body style="padding-top: 0px;">
+  <body>
     ${panel('navbar')}
 
-    <div class="container clearfix">
+    <div class="container">
       <div class="row">
         <!-- main page -->
         <div class="col-9 col-lg-9 col-sm-9">
