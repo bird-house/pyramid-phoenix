@@ -36,14 +36,6 @@ class Logon(MyView):
     def __init__(self, request):
         super(Logon, self).__init__(request, name="login_openid", title='Logon')
 
-    def is_valid_user(self, email):
-        if email in admin_users(self.request):
-            return True
-        user = self.get_user(email=email)
-        if user is None:
-            return False
-        return True
-
     def notify_login_failure(self, user_email):
         """Notifies about user login failure via email.
         
@@ -76,6 +68,7 @@ class Logon(MyView):
         logger.debug('login success: email=%s', email)
         user = self.get_user(email)
         if user is None:
+            logger.warn("openid login: new user %s", result.user.email)
             user = add_user(self.request, email=email, group=Guest)
         if email in admin_users(self.request):
             user['group'] = Admin
@@ -159,15 +152,12 @@ class Logon(MyView):
                                        {'message': result.error.message}, request=self.request)
             elif result.user:
                 # Hooray, we have the user!
+                logger.info("openid login successful for user %s", result.user.email)
                 logger.debug("user=%s, id=%s, email=%s, credentials=%s",
                           result.user.name, result.user.id, result.user.email, result.user.credentials)
                 logger.debug("provider=%s", result.provider.name )
                 logger.debug("response headers=%s", response.headers.keys())
                 #logger.debug("response cookie=%s", response.headers['Set-Cookie'])
-                if self.is_valid_user(result.user.email):
-                    logger.info("openid login successful for user %s", result.user.email)
-                else:
-                    logger.warn("openid login: new user %s", result.user.email)
                 self.login_success(email=result.user.email, openid=result.user.id, name=result.user.name)
                 response.text = render('phoenix:templates/openid_success.pt', {'result': result}, request=self.request)
                 # Add the headers required to remember the user to the response
