@@ -42,9 +42,7 @@ class Overview(MyJobs):
         items = list(self.db.jobs.find({'email': self.user_email()}).sort('created', -1))
 
         from phoenix.grid.jobs import JobsGrid
-        grid = JobsGrid(
-                self.request,
-                items,
+        grid = JobsGrid(self.request, items,
                 ['status', 'job', 'duration', 'finished', 'progress', ''],
             )
         return dict(grid=grid)
