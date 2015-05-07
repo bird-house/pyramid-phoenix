@@ -22,9 +22,9 @@ class Users(SettingsView):
         order_dir = 1 if order_dir == 'asc' else -1
         return dict(order=order, order_dir=order_dir)   
         
-    def generate_form(self, formid="deform"):
+    def generate_form(self):
         from phoenix.schema import UserSchema
-        return Form(schema=UserSchema(), buttons=('submit',), formid=formid)
+        return Form(schema=UserSchema(), buttons=('submit',), formid='deform')
 
     def process_form(self, form):
         try:
