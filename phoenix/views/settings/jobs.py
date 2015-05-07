@@ -13,7 +13,12 @@ logger = logging.getLogger(__name__)
 class Jobs(SettingsView):
     def __init__(self, request):
         super(Jobs, self).__init__(request, name='job_settings', title='Jobs')
-        self.jobsdb = self.request.db.jobs 
+        self.jobsdb = self.request.db.jobs
+
+    def breadcrumbs(self):
+        breadcrumbs = super(Jobs, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
 
     @view_config(route_name='remove_all_jobs')
     def remove(self):
