@@ -33,7 +33,7 @@ class Users(SettingsView):
             logger.debug('users appstruct: %s', appstruct)
             # TODO: fix update user ... email is readonly
             user = self.get_user(appstruct.get('email'))
-            for key in ['name', 'openid', 'organisation', 'notes', 'activated']:
+            for key in ['name', 'openid', 'organisation', 'notes', 'group']:
                 user[key] = appstruct.get(key)
             self.userdb.update({'email':self.user_email()}, user)
         except ValidationFailure, e:
@@ -60,9 +60,6 @@ class Users(SettingsView):
             user = self.userdb.find_one({'email':email})
         if user is None:
             user = dict(email=email)
-        logger.debug('edit user: %s', user)
-        # TODO: activation dialog does not work
-        user['activated'] = 'true'
         return user
 
     @view_config(route_name='user_settings', renderer='phoenix:templates/settings/users.pt')
@@ -76,7 +73,7 @@ class Users(SettingsView):
         grid = UsersGrid(
                 self.request,
                 user_items,
-                ['name', 'email', 'openid', 'organisation', 'notes', 'last_login', 'activated', ''],
+                ['name', 'email', 'openid', 'organisation', 'notes', 'group', 'last_login', ''],
             )
         return dict(
             grid=grid,

@@ -9,6 +9,7 @@ from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
 
 from phoenix.views import MyView
+from phoenix.security import Admin, Guest, admin_users
 
 import logging
 logger = logging.getLogger(__name__)
@@ -36,13 +37,12 @@ class Logon(MyView):
         super(Logon, self).__init__(request, name="login_openid", title='Logon')
 
     def is_valid_user(self, email):
-        from phoenix.security import admin_users
         if email in admin_users(self.request):
             return True
         user = self.get_user(email=email)
         if user is None:
             return False
-        return user.get('activated', False)
+        return True
 
     def notify_login_failure(self, user_email):
         """Notifies about user login failure via email.
@@ -71,18 +71,18 @@ class Logon(MyView):
         #mailer.send(message)
         mailer.send_immediately(message, fail_silently=True)
 
-    def login_success(self, email, openid=None, name="Unknown", activated=False):
+    def login_success(self, email, openid=None, name="Unknown"):
         from phoenix.models import add_user
         logger.debug('login success: email=%s', email)
         user = self.get_user(email)
         if user is None:
-            user = add_user(self.request, email=email)
+            user = add_user(self.request, email=email, group=Guest)
+        if email in admin_users(self.request):
+            user['group'] = Admin
         user['last_login'] = datetime.datetime.now()
         if openid is not None:
             user['openid'] = openid
-        user['activated'] = activated
         user['name'] = name
-        logger.debug('user=%s', user)
         self.userdb.update({'email':email}, user)
         self.session.flash("Welcome %s (%s)." % (name, email), queue='info')
 
@@ -164,29 +164,14 @@ class Logon(MyView):
                 logger.debug("provider=%s", result.provider.name )
                 logger.debug("response headers=%s", response.headers.keys())
                 #logger.debug("response cookie=%s", response.headers['Set-Cookie'])
-
                 if self.is_valid_user(result.user.email):
                     logger.info("openid login successful for user %s", result.user.email)
-                    self.login_success(
-                        email=result.user.email,
-                        openid=result.user.id,
-                        name=result.user.name,
-                        activated=True)
-                    response.text = render('phoenix:templates/openid_success.pt',
-                                           {'result': result},
-                                           request=self.request)
-                    # Add the headers required to remember the user to the response
-                    response.headers.extend(remember(self.request, result.user.email))
                 else:
-                    logger.info("openid login: user %s is not registered", result.user.email)
-                    self.notify_login_failure(result.user.email)
-                    self.login_success(
-                        email=result.user.email,
-                        openid=result.user.id,
-                        name=result.user.name,
-                        activated=False)
-                    response.text = render('phoenix:templates/register.pt',
-                                           {'email': result.user.email}, request=self.request)
+                    logger.warn("openid login: new user %s", result.user.email)
+                self.login_success(email=result.user.email, openid=result.user.id, name=result.user.name)
+                response.text = render('phoenix:templates/openid_success.pt', {'result': result}, request=self.request)
+                # Add the headers required to remember the user to the response
+                response.headers.extend(remember(self.request, result.user.email))
 
         #logger.debug('response: %s', response)
 
