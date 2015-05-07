@@ -40,6 +40,7 @@ def build_url(url, query):
 def time_ago_in_words(from_time):
     try:
         from webhelpers2 import date
+        #logger.debug("from_time: %s, type=%s", from_time, type(from_time))
         time_ago = date.time_ago_in_words(from_time, granularity='minute')
         time_ago = time_ago + " ago"
     except:

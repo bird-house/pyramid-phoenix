@@ -86,6 +86,7 @@ class CSWGrid(MyGrid):
         self.column_formats['title'] = self.title_td
         self.column_formats['format'] = self.format_td
         self.column_formats['modified'] = self.modified_td
+        self.exclude_ordering = self.columns
 
     def title_td(self, col_num, i, item):
         return self.render_title_td(item['title'], item['abstract'], item.get('subjects'))
@@ -94,12 +95,12 @@ class CSWGrid(MyGrid):
         return self.render_format_td(item['format'], item['source'])
 
     def modified_td(self, col_num, i, item):
-        return self.render_timestamp_td(timestamp=item.get('modified'))
+        return self.render_time_ago_td(from_time=item.get('modified'))
 
     def action_td(self, col_num, i, item):
         buttongroup = []
         buttongroup.append(
-            ("remove", item.get('identifier'), "glyphicon glyphicon-trash", "",
+            ("remove", item.get('identifier'), "glyphicon glyphicon-trash text-danger", "",
             self.request.route_url('remove_record', recordid=item.get('identifier')),
             False) )
         return self.render_action_td(buttongroup)
