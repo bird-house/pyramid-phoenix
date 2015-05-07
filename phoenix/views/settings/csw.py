@@ -10,12 +10,17 @@ from phoenix.grid import MyGrid
 import logging
 logger = logging.getLogger(__name__)
 
-class CatalogService(SettingsView):
+class Catalog(SettingsView):
     def __init__(self, request):
-        super(CatalogService, self).__init__(
+        super(Catalog, self).__init__(
             request, name='catalog_settings', title='Catalog Service')
         self.csw = self.request.csw
         self.description = "%s (%s)" % (self.csw.identification.title, self.csw.url)
+
+    def breadcrumbs(self):
+        breadcrumbs = super(Catalog, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
         
     def generate_service_form(self, formid="deform"):
         from phoenix.schema import CatalogAddServiceSchema
