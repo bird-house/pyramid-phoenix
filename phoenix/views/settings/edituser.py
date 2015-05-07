@@ -16,7 +16,8 @@ class EditUser(SettingsView):
        
     def breadcrumbs(self):
         breadcrumbs = super(EditUser, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path('user_settings'), title="Users"))
+        # TODO: fix breadcrumb generation
+        breadcrumbs.append(dict(route_path=self.request.route_path('settings_users'), title="Users"))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name, email=self.email), title=self.title))
         return breadcrumbs
 
@@ -38,7 +39,7 @@ class EditUser(SettingsView):
         except Exception, e:
             logger.exception('edit user failed')
             self.session.flash('Edit user failed. %s' % (e), queue="error")
-        return HTTPFound(location=self.request.route_path('user_settings'))
+        return HTTPFound(location=self.request.route_path('settings_users'))
 
     def appstruct(self):
         return self.get_user(self.email)

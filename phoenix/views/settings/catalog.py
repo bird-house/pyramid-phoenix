@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class Catalog(SettingsView):
     def __init__(self, request):
         super(Catalog, self).__init__(
-            request, name='catalog_settings', title='Catalog')
+            request, name='settings_catalog', title='Catalog')
         self.csw = self.request.csw
         self.description = self.csw.identification.title
 
@@ -45,7 +45,7 @@ class Catalog(SettingsView):
         except Exception, e:
             logger.exception('could not harvest wps.')
             self.session.flash('Could not add WPS %s. %s' % (url, e), queue="error")
-        return HTTPFound(location=self.request.route_url('catalog_settings'))
+        return HTTPFound(location=self.request.route_url(self.name))
 
     def generate_dataset_form(self, formid="deform"):
         from phoenix.schema import PublishSchema
@@ -75,7 +75,7 @@ class Catalog(SettingsView):
         except Exception, e:
             logger.exception('could not harvest wps.')
             self.session.flash('Could not add Dataset %s. %s' % (appstruct.get('source'), e), queue="error")
-        return HTTPFound(location=self.request.route_url('catalog_settings'))
+        return HTTPFound(location=self.request.route_url(self.name))
 
     @view_config(route_name='remove_all_records')
     def remove_all(self):
@@ -88,7 +88,7 @@ class Catalog(SettingsView):
         except Exception,e:
             logger.exception('could not remove datasets.')
             self.session.flash('Ooops ... self destruction out of order. %s' % e, queue="error")
-        return HTTPFound(location=self.request.route_url('catalog_settings'))
+        return HTTPFound(location=self.request.route_url(self.name))
  
     @view_config(route_name='remove_record')
     def remove(self):
@@ -99,7 +99,7 @@ class Catalog(SettingsView):
         except Exception,e:
             logger.exception("Could not remove record")
             self.session.flash('Could not remove record. %s' % e, queue="error")
-        return HTTPFound(location=self.request.route_url('catalog_settings'))
+        return HTTPFound(location=self.request.route_url(self.name))
 
     def get_csw_items(self):
         results = []
@@ -124,7 +124,7 @@ class Catalog(SettingsView):
             logger.exception('could not get items for csw.')
         return results
 
-    @view_config(route_name="catalog_settings", renderer='phoenix:templates/settings/catalog.pt')
+    @view_config(route_name="settings_catalog", renderer='phoenix:templates/settings/catalog.pt')
     def view(self):
         service_form = self.generate_service_form()
         dataset_form = self.generate_dataset_form()

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class Users(SettingsView):
     def __init__(self, request):
-        super(Users, self).__init__(request, name='user_settings', title='Users')
+        super(Users, self).__init__(request, name='settings_users', title='Users')
 
     def breadcrumbs(self):
         breadcrumbs = super(Users, self).breadcrumbs()
@@ -30,9 +30,9 @@ class Users(SettingsView):
         if email is not None:
             self.userdb.remove(dict(email=email))
             self.session.flash('User %s removed' % (email), queue="info")
-        return HTTPFound(location=self.request.route_path('user_settings'))
+        return HTTPFound(location=self.request.route_path(self.name))
 
-    @view_config(route_name='user_settings', renderer='phoenix:templates/settings/users.pt')
+    @view_config(route_name='settings_users', renderer='phoenix:templates/settings/users.pt')
     def view(self):
         order = self.sort_order()
         user_items = list(self.userdb.find().sort(order.get('order'), order.get('order_dir')))
