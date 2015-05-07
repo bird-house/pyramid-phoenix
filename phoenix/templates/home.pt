@@ -1,13 +1,19 @@
 <metal:block use-macro="main_template">
 
   <div metal:fill-slot="content">
-
-    <!-- Main page with a welcome message -->
-    ${panel('welcome')}
-
-    <!-- row columns -->
-    <div class="row">
-      ${panel('headings')}
+    
+    <div class="intro-block">
+      <div class="container">
+	<div class="row">
+	  <div class="col-xs-3">
+            <img class="img-responsive tpad" src="${request.static_url('phoenix:static/images/Phoenix.jpg')}">
+	  </div>
+	  <div class="col-xs-9">
+            <h1>Phoenix <span class="text-muted">&raquo; Making WPS easy</span></h1>
+            <p class="lead"> This is a <b>Demo</b> installation. If you want to try it out please <a class="btn btn-mini btn-success" href="/register">register</a> and ask for account activation.</p>
+	  </div>
+	</div>
+      </div>       
     </div>
     
   </div>
