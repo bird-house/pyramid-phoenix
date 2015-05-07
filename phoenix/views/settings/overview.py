@@ -8,7 +8,6 @@ logger = logging.getLogger(__name__)
 class Overview(SettingsView):
     def __init__(self, request):
         super(Overview, self).__init__(request, name='settings', title='Overview')
-        self.settings = self.request.registry.settings
 
     @view_config(route_name='settings', renderer='phoenix:templates/settings/overview.pt')
     def view(self):
