@@ -47,7 +47,7 @@ class Overview(MyJobs):
                 items,
                 ['status', 'job', 'duration', 'finished', 'progress', ''],
             )
-        return dict(grid=grid, items=items)
+        return dict(grid=grid)
 
 
 
