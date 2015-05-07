@@ -34,8 +34,8 @@ def navbar(context, request):
     return dict(title='Phoenix', items=items, username=authenticated_userid(request), login=login)
 
 @panel_config(name='welcome', renderer='phoenix:templates/panels/welcome.pt')
-def welcome(context, request, title):
-    return dict(title=title, logged_in=authenticated_userid(request))
+def welcome(context, request):
+    return dict(logged_in=authenticated_userid(request))
 
 @panel_config(name='breadcrumbs', renderer='phoenix:templates/panels/breadcrumbs.pt')
 def breadcrumbs(context, request):

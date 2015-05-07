@@ -3,7 +3,7 @@
   <div metal:fill-slot="content">
 
     <!-- Main page with a welcome message -->
-    ${panel('welcome', title='Phoenix')}
+    ${panel('welcome')}
 
     <!-- row columns -->
     <div class="row">
