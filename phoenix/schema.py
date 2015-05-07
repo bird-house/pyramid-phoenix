@@ -14,6 +14,8 @@ from phoenix.widget import (
     ESGFSearchWidget,
     )
 
+from phoenix.security import Admin, User, Guest
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -306,6 +308,8 @@ class PublishSchema(colander.MappingSchema):
         )
 
 class UserSchema(colander.MappingSchema):
+    choices = ((Admin, 'Admin'), (User, 'User'), (Guest, 'Guest'))
+    
     name = colander.SchemaNode(
         colander.String(),
         title = "Name",
@@ -332,10 +336,11 @@ class UserSchema(colander.MappingSchema):
         title = "Notes",
         missing = colander.drop,
         )
-    activated = colander.SchemaNode(
-        colander.Boolean(),
-        description='Check to activate user.',
-        widget=deform.widget.CheckboxWidget(),
-        title='Activated')
+    group = colander.SchemaNode(
+        colander.String(),
+        validator=colander.OneOf([x[0] for x in choices]),
+        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
+        title='Group',
+        description='Select Group')
 
 
