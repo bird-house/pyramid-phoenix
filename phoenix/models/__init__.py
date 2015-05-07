@@ -1,5 +1,5 @@
 import uuid
-import datetime
+from datetime import datetime, timedelta
 
 from phoenix import utils
 from phoenix.security import Guest
@@ -32,8 +32,8 @@ def add_user(
         organisation = organisation,
         notes = notes,
         group = group,
-        creation_time = datetime.datetime.now(),
-        last_login = datetime.datetime.now())
+        creation_time = datetime.now(),
+        last_login = datetime.now())
     request.db.users.save(user)
     return request.db.users.find_one({'email':email})
 
@@ -55,17 +55,42 @@ def add_job(request, title, wps_url, status_location, workflow=False, abstract=N
         email = authenticated_userid(request),
         wps_url = wps_url,
         status_location = status_location,
-        created = datetime.datetime.now(),
+        created = datetime.now(),
         is_complete = False)
     request.db.jobs.save(job)
+
+def update_job(request, job):
+    from owslib.wps import WPSExecution
+
+    try:
+        execution = WPSExecution(url = job['wps_url'])
+        execution.checkStatus(url = job['status_location'], sleepSecs=0)
+        job['status'] = execution.getStatus()
+        job['status_message'] = execution.statusMessage
+        job['is_complete'] = execution.isComplete()
+        job['is_succeded'] = execution.isSucceded()
+        job['errors'] = [ '%s %s\n: %s' % (error.code, error.locator, error.text.replace('\\','')) for error in execution.errors]
+        duration = datetime.now() - job.get('created', datetime.now())
+        job['duration'] = str(duration).split('.')[0]
+        if execution.isComplete():
+            job['finished'] = datetime.now()
+        if execution.isSucceded():
+            job['progress'] = 100
+            request.session.flash("Job %s completed." % job['title'], queue='success')
+        else:
+            job['progress'] = execution.percentCompleted
+        # update db
+        request.db.jobs.update({'identifier': job['identifier']}, job)
+    except:
+        logger.exception("could not update job %s", job.get('identifier'))
 
 def user_stats(request):
     num_unregistered = request.db.users.find({"activated": False}).count()
     
-    d = datetime.datetime.now() - datetime.timedelta(hours=3)
+    d = datetime.now() - timedelta(hours=3)
     num_logins_3h = request.db.users.find({"last_login": {"$gt": d}}).count()
 
-    d = datetime.datetime.now() - datetime.timedelta(days=7)
+    d = datetime.now() - timedelta(days=7)
     num_logins_7d = request.db.users.find({"last_login": {"$gt": d}}).count()
 
     return dict(num_users=request.db.users.count(),

@@ -3,8 +3,6 @@ from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 
 from phoenix.views.myjobs import MyJobs
 
-from datetime import datetime
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -14,36 +12,12 @@ class Overview(MyJobs):
         super(Overview, self).__init__(request, name='myjobs_overview', title='Overview')
         self.db = self.request.db 
 
-    def update_job(self, job):
-        from owslib.wps import WPSExecution
-        
-        try:
-            execution = WPSExecution(url = job['wps_url'])
-            execution.checkStatus(url = job['status_location'], sleepSecs=0)
-            job['status'] = execution.getStatus()
-            job['status_message'] = execution.statusMessage
-            job['is_complete'] = execution.isComplete()
-            job['is_succeded'] = execution.isSucceded()
-            job['errors'] = [ '%s %s\n: %s' % (error.code, error.locator, error.text.replace('\\','')) for error in execution.errors]
-            duration = datetime.now() - job.get('created', datetime.now())
-            job['duration'] = str(duration).split('.')[0]
-            if execution.isComplete():
-                job['finished'] = datetime.now()
-            if execution.isSucceded():
-                job['progress'] = 100
-                self.session.flash("Job %s completed." % job['title'], queue='success')
-            else:
-                job['progress'] = execution.percentCompleted
-            # update db
-            self.db.jobs.update({'identifier': job['identifier']}, job)
-        except:
-            logger.exception("could not update job %s", job.get('identifier'))
-    
     @view_config(renderer='json', route_name='update_myjobs')
     def update_jobs(self):
+        from phoenix.models import update_job
         jobs = list(self.db.jobs.find({'email': self.user_email(), 'is_complete':False}))
         for job in jobs:
-            self.update_job(job)
+            update_job(self.request, job)
         return jobs
 
     @view_config(route_name='remove_myjobs')
