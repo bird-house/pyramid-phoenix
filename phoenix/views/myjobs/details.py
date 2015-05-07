@@ -13,6 +13,11 @@ class JobDetails(MyJobs):
     def __init__(self, request):
         super(JobDetails, self).__init__(
             request, name='myjobs_details', title='Job Details')
+
+    def breadcrumbs(self):
+        breadcrumbs = super(JobDetails, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path='', title=self.title))
+        return breadcrumbs
         
     @view_config(renderer='json', name='publish.output')
     def publish(self):

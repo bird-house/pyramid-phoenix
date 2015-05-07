@@ -10,20 +10,24 @@ logger = logging.getLogger(__name__)
 class Overview(MyJobs):
     def __init__(self, request):
         super(Overview, self).__init__(request, name='myjobs_overview', title='Overview')
-        self.db = self.request.db 
+        self.jobsdb = self.request.db.jobs
+
+    def breadcrumbs(self):
+        breadcrumbs = super(Overview, self).breadcrumbs()
+        return breadcrumbs
 
     @view_config(renderer='json', route_name='update_myjobs')
     def update_jobs(self):
         from phoenix.models import update_job
-        jobs = list(self.db.jobs.find({'email': self.user_email(), 'is_complete':False}))
+        jobs = list(self.jobsdb.find({'email': self.user_email(), 'is_complete':False}))
         for job in jobs:
             update_job(self.request, job)
         return jobs
 
     @view_config(route_name='remove_myjobs')
     def remove_all(self):
-        count = self.db.jobs.find({'email': self.user_email()}).count()
-        self.db.jobs.remove({'email': self.user_email()})
+        count = self.jobsdb.find({'email': self.user_email()}).count()
+        self.jobsdb.remove({'email': self.user_email()})
         self.session.flash("%d Jobs deleted." % count, queue='info')
         return HTTPFound(location=self.request.route_path(self.name))
 
@@ -31,15 +35,15 @@ class Overview(MyJobs):
     def remove(self):
         jobid = self.request.matchdict.get('jobid')
         if jobid is not None:
-            job = self.db.jobs.find_one({'identifier': jobid})
-            self.db.jobs.remove({'identifier': jobid})
+            job = self.jobsdb.find_one({'identifier': jobid})
+            self.jobsdb.remove({'identifier': jobid})
             self.session.flash("Job %s deleted." % job['title'], queue='info')
         return HTTPFound(location=self.request.route_path(self.name))
 
     @view_config(route_name='myjobs_overview', renderer='phoenix:templates/myjobs/overview.pt')
     def view(self):
         self.update_jobs()
-        items = list(self.db.jobs.find({'email': self.user_email()}).sort('created', -1))
+        items = list(self.jobsdb.find({'email': self.user_email()}).sort('created', -1))
 
         from phoenix.grid.jobs import JobsGrid
         grid = JobsGrid(self.request, items,
