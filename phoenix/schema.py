@@ -1,14 +1,7 @@
+import deform
 import colander
 from colander import Invalid
 
-import deform
-from deform.widget import (
-    RadioChoiceWidget,
-    TextInputWidget,
-    PasswordWidget,
-    TextAreaWidget,
-    SelectWidget 
-    )
 from phoenix.widget import (
     TagsWidget,
     ESGFSearchWidget,
@@ -32,7 +25,7 @@ class ESGFLoginSchema(colander.MappingSchema):
         title = 'Password',
         description = 'Type your password for your ESGF OpenID',
         validator = colander.Length(min=6),
-        widget = PasswordWidget())
+        widget = deform.widget.PasswordWidget())
 
 class SwiftLoginSchema(colander.MappingSchema):
     username = colander.SchemaNode(
@@ -47,7 +40,7 @@ class SwiftLoginSchema(colander.MappingSchema):
         title = 'Password',
         missing = '',
         default = '',
-        widget = PasswordWidget(size=30))
+        widget = deform.widget.PasswordWidget(size=30))
 
 class UserProfileSchema(colander.MappingSchema):
     name = colander.SchemaNode(
@@ -61,7 +54,7 @@ class UserProfileSchema(colander.MappingSchema):
         title = "EMail",
         validator = colander.Email(),
         missing = '',
-        widget = TextInputWidget(template='readonly/textinput'),
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
         )
     organisation = colander.SchemaNode(
         colander.String(),
@@ -83,7 +76,7 @@ class ESGFCredentialsSchema(colander.MappingSchema):
         description = "OpenID to access ESGF data",
         validator = colander.url,
         missing = '',
-        widget = TextInputWidget(template='readonly/textinput'),
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
         )
     credentials = colander.SchemaNode(
         colander.String(),
@@ -91,14 +84,14 @@ class ESGFCredentialsSchema(colander.MappingSchema):
         description = "URL to ESGF Proxy Certificate",
         validator = colander.url,
         missing = '',
-        widget = TextInputWidget(template='readonly/textinput'),
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
         )
     cert_expires = colander.SchemaNode(
         colander.String(),
         title = "Expires",
         description = "When your Proxy Certificate expires",
         missing = '',
-        widget = TextInputWidget(template='readonly/textinput'),
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
         )
 
 class SwiftSchema(colander.MappingSchema):
@@ -106,19 +99,19 @@ class SwiftSchema(colander.MappingSchema):
         colander.String(),
         title = "Swift Username",
         missing = '',
-        widget = TextInputWidget(template='readonly/textinput'),
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
         )
     swift_storage_url = colander.SchemaNode(
         colander.String(),
         title = "Swift Storage URL",
         missing = '',
-        widget = TextInputWidget(template='readonly/textinput'),
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
         )
     swift_auth_token = colander.SchemaNode(
         colander.String(),
         title = "Swift Auth Token",
         missing = '',
-        widget = TextInputWidget(template='readonly/textinput'),
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
         )
 
 class ChooseWPSSchema(colander.MappingSchema):
@@ -129,7 +122,7 @@ class ChooseWPSSchema(colander.MappingSchema):
         for wps in wps_list:
             title = "%s (%s) [%s]" % (wps.get('title'), wps.get('abstract'), wps.get('source'))
             choices.append((wps.get('source'), title))
-        return RadioChoiceWidget(values = choices)
+        return deform.widget.RadioChoiceWidget(values = choices)
     
     url = colander.SchemaNode(
         colander.String(),
@@ -146,7 +139,7 @@ def deferred_choose_process_widget(node, kw):
     for process in processes:
         title = "%s [%s]" % (process.title, process.identifier)
         choices.append( (process.identifier, title) )
-    return RadioChoiceWidget(values = choices)
+    return deform.widget.RadioChoiceWidget(values = choices)
 
 class SelectProcessSchema(colander.MappingSchema):
     identifier = colander.SchemaNode(
@@ -165,7 +158,7 @@ def deferred_choose_input_parameter_widget(node, kw):
             title += " [%s]" % (', '.join([value.mimeType for value in dataInput.supportedValues]))
             title += " (%d-%d)" % (dataInput.minOccurs, dataInput.maxOccurs)
             choices.append( (dataInput.identifier, title) )
-    return RadioChoiceWidget(values = choices)
+    return deform.widget.RadioChoiceWidget(values = choices)
 
 class ChooseInputParamterSchema(colander.MappingSchema):
     identifier = colander.SchemaNode(
@@ -239,12 +232,12 @@ class CatalogAddServiceSchema(colander.MappingSchema):
         description = 'Add URL of OGC service (WPS, WMS, ...). Example: http://localhost:8091/wps',
         default = 'http://localhost:8091/wps',
         validator = colander.url,
-        widget = TextInputWidget())
+        widget = deform.widget.TextInputWidget())
     resource_type = colander.SchemaNode(
         colander.String(),
         description = "Choose OGC service resource type.",
         default = 'http://www.opengis.net/wps/1.0.0',
-        widget = RadioChoiceWidget(
+        widget = deform.widget.RadioChoiceWidget(
             values=[('http://www.opengis.net/wps/1.0.0', "OGC:WPS 1.0.0"),
                     ('http://www.opengis.net/wms', "OGC:WMS 1.1.1"),
                     ('http://www.opengis.net/cat/csw/2.0.2', "OGC:CSW 2.0.2")])
@@ -280,7 +273,7 @@ class PublishSchema(colander.MappingSchema):
         missing = '',
         default = '',
         validator = colander.Length(max=150),
-        widget = TextAreaWidget(rows=2, cols=80))
+        widget = deform.widget.TextAreaWidget(rows=2, cols=80))
     creator = colander.SchemaNode(
         colander.String(),
         validator = colander.Email(),
@@ -318,7 +311,7 @@ class UserSchema(colander.MappingSchema):
     email = colander.SchemaNode(
         colander.String(),
         validator = colander.Email(),
-        widget = TextInputWidget(),
+        widget = deform.widget.TextInputWidget(),
         )
     openid = colander.SchemaNode(
         colander.String(),
