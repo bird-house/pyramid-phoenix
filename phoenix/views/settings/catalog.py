@@ -13,9 +13,9 @@ logger = logging.getLogger(__name__)
 class Catalog(SettingsView):
     def __init__(self, request):
         super(Catalog, self).__init__(
-            request, name='catalog_settings', title='Catalog Service')
+            request, name='catalog_settings', title='Catalog')
         self.csw = self.request.csw
-        self.description = "%s (%s)" % (self.csw.identification.title, self.csw.url)
+        self.description = self.csw.identification.title
 
     def breadcrumbs(self):
         breadcrumbs = super(Catalog, self).breadcrumbs()
