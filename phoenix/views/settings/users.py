@@ -23,7 +23,7 @@ class Users(SettingsView):
         return dict(order=order, order_dir=order_dir)   
         
     def generate_form(self):
-        from phoenix.schema import UserSchema
+        from phoenix.schema.settings import UserSchema
         return Form(schema=UserSchema(), buttons=('submit',), formid='deform')
 
     def process_form(self, form):

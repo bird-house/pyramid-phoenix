@@ -7,11 +7,8 @@ from phoenix.widget import (
     ESGFSearchWidget,
     )
 
-from phoenix.security import Admin, User, Guest
-
 import logging
 logger = logging.getLogger(__name__)
-
 
 class ESGFLoginSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
@@ -300,40 +297,5 @@ class PublishSchema(colander.MappingSchema):
         default = 'Free for non-commercial use',
         )
 
-class UserSchema(colander.MappingSchema):
-    choices = ((Admin, 'Admin'), (User, 'User'), (Guest, 'Guest'))
-    
-    name = colander.SchemaNode(
-        colander.String(),
-        title = "Name",
-        missing = colander.drop,
-        )
-    email = colander.SchemaNode(
-        colander.String(),
-        validator = colander.Email(),
-        widget = deform.widget.TextInputWidget(),
-        )
-    openid = colander.SchemaNode(
-        colander.String(),
-        title = "OpenID",
-        validator = colander.url,
-        missing = colander.drop,
-        )
-    organisation = colander.SchemaNode(
-        colander.String(),
-        title = "Organisation",
-        missing = colander.drop,
-        )
-    notes = colander.SchemaNode(
-        colander.String(),
-        title = "Notes",
-        missing = colander.drop,
-        )
-    group = colander.SchemaNode(
-        colander.String(),
-        validator=colander.OneOf([x[0] for x in choices]),
-        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
-        title='Group',
-        description='Select Group')
 
 
