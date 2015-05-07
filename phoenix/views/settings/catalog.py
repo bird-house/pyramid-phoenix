@@ -22,31 +22,6 @@ class Catalog(SettingsView):
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
         
-    def generate_service_form(self, formid="deform"):
-        from phoenix.schema import CatalogAddServiceSchema
-        schema = CatalogAddServiceSchema()
-        return Form(
-            schema,
-            buttons=(Button(name='add_service', title='Add Service'),),
-            formid=formid)
-
-    def process_service_form(self, form):
-        try:
-            controls = self.request.POST.items()
-            appstruct = form.validate(controls)
-            url = appstruct.get('url')
-            self.request.csw.harvest(
-                source=url,
-                resourcetype=appstruct.get('resource_type'))
-            self.session.flash('Added WPS %s' % (url), queue="success")
-        except ValidationFailure, e:
-            logger.exception('validation of catalog form failed')
-            return dict(form = e.render())
-        except Exception, e:
-            logger.exception('could not harvest wps.')
-            self.session.flash('Could not add WPS %s. %s' % (url, e), queue="error")
-        return HTTPFound(location=self.request.route_url(self.name))
-
     def generate_dataset_form(self, formid="deform"):
         from phoenix.schema import PublishSchema
         schema = PublishSchema().bind(email=self.user_email())
@@ -126,11 +101,8 @@ class Catalog(SettingsView):
 
     @view_config(route_name="settings_catalog", renderer='phoenix:templates/settings/catalog.pt')
     def view(self):
-        service_form = self.generate_service_form()
         dataset_form = self.generate_dataset_form()
-        if 'add_service' in self.request.POST:
-            return self.process_service_form(service_form)
-        elif 'add_dataset' in self.request.POST:
+        if 'add_dataset' in self.request.POST:
             return self.process_dataset_form(dataset_form)
         items = self.get_csw_items()
             
@@ -144,7 +116,6 @@ class Catalog(SettingsView):
             datasets_found=self.csw.results.get('matches'),
             grid=grid,
             items=items,
-            service_form=service_form.render(),
             dataset_form=dataset_form.render())
 
 class CSWGrid(MyGrid):

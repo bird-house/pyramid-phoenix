@@ -63,6 +63,12 @@ def main(global_config, **settings):
     # routes 
     config.add_route('home', '/')
 
+    # login
+    config.add_route('signin', '/signin/{tab}')
+    config.add_route('logout', '/logout')
+    config.add_route('login_openid', '/login/openid')
+    config.add_route('register', '/register')
+
     # dashboard
     config.add_route('dashboard', '/dashboard/{tab}')
     
@@ -78,13 +84,13 @@ def main(global_config, **settings):
     config.add_route('remove_myjobs', '/myjobs/remove_all')
     config.add_route('remove_myjob', '/myjobs/{jobid}/remove')
     
-
     # my account
     config.add_route('myaccount', '/myaccount/{tab}')
 
     # settings
     config.add_route('settings', '/settings/overview')
     config.add_route('settings_catalog', '/settings/catalog')
+    config.add_route('settings_add_service', '/settings/catalog/add_service')
     config.add_route('remove_record', '/settings/catalog/{recordid}/remove')
     config.add_route('remove_all_records', '/settings/catalog/remove_all')
     config.add_route('settings_users', '/settings/users')
@@ -92,11 +98,6 @@ def main(global_config, **settings):
     config.add_route('remove_user', '/settings/users/{email}/remove')
     config.add_route('settings_jobs', '/settings/jobs')
     config.add_route('remove_all_jobs', '/settings/jobs/remove_all')
-    
-    config.add_route('signin', '/signin/{tab}')
-    config.add_route('logout', '/logout')
-    config.add_route('login_openid', '/login/openid')
-    config.add_route('register', '/register')
 
     # wizard
     config.add_route('wizard', '/wizard/start')

@@ -2,8 +2,8 @@
 
   <div metal:fill-slot="content">
 
-    <!-- Button to trigger modal dialog for adding ogc service to catalog -->
-    <a href="#service-form" role="button" class="btn btn-success" data-toggle="modal">
+    <!-- Button to add an ogc service -->
+    <a href="${request.route_path('settings_add_service')}" role="button" class="btn btn-success">
       Add Service
     </a>
     <!-- Button to trigger modal dialog for adding dataset to catalog -->
@@ -11,7 +11,7 @@
       Add Dataset
     </a>
     <!-- Button to remove all records -->
-    <a href="${request.route_url('remove_all_records')}" role="button" class="btn btn-danger">
+    <a href="${request.route_path('remove_all_records')}" role="button" class="btn btn-danger">
       Remove all Datasets
     </a>
 
@@ -26,21 +26,6 @@
         <table class="table table-striped" tal:condition="grid | None">
           <tal:rows replace="structure grid" />
         </table>
-      </div>
-    </div>
-
-    <!-- Add form for service addition -->
-    <div id="service-form" class="modal fade">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4 class="modal-title" id="service-form-label">Add OGC Service to Catalog</h4>
-          </div>
-          <div class="modal-body">
-            <tal:form replace="structure service_form" />
-          </div>
-        </div>
       </div>
     </div>
 
