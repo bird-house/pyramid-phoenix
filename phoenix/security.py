@@ -1,6 +1,10 @@
 import logging
 logger = logging.getLogger(__name__)
 
+Admin = 'group.admin'
+User = 'group.user'
+Guest = 'group.guest'
+
 def admin_users(request):
     value = request.registry.settings.get('phoenix.admin_users')
     if value is not None:
@@ -12,11 +16,11 @@ def groupfinder(email, request):
     admins = admin_users(request)
     
     if email in admins:
-        return ['group:admins']
+        return [Admin]
     elif request.db.users.find_one({'email':email}).get('activated'):
-        return ['group:editors']
+        return [User]
     else:
-        return ['group:views']
+        return [Guest]
 
 from pyramid.security import (
         Allow, 
@@ -30,8 +34,8 @@ class Root():
     __acl__ = [
                 (Allow, Everyone, 'view'),
                 #(Allow, Authenticated, 'edit'),
-                (Allow, 'group:editors', 'edit'),
-                (Allow, 'group:admins', ALL_PERMISSIONS)
+                (Allow, User, 'edit'),
+                (Allow, Admin, ALL_PERMISSIONS)
                ]
 
     def __init__(self, request):

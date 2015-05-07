@@ -2,6 +2,7 @@ import uuid
 import datetime
 
 from phoenix import utils
+from phoenix.security import Guest
 
 import logging
 logger = logging.getLogger(__name__)
@@ -22,7 +23,7 @@ def add_user(
     name='unknown',
     organisation='unknown',
     notes='',
-    activated=False):
+    group=Guest):
     user=dict(
         identifier = uuid.uuid4().get_urn(),
         email = email,
@@ -30,7 +31,7 @@ def add_user(
         name = name,
         organisation = organisation,
         notes = notes,
-        activated = activated,
+        group = group,
         creation_time = datetime.datetime.now(),
         last_login = datetime.datetime.now())
     request.db.users.save(user)
