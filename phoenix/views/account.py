@@ -89,7 +89,7 @@ class Account(MyView):
             lm.layout.add_heading('logon_openid')
         return dict(active=protocol)
 
-    @view_config(route_name='logout', permission='edit')
+    @view_config(route_name='account_logout', permission='edit')
     def logout(self):
         headers = forget(self.request)
         return HTTPFound(location = self.request.route_path('home'), headers = headers)

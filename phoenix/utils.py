@@ -11,7 +11,7 @@ def button(request):
     if not authenticated_userid(request):
         return markupsafe.Markup(SIGNIN_HTML) % (request.route_path('account_login', protocol='esgf'))
     else:
-        return markupsafe.Markup(SIGNOUT_HTML) % (request.route_path('logout'), authenticated_userid(request))
+        return markupsafe.Markup(SIGNOUT_HTML) % (request.route_path('account_logout'), authenticated_userid(request))
 
 
 def localize_datetime(dt, tz_name='UTC'):
