@@ -113,6 +113,9 @@ def main(global_config, **settings):
     config.add_route('wizard_swiftbrowser', '/wizard/swiftbrowser')
     config.add_route('wizard_done', '/wizard/done')
 
+    # help
+    config.add_route('help', settings.get('help.url'))
+
     # A quick access to the login button
     from phoenix.utils import button
     config.add_request_method(button, 'login_button', reify=True)
