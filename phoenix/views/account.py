@@ -10,7 +10,7 @@ from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
 
 from phoenix.views import MyView
-from phoenix.security import Admin, Guest, admin_users
+from phoenix.security import Admin, Guest, admin_users, ESGF_Provider
 
 import logging
 logger = logging.getLogger(__name__)
@@ -20,17 +20,6 @@ authomatic = Authomatic(config=config.config,
                         secret=config.SECRET,
                         report_errors=True,
                         logging_level=logging.DEBUG)
-
-# TODO: make this configurable
-PROVIDER_URLS = dict(
-    badc='https://ceda.ac.uk/openid/%s',
-    bnu='https://esg.bnu.edu.cn/esgf-idp/openid/%s',
-    dkrz='https://esgf-data.dkrz.de/esgf-idp/openid/%s',
-    ipsl='https://esgf-node.ipsl.fr/esgf-idp/openid/%s',
-    nci='https://esg2.nci.org.au/esgf-idp/openid/%s',
-    pcmdi='https://pcmdi9.llnl.gov/esgf-idp/openid/%s',
-    smhi='https://esg-dn1.nsc.liu.se/esgf-idp/openid/%s',
-)
 
 @view_defaults(permission='view', layout='default')
 class Account(MyView):
@@ -125,7 +114,7 @@ class Account(MyView):
         if username is not None:
             provider = self.request.params.get('provider')
             logger.debug('username=%s, provider=%s', username, provider)
-            openid = PROVIDER_URLS.get(provider) % username
+            openid = ESGF_Provider.get(provider) % username
             self.request.GET['id'] = openid
             del self.request.GET['username']
             del self.request.GET['provider']

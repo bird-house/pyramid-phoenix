@@ -11,7 +11,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 class ESGFOpenIDSchema(colander.MappingSchema):
-    choices = (('dkrz', 'DKRZ'), ('test', 'TEST'))
+    from phoenix.security import ESGF_Provider
+    choices = zip(ESGF_Provider.keys(), ESGF_Provider.keys())
     provider = colander.SchemaNode(
         colander.String(),
         validator=colander.OneOf([x[0] for x in choices]),

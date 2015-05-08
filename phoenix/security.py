@@ -5,6 +5,17 @@ Admin = 'group.admin'
 User = 'group.user'
 Guest = 'group.guest'
 
+# TODO: make this configurable
+ESGF_Provider = dict(
+    BADC='https://ceda.ac.uk/openid/%s',
+    BNU='https://esg.bnu.edu.cn/esgf-idp/openid/%s',
+    DKRZ='https://esgf-data.dkrz.de/esgf-idp/openid/%s',
+    IPSL='https://esgf-node.ipsl.fr/esgf-idp/openid/%s',
+    NCI='https://esg2.nci.org.au/esgf-idp/openid/%s',
+    PCMDI='https://pcmdi9.llnl.gov/esgf-idp/openid/%s',
+    SMHI='https://esg-dn1.nsc.liu.se/esgf-idp/openid/%s',
+    )
+
 def admin_users(request):
     value = request.registry.settings.get('phoenix.admin_users')
     if value is not None:
