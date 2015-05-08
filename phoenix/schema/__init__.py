@@ -10,6 +10,20 @@ from phoenix.widget import (
 import logging
 logger = logging.getLogger(__name__)
 
+class ESGFOpenIDSchema(colander.MappingSchema):
+    choices = (('dkrz', 'DKRZ'), ('test', 'TEST'))
+    provider = colander.SchemaNode(
+        colander.String(),
+        validator=colander.OneOf([x[0] for x in choices]),
+        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
+        title='ESGF Provider',
+        description='Select the Provider for your ESGF OpenID.')
+    username = colander.SchemaNode(
+        colander.String(),
+        title = "Username",
+        description = "Your ESGF OpenID Username."
+        )
+
 class ESGFLoginSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
         colander.String(),

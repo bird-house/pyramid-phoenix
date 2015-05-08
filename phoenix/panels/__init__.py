@@ -89,7 +89,6 @@ class MyAccoutProfile(MyAccountPanel):
             self.request.session.flash('Update of your accound failed. %s' % (e), queue='error')
         else:
             self.request.session.flash("Your account was updated.", queue='success')
-        #return HTTPFound(location=request.route_url('myaccount', tab='profile'))
 
     @panel_config(name='myaccount_profile', renderer='phoenix:templates/panels/myaccount_default.pt')
     def panel(self):

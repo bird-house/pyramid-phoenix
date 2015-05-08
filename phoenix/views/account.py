@@ -1,10 +1,11 @@
 import datetime
 
 from pyramid.view import view_config, view_defaults
-from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
 from pyramid.renderers import render
 from pyramid.security import remember, forget, authenticated_userid
+from deform import Form, ValidationFailure
 from authomatic import Authomatic
 from authomatic.adapters import WebObAdapter
 
@@ -35,6 +36,25 @@ PROVIDER_URLS = dict(
 class Account(MyView):
     def __init__(self, request):
         super(Account, self).__init__(request, name="account", title='Account')
+
+    def appstruct(self):
+        return {}
+
+    def generate_form(self):
+        from phoenix.schema import ESGFOpenIDSchema
+        form = Form(schema=ESGFOpenIDSchema(), buttons=('submit',), formid='deform')
+        return form
+
+    def process_form(self, form):
+        try:
+            controls = self.request.POST.items()
+            appstruct = form.validate(controls)
+        except ValidationFailure, e:
+            logger.exception('validation of form failed.')
+            return dict(form=e.render())
+        else:
+            logger.debug('openid route = %s', self.request.route_path('account_openid', _query=appstruct.items()))
+            return HTTPFound(location=self.request.route_path('account_openid', _query=appstruct.items()))
 
     def notify_login_failure(self, user_email):
         """Notifies about user login failure via email.
@@ -82,12 +102,10 @@ class Account(MyView):
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
         protocol = self.request.matchdict.get('protocol', 'esgf')
-        lm = self.request.layout_manager
-        if protocol == 'esgf':
-            lm.layout.add_heading('account_esgf')
-        elif protocol == 'openid':
-            lm.layout.add_heading('account_openid')
-        return dict(active=protocol)
+        form = self.generate_form()
+        if 'submit' in self.request.POST:
+            return self.process_form(form)
+        return dict(active=protocol, title="ESGF OpenID", form=form.render( self.appstruct() ))
 
     @view_config(route_name='account_logout', permission='edit')
     def logout(self):
@@ -102,6 +120,7 @@ class Account(MyView):
     def openid(self):
         """authomatic openid login"""
         username = self.request.params.get('username')
+        logger.debug('openid username=%s', username)
         # esgf openid login with username and provider
         if username is not None:
             provider = self.request.params.get('provider')

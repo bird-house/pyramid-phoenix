@@ -13,9 +13,16 @@
         <a href="${request.route_path('account_login', protocol='openid')}">OpenID</a>
       </li>
     </ul>
-    
-    ${panel('headings')}
-    
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">${title}</h3>
+      </div>
+      <div class="panel-body">
+        <tal:form replace="structure form">The form will render here</tal:form>
+      </div>
+    </div>
+
   </div>
 
 </metal:block>
