@@ -5,15 +5,17 @@
   </div>
  
   <div metal:fill-slot="content">
-    <ul class="nav nav-tabs">
-      <li class="${'active' if active=='esgf' else ''}"><a href="${request.route_path('account_login', protocol='esgf')}">ESGF</a></li>
-      <li class="${'active' if active=='openid' else ''}"><a href="${request.route_path('account_login', protocol='openid')}">OpenID</a></li>
+    <ul class="nav nav-pills">
+      <li role="presentation" class="${'active' if active=='esgf' else ''}">
+        <a href="${request.route_path('account_login', protocol='esgf')}">ESGF</a>
+      </li>
+      <li role="presentation" class="${'active' if active=='openid' else ''}">
+        <a href="${request.route_path('account_login', protocol='openid')}">OpenID</a>
+      </li>
     </ul>
     
-     <!-- row columns -->
-     <div class="row-fluid offset1">
-       ${panel('headings')}
-     </div>
+    ${panel('headings')}
+    
   </div>
 
 </metal:block>
