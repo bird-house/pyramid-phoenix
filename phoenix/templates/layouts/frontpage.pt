@@ -29,7 +29,7 @@
 
   </head>
 
-  <body>
+  <body class="tpad">
     ${panel('navbar')}
 
     <metal:content define-slot="content">

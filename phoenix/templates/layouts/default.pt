@@ -68,18 +68,22 @@
 
   <body>
     ${panel('navbar')}
-    ${panel('sidebar')}
 
-    ${panel('breadcrumbs')}
+    <div class="container padded">
+      <div class="row">
+        ${panel('sidebar')}
+        ${panel('breadcrumbs')}
 
-    <!-- Page Title -->
-    <div class="page-header" tal:condition="view.description | None">
-      <h1>${view.title} <small>${view.description}</small></h1>
+        <!-- Page Title -->
+        <div class="page-header" tal:condition="view.description | None">
+          <h1>${view.title} <small>${view.description}</small></h1>
+        </div>
+
+        <metal:content define-slot="content">
+          Site content goes here ...
+        </metal:content>
+      </div>
     </div>
-
-    <metal:content define-slot="content">
-      Site content goes here ...
-    </metal:content>
 
     <!-- footer -->
     ${panel('footer')}
