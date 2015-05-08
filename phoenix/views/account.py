@@ -94,7 +94,7 @@ class Account(MyView):
         headers = forget(self.request)
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
-    @view_config(route_name='register', renderer='phoenix:templates/register.pt')
+    @view_config(route_name='account_register', renderer='phoenix:templates/account/register.pt')
     def register(self):
         return dict(email=None)
 
