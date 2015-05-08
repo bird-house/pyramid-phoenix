@@ -1,43 +1,47 @@
-<div class="col-9 col-lg-9 col-sm-9">
-  <h3>ESGF OpenID</h3>
-  <form id="esgf" action="/account/openid">
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">ESGF OpenID</h3>
+  </div>
+  <div class="panel-body">
+    <form id="esgf" action="/account/openid">
     
-    <label class="radio">
-      <input type="radio" name="provider" value="badc"> <img src="${request.static_url('phoenix:static/images/flags/flag_great_britain.png')}"> BADC
-    </label>
+      <label class="radio">
+        <input type="radio" name="provider" value="badc"> <img src="${request.static_url('phoenix:static/images/flags/flag_great_britain.png')}"> BADC
+      </label>
     
-    <label class="radio">
-      <input type="radio" name="provider" value="bnu"> <img src="${request.static_url('phoenix:static/images/flags/flag_china.png')}"> BNU
-    </label>
+      <label class="radio">
+        <input type="radio" name="provider" value="bnu"> <img src="${request.static_url('phoenix:static/images/flags/flag_china.png')}"> BNU
+      </label>
 
-    <label class="radio">
-      <input type="radio" name="provider" value="cmcc"> <img src="${request.static_url('phoenix:static/images/flags/flag_italy.png')}"> CMCC
-    </label>
+      <label class="radio">
+        <input type="radio" name="provider" value="cmcc"> <img src="${request.static_url('phoenix:static/images/flags/flag_italy.png')}"> CMCC
+      </label>
 
-    <label class="radio">
-      <input type="radio" name="provider" value="dkrz" checked="checked"> <img src="${request.static_url('phoenix:static/images/flags/flag_germany.png')}"> DKRZ
-    </label>
+      <label class="radio">
+        <input type="radio" name="provider" value="dkrz" checked="checked"> <img src="${request.static_url('phoenix:static/images/flags/flag_germany.png')}"> DKRZ
+      </label>
 
-    <label class="radio">
-      <input type="radio" name="provider" value="ipsl"> <img src="${request.static_url('phoenix:static/images/flags/flag_france.png')}"> IPSL
-    </label>
+      <label class="radio">
+        <input type="radio" name="provider" value="ipsl"> <img src="${request.static_url('phoenix:static/images/flags/flag_france.png')}"> IPSL
+      </label>
     
-    <label class="radio">
-      <input type="radio" name="provider" value="nci"> <img src="${request.static_url('phoenix:static/images/flags/flag_australia.png')}"> NCI
-    </label>
+      <label class="radio">
+        <input type="radio" name="provider" value="nci"> <img src="${request.static_url('phoenix:static/images/flags/flag_australia.png')}"> NCI
+      </label>
 
-    <label class="radio">
-      <input type="radio" name="provider" value="pcmdi"> <img src="${request.static_url('phoenix:static/images/flags/flag_usa.png')}"> PCMDI
-    </label>
+      <label class="radio">
+        <input type="radio" name="provider" value="pcmdi"> <img src="${request.static_url('phoenix:static/images/flags/flag_usa.png')}"> PCMDI
+      </label>
 
-    <label class="radio">
-      <input type="radio" name="provider" value="smhi"> <img src="${request.static_url('phoenix:static/images/flags/flag_sweden.png')}"> SMHI
-    </label>
-
-    <input type="text" name="username" placeholder="Your username"/>
-    <button type="submit" class="btn btn-success">Sign in</button>
-    <span class="help-block">
-      Choose your ESGF OpenID provider and enter your username
-    </span>
-  </form>
+      <label class="radio">
+        <input type="radio" name="provider" value="smhi"> <img src="${request.static_url('phoenix:static/images/flags/flag_sweden.png')}"> SMHI
+      </label>
+      
+      <input type="text" name="username" placeholder="Your username"/>
+      <button type="submit" class="btn btn-success">Sign in</button>
+      <span class="help-block">
+        Choose your ESGF OpenID provider and enter your username
+      </span>
+    </form>
+  </div>
 </div>
