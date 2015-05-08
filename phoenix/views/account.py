@@ -84,9 +84,9 @@ class Account(MyView):
         protocol = self.request.matchdict.get('protocol', 'esgf')
         lm = self.request.layout_manager
         if protocol == 'esgf':
-            lm.layout.add_heading('logon_esgf')
+            lm.layout.add_heading('account_esgf')
         elif protocol == 'openid':
-            lm.layout.add_heading('logon_openid')
+            lm.layout.add_heading('account_openid')
         return dict(active=protocol)
 
     @view_config(route_name='account_logout', permission='edit')
@@ -98,8 +98,8 @@ class Account(MyView):
     def register(self):
         return dict(email=None)
 
-    @view_config(route_name='login_openid')
-    def login_openid(self):
+    @view_config(route_name='account_openid')
+    def openid(self):
         """authomatic openid login"""
         username = self.request.params.get('username')
         # esgf openid login with username and provider

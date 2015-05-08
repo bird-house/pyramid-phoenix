@@ -44,12 +44,12 @@ def sidebar(context, request):
 def footer(context, request):
     return {}
 
-@panel_config(name='logon_openid', renderer='phoenix:templates/panels/logon_openid.pt')
-def logon_openid(context, request):
+@panel_config(name='account_openid', renderer='phoenix:templates/panels/account_openid.pt')
+def account_openid(context, request):
     return {}
 
-@panel_config(name='logon_esgf', renderer='phoenix:templates/panels/logon_esgf.pt')
-def logon_esgf(context, request):
+@panel_config(name='account_esgf', renderer='phoenix:templates/panels/account_esgf.pt')
+def account_esgf(context, request):
     return {}
 
 @panel_config(name='dashboard_users', renderer='phoenix:templates/panels/dashboard_users.pt')
