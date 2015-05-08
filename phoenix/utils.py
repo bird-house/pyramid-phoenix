@@ -1,8 +1,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
-SIGNIN_HTML = '<a href="/signin/esgf"><i class="glyphicon glyphicon-log-in"></i> Sign in</a>'
-SIGNOUT_HTML = '<a href="/logout" id="signout" title="Logout %s"><i class="glyphicon glyphicon-log-out"></i> Sign out</a>'
+SIGNIN_HTML = '<a class="navbar-link" href="/signin/esgf"><i class="glyphicon glyphicon-log-in"></i> Sign in</a>'
+SIGNOUT_HTML = '<a class="navbar-link" href="/logout" id="signout" title="Logout %s"><i class="glyphicon glyphicon-log-out"></i> Sign out</a>'
 
 def button(request):
     """If the user is logged in, returns the logout button, otherwise returns the login button"""

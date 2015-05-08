@@ -7,9 +7,7 @@ from phoenix.security import groupfinder, root_factory
 
 import pymongo
 
-from phoenix.utils import button
 import logging
-
 logger = logging.getLogger(__name__)
 
 from deform import Form
@@ -116,6 +114,7 @@ def main(global_config, **settings):
     config.add_route('wizard_done', '/wizard/done')
 
     # A quick access to the login button
+    from phoenix.utils import button
     config.add_request_method(button, 'login_button', reify=True)
 
     # use json_adapter for datetime
