@@ -10,7 +10,7 @@
           </div>
           <div class="col-xs-9">
             <h1>Phoenix <span class="text-muted">&raquo; Making WPS easy</span></h1>
-            <p class="lead"> This is a <b>Demo</b> installation. If you want to try it out please <a class="btn btn-mini btn-success" href="${request.route_path('account_register')}">register</a> and ask for account activation.</p>
+            <p class="lead"> This is a <b>Demo</b> installation. If you want to try it out please <a class="btn btn-mini btn-success" href="${request.route_path('account_register')}">Sign up</a> and ask for account activation.</p>
           </div>
         </div>
       </div>       
