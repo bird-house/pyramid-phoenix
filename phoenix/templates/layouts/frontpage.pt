@@ -16,14 +16,9 @@
     <link rel="stylesheet"
           href="${request.static_url('deform:static/css/form.css')}"
           type="text/css" media="screen" charset="utf-8"/>
-    <tal:block repeat="reqt css_links|[]">
-      <link rel="stylesheet" href="${request.static_url(reqt)}" type="text/css" />
-    </tal:block>
 
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
           href="${request.static_url('phoenix:static/css/phoenix.css')}" />
-
-    <metal:css define-slot="css"/>
 
     <!-- JavaScript 
          ======================================================================= -->
@@ -32,23 +27,6 @@
     <script src="${request.static_url('deform:static/scripts/bootstrap.min.js')}"
             type="text/javascript"></script>
 
-    <!-- deform used for own widget ... TODO: add on demand -->
-    <script src="${request.static_url('deform:static/scripts/jquery.form-3.09.js')}"
-            type="text/javascript"></script>
-    <script src="${request.static_url('deform:static/scripts/deform.js')}"
-            type="text/javascript"></script>
-    <script src="${request.static_url('deform:static/scripts/modernizr.custom.input-types-and-atts.js')}"
-            type="text/javascript"></script>
-
-    <tal:block repeat="reqt js_links|[]">
-      <script type="text/javascript" src="${request.static_url(reqt)}"></script>
-    </tal:block>
-
-    <!-- phoenix -->
-    <script src="${request.static_url('phoenix:static/scripts/phoenix.js')}"></script>
-
-    <metal:js define-slot="javascript"/>   
-    
   </head>
 
   <body>
