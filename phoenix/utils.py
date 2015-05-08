@@ -1,17 +1,17 @@
 import logging
 logger = logging.getLogger(__name__)
 
-SIGNIN_HTML = '<a class="navbar-link" href="/signin/esgf"><i class="glyphicon glyphicon-log-in"></i> Sign in</a>'
-SIGNOUT_HTML = '<a class="navbar-link" href="/logout" id="signout" title="Logout %s"><i class="glyphicon glyphicon-log-out"></i> Sign out</a>'
+SIGNIN_HTML = '<a class="navbar-link" href="%s"><i class="glyphicon glyphicon-log-in"></i> Sign in</a>'
+SIGNOUT_HTML = '<a class="navbar-link" href="%s" id="signout" title="Logout %s"><i class="glyphicon glyphicon-log-out"></i> Sign out</a>'
 
 def button(request):
     """If the user is logged in, returns the logout button, otherwise returns the login button"""
     import markupsafe
     from pyramid.security import authenticated_userid
     if not authenticated_userid(request):
-        return markupsafe.Markup(SIGNIN_HTML)
+        return markupsafe.Markup(SIGNIN_HTML) % (request.route_path('login', protocol='esgf'))
     else:
-        return markupsafe.Markup(SIGNOUT_HTML) % (authenticated_userid(request))
+        return markupsafe.Markup(SIGNOUT_HTML) % (request.route_path('logout'), authenticated_userid(request))
 
 
 def localize_datetime(dt, tz_name='UTC'):

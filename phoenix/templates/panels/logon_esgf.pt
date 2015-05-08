@@ -1,6 +1,6 @@
 <div class="col-9 col-lg-9 col-sm-9">
   <h3>ESGF OpenID</h3>
-  <form id="esgf" action="/login/openid">
+  <form id="esgf" action="/account/openid">
     
     <label class="radio">
       <input type="radio" name="provider" value="badc"> <img src="${request.static_url('phoenix:static/images/flags/flag_great_britain.png')}"> BADC

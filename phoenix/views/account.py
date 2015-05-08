@@ -32,9 +32,9 @@ PROVIDER_URLS = dict(
 )
 
 @view_defaults(permission='view', layout='default')
-class Logon(MyView):
+class Account(MyView):
     def __init__(self, request):
-        super(Logon, self).__init__(request, name="login_openid", title='Logon')
+        super(Account, self).__init__(request, name="login_openid", title='Account')
 
     def notify_login_failure(self, user_email):
         """Notifies about user login failure via email.
@@ -79,15 +79,15 @@ class Logon(MyView):
         self.userdb.update({'email':email}, user)
         self.session.flash("Welcome %s (%s)." % (name, email), queue='info')
 
-    @view_config(route_name='signin', renderer='phoenix:templates/signin.pt')
-    def signin(self):
-        tab = self.request.matchdict.get('tab', 'esgf')
+    @view_config(route_name='login', renderer='phoenix:templates/account/login.pt')
+    def login(self):
+        protocol = self.request.matchdict.get('protocol', 'esgf')
         lm = self.request.layout_manager
-        if tab == 'esgf':
+        if protocol == 'esgf':
             lm.layout.add_heading('logon_esgf')
-        elif tab == 'openid':
+        elif protocol == 'openid':
             lm.layout.add_heading('logon_openid')
-        return dict(active=tab)
+        return dict(active=protocol)
 
     @view_config(route_name='logout', permission='edit')
     def logout(self):
