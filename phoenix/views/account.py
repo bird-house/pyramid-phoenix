@@ -135,7 +135,7 @@ class Account(MyView):
                 logger.debug("response headers=%s", response.headers.keys())
                 #logger.debug("response cookie=%s", response.headers['Set-Cookie'])
                 self.login_success(email=result.user.email, openid=result.user.id, name=result.user.name)
-                response.text = render('phoenix:templates/openid_success.pt', {'result': result}, request=self.request)
+                response.text = render('phoenix:templates/account/openid_success.pt', {'result': result}, request=self.request)
                 # Add the headers required to remember the user to the response
                 response.headers.extend(remember(self.request, result.user.email))
 
