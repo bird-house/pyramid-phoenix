@@ -62,7 +62,7 @@ def main(global_config, **settings):
     config.add_route('home', '/')
 
     # login
-    config.add_route('login', '/account/login/{protocol}')
+    config.add_route('account_login', '/account/login/{protocol}')
     config.add_route('logout', '/account/logout')
     config.add_route('login_openid', '/account/openid')
     config.add_route('register', '/account/register')

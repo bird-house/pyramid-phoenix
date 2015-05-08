@@ -34,7 +34,7 @@ PROVIDER_URLS = dict(
 @view_defaults(permission='view', layout='default')
 class Account(MyView):
     def __init__(self, request):
-        super(Account, self).__init__(request, name="login_openid", title='Account')
+        super(Account, self).__init__(request, name="account", title='Account')
 
     def notify_login_failure(self, user_email):
         """Notifies about user login failure via email.
@@ -79,7 +79,7 @@ class Account(MyView):
         self.userdb.update({'email':email}, user)
         self.session.flash("Welcome %s (%s)." % (name, email), queue='info')
 
-    @view_config(route_name='login', renderer='phoenix:templates/account/login.pt')
+    @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
         protocol = self.request.matchdict.get('protocol', 'esgf')
         lm = self.request.layout_manager
