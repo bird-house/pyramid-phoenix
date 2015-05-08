@@ -2,9 +2,9 @@
 
   <div metal:fill-slot="content">
 
-    <div class="container-fluid">
+    <div class="container">
       <div class="row">
-        <div class="col-3 col-lg-3 col-sm-3">
+        <div class="col-lg-3 col-sm-3">
           <!--Sidebar content-->
           <ul class="nav nav-pills nav-stacked">
             <li class="${'active' if active=='profile' else ''}"><a href="${request.route_url('myaccount', tab='profile')}">Profile</a></li>
@@ -12,7 +12,7 @@
             <li class="${'active' if active=='swift' else ''}"><a href="${request.route_url('myaccount', tab='swift')}">Swift access token</a></li>
           </ul>
         </div>
-        <div class="col-9 col-lg-9 col-sm-9">
+        <div class="col-lg-9 col-sm-9">
           <!--Body content-->
           ${panel('headings')}
         </div>
