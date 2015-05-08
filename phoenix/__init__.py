@@ -113,8 +113,8 @@ def main(global_config, **settings):
     config.add_route('wizard_swiftbrowser', '/wizard/swiftbrowser')
     config.add_route('wizard_done', '/wizard/done')
 
-    # help
-    config.add_route('help', settings.get('help.url'))
+    # readthedocs
+    config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/en/latest/')
 
     # A quick access to the login button
     from phoenix.utils import button
