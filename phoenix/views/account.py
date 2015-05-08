@@ -27,20 +27,25 @@ class Account(MyView):
         super(Account, self).__init__(request, name="account", title='Account')
 
     def appstruct(self):
-        return {}
+        return dict(provider='DKRZ')
 
-    def generate_form(self):
-        from phoenix.schema import ESGFOpenIDSchema
-        form = Form(schema=ESGFOpenIDSchema(), buttons=('submit',), formid='deform')
+    def generate_form(self, protocol):
+        from phoenix.schema import OpenIDSchema, ESGFOpenIDSchema
+        schema = None
+        if protocol == 'esgf':
+            schema = ESGFOpenIDSchema()
+        else:
+            schema = OpenIDSchema()
+        form = Form(schema=schema, buttons=('submit',), formid='deform')
         return form
 
-    def process_form(self, form):
+    def process_form(self, form, protocol):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
         except ValidationFailure, e:
             logger.exception('validation of form failed.')
-            return dict(form=e.render())
+            return dict(active=protocol, form=e.render())
         else:
             logger.debug('openid route = %s', self.request.route_path('account_openid', _query=appstruct.items()))
             return HTTPFound(location=self.request.route_path('account_openid', _query=appstruct.items()))
@@ -91,9 +96,9 @@ class Account(MyView):
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
         protocol = self.request.matchdict.get('protocol', 'esgf')
-        form = self.generate_form()
+        form = self.generate_form(protocol)
         if 'submit' in self.request.POST:
-            return self.process_form(form)
+            return self.process_form(form, protocol)
         return dict(active=protocol, title="ESGF OpenID", form=form.render( self.appstruct() ))
 
     @view_config(route_name='account_logout', permission='edit')
@@ -109,7 +114,6 @@ class Account(MyView):
     def openid(self):
         """authomatic openid login"""
         username = self.request.params.get('username')
-        logger.debug('openid username=%s', username)
         # esgf openid login with username and provider
         if username is not None:
             provider = self.request.params.get('provider')

@@ -10,6 +10,13 @@ from phoenix.widget import (
 import logging
 logger = logging.getLogger(__name__)
 
+class OpenIDSchema(colander.MappingSchema):
+    id = colander.SchemaNode(
+        colander.String(),
+        validator = colander.url,
+        title = "OpenID",
+        description = "Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname")
+        
 class ESGFOpenIDSchema(colander.MappingSchema):
     from phoenix.security import ESGF_Provider
     choices = zip(ESGF_Provider.keys(), ESGF_Provider.keys())
@@ -21,6 +28,7 @@ class ESGFOpenIDSchema(colander.MappingSchema):
         description='Select the Provider for your ESGF OpenID.')
     username = colander.SchemaNode(
         colander.String(),
+        validator = colander.Length(min=6),
         title = "Username",
         description = "Your ESGF OpenID Username."
         )
