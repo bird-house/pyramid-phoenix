@@ -32,7 +32,6 @@ class MyView(object):
 
 from pyramid.view import (
     view_config,
-    forbidden_view_config,
     notfound_view_config
     )
 from pyramid.response import Response
@@ -44,11 +43,6 @@ def notfound(request):
     so that the 404 page fits nicely into our global layout.
     """
     return {}
-
-@forbidden_view_config(renderer='phoenix:templates/forbidden.pt')
-def forbidden(request):
-    request.response.status = 403
-    return dict(message=None)
 
 @subscriber(BeforeRender)
 def add_global(event):

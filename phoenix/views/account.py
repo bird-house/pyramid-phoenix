@@ -1,6 +1,6 @@
 import datetime
 
-from pyramid.view import view_config, view_defaults
+from pyramid.view import view_config, view_defaults, forbidden_view_config
 from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
 from pyramid.renderers import render
@@ -20,6 +20,11 @@ authomatic = Authomatic(config=config.config,
                         secret=config.SECRET,
                         report_errors=True,
                         logging_level=logging.DEBUG)
+
+@forbidden_view_config(renderer='phoenix:templates/account/forbidden.pt', layout="frontpage")
+def forbidden(request):
+    request.response.status = 403
+    return dict()
 
 @view_config(route_name='account_register', renderer='phoenix:templates/account/register.pt',
              permission='view', layout="frontpage")
