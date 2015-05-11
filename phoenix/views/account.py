@@ -101,7 +101,7 @@ class Account(MyView):
             user['openid'] = openid
         user['name'] = name
         self.userdb.update({'email':email}, user)
-        self.session.flash("Welcome %s (%s)." % (name, email), queue='info')
+        self.session.flash("Welcome %s (%s)." % (name, email), queue='success')
 
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
@@ -134,23 +134,22 @@ class Account(MyView):
         #response = request.response
         result = authomatic.login(WebObAdapter(self.request, response), "openid")
 
-        logger.debug('authomatic login result: %s', result)
+        #logger.debug('authomatic login result: %s', result)
 
+        # TODO: refactor handling of result and response
         if result:
             if result.error:
                 # Login procedure finished with an error.
-                #request.session.flash('Sorry, login failed: %s' % (result.error.message))
-                logger.error('openid login failed: %s', result.error.message)
-                #response.write(u'<h2>Login failed: {}</h2>'.format(result.error.message))
-                response.text = render('phoenix:templates/forbidden.pt',
-                                       {'message': result.error.message}, request=self.request)
+                self.session.flash('Sorry, login failed: %s', queue='error' % (result.error.message))
+                logger.warn('openid login failed: %s', result.error.message)
+                response.text = render('phoenix:templates/account/forbidden.pt', request=self.request)
             elif result.user:
                 # Hooray, we have the user!
                 logger.info("openid login successful for user %s", result.user.email)
-                logger.debug("user=%s, id=%s, email=%s, credentials=%s",
-                          result.user.name, result.user.id, result.user.email, result.user.credentials)
-                logger.debug("provider=%s", result.provider.name )
-                logger.debug("response headers=%s", response.headers.keys())
+                #logger.debug("user=%s, id=%s, email=%s, credentials=%s",
+                #          result.user.name, result.user.id, result.user.email, result.user.credentials)
+                #logger.debug("provider=%s", result.provider.name )
+                #logger.debug("response headers=%s", response.headers.keys())
                 #logger.debug("response cookie=%s", response.headers['Set-Cookie'])
                 self.login_success(email=result.user.email, openid=result.user.id, name=result.user.name)
                 response.text = render('phoenix:templates/account/openid_success.pt', {'result': result}, request=self.request)
