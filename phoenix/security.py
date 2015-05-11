@@ -44,8 +44,8 @@ from pyramid.security import (
 class Root():
     __acl__ = [
                 (Allow, Everyone, 'view'),
-                #(Allow, Authenticated, 'edit'),
-                (Allow, User, 'edit'),
+                (Allow, Authenticated, 'edit'),
+                (Allow, User, 'submit'),
                 (Allow, Admin, ALL_PERMISSIONS)
                ]
 

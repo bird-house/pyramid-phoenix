@@ -112,7 +112,7 @@ class WizardState(object):
         self.session['wizard'] = dict(state={}, chain=[self.initial_step])
         self.session.changed()
 
-@view_defaults(permission='edit', layout='default')
+@view_defaults(permission='submit', layout='default')
 class Wizard(MyView):
     def __init__(self, request, name, title, description=None):
         super(Wizard, self).__init__(request, name, title, description)

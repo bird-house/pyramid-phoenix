@@ -82,7 +82,7 @@ class Account(MyView):
         logger.debug('login success: email=%s', email)
         user = self.get_user(email)
         if user is None:
-            logger.warn("openid login: new user %s", result.user.email)
+            logger.warn("openid login: new user %s", email)
             user = add_user(self.request, email=email, group=Guest)
         if email in admin_users(self.request):
             user['group'] = Admin

@@ -21,7 +21,9 @@ def navbar(context, request):
         items.append( nav_item('Dashboard', request.route_path('dashboard', tab='jobs')) )
         items.append( nav_item('Processes', request.route_path('processes_overview')) )
         items.append( nav_item('My Jobs', request.route_path('myjobs_overview')) )
+    if has_permission('submit', request.context, request):
         items.append( nav_item('Wizard', request.route_path('wizard')) )
+    if has_permission('edit', request.context, request):
         items.append( nav_item('My Account', request.route_path('myaccount', tab='profile')) )
     if has_permission('admin', request.context, request):
         items.append( nav_item('Settings', request.route_path('settings')) )
