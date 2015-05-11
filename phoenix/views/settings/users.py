@@ -46,6 +46,7 @@ class Users(SettingsView):
 class UsersGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(UsersGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['group'] = self.group_td
         self.column_formats['last_login'] = self.last_login_td
         self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
@@ -53,8 +54,8 @@ class UsersGrid(MyGrid):
     def last_login_td(self, col_num, i, item):
         return self.render_time_ago_td(item.get('last_login'))
 
-    def activated_td(self, col_num, i, item):
-        return self.render_flag_td(item.get('activated'))
+    def group_td(self, col_num, i, item):
+        return self.render_label_td(item.get('group'))
 
     def action_td(self, col_num, i, item):
         buttongroup = []
