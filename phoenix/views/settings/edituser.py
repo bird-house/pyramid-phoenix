@@ -30,9 +30,10 @@ class EditUser(SettingsView):
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
             user = self.get_user(self.email)
-            for key in ['name', 'openid', 'organisation', 'notes', 'group']:
+            for key in ['name', 'organisation', 'notes', 'group']:
                 user[key] = appstruct.get(key)
-            self.userdb.update({'email':self.user_email()}, user)
+            logger.debug('update user: email=%s, %s', self.email, user)
+            self.db.users.update({'email':self.email}, user)
         except ValidationFailure, e:
             logger.exception('validation of user form failed')
             return dict(title=self.title, form = e.render())

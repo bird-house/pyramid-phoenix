@@ -21,12 +21,6 @@ class UserSchema(colander.MappingSchema):
         missing = colander.drop,
         widget = deform.widget.TextInputWidget(readonly=True),
         )
-    openid = colander.SchemaNode(
-        colander.String(),
-        title = "OpenID",
-        validator = colander.url,
-        missing = colander.drop,
-        )
     organisation = colander.SchemaNode(
         colander.String(),
         title = "Organisation",
