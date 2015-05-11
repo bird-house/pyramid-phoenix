@@ -33,7 +33,7 @@ def groupfinder(email, request):
     
     if email in admins or user.get('group') == Admin:
         return [Admin]
-    elif user.get('group') == User or user.get('activated'):
+    elif user.get('group') == User:
         return [User]
     else:
         return [Guest]

@@ -3,6 +3,7 @@ from pyramid.httpexceptions import HTTPFound
 
 from phoenix.views.settings import SettingsView
 from phoenix.grid import MyGrid
+from phoenix.security import Admin, User, Guest
 
 import logging
 logger = logging.getLogger(__name__)
@@ -55,7 +56,15 @@ class UsersGrid(MyGrid):
         return self.render_time_ago_td(item.get('last_login'))
 
     def group_td(self, col_num, i, item):
-        return self.render_label_td(item.get('group'))
+        group = item.get('group')
+        label = "???"
+        if group == Admin:
+            label = "Admin"
+        elif group == User:
+            label = "User"
+        elif group == Guest:
+            label = "Guest"
+        return self.render_label_td(label)
 
     def action_td(self, col_num, i, item):
         buttongroup = []

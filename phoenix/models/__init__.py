@@ -85,7 +85,7 @@ def update_job(request, job):
         logger.exception("could not update job %s", job.get('identifier'))
 
 def user_stats(request):
-    num_unregistered = request.db.users.find({"activated": False}).count()
+    num_unregistered = request.db.users.find({"group": Guest}).count()
     
     d = datetime.now() - timedelta(hours=3)
     num_logins_3h = request.db.users.find({"last_login": {"$gt": d}}).count()
