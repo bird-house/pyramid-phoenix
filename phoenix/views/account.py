@@ -21,6 +21,11 @@ authomatic = Authomatic(config=config.config,
                         report_errors=True,
                         logging_level=logging.DEBUG)
 
+@view_config(route_name='account_register', renderer='phoenix:templates/account/register.pt',
+             permission='view', layout="frontpage")
+def register(request):
+    return dict()
+
 @view_defaults(permission='view', layout='default')
 class Account(MyView):
     def __init__(self, request):
@@ -105,10 +110,6 @@ class Account(MyView):
     def logout(self):
         headers = forget(self.request)
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
-
-    @view_config(route_name='account_register', renderer='phoenix:templates/account/register.pt')
-    def register(self):
-        return dict(email=None)
 
     @view_config(route_name='account_openid')
     def openid(self):
