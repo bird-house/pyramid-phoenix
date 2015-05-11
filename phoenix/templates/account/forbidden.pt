@@ -3,11 +3,8 @@
   <div metal:fill-slot="content">
     
     <div class="intro-block">
-      <a class="btn btn-mini btn-success" href="${request.route_path('account_login', protocol='esgf')}">Sign in</a>
-
       <h1>403 Forbidden</h1>
-      Access was denied to this resource.<br/>
-
+      <p class="lead">Access was denied to this resource.<p/>
     </div>
   </div>
 

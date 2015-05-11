@@ -11,7 +11,7 @@ from owslib.wps import WebProcessingService
 import logging
 logger = logging.getLogger(__name__)
 
-@view_defaults(permission='edit', layout='default')
+@view_defaults(permission='submit', layout='default')
 class ExecuteProcess(Processes):
     def __init__(self, request):
         url = request.params.get('url')
