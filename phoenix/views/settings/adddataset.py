@@ -47,7 +47,7 @@ class AddDataset(SettingsView):
             return dict(title=self.title, form = e.render())
         except Exception, e:
             logger.exception('could not harvest wps.')
-            self.session.flash('Could not add Dataset %s. %s' % (appstruct.get('source'), e), queue="error")
+            self.session.flash('Could not add Dataset %s. %s' % (appstruct.get('source'), e), queue="danger")
         return HTTPFound(location=self.request.route_path('settings_catalog'))
 
     @view_config(route_name="settings_add_dataset", renderer='phoenix:templates/settings/add_dataset.pt')

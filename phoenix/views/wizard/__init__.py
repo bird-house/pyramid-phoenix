@@ -236,7 +236,7 @@ class Wizard(MyView):
 
     def flash_error(self, message):
         logger.error(message)
-        return self.flash(message, queue='error')
+        return self.flash(message, queue='danger')
 
     def custom_view(self):
         return {}

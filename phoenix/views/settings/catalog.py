@@ -29,7 +29,7 @@ class Catalog(SettingsView):
             self.session.flash("%d Records deleted." % count, queue='info')
         except Exception,e:
             logger.exception('could not remove datasets.')
-            self.session.flash('Ooops ... self destruction out of order. %s' % e, queue="error")
+            self.session.flash('Ooops ... self destruction out of order. %s' % e, queue="danger")
         return HTTPFound(location=self.request.route_url(self.name))
  
     @view_config(route_name='remove_record')
@@ -40,7 +40,7 @@ class Catalog(SettingsView):
             self.session.flash('Removed record %s.' % recordid, queue="info")
         except Exception,e:
             logger.exception("Could not remove record")
-            self.session.flash('Could not remove record. %s' % e, queue="error")
+            self.session.flash('Could not remove record. %s' % e, queue="danger")
         return HTTPFound(location=self.request.route_url(self.name))
 
     def get_csw_items(self):

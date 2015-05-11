@@ -88,7 +88,7 @@ class MyAccoutProfile(MyAccountPanel):
             return dict(form=e.render())
         except Exception, e:
             logger.exception('update user failed.')
-            self.request.session.flash('Update of your accound failed. %s' % (e), queue='error')
+            self.request.session.flash('Update of your accound failed. %s' % (e), queue='danger')
         else:
             self.request.session.flash("Your account was updated.", queue='success')
 

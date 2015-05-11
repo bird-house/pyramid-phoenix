@@ -42,7 +42,7 @@ class AddService(SettingsView):
             return dict(title=self.title, form = e.render())
         except Exception, e:
             logger.exception('could not harvest wps.')
-            self.session.flash('Could not add WPS %s. %s' % (url, e), queue="error")
+            self.session.flash('Could not add WPS %s. %s' % (url, e), queue="danger")
         return HTTPFound(location=self.request.route_url('settings_catalog'))
 
     @view_config(route_name="settings_add_service", renderer='phoenix:templates/settings/add_service.pt')

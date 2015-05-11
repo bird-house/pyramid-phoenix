@@ -39,7 +39,7 @@ class EditUser(SettingsView):
             return dict(title=self.title, form = e.render())
         except Exception, e:
             logger.exception('edit user failed')
-            self.session.flash('Edit user failed. %s' % (e), queue="error")
+            self.session.flash('Edit user failed. %s' % (e), queue="danger")
         return HTTPFound(location=self.request.route_path('settings_users'))
 
     def appstruct(self):

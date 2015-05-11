@@ -65,7 +65,7 @@ class ExecuteProcess(Processes):
                 keywords = appstruct.get('keywords', ''))
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
-            self.session.flash("There are errors on this page.", queue='error')
+            self.session.flash("There are errors on this page.", queue='danger')
             return dict(form = e.render())
         return HTTPFound(location=self.request.route_url('myjobs_overview'))
 

@@ -99,6 +99,8 @@ class Account(MyView):
         user['name'] = name
         self.userdb.update({'email':email}, user)
         self.session.flash("Welcome %s (%s)." % (name, email), queue='success')
+        if user.get('group') == Guest:
+            self.session.flash("You are logged in as guest. You are not allowed to submit any process.", queue='danger')
 
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
@@ -137,7 +139,7 @@ class Account(MyView):
         if result:
             if result.error:
                 # Login procedure finished with an error.
-                self.session.flash('Sorry, login failed: %s', queue='error' % (result.error.message))
+                self.session.flash('Sorry, login failed: %s', queue='danger' % (result.error.message))
                 logger.warn('openid login failed: %s', result.error.message)
                 response.text = render('phoenix:templates/account/forbidden.pt', request=self.request)
             elif result.user:

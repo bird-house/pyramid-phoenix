@@ -36,7 +36,7 @@ class MyJobsOutputs(object):
             return dict(form=e.render())
         except Exception,e:
             logger.exception("publication failed.")
-            self.session.flash("Publication failed. %s" % e, queue='error')
+            self.session.flash("Publication failed. %s" % e, queue='danger')
         else:
             self.session.flash("Publication was successful", queue='success')
         return HTTPFound(location=self.request.route_path('myjobs_details', jobid=jobid, tab='outputs'))
@@ -67,7 +67,7 @@ class MyJobsOutputs(object):
             return dict(form=e.render())
         except Exception,e:
             logger.exception("upload failed.")
-            self.session.flash("Upload failed. %s" % e, queue='error')
+            self.session.flash("Upload failed. %s" % e, queue='danger')
         else:
             self.session.flash("Swift upload added to Jobs.", queue='info')
         return HTTPFound(location=self.request.route_path('myjobs_details', jobid=jobid, tab='outputs'))
