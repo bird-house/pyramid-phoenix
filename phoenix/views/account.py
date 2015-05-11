@@ -60,21 +60,16 @@ class Account(MyView):
             logger.debug('openid route = %s', self.request.route_path('account_openid', _query=appstruct.items()))
             return HTTPFound(location=self.request.route_path('account_openid', _query=appstruct.items()))
 
-    def notify_login_failure(self, user_email):
-        """Notifies about user login failure via email.
+    def send_notification(self, email, subject, message):
+        """Sends email notification to admins.
         
         Sends email with the pyramid_mailer module.
         For configuration look at documentation http://pythonhosted.org//pyramid_mailer/
         """
-        logger.debug("notify login failure for %s", user_email)
-        
         from pyramid_mailer import get_mailer
         mailer = get_mailer(self.request)
 
         sender = "noreply@%s" % (self.request.server_name)
-        subject = "User %s failed to login on %s" % (user_email, self.request.server_name)
-        body = """User %s is not registered at Phoenix server on %s:%s.
-        """ % (user_email, self.request.server_name, self.request.server_port)
 
         from phoenix.security import admin_users
         recipients = admin_users(self.request)
@@ -83,8 +78,7 @@ class Account(MyView):
         message = Message(subject=subject,
                           sender=sender,
                           recipients=recipients,
-                          body=body)
-        #mailer.send(message)
+                          body=message)
         mailer.send_immediately(message, fail_silently=True)
 
     def login_success(self, email, openid=None, name="Unknown"):
@@ -94,6 +88,9 @@ class Account(MyView):
         if user is None:
             logger.warn("openid login: new user %s", email)
             user = add_user(self.request, email=email, group=Guest)
+            subject = 'New user %s logged in on %s' % (email, self.request.server_name)
+            message = 'Please check the activation of the user %s on the Phoenix host %s' % (email, self.request.server_name)
+            self.send_notification(email, subject, message)
         if email in admin_users(self.request):
             user['group'] = Admin
         user['last_login'] = datetime.datetime.now()

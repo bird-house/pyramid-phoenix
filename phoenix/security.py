@@ -18,7 +18,7 @@ ESGF_Provider = dict(
 
 def admin_users(request):
     admins = set()
-    for admin in request.db.users.find({'admin':Admin}):
+    for admin in request.db.users.find({'group':Admin}):
         admins.add(admin.get('email'))
     value = request.registry.settings.get('phoenix.admin_users')
     if value is not None:
