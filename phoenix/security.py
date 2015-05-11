@@ -17,11 +17,15 @@ ESGF_Provider = dict(
     )
 
 def admin_users(request):
+    admins = set()
+    for admin in request.db.users.find({'admin':Admin}):
+        admins.add(admin.get('email'))
     value = request.registry.settings.get('phoenix.admin_users')
     if value is not None:
         import re
-        return map(str.strip, re.split("\\s+", value.strip()))
-    return []
+        for email in map(str.strip, re.split("\\s+", value.strip())):
+            admins.add(email)
+    return admins
 
 def groupfinder(email, request):
     admins = admin_users(request)
