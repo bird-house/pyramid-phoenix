@@ -12,9 +12,9 @@ logger = logging.getLogger(__name__)
 # ------
 @panel_config(name='navbar', renderer='phoenix:templates/panels/navbar.pt')
 def navbar(context, request):
-    def nav_item(name, url):
+    def nav_item(name, url, icon=None):
         active = request.current_route_url() == url
-        return dict(name=name, url=url, active=active)
+        return dict(name=name, url=url, active=active, icon=icon)
 
     items = []
     if has_permission('edit', request.context, request):
@@ -25,14 +25,17 @@ def navbar(context, request):
     if has_permission('edit', request.context, request):
         items.append( nav_item('My Account', request.route_path('myaccount', tab='profile')) )
     items.append( nav_item('Help', request.route_url('readthedocs')) )
-    if has_permission('edit', request.context, request):
-        items.append( nav_item('Dashboard', request.route_path('dashboard', tab='jobs')) )
-    if has_permission('admin', request.context, request):
-        items.append( nav_item('Settings', request.route_path('settings')) )
+    
 
+    subitems = []
+    if has_permission('edit', request.context, request):
+        subitems.append( nav_item('Dashboard', request.route_path('dashboard', tab='jobs'), icon='glyphicon-dashboard') )
+    if has_permission('admin', request.context, request):
+        subitems.append( nav_item('Settings', request.route_path('settings'), icon="glyphicon-cog") )
+    
     login = request.current_route_url() == request.route_url('account_login', protocol='esgf')
 
-    return dict(title='Phoenix', items=items, username=authenticated_userid(request), login=login)
+    return dict(title='Phoenix', items=items, subitems=subitems, username=authenticated_userid(request), login=login)
 
 @panel_config(name='breadcrumbs', renderer='phoenix:templates/panels/breadcrumbs.pt')
 def breadcrumbs(context, request):

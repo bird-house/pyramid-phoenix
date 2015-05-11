@@ -10,16 +10,23 @@
       <a class="navbar-brand" href="/">${title}</a>
     </div>
     <div class="collapse navbar-collapse">
-      <!-- links -->
+      <!-- nav with text -->
       <ul class="nav navbar-nav">
         <div tal:repeat="item items" class="nav navbar-nav">
           <li class="${'active' if item['active'] else ''}">
-            <a href="${item['url']}">${item['name']}</a>
+            <a href="${item.url}">${item.name}</a>
           <li>
         </div>
       </ul>
-      <!-- sign-in -->
+
+      <!-- nav with icons -->
       <ul class="nav navbar-nav navbar-right">
+        <div tal:repeat="item subitems" class="nav navbar-nav">
+          <li class="${'active' if item['active'] else ''}">
+            <a class="navbar-link" href="${item.url}" data-toggle="tooltip" title="${item.name}"><i class="glyphicon ${item.icon}"></i> </a>
+          </li>
+        </div>
+         <!-- sign-in -->
         <li class="${'active' if login else ''}">
           ${request.login_button}
         </li>
