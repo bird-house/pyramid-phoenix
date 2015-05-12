@@ -26,7 +26,7 @@
            <p>Quickstart guide to getting startet with using Phoenix.</p>
          </div>
          <div class="col-sm-6 col-md-3 text-center">
-           <a class="btn btn-success btn-lg" href="${request.route_url('processes_overview')}">
+           <a class="btn btn-success btn-lg" href="${request.route_url('processes')}">
              <span class="glyphicon glyphicon-fire"></span> Processes
            </a>
            <p>Choose a process form a <b>Web Processing Service</b> and start it.</p>
