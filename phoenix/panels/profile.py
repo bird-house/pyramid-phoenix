@@ -44,7 +44,7 @@ class AccountPanel(ProfilePanel):
         form = self.generate_form()
         if 'update' in self.request.POST:
             self.process_form(form)
-        return dict(title="Profile", form=form.render( self.appstruct() ))
+        return dict(title="Account settings", form=form.render( self.appstruct() ))
 
 class ESGFPanel(ProfilePanel):
     def generate_form(self):

@@ -11,8 +11,7 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='edit', layout='default') 
 class Profile(MyView):
     def __init__(self, request):
-        super(Profile, self).__init__(request, name='profile', title='Profile')
-        self.description = "Update your profile details."
+        super(Profile, self).__init__(request, name='profile', title='')
 
     @view_config(route_name='profile', renderer='phoenix:templates/profile.pt')
     def view(self):

@@ -82,7 +82,7 @@ def main(global_config, **settings):
     config.add_route('remove_myjobs', '/myjobs/remove_all')
     config.add_route('remove_myjob', '/myjobs/{jobid}/remove')
     
-    # my account
+    # user profile
     config.add_route('profile', '/profile/{tab}')
 
     # settings
