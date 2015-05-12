@@ -24,9 +24,7 @@ class Overview(Processes):
                 items,
                 ['Web Processing Service', ''],
             )
-        return dict(
-            grid=grid,
-            items=items)
+        return dict(grid=grid)
 
 class OverviewGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):

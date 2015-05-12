@@ -15,7 +15,7 @@ class ProcessList(Processes):
     def __init__(self, request):
         self.wps = WebProcessingService(url=request.params.get('url'))
         super(ProcessList, self).__init__(request, name='processes_list', title='')
-
+        
     def breadcrumbs(self):
         breadcrumbs = super(ProcessList, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.wps.identification.title))
@@ -35,11 +35,9 @@ class ProcessList(Processes):
         return dict(
             url=self.wps.url,
             description=self.wps.identification.abstract,
-            version=self.wps.version,
             provider_name=self.wps.provider.name,
             provider_site=self.wps.provider.url,
-            grid=grid,
-            items=items)
+            grid=grid)
 
 class ProcessGrid(MyGrid):
     def __init__(self, request, wps, *args, **kwargs):
