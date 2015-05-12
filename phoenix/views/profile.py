@@ -14,7 +14,7 @@ class MyAccount(MyView):
         super(MyAccount, self).__init__(request, name='myaccount', title='My Account')
         self.description = "Update your profile details."
 
-    @view_config(route_name='myaccount', renderer='phoenix:templates/myaccount.pt')
+    @view_config(route_name='myaccount', renderer='phoenix:templates/profile.pt')
     def view(self):
         tab = self.request.matchdict.get('tab', 'profile')
     
