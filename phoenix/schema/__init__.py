@@ -134,23 +134,6 @@ class SwiftSchema(colander.MappingSchema):
         widget = deform.widget.TextInputWidget(template='readonly/textinput'),
         )
 
-class ChooseWPSSchema(colander.MappingSchema):
-    @colander.deferred
-    def deferred_wps_list_widget(node, kw):
-        wps_list = kw.get('wps_list', [])
-        choices = []
-        for wps in wps_list:
-            title = "%s (%s) [%s]" % (wps.get('title'), wps.get('abstract'), wps.get('source'))
-            choices.append((wps.get('source'), title))
-        return deform.widget.RadioChoiceWidget(values = choices)
-    
-    url = colander.SchemaNode(
-        colander.String(),
-        title = 'WPS service',
-        description = "Select WPS",
-        widget = deferred_wps_list_widget
-        )
-
 def esgfsearch_validator(node, value):
     import json
     search = json.loads(value)
