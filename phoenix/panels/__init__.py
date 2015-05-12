@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 @panel_config(name='navbar', renderer='phoenix:templates/panels/navbar.pt')
 def navbar(context, request):
     def nav_item(name, url, icon=None):
-        active = request.current_route_url() == url
+        active = request.current_route_path() == url
         return dict(name=name, url=url, active=active, icon=icon)
 
     items = []
