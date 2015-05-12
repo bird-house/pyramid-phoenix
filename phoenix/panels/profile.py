@@ -5,7 +5,7 @@ from phoenix import models
 import logging
 logger = logging.getLogger(__name__)
 
-class MyAccountPanel(object):
+class ProfilePanel(object):
     def __init__(self, context, request):
         self.context = context
         self.request = request
@@ -16,7 +16,7 @@ class MyAccountPanel(object):
             appstruct = {}
         return appstruct
 
-class MyAccoutProfile(MyAccountPanel):
+class AccountPanel(ProfilePanel):
     def generate_form(self):
         from phoenix.schema import UserProfileSchema
         form = Form(schema=UserProfileSchema(), buttons=('update',), formid='deform')
@@ -46,7 +46,7 @@ class MyAccoutProfile(MyAccountPanel):
             self.process_form(form)
         return dict(title="Profile", form=form.render( self.appstruct() ))
 
-class MyAccountESGF(MyAccountPanel):
+class ESGFPanel(ProfilePanel):
     def generate_form(self):
         from phoenix.schema import ESGFCredentialsSchema
         form = Form(schema=ESGFCredentialsSchema(), formid='deform')
@@ -57,7 +57,7 @@ class MyAccountESGF(MyAccountPanel):
         form = self.generate_form()
         return dict(title="ESGF access token", form=form.render( self.appstruct() ))
 
-class MyAccountSwift(MyAccountPanel):
+class SwiftPanel(ProfilePanel):
     def generate_form(self):
         from phoenix.schema import SwiftSchema
         form = Form(schema=SwiftSchema(), formid='deform')
