@@ -16,10 +16,10 @@ class Profile(MyView):
 
     @view_config(route_name='profile', renderer='phoenix:templates/profile.pt')
     def view(self):
-        tab = self.request.matchdict.get('tab', 'profile')
+        tab = self.request.matchdict.get('tab', 'account')
     
         lm = self.request.layout_manager
-        if tab == 'profile':
+        if tab == 'account':
             lm.layout.add_heading('profile_account')
         elif tab == 'esgf':
             lm.layout.add_heading('profile_esgf')
