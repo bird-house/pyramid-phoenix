@@ -12,6 +12,11 @@ class ComplexInputs(Wizard):
         self.process = self.wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
         self.description = "Process %s" % self.process.title
 
+    def breadcrumbs(self):
+        breadcrumbs = super(ComplexInputs, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
+
     def schema(self):
         from phoenix.schema import ChooseInputParamterSchema
         return ChooseInputParamterSchema().bind(process=self.process)

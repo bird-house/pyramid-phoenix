@@ -14,6 +14,11 @@ class Done(Wizard):
         self.wps = WebProcessingService(self.wizard_state.get('wizard_wps')['url'])
         self.csw = self.request.csw
 
+    def breadcrumbs(self):
+        breadcrumbs = super(Done, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
+
     def schema(self):
         from phoenix.schema import DoneSchema
         return DoneSchema()

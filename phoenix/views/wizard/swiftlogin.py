@@ -12,6 +12,11 @@ class SwiftLogin(Wizard):
             name='wizard_swift_login',
             title="Swift Cloud Login")
 
+    def breadcrumbs(self):
+        breadcrumbs = super(SwiftLogin, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
+
     def schema(self):
         from phoenix.schema import SwiftLoginSchema
         return SwiftLoginSchema().bind()

@@ -21,6 +21,11 @@ class ChooseSource(Wizard):
         super(ChooseSource, self).__init__(
             request, name='wizard_source', title="Choose Source")
         self.description = self.wizard_state.get('wizard_complex_inputs')['identifier']
+
+    def breadcrumbs(self):
+        breadcrumbs = super(ChooseSource, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
         
     def schema(self):
         return ChooseSourceSchema()

@@ -33,6 +33,11 @@ class SwiftBrowser(Wizard):
         self.storage_url = user.get('swift_storage_url')
         self.auth_token = user.get('swift_auth_token')
 
+    def breadcrumbs(self):
+        breadcrumbs = super(SwiftBrowser, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
+
     def schema(self):
         return SwiftBrowserSchema()
 

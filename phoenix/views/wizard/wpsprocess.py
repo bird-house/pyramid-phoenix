@@ -12,6 +12,11 @@ class ChooseWPSProcess(Wizard):
         self.wps = WebProcessingService(self.wizard_state.get('wizard_wps')['url'])
         self.description = self.wps.identification.title
 
+    def breadcrumbs(self):
+        breadcrumbs = super(ChooseWPSProcess, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
+
     def schema(self):
         from phoenix.schema import SelectProcessSchema
         return SelectProcessSchema().bind(processes = self.wps.processes)

@@ -9,6 +9,11 @@ class ESGFSearch(Wizard):
     def __init__(self, request):
         super(ESGFSearch, self).__init__(request, name='wizard_esgf_search', title="ESGF Search")
 
+    def breadcrumbs(self):
+        breadcrumbs = super(ESGFSearch, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
+
     def schema(self):
         from phoenix.schema import ESGFSearchSchema
         return ESGFSearchSchema()

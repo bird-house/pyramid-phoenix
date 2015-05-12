@@ -7,6 +7,11 @@ class ChooseWPS(Wizard):
         super(ChooseWPS, self).__init__(request, name='wizard_wps', title='WPS')
         self.description = "Choose Web Processing Service"
 
+    def breadcrumbs(self):
+        breadcrumbs = super(ChooseWPS, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
+
     def schema(self):
         from phoenix.schema import ChooseWPSSchema
         from phoenix import models
