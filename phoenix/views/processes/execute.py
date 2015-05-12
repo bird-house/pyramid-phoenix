@@ -22,14 +22,13 @@ class ExecuteProcess(Processes):
         logger.debug("execute: url=%s, identifier=%s", url, identifier)
         # TODO: need to fix owslib to handle special identifiers
         self.process = self.wps.describeprocess(identifier)
-        super(ExecuteProcess, self).__init__(request, name='processes_execute', title=self.process.title)
-        self.description = "Enter inputs and execute process."
+        super(ExecuteProcess, self).__init__(request, name='processes_execute', title='')
 
     def breadcrumbs(self):
         breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
         route_path = self.request.route_path('processes_list', _query=[('url', self.wps.url)] )
         breadcrumbs.append(dict(route_path=route_path, title=self.wps.identification.title))
-        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.process.title))
         return breadcrumbs
 
     def appstruct(self):

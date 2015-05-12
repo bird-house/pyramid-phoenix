@@ -13,7 +13,6 @@ class Overview(Processes):
 
     def breadcrumbs(self):
         breadcrumbs = super(Overview, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
     @view_config(route_name='processes', renderer='phoenix:templates/processes/overview.pt')

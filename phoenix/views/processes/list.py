@@ -14,14 +14,11 @@ logger = logging.getLogger(__name__)
 class ProcessList(Processes):
     def __init__(self, request):
         self.wps = WebProcessingService(url=request.params.get('url'))
-        title = self.wps.identification.title
-        super(ProcessList, self).__init__(request, name='processes_list',
-                                          title=title,
-                                          description="Choose a process to execute.")
+        super(ProcessList, self).__init__(request, name='processes_list', title='')
 
     def breadcrumbs(self):
         breadcrumbs = super(ProcessList, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.wps.identification.title))
         return breadcrumbs
 
     @view_config(route_name='processes_list', renderer='phoenix:templates/processes/list.pt')
