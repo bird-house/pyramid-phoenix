@@ -1,3 +1,5 @@
+import os
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -47,6 +49,12 @@ def time_ago_in_words(from_time):
         time_ago = '???'
     finally:
         return time_ago
+
+def root_path(path):
+    try:
+        return path.split(os.sep, 2)[1]
+    except:
+        return None
     
     
 
