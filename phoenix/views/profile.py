@@ -9,12 +9,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 @view_defaults(permission='edit', layout='default') 
-class MyAccount(MyView):
+class Profile(MyView):
     def __init__(self, request):
-        super(MyAccount, self).__init__(request, name='myaccount', title='My Account')
+        super(Profile, self).__init__(request, name='profile', title='Profile')
         self.description = "Update your profile details."
 
-    @view_config(route_name='myaccount', renderer='phoenix:templates/profile.pt')
+    @view_config(route_name='profile', renderer='phoenix:templates/profile.pt')
     def view(self):
         tab = self.request.matchdict.get('tab', 'profile')
     
