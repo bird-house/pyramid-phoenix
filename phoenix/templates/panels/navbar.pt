@@ -14,16 +14,23 @@
       <ul class="nav navbar-nav">
         <div tal:repeat="item items" class="nav navbar-nav">
           <li class="${'active' if item['active'] else ''}">
-            <a href="${item.url}">${item.name}</a>
+            <a class="navbar-link" href="${item.url}">${item.name}</a>
           <li>
         </div>
+      </ul>
+      
+      <!-- static links -->
+      <ul class="nav navbar-nav">
+        <li>
+          <a class="navbar-link" href="${request.route_url('readthedocs', part='index')}" target="_">Help</a>
+        </li>
       </ul>
 
       <!-- nav with icons -->
       <ul class="nav navbar-nav navbar-right">
         <div tal:repeat="item subitems" class="nav navbar-nav">
           <li class="${'active' if item['active'] else ''}">
-            <a class="navbar-link" href="${item.url}" data-toggle="tooltip" title="${item.name}">
+            <a class="navbar-link btn-lg" href="${item.url}" data-toggle="tooltip" title="${item.name}">
               <span class="glyphicon ${item.icon}"></span> 
             </a>
           </li>
