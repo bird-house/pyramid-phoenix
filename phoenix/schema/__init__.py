@@ -167,25 +167,6 @@ class SelectProcessSchema(colander.MappingSchema):
         title = "WPS Process",
         widget = deferred_choose_process_widget)
 
-@colander.deferred
-def deferred_choose_input_parameter_widget(node, kw):
-    process = kw.get('process', [])
-
-    choices = []
-    for dataInput in process.dataInputs:
-        if dataInput.dataType == 'ComplexData':
-            title = dataInput.title
-            title += " [%s]" % (', '.join([value.mimeType for value in dataInput.supportedValues]))
-            title += " (%d-%d)" % (dataInput.minOccurs, dataInput.maxOccurs)
-            choices.append( (dataInput.identifier, title) )
-    return deform.widget.RadioChoiceWidget(values = choices)
-
-class ChooseInputParamterSchema(colander.MappingSchema):
-    identifier = colander.SchemaNode(
-        colander.String(),
-        title = "Input Parameter",
-        widget = deferred_choose_input_parameter_widget)
-
 def esgfsearch_validator(node, value):
     import json
     search = json.loads(value)

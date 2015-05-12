@@ -1,6 +1,26 @@
 from pyramid.view import view_config
+import colander
+import deform
 
 from phoenix.views.wizard import Wizard
+
+@colander.deferred
+def deferred_choose_input_parameter_widget(node, kw):
+    process = kw.get('process', [])
+
+    choices = []
+    for dataInput in process.dataInputs:
+        if dataInput.dataType == 'ComplexData':
+            title = dataInput.title
+            title += " [%s]" % (', '.join([value.mimeType for value in dataInput.supportedValues]))
+            choices.append( (dataInput.identifier, title) )
+    return deform.widget.RadioChoiceWidget(values = choices)
+
+class ChooseInputParamterSchema(colander.MappingSchema):
+    identifier = colander.SchemaNode(
+        colander.String(),
+        title = "Input Parameter",
+        widget = deferred_choose_input_parameter_widget)
 
 class ComplexInputs(Wizard):
     def __init__(self, request):
@@ -18,7 +38,6 @@ class ComplexInputs(Wizard):
         return breadcrumbs
 
     def schema(self):
-        from phoenix.schema import ChooseInputParamterSchema
         return ChooseInputParamterSchema().bind(process=self.process)
 
     def success(self, appstruct):

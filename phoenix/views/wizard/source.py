@@ -9,7 +9,7 @@ class ChooseSourceSchema(colander.MappingSchema):
     choices = [
         # TODO: enable csw again
         #('wizard_csw', "CSW Catalog Search"),
-        ('wizard_esgf_search', "ESGF Files"),
+        ('wizard_esgf_search', "ESGF"),
         ('wizard_swift_login', "Swift Cloud")
         ]
     source = colander.SchemaNode(
