@@ -23,7 +23,9 @@
       <ul class="nav navbar-nav navbar-right">
         <div tal:repeat="item subitems" class="nav navbar-nav">
           <li class="${'active' if item['active'] else ''}">
-            <a class="navbar-link" href="${item.url}" data-toggle="tooltip" title="${item.name}"><i class="glyphicon ${item.icon}"></i> </a>
+            <a class="navbar-link" href="${item.url}" data-toggle="tooltip" title="${item.name}">
+              <span class="glyphicon ${item.icon}"></span> 
+            </a>
           </li>
         </div>
          <!-- sign-in -->

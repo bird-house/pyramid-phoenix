@@ -22,13 +22,11 @@ def navbar(context, request):
     if has_permission('submit', request.context, request):
         items.append( nav_item('My Jobs', request.route_path('myjobs_overview')) )
         items.append( nav_item('Wizard', request.route_path('wizard')) )
-    if has_permission('edit', request.context, request):
-        items.append( nav_item('My Account', request.route_path('myaccount', tab='profile')) )
     items.append( nav_item('Help', request.route_url('readthedocs')) )
     
-
     subitems = []
     if has_permission('edit', request.context, request):
+        subitems.append( nav_item('Profile', request.route_path('myaccount', tab='profile'), icon="glyphicon-user") )
         subitems.append( nav_item('Dashboard', request.route_path('dashboard', tab='jobs'), icon='glyphicon-dashboard') )
     if has_permission('admin', request.context, request):
         subitems.append( nav_item('Settings', request.route_path('settings'), icon="glyphicon-cog") )
