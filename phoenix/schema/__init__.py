@@ -151,22 +151,6 @@ class ChooseWPSSchema(colander.MappingSchema):
         widget = deferred_wps_list_widget
         )
 
-@colander.deferred
-def deferred_choose_process_widget(node, kw):
-    processes = kw.get('processes', [])
-
-    choices = []
-    for process in processes:
-        title = "%s [%s]" % (process.title, process.identifier)
-        choices.append( (process.identifier, title) )
-    return deform.widget.RadioChoiceWidget(values = choices)
-
-class SelectProcessSchema(colander.MappingSchema):
-    identifier = colander.SchemaNode(
-        colander.String(),
-        title = "WPS Process",
-        widget = deferred_choose_process_widget)
-
 def esgfsearch_validator(node, value):
     import json
     search = json.loads(value)

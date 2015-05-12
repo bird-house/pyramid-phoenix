@@ -1,6 +1,23 @@
 from pyramid.view import view_config
+import colander
+import deform
 
 from phoenix.views.wizard import Wizard
+
+@colander.deferred
+def deferred_choose_process_widget(node, kw):
+    processes = kw.get('processes', [])
+
+    choices = []
+    for process in processes:
+        choices.append( (process.identifier, process.title) )
+    return deform.widget.RadioChoiceWidget(values = choices)
+
+class SelectProcessSchema(colander.MappingSchema):
+    identifier = colander.SchemaNode(
+        colander.String(),
+        title = "WPS Process",
+        widget = deferred_choose_process_widget)
 
 class ChooseWPSProcess(Wizard):
     def __init__(self, request):
@@ -18,7 +35,6 @@ class ChooseWPSProcess(Wizard):
         return breadcrumbs
 
     def schema(self):
-        from phoenix.schema import SelectProcessSchema
         return SelectProcessSchema().bind(processes = self.wps.processes)
 
     def next_success(self, appstruct):
