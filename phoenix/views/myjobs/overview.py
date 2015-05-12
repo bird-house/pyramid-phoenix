@@ -6,7 +6,6 @@ from phoenix.views.myjobs import MyJobs
 import logging
 logger = logging.getLogger(__name__)
 
-@view_defaults(permission='edit', layout='default')
 class Overview(MyJobs):
     def __init__(self, request):
         super(Overview, self).__init__(request, name='myjobs_overview', title='Overview')

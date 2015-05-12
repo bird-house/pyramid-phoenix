@@ -7,7 +7,6 @@ from phoenix import models
 import logging
 logger = logging.getLogger(__name__)
 
-@view_defaults(permission='edit', layout='default')
 class Overview(Processes):
     def __init__(self, request):
         super(Processes, self).__init__(request, name='processes_overview', title='Overview')

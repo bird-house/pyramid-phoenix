@@ -8,7 +8,6 @@ from phoenix.views.myjobs import MyJobs
 import logging
 logger = logging.getLogger(__name__)
 
-@view_defaults(permission='edit', layout='default')
 class JobDetails(MyJobs):
     def __init__(self, request):
         super(JobDetails, self).__init__(

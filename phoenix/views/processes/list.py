@@ -11,7 +11,6 @@ import deform
 import logging
 logger = logging.getLogger(__name__)
 
-@view_defaults(permission='edit', layout='default')
 class ProcessList(Processes):
     def __init__(self, request):
         self.wps = WebProcessingService(url=request.params.get('url'))
