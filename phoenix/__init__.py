@@ -76,7 +76,7 @@ def main(global_config, **settings):
     config.add_route('processes_execute', '/processes/execute')
 
     # myjobs
-    config.add_route('myjobs_overview', '/myjobs/overview')
+    config.add_route('myjobs', '/myjobs')
     config.add_route('myjobs_details', '/myjobs/details/{tab}/{jobid}')
     config.add_route('update_myjobs', '/myjobs/update.json')
     config.add_route('remove_myjobs', '/myjobs/remove_all')

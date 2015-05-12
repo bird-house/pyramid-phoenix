@@ -15,7 +15,7 @@ def navbar(context, request):
     if has_permission('edit', request.context, request):
         items.append( nav_item('Processes', request.route_path('processes')) )
     if has_permission('submit', request.context, request):
-        items.append( nav_item('My Jobs', request.route_path('myjobs_overview')) )
+        items.append( nav_item('My Jobs', request.route_path('myjobs')) )
         items.append( nav_item('Wizard', request.route_path('wizard')) )
     
     subitems = []

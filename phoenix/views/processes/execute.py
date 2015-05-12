@@ -66,7 +66,7 @@ class ExecuteProcess(Processes):
             logger.exception('validation of exectue view failed.')
             self.session.flash("There are errors on this page.", queue='danger')
             return dict(form = e.render())
-        return HTTPFound(location=self.request.route_url('myjobs_overview'))
+        return HTTPFound(location=self.request.route_url('myjobs'))
 
     @view_config(route_name='processes_execute', renderer='phoenix:templates/processes/execute.pt')
     def view(self):

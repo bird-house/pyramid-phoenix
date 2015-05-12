@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class Overview(MyJobs):
     def __init__(self, request):
-        super(Overview, self).__init__(request, name='myjobs_overview', title='Overview')
+        super(Overview, self).__init__(request, name='myjobs', title='Overview')
         self.jobsdb = self.request.db.jobs
 
     def breadcrumbs(self):
@@ -39,7 +39,7 @@ class Overview(MyJobs):
             self.session.flash("Job %s deleted." % job['title'], queue='info')
         return HTTPFound(location=self.request.route_path(self.name))
 
-    @view_config(route_name='myjobs_overview', renderer='phoenix:templates/myjobs/overview.pt')
+    @view_config(route_name='myjobs', renderer='phoenix:templates/myjobs/overview.pt')
     def view(self):
         self.update_jobs()
         items = list(self.jobsdb.find({'email': self.user_email()}).sort('created', -1))
