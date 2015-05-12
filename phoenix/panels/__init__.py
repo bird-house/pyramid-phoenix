@@ -1,15 +1,9 @@
 from pyramid_layout.panel import panel_config
 from pyramid.security import authenticated_userid, has_permission
-from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
-
-from deform import Form, ValidationFailure
-from phoenix import models
 
 import logging
 logger = logging.getLogger(__name__)
 
-# navbar
-# ------
 @panel_config(name='navbar', renderer='phoenix:templates/panels/navbar.pt')
 def navbar(context, request):
     def nav_item(name, url, icon=None):
