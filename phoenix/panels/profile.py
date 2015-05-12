@@ -39,7 +39,7 @@ class AccountPanel(ProfilePanel):
         else:
             self.request.session.flash("Your account was updated.", queue='success')
 
-    @panel_config(name='myaccount_profile', renderer='phoenix:templates/panels/form.pt')
+    @panel_config(name='profile_account', renderer='phoenix:templates/panels/form.pt')
     def panel(self):
         form = self.generate_form()
         if 'update' in self.request.POST:
@@ -52,7 +52,7 @@ class ESGFPanel(ProfilePanel):
         form = Form(schema=ESGFCredentialsSchema(), formid='deform')
         return form
 
-    @panel_config(name='myaccount_esgf', renderer='phoenix:templates/panels/form.pt')
+    @panel_config(name='profile_esgf', renderer='phoenix:templates/panels/form.pt')
     def panel(self):
         form = self.generate_form()
         return dict(title="ESGF access token", form=form.render( self.appstruct() ))
@@ -63,7 +63,7 @@ class SwiftPanel(ProfilePanel):
         form = Form(schema=SwiftSchema(), formid='deform')
         return form
 
-    @panel_config(name='myaccount_swift', renderer='phoenix:templates/panels/form.pt')
+    @panel_config(name='profile_swift', renderer='phoenix:templates/panels/form.pt')
     def panel(self):
         form = self.generate_form()
         return dict(title="Swift access token", form=form.render( self.appstruct() ))

@@ -20,9 +20,9 @@ class Profile(MyView):
     
         lm = self.request.layout_manager
         if tab == 'profile':
-            lm.layout.add_heading('myaccount_profile')
+            lm.layout.add_heading('profile_account')
         elif tab == 'esgf':
-            lm.layout.add_heading('myaccount_esgf')
+            lm.layout.add_heading('profile_esgf')
         elif tab == 'swift':
-            lm.layout.add_heading('myaccount_swift')
+            lm.layout.add_heading('profile_swift')
         return dict(active=tab)
