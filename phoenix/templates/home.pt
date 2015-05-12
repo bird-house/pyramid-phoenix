@@ -15,6 +15,38 @@
         </div>
       </div>       
     </div>
+
+     <!-- info boxes -->
+     <div class="container padded">
+       <div class="row">
+         <div class="col-sm-6 col-md-3">
+           <img class="img-circle img-responsive center-block" src="${request.static_path('phoenix:static/images/user_catwomen.png')}">
+           <h3>Processes</h3>
+           <p>Run Processes ...</p>
+           <p><a class="btn btn-default" href="${request.route_path('processes_overview')}">View details &raquo;</a></p>            
+         </div>
+         <div class="col-sm-6 col-md-3">
+           <img class="img-circle img-responsive" src="${request.static_path('phoenix:static/images/user_catwomen.png')}">
+           <h3>Monitor Jobs</h3>
+           <p>Monitor Job execution ...</p>
+           <p><a class="btn btn-default" href="${request.route_path('myjobs_overview')}">View details &raquo;</a></p>            
+         </div>
+         <div class="clearfix hidden-md hidden-lg">                 
+         </div>
+         <div class="col-sm-6 col-md-3">
+           <img class="img-circle img-responsive" src="${request.static_path('phoenix:static/images/user_catwomen.png')}">
+           <h3>Wizard</h3>
+           <p>Use data sources to run processes ...</p>
+           <p><a class="btn btn-default" href="${request.route_path('wizard')}">View details &raquo;</a></p>            
+         </div>
+         <div class="col-sm-6 col-md-3">
+           <img class="img-circle img-responsive" src="${request.static_path('phoenix:static/images/user_catwomen.png')}">
+           <h3>Quickstart</h3>
+           <p>Quickstart guide to getting startet with using Phoenix.</p>
+           <p><a class="btn btn-default" href="${request.route_url('readthedocs')}">View details &raquo;</a></p>            
+         </div>
+       </div>            
+     </div>
     
   </div>
 
