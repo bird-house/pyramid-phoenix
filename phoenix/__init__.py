@@ -114,7 +114,7 @@ def main(global_config, **settings):
     config.add_route('wizard_done', '/wizard/done')
 
     # readthedocs
-    config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/en/latest/')
+    config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/en/latest/{part}.html')
 
     # A quick access to the login button
     from phoenix.utils import button
