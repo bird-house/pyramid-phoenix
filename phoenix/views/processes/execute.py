@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='submit', layout='default')
 class ExecuteProcess(Processes):
     def __init__(self, request):
-        url = request.params.get('url')
+        url = request.session.get('wps_url')
         # TODO: fix owslib.wps url handling
         url = url.split('?')[0]
         self.wps = WebProcessingService(url)
@@ -26,7 +26,7 @@ class ExecuteProcess(Processes):
 
     def breadcrumbs(self):
         breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
-        route_path = self.request.route_path('processes_list', _query=[('url', self.wps.url)] )
+        route_path = self.request.route_path('processes_list')
         breadcrumbs.append(dict(route_path=route_path, title=self.wps.identification.title))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.process.title))
         return breadcrumbs

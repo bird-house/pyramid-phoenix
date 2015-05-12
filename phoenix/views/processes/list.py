@@ -13,7 +13,9 @@ logger = logging.getLogger(__name__)
 
 class ProcessList(Processes):
     def __init__(self, request):
-        self.wps = WebProcessingService(url=request.params.get('url'))
+        url=request.params.get('url', request.session.get('wps_url'))
+        request.session['wps_url'] = url
+        self.wps = WebProcessingService(url)
         super(ProcessList, self).__init__(request, name='processes_list', title='')
         
     def breadcrumbs(self):
@@ -57,7 +59,7 @@ class ProcessGrid(MyGrid):
             source=build_get_url(self.wps.url, query))
 
     def action_td(self, col_num, i, item):
-        query = [('url', self.wps.url), ('identifier', item.identifier)]
+        query = [('identifier', item.identifier)]
         route_path = self.request.route_path('processes_execute', _query=query)
         logger.debug('route path = %s', route_path)
         
