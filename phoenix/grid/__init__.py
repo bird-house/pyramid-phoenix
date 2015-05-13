@@ -37,6 +37,13 @@ class MyGrid(Grid):
         from phoenix.utils import time_ago_in_words
         return self.render_label_td(time_ago_in_words(from_time))
 
+    def render_size_td(self, size_in_bytes):
+        from webhelpers2.number import format_byte_size
+        size = ''
+        if size_in_bytes is not None:
+            size = format_byte_size( size_in_bytes )
+        return self.render_label_td(size)
+
     def render_flag_td(self, flag=False, tooltip=''):
         return self.render_td(renderer="flag_td", flag=flag, tooltip=tooltip)
     
