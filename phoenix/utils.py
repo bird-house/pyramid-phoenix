@@ -43,8 +43,8 @@ def time_ago_in_words(from_time):
     try:
         from datetime import datetime
         from webhelpers2 import date
-        #logger.debug("from_time: %s, type=%s", from_time, type(from_time))
-        delta = from_time - datetime.now()
+        logger.debug("from_time: %s, type=%s", from_time, type(from_time))
+        delta = datetime.now() - from_time
         granularity='minute'
         if delta.days > 365:
             granularity = 'year'
