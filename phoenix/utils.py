@@ -41,9 +41,20 @@ def build_url(url, query):
 
 def time_ago_in_words(from_time):
     try:
+        from datetime import datetime
         from webhelpers2 import date
         #logger.debug("from_time: %s, type=%s", from_time, type(from_time))
-        time_ago = date.time_ago_in_words(from_time, granularity='minute')
+        delta = from_time - datetime.now()
+        granularity='minute'
+        if delta.days > 365:
+            granularity = 'year'
+        elif delta.days > 30:
+            granularity = 'month'
+        elif delta.days > 0:
+            granularity = 'day'
+        elif delta.total_seconds() > 3600:
+            granularity = 'hour'
+        time_ago = date.time_ago_in_words(from_time, granularity=granularity)
         time_ago = time_ago + " ago"
     except:
         time_ago = '???'
