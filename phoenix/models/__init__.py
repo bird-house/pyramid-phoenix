@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from phoenix import utils
 from phoenix.security import Guest
+from phoenix.events import JobFinished
 
 import logging
 logger = logging.getLogger(__name__)
@@ -76,11 +77,12 @@ def update_job(request, job):
             job['finished'] = datetime.now()
         if execution.isSucceded():
             job['progress'] = 100
-            request.session.flash("Job %s completed." % job['title'], queue='success')
         else:
             job['progress'] = execution.percentCompleted
         # update db
         request.db.jobs.update({'identifier': job['identifier']}, job)
+        if execution.isComplete():
+            request.registry.notify(JobFinished(request, job, success=execution.isSucceded()))
     except:
         logger.exception("could not update job %s", job.get('identifier'))
 
