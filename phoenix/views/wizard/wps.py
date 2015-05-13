@@ -10,7 +10,7 @@ class ChooseWPSSchema(colander.MappingSchema):
         wps_list = kw.get('wps_list', [])
         choices = []
         for wps in wps_list:
-            title = "%s (%s) [%s]" % (wps.get('title'), wps.get('abstract'), wps.get('source'))
+            title = "%s (%s)" % (wps.get('title'), wps.get('abstract'))
             choices.append((wps.get('source'), title))
         return deform.widget.RadioChoiceWidget(values = choices)
     
