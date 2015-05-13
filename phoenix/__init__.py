@@ -47,6 +47,10 @@ def main(global_config, **settings):
     # mailer
     config.include('pyramid_mailer')
 
+    # celery
+    config.include('pyramid_celery')
+    config.configure_celery(global_config['__file__'])
+
     # add my own templates
     # TODO: improve config of my own templates
     # see also: http://docs.pylonsproject.org/projects/deform/en/latest/templates.html#overriding-for-all-forms

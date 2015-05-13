@@ -36,6 +36,7 @@ requires = [
     #'egenix-mx-base',
     'esgf-pyclient',
     'python-swiftclient',
+    'pyramid_celery',
     ]
 
 setup(name='Phoenix',
