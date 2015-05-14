@@ -7,7 +7,7 @@ README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
 requires = [
-    'pyramid>=1.5.6',
+    'pyramid>=1.5.7',
     'pyramid-chameleon',
     'pyramid-mako',
     'pymongo',
@@ -37,6 +37,7 @@ requires = [
     'esgf-pyclient',
     'python-swiftclient',
     'pyramid_celery',
+    'celery',
     ]
 
 setup(name='Phoenix',
