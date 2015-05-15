@@ -38,7 +38,7 @@ class ExecuteProcess(Processes):
             keywords = "test,%s,%s" % (self.wps.identification.title, self.process.identifier))
 
     def generate_form(self, formid='deform'):
-        from phoenix.wps import WPSSchema
+        from phoenix.schema.wps import WPSSchema
         schema = WPSSchema(info=True, process = self.process, user=self.get_user())
         return Form(
             schema,
