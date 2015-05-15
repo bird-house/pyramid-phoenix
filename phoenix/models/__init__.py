@@ -67,32 +67,6 @@ def add_job(db, email, title, wps_url, status_location, workflow=False, abstract
     db.jobs.save(job)
     return job
 
-def update_job(db, job):
-    from owslib.wps import WPSExecution
-
-    try:
-        execution = WPSExecution(url = job['wps_url'])
-        execution.checkStatus(url = job['status_location'], sleepSecs=0)
-        job['status'] = execution.getStatus()
-        job['status_message'] = execution.statusMessage
-        job['is_complete'] = execution.isComplete()
-        job['is_succeded'] = execution.isSucceded()
-        job['errors'] = [ '%s %s\n: %s' % (error.code, error.locator, error.text.replace('\\','')) for error in execution.errors]
-        duration = datetime.now() - job.get('created', datetime.now())
-        job['duration'] = str(duration).split('.')[0]
-        if execution.isComplete():
-            job['finished'] = datetime.now()
-        if execution.isSucceded():
-            job['progress'] = 100
-        else:
-            job['progress'] = execution.percentCompleted
-        # update db
-        db.jobs.update({'identifier': job['identifier']}, job)
-        #if execution.isComplete():
-        #    request.registry.notify(JobFinished(request, job, success=execution.isSucceded()))
-    except:
-        logger.exception("could not update job %s", job.get('identifier'))
-
 def user_stats(request):
     num_unregistered = request.db.users.find({"group": Guest}).count()
     

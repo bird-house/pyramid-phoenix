@@ -52,18 +52,7 @@ class ExecuteProcess(Processes):
             appstruct = form.validate(controls)
             from phoenix.wps import execute
             execution = execute(self.user_email(), self.wps, self.process.identifier, appstruct)
-
-            """
-            from phoenix.models import add_job
-            add_job(
-                request = self.request,
-                workflow = False,
-                title = execution.process.title,
-                wps_url = execution.serviceInstance,
-                status_location = execution.statusLocation,
-                abstract = execution.process.abstract,
-                keywords = appstruct.get('keywords', ''))
-            """
+            #keywords = appstruct.get('keywords', ''))
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
             self.session.flash("There are errors on this page.", queue='danger')
