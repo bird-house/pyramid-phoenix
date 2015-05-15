@@ -26,24 +26,17 @@ def execute_dispel(email, wps, nodes, name='esgsearch_workflow'):
 
 def appstruct_to_inputs(appstruct):
     import types
-    logger.debug('execute appstruct: %s', appstruct)
     inputs = []
     for key,values in appstruct.items():
         if key == 'keywords':
-            continue
-        if key == 'abstract':
             continue
         if type(values) != types.ListType:
             values = [values]
         for value in values:
             inputs.append( (str(key).strip(), str(value).strip()) )
-    logger.debug('execute inputs: %s', inputs)
     return inputs
 
 def execute(email, wps, identifier, appstruct):
-    # TODO: handle sync/async case, 
-    # TODO: handle upload with base64 enconding
-    # TODO: handle bbox
     process = wps.describeprocess(identifier)
     
     inputs = appstruct_to_inputs(appstruct)
