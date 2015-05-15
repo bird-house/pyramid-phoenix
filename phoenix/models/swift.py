@@ -1,4 +1,5 @@
 from swiftclient import client, ClientException
+from pyramid.security import authenticated_userid
 
 import logging
 logger = logging.getLogger(__name__)
@@ -11,18 +12,13 @@ def swift_upload(request, storage_url, auth_token, container, prefix, source):
     inputs.append( ('prefix', prefix.encode('ascii', 'ignore')) )
     inputs.append( ('resource', source.encode('ascii', 'ignore')) )
 
-    execution = request.wps.execute(
+    from phoenix.tasks import execute
+    execute.delay(
+        email=authenticated_userid(request),
+        url=request.wps.url,
         identifier='swift_upload',
         inputs=inputs,
         output=[('output',True)])
-
-    from phoenix.models import add_job
-    add_job(request,
-            title="Swift Upload",
-            abstract='Added by My Account',
-            wps_url=execution.serviceInstance,
-            status_location=execution.statusLocation,
-            keywords='swift,upload')
 
 def swift_login(request, username, password):
     storage_url = auth_token = None
