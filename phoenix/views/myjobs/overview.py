@@ -17,10 +17,7 @@ class Overview(MyJobs):
 
     @view_config(renderer='json', route_name='update_myjobs')
     def update_jobs(self):
-        from phoenix.models import update_job
         jobs = list(self.jobsdb.find({'email': self.user_email(), 'is_complete':False}))
-        for job in jobs:
-            update_job(self.request, job)
         return jobs
 
     @view_config(route_name='remove_myjobs')

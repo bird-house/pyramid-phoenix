@@ -1,7 +1,25 @@
 from pyramid_celery import celery_app as app
+import pymongo
 
 @app.task
-def add(x, y):
-    print x+y
-
-
+def execute(email, url, identifier, inputs, outputs, workflow=False, keywords=None):
+    from owslib.wps import WebProcessingService
+    wps = WebProcessingService(url=url, skip_caps=True)
+    execution = wps.execute(identifier, inputs=inputs, output=outputs)
+    settings = app.conf['PYRAMID_REGISTRY'].settings
+    db = pymongo.Connection(settings['mongodb.url'])[settings['mongodb.db_name']]
+    from phoenix.models import add_job, update_job
+    job = add_job(
+        db = db,
+        email = email,
+        workflow = workflow,
+        title = execution.process.title,
+        wps_url = execution.serviceInstance,
+        status_location = execution.statusLocation,
+        abstract = execution.process.abstract,
+        keywords = keywords)
+    while not execution.isComplete():
+        execution.checkStatus(sleepSecs=2)
+        print execution.getStatus()
+        update_job(db, job)
+    return execution.getStatus()

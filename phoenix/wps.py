@@ -41,7 +41,7 @@ def appstruct_to_inputs(appstruct):
     logger.debug('execute inputs: %s', inputs)
     return inputs
 
-def execute(wps, identifier, appstruct):
+def execute(email, wps, identifier, appstruct):
     # TODO: handle sync/async case, 
     # TODO: handle upload with base64 enconding
     # TODO: handle bbox
@@ -52,10 +52,9 @@ def execute(wps, identifier, appstruct):
     for output in process.processOutputs:
         outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
 
-    execution = wps.execute(identifier, inputs=inputs, output=outputs)
-    logger.debug('status_location = %s', execution.statusLocation)
-
-    return execution
+    from phoenix.tasks import execute
+    execute.delay(email, wps.url, identifier, inputs=inputs, outputs=outputs)
+    
 
         
     

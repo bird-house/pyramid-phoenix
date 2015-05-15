@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime, timedelta
+import pymongo
 
 from phoenix import utils
 from phoenix.security import Guest
@@ -7,6 +8,10 @@ from phoenix.events import JobFinished
 
 import logging
 logger = logging.getLogger(__name__)
+
+def mongodb(url, db_name):
+    conn = pymongo.Connection(url)
+    return conn[db_name]
 
 def user_email(request):
     from pyramid.security import authenticated_userid
@@ -38,7 +43,7 @@ def add_user(
     request.db.users.save(user)
     return request.db.users.find_one({'email':email})
 
-def add_job(request, title, wps_url, status_location, workflow=False, abstract=None, keywords=None):
+def add_job(db, email, title, wps_url, status_location, workflow=False, abstract=None, keywords=None):
     from pyramid.security import authenticated_userid
 
     logger.debug("add job: status_location=%s", status_location)
@@ -53,14 +58,16 @@ def add_job(request, title, wps_url, status_location, workflow=False, abstract=N
         # TODO: keywords must be a list
         keywords = keywords,
         #TODO: dont use auth... userid=email ...
-        email = authenticated_userid(request),
+        #email = authenticated_userid(request),
+        email = email,
         wps_url = wps_url,
         status_location = status_location,
         created = datetime.now(),
         is_complete = False)
-    request.db.jobs.save(job)
+    db.jobs.save(job)
+    return job
 
-def update_job(request, job):
+def update_job(db, job):
     from owslib.wps import WPSExecution
 
     try:
@@ -80,9 +87,9 @@ def update_job(request, job):
         else:
             job['progress'] = execution.percentCompleted
         # update db
-        request.db.jobs.update({'identifier': job['identifier']}, job)
-        if execution.isComplete():
-            request.registry.notify(JobFinished(request, job, success=execution.isSucceded()))
+        db.jobs.update({'identifier': job['identifier']}, job)
+        #if execution.isComplete():
+        #    request.registry.notify(JobFinished(request, job, success=execution.isSucceded()))
     except:
         logger.exception("could not update job %s", job.get('identifier'))
 
