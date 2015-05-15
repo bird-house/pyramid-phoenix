@@ -41,7 +41,7 @@ class ChooseWPSProcess(Wizard):
         self.success(appstruct)
 
         # TODO: this code does not belong here
-        from phoenix.wps import count_literal_inputs
+        from phoenix.models import count_literal_inputs
         identifier = appstruct['identifier']
         if count_literal_inputs(self.wps, identifier) > 0:
             return self.next('wizard_literal_inputs')

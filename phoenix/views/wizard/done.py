@@ -51,7 +51,7 @@ class Done(Wizard):
             )
             nodes['source'] = source
 
-        from phoenix.wps import appstruct_to_inputs
+        from phoenix.models import appstruct_to_inputs
         inputs = appstruct_to_inputs(self.wizard_state.get('wizard_literal_inputs', {}))
         worker_inputs = ['%s=%s' % (key, value) for key,value in inputs]
         worker = dict(
@@ -64,7 +64,7 @@ class Done(Wizard):
         return nodes
 
     def execute_workflow(self, appstruct):
-        from phoenix.wps import execute_dispel
+        from phoenix.models import execute_dispel
         source = self.wizard_state.get('wizard_source')['source']
         if 'swift' in source:
             name = 'swift_workflow'

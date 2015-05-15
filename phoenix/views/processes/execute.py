@@ -50,7 +50,7 @@ class ExecuteProcess(Processes):
         controls = self.request.POST.items()
         try:
             appstruct = form.validate(controls)
-            from phoenix.wps import execute
+            from phoenix.models import execute
             execution = execute(self.user_email(), self.wps, self.process.identifier, appstruct)
             #keywords = appstruct.get('keywords', ''))
         except ValidationFailure, e:
