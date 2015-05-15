@@ -150,13 +150,4 @@ def execute_dispel(email, wps, nodes, name='esgsearch_workflow'):
     from phoenix.tasks import execute
     execute.delay(email, wps.url, identifier, inputs=inputs, outputs=outputs, workflow=True)
 
-def appstruct_to_inputs(appstruct):
-    import types
-    inputs = []
-    for key,values in appstruct.items():
-        if type(values) != types.ListType:
-            values = [values]
-        for value in values:
-            inputs.append( (str(key).strip(), str(value).strip()) )
-    return inputs
 

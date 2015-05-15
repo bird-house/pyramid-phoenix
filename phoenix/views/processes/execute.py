@@ -55,7 +55,7 @@ class ExecuteProcess(Processes):
         return HTTPFound(location=self.request.route_url('myjobs'))
 
     def execute(self, appstruct):
-        from phoenix.models import appstruct_to_inputs
+        from phoenix.utils import appstruct_to_inputs
         inputs = appstruct_to_inputs(appstruct)
         outputs = []
         for output in self.process.processOutputs:
