@@ -71,7 +71,7 @@ class Done(Wizard):
         else:
             name = 'esgsearch_workflow'
         nodes = self.workflow_description(name)
-        return execute_dispel(self.request.wps, nodes=nodes, name=name)
+        return execute_dispel(email=self.user_email(), wps=self.request.wps, nodes=nodes, name=name)
 
     def success(self, appstruct):
         super(Done, self).success(appstruct)
@@ -82,21 +82,7 @@ class Done(Wizard):
             self.favorite.save()
         
         execution = self.execute_workflow(appstruct)
-        from phoenix.models import add_job
-        # TODO: cache process description
-        process = self.wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
-        abstract = None
-        if hasattr(process, 'abstract'):
-            abstract = process.abstract
-        add_job(
-            request = self.request,
-            workflow = True,
-            title = process.title,
-            wps_url = execution.serviceInstance,
-            status_location = execution.statusLocation,
-            abstract = abstract,
-            keywords = appstruct.get('keywords'))
-
+        
     def next_success(self, appstruct):
         from pyramid.httpexceptions import HTTPFound
         self.success(appstruct)

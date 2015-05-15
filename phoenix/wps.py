@@ -10,7 +10,7 @@ def count_literal_inputs(wps, identifier):
     logger.debug('num literal inputs: %d', len(literal_inputs))
     return len(literal_inputs)
 
-def execute_dispel(wps, nodes, name='esgsearch_workflow'):
+def execute_dispel(email, wps, nodes, name='esgsearch_workflow'):
     """
     execute dispel workflow on given wps and with given nodes
     """
@@ -21,9 +21,8 @@ def execute_dispel(wps, nodes, name='esgsearch_workflow'):
     identifier='dispel'
     inputs=[('nodes', nodes_json), ('name', name)]
     outputs=[('output', True)]
-    execution = wps.execute(identifier, inputs=inputs, output=outputs)
-    logger.debug("inputs=%s", inputs)
-    return execution
+    from phoenix.tasks import execute
+    execute.delay(email, wps.url, identifier, inputs=inputs, outputs=outputs, workflow=True)
 
 def appstruct_to_inputs(appstruct):
     import types
