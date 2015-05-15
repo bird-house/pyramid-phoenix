@@ -14,7 +14,8 @@ $(function() {
       '/myjobs/update.json',
       {},
       function(json) {
-        var finished = true;
+        //var finished = true;
+	var finished = false;
         $.each(json, function(index, job) {
             var status_class = ''
             if (job.status == 'ProcessSucceeded') {
@@ -26,9 +27,9 @@ $(function() {
             else if (job.status == 'ProcessPaused') {
               status_class = 'glyphicon glyphicon-paused text-muted';
             }
-          else if (job.status == 'ProcessStarted' || job.status == 'ProcessAccepted') {
+            else if (job.status == 'ProcessStarted' || job.status == 'ProcessAccepted') {
               status_class = 'glyphicon glyphicon-cog text-muted';
-              finished = false;
+              //finished = false;
             }
             else {
               status_class = 'glyphicon glyphicon-question-sign text-danger';
@@ -48,10 +49,10 @@ $(function() {
     );
   };
 
-  // refresh job list each 3 secs ...
+  // refresh job list each 5 secs ...
   timerId = setInterval(function() {
     updateJobs();
-  }, 3000); 
+  }, 5000); 
 
   // Open publish form when publish is clicked
   $(".publish").button({

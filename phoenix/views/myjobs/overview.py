@@ -17,8 +17,7 @@ class Overview(MyJobs):
 
     @view_config(renderer='json', route_name='update_myjobs')
     def update_jobs(self):
-        jobs = list(self.jobsdb.find({'email': self.user_email(), 'is_complete':False}))
-        return jobs
+        return list(self.jobsdb.find({'email': self.user_email()}).sort('created', -1))
 
     @view_config(route_name='remove_myjobs')
     def remove_all(self):
@@ -38,8 +37,7 @@ class Overview(MyJobs):
 
     @view_config(route_name='myjobs', renderer='phoenix:templates/myjobs/overview.pt')
     def view(self):
-        self.update_jobs()
-        items = list(self.jobsdb.find({'email': self.user_email()}).sort('created', -1))
+        items = self.update_jobs()
 
         from phoenix.grid.jobs import JobsGrid
         grid = JobsGrid(self.request, items,

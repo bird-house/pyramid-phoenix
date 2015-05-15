@@ -3,10 +3,11 @@ from phoenix.models import mongodb
 
 @app.task
 def execute(email, url, identifier, inputs, outputs, workflow=False, keywords=None):
+    registry = app.conf['PYRAMID_REGISTRY']
     from owslib.wps import WebProcessingService
     wps = WebProcessingService(url=url, skip_caps=True)
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
-    db = mongodb(app.conf['PYRAMID_REGISTRY'])
+    db = mongodb(registry)
     import uuid
     from datetime import datetime
     job = dict(
@@ -38,4 +39,7 @@ def execute(email, url, identifier, inputs, outputs, workflow=False, keywords=No
             job['progress'] = execution.percentCompleted
         # update db
         db.jobs.update({'identifier': job['identifier']}, job)
+    from phoenix.events import JobFinished
+    event = JobFinished(job, success=execution.isSucceded())
+    registry.notify(event)
     return execution.getStatus()

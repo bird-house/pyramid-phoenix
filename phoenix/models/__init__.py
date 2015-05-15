@@ -4,7 +4,6 @@ import pymongo
 
 from phoenix import utils
 from phoenix.security import Guest
-from phoenix.events import JobFinished
 
 import logging
 logger = logging.getLogger(__name__)
