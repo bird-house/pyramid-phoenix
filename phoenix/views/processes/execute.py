@@ -47,14 +47,24 @@ class ExecuteProcess(Processes):
         controls = self.request.POST.items()
         try:
             appstruct = form.validate(controls)
-            from phoenix.models import execute
-            execution = execute(self.user_email(), self.wps, self.process.identifier, appstruct)
+            self.execute(appstruct)
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
             self.session.flash("There are errors on this page.", queue='danger')
             return dict(form = e.render())
         return HTTPFound(location=self.request.route_url('myjobs'))
 
+    def execute(self, appstruct):
+        from phoenix.models import appstruct_to_inputs
+        inputs = appstruct_to_inputs(appstruct)
+        outputs = []
+        for output in self.process.processOutputs:
+            outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
+
+            from phoenix.tasks import execute
+            execute.delay(self.user_email(), self.wps.url, self.process.identifier, 
+                          inputs=inputs, outputs=outputs)
+    
     @view_config(route_name='processes_execute', renderer='phoenix:templates/processes/execute.pt')
     def view(self):
         form = self.generate_form()

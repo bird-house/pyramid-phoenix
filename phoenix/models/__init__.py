@@ -160,14 +160,3 @@ def appstruct_to_inputs(appstruct):
             inputs.append( (str(key).strip(), str(value).strip()) )
     return inputs
 
-def execute(email, wps, identifier, appstruct):
-    process = wps.describeprocess(identifier)
-    
-    inputs = appstruct_to_inputs(appstruct)
-    outputs = []
-    for output in process.processOutputs:
-        outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
-
-    from phoenix.tasks import execute
-    execute.delay(email, wps.url, identifier, inputs=inputs, outputs=outputs)
-    
