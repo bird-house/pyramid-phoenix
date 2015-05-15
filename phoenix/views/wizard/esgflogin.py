@@ -30,23 +30,11 @@ class ESGFLogin(Wizard):
         appstruct['openid'] = self.get_user().get('openid')
         super(ESGFLogin, self).success(appstruct)
 
-        try:
-            self.wizard_state.set('password', appstruct.get('password'))
-            from phoenix.models import esgf
-            result = esgf.myproxy_logon(
-                self.request,
-                openid=appstruct.get('openid'),
-                password=appstruct.get('password'))
-            user = self.get_user()
-            user['credentials'] = result['credentials']
-            user['cert_expires'] = result['cert_expires'] 
-            self.userdb.update({'email':self.user_email()}, user)
-        except Exception, e:
-            logger.exception("update credentials failed.")
-            self.flash_error("ESGF Login failed.")
-        else:
-            self.flash_success('ESGF Login was successful.')
-        
+        self.wizard_state.set('password', appstruct.get('password'))
+        from phoenix.tasks import myproxy_logon
+        myproxy_logon.delay(self.user_email(), self.request.wps.url, 
+                            appstruct.get('openid'),
+                            appstruct.get('password'))
     def next_success(self, appstruct):
         self.success(appstruct)
         return self.next('wizard_done')
