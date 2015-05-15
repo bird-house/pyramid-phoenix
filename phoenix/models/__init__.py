@@ -136,18 +136,5 @@ def count_literal_inputs(wps, identifier):
     logger.debug('num literal inputs: %d', len(literal_inputs))
     return len(literal_inputs)
 
-def execute_dispel(email, wps, nodes, name='esgsearch_workflow'):
-    """
-    execute dispel workflow on given wps and with given nodes
-    """
-    import json
-    nodes_json = json.dumps(nodes)
-
-    # generate and run dispel workflow
-    identifier='dispel'
-    inputs=[('nodes', nodes_json), ('name', name)]
-    outputs=[('output', True)]
-    from phoenix.tasks import execute
-    execute.delay(email, wps.url, identifier, inputs=inputs, outputs=outputs, workflow=True)
 
 

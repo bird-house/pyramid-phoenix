@@ -1,4 +1,5 @@
 from pyramid.view import view_config
+import json
 
 from phoenix.views.wizard import Wizard
 
@@ -41,7 +42,6 @@ class Done(Wizard):
             credentials = user.get('credentials')
 
             selection = self.wizard_state.get('wizard_esgf_search')['selection']
-            import json
             esgsearch = json.loads(selection)
             nodes['esgsearch'] = esgsearch
             
@@ -64,14 +64,21 @@ class Done(Wizard):
         return nodes
 
     def execute_workflow(self, appstruct):
-        from phoenix.models import execute_dispel
         source = self.wizard_state.get('wizard_source')['source']
         if 'swift' in source:
             name = 'swift_workflow'
         else:
             name = 'esgsearch_workflow'
         nodes = self.workflow_description(name)
-        return execute_dispel(email=self.user_email(), wps=self.request.wps, nodes=nodes, name=name)
+        nodes_json = json.dumps(nodes)
+
+        # generate and run dispel workflow
+        identifier='dispel'
+        inputs=[('nodes', nodes_json), ('name', name)]
+        outputs=[('output', True)]
+        from phoenix.tasks import execute
+        execute.delay(self.user_email(), self.request.wps.url, identifier, 
+                      inputs=inputs, outputs=outputs, workflow=True)
 
     def success(self, appstruct):
         super(Done, self).success(appstruct)
