@@ -93,10 +93,7 @@ class Done(Wizard):
         appstruct = super(Done, self).appstruct()
         #params = ', '.join(['%s=%s' % item for item in self.wizard_state.get('wizard_literal_inputs', {}).items()])
         identifier = self.wizard_state.get('wizard_process')['identifier']
-        # TODO: add search facets to keywords
-        appstruct.update( dict(
-            keywords="test,workflow,%s" % identifier,
-            favorite_name=identifier))
+        appstruct.update( dict(favorite_name=identifier) )
         return appstruct
 
     @view_config(route_name='wizard_done', renderer='phoenix:templates/wizard/default.pt')

@@ -1,6 +1,5 @@
 import colander
 import deform
-
 import dateutil
 import re
 
@@ -22,8 +21,7 @@ tmpstore = MemoryTmpStore()
 # wps input schema
 # ----------------
 
-from phoenix.schema import JobSchema
-class WPSSchema(JobSchema):
+class WPSSchema(colander.MappingSchema):
     """ Build a Colander Schema based on the WPS data inputs.
 
     This Schema generator is based on:
@@ -36,15 +34,10 @@ class WPSSchema(JobSchema):
 
     appstruct = {}
 
-    def __init__(self, info=False, hide_complex=False, process=None, unknown='ignore', user=None, **kw):
+    def __init__(self, hide_complex=False, process=None, unknown='ignore', user=None, **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
-
-        info:
-           Add info fields for notes and tags (boolean).
-
-           Default: False
 
         process:
            An ``WPS`` process description that you want a ``Colander`` schema
@@ -75,17 +68,12 @@ class WPSSchema(JobSchema):
 
         # The default type of this SchemaNode is Mapping.
         colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
-        self.info = info
         self.hide_complex = hide_complex
         self.process = process
         self.unknown = unknown
         self.user = user
         self.kwargs = kwargs or {}
-
-        if not info:
-            self.__delitem__('keywords')
         self.add_nodes(process)
-
         
     def add_nodes(self, process):
         if process is None:
@@ -303,7 +291,6 @@ class WPSSchema(JobSchema):
 
     def clone(self):
         cloned = self.__class__(
-            self.info,
             self.process,
             self.unknown,
             **self.kwargs)

@@ -13,7 +13,7 @@ class LiteralInputs(Wizard):
 
     def schema(self):
         from phoenix.schema.wps import WPSSchema
-        return WPSSchema(info=False, hide_complex=True, process = self.process)
+        return WPSSchema(hide_complex=True, process = self.process)
 
     def next_success(self, appstruct):
         self.success(appstruct)

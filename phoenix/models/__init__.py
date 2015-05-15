@@ -154,8 +154,6 @@ def appstruct_to_inputs(appstruct):
     import types
     inputs = []
     for key,values in appstruct.items():
-        if key == 'keywords':
-            continue
         if type(values) != types.ListType:
             values = [values]
         for value in values:

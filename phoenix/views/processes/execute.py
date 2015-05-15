@@ -32,14 +32,11 @@ class ExecuteProcess(Processes):
         return breadcrumbs
 
     def appstruct(self):
-        return dict(
-            title = self.process.title,
-            abstract = getattr(self.process, 'abstract', ""),
-            keywords = "test,%s,%s" % (self.wps.identification.title, self.process.identifier))
+        return {}
 
     def generate_form(self, formid='deform'):
         from phoenix.schema.wps import WPSSchema
-        schema = WPSSchema(info=True, process = self.process, user=self.get_user())
+        schema = WPSSchema(process = self.process, user=self.get_user())
         return Form(
             schema,
             buttons=('submit',),
@@ -52,7 +49,6 @@ class ExecuteProcess(Processes):
             appstruct = form.validate(controls)
             from phoenix.models import execute
             execution = execute(self.user_email(), self.wps, self.process.identifier, appstruct)
-            #keywords = appstruct.get('keywords', ''))
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
             self.session.flash("There are errors on this page.", queue='danger')
