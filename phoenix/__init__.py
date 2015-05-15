@@ -150,13 +150,8 @@ def main(global_config, **settings):
         settings = event.request.registry.settings
         if settings.get('db') is None:
             try:
-                MongoDB = pymongo.Connection
-                if 'pyramid_debugtoolbar' in set(settings.values()):
-                    class MongoDB(pymongo.Connection):
-                        def __html__(self):
-                            return 'MongoDB: <b>{}></b>'.format(self)
-                conn = MongoDB(settings['mongodb.url'])
-                settings['db'] = conn[settings['mongodb.db_name']]
+                from phoenix.models import mongodb
+                settings['db'] = mongodb(event.request.registry)
                 logger.debug("Connected to mongodb %s.", settings['mongodb.url'])
             except:
                 logger.exception('Could not connect to mongodb %s.', settings['mongodb.url'])

@@ -1,13 +1,12 @@
 from pyramid_celery import celery_app as app
-import pymongo
+from phoenix.models import mongodb
 
 @app.task
 def execute(email, url, identifier, inputs, outputs, workflow=False, keywords=None):
     from owslib.wps import WebProcessingService
     wps = WebProcessingService(url=url, skip_caps=True)
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
-    settings = app.conf['PYRAMID_REGISTRY'].settings
-    db = pymongo.Connection(settings['mongodb.url'])[settings['mongodb.db_name']]
+    db = mongodb(app.conf['PYRAMID_REGISTRY'])
     from phoenix.models import add_job, update_job
     job = add_job(
         db = db,

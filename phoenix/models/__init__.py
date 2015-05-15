@@ -9,9 +9,9 @@ from phoenix.events import JobFinished
 import logging
 logger = logging.getLogger(__name__)
 
-def mongodb(url, db_name):
-    conn = pymongo.Connection(url)
-    return conn[db_name]
+def mongodb(registry):
+    settings = registry.settings
+    return pymongo.Connection(settings['mongodb.url'])[settings['mongodb.db_name']]
 
 def user_email(request):
     from pyramid.security import authenticated_userid
