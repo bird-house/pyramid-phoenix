@@ -216,19 +216,19 @@ class Wizard(MyView):
         
     def previous(self):
         self.wizard_state.previous()
-        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
+        return HTTPFound(location=self.request.route_path(self.wizard_state.current_step()))
 
     def next(self, step):
         self.wizard_state.next(step)
-        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
+        return HTTPFound(location=self.request.route_path(self.wizard_state.current_step()))
 
     def cancel(self):
         self.wizard_state.clear()
-        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
+        return HTTPFound(location=self.request.route_path(self.wizard_state.current_step()))
 
     def flash(self, message, queue='info'):
         self.session.flash(message, queue=queue)
-        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
+        return HTTPFound(location=self.request.route_path(self.wizard_state.current_step()))
 
     def flash_success(self, message):
         logger.info(message)

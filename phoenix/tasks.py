@@ -1,8 +1,8 @@
 from pyramid_celery import celery_app as app
 from phoenix.models import mongodb
 
-@app.task()
-def myproxy_logon(email, url, openid, password):
+@app.task
+def esgf_logon(email, url, openid, password):
     registry = app.conf['PYRAMID_REGISTRY']
     inputs = []
     inputs.append( ('openid', openid.encode('ascii', 'ignore')) )

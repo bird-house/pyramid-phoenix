@@ -32,8 +32,8 @@ class ESGFLogin(Wizard):
         super(ESGFLogin, self).success(appstruct)
 
         self.wizard_state.set('password', appstruct.get('password'))
-        from phoenix.tasks import myproxy_logon
-        result = myproxy_logon.delay(self.user_email(), self.request.wps.url, 
+        from phoenix.tasks import esgf_logon
+        result = esgf_logon.delay(self.user_email(), self.request.wps.url, 
                             appstruct.get('openid'),
                             appstruct.get('password'))
         self.session['task'] = result
@@ -41,7 +41,7 @@ class ESGFLogin(Wizard):
         self.success(appstruct)
         return HTTPFound(location=self.request.route_path('wizard_loading'))
 
-    @view_config(renderer='json', route_name='check_logon')
+    @view_config(renderer='json', route_name='wizard_check_logon')
     def check_logon(self):
         status = 'running'
         if self.session.get('task').ready():
