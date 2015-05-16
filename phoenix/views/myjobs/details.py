@@ -69,12 +69,12 @@ class JobDetails(MyJobs):
         lm = self.request.layout_manager
         if tab == 'log':
             lm.layout.add_heading('myjobs_log')
-        elif tab == 'inputs':
-            lm.layout.add_heading('myjobs_inputs')
-        elif tab == 'resources':
-            lm.layout.add_heading('myjobs_resources')
-        elif tab == 'workflow':
-            lm.layout.add_heading('myjobs_workflow')
+        #elif tab == 'inputs':
+        #    lm.layout.add_heading('myjobs_inputs')
+        #elif tab == 'resources':
+        #    lm.layout.add_heading('myjobs_resources')
+        #elif tab == 'workflow':
+        #    lm.layout.add_heading('myjobs_workflow')
         else:
             lm.layout.add_heading('myjobs_outputs')
 
