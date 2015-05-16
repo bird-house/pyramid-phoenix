@@ -1,8 +1,8 @@
 from pyramid_celery import celery_app as app
 from phoenix.models import mongodb
 
-def task_result(uuid):
-    return app.AsyncResult(uuid)
+def task_result(task_id):
+    return app.AsyncResult(task_id)
 
 @app.task
 def esgf_logon(email, url, openid, password):
@@ -77,7 +77,4 @@ def execute_process(email, url, identifier, inputs, outputs, workflow=False, key
             job['progress'] = execution.percentCompleted
         # update db
         db.jobs.update({'identifier': job['identifier']}, job)
-    from phoenix.events import JobFinished
-    event = JobFinished(job, success=execution.isSucceded())
-    registry.notify(event)
     return execution.getStatus()

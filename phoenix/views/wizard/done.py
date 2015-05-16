@@ -63,15 +63,14 @@ class Done(Wizard):
         nodes['worker'] = worker
         return nodes
 
-    def execute_workflow(self, appstruct):
+    def workflow_name(self):
+        name = None
         source = self.wizard_state.get('wizard_source')['source']
         if 'swift' in source:
             name = 'swift_workflow'
         else:
             name = 'esgsearch_workflow'
-        nodes = self.workflow_description(name)
-        from phoenix.tasks import execute_workflow
-        execute_workflow.delay(self.user_email(), self.request.wps.url, name, nodes)
+        return name
 
     def success(self, appstruct):
         super(Done, self).success(appstruct)
@@ -80,8 +79,11 @@ class Done(Wizard):
                 name=appstruct.get('favorite_name'),
                 state=self.wizard_state.dump())
             self.favorite.save()
-        
-        execution = self.execute_workflow(appstruct)
+
+        name = self.workflow_name()
+        nodes = self.workflow_description(name)
+        from phoenix.tasks import execute_workflow
+        execute_workflow.delay(self.user_email(), self.request.wps.url, name, nodes)
         
     def next_success(self, appstruct):
         from pyramid.httpexceptions import HTTPFound
