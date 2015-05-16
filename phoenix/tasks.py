@@ -52,7 +52,7 @@ def execute_workflow(email, url, name, nodes):
         email = email,
         title = nodes['worker']['identifier'],
         abstract = '',
-        status_location = execution.statusLocation,
+        workflow_status_location = execution.statusLocation,
         created = datetime.now(),
         is_complete = False)
     db.jobs.save(job)
@@ -70,7 +70,8 @@ def execute_workflow(email, url, name, nodes):
             job['finished'] = datetime.now()
             result_url = execution.processOutputs[0].reference
             result = json.load(urllib.urlopen(result_url))
-            job['status_location'] = result.get('worker', [job['status_location']])[0]
+            job['status_location'] = result.get('worker', [''])[0]
+            job['resource_status_location'] = result.get('source', [''])[0]
         if execution.isSucceded():
             job['progress'] = 100
         else:
