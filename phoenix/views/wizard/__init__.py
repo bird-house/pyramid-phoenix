@@ -226,18 +226,6 @@ class Wizard(MyView):
         self.wizard_state.clear()
         return HTTPFound(location=self.request.route_path(self.wizard_state.current_step()))
 
-    def flash(self, message, queue='info'):
-        self.session.flash(message, queue=queue)
-        return HTTPFound(location=self.request.route_path(self.wizard_state.current_step()))
-
-    def flash_success(self, message):
-        logger.info(message)
-        return self.flash(message, queue='success')
-
-    def flash_error(self, message):
-        logger.error(message)
-        return self.flash(message, queue='danger')
-
     def custom_view(self):
         return {}
 

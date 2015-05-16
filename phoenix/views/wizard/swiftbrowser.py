@@ -1,4 +1,5 @@
 from pyramid.view import view_config
+from pyramid.httpexceptions import HTTPFound
 
 from swiftclient import client, ClientException
 
@@ -61,7 +62,8 @@ class SwiftBrowser(Wizard):
             self.success(appstruct)
             return self.next('wizard_done')
         else:
-            return self.flash_error("Please choose container and prefix.")
+            self.session.flash("Please choose container and prefix.", queue="danger")
+            return HTTPFound(location=self.request.route_path(self.name))
 
     def custom_view(self):
         container = self.request.params.get('container')

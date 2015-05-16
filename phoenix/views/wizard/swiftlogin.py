@@ -1,4 +1,5 @@
 from pyramid.view import view_config
+from pyramid.httpexceptions import HTTPFound
 
 from phoenix.views.wizard import Wizard
 
@@ -45,10 +46,11 @@ class SwiftLogin(Wizard):
             self.login(appstruct)
         except Exception, e:
             logger.exception("update of swift token failed.")
-            return self.flash_error("Could not update your Swift token. %s" % (e))
+            self.session.flash("Could not update your Swift token. %s" % (e), queue="danger")
+            return HTTPFound(location=self.request.route_path(self.name))
         else:
             super(SwiftLogin, self).success(appstruct)
-            self.flash_success('Swift token was updated.')
+            self.session.flash('Swift token was updated.', queue="success")
             return self.next('wizard_swiftbrowser')
         
     @view_config(route_name='wizard_swift_login', renderer='phoenix:templates/wizard/default.pt')
