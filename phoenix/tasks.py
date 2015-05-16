@@ -1,10 +1,7 @@
 from pyramid_celery import celery_app as app
 from phoenix.models import mongodb
 
-def on_success(self, retval, task_id, args, kwargs):
-    pass
-
-@app.task(on_success=on_success)
+@app.task()
 def myproxy_logon(email, url, openid, password):
     registry = app.conf['PYRAMID_REGISTRY']
     inputs = []
@@ -25,6 +22,7 @@ def myproxy_logon(email, url, openid, password):
         user['credentials'] = credentials
         user['cert_expires'] = cert_expires
         db.users.update({'email':email}, user)
+    return execution.status
 
 
 @app.task

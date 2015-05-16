@@ -45,14 +45,18 @@ class ESGFLogin(Wizard):
     def check_logon(self):
         status = 'running'
         if self.session.get('task').ready():
-            status = 'success'
-            self.session.flash('logon was successful', queue='success')
+            status = 'ready'
         return dict(status=status)
 
     @view_config(route_name='wizard_loading', renderer='phoenix:templates/wizard/loading.pt')
     def loading(self):
         if self.session.get('task').ready():
-            return self.next('wizard_done')
+            if self.session.get('task').get() == 'ProcessSucceeded':
+                self.session.flash('ESGF logon was successful.', queue='success')
+                return self.next('wizard_done')
+            else:
+                self.session.flash('ESGF logon failed.', queue='danger')
+                return HTTPFound(location=self.request.route_path(self.name))
         return {}
         
     @view_config(route_name='wizard_esgf_login', renderer='phoenix:templates/wizard/default.pt')
