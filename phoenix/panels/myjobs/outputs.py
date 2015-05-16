@@ -7,6 +7,23 @@ from deform import ValidationFailure
 import logging
 logger = logging.getLogger(__name__)
 
+def collect_outputs(status_location, prefix="job"):
+    from owslib.wps import WPSExecution
+    execution = WPSExecution()
+    execution.checkStatus(url=status_location, sleepSecs=0)
+    outputs = {}
+    for output in execution.processOutputs:
+        oid = "%s.%s" %(prefix, output.identifier)
+        outputs[oid] = output
+    return outputs
+
+def process_outputs(request, jobid, tab='outputs'):
+    job = request.db.jobs.find_one({'identifier': jobid})
+    outputs = {}
+    if job['is_complete']:
+        outputs = collect_outputs(job['status_location'])
+    return outputs
+
 class MyJobsOutputs(object):
     def __init__(self, context, request):
         self.context = context
@@ -85,7 +102,6 @@ class MyJobsOutputs(object):
             return self.process_upload_form(upload_form, jobid)
 
         items = []
-        from phoenix.models import process_outputs
         for oid,output in process_outputs(self.request, jobid).items():
             items.append(dict(title=output.title,
                               abstract=getattr(output, 'abstract', ""),

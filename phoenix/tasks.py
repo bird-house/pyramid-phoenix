@@ -82,7 +82,7 @@ def execute_workflow(email, url, name, nodes):
     return execution.getStatus()
 
 @app.task
-def execute_process(email, url, identifier, inputs, outputs, workflow=False, keywords=None):
+def execute_process(email, url, identifier, inputs, outputs, keywords=None):
     registry = app.conf['PYRAMID_REGISTRY']
 
     wps = WebProcessingService(url=url, skip_caps=True)

@@ -81,23 +81,6 @@ def get_wps_list(request):
             rights=csw.records[rec].rights))
     return items
 
-def collect_outputs(status_location, prefix="job"):
-    from owslib.wps import WPSExecution
-    execution = WPSExecution()
-    execution.checkStatus(url=status_location, sleepSecs=0)
-    outputs = {}
-    for output in execution.processOutputs:
-        oid = "%s.%s" %(prefix, output.identifier)
-        outputs[oid] = output
-    return outputs
-
-def process_outputs(request, jobid, tab='outputs'):
-    job = request.db.jobs.find_one({'identifier': jobid})
-    outputs = {}
-    if job['is_complete']:
-        outputs = collect_outputs(job['status_location'])
-    return outputs
-
 def job_details(request, jobid):
     job = request.db.jobs.find_one({'identifier': jobid})
     details = job.copy()
