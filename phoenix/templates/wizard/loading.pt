@@ -1,37 +1,11 @@
 <metal:block use-macro="main_template">
 
   <div metal:fill-slot="javascript">
-    <script type="text/javascript">
-  $('#loading-indicator').show();
-  var timerId = 0;
-
-  // update job table with current values
-  var checkLogon = function() {
-     $.getJSON(
-      '/wizard/check_logon.json',
-      {},
-      function(json) {
-        if (json.status == 'ready') {
-          clearInterval(timerId);
-          location.reload();
-        }
-      }
-    );
-  };
-
-  // refresh job list each 1 secs ...
-  timerId = setInterval(function() {
-    checkLogon();
-  }, 1000); 
-
-    </script>
+    <script src="${request.static_path('phoenix:static/scripts/esgflogon.js')}"></script>
   </div>
         
   <div metal:fill-slot="content">
-    <h3>Logon to ESGF ... </h3>
-    <div id="loading-indicator" style="display: none;">
-      <img src="${request.static_path('phoenix:static/images/loading-indicator.gif')}"></img>
-    </div>
+    <h3><img src="${request.static_path('phoenix:static/images/ajax-loader.gif')}"></img> Please wait ... retrieving ESGF certificate.</h3>
   </div>
    
 </metal:block>
