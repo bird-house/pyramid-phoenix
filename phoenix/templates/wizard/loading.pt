@@ -1,0 +1,43 @@
+<metal:block use-macro="main_template">
+
+  <div metal:fill-slot="javascript">
+    <script type="text/javascript">
+  var timerId = 0;
+
+  // update job table with current values
+  var checkLogon = function() {
+     $.getJSON(
+      '/wizard/check_logon.json',
+      {},
+      function(json) {
+        if (json.status == 'success') {
+          clearInterval(timerId);
+          location.reload();
+        }
+      }
+    );
+  };
+
+  // refresh job list each 5 secs ...
+  timerId = setInterval(function() {
+    checkLogon();
+  }, 5000); 
+
+      $(document).ajaxStart(function() {
+      $('#loading-indicator').show();
+      });
+
+      $(document).ajaxStop(function() {
+      $('#loading-indicator').hide();
+      });
+    </script>
+  </div>
+        
+  <div metal:fill-slot="content">
+    <div id="loading-indicator" style="display: none;">
+      Logon to esgf ...
+      <img src="${request.static_path('phoenix:static/images/loading-indicator.gif')}"></img>
+    </div>
+  </div>
+   
+</metal:block>

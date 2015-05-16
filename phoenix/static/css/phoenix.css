@@ -16,6 +16,12 @@ body {
     padding-top: 70px;
 }
 
+#loading-indicator {
+    position: fixed; 
+    left: 50%; 
+    top: 150px;
+}
+
 /* hits */
 
 .hits {

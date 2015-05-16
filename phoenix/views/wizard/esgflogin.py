@@ -1,4 +1,5 @@
 from pyramid.view import view_config
+from pyramid.httpexceptions import HTTPFound
 
 from phoenix.views.wizard import Wizard
 
@@ -32,12 +33,27 @@ class ESGFLogin(Wizard):
 
         self.wizard_state.set('password', appstruct.get('password'))
         from phoenix.tasks import myproxy_logon
-        myproxy_logon.delay(self.user_email(), self.request.wps.url, 
+        result = myproxy_logon.delay(self.user_email(), self.request.wps.url, 
                             appstruct.get('openid'),
                             appstruct.get('password'))
+        self.session['task'] = result
     def next_success(self, appstruct):
         self.success(appstruct)
-        return self.next('wizard_done')
+        return HTTPFound(location=self.request.route_path('wizard_loading'))
+
+    @view_config(renderer='json', route_name='check_logon')
+    def check_logon(self):
+        status = 'running'
+        if self.session.get('task').ready():
+            status = 'success'
+            self.session.flash('logon was successful', queue='success')
+        return dict(status=status)
+
+    @view_config(route_name='wizard_loading', renderer='phoenix:templates/wizard/loading.pt')
+    def loading(self):
+        if self.session.get('task').ready():
+            return self.next('wizard_done')
+        return {}
         
     @view_config(route_name='wizard_esgf_login', renderer='phoenix:templates/wizard/default.pt')
     def view(self):
