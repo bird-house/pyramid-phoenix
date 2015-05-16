@@ -53,7 +53,6 @@ def execute_workflow(email, url, name, nodes):
         abstract = '',
         keywords = None,
         email = email,
-        wps_url = execution.serviceInstance,
         status_location = execution.statusLocation,
         created = datetime.now(),
         is_complete = False)
@@ -94,7 +93,6 @@ def execute_process(email, url, identifier, inputs, outputs, keywords=None):
         abstract = execution.process.abstract,
         keywords = keywords,
         email = email,
-        wps_url = execution.serviceInstance,
         status_location = execution.statusLocation,
         created = datetime.now(),
         is_complete = False)
