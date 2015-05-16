@@ -70,15 +70,8 @@ class Done(Wizard):
         else:
             name = 'esgsearch_workflow'
         nodes = self.workflow_description(name)
-        nodes_json = json.dumps(nodes)
-
-        # generate and run dispel workflow
-        identifier='dispel'
-        inputs=[('nodes', nodes_json), ('name', name)]
-        outputs=[('output', True)]
-        from phoenix.tasks import execute_process
-        execute_process.delay(self.user_email(), self.request.wps.url, identifier, 
-                      inputs=inputs, outputs=outputs, workflow=True)
+        from phoenix.tasks import execute_workflow
+        execute_workflow.delay(self.user_email(), self.request.wps.url, name, nodes)
 
     def success(self, appstruct):
         super(Done, self).success(appstruct)

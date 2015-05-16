@@ -29,6 +29,17 @@ def esgf_logon(email, url, openid, password):
 
 
 @app.task
+def execute_workflow(email, url, name, nodes):
+    import json
+    nodes_json = json.dumps(nodes)
+    # generate and run dispel workflow
+    identifier='dispel'
+    inputs=[('nodes', nodes_json), ('name', name)]
+    outputs=[('output', True)]
+    return execute_process(email, url, identifier, 
+                           inputs=inputs, outputs=outputs, workflow=True)
+
+@app.task
 def execute_process(email, url, identifier, inputs, outputs, workflow=False, keywords=None):
     registry = app.conf['PYRAMID_REGISTRY']
     from owslib.wps import WebProcessingService
