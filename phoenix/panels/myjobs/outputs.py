@@ -7,17 +7,16 @@ from deform import ValidationFailure
 import logging
 logger = logging.getLogger(__name__)
 
-def collect_outputs(status_location, prefix="job"):
+def collect_outputs(status_location):
     from owslib.wps import WPSExecution
     execution = WPSExecution()
     execution.checkStatus(url=status_location, sleepSecs=0)
     outputs = {}
     for output in execution.processOutputs:
-        oid = "%s.%s" %(prefix, output.identifier)
-        outputs[oid] = output
+        outputs[output.identifier] = output
     return outputs
 
-def process_outputs(request, jobid, tab='outputs'):
+def process_outputs(request, jobid):
     job = request.db.jobs.find_one({'identifier': jobid})
     outputs = {}
     if job['is_complete']:
@@ -102,10 +101,10 @@ class MyJobsOutputs(object):
             return self.process_upload_form(upload_form, jobid)
 
         items = []
-        for oid,output in process_outputs(self.request, jobid).items():
+        for output in process_outputs(self.request, jobid).values():
             items.append(dict(title=output.title,
                               abstract=getattr(output, 'abstract', ""),
-                              identifier=oid,
+                              identifier=output.identifier,
                               mime_type = output.mimeType,
                               data = output.data,
                               reference=output.reference))
