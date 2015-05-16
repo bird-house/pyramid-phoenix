@@ -1,8 +1,10 @@
 from pyramid_celery import celery_app as app
 from phoenix.models import mongodb
-from phoenix.exceptions import MyProxyLogonFailure
 
-@app.task
+def on_success(self, retval, task_id, args, kwargs):
+    pass
+
+@app.task(on_success=on_success)
 def myproxy_logon(email, url, openid, password):
     registry = app.conf['PYRAMID_REGISTRY']
     inputs = []
@@ -23,10 +25,7 @@ def myproxy_logon(email, url, openid, password):
         user['credentials'] = credentials
         user['cert_expires'] = cert_expires
         db.users.update({'email':email}, user)
-    else:
-        raise MyProxyLogonFailure('logon process failed.',
-                                  execution.status,
-                                  execution.statusMessage)
+
 
 @app.task
 def execute(email, url, identifier, inputs, outputs, workflow=False, keywords=None):
