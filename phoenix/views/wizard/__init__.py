@@ -255,6 +255,6 @@ class Wizard(MyView):
         elif 'cancel' in self.request.POST:
             return self.cancel()
     
-        result = dict(form=form.render(self.appstruct()))
+        result = dict(title=self.title, form=form.render(self.appstruct()))
         custom = self.custom_view()    
         return dict(result, **custom)
