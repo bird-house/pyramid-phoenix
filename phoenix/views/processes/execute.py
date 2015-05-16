@@ -61,9 +61,9 @@ class ExecuteProcess(Processes):
         for output in self.process.processOutputs:
             outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
 
-            from phoenix.tasks import execute
-            execute.delay(self.user_email(), self.wps.url, self.process.identifier, 
-                          inputs=inputs, outputs=outputs)
+            from phoenix.tasks import execute_process
+            execute_process.delay(self.user_email(), self.wps.url, self.process.identifier, 
+                                  inputs=inputs, outputs=outputs)
     
     @view_config(route_name='processes_execute', renderer='phoenix:templates/processes/execute.pt')
     def view(self):

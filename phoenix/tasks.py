@@ -29,7 +29,7 @@ def esgf_logon(email, url, openid, password):
 
 
 @app.task
-def execute(email, url, identifier, inputs, outputs, workflow=False, keywords=None):
+def execute_process(email, url, identifier, inputs, outputs, workflow=False, keywords=None):
     registry = app.conf['PYRAMID_REGISTRY']
     from owslib.wps import WebProcessingService
     wps = WebProcessingService(url=url, skip_caps=True)

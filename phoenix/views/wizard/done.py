@@ -76,8 +76,8 @@ class Done(Wizard):
         identifier='dispel'
         inputs=[('nodes', nodes_json), ('name', name)]
         outputs=[('output', True)]
-        from phoenix.tasks import execute
-        execute.delay(self.user_email(), self.request.wps.url, identifier, 
+        from phoenix.tasks import execute_process
+        execute_process.delay(self.user_email(), self.request.wps.url, identifier, 
                       inputs=inputs, outputs=outputs, workflow=True)
 
     def success(self, appstruct):
