@@ -49,10 +49,9 @@ def execute_workflow(email, url, name, nodes):
     
     job = dict(
         identifier = uuid.uuid4().get_hex(),
+        email = email,
         title = nodes['worker']['identifier'],
         abstract = '',
-        keywords = None,
-        email = email,
         status_location = execution.statusLocation,
         created = datetime.now(),
         is_complete = False)
@@ -89,10 +88,9 @@ def execute_process(email, url, identifier, inputs, outputs, keywords=None):
 
     job = dict(
         identifier = uuid.uuid4().get_hex(),
-        title = execution.process.title,
-        abstract = execution.process.abstract,
-        keywords = keywords,
         email = email,
+        title = execution.process.title,
+        abstract = getattr(execution.process, "abstract", ""),
         status_location = execution.statusLocation,
         created = datetime.now(),
         is_complete = False)
