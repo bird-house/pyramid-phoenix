@@ -49,7 +49,6 @@ def execute_workflow(email, url, name, nodes):
     
     job = dict(
         identifier = uuid.uuid4().get_hex(),
-        workflow = True,
         title = nodes['worker']['identifier'],
         abstract = '',
         keywords = None,
@@ -91,7 +90,6 @@ def execute_process(email, url, identifier, inputs, outputs, keywords=None):
 
     job = dict(
         identifier = uuid.uuid4().get_hex(),
-        workflow = workflow,
         title = execution.process.title,
         abstract = execution.process.abstract,
         keywords = keywords,
