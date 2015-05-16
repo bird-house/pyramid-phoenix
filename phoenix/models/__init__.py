@@ -95,28 +95,7 @@ def process_outputs(request, jobid, tab='outputs'):
     job = request.db.jobs.find_one({'identifier': jobid})
     outputs = {}
     if job['is_complete']:
-        # TODO: dirty hack for workflows ... not save and needs refactoring
-        from owslib.wps import WPSExecution
-        execution = WPSExecution()
-        execution.checkStatus(url=job['status_location'], sleepSecs=0)
-        if job['workflow']:
-            import urllib
-            import json
-            wf_result_url = execution.processOutputs[0].reference
-            wf_result_json = json.load(urllib.urlopen(wf_result_url))
-            count = 0
-            if tab == 'outputs':
-                for url in wf_result_json.get('worker', []):
-                    count = count + 1
-                    outputs = collect_outputs(url, prefix='worker%d' % count )
-            elif tab == 'resources':
-                for url in wf_result_json.get('source', []):
-                    count = count + 1
-                    outputs = collect_outputs(url, prefix='source%d' % count )
-            elif tab == 'inputs':
-                outputs = {}
-        elif tab == 'outputs':
-            outputs = collect_outputs(job['status_location'])
+        outputs = collect_outputs(job['status_location'])
     return outputs
 
 def job_details(request, jobid):

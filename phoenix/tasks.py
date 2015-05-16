@@ -3,6 +3,7 @@ from pyramid_celery import celery_app as app
 from owslib.wps import WebProcessingService, monitorExecution
 import json
 import uuid
+import urllib
 from datetime import datetime
 
 from phoenix.models import mongodb
@@ -70,6 +71,9 @@ def execute_workflow(email, url, name, nodes):
         job['duration'] = str(duration).split('.')[0]
         if execution.isComplete():
             job['finished'] = datetime.now()
+            result_url = execution.processOutputs[0].reference
+            result = json.load(urllib.urlopen(result_url))
+            job['status_location'] = result.get('worker', [job['status_location']])[0]
         if execution.isSucceded():
             job['progress'] = 100
         else:
