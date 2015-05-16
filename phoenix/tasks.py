@@ -1,6 +1,9 @@
 from pyramid_celery import celery_app as app
 from phoenix.models import mongodb
 
+def task_result(uuid):
+    return app.AsyncResult(uuid)
+
 @app.task
 def esgf_logon(email, url, openid, password):
     registry = app.conf['PYRAMID_REGISTRY']

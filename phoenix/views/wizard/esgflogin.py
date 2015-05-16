@@ -1,6 +1,7 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
+from phoenix.tasks import esgf_logon, task_result
 from phoenix.views.wizard import Wizard
 
 import logging
@@ -32,11 +33,10 @@ class ESGFLogin(Wizard):
         super(ESGFLogin, self).success(appstruct)
 
         self.wizard_state.set('password', appstruct.get('password'))
-        from phoenix.tasks import esgf_logon
         result = esgf_logon.delay(self.user_email(), self.request.wps.url, 
                             appstruct.get('openid'),
                             appstruct.get('password'))
-        self.session['task'] = result
+        self.session['task_id'] = result.id
     def next_success(self, appstruct):
         self.success(appstruct)
         return HTTPFound(location=self.request.route_path('wizard_loading'))
@@ -44,14 +44,16 @@ class ESGFLogin(Wizard):
     @view_config(renderer='json', route_name='wizard_check_logon')
     def check_logon(self):
         status = 'running'
-        if self.session.get('task').ready():
+        result = task_result(self.session.get('task_id'))
+        if result.ready():
             status = 'ready'
         return dict(status=status)
 
     @view_config(route_name='wizard_loading', renderer='phoenix:templates/wizard/loading.pt')
     def loading(self):
-        if self.session.get('task').ready():
-            if self.session.get('task').get() == 'ProcessSucceeded':
+        result = task_result(self.session.get('task_id'))
+        if result.ready():
+            if result.get() == 'ProcessSucceeded':
                 self.session.flash('ESGF logon was successful.', queue='success')
                 return self.next('wizard_done')
             else:
