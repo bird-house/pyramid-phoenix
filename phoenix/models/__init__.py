@@ -81,21 +81,6 @@ def get_wps_list(request):
             rights=csw.records[rec].rights))
     return items
 
-def job_details(request, jobid):
-    job = request.db.jobs.find_one({'identifier': jobid})
-    details = job.copy()
-    from phoenix.utils import time_ago_in_words
-    details['finished'] = time_ago_in_words(job.get('finished'))
-    return details
-
-def count_literal_inputs(wps, identifier):
-    process = wps.describeprocess(identifier)
-    literal_inputs = []
-    for input in process.dataInputs:
-        if input.dataType != 'ComplexData':
-            literal_inputs.append(input)
-    logger.debug('num literal inputs: %d', len(literal_inputs))
-    return len(literal_inputs)
 
 
 

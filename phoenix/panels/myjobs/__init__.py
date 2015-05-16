@@ -3,10 +3,16 @@ from pyramid_layout.panel import panel_config
 import logging
 logger = logging.getLogger(__name__)
 
+def job_details(request, jobid):
+    job = request.db.jobs.find_one({'identifier': jobid})
+    details = job.copy()
+    from phoenix.utils import time_ago_in_words
+    details['finished'] = time_ago_in_words(job.get('finished'))
+    return details
+
 @panel_config(name='myjobs_details', renderer='phoenix:templates/panels/myjobs_details.pt')
 def details(context, request):
     jobid = request.session.get('jobid')
-    from phoenix.models import job_details
     return dict(job=job_details(request, jobid=jobid))
 
 @panel_config(name='myjobs_log', renderer='phoenix:templates/panels/myjobs_log.pt')

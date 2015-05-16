@@ -4,6 +4,14 @@ import deform
 
 from phoenix.views.wizard import Wizard
 
+def count_literal_inputs(wps, identifier):
+    process = wps.describeprocess(identifier)
+    literal_inputs = []
+    for input in process.dataInputs:
+        if input.dataType != 'ComplexData':
+            literal_inputs.append(input)
+    return len(literal_inputs)
+
 @colander.deferred
 def deferred_choose_process_widget(node, kw):
     processes = kw.get('processes', [])
@@ -41,7 +49,6 @@ class ChooseWPSProcess(Wizard):
         self.success(appstruct)
 
         # TODO: this code does not belong here
-        from phoenix.models import count_literal_inputs
         identifier = appstruct['identifier']
         if count_literal_inputs(self.wps, identifier) > 0:
             return self.next('wizard_literal_inputs')
