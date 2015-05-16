@@ -17,4 +17,7 @@ def details(context, request):
 
 @panel_config(name='myjobs_log', renderer='phoenix:templates/panels/myjobs_log.pt')
 def log(context, request):
-    return {}
+    jobid = request.session.get('jobid')
+    job = request.db.jobs.find_one({'identifier': jobid})
+    logger.debug("log: %s", job.get('log'))
+    return dict(log=job.get('log'))

@@ -47,6 +47,8 @@ def execute_workflow(email, url, name, nodes):
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     db = mongodb(registry)
     
+    log = ['0%: process started']
+
     job = dict(
         identifier = uuid.uuid4().get_hex(),
         email = email,
@@ -54,7 +56,8 @@ def execute_workflow(email, url, name, nodes):
         abstract = '',
         workflow_status_location = execution.statusLocation,
         created = datetime.now(),
-        is_complete = False)
+        is_complete = False,
+        log = log)
     db.jobs.save(job)
 
     while not execution.isComplete():
@@ -63,9 +66,11 @@ def execute_workflow(email, url, name, nodes):
         job['status_message'] = execution.statusMessage
         job['is_complete'] = execution.isComplete()
         job['is_succeded'] = execution.isSucceded()
+        job['progress'] = execution.percentCompleted
         job['errors'] = [ '%s %s\n: %s' % (error.code, error.locator, error.text.replace('\\','')) for error in execution.errors]
         duration = datetime.now() - job.get('created', datetime.now())
         job['duration'] = str(duration).split('.')[0]
+        log.append('%d: %s' % (execution.percentCompleted, execution.statusMessage))
         if execution.isComplete():
             job['finished'] = datetime.now()
             result_url = execution.processOutputs[0].reference
@@ -74,8 +79,7 @@ def execute_workflow(email, url, name, nodes):
             job['resource_status_location'] = result.get('source', [''])[0]
         if execution.isSucceded():
             job['progress'] = 100
-        else:
-            job['progress'] = execution.percentCompleted
+        job['log'] = log
         db.jobs.update({'identifier': job['identifier']}, job)
     return execution.getStatus()
 
@@ -87,6 +91,8 @@ def execute_process(email, url, identifier, inputs, outputs, keywords=None):
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     db = mongodb(registry)
 
+    log = ['0%: process started']
+
     job = dict(
         identifier = uuid.uuid4().get_hex(),
         email = email,
@@ -94,7 +100,8 @@ def execute_process(email, url, identifier, inputs, outputs, keywords=None):
         abstract = getattr(execution.process, "abstract", ""),
         status_location = execution.statusLocation,
         created = datetime.now(),
-        is_complete = False)
+        is_complete = False,
+        log = log)
     db.jobs.save(job)
 
     while not execution.isComplete():
@@ -103,6 +110,7 @@ def execute_process(email, url, identifier, inputs, outputs, keywords=None):
         job['status_message'] = execution.statusMessage
         job['is_complete'] = execution.isComplete()
         job['is_succeded'] = execution.isSucceded()
+        log.append('%d: %s' % (execution.percentCompleted, execution.statusMessage))
         job['errors'] = [ '%s %s\n: %s' % (error.code, error.locator, error.text.replace('\\','')) for error in execution.errors]
         duration = datetime.now() - job.get('created', datetime.now())
         job['duration'] = str(duration).split('.')[0]
@@ -112,5 +120,6 @@ def execute_process(email, url, identifier, inputs, outputs, keywords=None):
             job['progress'] = 100
         else:
             job['progress'] = execution.percentCompleted
+        job['log'] = log
         db.jobs.update({'identifier': job['identifier']}, job)
     return execution.getStatus()
