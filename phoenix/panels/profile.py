@@ -1,4 +1,5 @@
 from pyramid_layout.panel import panel_config
+from pyramid.security import authenticated_userid
 from deform import Form, ValidationFailure
 from phoenix import models
 
@@ -29,7 +30,7 @@ class AccountPanel(ProfilePanel):
             user = models.get_user(self.request)
             for key in ['name', 'organisation', 'notes']:
                 user[key] = appstruct.get(key)
-            self.request.db.users.update({'email':models.user_email(self.request)}, user)
+            self.request.db.users.update({'email':authenticated_userid(self.request)}, user)
         except ValidationFailure, e:
             logger.exception('validation of form failed.')
             return dict(form=e.render())

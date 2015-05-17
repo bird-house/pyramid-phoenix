@@ -1,5 +1,5 @@
 from pyramid.view import view_config, view_defaults
-
+from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from deform import Form, Button
 from deform import ValidationFailure
@@ -62,7 +62,7 @@ class ExecuteProcess(Processes):
             outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
 
             from phoenix.tasks import execute_process
-            execute_process.delay(self.user_email(), self.wps.url, self.process.identifier, 
+            execute_process.delay(authenticated_userid(self.request), self.wps.url, self.process.identifier, 
                                   inputs=inputs, outputs=outputs)
     
     @view_config(route_name='processes_execute', renderer='phoenix:templates/processes/execute.pt')

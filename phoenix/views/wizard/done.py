@@ -1,4 +1,5 @@
 from pyramid.view import view_config
+from pyramid.security import authenticated_userid
 import json
 
 from phoenix.views.wizard import Wizard
@@ -83,7 +84,7 @@ class Done(Wizard):
         name = self.workflow_name()
         nodes = self.workflow_description(name)
         from phoenix.tasks import execute_workflow
-        execute_workflow.delay(self.user_email(), self.request.wps.url, name, nodes)
+        execute_workflow.delay(authenticated_userid(self.request), self.request.wps.url, name, nodes)
         
     def next_success(self, appstruct):
         from pyramid.httpexceptions import HTTPFound

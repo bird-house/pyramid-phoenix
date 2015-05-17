@@ -1,4 +1,5 @@
 from pyramid.view import view_config, view_defaults
+from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPFound
 
 from deform import Form, Button
@@ -118,7 +119,7 @@ class Wizard(MyView):
         super(Wizard, self).__init__(request, name, title, description)
         self.csw = self.request.csw
         self.wizard_state = WizardState(self.session)
-        self.favorite = WizardFavorite(self.request, self.session, email=self.user_email())
+        self.favorite = WizardFavorite(self.request, self.session, email=authenticated_userid(self.request))
 
     def buttons(self):
         prev_disabled = not self.prev_ok()

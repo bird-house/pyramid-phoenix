@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
-
+from pyramid.security import authenticated_userid
 from phoenix.views.wizard import Wizard
 
 import logging
@@ -39,7 +39,7 @@ class SwiftLogin(Wizard):
         user['swift_username'] = appstruct.get('username')
         user['swift_storage_url'] = result['storage_url']
         user['swift_auth_token'] = result['auth_token'] 
-        self.userdb.update({'email':self.user_email()}, user)
+        self.userdb.update({'email':authenticated_userid(self.request)}, user)
         
     def next_success(self, appstruct):
         try:

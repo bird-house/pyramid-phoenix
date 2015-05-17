@@ -1,5 +1,5 @@
 from pyramid.view import view_config
-
+from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPFound
 from deform import Form, Button
 from deform import ValidationFailure
@@ -25,7 +25,7 @@ class AddDataset(SettingsView):
         
     def generate_form(self):
         from phoenix.schema import PublishSchema
-        schema = PublishSchema().bind(email=self.user_email())
+        schema = PublishSchema().bind(email=authenticated_userid(self.request))
         return Form(schema, buttons=(Button(name='add_dataset', title='Add Dataset'),), formid='deform')
 
     def process_form(self, form):

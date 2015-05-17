@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
-
+from pyramid.security import authenticated_userid
 from phoenix.tasks import esgf_logon, task_result
 from phoenix.views.wizard import Wizard
 
@@ -33,7 +33,7 @@ class ESGFLogin(Wizard):
         super(ESGFLogin, self).success(appstruct)
 
         self.wizard_state.set('password', appstruct.get('password'))
-        result = esgf_logon.delay(self.user_email(), self.request.wps.url, 
+        result = esgf_logon.delay(authenticated_userid(self.request), self.request.wps.url, 
                             appstruct.get('openid'),
                             appstruct.get('password'))
         self.session['task_id'] = result.id

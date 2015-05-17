@@ -1,6 +1,6 @@
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
-
+from pyramid.security import authenticated_userid
 from phoenix.views.myjobs import MyJobs
 
 import logging
@@ -17,12 +17,12 @@ class Overview(MyJobs):
 
     @view_config(renderer='json', route_name='update_myjobs')
     def update_jobs(self):
-        return list(self.jobsdb.find({'email': self.user_email()}).sort('created', -1))
+        return list(self.jobsdb.find({'email': authenticated_userid(self.request)}).sort('created', -1))
 
     @view_config(route_name='remove_myjobs')
     def remove_all(self):
-        count = self.jobsdb.find({'email': self.user_email()}).count()
-        self.jobsdb.remove({'email': self.user_email()})
+        count = self.jobsdb.find({'email': authenticated_userid(self.request)}).count()
+        self.jobsdb.remove({'email': authenticated_userid(self.request)})
         self.session.flash("%d Jobs deleted." % count, queue='info')
         return HTTPFound(location=self.request.route_path(self.name))
 
