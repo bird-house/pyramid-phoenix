@@ -14,11 +14,25 @@ logger = get_task_logger(__name__)
 def task_result(task_id):
     return app.AsyncResult(task_id)
 
-def add_job(db, user_id, task_id, title, abstract, status_location):
-    log = ['0%: process started']
-    log.append('0: task id = %s' % task_id)
-    logger.info("process started")
+def log(job):
+    log_msg = '{0:d}%: {1}'.format(job.get('progress'), job.get('status_message'))
+    if not 'log' in job:
+        job['log'] = []
+    # skip same log messages
+    if len(job['log']) == 0 or job['log'][-1] != log_msg:
+        job['log'].append(log_msg)
+        logger.info(log_msg)
 
+def log_error(job, error):
+    log_msg = 'ERROR: code={0.code}, locator={0.locator}, message={0.text}'.format(error)
+    if not 'log' in job:
+        job['log'] = []
+    # skip same log messages
+    if len(job['log']) == 0 or job['log'][-1] != log_msg:
+        job['log'].append(log_msg)
+        logger.error(log_msg)
+
+def add_job(db, user_id, task_id, title, abstract, status_location):
     job = dict(
         identifier = uuid.uuid4().get_hex(),
         task_id = task_id,
@@ -27,8 +41,7 @@ def add_job(db, user_id, task_id, title, abstract, status_location):
         abstract = abstract,
         status_location = status_location,
         created = datetime.now(),
-        is_complete = False,
-        log = log)
+        is_complete = False)
     db.jobs.save(job)
     return job
 
@@ -81,18 +94,19 @@ def execute_workflow(self, user_id, url, name, nodes):
         job['is_complete'] = execution.isComplete()
         job['is_succeded'] = execution.isSucceded()
         job['progress'] = execution.percentCompleted
-        job['errors'] = [ '%s %s\n: %s' % (error.code, error.locator, error.text.replace('\\','')) for error in execution.errors]
         duration = datetime.now() - job.get('created', datetime.now())
         job['duration'] = str(duration).split('.')[0]
-        job['log'].append('%d: %s' % (execution.percentCompleted, execution.statusMessage))
         if execution.isComplete():
             job['finished'] = datetime.now()
             result_url = execution.processOutputs[0].reference
             result = json.load(urllib.urlopen(result_url))
             job['status_location'] = result.get('worker', [''])[0]
             job['resource_status_location'] = result.get('source', [''])[0]
-        if execution.isSucceded():
-            job['progress'] = 100
+            if execution.isSucceded():
+                job['progress'] = 100
+        log(job)
+        for error in execution.errors:
+            log_error(job)
         db.jobs.update({'identifier': job['identifier']}, job)
     return execution.getStatus()
 
@@ -115,15 +129,15 @@ def execute_process(self, user_id, url, identifier, inputs, outputs, keywords=No
         job['status_message'] = execution.statusMessage
         job['is_complete'] = execution.isComplete()
         job['is_succeded'] = execution.isSucceded()
-        job['log'].append('%d: %s' % (execution.percentCompleted, execution.statusMessage))
-        job['errors'] = [ '%s %s\n: %s' % (error.code, error.locator, error.text.replace('\\','')) for error in execution.errors]
+        job['progress'] = execution.percentCompleted
         duration = datetime.now() - job.get('created', datetime.now())
         job['duration'] = str(duration).split('.')[0]
         if execution.isComplete():
             job['finished'] = datetime.now()
-        if execution.isSucceded():
-            job['progress'] = 100
-        else:
-            job['progress'] = execution.percentCompleted
+            if execution.isSucceded():
+                job['progress'] = 100
+        log(job)
+        for error in execution.errors:
+            log_error(job, error)
         db.jobs.update({'identifier': job['identifier']}, job)
     return execution.getStatus()
