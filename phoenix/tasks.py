@@ -8,11 +8,14 @@ from datetime import datetime
 
 from phoenix.models import mongodb
 
+from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
+
 def task_result(task_id):
     return app.AsyncResult(task_id)
 
-@app.task
-def esgf_logon(email, url, openid, password):
+@app.task(bind=True)
+def esgf_logon(self, email, url, openid, password):
     registry = app.conf['PYRAMID_REGISTRY']
     inputs = []
     inputs.append( ('openid', openid.encode('ascii', 'ignore')) )
@@ -33,8 +36,8 @@ def esgf_logon(email, url, openid, password):
         db.users.update({'email':email}, user)
     return execution.status
 
-@app.task
-def execute_workflow(email, url, name, nodes):
+@app.task(bind=True)
+def execute_workflow(self, email, url, name, nodes):
     registry = app.conf['PYRAMID_REGISTRY']
 
     nodes_json = json.dumps(nodes)
@@ -48,9 +51,11 @@ def execute_workflow(email, url, name, nodes):
     db = mongodb(registry)
     
     log = ['0%: process started']
+    log.append('0: task id = %s' % self.request.id)
 
     job = dict(
         identifier = uuid.uuid4().get_hex(),
+        task_id = self.request.id,
         email = email,
         title = nodes['worker']['identifier'],
         abstract = '',
@@ -84,8 +89,8 @@ def execute_workflow(email, url, name, nodes):
         db.jobs.update({'identifier': job['identifier']}, job)
     return execution.getStatus()
 
-@app.task
-def execute_process(email, url, identifier, inputs, outputs, keywords=None):
+@app.task(bind=True)
+def execute_process(self, email, url, identifier, inputs, outputs, keywords=None):
     registry = app.conf['PYRAMID_REGISTRY']
 
     wps = WebProcessingService(url=url, skip_caps=True)
@@ -93,9 +98,12 @@ def execute_process(email, url, identifier, inputs, outputs, keywords=None):
     db = mongodb(registry)
 
     log = ['0%: process started']
+    log.append('0: task id = %s' % self.request.id)
+    logger.info("process started")
 
     job = dict(
         identifier = uuid.uuid4().get_hex(),
+        task_id = self.request.id,
         email = email,
         title = execution.process.title,
         abstract = getattr(execution.process, "abstract", ""),

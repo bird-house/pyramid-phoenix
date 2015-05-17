@@ -1,3 +1,5 @@
+from pyramid.security import authenticated_userid
+
 import uuid
 from datetime import datetime, timedelta
 import pymongo
@@ -11,6 +13,20 @@ logger = logging.getLogger(__name__)
 def mongodb(registry):
     settings = registry.settings
     return pymongo.Connection(settings['mongodb.url'])[settings['mongodb.db_name']]
+
+def add_job(request, title, abstract=''):
+    log = ['0%: process pending']
+
+    job = dict(
+        identifier = uuid.uuid4().get_hex(),
+        email = authenticated_userid(request),
+        title = title,
+        abstract = abstract,
+        created = datetime.now(),
+        is_complete = False,
+        log = log)
+    request.db.jobs.save(job)
+    return request.db.jobs.find_one({'identifier':job['identifier']})
 
 def user_email(request):
     from pyramid.security import authenticated_userid
