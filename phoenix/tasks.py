@@ -54,6 +54,7 @@ def execute_workflow(email, url, name, nodes):
         email = email,
         title = nodes['worker']['identifier'],
         abstract = '',
+        status_location = execution.statusLocation,
         workflow_status_location = execution.statusLocation,
         created = datetime.now(),
         is_complete = False,
