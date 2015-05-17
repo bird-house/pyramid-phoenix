@@ -14,7 +14,7 @@ $(function() {
         //var finished = true;
 	var finished = false;
 	var numRows = $("table tr").length - 1;
-	if (numRows != json.length) {
+	if (numRows < json.length) {
 	  location.reload();
 	}
 	else {
@@ -52,9 +52,9 @@ $(function() {
     );
   };
 
-  // refresh job list each 5 secs ...
+  // refresh job list each 3 secs ...
   timerId = setInterval(function() {
     updateJobs();
-  }, 5000); 
+  }, 3000); 
 
 });
