@@ -67,9 +67,9 @@ class JobDetails(MyJobs):
 
         lm = self.request.layout_manager
         if tab == 'log':
-            lm.layout.add_heading('myjobs_log')
+            lm.layout.add_heading('monitor_log')
         else:
-            lm.layout.add_heading('myjobs_outputs')
+            lm.layout.add_heading('monitor_outputs')
 
         return dict(active=tab, jobid=jobid)
 

@@ -88,7 +88,7 @@ class MyJobsOutputs(object):
             self.session.flash("Swift upload added to Jobs.", queue='info')
         return HTTPFound(location=self.request.route_path('monitor_details', jobid=jobid, tab='outputs'))
     
-    @panel_config(name='myjobs_outputs', renderer='phoenix:templates/panels/myjobs_outputs.pt')
+    @panel_config(name='monitor_outputs', renderer='phoenix:templates/panels/monitor_outputs.pt')
     def panel(self):
         jobid = self.session.get('jobid')
         
