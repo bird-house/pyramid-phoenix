@@ -32,7 +32,7 @@
            <p>Choose a process form a <b>Web Processing Service</b> and start it.</p>
          </div>
          <div class="col-sm-6 col-md-3 text-center">
-           <a class="btn btn-success btn-lg" href="${request.route_url('myjobs')}">
+           <a class="btn btn-success btn-lg" href="${request.route_url('monitor')}">
              <span class="glyphicon glyphicon-tasks"></span> Monitor Jobs
            </a>
            <p>Monitor the status of your running jobs/processes.</p>

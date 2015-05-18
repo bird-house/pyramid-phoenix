@@ -55,7 +55,7 @@ class MyJobsOutputs(object):
             self.session.flash("Publication failed. %s" % e, queue='danger')
         else:
             self.session.flash("Publication was successful", queue='success')
-        return HTTPFound(location=self.request.route_path('myjobs_details', jobid=jobid, tab='outputs'))
+        return HTTPFound(location=self.request.route_path('monitor_details', jobid=jobid, tab='outputs'))
 
     def generate_upload_form(self, formid="deform"):
         """Generate form for upload to swift cloud"""
@@ -86,7 +86,7 @@ class MyJobsOutputs(object):
             self.session.flash("Upload failed. %s" % e, queue='danger')
         else:
             self.session.flash("Swift upload added to Jobs.", queue='info')
-        return HTTPFound(location=self.request.route_path('myjobs_details', jobid=jobid, tab='outputs'))
+        return HTTPFound(location=self.request.route_path('monitor_details', jobid=jobid, tab='outputs'))
     
     @panel_config(name='myjobs_outputs', renderer='phoenix:templates/panels/myjobs_outputs.pt')
     def panel(self):

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class JobDetails(MyJobs):
     def __init__(self, request):
         super(JobDetails, self).__init__(
-            request, name='myjobs_details', title='Job Details')
+            request, name='monitor_details', title='Details')
 
     def breadcrumbs(self):
         breadcrumbs = super(JobDetails, self).breadcrumbs()
@@ -56,7 +56,7 @@ class JobDetails(MyJobs):
                 format = output.mimeType)
         return result
 
-    @view_config(route_name='myjobs_details', renderer='phoenix:templates/myjobs/details.pt')
+    @view_config(route_name='monitor_details', renderer='phoenix:templates/myjobs/details.pt')
     def view(self):
         tab = self.request.matchdict.get('tab')
         # TODO: this is a bit fishy ...
