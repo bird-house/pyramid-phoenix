@@ -15,7 +15,7 @@ def task_result(task_id):
     return app.AsyncResult(task_id)
 
 def log(job):
-    log_msg = '{0:d}%: {1}'.format(job.get('progress'), job.get('status_message'))
+    log_msg = '{0:3d}%: {1}'.format(job.get('progress'), job.get('status_message'))
     if not 'log' in job:
         job['log'] = []
     # skip same log messages

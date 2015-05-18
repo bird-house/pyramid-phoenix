@@ -23,7 +23,7 @@ class MyJobs(MyView):
         
     def breadcrumbs(self):
         breadcrumbs = super(MyJobs, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path('myjobs'), title='My Jobs'))
+        breadcrumbs.append(dict(route_path=self.request.route_path('myjobs'), title='Monitor'))
         return breadcrumbs
 
    
