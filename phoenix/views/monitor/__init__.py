@@ -17,12 +17,12 @@ def notify_job_finished(event):
         #self.session.flash("Job <b>%s</b> failed." % event.job.get('title'), queue='danger')
 
 @view_defaults(permission='submit', layout='default')
-class MyJobs(MyView):
+class Monitor(MyView):
     def __init__(self, request, name, title, description=None):
-        super(MyJobs, self).__init__(request, name, title, description)
+        super(Monitor, self).__init__(request, name, title, description)
         
     def breadcrumbs(self):
-        breadcrumbs = super(MyJobs, self).breadcrumbs()
+        breadcrumbs = super(Monitor, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path('monitor'), title='Monitor'))
         return breadcrumbs
 

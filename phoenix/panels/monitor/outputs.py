@@ -23,7 +23,7 @@ def process_outputs(request, jobid):
         outputs = collect_outputs(job['status_location'])
     return outputs
 
-class MyJobsOutputs(object):
+class Outputs(object):
     def __init__(self, context, request):
         self.context = context
         self.request = request

@@ -1,19 +1,19 @@
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.security import authenticated_userid
-from phoenix.views.monitor import MyJobs
+from phoenix.views.monitor import Monitor
 from phoenix.panels.monitor.outputs import process_outputs
 
 import logging
 logger = logging.getLogger(__name__)
 
-class JobDetails(MyJobs):
+class Details(Monitor):
     def __init__(self, request):
-        super(JobDetails, self).__init__(
+        super(Details, self).__init__(
             request, name='monitor_details', title='Details')
 
     def breadcrumbs(self):
-        breadcrumbs = super(JobDetails, self).breadcrumbs()
+        breadcrumbs = super(Details, self).breadcrumbs()
         breadcrumbs.append(dict(route_path='', title=self.title))
         return breadcrumbs
         
