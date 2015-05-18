@@ -50,6 +50,10 @@ def main(global_config, **settings):
     # mailer
     config.include('pyramid_mailer')
 
+    # ldap
+    config.include('pyramid_ldap')
+    # TODO: ldap_setup(), etc.
+
     # add my own templates
     # TODO: improve config of my own templates
     # see also: http://docs.pylonsproject.org/projects/deform/en/latest/templates.html#overriding-for-all-forms
