@@ -16,17 +16,17 @@ body {
     padding-top: 70px;
 }
 
-#loading-indicator {
-    position: fixed; 
-    left: 50%; 
-    top: 150px;
+/* log output */
+pre.log-output {
+    color:#f1f1f1;
+    background-color:#222;
 }
 
 /* hits */
 
 .hits {
-        color: green;
-        font-weight: bold;
+    color: green;
+    font-weight: bold;
 }
 
 /* tags */
