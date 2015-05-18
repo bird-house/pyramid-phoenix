@@ -1,7 +1,7 @@
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.security import authenticated_userid
-from phoenix.views.myjobs import MyJobs
+from phoenix.views.monitor import MyJobs
 
 import logging
 logger = logging.getLogger(__name__)
