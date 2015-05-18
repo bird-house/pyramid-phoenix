@@ -56,7 +56,7 @@ class JobDetails(MyJobs):
                 format = output.mimeType)
         return result
 
-    @view_config(route_name='monitor_details', renderer='phoenix:templates/myjobs/details.pt')
+    @view_config(route_name='monitor_details', renderer='phoenix:templates/monitor/details.pt')
     def view(self):
         tab = self.request.matchdict.get('tab')
         # TODO: this is a bit fishy ...

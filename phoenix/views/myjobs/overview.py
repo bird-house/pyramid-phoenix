@@ -35,7 +35,7 @@ class Overview(MyJobs):
             self.session.flash("Job %s deleted." % job['title'], queue='info')
         return HTTPFound(location=self.request.route_path(self.name))
 
-    @view_config(route_name='monitor', renderer='phoenix:templates/myjobs/overview.pt')
+    @view_config(route_name='monitor', renderer='phoenix:templates/monitor/overview.pt')
     def view(self):
         items = self.update_jobs()
 
