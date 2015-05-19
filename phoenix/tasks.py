@@ -2,6 +2,7 @@ from pyramid_celery import celery_app as app
 
 from owslib.wps import WebProcessingService, monitorExecution
 import json
+import yaml
 import uuid
 import urllib
 from datetime import datetime
@@ -71,14 +72,13 @@ def esgf_logon(self, email, url, openid, password):
 def execute_workflow(self, user_id, url, name, nodes):
     registry = app.conf['PYRAMID_REGISTRY']
 
-    nodes_json = json.dumps(nodes)
     # generate and run dispel workflow
-    identifier='dispel'
-    inputs=[('nodes', nodes_json), ('name', name)]
+    # TODO: fix owslib wps for unicode/yaml parameters
+    inputs=[('nodes', json.dumps(nodes)), ('name', name)]
     outputs=[('output', True)]
     
     wps = WebProcessingService(url=url, skip_caps=True)
-    execution = wps.execute(identifier, inputs=inputs, output=outputs)
+    execution = wps.execute(identifier='dispel', inputs=inputs, output=outputs)
     db = mongodb(registry)
     job = add_job(db, user_id,
                   task_id = self.request.id,

@@ -18,7 +18,9 @@ class Overview(SettingsView):
                             icon="monitor_edit.png", title="Supervisor", id="external-url"))
         buttons.append(dict(url="/settings/catalog", icon="bookshelf.png", title="Catalog"))
         buttons.append(dict(url="/settings/users", icon="user_catwomen.png", title="Users"))
-        buttons.append(dict(url="/settings/jobs", icon="blackboard_sum.png", title="Jobs"))
+        buttons.append(dict(url=self.settings.get('celery.url'),
+                            icon="celery_128.png", title="Celery", id="external-url"))
+        buttons.append(dict(url="/settings/jobs", icon="blackboard_sum.png", title="Monitor"))
         buttons.append(dict(url="/ipython/notebook", icon="ipynb_icon_64x64.png", title="IPython"))
         buttons.append(dict(url=self.settings.get('thredds.url'),
                             icon="unidataLogo.png", title="Thredds", id="external-url"))
