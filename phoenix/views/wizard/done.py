@@ -25,53 +25,38 @@ class Done(Wizard):
         from phoenix.schema import DoneSchema
         return DoneSchema()
 
-    def workflow_description(self, name):
-        nodes = {}
+    def workflow_description(self):
+        # source_type
+        source_type = self.wizard_state.get('wizard_source')['source']
+        workflow = dict(name=source_type, source={}, worker={})
 
+        # source
         user = self.get_user()
-        if 'swift' in name:
+        if 'swift' in source_type:
             source = dict(
-                service = self.request.wps.url,
                 storage_url = user.get('swift_storage_url'),
                 auth_token = user.get('swift_auth_token'),
             )
             source['container'] = self.wizard_state.get('wizard_swiftbrowser')['container']
             source['prefix'] = self.wizard_state.get('wizard_swiftbrowser')['prefix']
-            nodes['source'] = source
-            logger.debug('source = %s', source)
-        else: # esgsearch
-            credentials = user.get('credentials')
-
+            workflow['source']['swift'] = swift
+        else: # esgf
             selection = self.wizard_state.get('wizard_esgf_search')['selection']
-            esgsearch = json.loads(selection)
-            nodes['esgsearch'] = esgsearch
-            
-            source = dict(
-                service = self.request.wps.url,
-                credentials=credentials,
-            )
-            nodes['source'] = source
+            source = json.loads(selection)
+            source['credentials'] = user.get('credentials')
+            workflow['source']['esgf'] = source
 
         from phoenix.utils import appstruct_to_inputs
         inputs = appstruct_to_inputs(self.wizard_state.get('wizard_literal_inputs', {}))
         worker_inputs = ['%s=%s' % (key, value) for key,value in inputs]
         worker = dict(
-            service = self.wps.url,
+            url = self.wps.url,
             identifier = self.wizard_state.get('wizard_process')['identifier'],
             inputs = [(key, value) for key,value in inputs],
             resource = self.wizard_state.get('wizard_complex_inputs')['identifier'],
             )
-        nodes['worker'] = worker
-        return nodes
-
-    def workflow_name(self):
-        name = None
-        source = self.wizard_state.get('wizard_source')['source']
-        if 'swift' in source:
-            name = 'swift_workflow'
-        else:
-            name = 'esgsearch_workflow'
-        return name
+        workflow['worker'] = worker
+        return workflow
 
     def success(self, appstruct):
         super(Done, self).success(appstruct)
@@ -81,10 +66,9 @@ class Done(Wizard):
                 state=self.wizard_state.dump())
             self.favorite.save()
 
-        name = self.workflow_name()
-        nodes = self.workflow_description(name)
         from phoenix.tasks import execute_workflow
-        execute_workflow.delay(authenticated_userid(self.request), self.request.wps.url, name, nodes)
+        execute_workflow.delay(authenticated_userid(self.request), self.request.wps.url,
+                               workflow=self.workflow_description())
         
     def next_success(self, appstruct):
         from pyramid.httpexceptions import HTTPFound
