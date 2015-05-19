@@ -3,6 +3,8 @@ from pyramid.security import authenticated_userid
 import uuid
 from datetime import datetime, timedelta
 import pymongo
+from phoenix.utils import localize_datetime
+from dateutil import parser as datetime_parser
 
 from phoenix import utils
 from phoenix.security import Guest
@@ -53,6 +55,17 @@ def user_stats(request):
                 num_unregistered=num_unregistered,
                 num_logins_3h=num_logins_3h,
                 num_logins_7d=num_logins_7d)
+
+def user_cert_valid(request, valid_hours=12):
+    cert_expires = get_user(request).get('cert_expires')
+    if cert_expires != None:
+        timestamp = datetime_parser.parse(cert_expires)
+        now = localize_datetime(datetime.utcnow())
+        valid_hours = timedelta(hours=valid_hours)
+        # cert must be valid for some hours
+        if timestamp > now + valid_hours:
+            return True
+    return False
 
 def get_wps_list(request):
     csw = request.csw

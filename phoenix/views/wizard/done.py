@@ -46,6 +46,7 @@ class Done(Wizard):
             source['credentials'] = user.get('credentials')
             workflow['source']['esgf'] = source
 
+        # worker
         from phoenix.utils import appstruct_to_inputs
         inputs = appstruct_to_inputs(self.wizard_state.get('wizard_literal_inputs', {}))
         worker_inputs = ['%s=%s' % (key, value) for key,value in inputs]
