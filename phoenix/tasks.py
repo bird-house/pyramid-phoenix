@@ -78,7 +78,7 @@ def execute_workflow(self, user_id, url, workflow):
     outputs=[('output', True)]
     
     wps = WebProcessingService(url=url, skip_caps=True)
-    execution = wps.execute(identifier='dispel', inputs=inputs, output=outputs)
+    execution = wps.execute(identifier='workflow', inputs=inputs, output=outputs)
     db = mongodb(registry)
     job = add_job(db, user_id,
                   task_id = self.request.id,
