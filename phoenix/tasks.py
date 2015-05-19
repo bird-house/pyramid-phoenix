@@ -88,7 +88,7 @@ def execute_workflow(self, user_id, url, workflow):
     job['workflow_status_location'] = execution.statusLocation,
 
     while not execution.isComplete():
-        execution.checkStatus(sleepSecs=2)
+        execution.checkStatus(sleepSecs=1)
         job['status'] = execution.getStatus()
         job['status_message'] = execution.statusMessage
         job['is_complete'] = execution.isComplete()
@@ -124,7 +124,7 @@ def execute_process(self, user_id, url, identifier, inputs, outputs, keywords=No
                   status_location = execution.statusLocation)
 
     while not execution.isComplete():
-        execution.checkStatus(sleepSecs=2)
+        execution.checkStatus(sleepSecs=1)
         job['status'] = execution.getStatus()
         job['status_message'] = execution.statusMessage
         job['is_complete'] = execution.isComplete()
