@@ -39,7 +39,7 @@ class Done(Wizard):
             )
             source['container'] = self.wizard_state.get('wizard_swiftbrowser')['container']
             source['prefix'] = self.wizard_state.get('wizard_swiftbrowser')['prefix']
-            workflow['source']['swift'] = swift
+            workflow['source']['swift'] = source
         else: # esgf
             selection = self.wizard_state.get('wizard_esgf_search')['selection']
             source = json.loads(selection)
