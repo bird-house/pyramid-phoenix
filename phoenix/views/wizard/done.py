@@ -2,6 +2,7 @@ from pyramid.view import view_config
 from pyramid.security import authenticated_userid
 import json
 
+from phoenix.events import JobStarted
 from phoenix.views.wizard import Wizard
 
 import logging
@@ -68,8 +69,9 @@ class Done(Wizard):
             self.favorite.save()
 
         from phoenix.tasks import execute_workflow
-        execute_workflow.delay(authenticated_userid(self.request), self.request.wps.url,
+        result = execute_workflow.delay(authenticated_userid(self.request), self.request.wps.url,
                                workflow=self.workflow_description())
+        self.request.registry.notify(JobStarted(self.request, result.id))
         
     def next_success(self, appstruct):
         from pyramid.httpexceptions import HTTPFound

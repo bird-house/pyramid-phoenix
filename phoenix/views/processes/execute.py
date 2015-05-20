@@ -4,6 +4,7 @@ from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from deform import Form, Button
 from deform import ValidationFailure
 
+from phoenix.events import JobStarted
 from phoenix.views.processes import Processes
 
 from owslib.wps import WebProcessingService
@@ -61,9 +62,10 @@ class ExecuteProcess(Processes):
         for output in self.process.processOutputs:
             outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
 
-            from phoenix.tasks import execute_process
-            execute_process.delay(authenticated_userid(self.request), self.wps.url, self.process.identifier, 
-                                  inputs=inputs, outputs=outputs)
+        from phoenix.tasks import execute_process
+        result = execute_process.delay(authenticated_userid(self.request), self.wps.url, self.process.identifier, 
+                                    inputs=inputs, outputs=outputs)
+        self.request.registry.notify(JobStarted(self.request, result.id))
     
     @view_config(route_name='processes_execute', renderer='phoenix:templates/processes/execute.pt')
     def view(self):
