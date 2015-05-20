@@ -98,15 +98,16 @@ def execute_workflow(self, user_id, url, workflow):
         job['duration'] = str(duration).split('.')[0]
         if execution.isComplete():
             job['finished'] = datetime.now()
-            result_url = execution.processOutputs[0].reference
-            result = json.load(urllib.urlopen(result_url))
-            job['status_location'] = result.get('worker', [''])[0]
-            job['resource_status_location'] = result.get('source', [''])[0]
+            if len(execution.processOutputs) > 0:
+                result_url = execution.processOutputs[0].reference
+                result = json.load(urllib.urlopen(result_url))
+                job['status_location'] = result.get('worker', [''])[0]
+                job['resource_status_location'] = result.get('source', [''])[0]
             if execution.isSucceded():
                 job['progress'] = 100
         log(job)
         for error in execution.errors:
-            log_error(job)
+            log_error(job, error)
         db.jobs.update({'identifier': job['identifier']}, job)
     return execution.getStatus()
 
