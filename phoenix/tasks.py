@@ -98,12 +98,11 @@ def execute_workflow(self, user_id, url, workflow):
         job['duration'] = str(duration).split('.')[0]
         if execution.isComplete():
             job['finished'] = datetime.now()
-            if len(execution.processOutputs) > 0:
+            if execution.isSucceded():
                 result_url = execution.processOutputs[0].reference
                 result = json.load(urllib.urlopen(result_url))
                 job['status_location'] = result.get('worker', [''])[0]
                 job['resource_status_location'] = result.get('source', [''])[0]
-            if execution.isSucceded():
                 job['progress'] = 100
         log(job)
         for error in execution.errors:
