@@ -25,7 +25,7 @@ def log(job):
         logger.info(log_msg)
 
 def log_error(job, error):
-    log_msg = 'ERROR: code={0.code}, locator={0.locator}, message={0.text}'.format(error)
+    log_msg = 'ERROR: {0.text} - code={0.code} - locator={0.locator}'.format(error)
     if not 'log' in job:
         job['log'] = []
     # skip same log messages
