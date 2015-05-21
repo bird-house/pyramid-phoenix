@@ -88,7 +88,7 @@ def execute_workflow(self, user_id, url, workflow):
                   abstract = '',
                   status_location = execution.statusLocation)
 
-    while not execution.isComplete():
+    while execution.isNotComplete():
         execution.checkStatus(sleepSecs=1)
         job['status'] = execution.getStatus()
         job['status_message'] = execution.statusMessage
@@ -129,7 +129,7 @@ def execute_process(self, user_id, url, identifier, inputs, outputs, keywords=No
                   abstract = getattr(execution.process, "abstract", ""),
                   status_location = execution.statusLocation)
 
-    while not execution.isComplete():
+    while execution.isNotComplete():
         execution.checkStatus(sleepSecs=1)
         job['status'] = execution.getStatus()
         job['status_message'] = execution.statusMessage
@@ -142,8 +142,12 @@ def execute_process(self, user_id, url, identifier, inputs, outputs, keywords=No
             job['finished'] = datetime.now()
             if execution.isSucceded():
                 job['progress'] = 100
-        log(job)
-        for error in execution.errors:
-            log_error(job, error)
+                log(job)
+            else:
+                job['status_message'] = '\n'.join(error.text for error in execution.errors)
+                for error in execution.errors:
+                    log_error(job, error)
+        else:
+            log(job)
         db.jobs.update({'identifier': job['identifier']}, job)
     return execution.getStatus()
