@@ -103,7 +103,7 @@ def execute_workflow(self, user_id, url, workflow):
                 for output in execution.processOutputs:
                     if 'output' == output.identifier:
                         result = yaml.load(urllib.urlopen(output.reference))
-                        job['worker_status_location'] = result.get('status_location')
+                        job['worker_status_location'] = result['worker']['status_location']
                 job['progress'] = 100
         log(job)
         for error in execution.errors:
