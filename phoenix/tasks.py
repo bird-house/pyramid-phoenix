@@ -33,12 +33,12 @@ def log_error(job, error):
         job['log'].append(log_msg)
         logger.error(log_msg)
 
-def add_job(db, user_id, task_id, title, abstract, status_location, workflow=False):
+def add_job(db, user_id, task_id, title, abstract, status_location, is_workflow=False):
     job = dict(
         identifier = str(uuid.uuid1()),
         task_id = task_id,
         email = user_id,
-        workflow = workflow,
+        is_workflow = is_workflow,
         title = title,
         abstract = abstract,
         status_location = status_location,
@@ -83,11 +83,10 @@ def execute_workflow(self, user_id, url, workflow):
     db = mongodb(registry)
     job = add_job(db, user_id,
                   task_id = self.request.id,
-                  workflow = True,
+                  is_workflow = True,
                   title = workflow['worker']['identifier'],
                   abstract = '',
                   status_location = execution.statusLocation)
-    job['workflow_status_location'] = execution.statusLocation,
 
     while not execution.isComplete():
         execution.checkStatus(sleepSecs=1)
@@ -103,7 +102,6 @@ def execute_workflow(self, user_id, url, workflow):
             if execution.isSucceded():
                 result_url = execution.processOutputs[0].reference
                 result = json.load(urllib.urlopen(result_url))
-                job['status_location'] = result.get('worker', [''])[0]
                 job['worker_status_location'] = result.get('worker', [''])[0]
                 job['source_status_location'] = result.get('source', [''])[0]
                 job['progress'] = 100
@@ -122,7 +120,7 @@ def execute_process(self, user_id, url, identifier, inputs, outputs, keywords=No
     db = mongodb(registry)
     job = add_job(db, user_id,
                   task_id = self.request.id,
-                  workflow = False,
+                  is_workflow = False,
                   title = execution.process.title,
                   abstract = getattr(execution.process, "abstract", ""),
                   status_location = execution.statusLocation)

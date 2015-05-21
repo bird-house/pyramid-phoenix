@@ -19,8 +19,11 @@ def collect_outputs(status_location):
 def process_outputs(request, jobid):
     job = request.db.jobs.find_one({'identifier': jobid})
     outputs = {}
-    if job['is_complete']:
-        outputs = collect_outputs(job['status_location'])
+    if job.get('is_succeded', False):
+        if job.get('is_workflow', False):
+            outputs = collect_outputs(job['worker_status_location'])
+        else:
+            outputs = collect_outputs(job['status_location'])
     return outputs
 
 class Outputs(object):
