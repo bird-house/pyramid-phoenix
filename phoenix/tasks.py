@@ -76,7 +76,7 @@ def execute_workflow(self, user_id, url, workflow):
     # generate and run dispel workflow
     # TODO: fix owslib wps for unicode/yaml parameters
     inputs=[('workflow', json.dumps(workflow))]
-    outputs=[('output', True)]
+    outputs=[('output', True), ('logfile', True)]
     
     wps = WebProcessingService(url=url, skip_caps=True)
     execution = wps.execute(identifier='workflow', inputs=inputs, output=outputs)
@@ -100,10 +100,10 @@ def execute_workflow(self, user_id, url, workflow):
         if execution.isComplete():
             job['finished'] = datetime.now()
             if execution.isSucceded():
-                result_url = execution.processOutputs[0].reference
-                result = json.load(urllib.urlopen(result_url))
-                job['worker_status_location'] = result.get('worker', [''])[0]
-                job['source_status_location'] = result.get('source', [''])[0]
+                for output in execution.processOutputs:
+                    if 'output' == output.identifier:
+                        result = yaml.load(urllib.urlopen(output.reference))
+                        job['worker_status_location'] = result.get('status_location')
                 job['progress'] = 100
         log(job)
         for error in execution.errors:
