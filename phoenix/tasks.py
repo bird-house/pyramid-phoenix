@@ -105,9 +105,13 @@ def execute_workflow(self, user_id, url, workflow):
                         result = yaml.load(urllib.urlopen(output.reference))
                         job['worker_status_location'] = result['worker']['status_location']
                 job['progress'] = 100
-        log(job)
-        for error in execution.errors:
-            log_error(job, error)
+                log(job)
+            else:
+                job['status_message'] = '\n'.join(error.text for error in execution.errors)
+                for error in execution.errors:
+                    log_error(job, error)
+        else:
+            log(job)
         db.jobs.update({'identifier': job['identifier']}, job)
     return execution.getStatus()
 
