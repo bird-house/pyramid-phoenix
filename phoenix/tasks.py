@@ -35,7 +35,7 @@ def log_error(job, error):
 
 def add_job(db, user_id, task_id, title, abstract, status_location):
     job = dict(
-        identifier = uuid.uuid4().get_hex(),
+        identifier = str(uuid.uuid1()),
         task_id = task_id,
         email = user_id,
         title = title,
