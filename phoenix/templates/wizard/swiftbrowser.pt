@@ -5,13 +5,12 @@
     <ul class="breadcrumb">
       <li><a href="${request.route_url('wizard_swiftbrowser')}">Containers</a></li> 
 
-      <li tal:condition="container"><span class="divider">/</span>
-        <a class="u" href="${request.route_url('wizard_swiftbrowser', _query=[('container', container)])}">${container}</a>
+      <li tal:condition="container">
+        <a class="u" href="${request.route_path('wizard_swiftbrowser', _query=[('container', container)])}">${container}</a>
       </li>
 
       <li tal:repeat="prefix prefixes">
-        <span class="divider">/</span>
-        <a href="${request.route_url('wizard_swiftbrowser', _query=[('container', container), ('prefix', prefix.full_name)])}">${prefix.display_name}</a>
+        <a href="${request.route_path('wizard_swiftbrowser', _query=[('container', container), ('prefix', prefix.full_name)])}">${prefix.display_name}</a>
       </li>
     </ul> 
 

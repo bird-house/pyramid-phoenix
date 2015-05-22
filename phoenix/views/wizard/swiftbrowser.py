@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 import colander
 from deform.widget import HiddenWidget
-class SwiftBrowserSchema(colander.MappingSchema):
+class Schema(colander.MappingSchema):
     container = colander.SchemaNode(
         colander.String(),
         missing = '',
@@ -40,7 +40,7 @@ class SwiftBrowser(Wizard):
         return breadcrumbs
 
     def schema(self):
-        return SwiftBrowserSchema()
+        return Schema()
 
     def appstruct(self):
         appstruct = super(SwiftBrowser, self).appstruct()
@@ -75,6 +75,7 @@ class SwiftBrowser(Wizard):
         else:
             items = swift.get_containers(self.storage_url, self.auth_token)
             fields = ['name', 'objects', 'size', '']
+        # TODO: filter with choosen mime type
         filtered_items = []
         for item in items:
             logger.debug(item)
@@ -135,7 +136,7 @@ class SwiftBrowserGrid(MyGrid):
             query.append( ('prefix', prefix) )
         name = prefix.strip('/')
         name = name.split('/')[-1]
-        url = self.request.route_url('wizard_swiftbrowser', _query=query)
+        url = self.request.route_path('wizard_swiftbrowser', _query=query)
         return self.render_td(renderer="folder_element_td", url=url, name=name, content_type=content_type)
 
     def created_td(self, col_num, i, item):
