@@ -17,14 +17,6 @@ class Users(SettingsView):
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
-    def sort_order(self):
-        """Determine what the current sort parameters are.
-        """
-        order = self.request.GET.get('order_col', 'last_login')
-        order_dir = self.request.GET.get('order_dir', 'asc')
-        order_dir = 1 if order_dir == 'asc' else -1
-        return dict(order=order, order_dir=order_dir)   
-        
     @view_config(route_name='remove_user')
     def remove(self):
         email = self.request.matchdict.get('email')
@@ -35,8 +27,7 @@ class Users(SettingsView):
 
     @view_config(route_name='settings_users', renderer='phoenix:templates/settings/users.pt')
     def view(self):
-        order = self.sort_order()
-        user_items = list(self.userdb.find().sort(order.get('order'), order.get('order_dir')))
+        user_items = list(self.userdb.find().sort('last_login', -1))
         grid = UsersGrid(
                 self.request,
                 user_items,
