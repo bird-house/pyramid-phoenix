@@ -54,15 +54,14 @@ class SwiftBrowser(Wizard):
             appstruct['prefix'] = prefix
         else:
             appstruct['prefix'] = colander.null
-        logger.debug("appstruct = %s", appstruct)
         return appstruct
 
     def next_success(self, appstruct):
-        if appstruct['container'] and appstruct['prefix']:
+        if appstruct['container']:
             self.success(appstruct)
             return self.next('wizard_done')
         else:
-            self.session.flash("Please choose container and prefix.", queue="danger")
+            self.session.flash("Please choose container", queue="danger")
             return HTTPFound(location=self.request.route_path(self.name))
 
     def custom_view(self):

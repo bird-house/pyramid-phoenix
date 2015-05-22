@@ -38,8 +38,11 @@ class Done(Wizard):
                 storage_url = user.get('swift_storage_url'),
                 auth_token = user.get('swift_auth_token'),
             )
-            source['container'] = self.wizard_state.get('wizard_swiftbrowser')['container']
-            source['prefix'] = self.wizard_state.get('wizard_swiftbrowser')['prefix']
+            source['container'] = self.wizard_state.get('wizard_swiftbrowser').get('container')
+            prefix = self.wizard_state.get('wizard_swiftbrowser').get('prefix')
+            logger.debug('swift prefix = %s', prefix)
+            if prefix is not None and len(prefix.strip()) > 0:
+                source['prefix'] = prefix
             workflow['source']['swift'] = source
         else: # esgf
             selection = self.wizard_state.get('wizard_esgf_search')['selection']
