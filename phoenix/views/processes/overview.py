@@ -22,7 +22,7 @@ class Overview(Processes):
         grid = OverviewGrid(
                 self.request,
                 items,
-                ['Web Processing Service', ''],
+                ['Web Processing Service'],
             )
         return dict(grid=grid)
 
@@ -31,22 +31,12 @@ class OverviewGrid(MyGrid):
         super(OverviewGrid, self).__init__(request, *args, **kwargs)
         self.labels['Web Processing Service'] = ''
         self.column_formats['Web Processing Service'] = self.title_td
-        self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
 
     def title_td(self, col_num, i, item):
         return self.render_title_td(
             title=item.get('title'), 
             abstract=item.get('abstract'),
-            format='XML',
-            source=item.get('source'))
+            url=self.request.route_path('processes_list', _query=[('url', item.get('source'))]))
 
-    def action_td(self, col_num, i, item):
-        route_path = self.request.route_path('processes_list', _query=[('url', item.get('source'))])
-        logger.debug('route path = %s', route_path)
-        
-        buttongroup = []
-        buttongroup.append( ("submit", "", "glyphicon glyphicon-play", "Show Processes", 
-                             route_path, False) )
-        return self.render_action_td(buttongroup)
     

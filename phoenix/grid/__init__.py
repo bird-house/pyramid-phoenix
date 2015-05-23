@@ -30,8 +30,8 @@ class MyGrid(Grid):
     def render_label_td(self, label):
         return self.render_td(renderer="label_td", label=label)
 
-    def render_title_td(self, title, abstract="", keywords=[], data=[], format=None, source="#"):
-        return self.render_td(renderer="title_td", title=title, abstract=abstract, keywords=keywords, data=data, format=format, source=source)
+    def render_title_td(self, title, abstract="", keywords=[], data=[], format=None, source="#", url="#"):
+        return self.render_td(renderer="title_td", title=title, abstract=abstract, keywords=keywords, data=data, format=format, source=source, url=url)
 
     def render_status_td(self, item):
         return self.render_td(renderer="status_td", status=item.get('status'), identifier=item.get('identifier'))

@@ -1,6 +1,6 @@
 <div>
   <div>
-    <b>${title}</b>
+    <a class="btn btn-link btn-lg" role="button" href="${url}">${title}</a>
     % if abstact != None:
     <div>${abstract}</div>
     % endif

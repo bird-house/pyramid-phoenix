@@ -31,7 +31,7 @@ class ProcessList(Processes):
                 self.request,
                 self.wps,
                 items,
-                ['Process', '']
+                ['Process']
             )
 
         return dict(
@@ -47,7 +47,6 @@ class ProcessGrid(MyGrid):
         self.wps = wps
         self.labels['Process'] = ''
         self.column_formats['Process'] = self.title_td
-        self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
 
     def title_td(self, col_num, i, item):
@@ -56,15 +55,6 @@ class ProcessGrid(MyGrid):
             title="%s %s" % (item.title, item.processVersion), 
             abstract=getattr(item, 'abstract', ''),
             format='XML',
-            source=build_get_url(self.wps.url, query))
-
-    def action_td(self, col_num, i, item):
-        query = [('identifier', item.identifier)]
-        route_path = self.request.route_path('processes_execute', _query=query)
-        logger.debug('route path = %s', route_path)
-        
-        buttongroup = []
-        buttongroup.append( ("execute", "", "glyphicon glyphicon-cog", "Execute Process", 
-                             route_path, False) )
-        return self.render_action_td(buttongroup)
+            source=build_get_url(self.wps.url, query),
+            url=self.request.route_path('processes_execute', _query=[('identifier', item.identifier)]))
     
