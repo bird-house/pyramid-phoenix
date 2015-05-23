@@ -4,7 +4,9 @@ class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['status'] = self.status_td
+        self.column_formats['identifier'] = self.uuid_td
         self.column_formats['job'] = self.job_td
+        self.column_formats['service'] = self.service_td
         self.column_formats['duration'] = self.duration_td
         self.column_formats['finished'] = self.finished_td
         self.column_formats['progress'] = self.progress_td
@@ -13,9 +15,15 @@ class JobsGrid(MyGrid):
 
     def status_td(self, col_num, i, item):
         return self.render_status_td(item)
+
+    def uuid_td(self, col_num, i, item):
+        return self.render_label_td(item.get('identifier'))
     
     def job_td(self, col_num, i, item):
-        return self.render_label_td(item['title'])
+        return self.render_label_td(item.get('title'))
+
+    def service_td(self, col_num, i, item):
+        return self.render_label_td(item.get('service'))
 
     def duration_td(self, col_num, i, item):
         return self.render_td(renderer="duration_td",

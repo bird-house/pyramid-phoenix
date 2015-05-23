@@ -33,12 +33,13 @@ def log_error(job, error):
         job['log'].append(log_msg)
         logger.error(log_msg)
 
-def add_job(db, user_id, task_id, title, abstract, status_location, is_workflow=False):
+def add_job(db, user_id, task_id, service, title, abstract, status_location, is_workflow=False):
     job = dict(
         identifier = str(uuid.uuid1()),
         task_id = task_id,
         email = user_id,
         is_workflow = is_workflow,
+        service = service,
         title = title,
         abstract = abstract,
         status_location = status_location,
@@ -84,6 +85,7 @@ def execute_workflow(self, user_id, url, workflow):
     job = add_job(db, user_id,
                   task_id = self.request.id,
                   is_workflow = True,
+                  service = workflow['worker']['url'],
                   title = workflow['worker']['identifier'],
                   abstract = '',
                   status_location = execution.statusLocation)
@@ -125,7 +127,8 @@ def execute_process(self, user_id, url, identifier, inputs, outputs, keywords=No
     job = add_job(db, user_id,
                   task_id = self.request.id,
                   is_workflow = False,
-                  title = execution.process.title,
+                  service = url,
+                  title = execution.process.identifier,
                   abstract = getattr(execution.process, "abstract", ""),
                   status_location = execution.statusLocation)
 
