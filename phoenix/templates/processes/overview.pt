@@ -11,6 +11,9 @@
 	<ul class="list-group">
 	  <li class="list-group-item" tal:repeat="item items">
 	    <div class="media">
+	      <span class="pull-left text-muted" aria-hidden="true">
+		<i class="glyphicon glyphicon-fire"></i>
+	      </span>
 	      <div class="media-body">
 		<h4 class="media-heading">
 		  <a href="${item.url}">${item.title}</a>
