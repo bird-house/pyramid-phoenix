@@ -1,12 +1,8 @@
 from pyramid.view import view_config, view_defaults
 
 from owslib.wps import WebProcessingService
-from owslib.util import build_get_url
 
 from phoenix.views.processes import Processes
-from phoenix.grid import MyGrid
-from phoenix import models
-import deform
 
 import logging
 logger = logging.getLogger(__name__)
@@ -25,36 +21,17 @@ class ProcessList(Processes):
 
     @view_config(route_name='processes_list', renderer='phoenix:templates/processes/list.pt')
     def view(self):
-        items = self.wps.processes
-
-        grid = ProcessGrid(
-                self.request,
-                self.wps,
-                items,
-                ['Process']
-            )
-
+        items = []
+        for process in self.wps.processes:
+            item = {}
+            item['title'] = "{0.title} {0.processVersion}".format(process)
+            item['description'] = getattr(process, 'abstract', '')
+            item['url'] = self.request.route_path('processes_execute', _query=[('identifier', process.identifier)])
+            items.append(item)
         return dict(
             url=self.wps.url,
             description=self.wps.identification.abstract,
             provider_name=self.wps.provider.name,
             provider_site=self.wps.provider.url,
-            grid=grid)
+            items=items)
 
-class ProcessGrid(MyGrid):
-    def __init__(self, request, wps, *args, **kwargs):
-        super(ProcessGrid, self).__init__(request, *args, **kwargs)
-        self.wps = wps
-        self.labels['Process'] = ''
-        self.column_formats['Process'] = self.title_td
-        self.exclude_ordering = self.columns
-
-    def title_td(self, col_num, i, item):
-        query = dict(service='wps', version='1.0.0', request='describeprocess', identifier=item.identifier)
-        return self.render_title_td(
-            title="%s %s" % (item.title, item.processVersion), 
-            abstract=getattr(item, 'abstract', ''),
-            format='XML',
-            source=build_get_url(self.wps.url, query),
-            url=self.request.route_path('processes_execute', _query=[('identifier', item.identifier)]))
-    
