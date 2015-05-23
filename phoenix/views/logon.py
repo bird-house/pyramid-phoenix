@@ -101,6 +101,8 @@ class Logon(MyView):
             lm.layout.add_heading('logon_esgf')
         elif tab == 'openid':
             lm.layout.add_heading('logon_openid')
+        elif tab == 'ldap':
+            lm.layout.add_heading('logon_ldap')
         return dict(active=tab)
 
     @view_config(route_name='logout', permission='edit')
@@ -199,5 +201,9 @@ class Logon(MyView):
 
         return response
 
-    
-
+    @view_config(route_name='login_ldap')
+    def login_ldap(self):
+        """ldap login"""
+        username = self.request.params.get('username')
+        password = self.request.params.get('password')
+        # TODO: Implement...

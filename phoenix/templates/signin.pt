@@ -5,6 +5,7 @@
     <ul class="nav nav-tabs">
       <li class="${'active' if active=='esgf' else ''}"><a href="${request.route_url('signin', tab='esgf')}">ESGF</a></li>
       <li class="${'active' if active=='openid' else ''}"><a href="${request.route_url('signin', tab='openid')}">OpenID</a></li>
+      <li class="${'active' if active=='ldap' else ''}"><a href="${request.route_url('signin', tab='ldap')}">LDAP</a></li>
     </ul>
     
      <!-- row columns -->

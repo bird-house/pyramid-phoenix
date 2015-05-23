@@ -6,6 +6,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from phoenix.security import groupfinder, root_factory
 
 import pymongo
+import ldap
 
 from phoenix.utils import button
 import logging
@@ -52,7 +53,20 @@ def main(global_config, **settings):
 
     # ldap
     config.include('pyramid_ldap')
-    # TODO: ldap_setup(), etc.
+    # TODO: Remove hardcoded arguments from ldap_setup(), etc.
+    config.ldap_setup(
+            'ldap://ldap.example.com',
+            bind = 'CN=admin,DC=example,DC=com', # To be omitted?
+            passwd = 'password')
+    config.ldap_set_login_query(
+            base_dn = 'DC=example,DC=com',
+            filter_tmpl = '(UID=%(login)s)', # OpenLDAP POSIX user account
+            scope = ldap.SCOPE_ONELEVEL)
+    #config.ldap_set_groups_query(
+    #        base_dn = 'DC=example,DC=com',
+    #        filter_tmpl = '(&(GUINumber=500)(DN=%(userdn)s))', # OpenLDAP POSIX group check
+    #        scope = ldap.SCOPE_SUBTREE,
+    #        cache_period = 600)
 
     # add my own templates
     # TODO: improve config of my own templates
