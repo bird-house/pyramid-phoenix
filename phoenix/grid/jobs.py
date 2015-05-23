@@ -17,7 +17,9 @@ class JobsGrid(MyGrid):
         return self.render_status_td(item)
 
     def uuid_td(self, col_num, i, item):
-        return self.render_label_td(item.get('identifier'))
+        return self.render_button_td(
+            url=self.request.route_path('monitor_details', tab='log', jobid=item.get('identifier')),
+            title=item.get('identifier'))
     
     def job_td(self, col_num, i, item):
         return self.render_label_td(item.get('title'))
@@ -38,8 +40,6 @@ class JobsGrid(MyGrid):
         
     def action_td(self, col_num, i, item):
         buttongroup = []
-        buttongroup.append( ("show", item.get('identifier'), "glyphicon glyphicon-eye-open", "Show Details", 
-                             self.request.route_path('monitor_details', tab='log', jobid=item.get('identifier')), False) )
         buttongroup.append( ("remove", item.get('identifier'), "glyphicon glyphicon-trash text-danger", "Remove Job", 
                              self.request.route_path('remove_job', jobid=item.get('identifier')), False) )
         return self.render_action_td(buttongroup)
