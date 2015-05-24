@@ -1,5 +1,5 @@
 <div class="span6">
-  <h3><img src="${request.static_url('phoenix:static/images/OpenID_24.png')}">OpenID</h3>
+    <!--<h3><img src="${request.static_url('phoenix:static/images/OpenID_24.png')}">OpenID</h3>-->
   <form action="/login/ldap">
     <input type="text" name="username" placeholder="Your username"/>
     <input type="password" name="password" placeholder="Your password"/>

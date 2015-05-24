@@ -64,7 +64,7 @@ def main(global_config, **settings):
             scope = ldap.SCOPE_ONELEVEL)
     #config.ldap_set_groups_query(
     #        base_dn = 'DC=example,DC=com',
-    #        filter_tmpl = '(&(GUINumber=500)(DN=%(userdn)s))', # OpenLDAP POSIX group check
+    #        filter_tmpl = '(&(GUINumber=500)(DN=%(userdn)s))', # OpenLDAP POSIX groups, TODO?
     #        scope = ldap.SCOPE_SUBTREE,
     #        cache_period = 600)
 
@@ -129,6 +129,7 @@ def main(global_config, **settings):
     config.add_route('signin', '/signin/{tab}')
     config.add_route('logout', '/logout')
     config.add_route('login_openid', '/login/openid')
+    config.add_route('login_ldap', '/login/ldap')
     # TODO: need some work on local accounts
     config.add_route('login_local', '/login/local')
     config.add_route('register', '/register')

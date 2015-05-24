@@ -11,7 +11,7 @@ requires = [
     'pyramid-chameleon',
     'pyramid-mako',
     'pymongo',
-    #'pyramid_debugtoolbar',
+    'pyramid_debugtoolbar',
     'waitress',
     'pyramid_layout',
     'pyramid_deform',
