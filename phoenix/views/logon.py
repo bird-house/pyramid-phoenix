@@ -204,6 +204,13 @@ class Logon(MyView):
     @view_config(route_name='login_ldap')
     def login_ldap(self):
         """ldap login"""
+        # FK: Why not use 'deform' and it's features to check the fields?
         username = self.request.params.get('username')
         password = self.request.params.get('password')
-        # TODO: Implement...
+
+        # TODO: Implement ldap login...
+        # FK: Why is this called twice?
+        logger.debug('ldap login, username: %s, password: %s', username, '*' * len(password))
+
+        return Response('Not implemented yet!')
+

@@ -1,6 +1,6 @@
 <div class="span6">
   <h3>LDAP</h3>
-  <form action="/login/ldap">
+  <form action="/login/ldap" method="POST">
     <input type="text" name="username" placeholder="Your username"/>
     <input type="password" name="password" placeholder="Your password"/>
     <br/>
