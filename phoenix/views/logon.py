@@ -122,7 +122,7 @@ class Logon(MyView):
         if (True):
             email = "admin@malleefowl.org"
             if self.is_valid_user(email):
-                self.request.response.text = render('phoenix:templates/openid_success.pt',
+                self.request.response.text = render('phoenix:templates/login_success.pt',
                                                {'result': email},
                                                request=self.request)
                 # Add the headers required to remember the user to the response
@@ -181,7 +181,7 @@ class Logon(MyView):
                         openid=result.user.id,
                         name=result.user.name,
                         activated=True)
-                    response.text = render('phoenix:templates/openid_success.pt',
+                    response.text = render('phoenix:templates/login_success.pt',
                                            {'result': result},
                                            request=self.request)
                     # Add the headers required to remember the user to the response
@@ -209,8 +209,14 @@ class Logon(MyView):
         password = self.request.params.get('password')
 
         # TODO: Implement ldap login...
-        # FK: Why is this called twice?
+        # FK: Why is this called twice? Or is it just logged twice?
         logger.debug('ldap login, username: %s, password: %s', username, '*' * len(password))
 
-        return Response('Not implemented yet!')
+        response = Response()
+        response.text = render('phoenix:templates/login_success.pt',
+                {'result': username}, request = self.request)
+        response.headers.extend(remember(self.request, username))
+
+        logger.debug('ldap response: %s', response)
+        return response
 
