@@ -1,11 +1,10 @@
 <div class="span6">
-    <!--<h3><img src="${request.static_url('phoenix:static/images/OpenID_24.png')}">OpenID</h3>-->
+  <h3>LDAP</h3>
   <form action="/login/ldap">
     <input type="text" name="username" placeholder="Your username"/>
     <input type="password" name="password" placeholder="Your password"/>
+    <br/>
     <button type="submit" class="btn btn-success">Sign in</button>
-    <!--<span class="help-block">
-      Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname
-    </span>-->
+    <!-- <span class="help-block">Example: johndoe, p4ssw0rd</span> -->
   </form>
 </div>
