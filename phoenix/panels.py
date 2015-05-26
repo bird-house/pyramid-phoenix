@@ -58,6 +58,11 @@ def logon_openid(context, request):
 def logon_esgf(context, request):
     return {}
 
+# FK: What does this do?
+@panel_config(name='logon_ldap', renderer='phoenix:templates/panels/logon_ldap.pt')
+def logon_ldap(context, request):
+    return {}
+
 @panel_config(name='dashboard_users', renderer='phoenix:templates/panels/dashboard_users.pt')
 def dashboard_users(context, request):
     from phoenix.models import user_stats
