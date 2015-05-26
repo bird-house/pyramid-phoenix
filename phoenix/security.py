@@ -13,7 +13,8 @@ def groupfinder(email, request):
     
     if email in admins:
         return ['group:admins']
-    elif request.db.users.find_one({'email':email}).get('activated'):
+    # FK: Is this fix okay, or was the previous line intended to fail the way it did?
+    elif request.db.users.find_one({'email':email}) is not None and request.db.users.find_one({'email':email}).get('activated'):
         return ['group:editors']
     else:
         return ['group:views']
@@ -29,6 +30,7 @@ from pyramid.security import (
 class Root():
     __acl__ = [
                 (Allow, Everyone, 'view'),
+                # FK: Authenticated should be sufficient to see the 'logout' page.
                 #(Allow, Authenticated, 'edit'),
                 (Allow, 'group:editors', 'edit'),
                 (Allow, 'group:admins', ALL_PERMISSIONS)
