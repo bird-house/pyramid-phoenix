@@ -35,6 +35,7 @@ class Logon(MyView):
     def __init__(self, request):
         super(Logon, self).__init__(request, name="login_openid", title='Logon')
 
+    # FK: What is this function for?
     def is_valid_user(self, email):
         from phoenix.security import admin_users
         if email in admin_users(self.request):
@@ -208,15 +209,26 @@ class Logon(MyView):
         username = self.request.params.get('username')
         password = self.request.params.get('password')
 
-        # TODO: Implement ldap login...
-        # FK: Why is this called twice? Or is it just logged twice?
+        # FK: Why is everything logged twice?
         logger.debug('ldap login, username: %s, password: %s', username, '*' * len(password))
 
+        # Performing ldap login
+        from pyramid_ldap import get_ldap_connector
+        connector = get_ldap_connector(self.request)
+        auth = connector.authenticate(username, password)
+        logger.debug('ldap auth, %s', auth)
+
         response = Response()
-        response.text = render('phoenix:templates/login_success.pt',
-                {'result': username}, request = self.request)
-        response.headers.extend(remember(self.request, username))
+        if auth is not None:
+            # Authentication successful
+            userdn = auth[0]
+            response.text = render('phoenix:templates/login_success.pt',
+                    # FK: What is 'result' for? Just an old debug argument?
+                    {'result': username}, request = self.request)
+            response.headers.extend(remember(self.request, userdn))
+        else:
+            # Authentification failed
+            response.text = render('phoenix:templates/forbidden.pt',
+                    {'message': 'Invalid credentials'}, request = self.request)
 
-        logger.debug('ldap response: %s', response)
         return response
-

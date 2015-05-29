@@ -56,17 +56,17 @@ def main(global_config, **settings):
     # TODO: Remove hardcoded arguments from ldap_setup(), etc.
     config.ldap_setup(
             'ldap://ldap.example.com',
-            bind = 'CN=admin,DC=example,DC=com', # To be omitted?
+            bind = 'cn=admin,dc=example,dc=com', # Is this bind necessary?
             passwd = 'password')
     config.ldap_set_login_query(
-            base_dn = 'DC=example,DC=com',
-            filter_tmpl = '(UID=%(login)s)', # OpenLDAP POSIX user account
+            base_dn = 'dc=example,dc=com',
+            filter_tmpl = '(uid=%(login)s)', # OpenLDAP POSIX user account
             scope = ldap.SCOPE_ONELEVEL)
-    #config.ldap_set_groups_query(
-    #        base_dn = 'DC=example,DC=com',
-    #        filter_tmpl = '(&(GUINumber=500)(DN=%(userdn)s))', # OpenLDAP POSIX groups, TODO?
-    #        scope = ldap.SCOPE_SUBTREE,
-    #        cache_period = 600)
+    config.ldap_set_groups_query(
+            base_dn = 'dc=example,dc=com',
+            filter_tmpl = '(&(objectClass=posixGroup)(memberUid=%(userdn)s))', # OpenLDAP POSIX groups, TODO?
+            scope = ldap.SCOPE_SUBTREE,
+            cache_period = 600)
 
     # add my own templates
     # TODO: improve config of my own templates
