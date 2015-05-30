@@ -68,6 +68,8 @@ class MyGrid(Grid):
 
     def render_format_td(self, format, source):
         span_class = 'label'
+        if format is None:
+            format = 'unknown'
         if 'wps' in format.lower():
             span_class += ' label-warning'
         elif 'wms' in format.lower():

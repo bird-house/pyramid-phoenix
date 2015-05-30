@@ -22,7 +22,7 @@ class Catalog(SettingsView):
     @view_config(route_name='remove_all_records')
     def remove_all(self):
         try:
-            self.csw.getrecords(maxrecords=0)
+            self.csw.getrecords2(maxrecords=0)
             count = self.csw.results.get('matches'),
             # TODO: self destruction is out of order ... see exception
             self.csw.transaction(ttype='delete', typename='csw:Record')
@@ -46,7 +46,7 @@ class Catalog(SettingsView):
     def get_csw_items(self):
         results = []
         try:
-            self.csw.getrecords(esn="full")
+            self.csw.getrecords2(esn="full", maxrecords=20)
             logger.debug('csw results %s', self.csw.results)
             for rec in self.csw.records:
                 myrec = self.csw.records[rec]
@@ -75,7 +75,7 @@ class Catalog(SettingsView):
                 items,
                 ['title', 'creator', 'modified', 'format', ''],
             )
-        self.csw.getrecords(maxrecords=0)
+        self.csw.getrecords2(maxrecords=0)
         return dict(datasets_found=self.csw.results.get('matches'), grid=grid)
 
 from phoenix.grid import MyGrid
