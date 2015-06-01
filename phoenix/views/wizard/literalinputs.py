@@ -10,7 +10,7 @@ class LiteralInputs(Wizard):
         from owslib.wps import WebProcessingService
         self.wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['identifier']))
         self.process = self.wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
-        self.description = "Process %s" % self.process.title
+        self.title = "Literal inputs of {0}".format(self.process.title)
 
     def schema(self):
         from phoenix.schema.wps import WPSSchema

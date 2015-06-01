@@ -26,22 +26,13 @@ class Overview(Monitor):
         self.session.flash("%d Jobs deleted." % count, queue='info')
         return HTTPFound(location=self.request.route_path(self.name))
 
-    @view_config(route_name='remove_job')
-    def remove(self):
-        jobid = self.request.matchdict.get('jobid')
-        if jobid is not None:
-            job = self.jobsdb.find_one({'identifier': jobid})
-            self.jobsdb.remove({'identifier': jobid})
-            self.session.flash("Job %s deleted." % job['title'], queue='info')
-        return HTTPFound(location=self.request.route_path(self.name))
-
     @view_config(route_name='monitor', renderer='phoenix:templates/monitor/overview.pt')
     def view(self):
         items = self.update_jobs()
 
         from phoenix.grid.jobs import JobsGrid
         grid = JobsGrid(self.request, items,
-                ['status', 'job', 'process', 'service', 'duration', 'finished', 'progress', ''],
+                ['status', 'job', 'process', 'service', 'duration', 'finished', 'progress'],
             )
         return dict(grid=grid)
 

@@ -10,7 +10,6 @@ class JobsGrid(MyGrid):
         self.column_formats['duration'] = self.duration_td
         self.column_formats['finished'] = self.finished_td
         self.column_formats['progress'] = self.progress_td
-        self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
 
     def status_td(self, col_num, i, item):
@@ -38,8 +37,3 @@ class JobsGrid(MyGrid):
     def progress_td(self, col_num, i, item):
         return self.render_progress_td(identifier=item.get('identifier'), progress = item.get('progress', 0))
         
-    def action_td(self, col_num, i, item):
-        buttongroup = []
-        buttongroup.append( ("remove", item.get('identifier'), "glyphicon glyphicon-trash text-danger", "Remove Job", 
-                             self.request.route_path('remove_job', jobid=item.get('identifier')), False) )
-        return self.render_action_td(buttongroup)
