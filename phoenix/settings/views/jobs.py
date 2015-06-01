@@ -16,13 +16,6 @@ class Jobs(SettingsView):
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
-    @view_config(route_name='remove_all_jobs')
-    def remove_all(self):
-        count = self.jobsdb.count()
-        self.jobsdb.drop()
-        self.session.flash("%d Jobs deleted." % count, queue='info')
-        return HTTPFound(location=self.request.route_path(self.name))
-
     @view_config(route_name='settings_jobs', renderer='../templates/settings/jobs.pt')
     def view(self):
         jobs = list(self.jobsdb.find().sort('created', -1))

@@ -19,13 +19,6 @@ class Overview(Monitor):
     def update_jobs(self):
         return list(self.jobsdb.find({'email': authenticated_userid(self.request)}).sort('created', -1))
 
-    @view_config(route_name='remove_myjobs')
-    def remove_all(self):
-        count = self.jobsdb.find({'email': authenticated_userid(self.request)}).count()
-        self.jobsdb.remove({'email': authenticated_userid(self.request)})
-        self.session.flash("%d Jobs deleted." % count, queue='info')
-        return HTTPFound(location=self.request.route_path(self.name))
-
     @view_config(route_name='monitor', renderer='../templates/monitor/overview.pt')
     def view(self):
         items = self.update_jobs()

@@ -63,11 +63,14 @@ def main(global_config, **settings):
     config.add_route('processes_list', '/processes/list')
     config.add_route('processes_execute', '/processes/execute')
 
-    # job monitor
+    # monitor
     config.add_route('monitor', '/monitor')
     config.add_route('monitor_details', '/monitor/{jobid}/{tab}')
     config.add_route('update_myjobs', '/monitor/update.json')
-    config.add_route('remove_myjobs', '/monitor/remove_all')
+    
+    # jobs
+    config.add_route('remove_myjobs', '/jobs/remove_myjobs')
+    config.add_route('remove_all_jobs', '/jobs/remove_all')
     
     # user profile
     config.add_route('profile', '/profile/{tab}')
@@ -83,7 +86,6 @@ def main(global_config, **settings):
     config.add_route('settings_edit_user', '/settings/users/{email}/edit')
     config.add_route('remove_user', '/settings/users/{email}/remove')
     config.add_route('settings_jobs', '/settings/jobs')
-    config.add_route('remove_all_jobs', '/settings/jobs/remove_all')
 
     # wizard
     config.add_route('wizard', '/wizard')
