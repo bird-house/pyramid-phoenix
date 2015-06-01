@@ -15,26 +15,32 @@ def count_literal_inputs(wps, identifier):
 
 class Schema(colander.MappingSchema):
     @colander.deferred
+    def deferred_title(node, kw):
+        wps = kw.get('wps')
+        return "Choose a Process of {0}".format(wps.identification.title)
+    
+    @colander.deferred
     def deferred_validator(node, kw):
-        processes = kw.get('processes', [])
+        wps = kw.get('wps')
 
         choices = []
-        for process in processes:
+        for process in wps.processes:
             choices.append(process.identifier)
         return colander.OneOf(choices)
     
     @colander.deferred
     def deferred_widget(node, kw):
-        processes = kw.get('processes', [])
+        wps = kw.get('wps')
 
         choices = []
-        for process in processes:
-            choices.append( (process.identifier, process.title) )
+        for process in wps.processes:
+            description = "{0.title} - {0.abstract}".format(process)
+            choices.append( (process.identifier, description) )
         return deform.widget.RadioChoiceWidget(values = choices)
 
     identifier = colander.SchemaNode(
         colander.String(),
-        title = "Choose a Process",
+        title = deferred_title,
         validator = deferred_validator,
         widget = deferred_widget)
 
@@ -54,7 +60,7 @@ class ChooseWPSProcess(Wizard):
         return breadcrumbs
 
     def schema(self):
-        return Schema().bind(processes = self.wps.processes)
+        return Schema().bind(wps=self.wps)
 
     def next_success(self, appstruct):
         self.success(appstruct)

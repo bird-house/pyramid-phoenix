@@ -25,8 +25,7 @@ class ChooseWPSSchema(colander.MappingSchema):
     
     wps_id = colander.SchemaNode(
         colander.String(),
-        title = 'Web Processing Service',
-        description = "Choose a Web Processing Service",
+        title = 'Choose a Web Processing Service',
         validator = deferred_validator,
         widget = deferred_widget
         )
