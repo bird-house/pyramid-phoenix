@@ -29,7 +29,7 @@ class ComplexInputs(Wizard):
             request, name='wizard_complex_inputs',
             title="Choose Complex Input Parameter")
         from owslib.wps import WebProcessingService
-        self.wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['wps_id']))
+        self.wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['identifier']))
         self.process = self.wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
         self.description = "Process %s" % self.process.title
 

@@ -51,7 +51,7 @@ class ChooseWPSProcess(Wizard):
             name='wizard_process',
             title='Choose WPS Process')
         from owslib.wps import WebProcessingService
-        self.wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['wps_id']))
+        self.wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['identifier']))
         self.description = self.wps.identification.title
 
     def breadcrumbs(self):

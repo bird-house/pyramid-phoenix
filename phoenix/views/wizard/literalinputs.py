@@ -1,13 +1,14 @@
 from pyramid.view import view_config
 
 from phoenix.views.wizard import Wizard
+from phoenix.utils import wps_url
 
 class LiteralInputs(Wizard):
     def __init__(self, request):
         super(LiteralInputs, self).__init__(
             request, name='wizard_literal_inputs', title="Literal Inputs")
         from owslib.wps import WebProcessingService
-        self.wps = WebProcessingService(self.wizard_state.get('wizard_wps')['url'])
+        self.wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['identifier']))
         self.process = self.wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
         self.description = "Process %s" % self.process.title
 

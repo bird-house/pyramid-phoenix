@@ -23,7 +23,7 @@ class ChooseWPSSchema(colander.MappingSchema):
             choices.append((wps.identifier, title))
         return deform.widget.RadioChoiceWidget(values = choices)
     
-    wps_id = colander.SchemaNode(
+    identifier = colander.SchemaNode(
         colander.String(),
         title = 'Choose a Web Processing Service',
         validator = deferred_validator,
