@@ -82,6 +82,12 @@ def wps_url(request, identifier):
     csw.getrecordbyid(id=[identifier])
     return csw.records[identifier].source
 
+def get_wps_list(request):
+    csw = request.csw
+    from owslib.fes import PropertyIsEqualTo
+    wps_query = PropertyIsEqualTo('dc:format', 'WPS')
+    csw.getrecords2(constraints=[wps_query], maxrecords=20)
+    return csw.records.values()
 
 
     

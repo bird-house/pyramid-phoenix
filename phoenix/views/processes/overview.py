@@ -1,7 +1,7 @@
 from pyramid.view import view_config, view_defaults
 
 from phoenix.views.processes import Processes
-from phoenix import models
+from phoenix.utils import get_wps_list
 
 import logging
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ class Overview(Processes):
     @view_config(route_name='processes', renderer='phoenix:templates/processes/overview.pt')
     def view(self):
         items = []
-        for wps in models.get_wps_list(self.request):
+        for wps in get_wps_list(self.request):
             url=self.request.route_path('processes_list', _query=[('wps', wps.identifier)])
             items.append(dict(title=wps.title, description=wps.abstract, url=url))
         return dict(title="Web Processing Services", items=items)

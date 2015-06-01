@@ -67,12 +67,7 @@ def user_cert_valid(request, valid_hours=8):
             return True
     return False
 
-def get_wps_list(request):
-    csw = request.csw
-    from owslib.fes import PropertyIsEqualTo
-    wps_query = PropertyIsEqualTo('dc:format', 'WPS')
-    csw.getrecords2(constraints=[wps_query], maxrecords=20)
-    return csw.records.values()
+
 
 
 
