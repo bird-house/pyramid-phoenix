@@ -63,11 +63,12 @@ def main(global_config, **settings):
             base_dn = 'dc=example,dc=com',
             filter_tmpl = '(uid=%(login)s)', # OpenLDAP POSIX user account
             scope = ldap.SCOPE_ONELEVEL)
-    config.ldap_set_groups_query(
-            base_dn = 'dc=example,dc=com',
-            filter_tmpl = '(&(objectClass=posixGroup)(memberUid=%(userdn)s))', # OpenLDAP POSIX groups, TODO?
-            scope = ldap.SCOPE_SUBTREE,
-            cache_period = 600)
+    # FK: Do not use LDAP groups just now.
+    #config.ldap_set_groups_query(
+    #        base_dn = 'dc=example,dc=com',
+    #        filter_tmpl = '(&(objectClass=posixGroup)(memberUid=%(userdn)s))', # OpenLDAP POSIX groups, TODO?
+    #        scope = ldap.SCOPE_SUBTREE,
+    #        cache_period = 600)
 
     # add my own templates
     # TODO: improve config of my own templates
