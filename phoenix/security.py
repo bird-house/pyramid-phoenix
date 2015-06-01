@@ -29,7 +29,7 @@ def admin_users(request):
 
 def groupfinder(email, request):
     user = request.db.users.find_one({'email':email})
-    if user == None:
+    if user is None:
         return [Guest]
     
     admins = admin_users(request)
