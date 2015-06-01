@@ -1,7 +1,7 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
-from phoenix.views.settings import SettingsView
+from . import SettingsView
 from phoenix.grid import MyGrid
 from phoenix.security import Admin, User, Guest
 

@@ -1,7 +1,7 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
-from phoenix.views.settings import SettingsView
+from . import SettingsView
 
 import logging
 logger = logging.getLogger(__name__)
