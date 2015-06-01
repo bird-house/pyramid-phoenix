@@ -7,19 +7,28 @@ from phoenix.views.wizard import Wizard
 
 class ChooseWPSSchema(colander.MappingSchema):
     @colander.deferred
-    def deferred_wps_list_widget(node, kw):
+    def deferred_validator(node, kw):
         wps_list = kw.get('wps_list', [])
         choices = []
         for wps in wps_list:
-            title = "%s (%s)" % (wps.title, wps.abstract)
+            choices.append(wps.identifier)
+        return colander.OneOf(choices)
+    
+    @colander.deferred
+    def deferred_widget(node, kw):
+        wps_list = kw.get('wps_list', [])
+        choices = []
+        for wps in wps_list:
+            title = "{0.title} - {0.abstract}".format(wps)
             choices.append((wps.identifier, title))
         return deform.widget.RadioChoiceWidget(values = choices)
     
     wps_id = colander.SchemaNode(
         colander.String(),
-        title = 'WPS service',
-        description = "Select WPS",
-        widget = deferred_wps_list_widget
+        title = 'Web Processing Service',
+        description = "Choose a Web Processing Service",
+        validator = deferred_validator,
+        widget = deferred_widget
         )
 
 class ChooseWPS(Wizard):

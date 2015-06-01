@@ -13,20 +13,30 @@ def count_literal_inputs(wps, identifier):
             literal_inputs.append(input)
     return len(literal_inputs)
 
-@colander.deferred
-def deferred_choose_process_widget(node, kw):
-    processes = kw.get('processes', [])
+class Schema(colander.MappingSchema):
+    @colander.deferred
+    def deferred_validator(node, kw):
+        processes = kw.get('processes', [])
 
-    choices = []
-    for process in processes:
-        choices.append( (process.identifier, process.title) )
-    return deform.widget.RadioChoiceWidget(values = choices)
+        choices = []
+        for process in processes:
+            choices.append(process.identifier)
+        return colander.OneOf(choices)
+    
+    @colander.deferred
+    def deferred_widget(node, kw):
+        processes = kw.get('processes', [])
 
-class SelectProcessSchema(colander.MappingSchema):
+        choices = []
+        for process in processes:
+            choices.append( (process.identifier, process.title) )
+        return deform.widget.RadioChoiceWidget(values = choices)
+
     identifier = colander.SchemaNode(
         colander.String(),
-        title = "WPS Process",
-        widget = deferred_choose_process_widget)
+        title = "Choose a Process",
+        validator = deferred_validator,
+        widget = deferred_widget)
 
 class ChooseWPSProcess(Wizard):
     def __init__(self, request):
@@ -44,7 +54,7 @@ class ChooseWPSProcess(Wizard):
         return breadcrumbs
 
     def schema(self):
-        return SelectProcessSchema().bind(processes = self.wps.processes)
+        return Schema().bind(processes = self.wps.processes)
 
     def next_success(self, appstruct):
         self.success(appstruct)
