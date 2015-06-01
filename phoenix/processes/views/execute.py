@@ -5,7 +5,7 @@ from deform import Form, Button
 from deform import ValidationFailure
 
 from phoenix.events import JobStarted
-from phoenix.views.processes import Processes
+from phoenix.processes.views import Processes
 from phoenix.utils import wps_url
 
 from owslib.wps import WebProcessingService

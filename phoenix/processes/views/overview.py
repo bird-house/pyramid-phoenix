@@ -1,6 +1,6 @@
 from pyramid.view import view_config, view_defaults
 
-from phoenix.views.processes import Processes
+from phoenix.processes.views import Processes
 from phoenix.utils import get_wps_list
 
 import logging
