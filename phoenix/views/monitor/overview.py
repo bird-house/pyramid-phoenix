@@ -41,7 +41,7 @@ class Overview(Monitor):
 
         from phoenix.grid.jobs import JobsGrid
         grid = JobsGrid(self.request, items,
-                ['status', 'identifier', 'job', 'service', 'duration', 'finished', 'progress', ''],
+                ['status', 'job', 'process', 'service', 'duration', 'finished', 'progress', ''],
             )
         return dict(grid=grid)
 

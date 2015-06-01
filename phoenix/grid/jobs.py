@@ -4,8 +4,8 @@ class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['status'] = self.status_td
-        self.column_formats['identifier'] = self.uuid_td
-        self.column_formats['job'] = self.job_td
+        self.column_formats['job'] = self.uuid_td
+        self.column_formats['process'] = self.process_td
         self.column_formats['service'] = self.service_td
         self.column_formats['duration'] = self.duration_td
         self.column_formats['finished'] = self.finished_td
@@ -21,7 +21,7 @@ class JobsGrid(MyGrid):
             url=self.request.route_path('monitor_details', tab='log', jobid=item.get('identifier')),
             title=item.get('identifier'))
     
-    def job_td(self, col_num, i, item):
+    def process_td(self, col_num, i, item):
         return self.render_label_td(item.get('title'))
 
     def service_td(self, col_num, i, item):

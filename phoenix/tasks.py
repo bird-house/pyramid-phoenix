@@ -80,12 +80,13 @@ def execute_workflow(self, user_id, url, workflow):
     outputs=[('output', True), ('logfile', True)]
     
     wps = WebProcessingService(url=url, skip_caps=True)
+    worker_wps = WebProcessingService(url=workflow['worker']['url'], skip_caps=False)
     execution = wps.execute(identifier='workflow', inputs=inputs, output=outputs)
     db = mongodb(registry)
     job = add_job(db, user_id,
                   task_id = self.request.id,
                   is_workflow = True,
-                  service = workflow['worker']['url'],
+                  service = worker_wps.identification.title,
                   title = workflow['worker']['identifier'],
                   abstract = '',
                   status_location = execution.statusLocation)
@@ -121,13 +122,13 @@ def execute_workflow(self, user_id, url, workflow):
 def execute_process(self, user_id, url, identifier, inputs, outputs, keywords=None):
     registry = app.conf['PYRAMID_REGISTRY']
 
-    wps = WebProcessingService(url=url, skip_caps=True)
+    wps = WebProcessingService(url=url, skip_caps=False)
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     db = mongodb(registry)
     job = add_job(db, user_id,
                   task_id = self.request.id,
                   is_workflow = False,
-                  service = url,
+                  service = wps.identification.title,
                   title = execution.process.identifier,
                   abstract = getattr(execution.process, "abstract", ""),
                   status_location = execution.statusLocation)
