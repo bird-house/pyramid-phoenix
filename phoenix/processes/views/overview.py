@@ -14,7 +14,7 @@ class Overview(Processes):
         breadcrumbs = super(Overview, self).breadcrumbs()
         return breadcrumbs
 
-    @view_config(route_name='processes', renderer='phoenix:templates/processes/overview.pt')
+    @view_config(route_name='processes', renderer='../templates/processes/overview.pt')
     def view(self):
         items = []
         for wps in get_wps_list(self.request):

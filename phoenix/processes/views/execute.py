@@ -65,7 +65,7 @@ class ExecuteProcess(Processes):
                                     inputs=inputs, outputs=outputs)
         self.request.registry.notify(JobStarted(self.request, result.id))
     
-    @view_config(route_name='processes_execute', renderer='phoenix:templates/processes/execute.pt')
+    @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
