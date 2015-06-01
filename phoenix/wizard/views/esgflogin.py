@@ -49,7 +49,7 @@ class ESGFLogin(Wizard):
             status = 'ready'
         return dict(status=status)
 
-    @view_config(route_name='wizard_loading', renderer='phoenix:templates/wizard/loading.pt')
+    @view_config(route_name='wizard_loading', renderer='../templates/wizard/loading.pt')
     def loading(self):
         result = task_result(self.session.get('task_id'))
         if result.ready():
