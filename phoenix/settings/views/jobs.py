@@ -23,7 +23,7 @@ class Jobs(SettingsView):
         self.session.flash("%d Jobs deleted." % count, queue='info')
         return HTTPFound(location=self.request.route_path(self.name))
 
-    @view_config(route_name='settings_jobs', renderer='phoenix:templates/settings/jobs.pt')
+    @view_config(route_name='settings_jobs', renderer='../templates/settings/jobs.pt')
     def view(self):
         jobs = list(self.jobsdb.find().sort('created', -1))
         

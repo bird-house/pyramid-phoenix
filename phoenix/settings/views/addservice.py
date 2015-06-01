@@ -45,7 +45,7 @@ class AddService(SettingsView):
             self.session.flash('Could not add WPS %s. %s' % (url, e), queue="danger")
         return HTTPFound(location=self.request.route_url('settings_catalog'))
 
-    @view_config(route_name="settings_add_service", renderer='phoenix:templates/settings/add_service.pt')
+    @view_config(route_name="settings_add_service", renderer='../templates/settings/add_service.pt')
     def view(self):
         form = self.generate_form()
         if 'add_service' in self.request.POST:

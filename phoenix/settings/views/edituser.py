@@ -45,7 +45,7 @@ class EditUser(SettingsView):
     def appstruct(self):
         return self.get_user(self.email)
 
-    @view_config(route_name='settings_edit_user', renderer='phoenix:templates/settings/edit_user.pt')
+    @view_config(route_name='settings_edit_user', renderer='../templates/settings/edit_user.pt')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:

@@ -42,7 +42,7 @@ class Catalog(SettingsView):
             self.session.flash('Could not remove record. %s' % e, queue="danger")
         return HTTPFound(location=self.request.route_path(self.name))
 
-    @view_config(route_name="settings_catalog", renderer='phoenix:templates/settings/catalog.pt')
+    @view_config(route_name="settings_catalog", renderer='../templates/settings/catalog.pt')
     def view(self):
         self.csw.getrecords2(esn="full", maxrecords=20)
             

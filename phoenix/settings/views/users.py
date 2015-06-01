@@ -25,7 +25,7 @@ class Users(SettingsView):
             self.session.flash('User %s removed' % (email), queue="info")
         return HTTPFound(location=self.request.route_path(self.name))
 
-    @view_config(route_name='settings_users', renderer='phoenix:templates/settings/users.pt')
+    @view_config(route_name='settings_users', renderer='../templates/settings/users.pt')
     def view(self):
         user_items = list(self.userdb.find().sort('last_login', -1))
         grid = UsersGrid(

@@ -9,7 +9,7 @@ class Overview(SettingsView):
     def __init__(self, request):
         super(Overview, self).__init__(request, name='settings', title='Overview')
 
-    @view_config(route_name='settings', renderer='phoenix:templates/settings/overview.pt')
+    @view_config(route_name='settings', renderer='../templates/settings/overview.pt')
     def view(self):
         buttongroups = []
         buttons = []
