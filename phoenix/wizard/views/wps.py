@@ -3,7 +3,7 @@ import colander
 import deform
 
 from phoenix.utils import get_wps_list
-from phoenix.views.wizard import Wizard
+from phoenix.wizard.views import Wizard
 
 class ChooseWPSSchema(colander.MappingSchema):
     @colander.deferred

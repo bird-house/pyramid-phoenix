@@ -2,7 +2,7 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 from phoenix.tasks import esgf_logon, task_result
-from phoenix.views.wizard import Wizard
+from phoenix.wizard.views import Wizard
 
 import logging
 logger = logging.getLogger(__name__)

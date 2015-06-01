@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 
-from phoenix.views.wizard import Wizard
+from phoenix.wizard.views import Wizard
 
 import logging
 logger = logging.getLogger(__name__)

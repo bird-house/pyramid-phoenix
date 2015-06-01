@@ -2,7 +2,7 @@ from pyramid.view import view_config
 import colander
 import deform
 
-from phoenix.views.wizard import Wizard
+from phoenix.wizard.views import Wizard
 from phoenix.utils import wps_url
 
 def count_literal_inputs(wps, identifier):

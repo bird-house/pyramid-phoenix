@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 
-from phoenix.views.wizard import Wizard
+from phoenix.wizard.views import Wizard
 
 import colander
 from deform.widget import RadioChoiceWidget

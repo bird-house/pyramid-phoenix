@@ -3,7 +3,7 @@ from pyramid.security import authenticated_userid
 import json
 
 from phoenix.events import JobStarted
-from phoenix.views.wizard import Wizard
+from phoenix.wizard.views import Wizard
 from phoenix.utils import wps_url
 
 import logging

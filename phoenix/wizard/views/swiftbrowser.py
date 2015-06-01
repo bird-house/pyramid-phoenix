@@ -3,7 +3,7 @@ from pyramid.httpexceptions import HTTPFound
 
 from swiftclient import client, ClientException
 
-from phoenix.views.wizard import Wizard
+from phoenix.wizard.views import Wizard
 from phoenix.models import swift
 
 import logging
