@@ -69,28 +69,11 @@ def user_cert_valid(request, valid_hours=8):
 
 def get_wps_list(request):
     csw = request.csw
-    csw.getrecords(
-        qtype="service",
-        esn="full",
-        propertyname="dc:format",
-        keywords=['WPS'])
-    items = []
-    for rec in csw.records:
-        source=csw.records[rec].source
-        # TODO: fix owslib url handling and wps caps url
-        #if not '?' in source.lower():
-        #    source = utils.build_url(source, [('service', 'WPS'), ('version', '1.0.0'), ('request', 'GetCapabilities')])
-        
-        items.append(dict(
-            identifier=csw.records[rec].identifier,
-            title=csw.records[rec].title,
-            subjects=csw.records[rec].subjects,
-            abstract=csw.records[rec].abstract,
-            references=csw.records[rec].references,
-            format=csw.records[rec].format,
-            source=source,
-            rights=csw.records[rec].rights))
-    return items
+    from owslib.fes import PropertyIsEqualTo
+    wps_query = PropertyIsEqualTo('dc:format', 'WPS')
+    csw.getrecords2(constraints=[wps_query], maxrecords=20)
+    return csw.records.values()
+
 
 
 

@@ -3,6 +3,7 @@ import colander
 import deform
 
 from phoenix.views.wizard import Wizard
+from phoenix.utils import wps_url
 
 def count_literal_inputs(wps, identifier):
     process = wps.describeprocess(identifier)
@@ -34,7 +35,7 @@ class ChooseWPSProcess(Wizard):
             name='wizard_process',
             title='Choose WPS Process')
         from owslib.wps import WebProcessingService
-        self.wps = WebProcessingService(self.wizard_state.get('wizard_wps')['url'])
+        self.wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['wps_id']))
         self.description = self.wps.identification.title
 
     def breadcrumbs(self):

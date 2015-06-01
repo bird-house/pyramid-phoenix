@@ -77,8 +77,10 @@ def appstruct_to_inputs(appstruct):
             inputs.append( (str(key).strip(), str(value).strip()) )
     return inputs
 
-    
-
+def wps_url(request, identifier):
+    csw = request.csw
+    csw.getrecordbyid(id=[identifier])
+    return csw.records[identifier].source
 
 
 

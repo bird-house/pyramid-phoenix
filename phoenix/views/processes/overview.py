@@ -16,11 +16,10 @@ class Overview(Processes):
 
     @view_config(route_name='processes', renderer='phoenix:templates/processes/overview.pt')
     def view(self):
-        wps_list = models.get_wps_list(self.request)
         items = []
-        for wps in wps_list:
-            url=self.request.route_path('processes_list', _query=[('url', wps.get('source'))])
-            items.append(dict(title=wps.get('title'), description=wps.get('abstract'), url=url))
+        for wps in models.get_wps_list(self.request):
+            url=self.request.route_path('processes_list', _query=[('wps', wps.identifier)])
+            items.append(dict(title=wps.title, description=wps.abstract, url=url))
         return dict(title="Web Processing Services", items=items)
 
     
