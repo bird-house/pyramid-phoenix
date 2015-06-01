@@ -24,13 +24,12 @@ class Catalog(SettingsView):
         try:
             self.csw.getrecords2(maxrecords=0)
             count = self.csw.results.get('matches'),
-            # TODO: self destruction is out of order ... see exception
             self.csw.transaction(ttype='delete', typename='csw:Record')
             self.session.flash("%d Records deleted." % count, queue='info')
         except Exception,e:
             logger.exception('could not remove datasets.')
             self.session.flash('Ooops ... self destruction out of order. %s' % e, queue="danger")
-        return HTTPFound(location=self.request.route_url(self.name))
+        return HTTPFound(location=self.request.route_path(self.name))
  
     @view_config(route_name='remove_record')
     def remove(self):
@@ -41,39 +40,16 @@ class Catalog(SettingsView):
         except Exception,e:
             logger.exception("Could not remove record")
             self.session.flash('Could not remove record. %s' % e, queue="danger")
-        return HTTPFound(location=self.request.route_url(self.name))
-
-    def get_csw_items(self):
-        results = []
-        try:
-            self.csw.getrecords2(esn="full", maxrecords=20)
-            logger.debug('csw results %s', self.csw.results)
-            for rec in self.csw.records:
-                myrec = self.csw.records[rec]
-                results.append(dict(
-                    source = myrec.source,
-                    identifier = myrec.identifier,
-                    title = myrec.title,
-                    abstract = myrec.abstract,
-                    subjects = myrec.subjects,
-                    format = myrec.format,
-                    creator = myrec.creator,
-                    modified = myrec.modified,
-                    bbox = myrec.bbox,
-                    references = myrec.references,
-                    ))
-        except:
-            logger.exception('could not get items for csw.')
-        return results
+        return HTTPFound(location=self.request.route_path(self.name))
 
     @view_config(route_name="settings_catalog", renderer='phoenix:templates/settings/catalog.pt')
     def view(self):
-        items = self.get_csw_items()
+        self.csw.getrecords2(esn="full", maxrecords=20)
             
         grid = CSWGrid(
                 self.request,
-                items,
-                ['title', 'creator', 'modified', 'format', ''],
+                self.csw.records.values(),
+                ['title', 'format', ''],
             )
         self.csw.getrecords2(maxrecords=0)
         return dict(datasets_found=self.csw.results.get('matches'), grid=grid)
@@ -89,19 +65,19 @@ class CSWGrid(MyGrid):
         self.exclude_ordering = self.columns
 
     def title_td(self, col_num, i, item):
-        return self.render_title_td(item['title'], item['abstract'], item.get('subjects'))
+        return self.render_title_td(item.title, item.abstract, item.subjects)
 
     def format_td(self, col_num, i, item):
-        return self.render_format_td(item['format'], item['source'])
+        return self.render_format_td(item.format, item.source)
 
     def modified_td(self, col_num, i, item):
-        return self.render_time_ago_td(from_time=item.get('modified'))
+        return self.render_time_ago_td(from_time=item.modified)
 
     def action_td(self, col_num, i, item):
         buttongroup = []
         buttongroup.append(
-            ("remove", item.get('identifier'), "glyphicon glyphicon-trash text-danger", "",
-            self.request.route_url('remove_record', recordid=item.get('identifier')),
+            ("remove", item.identifier, "glyphicon glyphicon-trash text-danger", "",
+            self.request.route_path('remove_record', recordid=item.identifier),
             False) )
         return self.render_action_td(buttongroup)
        
