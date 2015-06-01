@@ -84,7 +84,6 @@ def main(global_config, **settings):
     config.add_route('monitor_details', '/monitor/{jobid}/{tab}')
     config.add_route('update_myjobs', '/monitor/update.json')
     config.add_route('remove_myjobs', '/monitor/remove_all')
-    config.add_route('remove_job', '/monitor/{jobid}/remove')
     
     # user profile
     config.add_route('profile', '/profile/{tab}')
