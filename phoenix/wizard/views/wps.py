@@ -47,7 +47,7 @@ class ChooseWPS(Wizard):
         self.success(appstruct)
         return self.next('wizard_process')
 
-    @view_config(route_name='wizard_wps', renderer='phoenix:templates/wizard/default.pt')
+    @view_config(route_name='wizard_wps', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(ChooseWPS, self).view()
     

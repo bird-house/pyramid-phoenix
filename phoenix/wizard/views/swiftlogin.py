@@ -53,6 +53,6 @@ class SwiftLogin(Wizard):
             self.session.flash('Swift token was updated.', queue="success")
             return self.next('wizard_swiftbrowser')
         
-    @view_config(route_name='wizard_swift_login', renderer='phoenix:templates/wizard/default.pt')
+    @view_config(route_name='wizard_swift_login', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(SwiftLogin, self).view()

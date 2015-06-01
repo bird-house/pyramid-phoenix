@@ -95,7 +95,7 @@ class CatalogSearch(Wizard):
             )
         return dict(grid=grid, items=items)
 
-    @view_config(route_name='wizard_csw', renderer='phoenix:templates/wizard/csw.pt')
+    @view_config(route_name='wizard_csw', renderer='../templates/wizard/csw.pt')
     def view(self):
         return super(CatalogSearch, self).view()
 

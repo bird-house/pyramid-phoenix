@@ -27,6 +27,6 @@ class ESGFSearch(Wizard):
             return self.next('wizard_done')
         return self.next('wizard_esgf_login')
 
-    @view_config(route_name='wizard_esgf_search', renderer='phoenix:templates/wizard/esgfsearch.pt')
+    @view_config(route_name='wizard_esgf_search', renderer='../templates/wizard/esgfsearch.pt')
     def view(self):
         return super(ESGFSearch, self).view()

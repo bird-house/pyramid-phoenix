@@ -89,6 +89,6 @@ class Done(Wizard):
         appstruct.update( dict(favorite_name=identifier) )
         return appstruct
 
-    @view_config(route_name='wizard_done', renderer='phoenix:templates/wizard/default.pt')
+    @view_config(route_name='wizard_done', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(Done, self).view()

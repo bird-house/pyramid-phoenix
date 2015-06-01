@@ -34,7 +34,7 @@ class ChooseSource(Wizard):
         self.success(appstruct)
         return self.next( appstruct.get('source') )
         
-    @view_config(route_name='wizard_source', renderer='phoenix:templates/wizard/default.pt')
+    @view_config(route_name='wizard_source', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(ChooseSource, self).view()
     

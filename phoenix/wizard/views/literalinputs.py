@@ -20,7 +20,7 @@ class LiteralInputs(Wizard):
         self.success(appstruct)
         return self.next('wizard_complex_inputs')
     
-    @view_config(route_name='wizard_literal_inputs', renderer='phoenix:templates/wizard/default.pt')
+    @view_config(route_name='wizard_literal_inputs', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(LiteralInputs, self).view()
     

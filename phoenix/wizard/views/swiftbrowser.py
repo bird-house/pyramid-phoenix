@@ -102,7 +102,7 @@ class SwiftBrowser(Wizard):
             )
         return dict(grid=grid, items=items, container=container, prefixes=swift.prefix_list(prefix))
 
-    @view_config(route_name='wizard_swiftbrowser', renderer='phoenix:templates/wizard/swiftbrowser.pt')
+    @view_config(route_name='wizard_swiftbrowser', renderer='../templates/wizard/swiftbrowser.pt')
     def view(self):
         return super(SwiftBrowser, self).view()
 

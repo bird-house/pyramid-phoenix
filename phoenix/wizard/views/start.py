@@ -36,6 +36,6 @@ class Start(Wizard):
         self.success(appstruct)
         return self.next('wizard_wps')
 
-    @view_config(route_name='wizard', renderer='phoenix:templates/wizard/default.pt')
+    @view_config(route_name='wizard', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(Start, self).view()

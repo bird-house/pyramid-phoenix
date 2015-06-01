@@ -72,7 +72,7 @@ class ChooseWPSProcess(Wizard):
         self.wizard_state.set('wizard_literal_inputs', {})
         return self.next('wizard_complex_inputs')
         
-    @view_config(route_name='wizard_process', renderer='phoenix:templates/wizard/default.pt')
+    @view_config(route_name='wizard_process', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(ChooseWPSProcess, self).view()
 

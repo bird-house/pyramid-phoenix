@@ -51,6 +51,6 @@ class ComplexInputs(Wizard):
         self.success(appstruct)
         return self.next('wizard_source')
 
-    @view_config(route_name='wizard_complex_inputs', renderer='phoenix:templates/wizard/default.pt')
+    @view_config(route_name='wizard_complex_inputs', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(ComplexInputs, self).view()
