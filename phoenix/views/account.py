@@ -59,9 +59,11 @@ class Account(MyView):
             logger.exception('validation of form failed.')
             return dict(active=protocol, form=e.render())
         else:
-            # TODO: Add ldap!?
-            logger.debug('openid route = %s', self.request.route_path('account_openid', _query=appstruct.items()))
-            return HTTPFound(location=self.request.route_path('account_openid', _query=appstruct.items()))
+            if protocol == 'ldap':
+                return HTTPFound(location = self.request.route_path('account_ldap', _query = appstruct.items()))
+            else:
+                logger.debug('openid route = %s', self.request.route_path('account_openid', _query=appstruct.items()))
+                return HTTPFound(location=self.request.route_path('account_openid', _query=appstruct.items()))
 
     def send_notification(self, email, subject, message):
         """Sends email notification to admins.
