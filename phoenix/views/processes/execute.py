@@ -6,6 +6,7 @@ from deform import ValidationFailure
 
 from phoenix.events import JobStarted
 from phoenix.views.processes import Processes
+from phoenix.utils import wps_url
 
 from owslib.wps import WebProcessingService
 
@@ -16,9 +17,7 @@ logger = logging.getLogger(__name__)
 class ExecuteProcess(Processes):
     def __init__(self, request):
         self.wps_id = request.params.get('wps')
-        csw = request.csw
-        csw.getrecordbyid(id=[self.wps_id])
-        self.wps = WebProcessingService(url=csw.records[self.wps_id].source)
+        self.wps = WebProcessingService(url=wps_url(request, self.wps_id))
         identifier = request.params.get('process')
         # TODO: need to fix owslib to handle special identifiers
         self.process = self.wps.describeprocess(identifier)
