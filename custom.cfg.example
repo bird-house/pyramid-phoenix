@@ -9,7 +9,8 @@ esgf-search = http://136.172.30.96/esg-search
 wps-url = http://localhost:8091/wps
 csw-url = http://localhost:8082/csw
 thredds-url = http://localhost:8080/thredds
-admin-users = admin@malleefowl.org
+# add the email of your initial administrator
+admin-users = 
 swift-auth-url = http://localhost/auth/v1.0
 swift-auth-version = 1
 

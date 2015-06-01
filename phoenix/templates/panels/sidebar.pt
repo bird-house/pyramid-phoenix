@@ -12,7 +12,7 @@
     </div>
   </tal:message>
   <!--! Flash messages from specific queues -->
-  <tal:newsflash repeat="flash_type ['success', 'info', 'error']">
+  <tal:newsflash repeat="flash_type ['success', 'info', 'warning', 'danger']">
     <tal:message condition="request.session.peek_flash(flash_type)">
       <div tal:repeat="message request.session.pop_flash(flash_type)" 
         tal:attributes="class string:alert alert-$flash_type">

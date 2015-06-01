@@ -8,7 +8,6 @@ logger = logging.getLogger(__name__)
 class Overview(SettingsView):
     def __init__(self, request):
         super(Overview, self).__init__(request, name='settings', title='Overview')
-        self.settings = self.request.registry.settings
 
     @view_config(route_name='settings', renderer='phoenix:templates/settings/overview.pt')
     def view(self):
@@ -19,7 +18,9 @@ class Overview(SettingsView):
                             icon="monitor_edit.png", title="Supervisor", id="external-url"))
         buttons.append(dict(url="/settings/catalog", icon="bookshelf.png", title="Catalog"))
         buttons.append(dict(url="/settings/users", icon="user_catwomen.png", title="Users"))
-        buttons.append(dict(url="/settings/jobs", icon="blackboard_sum.png", title="Jobs"))
+        buttons.append(dict(url=self.settings.get('celery.url'),
+                            icon="celery_128.png", title="Celery", id="external-url"))
+        buttons.append(dict(url="/settings/jobs", icon="blackboard_sum.png", title="Monitor"))
         buttons.append(dict(url="/ipython/notebook", icon="ipynb_icon_64x64.png", title="IPython"))
         buttons.append(dict(url=self.settings.get('thredds.url'),
                             icon="unidataLogo.png", title="Thredds", id="external-url"))

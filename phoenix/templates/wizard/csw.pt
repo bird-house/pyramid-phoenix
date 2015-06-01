@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="${request.static_url('phoenix:static/leaflet/leaflet.css')}" />
     <!--[if lte IE 8]><link rel="stylesheet" href="${request.static_url('phoenix:static/leafletleaflet.ie.css')}" /><![endif]-->
     <script type="text/javascript" src="${request.static_url('phoenix:static/leaflet/leaflet.js')}"></script>
-    <script src="${request.static_url('phoenix:static/js/csw.js')}"></script>
+    <script src="${request.static_url('phoenix:static/scripts/csw.js')}"></script>
     <script type="text/javascript">
       $(document).ready(function (e) {
          initMap();
@@ -20,10 +20,10 @@
         
   <div metal:fill-slot="content">
 
-    <div class="row-fluid">
-      <div class="span3" id="div-map">Map</div>
+    <div class="row">
+      <div class="col-3 col-lg-3 col-sm-3" id="div-map">Map</div>
         
-      <div class="span9">
+      <div class="col-9 col-lg-9 col-sm-9">
         <!-- search form -->
         <div>
           <form id="query" class="form-search">

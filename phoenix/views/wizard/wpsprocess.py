@@ -1,6 +1,31 @@
 from pyramid.view import view_config
+import colander
+import deform
 
 from phoenix.views.wizard import Wizard
+
+def count_literal_inputs(wps, identifier):
+    process = wps.describeprocess(identifier)
+    literal_inputs = []
+    for input in process.dataInputs:
+        if input.dataType != 'ComplexData':
+            literal_inputs.append(input)
+    return len(literal_inputs)
+
+@colander.deferred
+def deferred_choose_process_widget(node, kw):
+    processes = kw.get('processes', [])
+
+    choices = []
+    for process in processes:
+        choices.append( (process.identifier, process.title) )
+    return deform.widget.RadioChoiceWidget(values = choices)
+
+class SelectProcessSchema(colander.MappingSchema):
+    identifier = colander.SchemaNode(
+        colander.String(),
+        title = "WPS Process",
+        widget = deferred_choose_process_widget)
 
 class ChooseWPSProcess(Wizard):
     def __init__(self, request):
@@ -12,15 +37,18 @@ class ChooseWPSProcess(Wizard):
         self.wps = WebProcessingService(self.wizard_state.get('wizard_wps')['url'])
         self.description = self.wps.identification.title
 
+    def breadcrumbs(self):
+        breadcrumbs = super(ChooseWPSProcess, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
+
     def schema(self):
-        from phoenix.schema import SelectProcessSchema
         return SelectProcessSchema().bind(processes = self.wps.processes)
 
     def next_success(self, appstruct):
         self.success(appstruct)
 
         # TODO: this code does not belong here
-        from phoenix.wps import count_literal_inputs
         identifier = appstruct['identifier']
         if count_literal_inputs(self.wps, identifier) > 0:
             return self.next('wizard_literal_inputs')
@@ -53,11 +81,11 @@ class CatalogSearchGrid(MyGrid):
 
     def selected_td(self, col_num, i, item):
         from string import Template
-        from webhelpers.html.builder import HTML
+        from webhelpers2.html.builder import HTML
 
-        icon_class = "icon-thumbs-down"
+        icon_class = "glyphicon glyphicon-thumbs-down"
         if item['selected'] == True:
-            icon_class = "icon-thumbs-up"
+            icon_class = "glyphicon glyphicon-thumbs-up"
         div = Template("""\
         <button class="btn btn-mini select" data-value="${identifier}"><i class="${icon_class}"></i></button>
         """)

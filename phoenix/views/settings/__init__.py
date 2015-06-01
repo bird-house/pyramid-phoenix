@@ -13,6 +13,5 @@ class SettingsView(MyView):
 
     def breadcrumbs(self):
         breadcrumbs = super(SettingsView, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='settings', title="Settings"))
-        breadcrumbs.append(dict(route_name=self.name, title=self.title))
+        breadcrumbs.append(dict(route_path=self.request.route_path('settings'), title="Settings"))
         return breadcrumbs

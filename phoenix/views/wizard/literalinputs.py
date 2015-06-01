@@ -12,8 +12,8 @@ class LiteralInputs(Wizard):
         self.description = "Process %s" % self.process.title
 
     def schema(self):
-        from phoenix.wps import WPSSchema
-        return WPSSchema(info=False, hide_complex=True, process = self.process)
+        from phoenix.schema.wps import WPSSchema
+        return WPSSchema(hide_complex=True, process = self.process)
 
     def next_success(self, appstruct):
         self.success(appstruct)

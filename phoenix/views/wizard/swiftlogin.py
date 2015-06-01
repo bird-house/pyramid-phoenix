@@ -1,5 +1,6 @@
 from pyramid.view import view_config
-
+from pyramid.httpexceptions import HTTPFound
+from pyramid.security import authenticated_userid
 from phoenix.views.wizard import Wizard
 
 import logging
@@ -11,6 +12,11 @@ class SwiftLogin(Wizard):
             request,
             name='wizard_swift_login',
             title="Swift Cloud Login")
+
+    def breadcrumbs(self):
+        breadcrumbs = super(SwiftLogin, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
 
     def schema(self):
         from phoenix.schema import SwiftLoginSchema
@@ -33,17 +39,18 @@ class SwiftLogin(Wizard):
         user['swift_username'] = appstruct.get('username')
         user['swift_storage_url'] = result['storage_url']
         user['swift_auth_token'] = result['auth_token'] 
-        self.userdb.update({'email':self.user_email()}, user)
+        self.userdb.update({'email':authenticated_userid(self.request)}, user)
         
     def next_success(self, appstruct):
         try:
             self.login(appstruct)
         except Exception, e:
             logger.exception("update of swift token failed.")
-            return self.flash_error("Could not update your Swift token. %s" % (e))
+            self.session.flash("Could not update your Swift token. %s" % (e), queue="danger")
+            return HTTPFound(location=self.request.route_path(self.name))
         else:
             super(SwiftLogin, self).success(appstruct)
-            self.flash_success('Swift token was updated.')
+            self.session.flash('Swift token was updated.', queue="success")
             return self.next('wizard_swiftbrowser')
         
     @view_config(route_name='wizard_swift_login', renderer='phoenix:templates/wizard/default.pt')

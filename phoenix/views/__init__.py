@@ -10,28 +10,25 @@ class MyView(object):
         self.name = name
         self.title = title
         self.description = description
-        # db access
+        # TODO: refactor db access
+        self.db = self.request.db
         self.userdb = self.request.db.users
 
         # set breadcrumbs
         for item in self.breadcrumbs():
             lm = self.request.layout_manager
             lm.layout.add_breadcrumb(
-                route_name=item.get('route_name'),
+                route_path=item.get('route_path'),
                 title=item.get('title'))
-
-    def user_email(self):
-        return models.user_email(self.request)
 
     def get_user(self, email=None):
         return models.get_user(self.request, email)
 
     def breadcrumbs(self):
-        return [dict(route_name="home", title="Home")]
+        return [dict(route_path=self.request.route_path("home"), title="Home")]
 
 from pyramid.view import (
     view_config,
-    forbidden_view_config,
     notfound_view_config
     )
 from pyramid.response import Response
@@ -43,11 +40,6 @@ def notfound(request):
     so that the 404 page fits nicely into our global layout.
     """
     return {}
-
-@forbidden_view_config(renderer='phoenix:templates/forbidden.pt')
-def forbidden(request):
-    request.response.status = 403
-    return dict(message=None)
 
 @subscriber(BeforeRender)
 def add_global(event):

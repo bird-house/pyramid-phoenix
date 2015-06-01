@@ -28,9 +28,7 @@ class Start(Wizard):
         return WizardSchema().bind(favorites=self.favorite.names())
 
     def success(self, appstruct):
-        logger.debug('favorite: %s', appstruct.get('favorite'))
         favorite_state = self.favorite.get(appstruct.get('favorite'))
-        logger.debug('favorite state: %s', favorite_state)
         self.wizard_state.load(favorite_state)
         super(Start, self).success(appstruct)
 

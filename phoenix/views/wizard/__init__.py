@@ -1,4 +1,5 @@
 from pyramid.view import view_config, view_defaults
+from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPFound
 
 from deform import Form, Button
@@ -112,13 +113,13 @@ class WizardState(object):
         self.session['wizard'] = dict(state={}, chain=[self.initial_step])
         self.session.changed()
 
-@view_defaults(permission='edit', layout='default')
+@view_defaults(permission='submit', layout='default')
 class Wizard(MyView):
     def __init__(self, request, name, title, description=None):
         super(Wizard, self).__init__(request, name, title, description)
         self.csw = self.request.csw
         self.wizard_state = WizardState(self.session)
-        self.favorite = WizardFavorite(self.request, self.session, email=self.user_email())
+        self.favorite = WizardFavorite(self.request, self.session, email=authenticated_userid(self.request))
 
     def buttons(self):
         prev_disabled = not self.prev_ok()
@@ -216,35 +217,22 @@ class Wizard(MyView):
         
     def previous(self):
         self.wizard_state.previous()
-        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
+        return HTTPFound(location=self.request.route_path(self.wizard_state.current_step()))
 
     def next(self, step):
         self.wizard_state.next(step)
-        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
+        return HTTPFound(location=self.request.route_path(self.wizard_state.current_step()))
 
     def cancel(self):
         self.wizard_state.clear()
-        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
-
-    def flash(self, message, queue='info'):
-        self.session.flash(message, queue=queue)
-        return HTTPFound(location=self.request.route_url(self.wizard_state.current_step()))
-
-    def flash_success(self, message):
-        logger.info(message)
-        return self.flash(message, queue='success')
-
-    def flash_error(self, message):
-        logger.error(message)
-        return self.flash(message, queue='error')
+        return HTTPFound(location=self.request.route_path(self.wizard_state.current_step()))
 
     def custom_view(self):
         return {}
 
     def breadcrumbs(self):
         breadcrumbs = super(Wizard, self).breadcrumbs()
-        breadcrumbs.append(dict(route_name='wizard', title='Wizard'))
-        breadcrumbs.append(dict(route_name=self.name, title=self.title))
+        breadcrumbs.append(dict(route_path=self.request.route_path('wizard'), title='Wizard'))
         return breadcrumbs
 
     def resources(self):
@@ -256,8 +244,6 @@ class Wizard(MyView):
             logger.debug("catalog selection: %s", selection)
             self.csw.getrecordbyid(id=selection)
             resources = [str(rec.source) for rec in self.csw.records.values()]
-        elif resource == 'wizard_esgf':
-            resources = [str(file_url) for file_url in self.wizard_state.get('wizard_esgf_files')['url']]
         return resources
 
     def view(self):
@@ -270,6 +256,6 @@ class Wizard(MyView):
         elif 'cancel' in self.request.POST:
             return self.cancel()
     
-        result = dict(form=form.render(self.appstruct()))
+        result = dict(title=self.title, form=form.render(self.appstruct()))
         custom = self.custom_view()    
         return dict(result, **custom)

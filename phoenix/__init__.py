@@ -8,20 +8,18 @@ from phoenix.security import groupfinder, root_factory
 import pymongo
 import ldap
 
-from phoenix.utils import button
 import logging
-
 logger = logging.getLogger(__name__)
 
 from deform import Form
 
-def add_search_path():
-    # register templates
-    loader = Form.default_renderer.loader
+## def add_search_path():
+##     # register templates
+##     loader = Form.default_renderer.loader
    
-    from os.path import dirname, join
-    path = join(dirname(__file__), 'templates', 'deform')
-    loader.search_path = (path,) + loader.search_path
+##     from os.path import dirname, join
+##     path = join(dirname(__file__), 'templates', 'deform')
+##     loader.search_path = (path,) + loader.search_path
 
 
 def main(global_config, **settings):
@@ -31,7 +29,7 @@ def main(global_config, **settings):
 
     # security
     authn_policy = AuthTktAuthenticationPolicy(
-        'sosecret', callback=groupfinder, hashalg='sha512')
+        'tellnoone', callback=groupfinder, hashalg='sha512')
     authz_policy = ACLAuthorizationPolicy()
     config = Configurator(root_factory=root_factory, settings=settings)
     config.set_authentication_policy(authn_policy)
@@ -44,12 +42,15 @@ def main(global_config, **settings):
     config.include('pyramid_chameleon')
     
     # deform
-    config.include('pyramid_deform')
-    config.include('js.deform')
-    config.include('deform_bootstrap')
+    #config.include('pyramid_deform')
+    #config.include('js.deform')
 
     # mailer
     config.include('pyramid_mailer')
+
+    # celery
+    config.include('pyramid_celery')
+    config.configure_celery(global_config['__file__'])
 
     # ldap
     config.include('pyramid_ldap')
@@ -72,70 +73,56 @@ def main(global_config, **settings):
     # TODO: improve config of my own templates
     # see also: http://docs.pylonsproject.org/projects/deform/en/latest/templates.html#overriding-for-all-forms
     # register template search path
-    add_search_path()
+    #add_search_path()
     #logger.debug('search path= %s', Form.default_renderer.loader.search_path)
 
     # static views (stylesheets etc)
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_static_view('deform_static', 'deform:static', cache_max_age=3600)
-    config.add_static_view(
-        'deform_bootstrap_static', 'deform_bootstrap:static',
-        cache_max_age=3600
-    )
-
-    # dummy view for testing
-    config.add_route('dummy', '/dummy/{email}')
-    config.add_route('dummy_json', '/dummy/{email}/edit.json')
 
     # routes 
     config.add_route('home', '/')
+
+    # login
+    config.add_route('account_login', '/account/login/{protocol}')
+    config.add_route('account_logout', '/account/logout')
+    config.add_route('account_openid', '/account/openid')
+    config.add_route('account_ldap', '/account/ldap')
+    config.add_route('account_register', '/account/register')
 
     # dashboard
     config.add_route('dashboard', '/dashboard/{tab}')
     
     # processes
     config.add_route('processes', '/processes')
-    config.add_route('execute_process', '/processes/{identifier}/execute')
+    config.add_route('processes_list', '/processes/list')
+    config.add_route('processes_execute', '/processes/execute')
 
-    # myjobs
-    config.add_route('myjobs', '/myjobs')
-    config.add_route('update_myjobs', '/myjobs/update.json')
-    config.add_route('remove_myjobs', '/myjobs/remove_all')
-    config.add_route('remove_myjob', '/myjobs/{jobid}/remove')
-    config.add_route('process_outputs', '/myjobs/{jobid}/outputs/{tab}')
-
-    # map
-    config.add_route('map', '/map')
-
-    # my account
-    config.add_route('myaccount', '/myaccount/{tab}')
-
-    # TODO: disable qc wizards
-    config.add_route('qc_wizard_check', '/qc_wizard_check')
-    config.add_route('qc_wizard_yaml', '/qc_wizard_yaml')
+    # job monitor
+    config.add_route('monitor', '/monitor')
+    config.add_route('monitor_details', '/monitor/details/{tab}/{jobid}')
+    config.add_route('update_myjobs', '/monitor/update.json')
+    config.add_route('remove_myjobs', '/monitor/remove_all')
+    config.add_route('remove_job', '/monitor/remove/{jobid}')
+    
+    # user profile
+    config.add_route('profile', '/profile/{tab}')
 
     # settings
     config.add_route('settings', '/settings/overview')
-    config.add_route('catalog_settings', '/settings/catalog')
+    config.add_route('settings_catalog', '/settings/catalog')
+    config.add_route('settings_add_service', '/settings/catalog/add_service')
+    config.add_route('settings_add_dataset', '/settings/catalog/add_dataset')
     config.add_route('remove_record', '/settings/catalog/{recordid}/remove')
     config.add_route('remove_all_records', '/settings/catalog/remove_all')
-    config.add_route('user_settings', '/settings/users')
-    config.add_route('edit_user', '/settings/users/{email}/edit.json')
+    config.add_route('settings_users', '/settings/users')
+    config.add_route('settings_edit_user', '/settings/users/{email}/edit')
     config.add_route('remove_user', '/settings/users/{email}/remove')
-    config.add_route('activate_user', '/settings/users/{email}/activate.json')
-    config.add_route('job_settings', '/settings/jobs')
+    config.add_route('settings_jobs', '/settings/jobs')
     config.add_route('remove_all_jobs', '/settings/jobs/remove_all')
-    
-    config.add_route('signin', '/signin/{tab}')
-    config.add_route('logout', '/logout')
-    config.add_route('login_openid', '/login/openid')
-    config.add_route('login_ldap', '/login/ldap')
-    # TODO: need some work on local accounts
-    config.add_route('login_local', '/login/local')
-    config.add_route('register', '/register')
 
     # wizard
-    config.add_route('wizard', '/wizard/start')
+    config.add_route('wizard', '/wizard')
     config.add_route('wizard_wps', '/wizard/wps')
     config.add_route('wizard_process', '/wizard/process')
     config.add_route('wizard_literal_inputs', '/wizard/literal_inputs')
@@ -143,15 +130,19 @@ def main(global_config, **settings):
     config.add_route('wizard_source', '/wizard/source')
     config.add_route('wizard_csw', '/wizard/csw')
     config.add_route('wizard_csw_select', '/wizard/csw/{recordid}/select.json')
-    config.add_route('wizard_esgf', '/wizard/esgf')
-    config.add_route('wizard_esgf_files', '/wizard/esgf_files')
+    config.add_route('wizard_esgf_search', '/wizard/esgf_search')
+    config.add_route('wizard_esgf_login', '/wizard/esgf_login')
+    config.add_route('wizard_loading', '/wizard/loading')
+    config.add_route('wizard_check_logon', '/wizard/check_logon.json')
     config.add_route('wizard_swift_login', '/wizard/swift_login')
     config.add_route('wizard_swiftbrowser', '/wizard/swiftbrowser')
-    config.add_route('wizard_esgf_credentials', '/wizard/esgf_credentials')
-    config.add_route('wizard_check_parameters', '/wizard/check_parameters')
     config.add_route('wizard_done', '/wizard/done')
 
+    # readthedocs
+    config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/en/latest/{part}.html')
+
     # A quick access to the login button
+    from phoenix.utils import button
     config.add_request_method(button, 'login_button', reify=True)
 
     # use json_adapter for datetime
@@ -180,13 +171,8 @@ def main(global_config, **settings):
         settings = event.request.registry.settings
         if settings.get('db') is None:
             try:
-                MongoDB = pymongo.Connection
-                if 'pyramid_debugtoolbar' in set(settings.values()):
-                    class MongoDB(pymongo.Connection):
-                        def __html__(self):
-                            return 'MongoDB: <b>{}></b>'.format(self)
-                conn = MongoDB(settings['mongodb.url'])
-                settings['db'] = conn[settings['mongodb.db_name']]
+                from phoenix.models import mongodb
+                settings['db'] = mongodb(event.request.registry)
                 logger.debug("Connected to mongodb %s.", settings['mongodb.url'])
             except:
                 logger.exception('Could not connect to mongodb %s.', settings['mongodb.url'])

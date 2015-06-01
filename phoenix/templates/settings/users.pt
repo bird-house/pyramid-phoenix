@@ -1,23 +1,12 @@
 <metal:block use-macro="main_template">
 
-  <div metal:fill-slot="javascript">
-    <script src="${request.static_url('phoenix:static/js/users.js')}"></script>
-  </div>
-        
   <div metal:fill-slot="content">
 
-    <table class="table table-striped" tal:condition="grid | None">
-      <tal:rows replace="structure grid" />
-    </table>
-
-    <!-- User edit form -->
-    <div id="user-form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="user-form-label" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="user-form-label">Edit User</h3>
-      </div>
-      <div class="modal-body">
-        <tal:form replace="structure form" />
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <table class="table table-striped" tal:condition="grid | None">
+          <tal:rows replace="structure grid" />
+        </table>
       </div>
     </div>
 

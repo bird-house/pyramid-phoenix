@@ -1,17 +1,19 @@
+import os
+
 import logging
 logger = logging.getLogger(__name__)
 
-SIGNIN_HTML = '<a href="/signin/esgf"><i class="icon-user"></i> Sign in</a>'
-SIGNOUT_HTML = '<a href="/logout" id="signout" title="Logout %s"><i class="icon-off"></i> Sign out</a>'
+SIGNIN_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign in"><span class="glyphicon glyphicon-log-in"></span></a>'
+SIGNOUT_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign out %s"><span class="glyphicon glyphicon-log-out"></span></a>'
 
 def button(request):
     """If the user is logged in, returns the logout button, otherwise returns the login button"""
     import markupsafe
     from pyramid.security import authenticated_userid
     if not authenticated_userid(request):
-        return markupsafe.Markup(SIGNIN_HTML)
+        return markupsafe.Markup(SIGNIN_HTML) % (request.route_path('account_login', protocol='esgf'))
     else:
-        return markupsafe.Markup(SIGNOUT_HTML) % (authenticated_userid(request))
+        return markupsafe.Markup(SIGNOUT_HTML) % (request.route_path('account_logout'), authenticated_userid(request))
 
 
 def localize_datetime(dt, tz_name='UTC'):
@@ -31,26 +33,53 @@ def is_url(url):
     from urlparse import urlparse
     return bool(urlparse(url ).scheme)
 
+def build_url(url, query):
+    import urllib
+    if not url.endswith('?'):
+        url = url + '?'
+    return url + urllib.urlencode(query)
 
-def filesizeformat(bytes, precision=2):
-    """Returns a humanized string for a given amount of bytes
-       Based on http://python.todaysummary.com/q_python_11123.html
-    """
-    import math
-
+def time_ago_in_words(from_time):
     try:
-        bytes = int(bytes)
+        from datetime import datetime
+        from webhelpers2 import date
+        logger.debug("from_time: %s, type=%s", from_time, type(from_time))
+        delta = datetime.now() - from_time
+        granularity='minute'
+        if delta.days > 365:
+            granularity = 'year'
+        elif delta.days > 30:
+            granularity = 'month'
+        elif delta.days > 0:
+            granularity = 'day'
+        elif delta.total_seconds() > 3600:
+            granularity = 'hour'
+        time_ago = date.time_ago_in_words(from_time, granularity=granularity)
+        time_ago = time_ago + " ago"
     except:
-        bytes = 0
-    if bytes == 0:
-        return '0 Bytes'
-    log = math.floor(math.log(bytes, 1024))
+        time_ago = '???'
+    finally:
+        return time_ago
+
+def root_path(path):
+    try:
+        return path.split(os.sep, 2)[1]
+    except:
+        return None
     
-    return "%.*f %s" % (
-        precision,
-        bytes / math.pow(1024, log),
-        ['Bytes', 'KB', 'MB', 'GB', 'TB','PB', 'EB', 'ZB', 'YB'][int(log)]
-        )
+def appstruct_to_inputs(appstruct):
+    import types
+    inputs = []
+    for key,values in appstruct.items():
+        if type(values) != types.ListType:
+            values = [values]
+        for value in values:
+            inputs.append( (str(key).strip(), str(value).strip()) )
+    return inputs
+
+    
+
+
 
 
     

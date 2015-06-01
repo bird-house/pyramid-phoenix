@@ -1,4 +1,5 @@
 from pyramid.view import view_config
+from pyramid.httpexceptions import HTTPFound
 
 from swiftclient import client, ClientException
 
@@ -10,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 import colander
 from deform.widget import HiddenWidget
-class SwiftBrowserSchema(colander.MappingSchema):
+class Schema(colander.MappingSchema):
     container = colander.SchemaNode(
         colander.String(),
         missing = '',
@@ -33,8 +34,13 @@ class SwiftBrowser(Wizard):
         self.storage_url = user.get('swift_storage_url')
         self.auth_token = user.get('swift_auth_token')
 
+    def breadcrumbs(self):
+        breadcrumbs = super(SwiftBrowser, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
+
     def schema(self):
-        return SwiftBrowserSchema()
+        return Schema()
 
     def appstruct(self):
         appstruct = super(SwiftBrowser, self).appstruct()
@@ -48,15 +54,15 @@ class SwiftBrowser(Wizard):
             appstruct['prefix'] = prefix
         else:
             appstruct['prefix'] = colander.null
-        logger.debug("appstruct = %s", appstruct)
         return appstruct
 
     def next_success(self, appstruct):
-        if appstruct['container'] and appstruct['prefix']:
+        if appstruct['container']:
             self.success(appstruct)
             return self.next('wizard_done')
         else:
-            return self.flash_error("Please choose container and prefix.")
+            self.session.flash("Please choose container", queue="danger")
+            return HTTPFound(location=self.request.route_path(self.name))
 
     def custom_view(self):
         container = self.request.params.get('container')
@@ -68,6 +74,7 @@ class SwiftBrowser(Wizard):
         else:
             items = swift.get_containers(self.storage_url, self.auth_token)
             fields = ['name', 'objects', 'size', '']
+        # TODO: filter with choosen mime type
         filtered_items = []
         for item in items:
             logger.debug(item)
@@ -99,7 +106,7 @@ class SwiftBrowser(Wizard):
     def view(self):
         return super(SwiftBrowser, self).view()
 
-from webhelpers.html.builder import HTML
+from webhelpers2.html.builder import HTML
 from phoenix.grid import MyGrid
 
 class SwiftBrowserGrid(MyGrid):
@@ -128,7 +135,7 @@ class SwiftBrowserGrid(MyGrid):
             query.append( ('prefix', prefix) )
         name = prefix.strip('/')
         name = name.split('/')[-1]
-        url = self.request.route_url('wizard_swiftbrowser', _query=query)
+        url = self.request.route_path('wizard_swiftbrowser', _query=query)
         return self.render_td(renderer="folder_element_td", url=url, name=name, content_type=content_type)
 
     def created_td(self, col_num, i, item):
@@ -138,18 +145,13 @@ class SwiftBrowserGrid(MyGrid):
         return self.render_label_td(item.get('count') )
 
     def size_td(self, col_num, i, item):
-        from phoenix.utils import filesizeformat
-        size = filesizeformat( item.get('bytes') )
-        if item.has_key('subdir'):
-            size = ''
-        return self.render_label_td(size)
+        size = None
+        if not item.has_key('subdir'):
+            size = item.get('bytes')
+        return self.render_size_td(size)
 
     def action_td(self, col_num, i, item):
         buttongroup = []
-    ##     buttongroup.append( ("show", item.get('identifier'), "icon-th-list", "Show", 
-    ##                          self.request.route_url('process_outputs', tab='outputs', jobid=item.get('identifier')), False) )
-    ##     buttongroup.append( ("remove", item.get('identifier'), "icon-trash", "Remove", 
-    ##                          self.request.route_url('remove_myjob', jobid=item.get('identifier')), False) )
         return self.render_action_td(buttongroup)
 
     

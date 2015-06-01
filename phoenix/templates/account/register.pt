@@ -1,0 +1,38 @@
+<metal:block use-macro="main_template">
+
+  <div metal:fill-slot="content">
+    
+    <div class="intro-block">
+      <h1>Please ask for registration</h1>
+      This is a demo installation of Phoenix. If you want to try it out please do the following steps:
+      <ol>
+        <li>
+          Get an OpenID Account at an ESGF Node, 
+          for example at <a href="http://esgf-data.dkrz.de">http://esgf-data.dkrz.de</a>
+        </li>
+        <li>
+          To be allowed to download data from ESGF (e.a. CORDEX) you
+          must be registered in the <b>non-commercial</b> ESGF
+          Group. You can register for this group by just downloading data
+          files from an <a href="http://esgf-data.dkrz.de">ESGF Node</a>. 
+          When you are not registered you will be asked for group registration once.
+        </li>
+        <li>
+          <a class="btn btn-mini btn-success" href="${request.route_path('account_login', protocol='esgf')}">Sign in</a> with your OpenID at Phoenix.
+        </li>
+        <li>
+          You will only have <b>guest</b> status and an admin needs to activate your account.
+        </li>
+        <li>
+          We will inform you when you are added to the allowed users of this Demo.
+        </li>
+        <li>
+          Finally login again with your OpenID.
+        </li>
+      </ol>
+    </div>
+    
+  </div>
+
+</metal:block>
+

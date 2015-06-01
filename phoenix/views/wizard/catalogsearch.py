@@ -20,7 +20,7 @@ class CatalogSearch(Wizard):
 
     def next_success(self, appstruct):
         #self.success(appstruct)
-        return self.next('wizard_check_parameters')
+        return self.next('wizard_done')
 
     def search_csw(self, query=''):
         keywords = [k for k in map(str.strip, str(query).split(' ')) if len(k)>0]
@@ -120,11 +120,11 @@ class CatalogSearchGrid(MyGrid):
 
     def selected_td(self, col_num, i, item):
         from string import Template
-        from webhelpers.html.builder import HTML
+        from webhelpers2.html.builder import HTML
 
-        icon_class = "icon-thumbs-down"
+        icon_class = "glyphicon glyphicon-thumbs-down"
         if item.get('selected') == True:
-            icon_class = "icon-thumbs-up"
+            icon_class = "glyphicon glyphicon-thumbs-up"
         div = Template("""\
         <a class="select" data-value="${recordid}" href="#"><i class="${icon_class}"></i></a>
         """)

@@ -1,0 +1,23 @@
+<metal:block use-macro="main_template">
+
+  <div metal:fill-slot="content">
+
+    ${panel('monitor_details')}
+
+    <ul class="nav nav-tabs">
+      <li class="${'active' if active=='outputs' else ''}">
+        <a href="${request.route_path('monitor_details', jobid=jobid, tab='outputs')}">Outputs</a>
+      </li>
+      <li class="${'active' if active=='log' else ''}">
+        <a href="${request.route_path('monitor_details', jobid=jobid, tab='log')}">Log</a>
+      </li>
+    </ul>
+
+    <!-- row columns -->
+    <div class="row-fluid offset1">
+      ${panel('headings')}
+    </div>
+
+  </div>
+   
+</metal:block>
