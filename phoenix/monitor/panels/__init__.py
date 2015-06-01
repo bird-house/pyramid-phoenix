@@ -10,12 +10,12 @@ def job_details(request, jobid):
     details['finished'] = time_ago_in_words(job.get('finished'))
     return details
 
-@panel_config(name='monitor_details', renderer='phoenix:templates/panels/monitor_details.pt')
+@panel_config(name='monitor_details', renderer='../templates/panels/monitor_details.pt')
 def details(context, request):
     jobid = request.session.get('jobid')
     return dict(job=job_details(request, jobid=jobid))
 
-@panel_config(name='monitor_log', renderer='phoenix:templates/panels/monitor_log.pt')
+@panel_config(name='monitor_log', renderer='../templates/panels/monitor_log.pt')
 def log(context, request):
     jobid = request.session.get('jobid')
     job = request.db.jobs.find_one({'identifier': jobid})
