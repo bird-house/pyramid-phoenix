@@ -81,7 +81,7 @@ def main(global_config, **settings):
 
     # job monitor
     config.add_route('monitor', '/monitor')
-    config.add_route('monitor_details', '/monitor/details/{tab}/{jobid}')
+    config.add_route('monitor_details', '/monitor/{jobid}/{tab}')
     config.add_route('update_myjobs', '/monitor/update.json')
     config.add_route('remove_myjobs', '/monitor/remove_all')
     config.add_route('remove_job', '/monitor/remove/{jobid}')
