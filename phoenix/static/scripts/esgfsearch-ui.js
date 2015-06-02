@@ -11,6 +11,7 @@
       var selectedFacet = 'project';
       
       var init = function() {
+        init_toggle_collapse();
         init_search_options();
         init_query();
         init_constraints();
@@ -19,6 +20,12 @@
         init_time_constraints();
         //init_spatial_constraints();
         search();
+      };
+
+      var init_toggle_collapse = function() {
+        $('a[data-toggle="collapse"]').click(function () {
+          $(this).find('i').toggleClass('glyphicon-chevron-right glyphicon-chevron-down');
+        })
       };
 
       // using ctrl for multiple selection of facets
