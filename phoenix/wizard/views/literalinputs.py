@@ -5,12 +5,16 @@ from phoenix.utils import wps_url
 
 class LiteralInputs(Wizard):
     def __init__(self, request):
-        super(LiteralInputs, self).__init__(
-            request, name='wizard_literal_inputs', title="Literal Inputs")
+        super(LiteralInputs, self).__init__(request, name='wizard_literal_inputs', title="Literal Inputs")
         from owslib.wps import WebProcessingService
         self.wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['identifier']))
         self.process = self.wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
         self.title = "Literal inputs of {0}".format(self.process.title)
+
+    def breadcrumbs(self):
+        breadcrumbs = super(LiteralInputs, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        return breadcrumbs
 
     def schema(self):
         from phoenix.schema.wps import WPSSchema

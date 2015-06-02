@@ -25,15 +25,14 @@ class ChooseWPSSchema(colander.MappingSchema):
     
     identifier = colander.SchemaNode(
         colander.String(),
-        title = 'Choose a Web Processing Service',
+        title = "Web Processing Service",
         validator = deferred_validator,
         widget = deferred_widget
         )
 
 class ChooseWPS(Wizard):
     def __init__(self, request):
-        super(ChooseWPS, self).__init__(request, name='wizard_wps', title='WPS')
-        self.description = "Choose Web Processing Service"
+        super(ChooseWPS, self).__init__(request, name='wizard_wps', title='Choose a Web Processing Service')
 
     def breadcrumbs(self):
         breadcrumbs = super(ChooseWPS, self).breadcrumbs()

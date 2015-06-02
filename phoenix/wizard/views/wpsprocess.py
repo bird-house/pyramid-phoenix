@@ -15,11 +15,6 @@ def count_literal_inputs(wps, identifier):
 
 class Schema(colander.MappingSchema):
     @colander.deferred
-    def deferred_title(node, kw):
-        wps = kw.get('wps')
-        return "Choose a Process of {0}".format(wps.identification.title)
-    
-    @colander.deferred
     def deferred_validator(node, kw):
         wps = kw.get('wps')
 
@@ -40,7 +35,7 @@ class Schema(colander.MappingSchema):
 
     identifier = colander.SchemaNode(
         colander.String(),
-        title = deferred_title,
+        title = "Process",
         validator = deferred_validator,
         widget = deferred_widget)
 
@@ -52,7 +47,7 @@ class ChooseWPSProcess(Wizard):
             title='Choose WPS Process')
         from owslib.wps import WebProcessingService
         self.wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['identifier']))
-        self.description = self.wps.identification.title
+        self.title = "Choose WPS Process of {0}".format(self.wps.identification.title)
 
     def breadcrumbs(self):
         breadcrumbs = super(ChooseWPSProcess, self).breadcrumbs()
