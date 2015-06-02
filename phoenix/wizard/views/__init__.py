@@ -56,10 +56,14 @@ class WizardFavorite(object):
             self.session[wizard_favorite] = yaml.load(fav.get('favorite', '{}'))
             self.session[wizard_favorite][no_favorite] = {}
             self.session.changed()
-            logger.debug('loaded favorite for %s', self.email)
         except:
             self.clear()
             logger.exception('loading favorite for %s failed.', self.email)
+
+    def drop(self):
+        self.favdb.remove({'email': authenticated_userid(self.request)})
+        self.clear()
+        self.session.flash("Cleared wizard favorites.", queue='info')
 
 class WizardState(object):
     def __init__(self, session, initial_step='wizard', final_step='wizard_done'):

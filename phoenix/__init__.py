@@ -104,6 +104,9 @@ def main(global_config, **settings):
     config.add_route('wizard_swiftbrowser', '/wizard/swiftbrowser')
     config.add_route('wizard_done', '/wizard/done')
 
+    # wizard actions
+    config.add_route('wizard_clear_favorites', '/wizard/clear_favorites')
+
     # readthedocs
     config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/en/latest/{part}.html')
 

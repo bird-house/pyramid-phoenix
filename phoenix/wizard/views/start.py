@@ -1,4 +1,5 @@
 from pyramid.view import view_config
+from pyramid.httpexceptions import HTTPFound
 
 from phoenix.wizard.views import Wizard
 
@@ -20,8 +21,7 @@ class WizardSchema(colander.MappingSchema):
 
 class Start(Wizard):
     def __init__(self, request):
-        super(Start, self).__init__(request, name='wizard', title='Start')
-        self.description = "Choose Favorite or None."
+        super(Start, self).__init__(request, name='wizard', title='Choose a Favorite')
         self.wizard_state.clear()
 
     def schema(self):
@@ -36,6 +36,11 @@ class Start(Wizard):
         self.success(appstruct)
         return self.next('wizard_wps')
 
-    @view_config(route_name='wizard', renderer='../templates/wizard/default.pt')
+    @view_config(route_name='wizard_clear_favorites')
+    def clear_favorites(self):
+        self.favorite.drop()
+        return HTTPFound(location=self.request.route_path('wizard'))
+
+    @view_config(route_name='wizard', renderer='../templates/wizard/start.pt')
     def view(self):
         return super(Start, self).view()
