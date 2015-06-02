@@ -57,7 +57,7 @@
 
       var selected_facet_handler = function (facet) {
         selectedFacet = facet;
-        $('#search-label-category').text("Category: " + selectedFacet)
+        $('#search-label-category').text("Keywords: " + selectedFacet)
         search();
       };
 
