@@ -45,28 +45,23 @@
     Temporal
   </label>
 
-  <!--
-  <input type="checkbox" name="spatial" value="${true_val}"
-         tal:attributes="checked spatial == true_val;"
-         id="${oid}-spatial"/>
-  <span>Spatial</span>
-  -->
-
-  <p/>
 
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="headingOne">
         <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-            Freetext Search
+          <a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <i class="glyphicon glyphicon-chevron-down"></i> Freetext Search
           </a>
         </h4>
       </div>
       <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
         <div class="panel-body">
-          <input type="text" name="query" value="${query}"
-                 id="${oid}-query"/>
+          <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1"><i class="glyphicon glyphicon-search"></i></span>
+            <input type="text" name="query" value="${query}" placeholder="Enter your text here ..." class="form-control"
+                   id="${oid}-query"/>
+          </div>
         </div>
       </div>
     </div>
@@ -74,8 +69,8 @@
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="headingTwo">
         <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-            Current Selection
+          <a data-toggle="collapse" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+            <i class="glyphicon glyphicon-chevron-down"></i> Current Selection
           </a>
         </h4>
       </div>
@@ -92,8 +87,8 @@
      <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="headingThree">
         <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-            Categories
+          <a data-toggle="collapse" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+            <i class="glyphicon glyphicon-chevron-down"></i> Categories
           </a>
         </h4>
       </div>
@@ -108,8 +103,9 @@
      <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="headingFour">
         <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
-             <label for="tm-facet" class="control-label" 
+          <a data-toggle="collapse" href="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+            <i class="glyphicon glyphicon-chevron-down"></i>
+            <label for="tm-facet" class="control-label" 
                     id="search-label-category">
                Project
              </label>
@@ -127,25 +123,19 @@
      <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="headingFive">
         <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
-            Date
+          <a data-toggle="collapse" href="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
+            <i class="glyphicon glyphicon-chevron-down"></i> Date
           </a>
         </h4>
       </div>
       <div id="collapseFive" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingFive">
         <div class="panel-body">
-          <label for="${oid}-start" class="control-label">
-            Date begins after:
-          </label>
-          <input type="text" name="start" value="${start}" class="form-control hasDatepicker"
+          <label>Date begins after:</label>
+          <input value="yyyy-mm-dd" data-date-format="YYYY-MM-DD" type="text" name="start" value="${start}" class="form-control hasDatepicker"
                  id="${oid}-start"/>
-          <label for="${oid}-end" class="control-label">
-            Date ends before:
-          </label>
-          <input type="text" name="end" value="${end}" class="form-control hasDatepicker"
+          <label>Date ends before:</label>
+          <input value="yyyy-mm-dd" data-date-format="YYYY-MM-DD" type="text" name="end" value="${end}" class="form-control hasDatepicker"
                  id="${oid}-end"/>
-          <input type="text" name="Categorie: xxx" class="tm-facet"
-                 id="tm-facet"/>
         </div>
       </div>
      </div>
