@@ -26,32 +26,30 @@
       </div>
       <div id="collapse-options" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-options">
         <div class="panel-body">
-          <label for="${oid}-distrib" class="checkbox-inline">
+          <label class="checkbox-inline">
             <input type="checkbox" name="distrib" value="${true_val}"
                    tal:attributes="checked distrib == true_val;"
-                   id="${oid}-distrib"/>
-            All Sites
+                   id="${oid}-distrib"/> 
+            Distributed Search
           </label>
 
-          <label for="${oid}-relica" class="checkbox-inline">
+          <label class="checkbox-inline">
             <input type="checkbox" name="replica" value="${true_val}"
                    tal:attributes="checked replica == true_val;"
-                   id="${oid}-replica"/>
+                   id="${oid}-replica"/> 
             Including Replicas
-          </label>
-          
-          <label for="${oid}-latest" class="checkbox-inline">
+          </label class="checkbox-inline">
+
+          <label class="checkbox-inline">
             <input type="checkbox" name="latest" value="${true_val}"
                    tal:attributes="checked latest == true_val;"
-                   id="${oid}-latest"/>
-            Latest Version
+                   id="${oid}-latest"/> Latest Version
           </label>
-          
-          <label for="${oid}-temporal" class="checkbox-inline">
+
+          <label class="checkbox-inline">
             <input type="checkbox" name="temporal" value="${true_val}"
                    tal:attributes="checked temporal == true_val;"
-                   id="${oid}-temporal"/>
-            Temporal
+                   id="${oid}-temporal"/> Temporal Search
           </label>
         </div>
       </div>
@@ -138,10 +136,10 @@
       <div id="collapse-date" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-date">
         <div class="panel-body">
           <label>Date begins after:</label>
-          <input value="yyyy-mm-dd" data-date-format="YYYY-MM-DD" type="text" name="start" value="${start}" class="form-control hasDatepicker"
+          <input data-date-format="YYYY-MM-DD" type="text" name="start" value="${start}" class="form-control hasDatepicker"
                  id="${oid}-start"/>
           <label>Date ends before:</label>
-          <input value="yyyy-mm-dd" data-date-format="YYYY-MM-DD" type="text" name="end" value="${end}" class="form-control hasDatepicker"
+          <input data-date-format="YYYY-MM-DD" type="text" name="end" value="${end}" class="form-control hasDatepicker"
                  id="${oid}-end"/>
         </div>
       </div>
