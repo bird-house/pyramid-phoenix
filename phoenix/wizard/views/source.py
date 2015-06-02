@@ -19,7 +19,7 @@ class ChooseSourceSchema(colander.MappingSchema):
 class ChooseSource(Wizard):
     def __init__(self, request):
         super(ChooseSource, self).__init__(
-            request, name='wizard_source', title="Choose Source")
+            request, name='wizard_source', title="Choose Data Source")
         self.description = self.wizard_state.get('wizard_complex_inputs')['identifier']
 
     def breadcrumbs(self):

@@ -183,7 +183,8 @@ class Wizard(MyView):
         raise NotImplementedError
 
     def previous_success(self, appstruct):
-        self.success(appstruct)
+        # TODO: maybe store current state?
+        #self.success(appstruct)
         return self.previous()
 
     def previous_failure(self, validation_failure):
