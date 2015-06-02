@@ -1,6 +1,6 @@
 <div class="footer-wrapper" >
   <footer class="text-center">
     <hr/>
-    <p>Powered by <a href="http://bird-house.github.io/">Birdhouse</a> &mdash; Get the code on <a href="https://github.com/bird-house/pyramid-phoenix/blob/master/README.rst">GitHub</a></p>
+    <p>Powered by <a href="http://bird-house.github.io/">Birdhouse</a> &mdash; Get the code on <a href="https://github.com/bird-house/pyramid-phoenix/blob/master/README.rst">GitHub</a> &mdash; Version 0.3.0</p>
   </footer>
 </div>

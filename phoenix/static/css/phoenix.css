@@ -16,6 +16,11 @@ body {
     padding-top: 70px;
 }
 
+.text-footer {
+    border-top: 1px solid @gray-light;
+    padding: 20px;
+}
+
 /* log output */
 pre.log-output {
     color:#f1f1f1;
