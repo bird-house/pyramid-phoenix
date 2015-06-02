@@ -54,69 +54,103 @@
 
   <p/>
 
-  <label for="${oid}-query" class="control-label">Query</label>
-  <input type="text" name="query" value="${query}"
-         id="${oid}-query"/>
-  <p/>
-   
-  <label for="tm-selection" class="control-label">Current Selection</label>
-  <div>
-    <input type="text" name="Current Selection" class="tm-selection" 
-           id="tm-selection"/>
-    <input type="hidden" name="facets" value="${facets}" 
-           id="${oid}-facets">
+  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="headingOne">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            Freetext Search
+          </a>
+        </h4>
+      </div>
+      <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+        <div class="panel-body">
+          <input type="text" name="query" value="${query}"
+                 id="${oid}-query"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="headingTwo">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+            Current Selection
+          </a>
+        </h4>
+      </div>
+      <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
+        <div class="panel-body">
+          <input type="text" name="Current Selection" class="tm-selection" 
+                 id="tm-selection"/>
+          <input type="hidden" name="facets" value="${facets}" 
+                 id="${oid}-facets">
+        </div>
+      </div>
+    </div>
+
+     <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="headingThree">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+            Categories
+          </a>
+        </h4>
+      </div>
+      <div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
+        <div class="panel-body">
+          <input type="text" name="Search Categories" class="tm-facets"
+                 id="tm-facets"/>
+        </div>
+      </div>
+    </div>
+
+     <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="headingFour">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+             <label for="tm-facet" class="control-label" 
+                    id="search-label-category">
+               Project
+             </label>
+          </a>
+        </h4>
+      </div>
+      <div id="collapseFour" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingFour">
+        <div class="panel-body">
+          <input type="text" name="Categorie: xxx" class="tm-facet"
+                 id="tm-facet"/>
+        </div>
+      </div>
+    </div>
+
+     <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="headingFive">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
+            Date
+          </a>
+        </h4>
+      </div>
+      <div id="collapseFive" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingFive">
+        <div class="panel-body">
+          <label for="${oid}-start" class="control-label">
+            Date begins after:
+          </label>
+          <input type="text" name="start" value="${start}" class="form-control hasDatepicker"
+                 id="${oid}-start"/>
+          <label for="${oid}-end" class="control-label">
+            Date ends before:
+          </label>
+          <input type="text" name="end" value="${end}" class="form-control hasDatepicker"
+                 id="${oid}-end"/>
+          <input type="text" name="Categorie: xxx" class="tm-facet"
+                 id="tm-facet"/>
+        </div>
+      </div>
+     </div>
   </div>
-  <p/>
 
-  <label for="tm-facets" class="control-label">Search Categories</label>
-  <div>
-    <input type="text" name="Search Categories" class="tm-facets"
-           id="tm-facets"/>
-  </div>
-  <p/>
- 
-  <label for="tm-facet" class="control-label" 
-         id="search-label-category">
-    Project
-  </label>
-  <div>
-    <input type="text" name="Categorie: xxx" class="tm-facet"
-           id="tm-facet"/>
-  </div>
-  <p/>
-
-  <!--
-  <span>Start Year</span>
-  <input type="text" name="startyear" value="2000" class="input-small"
-         id="${oid}-startyear"/>
-
-  <span>Year Offset</span>
-  <select name="yearoffset" id="${oid}-yearoffset" class="input-small">
-    <option name="1" value="1" selected>1</option>
-    <option name="5" value="5">5</option>
-    <option name="10" value="10">10</option>
-    <option name="20" value="20">20</option>
-  </select>
-  -->
-
-  <p/>
-
-  <label for="${oid}-start" class="control-label">
-    Start
-  </label>
-  <input type="text" name="start" value="${start}" class="form-control hasDatepicker"
-         id="${oid}-start"/>
-  <label for="${oid}-end" class="control-label">
-    End
-  </label>
-  <input type="text" name="end" value="${end}" class="form-control hasDatepicker"
-         id="${oid}-end"/>
-  <!--
-  <p/>
-  <span>Bounding Box</span>
-  <input type="text" name="bbox" value="${bbox}"
-         id="${oid}-bbox"/>
-  -->
   ${field.end_mapping()}
   <script type="text/javascript">
     deform.addCallback(
