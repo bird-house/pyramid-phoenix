@@ -30,7 +30,7 @@ $(function() {
               status_class = 'glyphicon glyphicon-paused text-muted';
             }
             else if (job.status == 'ProcessStarted' || job.status == 'ProcessAccepted') {
-              status_class = 'glyphicon glyphicon-cog text-muted';
+              status_class = 'fa fa-cog fa-spin text-muted';
               //finished = false;
             }
             else {

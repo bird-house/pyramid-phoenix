@@ -6,7 +6,7 @@
    elif status == 'ProcessPaused':
      icon_class="glyphicon glyphicon-paused text-muted"
    elif status == 'ProcessStarted' or status == 'ProcessAccepted':
-     icon_class="glyphicon glyphicon-cog text-muted"
+     icon_class="fa fa-cog fa-spin text-muted"
    else:
      icon_class="glyphicon glyphicon-question-sign text-danger"
 %>
