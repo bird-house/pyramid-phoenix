@@ -17,8 +17,8 @@ class Supervisor(SettingsView):
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
    
-    @view_config(route_name="supervisor_program")
-    def supervisor_program(self):
+    @view_config(route_name="supervisor_process")
+    def supervisor_process(self):
         action = self.request.matchdict.get('action')
         name = self.request.matchdict.get('name')
 
@@ -32,6 +32,9 @@ class Supervisor(SettingsView):
             self.server.supervisor.stopProcess(name)
             self.server.supervisor.startProcess(name)
             self.session.flash("Service {0} restarted.".format(name), queue="success")
+        elif action == 'clear':
+            self.server.supervisor.clearProcessLogs(name)
+            self.session.flash("Logs of service {0} cleared.".format(name), queue="success")
         return HTTPFound(location=self.request.route_path(self.name))
         
     @view_config(route_name="settings_supervisor", renderer='../templates/settings/supervisor.pt')
@@ -63,17 +66,17 @@ class Grid(MyGrid):
         if item.get('state') == 20:
             buttongroup.append(
                 ("restart", item.get('name'), "fa fa-refresh", "",
-                self.request.route_path('supervisor_program', action='restart', name=item.get('name')), False) )
+                self.request.route_path('supervisor_process', action='restart', name=item.get('name')), False) )
             buttongroup.append(
                 ("stop", item.get('name'), "fa fa-stop", "",
-                self.request.route_path('supervisor_program', action='stop', name=item.get('name')), False) )
+                self.request.route_path('supervisor_process', action='stop', name=item.get('name')), False) )
         else:
             buttongroup.append(
                 ("start", item.get('name'), "fa fa-play", "",
-                self.request.route_path('supervisor_program', action='start', name=item.get('name')), False) )
+                self.request.route_path('supervisor_process', action='start', name=item.get('name')), False) )
         buttongroup.append(
             ("clear", item.get('name'), "fa fa-eraser", "",
-             self.request.route_path('supervisor_program', action='clear', name=item.get('name')), False) )
+             self.request.route_path('supervisor_process', action='clear', name=item.get('name')), False) )
         buttongroup.append(
             ("tail", item.get('name'), "fa fa-align-left", "",
              self.request.route_path('supervisor_log', name=item.get('name'), offset=0), False) )
