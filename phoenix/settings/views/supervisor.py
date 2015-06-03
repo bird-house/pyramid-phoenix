@@ -8,22 +8,35 @@ logger = logging.getLogger(__name__)
 
 class Supervisor(SettingsView):
     def __init__(self, request):
-        super(Supervisor, self).__init__(
-            request, name='settings_supervisor', title='Supervisor')
+        super(Supervisor, self).__init__(request, name='settings_supervisor', title='Supervisor')
+        import xmlrpclib
+        self.server = xmlrpclib.Server('http://localhost:9001/RPC2')
 
     def breadcrumbs(self):
         breadcrumbs = super(Supervisor, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
-    def get_all_process_info(self):
-        import xmlrpclib
-        server = xmlrpclib.Server('http://localhost:9001/RPC2')
-        return server.supervisor.getAllProcessInfo()
+    @view_config(route_name="supervisor_program")
+    def supervisor_program(self):
+        action = self.request.matchdict.get('action')
+        name = self.request.matchdict.get('name')
+        if action == 'start':
+            self.server.supervisor.startProcess(name)
+            self.session.flash("Process {0} started.".format(name), queue="info")
+        elif action == 'stop':
+            self.server.supervisor.stopProcess(name)
+            self.session.flash("Process {0} stopped.".format(name), queue="info")
+        elif action == 'restart':
+            self.server.supervisor.stopProcess(name)
+            self.server.supervisor.startProcess(name)
+            self.session.flash("Process {0} restarted.".format(name), queue="info")
+        
+        return HTTPFound(location=self.request.route_path(self.name))
         
     @view_config(route_name="settings_supervisor", renderer='../templates/settings/supervisor.pt')
     def view(self):
-        grid = Grid(self.request, self.get_all_process_info(), ['state', 'description', 'name', ''])
+        grid = Grid(self.request, self.server.supervisor.getAllProcessInfo(), ['state', 'description', 'name', ''])
         return dict(grid=grid)
 
 from phoenix.grid import MyGrid
