@@ -21,16 +21,29 @@ class Supervisor(SettingsView):
     def supervisor_program(self):
         action = self.request.matchdict.get('action')
         name = self.request.matchdict.get('name')
-        if action == 'start':
-            self.server.supervisor.startProcess(name)
-            self.session.flash("Service {0} started.".format(name), queue="success")
-        elif action == 'stop':
-            self.server.supervisor.stopProcess(name)
-            self.session.flash("Service {0} stopped.".format(name), queue="danger")
-        elif action == 'restart':
-            self.server.supervisor.stopProcess(name)
-            self.server.supervisor.startProcess(name)
-            self.session.flash("Service {0} restarted.".format(name), queue="success")
+
+        if name == 'all':
+            if action == 'start':
+                self.server.supervisor.startAllProcesses()
+                self.session.flash("All services started.", queue="success")
+            elif action == 'stop':
+                self.server.supervisor.stopAllProcesses()
+                self.session.flash("All services stopped.", queue="danger")
+            elif action == 'restart':
+                self.server.supervisor.stopAllProcesses()
+                self.server.supervisor.startAllProcesses()
+                self.session.flash("All services restarted.", queue="success")
+        else:
+            if action == 'start':
+                self.server.supervisor.startProcess(name)
+                self.session.flash("Service {0} started.".format(name), queue="success")
+            elif action == 'stop':
+                self.server.supervisor.stopProcess(name)
+                self.session.flash("Service {0} stopped.".format(name), queue="danger")
+            elif action == 'restart':
+                self.server.supervisor.stopProcess(name)
+                self.server.supervisor.startProcess(name)
+                self.session.flash("Service {0} restarted.".format(name), queue="success")
         
         return HTTPFound(location=self.request.route_path(self.name))
         
