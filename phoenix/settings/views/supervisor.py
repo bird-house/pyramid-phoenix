@@ -23,14 +23,14 @@ class Supervisor(SettingsView):
         name = self.request.matchdict.get('name')
         if action == 'start':
             self.server.supervisor.startProcess(name)
-            self.session.flash("Process {0} started.".format(name), queue="info")
+            self.session.flash("Service {0} started.".format(name), queue="success")
         elif action == 'stop':
             self.server.supervisor.stopProcess(name)
-            self.session.flash("Process {0} stopped.".format(name), queue="info")
+            self.session.flash("Service {0} stopped.".format(name), queue="danger")
         elif action == 'restart':
             self.server.supervisor.stopProcess(name)
             self.server.supervisor.startProcess(name)
-            self.session.flash("Process {0} restarted.".format(name), queue="info")
+            self.session.flash("Service {0} restarted.".format(name), queue="success")
         
         return HTTPFound(location=self.request.route_path(self.name))
         
@@ -50,7 +50,7 @@ class Grid(MyGrid):
         self.exclude_ordering = self.columns
 
     def state_td(self, col_num, i, item):
-        return self.render_label_td(item.get('state'))
+        return self.render_label_td(item.get('statename'))
         
     def description_td(self, col_num, i, item):
         return self.render_label_td(item.get('description'))
@@ -60,12 +60,17 @@ class Grid(MyGrid):
 
     def action_td(self, col_num, i, item):
         buttongroup = []
-        buttongroup.append(
-            ("restart", item.get('name'), "fa fa-refresh", "",
-             self.request.route_path('supervisor_program', action='restart', name=item.get('name')), False) )
-        buttongroup.append(
-            ("stop", item.get('name'), "fa fa-stop", "",
-             self.request.route_path('supervisor_program', action='stop', name=item.get('name')), False) )
+        if item.get('state') == 20:
+            buttongroup.append(
+                ("restart", item.get('name'), "fa fa-refresh", "",
+                self.request.route_path('supervisor_program', action='restart', name=item.get('name')), False) )
+            buttongroup.append(
+                ("stop", item.get('name'), "fa fa-stop", "",
+                self.request.route_path('supervisor_program', action='stop', name=item.get('name')), False) )
+        else:
+            buttongroup.append(
+                ("start", item.get('name'), "fa fa-play", "",
+                self.request.route_path('supervisor_program', action='start', name=item.get('name')), False) )
         buttongroup.append(
             ("clear", item.get('name'), "fa fa-eraser", "",
              self.request.route_path('supervisor_program', action='clear', name=item.get('name')), False) )
