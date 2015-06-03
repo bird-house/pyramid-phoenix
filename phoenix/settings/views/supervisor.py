@@ -16,7 +16,7 @@ class Supervisor(SettingsView):
         breadcrumbs = super(Supervisor, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
-
+   
     @view_config(route_name="supervisor_program")
     def supervisor_program(self):
         action = self.request.matchdict.get('action')
@@ -32,7 +32,6 @@ class Supervisor(SettingsView):
             self.server.supervisor.stopProcess(name)
             self.server.supervisor.startProcess(name)
             self.session.flash("Service {0} restarted.".format(name), queue="success")
-        
         return HTTPFound(location=self.request.route_path(self.name))
         
     @view_config(route_name="settings_supervisor", renderer='../templates/settings/supervisor.pt')
@@ -77,6 +76,6 @@ class Grid(MyGrid):
              self.request.route_path('supervisor_program', action='clear', name=item.get('name')), False) )
         buttongroup.append(
             ("tail", item.get('name'), "fa fa-align-left", "",
-             self.request.route_path('supervisor_program', action='tail', name=item.get('name')), False) )
+             self.request.route_path('supervisor_log', name=item.get('name'), offset=0), False) )
         return self.render_action_td(buttongroup)
        
