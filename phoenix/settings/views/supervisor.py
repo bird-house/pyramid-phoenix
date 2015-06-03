@@ -23,18 +23,26 @@ class Supervisor(SettingsView):
         
     @view_config(route_name="settings_supervisor", renderer='../templates/settings/supervisor.pt')
     def view(self):
-        grid = Grid(self.request, self.get_all_process_info(), ['title'])
+        grid = Grid(self.request, self.get_all_process_info(), ['state', 'description', 'name'])
         return dict(grid=grid)
 
 from phoenix.grid import MyGrid
 class Grid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(Grid, self).__init__(request, *args, **kwargs)
-        self.column_formats['title'] = self.title_td
+        self.column_formats['state'] = self.state_td
+        self.column_formats['description'] = self.description_td
+        self.column_formats['name'] = self.name_td
         #self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
 
-    def title_td(self, col_num, i, item):
+    def state_td(self, col_num, i, item):
+        return self.render_label_td(item.get('state'))
+        
+    def description_td(self, col_num, i, item):
+        return self.render_label_td(item.get('description'))
+    
+    def name_td(self, col_num, i, item):
         return self.render_label_td(item.get('name'))
 
     ## def action_td(self, col_num, i, item):
