@@ -14,8 +14,7 @@ class Overview(SettingsView):
         buttongroups = []
         buttons = []
 
-        buttons.append(dict(url=self.settings.get('supervisor.url'),
-                            icon="monitor_edit.png", title="Supervisor", id="external-url"))
+        buttons.append(dict(url=self.request.route_path('settings_supervisor'), icon="monitor_edit.png", title="Supervisor"))
         buttons.append(dict(url="/settings/catalog", icon="bookshelf.png", title="Catalog"))
         buttons.append(dict(url="/settings/users", icon="user_catwomen.png", title="Users"))
         buttons.append(dict(url=self.settings.get('celery.url'),
