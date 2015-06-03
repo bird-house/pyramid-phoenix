@@ -23,7 +23,7 @@ class Supervisor(SettingsView):
         
     @view_config(route_name="settings_supervisor", renderer='../templates/settings/supervisor.pt')
     def view(self):
-        grid = Grid(self.request, self.get_all_process_info(), ['state', 'description', 'name'])
+        grid = Grid(self.request, self.get_all_process_info(), ['state', 'description', 'name', ''])
         return dict(grid=grid)
 
 from phoenix.grid import MyGrid
@@ -33,7 +33,7 @@ class Grid(MyGrid):
         self.column_formats['state'] = self.state_td
         self.column_formats['description'] = self.description_td
         self.column_formats['name'] = self.name_td
-        #self.column_formats[''] = self.action_td
+        self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
 
     def state_td(self, col_num, i, item):
@@ -45,11 +45,19 @@ class Grid(MyGrid):
     def name_td(self, col_num, i, item):
         return self.render_label_td(item.get('name'))
 
-    ## def action_td(self, col_num, i, item):
-    ##     buttongroup = []
-    ##     buttongroup.append(
-    ##         ("start", item.name, "glyphicon glyphicon-trash text-danger", "",
-    ##         self.request.route_path('start_program', name=item.name),
-    ##         False) )
-    ##     return self.render_action_td(buttongroup)
+    def action_td(self, col_num, i, item):
+        buttongroup = []
+        buttongroup.append(
+            ("restart", item.get('name'), "fa fa-refresh", "",
+             self.request.route_path('supervisor_program', action='restart', name=item.get('name')), False) )
+        buttongroup.append(
+            ("stop", item.get('name'), "fa fa-stop", "",
+             self.request.route_path('supervisor_program', action='stop', name=item.get('name')), False) )
+        buttongroup.append(
+            ("clear", item.get('name'), "fa fa-eraser", "",
+             self.request.route_path('supervisor_program', action='clear', name=item.get('name')), False) )
+        buttongroup.append(
+            ("tail", item.get('name'), "fa fa-align-left", "",
+             self.request.route_path('supervisor_program', action='tail', name=item.get('name')), False) )
+        return self.render_action_td(buttongroup)
        
