@@ -5,10 +5,7 @@
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4>Supervisor
-          <div class="btn-group pull-right">
-            <a class="btn btn-danger" href="${request.route_path('supervisor_program', action='restart', name='all')}"><i class="fa fa-lg fa-refresh"></i></a>
-            <a class="btn btn-danger" href="${request.route_path('supervisor_program', action='stop', name='all')}"><i class="fa fa-lg fa-stop"></i></a>
-          </div>
+          <a class="btn btn-success pull-right" href="${request.route_path('settings_supervisor')}"><i class="fa fa-lg fa-repeat"></i></a>
         </h4>
       </div>
       <div class="panel-body">
