@@ -63,7 +63,7 @@ class Grid(MyGrid):
         self.exclude_ordering = self.columns
 
     def state_td(self, col_num, i, item):
-        return self.render_label_td(item.get('statename'))
+        return self.render_td(renderer="supervisor_state_td", state=item.get('state'), statename=item.get('statename'))
         
     def description_td(self, col_num, i, item):
         return self.render_label_td(item.get('description'))
