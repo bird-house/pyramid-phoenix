@@ -40,7 +40,7 @@ def sidebar(context, request):
 
 @panel_config(name='footer', renderer='phoenix:templates/panels/footer.pt')
 def footer(context, request):
-    return {}
+    return dict(version="0.3.0")
 
 @panel_config(name='headings')
 def headings(context, request):

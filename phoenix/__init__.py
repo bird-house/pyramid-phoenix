@@ -10,8 +10,6 @@ import pymongo
 import logging
 logger = logging.getLogger(__name__)
 
-from deform import Form
-
 def main(global_config, **settings):
     """
     This function returns a Pyramid WSGI application.
