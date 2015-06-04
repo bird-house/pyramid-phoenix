@@ -38,6 +38,7 @@ requires = [
     'python-swiftclient',
     'pyramid_celery',
     'celery',
+    'beautifulsoup4',
     ]
 
 setup(name='Phoenix',
