@@ -57,6 +57,18 @@ def dataset_services(dataset_url):
             services.append( {'name' : service.get('name'), 'service' : service.get('servicetype'), 'url' : url } )
     logger.debug("found services: %s", services)
     return services
+
+def size_in_bytes(size, unit):
+    # Convert to bytes
+    if unit == "Kbytes":
+        size *= 1000.0
+    elif unit == "Mbytes":
+        size *= 1e-6
+    elif unit == "Gbytes":
+        size *= 1e-9
+    elif unit == "Tbytes":
+        size *= 1e-12
+    return int(size)
     
 class TdsClient(object):
 
@@ -110,7 +122,12 @@ class TdsClient(object):
             elif leaf.get('urlpath') is None:
                 logger.debug("Skipping dataset with no urlPath.  Name: %s" % name)
                 continue
-            ds.append(LeafDataset(name=name, gid=leaf.get('id'), catalog_url=url))
+            size = -1
+            if leaf.datasize:
+                datasize = float(leaf.datasize.text)
+                units = leaf.datasize.get('units')
+                size = size_in_bytes(datasize, units)
+            ds.append(LeafDataset(name=name, gid=leaf.get('id'), catalog_url=url, size=size))
         return ds
 
 class Dataset(object):
@@ -118,12 +135,20 @@ class Dataset(object):
         self._name = name
         self._url = url
         self._content_type = content_type
+        self._size = None
+        self._modified = None
 
     def name(self):
         return self._name
 
     def url(self):
         return self._url
+
+    def size(self):
+        return self._size
+
+    def modified(self):
+        return self._modified
 
     def content_type(self):
         return self._content_type
@@ -132,10 +157,11 @@ class Dataset(object):
         return "<Dataset name: {0.name}, content type: {0.content_type}>".format(self)
     
 class LeafDataset(Dataset):
-    def __init__(self, catalog_url, name, gid):
+    def __init__(self, catalog_url, name, gid, size):
         super(LeafDataset, self).__init__(name=name, content_type="application/netcdf")
         self.gid = gid
         self.catalog_url = catalog_url
+        self._size = size
 
     def url(self):
         if self._url is None:

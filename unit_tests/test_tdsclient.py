@@ -15,6 +15,7 @@ def test_get_objects_2():
     items = tds.get_objects(tds.catalog_url)
     ok_(len(items) > 0)
     ok_(items[0].url() == "http://www.esrl.noaa.gov/psd/thredds/fileServer/Datasets/ncep.reanalysis2.dailyavgs/surface/hgt.sfc.nc")
+    ok_(False, items[0].size())
 
 def test_dataset_services():
     services = tdsclient.dataset_services(dataset_url='http://www.esrl.noaa.gov/psd/thredds/catalog/Datasets/ncep.reanalysis2.dailyavgs/surface/catalog.xml?dataset=Datasets/ncep.reanalysis2.dailyavgs/surface/mslp.1979.nc')
