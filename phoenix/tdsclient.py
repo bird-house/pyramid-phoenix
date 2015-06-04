@@ -28,7 +28,33 @@ def construct_url(url, href):
 
     return cat
 
+def services(dataset_url):
+    r = requests.get(dataset_url)
+    soup = BeautifulSoup(r.content)
 
+    dataset = soup.dataset
+    gid = dataset.get("id")
+    name = dataset.get("name")
+    catalog_url = dataset_url.split("?")[0]
+     
+    service_tag = dataset.servicename
+    if service_tag is None:
+        service_tag = dataset.metadata.servicename
+    service_name = service_tag.text
+
+    services = []
+    for service in soup.findAll('service', attrs=dict(name=service_name)):
+        if service.get("servicetype") == "Compound":
+            for s in service.findAll("service"):
+                url = construct_url(dataset_url, s.get('base')) + dataset.get("urlpath")
+                if s.get("suffix") is not None:
+                    url += s.get("suffix")
+                services.append( {'name' : s.get('name'), 'service' : s.get('servicetype'), 'url' : url } )
+        else:
+            url = construct_url(dataset_url, service.get('base')) + dataset.get("urlpath") + service.get("suffix", "")
+            services.append( {'name' : service.get('name'), 'service' : service.get('servicetype'), 'url' : url } )
+    return services
+    
 class TdsClient(object):
 
     SKIPS = [".*files.*", ".*Individual Files.*", ".*File_Access.*", ".*Forecast Model Run.*", ".*Constant Forecast Offset.*", ".*Constant Forecast Date.*"]

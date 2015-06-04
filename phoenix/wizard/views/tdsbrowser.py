@@ -71,6 +71,7 @@ class Grid(MyGrid):
         super(Grid, self).__init__(request, *args, **kwargs)
         self.column_formats['name'] = self.name_td
         self.column_formats[''] = self.action_td
+        self.exclude_ordering = self.columns
 
     def name_td(self, col_num, i, item):
         name = url = content_type = None
