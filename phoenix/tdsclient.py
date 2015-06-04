@@ -127,7 +127,11 @@ class TdsClient(object):
                 datasize = float(leaf.datasize.text)
                 units = leaf.datasize.get('units')
                 size = size_in_bytes(datasize, units)
-            ds.append(LeafDataset(name=name, gid=leaf.get('id'), catalog_url=url, size=size))
+            modified = None
+            if leaf.date:
+                if leaf.date.get('type') == 'modified':
+                    modified = leaf.date.text
+            ds.append(LeafDataset(name=name, gid=leaf.get('id'), catalog_url=url, size=size, modified=modified))
         return ds
 
 class Dataset(object):
@@ -157,11 +161,12 @@ class Dataset(object):
         return "<Dataset name: {0.name}, content type: {0.content_type}>".format(self)
     
 class LeafDataset(Dataset):
-    def __init__(self, catalog_url, name, gid, size):
+    def __init__(self, catalog_url, name, gid, size, modified):
         super(LeafDataset, self).__init__(name=name, content_type="application/netcdf")
         self.gid = gid
         self.catalog_url = catalog_url
         self._size = size
+        self._modified = modified
 
     def url(self):
         if self._url is None:
