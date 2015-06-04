@@ -29,7 +29,8 @@ def construct_url(url, href):
     return cat
 
 def dataset_services(dataset_url):
-    logger.debug(dataset_url)
+    logger.debug("service for dataset url: %s", dataset_url)
+    
     r = requests.get(dataset_url)
     soup = BeautifulSoup(r.content)
 
@@ -54,6 +55,7 @@ def dataset_services(dataset_url):
         else:
             url = construct_url(dataset_url, service.get('base')) + dataset.get("urlpath") + service.get("suffix", "")
             services.append( {'name' : service.get('name'), 'service' : service.get('servicetype'), 'url' : url } )
+    logger.debug("found services: %s", services)
     return services
     
 class TdsClient(object):
@@ -108,35 +110,40 @@ class TdsClient(object):
             elif leaf.get('urlpath') is None:
                 logger.debug("Skipping dataset with no urlPath.  Name: %s" % name)
                 continue
-            dataset_url = "{0}?dataset={1}".format(url, leaf.get('id'))
-            ds.append(LeafDataset(dataset_url=dataset_url, name=name))
+            ds.append(LeafDataset(name=name, gid=leaf.get('id'), catalog_url=url))
         return ds
 
 class Dataset(object):
     def __init__(self, name, content_type, url=None):
-        self.name = name
-        self.url = url
-        self.content_type = content_type
+        self._name = name
+        self._url = url
+        self._content_type = content_type
 
     def name(self):
-        return self.name
+        return self._name
 
     def url(self):
-        return self.url
+        return self._url
 
     def content_type(self):
-        return self.content_type
+        return self._content_type
 
     def __repr__(self):
         return "<Dataset name: {0.name}, content type: {0.content_type}>".format(self)
     
 class LeafDataset(Dataset):
-    def __init__(self, dataset_url, name):
+    def __init__(self, catalog_url, name, gid):
         super(LeafDataset, self).__init__(name=name, content_type="application/netcdf")
-        services = dataset_services(dataset_url)
-        for service in services:
-            if service.get('service') == 'HTTPService':
-                self.url = service.get('url')
+        self.gid = gid
+        self.catalog_url = catalog_url
+
+    def url(self):
+        if self._url is None:
+            services = dataset_services(dataset_url="{0.catalog_url}?dataset={0.gid}".format(self))
+            for service in services:
+                if service.get('service') == 'HTTPServer':
+                    self._url = service.get('url')
+        return self._url
 
 class CatalogDataset(Dataset):
     def __init__(self, url, title):
