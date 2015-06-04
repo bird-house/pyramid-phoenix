@@ -28,7 +28,8 @@ def construct_url(url, href):
 
     return cat
 
-def services(dataset_url):
+def dataset_services(dataset_url):
+    logger.debug(dataset_url)
     r = requests.get(dataset_url)
     soup = BeautifulSoup(r.content)
 
@@ -92,7 +93,7 @@ class TdsClient(object):
             # Check skips
             title = ref.get("xlink:title")
             if not any([x.match(title) for x in self.skip]):
-                ds.append(CatalogRef(url=construct_url(url, ref.get('xlink:href')), title=title))
+                ds.append(CatalogDataset(url=construct_url(url, ref.get('xlink:href')), title=title))
             else:
                 logger.info("Skipping catalogRef based on 'skips'.  Title: %s" % title)
                 continue
@@ -104,23 +105,40 @@ class TdsClient(object):
             if any([x.match(name) for x in self.skip]):
                 logger.info("Skipping dataset based on 'skips'.  Name: %s" % name)
                 continue
-            ds.append(Dataset(dataset_url=url, name=name, gid=leaf.get('ID')))
+            elif leaf.get('urlpath') is None:
+                logger.debug("Skipping dataset with no urlPath.  Name: %s" % name)
+                continue
+            dataset_url = "{0}?dataset={1}".format(url, leaf.get('id'))
+            ds.append(LeafDataset(dataset_url=dataset_url, name=name))
         return ds
 
 class Dataset(object):
-    def __init__(self, dataset_url, name, gid):
-        self.id = gid
+    def __init__(self, name, content_type, url=None):
         self.name = name
-        self.catalog_url = dataset_url.split("?")[0]
-
-    def __repr__(self):
-        return "<Dataset id: {0.id}, name: {0.name}>".format(self)
-
-class CatalogRef(object):
-    def __init__(self, url, title):
-        self.title = title
         self.url = url
+        self.content_type = content_type
+
+    def name(self):
+        return self.name
+
+    def url(self):
+        return self.url
+
+    def content_type(self):
+        return self.content_type
 
     def __repr__(self):
-        return "<CatalogRef title: {0.title}, url: {0.url}>".format(self)
+        return "<Dataset name: {0.name}, content type: {0.content_type}>".format(self)
+    
+class LeafDataset(Dataset):
+    def __init__(self, dataset_url, name):
+        super(LeafDataset, self).__init__(name=name, content_type="application/netcdf")
+        services = dataset_services(dataset_url)
+        for service in services:
+            if service.get('service') == 'HTTPService':
+                self.url = service.get('url')
+
+class CatalogDataset(Dataset):
+    def __init__(self, url, title):
+        super(CatalogDataset, self).__init__(url=url, name=title, content_type="application/directory")
 
