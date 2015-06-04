@@ -61,18 +61,17 @@ class TdsClient(object):
         soup = BeautifulSoup(r.content)
 
         # Get the catalogRefs:
-        refs = []
+        ds = []
         for ref in soup.findAll('catalogref'):
             # Check skips
             title = ref.get("xlink:title")
             if not any([x.match(title) for x in self.skip]):
-                refs.append(CatalogRef(url=construct_url(url, ref.get('xlink:href')), title=title))
+                ds.append(CatalogRef(url=construct_url(url, ref.get('xlink:href')), title=title))
             else:
                 logger.info("Skipping catalogRef based on 'skips'.  Title: %s" % title)
                 continue
 
         # Get the leaf datasets
-        ds = []
         for leaf in soup.findAll('dataset'):
             # Subset by the skips
             name = leaf.get("name")
@@ -80,7 +79,7 @@ class TdsClient(object):
                 logger.info("Skipping dataset based on 'skips'.  Name: %s" % name)
                 continue
             ds.append(Dataset(dataset_url=url, name=name, gid=leaf.get('ID')))
-        return dict(datasets=ds, catalogs=refs)
+        return ds
 
 class Dataset(object):
     def __init__(self, dataset_url, name, gid):

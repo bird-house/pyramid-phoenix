@@ -1,0 +1,18 @@
+<metal:block use-macro="main_template">
+        
+  <div metal:fill-slot="content">
+
+    <ul class="breadcrumb">
+      <li><a href="${request.route_path('wizard_tdsbrowser')}">Containers</a></li> 
+
+    </ul> 
+
+    <table class="table table-striped">
+      <tal:rows replace="structure grid" />
+    </table>
+
+    <tal:form replace="structure form">The form will render here</tal:form>
+     
+  </div>
+   
+</metal:block>
