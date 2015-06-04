@@ -4,7 +4,7 @@ from pyramid.httpexceptions import HTTPFound
 from swiftclient import client, ClientException
 
 from phoenix.wizard.views import Wizard
-from phoenix.tdsclient import TdsClient
+from phoenix import tdsclient 
 
 import logging
 logger = logging.getLogger(__name__)
@@ -52,12 +52,12 @@ class TdsBrowser(Wizard):
         url = self.request.params.get('url')
         if url is None:
             url = "http://www.esrl.noaa.gov/psd/thredds/catalog.xml"
-        tds = TdsClient(url)
+        tds = tdsclient.TdsClient(url)
         items = tds.get_objects(url)
         fields = ['name', '']
     
-        grid = Grid(self.request, items, fields)
-        return dict(grid=grid, items=items)
+        grid = Grid(self.request, items, fields, )
+        return dict(grid=grid)
 
     @view_config(route_name='wizard_tdsbrowser', renderer='../templates/wizard/tdsbrowser.pt')
     def view(self):

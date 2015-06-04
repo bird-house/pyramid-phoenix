@@ -2,11 +2,6 @@
         
   <div metal:fill-slot="content">
 
-    <ul class="breadcrumb">
-      <li><a href="${request.route_path('wizard_tdsbrowser')}">Containers</a></li> 
-
-    </ul> 
-
     <table class="table table-striped">
       <tal:rows replace="structure grid" />
     </table>
