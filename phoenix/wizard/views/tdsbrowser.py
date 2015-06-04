@@ -54,7 +54,7 @@ class TdsBrowser(Wizard):
             url = "http://www.esrl.noaa.gov/psd/thredds/catalog.xml"
         tds = tdsclient.TdsClient(url)
         items = tds.get_objects(url)
-        fields = ['name', '']
+        fields = ['name', 'size', 'modified']
     
         grid = Grid(self.request, items, fields, )
         return dict(grid=grid)
@@ -70,22 +70,25 @@ class Grid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(Grid, self).__init__(request, *args, **kwargs)
         self.column_formats['name'] = self.name_td
+        self.column_formats['size'] = self.size_td
+        self.column_formats['modified'] = self.modified_td
         self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
 
     def name_td(self, col_num, i, item):
-        name = url = content_type = None
-        if hasattr(item, 'name'):
-            name = item.name
-            content_type = 'application/netcdf'
-        else:
-            name = item.title
-            url = item.url
-            content_type = 'application/directory'
+        url = None
+        if item.content_type() == 'application/directory':
+            url = item.url()
         query = []
         query.append( ('url', url) )
         url = self.request.route_path('wizard_tdsbrowser', _query=query)
-        return self.render_td(renderer="folder_element_td", url=url, name=name, content_type=content_type)
+        return self.render_td(renderer="folder_element_td", url=url, name=item.name(), content_type=item.content_type())
+
+    def modified_td(self, col_num, i, item):
+        return self.render_timestamp_td(item.modified())
+
+    def size_td(self, col_num, i, item):
+        return self.render_size_td(item.bytes())
 
     def action_td(self, col_num, i, item):
         buttongroup = []

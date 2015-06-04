@@ -15,7 +15,7 @@ def test_get_objects_2():
     items = tds.get_objects(tds.catalog_url)
     ok_(len(items) > 0)
     ok_(items[0].url() == "http://www.esrl.noaa.gov/psd/thredds/fileServer/Datasets/ncep.reanalysis2.dailyavgs/surface/hgt.sfc.nc")
-    ok_(items[0].size() == 24030)
+    ok_(items[0].bytes() == 24030)
     ok_(items[0].modified() == "2010-08-19T21:22:40Z")
 
 def test_dataset_services():

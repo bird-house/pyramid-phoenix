@@ -63,11 +63,11 @@ def size_in_bytes(size, unit):
     if unit == "Kbytes":
         size *= 1000.0
     elif unit == "Mbytes":
-        size *= 1e-6
+        size *= 1e+6
     elif unit == "Gbytes":
-        size *= 1e-9
+        size *= 1e+9
     elif unit == "Tbytes":
-        size *= 1e-12
+        size *= 1e+12
     return int(size)
     
 class TdsClient(object):
@@ -124,14 +124,18 @@ class TdsClient(object):
                 continue
             size = -1
             if leaf.datasize:
-                datasize = float(leaf.datasize.text)
-                units = leaf.datasize.get('units')
-                size = size_in_bytes(datasize, units)
+                try:
+                    logger.debug("dataset size: %s", leaf.datasize)
+                    datasize = float(str(leaf.datasize.text))
+                    units = leaf.datasize.get('units')
+                    size = size_in_bytes(datasize, units)
+                except:
+                    logger.exception("dataset size conversion failed")
             modified = None
             if leaf.date:
                 if leaf.date.get('type') == 'modified':
                     modified = leaf.date.text
-            ds.append(LeafDataset(name=name, gid=leaf.get('id'), catalog_url=url, size=size, modified=modified))
+            ds.append(LeafDataset(name=name, gid=leaf.get('id'), catalog_url=url, bytes=size, modified=modified))
         return ds
 
 class Dataset(object):
@@ -139,7 +143,7 @@ class Dataset(object):
         self._name = name
         self._url = url
         self._content_type = content_type
-        self._size = None
+        self._bytes = None
         self._modified = None
 
     def name(self):
@@ -148,8 +152,8 @@ class Dataset(object):
     def url(self):
         return self._url
 
-    def size(self):
-        return self._size
+    def bytes(self):
+        return self._bytes
 
     def modified(self):
         return self._modified
@@ -158,14 +162,14 @@ class Dataset(object):
         return self._content_type
 
     def __repr__(self):
-        return "<Dataset name: {0.name}, content type: {0.content_type}>".format(self)
+        return "<Dataset name: {0._name}, content type: {0._content_type}>".format(self)
     
 class LeafDataset(Dataset):
-    def __init__(self, catalog_url, name, gid, size, modified):
+    def __init__(self, catalog_url, name, gid, bytes, modified):
         super(LeafDataset, self).__init__(name=name, content_type="application/netcdf")
         self.gid = gid
         self.catalog_url = catalog_url
-        self._size = size
+        self._bytes = bytes
         self._modified = modified
 
     def url(self):
