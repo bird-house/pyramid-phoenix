@@ -72,7 +72,7 @@ def size_in_bytes(size, unit):
     
 class TdsClient(object):
 
-    SKIPS = [".*files.*", ".*Individual Files.*", ".*File_Access.*", ".*Forecast Model Run.*", ".*Constant Forecast Offset.*", ".*Constant Forecast Date.*"]
+    SKIPS = [".*files.*", ".*Individual Files.*", ".*File_Access.*", ".*Forecast Model Run.*", ".*Constant Forecast Offset.*", ".*Constant Forecast Date.*", "\..*"]
 
     def __init__(self, catalog_url, skip=None):
         """
@@ -85,6 +85,14 @@ class TdsClient(object):
         if skip is None:
             skip = TdsClient.SKIPS
         self.skip = map(lambda x: re.compile(x), skip)
+
+    def get_download_urls(self, url):
+        urls = []
+        for ds in self.get_objects(url):
+            if ds.content_type() == 'application/netcdf':
+                urls.append(ds.url())
+                break
+        return urls
 
     def get_objects(self, url=None):
         if url is None:

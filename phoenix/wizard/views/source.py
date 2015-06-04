@@ -5,7 +5,7 @@ from phoenix.wizard.views import Wizard
 import colander
 from deform.widget import RadioChoiceWidget
 
-class ChooseSourceSchema(colander.MappingSchema):
+class Schema(colander.MappingSchema):
     choices = [
         # TODO: enable csw again
         #('wizard_csw', "CSW Catalog Search"),
@@ -29,7 +29,7 @@ class ChooseSource(Wizard):
         return breadcrumbs
         
     def schema(self):
-        return ChooseSourceSchema()
+        return Schema()
 
     def next_success(self, appstruct):
         self.success(appstruct)

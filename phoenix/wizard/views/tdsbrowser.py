@@ -41,7 +41,7 @@ class TdsBrowser(Wizard):
         return appstruct
 
     def next_success(self, appstruct):
-        if appstruct['url']:
+        if appstruct.get('url'):
             self.success(appstruct)
             return self.next('wizard_done')
         else:

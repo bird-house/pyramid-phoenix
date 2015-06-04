@@ -5,6 +5,7 @@ import json
 from phoenix.events import JobStarted
 from phoenix.wizard.views import Wizard
 from phoenix.utils import wps_url
+from phoenix import tdsclient
 
 import logging
 logger = logging.getLogger(__name__)
@@ -44,6 +45,11 @@ class Done(Wizard):
             if prefix is not None and len(prefix.strip()) > 0:
                 source['prefix'] = prefix
             workflow['source']['swift'] = source
+        if 'tds' in source_type:
+            catalog_url = self.wizard_state.get('wizard_tdsbrowser').get('url')
+            tds = tdsclient.TdsClient(catalog_url)
+            source = tds.get_download_urls(tds.catalog_url)
+            workflow['source']['thredds'] = source
         else: # esgf
             selection = self.wizard_state.get('wizard_esgf_search')['selection']
             source = json.loads(selection)
