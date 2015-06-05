@@ -19,12 +19,12 @@ class Schema(colander.MappingSchema):
         widget = deform.widget.HiddenWidget()
         )
 
-class TdsBrowser(Wizard):
+class ThreddsBrowser(Wizard):
     def __init__(self, request):
-        super(TdsBrowser, self).__init__(request, name='wizard_tdsbrowser', title="Threads browser")
+        super(ThreddsBrowser, self).__init__(request, name='wizard_threddsbrowser', title="Threads browser")
 
     def breadcrumbs(self):
-        breadcrumbs = super(TdsBrowser, self).breadcrumbs()
+        breadcrumbs = super(ThreddsBrowser, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
@@ -32,7 +32,7 @@ class TdsBrowser(Wizard):
         return Schema()
 
     def appstruct(self):
-        appstruct = super(TdsBrowser, self).appstruct()
+        appstruct = super(ThreddsBrowser, self).appstruct()
         url = self.request.params.get('url')
         if url:
             appstruct['url'] = url
@@ -59,9 +59,9 @@ class TdsBrowser(Wizard):
         grid = Grid(self.request, items, fields, )
         return dict(grid=grid)
 
-    @view_config(route_name='wizard_tdsbrowser', renderer='../templates/wizard/tdsbrowser.pt')
+    @view_config(route_name='wizard_threddsbrowser', renderer='../templates/wizard/threddsbrowser.pt')
     def view(self):
-        return super(TdsBrowser, self).view()
+        return super(ThreddsBrowser, self).view()
 
 from webhelpers2.html.builder import HTML
 from phoenix.grid import MyGrid
@@ -81,7 +81,7 @@ class Grid(MyGrid):
             url = item.url()
         query = []
         query.append( ('url', url) )
-        url = self.request.route_path('wizard_tdsbrowser', _query=query)
+        url = self.request.route_path('wizard_threddsbrowser', _query=query)
         return self.render_td(renderer="folder_element_td", url=url, name=item.name(), content_type=item.content_type())
 
     def modified_td(self, col_num, i, item):

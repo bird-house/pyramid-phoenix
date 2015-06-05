@@ -11,7 +11,7 @@ class Schema(colander.MappingSchema):
         #('wizard_csw', "CSW Catalog Search"),
         ('wizard_esgf_search', "ESGF"),
         ('wizard_swift_login', "Swift Cloud"),
-        ('wizard_tdsbrowser', "Thredds")
+        ('wizard_threddsbrowser', "Thredds")
         ]
     source = colander.SchemaNode(
         colander.String(),

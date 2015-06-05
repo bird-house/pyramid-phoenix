@@ -37,7 +37,7 @@ requires = [
     'python-swiftclient',
     'pyramid_celery',
     'celery',
-    'beautifulsoup4',
+    'threddsclient',
     ]
 
 setup(name='Phoenix',

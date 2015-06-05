@@ -46,7 +46,7 @@ class Done(Wizard):
                 source['prefix'] = prefix
             workflow['source']['swift'] = source
         if 'tds' in source_type:
-            catalog_url = self.wizard_state.get('wizard_tdsbrowser').get('url')
+            catalog_url = self.wizard_state.get('wizard_threddsbrowser').get('url')
             tds = tdsclient.TdsClient(catalog_url)
             source = tds.get_download_urls(tds.catalog_url)
             workflow['source']['thredds'] = source
