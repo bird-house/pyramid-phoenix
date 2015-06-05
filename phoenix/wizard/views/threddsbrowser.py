@@ -4,7 +4,7 @@ from pyramid.httpexceptions import HTTPFound
 from swiftclient import client, ClientException
 
 from phoenix.wizard.views import Wizard
-from phoenix import tdsclient 
+import threddsclient
 
 import logging
 logger = logging.getLogger(__name__)
@@ -52,8 +52,10 @@ class ThreddsBrowser(Wizard):
         url = self.request.params.get('url')
         if url is None:
             url = "http://www.esrl.noaa.gov/psd/thredds/catalog.xml"
-        tds = tdsclient.TdsClient(url)
-        items = tds.get_objects(url)
+        catalog = threddsclient.readUrl(url)
+        items = []
+        items.extend(catalog.references)
+        items.extend(catalog.datasets)
         fields = ['name', 'size', 'modified']
     
         grid = Grid(self.request, items, fields, )
@@ -77,18 +79,18 @@ class Grid(MyGrid):
 
     def name_td(self, col_num, i, item):
         url = None
-        if item.content_type() == 'application/directory':
-            url = item.url()
+        if item.content_type == 'application/directory':
+            url = item.url
         query = []
         query.append( ('url', url) )
         url = self.request.route_path('wizard_threddsbrowser', _query=query)
-        return self.render_td(renderer="folder_element_td", url=url, name=item.name(), content_type=item.content_type())
+        return self.render_td(renderer="folder_element_td", url=url, name=item.name, content_type=item.content_type)
 
     def modified_td(self, col_num, i, item):
-        return self.render_timestamp_td(item.modified())
+        return self.render_timestamp_td(item.modified)
 
     def size_td(self, col_num, i, item):
-        return self.render_size_td(item.bytes())
+        return self.render_size_td(item.bytes)
 
     def action_td(self, col_num, i, item):
         buttongroup = []
