@@ -20,10 +20,10 @@ def navbar(context, request):
         
     subitems = []
     if has_permission('edit', request.context, request):
-        subitems.append( nav_item('Profile', request.route_path('profile', tab='account'), icon="glyphicon-user") )
-        subitems.append( nav_item('Dashboard', request.route_path('dashboard', tab='jobs'), icon='glyphicon-dashboard') )
+        subitems.append( nav_item('Profile', request.route_path('profile', tab='account'), icon="fa fa-user") )
+        subitems.append( nav_item('Dashboard', request.route_path('dashboard', tab='jobs'), icon='fa fa-dashboard') )
     if has_permission('admin', request.context, request):
-        subitems.append( nav_item('Settings', request.route_path('settings'), icon="glyphicon-cog") )
+        subitems.append( nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench") )
     
     login = request.current_route_url() == request.route_url('account_login', protocol='esgf')
 

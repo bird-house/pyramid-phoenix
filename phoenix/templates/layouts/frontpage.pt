@@ -18,6 +18,9 @@
           type="text/css" media="screen" charset="utf-8"/>
 
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
+          href="${request.static_path('phoenix:static/font-awesome/css/font-awesome.min.css')}" />
+
+    <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
           href="${request.static_url('phoenix:static/css/phoenix.css')}" />
 
     <!-- JavaScript 
