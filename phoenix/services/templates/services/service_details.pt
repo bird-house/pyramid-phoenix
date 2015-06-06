@@ -4,7 +4,11 @@
 
      <div class="panel panel-default">
       <div class="panel-heading">
-        <span class="panel-title">${service.title}
+        <span class="panel-title">
+	  <a href="${request.route_path('services')}">
+            <i class="fa fa-fw fa-chevron-left" ></i>
+	  </a>
+	  ${service.title}
           <div class="pull-right">
             <a class="btn btn-danger btn-xs"
                rel="tooltip"
