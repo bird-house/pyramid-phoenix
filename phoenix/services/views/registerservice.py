@@ -36,13 +36,12 @@ class Schema(colander.MappingSchema):
 class RegisterService(SettingsView):
     def __init__(self, request):
         super(RegisterService, self).__init__(
-            request, name='settings_register_service', title='Register New Service')
+            request, name='register_service', title='Register New Service')
         self.csw = self.request.csw
 
     def breadcrumbs(self):
         breadcrumbs = super(RegisterService, self).breadcrumbs()
-        # TODO: fix breadcrumb
-        breadcrumbs.append(dict(route_path=self.request.route_path('settings_services'), title="Services"))
+        breadcrumbs.append(dict(route_path=self.request.route_path('services'), title="Services"))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
         
@@ -64,9 +63,9 @@ class RegisterService(SettingsView):
         except Exception, e:
             logger.exception('could not register service.')
             self.session.flash('Could not register Service %s. %s' % (url, e), queue="danger")
-        return HTTPFound(location=self.request.route_path('settings_services'))
+        return HTTPFound(location=self.request.route_path('services'))
 
-    @view_config(route_name="settings_register_service", renderer='../templates/services/service_register.pt')
+    @view_config(route_name="register_service", renderer='../templates/services/service_register.pt')
     def view(self):
         form = self.generate_form()
         if 'register' in self.request.POST:

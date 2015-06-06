@@ -75,9 +75,6 @@ def main(global_config, **settings):
 
     # settings
     config.add_route('settings', '/settings/overview')
-    config.add_route('settings_services', '/settings/services')
-    config.add_route('settings_register_service', '/settings/services/register')
-    config.add_route('remove_record', '/settings/services/{recordid}/remove')
     config.add_route('settings_users', '/settings/users')
     config.add_route('settings_edit_user', '/settings/users/{email}/edit')
     config.add_route('remove_user', '/settings/users/{email}/remove')
@@ -86,6 +83,11 @@ def main(global_config, **settings):
     config.add_route('supervisor_process', '/supervisor/{action}/{name}')
     config.add_route('supervisor_log', '/supervisor_log/{name}/{offset}')
 
+    # services
+    config.add_route('services', '/services')
+    config.add_route('register_service', '/services/register')
+    config.add_route('remove_service', '/services/{service_id}/remove')
+    
     # wizard
     config.add_route('wizard', '/wizard')
     config.add_route('wizard_wps', '/wizard/wps')

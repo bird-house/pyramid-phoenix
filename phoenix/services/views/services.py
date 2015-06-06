@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class Services(SettingsView):
     def __init__(self, request):
         super(Services, self).__init__(
-            request, name='settings_services', title='Services')
+            request, name='services', title='Services')
         self.csw = self.request.csw
 
     def breadcrumbs(self):
@@ -18,18 +18,19 @@ class Services(SettingsView):
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
         
-    @view_config(route_name='remove_record')
+    @view_config(route_name='remove_service')
     def remove(self):
         try:
-            recordid = self.request.matchdict.get('recordid')
-            self.csw.transaction(ttype='delete', typename='csw:Record', identifier=recordid )
-            self.session.flash('Removed record %s.' % recordid, queue="info")
+            service_id = self.request.matchdict.get('service_id')
+            self.csw.transaction(ttype='delete', typename='csw:Record', identifier=service_id )
+            self.session.flash('Removed Service %s.' % service_id, queue="info")
         except Exception,e:
-            logger.exception("Could not remove record")
-            self.session.flash('Could not remove record. %s' % e, queue="danger")
+            msg = "Could not remove service %s" % e
+            logger.exception(msg)
+            self.session.flash(msg, queue="danger")
         return HTTPFound(location=self.request.route_path(self.name))
 
-    @view_config(route_name="settings_services", renderer='../templates/services/service_list.pt')
+    @view_config(route_name="services", renderer='../templates/services/service_list.pt')
     def view(self):
         self.csw.getrecords2(esn="full", maxrecords=100)
             
@@ -59,7 +60,7 @@ class Grid(MyGrid):
         buttongroup = []
         buttongroup.append(
             ("remove", item.identifier, "glyphicon glyphicon-trash text-danger", "",
-            self.request.route_path('remove_record', recordid=item.identifier),
+            self.request.route_path('remove_service', service_id=item.identifier),
             False) )
         return self.render_action_td(buttongroup)
        

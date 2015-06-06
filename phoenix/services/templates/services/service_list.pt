@@ -10,7 +10,7 @@
                rel="tooltip"
                data-toggle="tooltip"
                title="Register a new Service"
-               href="${request.route_path('settings_register_service')}">
+               href="${request.route_path('register_service')}">
               Register a new Service
             </a>
           </div>
