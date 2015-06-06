@@ -7,11 +7,9 @@ from deform.widget import RadioChoiceWidget
 
 class Schema(colander.MappingSchema):
     choices = [
-        # TODO: enable csw again
-        #('wizard_csw', "CSW Catalog Search"),
-        ('wizard_esgf_search', "ESGF"),
+        ('wizard_esgf_search', "Earth System Grid (ESGF)"),
         ('wizard_swift_login', "Swift Cloud"),
-        ('wizard_threddsbrowser', "Thredds")
+        ('wizard_threddsservice', "Thredds Catalog Service")
         ]
     source = colander.SchemaNode(
         colander.String(),

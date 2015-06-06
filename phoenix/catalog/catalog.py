@@ -10,7 +10,14 @@ def get_wps_list(request):
     csw = request.csw
     from owslib.fes import PropertyIsEqualTo
     wps_query = PropertyIsEqualTo('dc:format', 'WPS')
-    csw.getrecords2(constraints=[wps_query], maxrecords=20)
+    csw.getrecords2(esn="full", constraints=[wps_query], maxrecords=100)
+    return csw.records.values()
+
+def get_thredds_list(request):
+    csw = request.csw
+    from owslib.fes import PropertyIsEqualTo
+    wps_query = PropertyIsEqualTo('dc:format', 'THREDDS')
+    csw.getrecords2(esn="full", constraints=[wps_query], maxrecords=100)
     return csw.records.values()
 
 def publish(request, record):

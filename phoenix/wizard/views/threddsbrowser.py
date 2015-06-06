@@ -51,7 +51,8 @@ class ThreddsBrowser(Wizard):
     def custom_view(self):
         url = self.request.params.get('url')
         if url is None:
-            url = "http://www.esrl.noaa.gov/psd/thredds/catalog.xml"
+            url = self.wizard_state.get('wizard_threddsservice')['url']
+        logger.debug("wizard state: %s", self.wizard_state.get('wizard_threddsservice'))
         catalog = threddsclient.readUrl(url)
         items = []
         items.extend(catalog.references)

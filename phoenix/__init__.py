@@ -104,6 +104,7 @@ def main(global_config, **settings):
     config.add_route('wizard_check_logon', '/wizard/check_logon.json')
     config.add_route('wizard_swift_login', '/wizard/swift_login')
     config.add_route('wizard_swiftbrowser', '/wizard/swiftbrowser')
+    config.add_route('wizard_threddsservice', '/wizard/threddsservice')
     config.add_route('wizard_threddsbrowser', '/wizard/threddsbrowser')
     config.add_route('wizard_done', '/wizard/done')
 
