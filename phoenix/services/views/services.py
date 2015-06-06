@@ -1,6 +1,5 @@
 from pyramid.view import view_config
-
-from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPFound
 
 from phoenix.settings.views import SettingsView
 
@@ -33,34 +32,6 @@ class Services(SettingsView):
     @view_config(route_name="services", renderer='../templates/services/service_list.pt')
     def view(self):
         self.csw.getrecords2(esn="full", maxrecords=100)
-            
-        grid = Grid(
-                self.request,
-                self.csw.records.values(),
-                ['title', 'type', ''],
-            )
-        return dict(grid=grid)
+        return dict(items=self.csw.records.values())
 
-from phoenix.grid import MyGrid
-class Grid(MyGrid):
-    def __init__(self, request, *args, **kwargs):
-        super(Grid, self).__init__(request, *args, **kwargs)
-        self.column_formats[''] = self.action_td
-        self.column_formats['title'] = self.title_td
-        self.column_formats['type'] = self.type_td
-        self.exclude_ordering = self.columns
 
-    def title_td(self, col_num, i, item):
-        return self.render_title_td(item.title, item.abstract, item.subjects)
-
-    def type_td(self, col_num, i, item):
-        return self.render_format_td(item.format, item.source)
-
-    def action_td(self, col_num, i, item):
-        buttongroup = []
-        buttongroup.append(
-            ("remove", item.identifier, "glyphicon glyphicon-trash text-danger", "",
-            self.request.route_path('remove_service', service_id=item.identifier),
-            False) )
-        return self.render_action_td(buttongroup)
-       

@@ -17,11 +17,26 @@
         </span>
       </div>
       <div class="panel-body">
-        <table class="table table-striped">
-	  <table class="table table-striped" tal:condition="grid | None">
-            <tal:rows replace="structure grid" />
-          </table>
-        </table>
+	<ul class="list-group">
+	  <li class="list-group-item" tal:repeat="item items">
+	    <div class="media">
+	      <span class="pull-left text-muted" aria-hidden="true">
+		<i class="fa fa-globe"></i>
+	      </span>
+	      <div class="media-body">
+		<h4 class="media-heading">
+		  <a href="${item.source}">${item.title}</a>
+		</h4>
+		<div class="pull-right text-muted text-right" style="font-size: .75em;">
+		  <span>
+		    ${item.format}
+		  </span>
+		</div>
+		${item.abstract}
+	      </div>
+	    </div>
+	  </li>
+	</ul>
       </div>
     </div>
 
