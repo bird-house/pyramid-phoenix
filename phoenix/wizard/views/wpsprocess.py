@@ -3,7 +3,7 @@ import colander
 import deform
 
 from phoenix.wizard.views import Wizard
-from phoenix.utils import wps_url
+from phoenix.catalog import wps_url
 
 def count_literal_inputs(wps, identifier):
     process = wps.describeprocess(identifier)

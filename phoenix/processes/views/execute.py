@@ -6,7 +6,7 @@ from deform import ValidationFailure
 
 from phoenix.events import JobStarted
 from phoenix.processes.views import Processes
-from phoenix.utils import wps_url
+from phoenix.catalog import wps_url
 
 from owslib.wps import WebProcessingService
 

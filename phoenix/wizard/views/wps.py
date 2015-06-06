@@ -2,7 +2,7 @@ from pyramid.view import view_config
 import colander
 import deform
 
-from phoenix.utils import get_wps_list
+from phoenix.catalog import get_wps_list
 from phoenix.wizard.views import Wizard
 
 class ChooseWPSSchema(colander.MappingSchema):

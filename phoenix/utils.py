@@ -77,29 +77,3 @@ def appstruct_to_inputs(appstruct):
             inputs.append( (str(key).strip(), str(value).strip()) )
     return inputs
 
-def wps_url(request, identifier):
-    csw = request.csw
-    csw.getrecordbyid(id=[identifier])
-    return csw.records[identifier].source
-
-def get_wps_list(request):
-    csw = request.csw
-    from owslib.fes import PropertyIsEqualTo
-    wps_query = PropertyIsEqualTo('dc:format', 'WPS')
-    csw.getrecords2(constraints=[wps_query], maxrecords=20)
-    return csw.records.values()
-
-def csw_publish(request, record):
-    # TODO: fix template loading and location
-    from mako.template import Template
-    from os.path import join, dirname
-    import phoenix
-    import uuid
-    record['identifier'] = uuid.uuid4().get_urn()
-    templ_dc = Template(filename=join(dirname(phoenix.__file__), "templates", "dc.xml"))
-    request.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
-
-
-    
-
-

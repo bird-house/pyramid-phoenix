@@ -3,7 +3,7 @@ from pyramid.view import view_config, view_defaults
 from owslib.wps import WebProcessingService
 
 from phoenix.processes.views import Processes
-from phoenix.utils import wps_url
+from phoenix.catalog import wps_url
 
 import logging
 logger = logging.getLogger(__name__)

@@ -5,6 +5,7 @@ from deform import Form, Button
 from deform import ValidationFailure
 
 from phoenix.settings.views import SettingsView
+from phoenix import catalog
 
 import deform
 import colander
@@ -37,37 +38,13 @@ class RegisterService(SettingsView):
     def __init__(self, request):
         super(RegisterService, self).__init__(
             request, name='register_service', title='Register New Service')
-        self.csw = self.request.csw
 
     def breadcrumbs(self):
         breadcrumbs = super(RegisterService, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path('services'), title="Services"))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
-
-    def harvest_ogc_service(self, appstruct):
-        self.csw.harvest(source=appstruct.get('url'), resourcetype=appstruct.get('service_type'))
-
-    def harvest_thredds_service(self, appstruct):
-        from phoenix.utils import csw_publish
-        import threddsclient
-        url=appstruct.get('url')
-        catalog = threddsclient.readUrl(url)
-        title = appstruct.get('service_name', '')
-        if len(title.strip()) < 3:
-            title = catalog.name
-        if len(title.strip()) == 0:
-            title = url
-        record = dict(
-            title = title,
-            abstract = "",
-            source = url,
-            format = "THREDDS",
-            creator = '',
-            keywords = 'thredds',
-            rights = '')
-        csw_publish(self.request, record)
-        
+    
     def generate_form(self):
         return Form(Schema(), buttons=(Button(name='register', title='Register'),))
 
@@ -76,18 +53,13 @@ class RegisterService(SettingsView):
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
             url = appstruct.get('url')
-            service_type = appstruct.get('service_type')
-            if service_type == 'thredds_catalog':
-                self.harvest_thredds_service(appstruct)
-            else:
-                self.harvest_ogc_service(appstruct)
+            catalog.harvest_service(self.request, **appstruct)
             self.session.flash('Registered Service %s' % (url), queue="success")
         except ValidationFailure, e:
-            logger.exception('valdation of register service form failed.')
             return dict(title=self.title, form = e.render())
-        except Exception, e:
+        except Exception, ex:
             logger.exception('could not register service.')
-            self.session.flash('Could not register Service %s. %s' % (url, e), queue="danger")
+            self.session.flash('Could not register Service {0}: {1}'.format(url, ex), queue="danger")
         return HTTPFound(location=self.request.route_path('services'))
 
     @view_config(route_name="register_service", renderer='../templates/services/service_register.pt')
