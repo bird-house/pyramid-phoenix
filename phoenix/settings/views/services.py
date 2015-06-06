@@ -31,15 +31,14 @@ class Services(SettingsView):
 
     @view_config(route_name="settings_services", renderer='../templates/settings/service_list.pt')
     def view(self):
-        self.csw.getrecords2(esn="full", maxrecords=20)
+        self.csw.getrecords2(esn="full", maxrecords=100)
             
         grid = Grid(
                 self.request,
                 self.csw.records.values(),
                 ['title', 'type', ''],
             )
-        self.csw.getrecords2(maxrecords=0)
-        return dict(datasets_found=self.csw.results.get('matches'), grid=grid)
+        return dict(grid=grid)
 
 from phoenix.grid import MyGrid
 class Grid(MyGrid):
