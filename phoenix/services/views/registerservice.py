@@ -4,7 +4,7 @@ from pyramid.httpexceptions import HTTPFound
 from deform import Form, Button
 from deform import ValidationFailure
 
-from . import SettingsView
+from phoenix.settings.views import SettingsView
 
 import deform
 import colander
@@ -66,7 +66,7 @@ class RegisterService(SettingsView):
             self.session.flash('Could not register Service %s. %s' % (url, e), queue="danger")
         return HTTPFound(location=self.request.route_path('settings_services'))
 
-    @view_config(route_name="settings_register_service", renderer='../templates/settings/service_register.pt')
+    @view_config(route_name="settings_register_service", renderer='../templates/services/service_register.pt')
     def view(self):
         form = self.generate_form()
         if 'register' in self.request.POST:

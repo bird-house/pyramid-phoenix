@@ -2,7 +2,7 @@ from pyramid.view import view_config
 
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 
-from . import SettingsView
+from phoenix.settings.views import SettingsView
 
 import logging
 logger = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ class Services(SettingsView):
             self.session.flash('Could not remove record. %s' % e, queue="danger")
         return HTTPFound(location=self.request.route_path(self.name))
 
-    @view_config(route_name="settings_services", renderer='../templates/settings/service_list.pt')
+    @view_config(route_name="settings_services", renderer='../templates/services/service_list.pt')
     def view(self):
         self.csw.getrecords2(esn="full", maxrecords=100)
             
