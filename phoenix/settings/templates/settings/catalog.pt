@@ -4,19 +4,11 @@
 
     <!-- Button to add an ogc service -->
     <a href="${request.route_path('settings_add_service')}" role="button" class="btn btn-success">
-      Add Service
-    </a>
-    <!-- Button to add a dataset -->
-    <a href="${request.route_path('settings_add_dataset')}" role="button" class="btn btn-success">
-      Add Dataset
-    </a>
-    <!-- Button to remove all records -->
-    <a href="${request.route_path('remove_all_records')}" role="button" class="btn btn-danger">
-      Remove all Datasets
+      Register a new Service
     </a>
 
     <div>
-      <h2>${datasets_found} Datasets found</h2>
+      <h2>${datasets_found} Services found</h2>
     </div>
 
     <br/><br />

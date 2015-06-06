@@ -9,15 +9,15 @@ from . import SettingsView
 import logging
 logger = logging.getLogger(__name__)
 
-class AddService(SettingsView):
+class RegisterService(SettingsView):
     def __init__(self, request):
-        super(AddService, self).__init__(
-            request, name='settings_add_service', title='Add Service')
+        super(RegisterService, self).__init__(
+            request, name='settings_add_service', title='Register New Service')
         self.csw = self.request.csw
         self.description = "Add OGC service to catalog."
 
     def breadcrumbs(self):
-        breadcrumbs = super(AddService, self).breadcrumbs()
+        breadcrumbs = super(RegisterService, self).breadcrumbs()
         # TODO: fix breadcrumb
         breadcrumbs.append(dict(route_path=self.request.route_path('settings_catalog'), title="Catalog"))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
@@ -26,7 +26,7 @@ class AddService(SettingsView):
     def generate_form(self):
         from phoenix.schema import CatalogAddServiceSchema
         schema = CatalogAddServiceSchema()
-        return Form(schema, buttons=(Button(name='add_service', title='Add Service'),), formid='deform')
+        return Form(schema, buttons=(Button(name='add_service', title='Register'),))
 
     def process_form(self, form):
         try:

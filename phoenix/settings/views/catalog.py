@@ -19,18 +19,6 @@ class Catalog(SettingsView):
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
         
-    @view_config(route_name='remove_all_records')
-    def remove_all(self):
-        try:
-            self.csw.getrecords2(maxrecords=0)
-            count = self.csw.results.get('matches'),
-            self.csw.transaction(ttype='delete', typename='csw:Record')
-            self.session.flash("%d Records deleted." % count, queue='info')
-        except Exception,e:
-            logger.exception('could not remove datasets.')
-            self.session.flash('Ooops ... self destruction out of order. %s' % e, queue="danger")
-        return HTTPFound(location=self.request.route_path(self.name))
- 
     @view_config(route_name='remove_record')
     def remove(self):
         try:
