@@ -16,6 +16,11 @@ class Services(SettingsView):
         breadcrumbs = super(Services, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
+
+    @view_config(route_name='service_details', renderer='../templates/services/service_details.pt')
+    def details(self):
+        service_id = self.request.matchdict.get('service_id')
+        return dict()
         
     @view_config(route_name='remove_service')
     def remove(self):
