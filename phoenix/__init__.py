@@ -76,8 +76,8 @@ def main(global_config, **settings):
     # settings
     config.add_route('settings', '/settings/overview')
     config.add_route('settings_services', '/settings/services')
-    config.add_route('settings_add_service', '/settings/catalog/add_service')
-    config.add_route('remove_record', '/settings/catalog/{recordid}/remove')
+    config.add_route('settings_register_service', '/settings/services/register')
+    config.add_route('remove_record', '/settings/services/{recordid}/remove')
     config.add_route('settings_users', '/settings/users')
     config.add_route('settings_edit_user', '/settings/users/{email}/edit')
     config.add_route('remove_user', '/settings/users/{email}/remove')

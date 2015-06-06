@@ -29,7 +29,7 @@ class Services(SettingsView):
             self.session.flash('Could not remove record. %s' % e, queue="danger")
         return HTTPFound(location=self.request.route_path(self.name))
 
-    @view_config(route_name="settings_services", renderer='../templates/settings/services.pt')
+    @view_config(route_name="settings_services", renderer='../templates/settings/service_list.pt')
     def view(self):
         self.csw.getrecords2(esn="full", maxrecords=20)
             

@@ -3,7 +3,7 @@
   <div metal:fill-slot="content">
 
     <!-- Button to add an ogc service -->
-    <a href="${request.route_path('settings_add_service')}" role="button" class="btn btn-success">
+    <a href="${request.route_path('settings_register_service')}" role="button" class="btn btn-success">
       Register a new Service
     </a>
 

@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class RegisterService(SettingsView):
     def __init__(self, request):
         super(RegisterService, self).__init__(
-            request, name='settings_add_service', title='Register New Service')
+            request, name='settings_register_service', title='Register New Service')
         self.csw = self.request.csw
         self.description = "Add OGC service to catalog."
 
@@ -26,7 +26,7 @@ class RegisterService(SettingsView):
     def generate_form(self):
         from phoenix.schema import CatalogAddServiceSchema
         schema = CatalogAddServiceSchema()
-        return Form(schema, buttons=(Button(name='add_service', title='Register'),))
+        return Form(schema, buttons=(Button(name='register', title='Register'),))
 
     def process_form(self, form):
         try:
@@ -45,10 +45,10 @@ class RegisterService(SettingsView):
             self.session.flash('Could not add WPS %s. %s' % (url, e), queue="danger")
         return HTTPFound(location=self.request.route_path('settings_services'))
 
-    @view_config(route_name="settings_add_service", renderer='../templates/settings/add_service.pt')
+    @view_config(route_name="settings_register_service", renderer='../templates/settings/service_register.pt')
     def view(self):
         form = self.generate_form()
-        if 'add_service' in self.request.POST:
+        if 'register' in self.request.POST:
             return self.process_form(form)
         return dict(title=self.title, form=form.render())
 
