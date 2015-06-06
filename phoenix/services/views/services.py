@@ -20,7 +20,8 @@ class Services(SettingsView):
     @view_config(route_name='service_details', renderer='../templates/services/service_details.pt')
     def details(self):
         service_id = self.request.matchdict.get('service_id')
-        return dict()
+        self.csw.getrecordbyid(id=[service_id])
+        return dict(service=self.csw.records[service_id])
         
     @view_config(route_name='remove_service')
     def remove(self):
