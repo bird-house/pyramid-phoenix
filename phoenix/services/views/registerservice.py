@@ -26,8 +26,8 @@ class Schema(colander.MappingSchema):
         widget = deform.widget.TextInputWidget())
     service_name = colander.SchemaNode(
         colander.String(),
-        missing=unicode(''),
-        description="An optional service name.")
+        missing = '',
+        description = "An optional service name.")
     service_type = colander.SchemaNode(
         colander.String(),
         default = 'http://www.opengis.net/wps/1.0.0',
@@ -50,10 +50,18 @@ class RegisterService(SettingsView):
 
     def harvest_thredds_service(self, appstruct):
         from phoenix.utils import csw_publish
+        import threddsclient
+        url=appstruct.get('url')
+        catalog = threddsclient.readUrl(url)
+        title = appstruct.get('service_name', '')
+        if len(title.strip()) < 3:
+            title = catalog.name
+        if len(title.strip()) == 0:
+            title = url
         record = dict(
-            title = appstruct.get('service_name', 'My Thredds'),
+            title = title,
             abstract = "",
-            source = appstruct.get('url'),
+            source = url,
             format = "THREDDS",
             creator = '',
             keywords = 'thredds',
