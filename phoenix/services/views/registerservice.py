@@ -44,6 +44,21 @@ class RegisterService(SettingsView):
         breadcrumbs.append(dict(route_path=self.request.route_path('services'), title="Services"))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
+
+    def harvest_ogc_service(self, appstruct):
+        self.csw.harvest(source=appstruct.get('url'), resourcetype=appstruct.get('service_type'))
+
+    def harvest_thredds_service(self, appstruct):
+        from phoenix.utils import csw_publish
+        record = dict(
+            title = appstruct.get('service_name', 'My Thredds'),
+            abstract = "",
+            source = appstruct.get('url'),
+            format = "THREDDS",
+            creator = '',
+            keywords = 'thredds',
+            rights = '')
+        csw_publish(self.request, record)
         
     def generate_form(self):
         return Form(Schema(), buttons=(Button(name='register', title='Register'),))
@@ -53,9 +68,11 @@ class RegisterService(SettingsView):
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
             url = appstruct.get('url')
-            self.csw.harvest(
-                source=url,
-                resourcetype=appstruct.get('service_type'))
+            service_type = appstruct.get('service_type')
+            if service_type == 'thredds_catalog':
+                self.harvest_thredds_service(appstruct)
+            else:
+                self.harvest_ogc_service(appstruct)
             self.session.flash('Registered Service %s' % (url), queue="success")
         except ValidationFailure, e:
             logger.exception('valdation of register service form failed.')

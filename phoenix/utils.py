@@ -89,6 +89,16 @@ def get_wps_list(request):
     csw.getrecords2(constraints=[wps_query], maxrecords=20)
     return csw.records.values()
 
+def csw_publish(request, record):
+    # TODO: fix template loading and location
+    from mako.template import Template
+    from os.path import join, dirname
+    import phoenix
+    import uuid
+    record['identifier'] = uuid.uuid4().get_urn()
+    templ_dc = Template(filename=join(dirname(phoenix.__file__), "templates", "dc.xml"))
+    request.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
+
 
     
 

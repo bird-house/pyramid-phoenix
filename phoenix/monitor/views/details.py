@@ -27,7 +27,6 @@ class Details(Monitor):
         if outputid is not None:
             output = process_outputs(self.request, jobid).get(outputid)
 
-            # TODO: how about schema.bind?
             result = dict(
                 identifier = uuid.uuid4().get_urn(),
                 title = output.title,
