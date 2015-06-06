@@ -19,7 +19,7 @@ class RegisterService(SettingsView):
     def breadcrumbs(self):
         breadcrumbs = super(RegisterService, self).breadcrumbs()
         # TODO: fix breadcrumb
-        breadcrumbs.append(dict(route_path=self.request.route_path('settings_catalog'), title="Catalog"))
+        breadcrumbs.append(dict(route_path=self.request.route_path('settings_services'), title="Services"))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
         
@@ -43,7 +43,7 @@ class RegisterService(SettingsView):
         except Exception, e:
             logger.exception('could not harvest wps.')
             self.session.flash('Could not add WPS %s. %s' % (url, e), queue="danger")
-        return HTTPFound(location=self.request.route_url('settings_catalog'))
+        return HTTPFound(location=self.request.route_path('settings_services'))
 
     @view_config(route_name="settings_add_service", renderer='../templates/settings/add_service.pt')
     def view(self):

@@ -7,15 +7,14 @@ from . import SettingsView
 import logging
 logger = logging.getLogger(__name__)
 
-class Catalog(SettingsView):
+class Services(SettingsView):
     def __init__(self, request):
-        super(Catalog, self).__init__(
-            request, name='settings_catalog', title='Catalog')
+        super(Services, self).__init__(
+            request, name='settings_services', title='Services')
         self.csw = self.request.csw
-        self.description = self.csw.identification.title
 
     def breadcrumbs(self):
-        breadcrumbs = super(Catalog, self).breadcrumbs()
+        breadcrumbs = super(Services, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
         
@@ -30,36 +29,32 @@ class Catalog(SettingsView):
             self.session.flash('Could not remove record. %s' % e, queue="danger")
         return HTTPFound(location=self.request.route_path(self.name))
 
-    @view_config(route_name="settings_catalog", renderer='../templates/settings/catalog.pt')
+    @view_config(route_name="settings_services", renderer='../templates/settings/services.pt')
     def view(self):
         self.csw.getrecords2(esn="full", maxrecords=20)
             
-        grid = CSWGrid(
+        grid = Grid(
                 self.request,
                 self.csw.records.values(),
-                ['title', 'format', ''],
+                ['title', 'type', ''],
             )
         self.csw.getrecords2(maxrecords=0)
         return dict(datasets_found=self.csw.results.get('matches'), grid=grid)
 
 from phoenix.grid import MyGrid
-class CSWGrid(MyGrid):
+class Grid(MyGrid):
     def __init__(self, request, *args, **kwargs):
-        super(CSWGrid, self).__init__(request, *args, **kwargs)
+        super(Grid, self).__init__(request, *args, **kwargs)
         self.column_formats[''] = self.action_td
         self.column_formats['title'] = self.title_td
-        self.column_formats['format'] = self.format_td
-        self.column_formats['modified'] = self.modified_td
+        self.column_formats['type'] = self.type_td
         self.exclude_ordering = self.columns
 
     def title_td(self, col_num, i, item):
         return self.render_title_td(item.title, item.abstract, item.subjects)
 
-    def format_td(self, col_num, i, item):
+    def type_td(self, col_num, i, item):
         return self.render_format_td(item.format, item.source)
-
-    def modified_td(self, col_num, i, item):
-        return self.render_time_ago_td(from_time=item.modified)
 
     def action_td(self, col_num, i, item):
         buttongroup = []
