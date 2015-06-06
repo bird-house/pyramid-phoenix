@@ -20,9 +20,6 @@ class Overview(SettingsView):
         buttons.append(dict(url=self.settings.get('celery.url'),
                             icon="celery_128.png", title="Celery", id="external-url"))
         buttons.append(dict(url="/settings/jobs", icon="blackboard_sum.png", title="Monitor"))
-        buttons.append(dict(url="/ipython/notebook", icon="ipynb_icon_64x64.png", title="IPython"))
-        buttons.append(dict(url=self.settings.get('thredds.url'),
-                            icon="unidataLogo.png", title="Thredds", id="external-url"))
         buttongroups.append(dict(title='Settings', buttons=buttons))
 
         return dict(buttongroups=buttongroups)
