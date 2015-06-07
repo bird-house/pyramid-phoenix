@@ -61,15 +61,13 @@ def main(global_config, **settings):
     config.add_route('processes_list', '/processes/list')
     config.add_route('processes_execute', '/processes/execute')
 
-    # monitor
+    # job monitor
     config.add_route('monitor', '/monitor')
-    config.add_route('monitor_details', '/monitor/{jobid}/{tab}')
+    config.add_route('remove_job', '/monitor/{job_id}/remove')
+    config.add_route('remove_all_jobs', '/monitor/remove_all')
     config.add_route('update_myjobs', '/monitor/update.json')
-    
-    # jobs
-    config.add_route('remove_myjobs', '/jobs/remove_myjobs')
-    config.add_route('remove_all_jobs', '/jobs/remove_all')
-    
+    config.add_route('monitor_details', '/monitor/{job_id}/{tab}')
+
     # user profile
     config.add_route('profile', '/profile/{tab}')
 

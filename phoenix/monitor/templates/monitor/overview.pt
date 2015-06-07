@@ -6,12 +6,6 @@
 
   <div metal:fill-slot="content">
 
-    <!-- Button to remove jobs -->
-    <a class="remove-myjobs btn btn-danger" href="${request.route_path('remove_myjobs')}" role="button">
-      Remove all
-    </a>
-    <br/><br/>
-
     <div class="panel panel-default">
       <div class="panel-body">
         <table class="table table-striped">
