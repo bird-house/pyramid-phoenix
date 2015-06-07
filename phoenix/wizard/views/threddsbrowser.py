@@ -55,8 +55,8 @@ class ThreddsBrowser(Wizard):
         logger.debug("wizard state: %s", self.wizard_state.get('wizard_threddsservice'))
         catalog = threddsclient.read_url(url)
         items = []
-        items.extend(catalog.references)
-        items.extend(catalog.datasets)
+        items.extend( catalog.flat_references() )
+        items.extend( catalog.flat_datasets() )
         fields = ['name', 'size', 'modified']
     
         grid = Grid(self.request, items, fields, )
