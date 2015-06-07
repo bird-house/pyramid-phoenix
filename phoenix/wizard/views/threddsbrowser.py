@@ -53,7 +53,7 @@ class ThreddsBrowser(Wizard):
         if url is None:
             url = self.wizard_state.get('wizard_threddsservice')['url']
         logger.debug("wizard state: %s", self.wizard_state.get('wizard_threddsservice'))
-        catalog = threddsclient.readUrl(url)
+        catalog = threddsclient.read_url(url)
         items = []
         items.extend(catalog.references)
         items.extend(catalog.datasets)
