@@ -52,6 +52,19 @@ class ThreddsBrowser(Wizard):
         url = self.request.params.get('url')
         if url is None:
             url = self.wizard_state.get('wizard_threddsservice')['url']
+        # TODO: back url handling needs to be changed
+        back_url = None
+        prev = self.request.params.get('prev')
+        back_links = self.wizard_state.get('wizard_threddsservice').get('back_links', [])
+        if prev:
+            back_links.append(prev)
+        elif len(back_links) > 0:
+            back_links.pop()
+        self.wizard_state.get('wizard_threddsservice')['back_links'] = back_links
+        self.session.changed()
+        if len(back_links) > 0:
+            back_url = self.request.route_path('wizard_threddsbrowser', _query=[('url', back_links[-1])])
+
         logger.debug("wizard state: %s", self.wizard_state.get('wizard_threddsservice'))
         catalog = threddsclient.read_url(url)
         items = []
@@ -60,7 +73,7 @@ class ThreddsBrowser(Wizard):
         fields = ['name', 'size', 'modified']
     
         grid = Grid(self.request, items, fields, )
-        return dict(grid=grid)
+        return dict(title=catalog.url, grid=grid, back_url=back_url)
 
     @view_config(route_name='wizard_threddsbrowser', renderer='../templates/wizard/threddsbrowser.pt')
     def view(self):
@@ -84,6 +97,7 @@ class Grid(MyGrid):
             url = item.url
         query = []
         query.append( ('url', url) )
+        query.append( ('prev', item.catalog.url) )
         url = self.request.route_path('wizard_threddsbrowser', _query=query)
         return self.render_td(renderer="folder_element_td", url=url, name=item.name, content_type=item.content_type)
 

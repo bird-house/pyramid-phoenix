@@ -2,9 +2,21 @@
         
   <div metal:fill-slot="content">
 
-    <table class="table table-striped">
-      <tal:rows replace="structure grid" />
-    </table>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+	  <a href="${back_url}" tal:condition="back_url">
+            <i class="fa fa-fw fa-chevron-left" ></i>
+	  </a>
+	  ${title}
+        </h3>
+      </div>
+      <div class="panel-body">
+	<table class="table table-striped">
+	  <tal:rows replace="structure grid" />
+	</table>
+      </div>
+    </div>
 
     <tal:form replace="structure form">The form will render here</tal:form>
      
