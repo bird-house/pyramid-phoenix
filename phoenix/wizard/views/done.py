@@ -45,15 +45,17 @@ class Done(Wizard):
             if prefix is not None and len(prefix.strip()) > 0:
                 source['prefix'] = prefix
             workflow['source']['swift'] = source
-        if 'thredds' in source_type:
-            catalog_url = self.wizard_state.get('wizard_threddsbrowser').get('url')
-            source = threddsclient.download_urls(catalog_url)
+        elif 'thredds' in source_type:
+            source = dict()
+            source['catalog_url'] = self.wizard_state.get('wizard_threddsbrowser').get('url')
             workflow['source']['thredds'] = source
-        else: # esgf
+        elif 'esgf' in source_type:
             selection = self.wizard_state.get('wizard_esgf_search')['selection']
             source = json.loads(selection)
             source['credentials'] = user.get('credentials')
             workflow['source']['esgf'] = source
+        else:
+            raise Exception('Unknown source type')
 
         # worker
         from phoenix.utils import appstruct_to_inputs

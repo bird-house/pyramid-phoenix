@@ -1,14 +1,14 @@
 <% 
    if status == 'ProcessSucceeded':
-     icon_class="glyphicon glyphicon-ok-sign text-success"
+     icon_class="fa fa-check-circle text-success"
    elif status == 'ProcessFailed':
-     icon_class="glyphicon glyphicon-remove-sign text-danger"
+     icon_class="fa fa-times-circle text-danger"
    elif status == 'ProcessPaused':
-     icon_class="glyphicon glyphicon-paused text-muted"
+     icon_class="fa fa-pause text-muted"
    elif status == 'ProcessStarted' or status == 'ProcessAccepted':
      icon_class="fa fa-cog fa-spin text-muted"
    else:
-     icon_class="glyphicon glyphicon-question-sign text-danger"
+     icon_class="fa fa-question-circle text-danger"
 %>
 <div>
   <i class="${icon_class}" data-toggle="tooltip" title="${status}"
