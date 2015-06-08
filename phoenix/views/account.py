@@ -40,12 +40,14 @@ class Account(MyView):
         return dict(provider='DKRZ')
 
     def generate_form(self, protocol):
-        from phoenix.schema import OpenIDSchema, ESGFOpenIDSchema
+        from phoenix.schema import OpenIDSchema, ESGFOpenIDSchema, LdapSchema
         schema = None
         if protocol == 'esgf':
             schema = ESGFOpenIDSchema()
-        else:
+        elif protocol == 'openid':
             schema = OpenIDSchema()
+        else:
+            schema = LdapSchema()
         form = Form(schema=schema, buttons=('submit',), formid='deform')
         return form
 
@@ -57,8 +59,11 @@ class Account(MyView):
             logger.exception('validation of form failed.')
             return dict(active=protocol, form=e.render())
         else:
-            logger.debug('openid route = %s', self.request.route_path('account_openid', _query=appstruct.items()))
-            return HTTPFound(location=self.request.route_path('account_openid', _query=appstruct.items()))
+            if protocol == 'ldap':
+                return HTTPFound(location = self.request.route_path('account_ldap', _query = appstruct.items()))
+            else:
+                logger.debug('openid route = %s', self.request.route_path('account_openid', _query=appstruct.items()))
+                return HTTPFound(location=self.request.route_path('account_openid', _query=appstruct.items()))
 
     def send_notification(self, email, subject, message):
         """Sends email notification to admins.
@@ -104,10 +109,11 @@ class Account(MyView):
 
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
-        protocol = self.request.matchdict.get('protocol', 'esgf')
+        protocol = self.request.matchdict.get('protocol', 'esgf') # FK: What is the second arg for?
         form = self.generate_form(protocol)
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
+        # TODO: Add ldap to title?
         return dict(active=protocol, title="ESGF OpenID", form=form.render( self.appstruct() ))
 
     @view_config(route_name='account_logout', permission='edit')
@@ -159,5 +165,32 @@ class Account(MyView):
 
         return response
 
-    
+    @view_config(route_name='account_ldap')
+    def ldap(self):
+        """ldap login"""
+        username = self.request.params.get('username')
+        password = self.request.params.get('password')
 
+        # FK: Why is everything logged twice?
+        logger.debug('ldap login, username: %s, password: %s', username, '*' * len(password))
+
+        # Performing ldap login
+        from pyramid_ldap import get_ldap_connector
+        connector = get_ldap_connector(self.request)
+        auth = connector.authenticate(username, password)
+        logger.debug('ldap auth, %s', auth)
+
+        response = Response()
+        if auth is not None:
+            # Authentication successful
+            userdn = auth[0]
+            # TODO: Rename template?
+            response.text = render('phoenix:templates/account/openid_success.pt',
+                    # FK: What is 'result' for? Just an old debug argument?
+                    {'result': username}, request = self.request)
+            response.headers.extend(remember(self.request, userdn))
+        else:
+            # Authentification failed
+            response.text = render('phoenix:templates/account/forbidden.pt', request = self.request)
+
+        return response

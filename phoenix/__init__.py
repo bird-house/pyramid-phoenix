@@ -6,6 +6,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from phoenix.security import groupfinder, root_factory
 
 import pymongo
+import ldap
 
 import logging
 logger = logging.getLogger(__name__)
@@ -42,6 +43,24 @@ def main(global_config, **settings):
     config.include('pyramid_celery')
     config.configure_celery(global_config['__file__'])
 
+    # ldap
+    config.include('pyramid_ldap')
+    # TODO: Remove hardcoded arguments from ldap_setup(), etc.
+    config.ldap_setup(
+            'ldap://ldap.example.com',
+            bind = 'cn=admin,dc=example,dc=com', # Is this bind necessary?
+            passwd = 'password')
+    config.ldap_set_login_query(
+            base_dn = 'dc=example,dc=com',
+            filter_tmpl = '(uid=%(login)s)', # OpenLDAP POSIX user account
+            scope = ldap.SCOPE_ONELEVEL)
+    # FK: Do not use LDAP groups just now.
+    #config.ldap_set_groups_query(
+    #        base_dn = 'dc=example,dc=com',
+    #        filter_tmpl = '(&(objectClass=posixGroup)(memberUid=%(userdn)s))', # OpenLDAP POSIX groups, TODO?
+    #        scope = ldap.SCOPE_SUBTREE,
+    #        cache_period = 600)
+
     # static views (stylesheets etc)
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_static_view('deform_static', 'deform:static', cache_max_age=3600)
@@ -53,6 +72,7 @@ def main(global_config, **settings):
     config.add_route('account_login', '/account/login/{protocol}')
     config.add_route('account_logout', '/account/logout')
     config.add_route('account_openid', '/account/openid')
+    config.add_route('account_ldap', '/account/ldap')
     config.add_route('account_register', '/account/register')
 
     # dashboard

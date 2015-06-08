@@ -11,7 +11,7 @@ requires = [
     'pyramid-chameleon',
     'pyramid-mako',
     'pymongo',
-    #'pyramid_debugtoolbar',
+    'pyramid_debugtoolbar',
     #'waitress',
     'pyramid_layout',
     'pyramid_deform',
@@ -38,6 +38,7 @@ requires = [
     'python-swiftclient',
     'pyramid_celery',
     'celery',
+    'pyramid_ldap',
     ]
 
 setup(name='Phoenix',
