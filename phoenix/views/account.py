@@ -139,9 +139,9 @@ class Account(MyView):
         if result:
             if result.error:
                 # Login procedure finished with an error.
-                self.session.flash('Sorry, login failed: %s', queue='danger' % (result.error.message))
+                self.session.flash('Sorry, login failed: %s' % (result.error.message), queue='danger')
                 logger.warn('openid login failed: %s', result.error.message)
-                response.text = render('phoenix:templates/account/forbidden.pt', request=self.request)
+                response.text = render('phoenix:templates/account/forbidden.pt', dict(), self.request)
             elif result.user:
                 # Hooray, we have the user!
                 logger.info("openid login successful for user %s", result.user.email)
