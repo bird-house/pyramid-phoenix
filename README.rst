@@ -9,7 +9,7 @@ Phoenix makes it easy to interact with Web Processing Services (WPS).
 
 For installation and configuration read the `documentation on ReadTheDocs <http://pyramid-phoenix.readthedocs.org/en/latest/index.html>`_.
 
-Malleefowl is part of the `Birdhouse <http://bird-house.github.io/>`_ project.
+Phoenix is part of the `Birdhouse <http://bird-house.github.io/>`_ project.
 
 
 
