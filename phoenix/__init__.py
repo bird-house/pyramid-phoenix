@@ -54,10 +54,11 @@ def main(global_config, **settings):
             base_dn = 'dc=example,dc=com',
             filter_tmpl = '(uid=%(login)s)', # OpenLDAP POSIX user account
             scope = ldap.SCOPE_ONELEVEL)
-    # FK: Do not use LDAP groups just now.
+    # FK: Do not use LDAP groups for now. Maybe skip them completely and use
+    #     the build in user management.
     #config.ldap_set_groups_query(
     #        base_dn = 'dc=example,dc=com',
-    #        filter_tmpl = '(&(objectClass=posixGroup)(memberUid=%(userdn)s))', # OpenLDAP POSIX groups, TODO?
+    #        filter_tmpl = '(&(objectClass=posixGroup)(memberUid=%(userdn)s))', # This is not working for posix groups, see https://github.com/Pylons/pyramid_ldap/issues/18
     #        scope = ldap.SCOPE_SUBTREE,
     #        cache_period = 600)
 

@@ -171,24 +171,31 @@ class Account(MyView):
         username = self.request.params.get('username')
         password = self.request.params.get('password')
 
-        # FK: Why is everything logged twice?
-        logger.debug('ldap login, username: %s, password: %s', username, '*' * len(password))
-
         # Performing ldap login
         from pyramid_ldap import get_ldap_connector
         connector = get_ldap_connector(self.request)
         auth = connector.authenticate(username, password)
-        logger.debug('ldap auth, %s', auth)
 
         response = Response()
         if auth is not None:
+            # FK: At the moment, all user identification is build around the
+            #     email address as one primary, unique key. While this is fine
+            #     with OpenID, it is no longer true when LDAP comes into play.
+            #     Maybe we should move away from the email address being a key
+            #     identifier, but for now (and for testing) we just assume
+            #     there is always an LDAP attribute 'mail' which gives as an
+            #     unique identification.
+            email = auth[1].get('mail')[0]
+            name  = auth[1].get('cn')[0]
+
             # Authentication successful
-            userdn = auth[0]
+            self.login_success(email = email, name = name)
+
             # TODO: Rename template?
             response.text = render('phoenix:templates/account/openid_success.pt',
                     # FK: What is 'result' for? Just an old debug argument?
-                    {'result': username}, request = self.request)
-            response.headers.extend(remember(self.request, userdn))
+                    {'result': email}, request = self.request)
+            response.headers.extend(remember(self.request, email))
         else:
             # Authentification failed
             response.text = render('phoenix:templates/account/forbidden.pt', request = self.request)
