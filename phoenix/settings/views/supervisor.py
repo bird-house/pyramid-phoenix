@@ -74,9 +74,10 @@ class Grid(MyGrid):
             buttongroup.append(
                 ("start", item.get('name'), "fa fa-play", "",
                 self.request.route_path('supervisor_process', action='start', name=item.get('name')), False) )
-        buttongroup.append(
-            ("clear", item.get('name'), "fa fa-eraser", "",
-             self.request.route_path('supervisor_process', action='clear', name=item.get('name')), False) )
+        # TODO: enable clear button again
+        ## buttongroup.append(
+        ##     ("clear", item.get('name'), "fa fa-eraser", "",
+        ##      self.request.route_path('supervisor_process', action='clear', name=item.get('name')), False) )
         buttongroup.append(
             ("tail", item.get('name'), "fa fa-align-left", "",
              self.request.route_path('supervisor_log', name=item.get('name'), offset=0), False) )

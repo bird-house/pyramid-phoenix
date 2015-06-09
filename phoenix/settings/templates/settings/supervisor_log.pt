@@ -5,7 +5,7 @@
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4>${name}
-          <a class="btn btn-success pull-right" href="${request.route_path('supervisor_log', name=name, offset=offset)}"><i class="fa fa-lg fa-repeat"></i></a>
+          <a class="btn btn-success pull-right" href="${request.route_path('supervisor_log', name=name)}"><i class="fa fa-lg fa-repeat"></i></a>
         </h4>
       </div>
       <div class="panel-body">

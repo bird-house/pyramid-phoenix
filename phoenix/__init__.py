@@ -77,9 +77,11 @@ def main(global_config, **settings):
     config.add_route('settings_edit_user', '/settings/users/{email}/edit')
     config.add_route('remove_user', '/settings/users/{email}/remove')
     config.add_route('settings_jobs', '/settings/jobs')
+
+    # supervisor
     config.add_route('settings_supervisor', '/settings/supervisor')
     config.add_route('supervisor_process', '/supervisor/{action}/{name}')
-    config.add_route('supervisor_log', '/supervisor_log/{name}/{offset}')
+    config.add_route('supervisor_log', '/supervisor_log/{name}')
 
     # services
     config.add_route('services', '/services')

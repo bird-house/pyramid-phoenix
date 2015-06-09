@@ -20,10 +20,10 @@ class SupervisorLog(SettingsView):
         import xmlrpclib
         self.server = xmlrpclib.Server('http://localhost:9001/RPC2')
         name = self.request.matchdict.get('name')
-        offset = self.request.matchdict.get('offset')
+        #offset = self.request.matchdict.get('offset')
         
-        log = self.server.supervisor.tailProcessStdoutLog(name, offset, 4096)
+        log = self.server.supervisor.tailProcessStdoutLog(name, 0, 4096)
         log_list = log[0].split('\n')
-        offset = max(0, log[1] - 1024)
-        return dict(name=name, log=log_list, offset=offset)
+        #offset = max(0, log[1] - 1024)
+        return dict(name=name, log=log_list)
 
