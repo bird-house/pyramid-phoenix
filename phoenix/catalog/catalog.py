@@ -30,7 +30,7 @@ def publish(request, record):
 def harvest_service(request, url, service_type, service_name=None):
     if service_type == 'thredds_catalog':
         import threddsclient
-        tds = threddsclient.readUrl(url)
+        tds = threddsclient.read_url(url)
         title = tds.name
         if service_name and len(service_name.strip()) > 2:
             title = service_name

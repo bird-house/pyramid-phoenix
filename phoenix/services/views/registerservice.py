@@ -21,7 +21,7 @@ class Schema(colander.MappingSchema):
     url = colander.SchemaNode(
         colander.String(),
         title = 'Service URL',
-        description = 'Add URL of service (WPS, Thredds, ...). Example: http://localhost:8091/wps',
+        description = 'Add URL of service (WPS, Thredds, ...). Example: http://localhost:8091/wps, http://localhost/thredds/catalog.xml',
         default = 'http://localhost:8091/wps',
         validator = colander.url,
         widget = deform.widget.TextInputWidget())
@@ -32,7 +32,7 @@ class Schema(colander.MappingSchema):
     service_type = colander.SchemaNode(
         colander.String(),
         default = 'http://www.opengis.net/wps/1.0.0',
-        widget = deform.widget.SelectWidget(values=service_types))
+        widget = deform.widget.RadioChoiceWidget(values=service_types))
 
 class RegisterService(SettingsView):
     def __init__(self, request):
