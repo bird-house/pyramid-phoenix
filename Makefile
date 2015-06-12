@@ -96,12 +96,11 @@ backup:
 	@echo "Setup default .gitignore ..."
 	@wget -q --no-check-certificate -O .gitignore "https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/$(RELEASE)/dot_gitignore"
 
-# Do not update bootstrap.sh for now (to avoid overrides). TODO: Change this back.
-#.PHONY: bootstrap.sh
-#bootstrap.sh:
-#	@echo "Update bootstrap.sh ..."
-#	@wget -q --no-check-certificate -O bootstrap.sh "https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/$(RELEASE)/bootstrap.sh"
-#	@chmod 755 bootstrap.sh
+.PHONY: bootstrap.sh
+bootstrap.sh:
+	@echo "Update bootstrap.sh ..."
+	@wget -q --no-check-certificate -O bootstrap.sh "https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/$(RELEASE)/bootstrap.sh"
+	@chmod 755 bootstrap.sh
 
 requirements.sh:
 	@echo "Setup default requirements.sh ..."

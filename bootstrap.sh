@@ -16,13 +16,14 @@ EOT
 install_pkgs() {
     if [ -f /etc/debian_version ] ; then
         echo "Install Debian/Ubuntu packages for Birdhouse build ..."
-        sudo apt-get -y update
-        sudo apt-get -y install python wget curl build-essential
+        sudo apt-get update && sudo apt-get -y install python wget curl build-essential
         sudo apt-get -y install vim-common # anaconda needs xxd
+        # FK: The following dependencies currently only apply to the ldap branch of
+        #     pyramid-phoenix (which is 'krueckedev')
         sudo apt-get -y install libldap2-dev libsasl2-dev python-all-dev # needed by pyramid_ldap
         # FK: The cleaner way would be to invoke 'sudo apt-get -y build-dep python-ldap'
         #     but source code repo's are likely to be disabled so that this one would fail.
-        # TODO: Add this dependency for the other platforms as well.
+        # TODO: Add these dependencies for the other platforms as well.
     elif [ -f /etc/redhat-release ] ; then
         echo "Install CentOS packages for Birdhouse build ..."
         #sudo rpm -i http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
