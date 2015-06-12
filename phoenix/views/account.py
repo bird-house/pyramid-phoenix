@@ -198,5 +198,6 @@ class Account(MyView):
             return response
         else:
             # Authentification failed
+            self.session.flash('Sorry, login failed!', queue='danger')
             return render_to_response('phoenix:templates/account/forbidden.pt',
                     dict(), request = self.request)
