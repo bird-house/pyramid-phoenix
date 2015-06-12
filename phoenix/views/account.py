@@ -3,7 +3,7 @@ import datetime
 from pyramid.view import view_config, view_defaults, forbidden_view_config
 from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
-from pyramid.renderers import render
+from pyramid.renderers import render, render_to_response
 from pyramid.security import remember, forget, authenticated_userid
 from deform import Form, ValidationFailure
 from authomatic import Authomatic
@@ -176,7 +176,6 @@ class Account(MyView):
         connector = get_ldap_connector(self.request)
         auth = connector.authenticate(username, password)
 
-        response = Response()
         if auth is not None:
             # FK: At the moment, all user identification is build around the
             #     email address as one primary, unique key. While this is fine
@@ -192,12 +191,12 @@ class Account(MyView):
             self.login_success(email = email, name = name)
 
             # TODO: Rename template?
-            response.text = render('phoenix:templates/account/openid_success.pt',
+            response = render_to_response('phoenix:templates/account/openid_success.pt',
                     # FK: What is 'result' for? Just an old debug argument?
                     {'result': email}, request = self.request)
             response.headers.extend(remember(self.request, email))
+            return response
         else:
             # Authentification failed
-            response.text = render('phoenix:templates/account/forbidden.pt', request = self.request)
-
-        return response
+            return render_to_response('phoenix:templates/account/forbidden.pt',
+                    dict(), request = self.request)
