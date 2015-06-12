@@ -81,7 +81,7 @@
         <!-- Page Title -->
         <!-- 
         <div class="page-header" tal:condition="view.description | None">
-          <h1>${view.title} <small>${view.description}</small></h1>
+          <h1>\${view.title} <small>\${view.description}</small></h1>
         </div>
         -->
 
