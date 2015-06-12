@@ -28,12 +28,9 @@ def admin_users(request):
     return admins
 
 def groupfinder(email, request):
-    # FK: A call to login_success (phoenix/views/account.py) prevents this case to happen. So this 'fix' could be undone.
-    user = request.db.users.find_one({'email':email})
-    if user is None:
-        return [Guest]
-    
     admins = admin_users(request)
+    user = request.db.users.find_one({'email':email})
+
     if email in admins or user.get('group') == Admin:
         return [Admin]
     elif user.get('group') == User:
