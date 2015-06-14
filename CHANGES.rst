@@ -1,10 +1,15 @@
 Changes
 *******
 
-0.3.1 (2015-mm-dd)
+0.4.0 (2015-06-24)
 ==================
 
-* Add help button pointing to phoenix documentation on readthedocs.
+* register thredds catalogs.
+* bugfixes.
+* added thredds as source in wizard.
+* added supervisor view.
+* refactored.
+* Added help button pointing to phoenix documentation on readthedocs.
 
 0.3.0 (2015-02-24)
 ==================
