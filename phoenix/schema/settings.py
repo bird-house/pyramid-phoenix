@@ -37,3 +37,19 @@ class UserSchema(colander.MappingSchema):
         widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
         title='Group',
         description='Select Group')
+
+class LdapSchema(colander.MappingSchema):
+    server = colander.SchemaNode(
+            colander.String(),
+            title = 'Server',
+            validator = colander.url,
+            description = 'URI of LDAP server to connect to, e.g. "ldap://ldap.example.com"')
+    bind = colander.SchemaNode(
+            colander.String(),
+            title = 'Bind',
+            description = 'Bind to use for the LDAP connection, e.g. "CN=admin,DC=example,DC=com"')
+    passwd = colander.SchemaNode(
+            colander.String(),
+            title = 'Password',
+            description = 'Password for the LDAP bind',
+            widget = deform.widget.PasswordWidget())

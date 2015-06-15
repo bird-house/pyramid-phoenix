@@ -110,6 +110,11 @@ class Account(MyView):
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
         protocol = self.request.matchdict.get('protocol', 'esgf') # FK: What is the second arg for?
+        if protocol == 'ldap':
+            # Warn if LDAP is about to be used but not set up.
+            if self.db.ldap.find_one() is None:
+                self.session.flash('LDAP does not seem to be set up correctly!', queue = 'danger')
+
         form = self.generate_form(protocol)
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
