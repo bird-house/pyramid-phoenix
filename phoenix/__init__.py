@@ -71,7 +71,6 @@ def main(global_config, **settings):
     config.add_route('account_login', '/account/login/{protocol}')
     config.add_route('account_logout', '/account/logout')
     config.add_route('account_openid', '/account/openid')
-    config.add_route('account_ldap', '/account/ldap')
     config.add_route('account_register', '/account/register')
 
     # dashboard

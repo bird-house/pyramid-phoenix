@@ -60,7 +60,7 @@ class Account(MyView):
             return dict(active=protocol, form=e.render())
         else:
             if protocol == 'ldap':
-                return HTTPFound(location = self.request.route_path('account_ldap', _query = appstruct.items()))
+                return self.ldap() # No redirect, just call the ldap login handler
             else:
                 logger.debug('openid route = %s', self.request.route_path('account_openid', _query=appstruct.items()))
                 return HTTPFound(location=self.request.route_path('account_openid', _query=appstruct.items()))
@@ -170,7 +170,6 @@ class Account(MyView):
 
         return response
 
-    @view_config(route_name='account_ldap')
     def ldap(self):
         """ldap login"""
         username = self.request.params.get('username')
@@ -204,5 +203,4 @@ class Account(MyView):
         else:
             # Authentification failed
             self.session.flash('Sorry, login failed!', queue='danger')
-            return render_to_response('phoenix:templates/account/forbidden.pt',
-                    dict(), request = self.request)
+            return HTTPFound(location = self.request.current_route_url())
