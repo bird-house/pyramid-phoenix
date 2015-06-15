@@ -5,12 +5,11 @@ from phoenix.wizard.views import Wizard
 import colander
 from deform.widget import RadioChoiceWidget
 
-class ChooseSourceSchema(colander.MappingSchema):
+class Schema(colander.MappingSchema):
     choices = [
-        # TODO: enable csw again
-        #('wizard_csw', "CSW Catalog Search"),
-        ('wizard_esgf_search', "ESGF"),
-        ('wizard_swift_login', "Swift Cloud")
+        ('wizard_esgf_search', "Earth System Grid (ESGF)"),
+        ('wizard_swift_login', "Swift Cloud"),
+        ('wizard_threddsservice', "Thredds Catalog Service")
         ]
     source = colander.SchemaNode(
         colander.String(),
@@ -28,7 +27,7 @@ class ChooseSource(Wizard):
         return breadcrumbs
         
     def schema(self):
-        return ChooseSourceSchema()
+        return Schema()
 
     def next_success(self, appstruct):
         self.success(appstruct)

@@ -1,7 +1,7 @@
 from pyramid.view import view_config, view_defaults
 
 from phoenix.processes.views import Processes
-from phoenix.utils import get_wps_list
+from phoenix.catalog import get_wps_list
 
 import logging
 logger = logging.getLogger(__name__)

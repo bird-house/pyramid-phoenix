@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 import colander
 from deform.widget import SelectWidget
-class WizardSchema(colander.MappingSchema):
+class Schema(colander.MappingSchema):
     @colander.deferred
     def deferred_favorite_widget(node, kw):
         favorites = kw.get('favorites', ['No Favorite'])
@@ -25,7 +25,7 @@ class Start(Wizard):
         self.wizard_state.clear()
 
     def schema(self):
-        return WizardSchema().bind(favorites=self.favorite.names())
+        return Schema().bind(favorites=self.favorite.names())
 
     def success(self, appstruct):
         favorite_state = self.favorite.get(appstruct.get('favorite'))

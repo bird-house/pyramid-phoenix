@@ -3,8 +3,8 @@ import os
 import logging
 logger = logging.getLogger(__name__)
 
-SIGNIN_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign in"><span class="glyphicon glyphicon-log-in"></span></a>'
-SIGNOUT_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign out %s"><span class="glyphicon glyphicon-log-out"></span></a>'
+SIGNIN_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign in"><span class="fa fa-sign-in"></span></a>'
+SIGNOUT_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign out %s"><span class="fa fa-sign-out"></span></a>'
 
 def button(request):
     """If the user is logged in, returns the logout button, otherwise returns the login button"""
@@ -76,20 +76,4 @@ def appstruct_to_inputs(appstruct):
         for value in values:
             inputs.append( (str(key).strip(), str(value).strip()) )
     return inputs
-
-def wps_url(request, identifier):
-    csw = request.csw
-    csw.getrecordbyid(id=[identifier])
-    return csw.records[identifier].source
-
-def get_wps_list(request):
-    csw = request.csw
-    from owslib.fes import PropertyIsEqualTo
-    wps_query = PropertyIsEqualTo('dc:format', 'WPS')
-    csw.getrecords2(constraints=[wps_query], maxrecords=20)
-    return csw.records.values()
-
-
-    
-
 

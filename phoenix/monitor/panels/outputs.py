@@ -16,8 +16,8 @@ def collect_outputs(status_location):
         outputs[output.identifier] = output
     return outputs
 
-def process_outputs(request, jobid):
-    job = request.db.jobs.find_one({'identifier': jobid})
+def process_outputs(request, job_id):
+    job = request.db.jobs.find_one({'identifier': job_id})
     outputs = {}
     if job.get('is_succeded', False):
         if job.get('is_workflow', False):
@@ -37,7 +37,7 @@ class Outputs(object):
         from phoenix.schema import PublishSchema
         return Form(schema=PublishSchema(), buttons=('publish',), formid=formid)
 
-    def process_publish_form(self, form, jobid):
+    def process_publish_form(self, form, job_id):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
@@ -58,14 +58,14 @@ class Outputs(object):
             self.session.flash("Publication failed. %s" % e, queue='danger')
         else:
             self.session.flash("Publication was successful", queue='success')
-        return HTTPFound(location=self.request.route_path('monitor_details', jobid=jobid, tab='outputs'))
+        return HTTPFound(location=self.request.route_path('monitor_details', job_id=job_id, tab='outputs'))
 
     def generate_upload_form(self, formid="deform"):
         """Generate form for upload to swift cloud"""
         from phoenix.schema import UploadSchema
         return Form(schema = UploadSchema(), buttons=('upload',), formid=formid)
 
-    def process_upload_form(self, form, jobid):
+    def process_upload_form(self, form, job_id):
         from phoenix.models import swift
         
         try:
@@ -89,22 +89,22 @@ class Outputs(object):
             self.session.flash("Upload failed. %s" % e, queue='danger')
         else:
             self.session.flash("Swift upload added to Jobs.", queue='info')
-        return HTTPFound(location=self.request.route_path('monitor_details', jobid=jobid, tab='outputs'))
+        return HTTPFound(location=self.request.route_path('monitor_details', job_id=job_id, tab='outputs'))
     
     @panel_config(name='monitor_outputs', renderer='../templates/panels/monitor_outputs.pt')
     def panel(self):
-        jobid = self.session.get('jobid')
+        job_id = self.session.get('job_id')
         
         publish_form = self.generate_publish_form()
         upload_form = self.generate_upload_form()
 
         if 'publish' in self.request.POST:
-            return self.process_publish_form(publish_form, jobid)
+            return self.process_publish_form(publish_form, job_id)
         elif 'upload' in self.request.POST:
-            return self.process_upload_form(upload_form, jobid)
+            return self.process_upload_form(upload_form, job_id)
 
         items = []
-        for output in process_outputs(self.request, jobid).values():
+        for output in process_outputs(self.request, job_id).values():
             items.append(dict(title=output.title,
                               abstract=getattr(output, 'abstract', ""),
                               identifier=output.identifier,

@@ -17,7 +17,7 @@ class JobsGrid(MyGrid):
 
     def uuid_td(self, col_num, i, item):
         return self.render_button_td(
-            url=self.request.route_path('monitor_details', tab='log', jobid=item.get('identifier')),
+            url=self.request.route_path('monitor_details', tab='log', job_id=item.get('identifier')),
             title=item.get('identifier'))
     
     def process_td(self, col_num, i, item):

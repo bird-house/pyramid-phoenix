@@ -1,26 +1,38 @@
 <?python
    if job.get('status') == 'ProcessSucceeded':
-     icon_class="glyphicon glyphicon-ok-sign text-success"
+     icon_class="fa fa-check-circle text-success"
      status_class="text-success"
    elif job.get('status') == 'ProcessFailed':
-     icon_class="glyphicon glyphicon-remove-sign text-danger"
+     icon_class="fa fa-times-circle text-danger"
      status_class="text-danger"
    elif job.get('status') == 'ProcessPaused':
-     icon_class="glyphicon glyphicon-paused text-muted"
+     icon_class="fa fa-pause text-muted"
      status_class="text-muted"
    elif job.get('status') == 'ProcessStarted' or job.get('status') == 'ProcessAccepted':
-     icon_class="glyphicon glyphicon-cog text-muted"
+     icon_class="fa fa-cog fa-spin text-muted"
      status_class="text-muted"
    else:
-     icon_class="glyphicon glyphicon-question-sign text-danger"
+     icon_class="fa fa-question-circle text-danger"
      status_class="text-danger"
 ?>
 
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">
+      <a href="${request.route_path('monitor')}">
+        <i class="fa fa-fw fa-chevron-left" ></i>
+      </a>
       ${job.title}
       <i class="${icon_class}" data-toggle="tooltip" title="${job.status}"></i>
+      <div class="pull-right">
+        <a class="btn btn-danger btn-xs"
+           rel="tooltip"
+           data-toggle="tooltip"
+           title="Remove Job"
+           href="${request.route_path('remove_job', job_id=job.identifier)}">
+          Remove Job
+        </a>
+      </div>
     </h3>
   </div>
   <div class="panel-body">

@@ -16,8 +16,8 @@
   <dct:modified>${datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')}</dct:modified>
   <dct:abstract>${abstract}</dct:abstract>
   <dc:type>dataset</dc:type>
-  % for subject in subjects.split(','):
-  <dc:subject>${subject}</dc:subject>
+  % for keyword in keywords.split(','):
+  <dc:subject>${keyword}</dc:subject>
   % endfor
   <dc:format>${format}</dc:format>
   <dc:creator>${creator}</dc:creator>

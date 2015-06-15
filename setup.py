@@ -1,5 +1,4 @@
 import os
-
 from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -38,11 +37,12 @@ requires = [
     'python-swiftclient',
     'pyramid_celery',
     'celery',
+    #'threddsclient',
     'pyramid_ldap',
     ]
 
 setup(name='Phoenix',
-      version='0.3.0',
+      version="0.4.0",
       description='Phoenix',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[

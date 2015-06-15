@@ -11,8 +11,6 @@ import ldap
 import logging
 logger = logging.getLogger(__name__)
 
-from deform import Form
-
 def main(global_config, **settings):
     """
     This function returns a Pyramid WSGI application.
@@ -84,30 +82,34 @@ def main(global_config, **settings):
     config.add_route('processes_list', '/processes/list')
     config.add_route('processes_execute', '/processes/execute')
 
-    # monitor
+    # job monitor
     config.add_route('monitor', '/monitor')
-    config.add_route('monitor_details', '/monitor/{jobid}/{tab}')
+    config.add_route('remove_job', '/monitor/{job_id}/remove')
+    config.add_route('remove_all_jobs', '/monitor/remove_all')
     config.add_route('update_myjobs', '/monitor/update.json')
-    
-    # jobs
-    config.add_route('remove_myjobs', '/jobs/remove_myjobs')
-    config.add_route('remove_all_jobs', '/jobs/remove_all')
-    
+    config.add_route('monitor_details', '/monitor/{job_id}/{tab}')
+
     # user profile
     config.add_route('profile', '/profile/{tab}')
 
     # settings
     config.add_route('settings', '/settings/overview')
-    config.add_route('settings_catalog', '/settings/catalog')
-    config.add_route('settings_add_service', '/settings/catalog/add_service')
-    config.add_route('settings_add_dataset', '/settings/catalog/add_dataset')
-    config.add_route('remove_record', '/settings/catalog/{recordid}/remove')
-    config.add_route('remove_all_records', '/settings/catalog/remove_all')
     config.add_route('settings_users', '/settings/users')
     config.add_route('settings_edit_user', '/settings/users/{email}/edit')
     config.add_route('remove_user', '/settings/users/{email}/remove')
     config.add_route('settings_jobs', '/settings/jobs')
 
+    # supervisor
+    config.add_route('settings_supervisor', '/settings/supervisor')
+    config.add_route('supervisor_process', '/supervisor/{action}/{name}')
+    config.add_route('supervisor_log', '/supervisor_log/{name}')
+
+    # services
+    config.add_route('services', '/services')
+    config.add_route('register_service', '/services/register')
+    config.add_route('service_details', '/services/{service_id}')
+    config.add_route('remove_service', '/services/{service_id}/remove')
+    
     # wizard
     config.add_route('wizard', '/wizard')
     config.add_route('wizard_wps', '/wizard/wps')
@@ -123,6 +125,8 @@ def main(global_config, **settings):
     config.add_route('wizard_check_logon', '/wizard/check_logon.json')
     config.add_route('wizard_swift_login', '/wizard/swift_login')
     config.add_route('wizard_swiftbrowser', '/wizard/swiftbrowser')
+    config.add_route('wizard_threddsservice', '/wizard/threddsservice')
+    config.add_route('wizard_threddsbrowser', '/wizard/threddsbrowser')
     config.add_route('wizard_done', '/wizard/done')
 
     # wizard actions

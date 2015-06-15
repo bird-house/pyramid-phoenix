@@ -22,12 +22,11 @@ class Details(Monitor):
         import uuid
         outputid = self.request.params.get('outputid')
         # TODO: why use session for jobid?
-        jobid = self.session.get('jobid')
+        job_id = self.session.get('job_id')
         result = dict()
         if outputid is not None:
-            output = process_outputs(self.request, jobid).get(outputid)
+            output = process_outputs(self.request, job_id).get(outputid)
 
-            # TODO: how about schema.bind?
             result = dict(
                 identifier = uuid.uuid4().get_urn(),
                 title = output.title,
@@ -42,16 +41,16 @@ class Details(Monitor):
     def upload(self):
         outputid = self.request.params.get('outputid')
         # TODO: why use session for jobid?
-        jobid = self.session.get('jobid')
+        job_id = self.session.get('job_id')
         result = dict()
         if outputid is not None:
-            output = process_outputs(self.request, jobid).get(outputid)
+            output = process_outputs(self.request, job_id).get(outputid)
             user = self.get_user()
 
             result = dict(
                 username = user.get('swift_username'),
                 container = 'WPS Outputs',
-                prefix = jobid,
+                prefix = job_id,
                 source = output.reference,
                 format = output.mimeType)
         return result
@@ -60,9 +59,9 @@ class Details(Monitor):
     def view(self):
         tab = self.request.matchdict.get('tab')
         # TODO: this is a bit fishy ...
-        jobid = self.request.matchdict.get('jobid')
-        if jobid is not None:
-            self.session['jobid'] = jobid
+        job_id = self.request.matchdict.get('job_id')
+        if job_id is not None:
+            self.session['job_id'] = job_id
             self.session.changed()
 
         lm = self.request.layout_manager
@@ -71,7 +70,7 @@ class Details(Monitor):
         else:
             lm.layout.add_heading('monitor_outputs')
 
-        return dict(active=tab, jobid=jobid)
+        return dict(active=tab, job_id=job_id)
 
         
 

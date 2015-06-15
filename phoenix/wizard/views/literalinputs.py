@@ -1,7 +1,7 @@
 from pyramid.view import view_config
 
 from phoenix.wizard.views import Wizard
-from phoenix.utils import wps_url
+from phoenix.catalog import wps_url
 
 class LiteralInputs(Wizard):
     def __init__(self, request):

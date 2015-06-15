@@ -6,7 +6,7 @@ from deform import ValidationFailure
 
 from phoenix.events import JobStarted
 from phoenix.processes.views import Processes
-from phoenix.utils import wps_url
+from phoenix.catalog import wps_url
 
 from owslib.wps import WebProcessingService
 
@@ -50,7 +50,8 @@ class ExecuteProcess(Processes):
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
             self.session.flash("There are errors on this page.", queue='danger')
-            return dict(form = e.render())
+            return dict(description=getattr(self.process, 'abstract', ''),
+                        form = e.render())
         return HTTPFound(location=self.request.route_url('monitor'))
 
     def execute(self, appstruct):

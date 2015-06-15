@@ -14,16 +14,12 @@ class Overview(SettingsView):
         buttongroups = []
         buttons = []
 
-        buttons.append(dict(url=self.settings.get('supervisor.url'),
-                            icon="monitor_edit.png", title="Supervisor", id="external-url"))
-        buttons.append(dict(url="/settings/catalog", icon="bookshelf.png", title="Catalog"))
+        buttons.append(dict(url=self.request.route_path('settings_supervisor'), icon="monitor_edit.png", title="Supervisor"))
+        buttons.append(dict(url=self.request.route_path('services'), icon="bookshelf.png", title="Services"))
         buttons.append(dict(url="/settings/users", icon="user_catwomen.png", title="Users"))
         buttons.append(dict(url=self.settings.get('celery.url'),
                             icon="celery_128.png", title="Celery", id="external-url"))
         buttons.append(dict(url="/settings/jobs", icon="blackboard_sum.png", title="Monitor"))
-        buttons.append(dict(url="/ipython/notebook", icon="ipynb_icon_64x64.png", title="IPython"))
-        buttons.append(dict(url=self.settings.get('thredds.url'),
-                            icon="unidataLogo.png", title="Thredds", id="external-url"))
         buttongroups.append(dict(title='Settings', buttons=buttons))
 
         return dict(buttongroups=buttongroups)
