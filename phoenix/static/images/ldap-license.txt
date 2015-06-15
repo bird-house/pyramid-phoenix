@@ -1,0 +1,5 @@
+The file 'ldap.png' is licensed under the Creative Commons Attribution-Share Alike 3.0 Unported license by the Regional Computing Centre of Erlangen (RRZE).
+
+See http://commons.wikimedia.org/wiki/File:Active-directory.svg
+and http://commons.wikimedia.org/wiki/User:RRZEicons
+for more information.
