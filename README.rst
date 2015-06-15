@@ -2,6 +2,7 @@ Phoenix
 =======
 
 .. image:: https://travis-ci.org/bird-house/pyramid-phoenix.svg?branch=master
+   :target: https://travis-ci.org/bird-house/pyramid-phoenix
    :alt: Travis Build
 
 
