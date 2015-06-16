@@ -43,22 +43,8 @@ def main(global_config, **settings):
 
     # ldap
     config.include('pyramid_ldap')
-    # TODO: Remove hardcoded arguments from ldap_setup(), etc.
-    config.ldap_setup(
-            'ldap://ldap.example.com',
-            bind = 'cn=admin,dc=example,dc=com', # Is this bind necessary?
-            passwd = 'password')
-    config.ldap_set_login_query(
-            base_dn = 'dc=example,dc=com',
-            filter_tmpl = '(uid=%(login)s)', # OpenLDAP POSIX user account
-            scope = ldap.SCOPE_ONELEVEL)
-    # FK: Do not use LDAP groups for now. Maybe skip them completely and use
-    #     the build in user management.
-    #config.ldap_set_groups_query(
-    #        base_dn = 'dc=example,dc=com',
-    #        filter_tmpl = '(&(objectClass=posixGroup)(memberUid=%(userdn)s))', # This is not working for posix groups, see https://github.com/Pylons/pyramid_ldap/issues/18
-    #        scope = ldap.SCOPE_SUBTREE,
-    #        cache_period = 600)
+    # FK: Ldap setup functions will be called on demand.
+    # TODO: At the moment, there is no good way to configure ldap on a clean installation.
 
     # static views (stylesheets etc)
     config.add_static_view('static', 'static', cache_max_age=3600)

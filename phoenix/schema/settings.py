@@ -53,3 +53,24 @@ class LdapSchema(colander.MappingSchema):
             title = 'Password',
             description = 'Password for the LDAP bind',
             widget = deform.widget.PasswordWidget())
+    base_dn = colander.SchemaNode(
+            colander.String(),
+            title = 'Base DN',
+            description = 'DN where to begin the search for users, e.g. "CN=Users,DC=example,DC=com"')
+    filter_tmpl = colander.SchemaNode(
+            colander.String(),
+            title = 'LDAP filter',
+            description = """Used to filter the LDAP search.
+                    Should always contain the placeholder "%(login)s".<br/>
+                    Example for OpenLDAP: "(uid=%(login)s)"<br/>
+                    Example for MS AD:    "(sAMAccountName=%(login)s)"<br/>
+                    Have a look at http://pyramid-ldap.readthedocs.org/en/latest/
+                    for more information.""")
+    scope = colander.SchemaNode(
+            colander.String(),
+            title = 'Scope',
+            description = 'Scope to search in',
+            widget = deform.widget.SelectWidget(values = (
+                ('ONELEVEL', 'One level'),
+                ('SUBTREE',  'Subtree')))
+            )

@@ -21,7 +21,13 @@ class Ldap(SettingsView):
         # Get LDAP settings
         ldap_settings = self.db.ldap.find_one()
         if ldap_settings is None:
-            ldap_settings = {'server': '', 'bind': '', 'passwd': ''}
+            ldap_settings = {
+                    'server'     : 'ldap://ldap.example.com',
+                    'bind'       : 'CN=admin,DC=example,DC=com',
+                    'passwd'     : '',
+                    'base_dn'    : 'DC=example,DC=com',
+                    'filter_tmpl': '(uid=%(login)s)',
+                    'scope'      : 'ONELEVEL'}
 
         # Generate form
         from phoenix.schema.settings import LdapSchema
@@ -36,10 +42,31 @@ class Ldap(SettingsView):
                 return dict(title = 'LDAP Settings', form = e.render())
             else:
                 # Update LDAP settings
-                ldap_settings['server'] = appstruct['server']
-                ldap_settings['bind']   = appstruct['bind']
-                ldap_settings['passwd'] = appstruct['passwd']
+                ldap_settings['server']      = appstruct['server']
+                ldap_settings['bind']        = appstruct['bind']
+                ldap_settings['passwd']      = appstruct['passwd']
+                ldap_settings['base_dn']     = appstruct['base_dn']
+                ldap_settings['filter_tmpl'] = appstruct['filter_tmpl']
+                ldap_settings['scope']       = appstruct['scope']
                 self.db.ldap.save(ldap_settings)
+
+                import ldap
+                if ldap_settings['scope'] == 'ONELEVEL':
+                    ldap_scope = ldap.SCOPE_ONELEVEL
+                else:
+                    ldap_scope = ldap.SCOPE_SUBTREE
+
+                from pyramid.config import Configurator
+                config = Configurator(registry = self.request.registry)
+                config.ldap_setup(ldap_settings['server'],
+                        bind = ldap_settings['bind'],
+                        passwd = ldap_settings['passwd'])
+                config.ldap_set_login_query(
+                        base_dn = ldap_settings['base_dn'],
+                        filter_tmpl = ldap_settings['filter_tmpl'],
+                        scope = ldap_scope)
+                config.commit()
+
                 self.session.flash('Successfully updated LDAP settings!', queue = 'success')
 
         # Display form
