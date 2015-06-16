@@ -29,8 +29,10 @@ class Schema(colander.MappingSchema):
 
         choices = []
         for process in wps.processes:
-            description = "{0.title} - {0.abstract}".format(process)
-            choices.append( (process.identifier, description) )
+            desc = process.title
+            if hasattr(process, 'abstract'):
+                desc = "{0.title} - {0.abstract}".format(process)
+            choices.append( (process.identifier, desc) )
         return deform.widget.RadioChoiceWidget(values = choices)
 
     identifier = colander.SchemaNode(
