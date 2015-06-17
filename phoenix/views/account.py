@@ -111,9 +111,11 @@ class Account(MyView):
     def login(self):
         protocol = self.request.matchdict.get('protocol', 'esgf')
 
-        # Ensure that the ldap connector is created
         if protocol == 'ldap':
-            self.ldap_prepare()
+            # Ensure that the ldap connector is created
+            redirect = self.ldap_prepare()
+            if redirect is not None:
+                return redirect
 
         form = self.generate_form(protocol)
         if 'submit' in self.request.POST:
@@ -198,7 +200,12 @@ class Account(MyView):
                     filter_tmpl = ldap_settings['filter_tmpl'],
                     scope = ldap_scope)
             config.commit()
-            # FK: TODO: For some reason, the first login after server restart will fail.
+
+            # FK: For some reason, this happens to be called multiple times after the server has been started.
+            #     As a workaround, redirect to the login page as long as this function is being called.
+            # TODO: Fix this, so that this set up will always be called once.
+            #self.session.flash('Set up LDAP connector! Please log in!', queue = 'success')
+            return HTTPFound(location = self.request.current_route_url())
 
     def ldap_login(self):
         """LDAP login"""
