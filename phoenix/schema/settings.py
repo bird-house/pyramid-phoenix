@@ -81,4 +81,4 @@ class LdapSchema(colander.MappingSchema):
                     build around the user email address. As an early adoption,
                     we also use the email address here and pull it from the
                     users LDAP entry. Name the name of the E-Mail attribute
-                    here, e.g. 'mail'""")
+                    here, e.g. "mail" """)
