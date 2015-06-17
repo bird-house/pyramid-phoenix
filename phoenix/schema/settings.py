@@ -61,9 +61,9 @@ class LdapSchema(colander.MappingSchema):
             colander.String(),
             title = 'LDAP filter',
             description = """Used to filter the LDAP search.
-                    Should always contain the placeholder "%(login)s".<br/>
-                    Example for OpenLDAP: "(uid=%(login)s)"<br/>
-                    Example for MS AD:    "(sAMAccountName=%(login)s)"<br/>
+                    Should always contain the placeholder "%(login)s".
+                    Example for OpenLDAP: "(uid=%(login)s)"
+                    Example for MS AD:    "(sAMAccountName=%(login)s)"
                     Have a look at http://pyramid-ldap.readthedocs.org/en/latest/
                     for more information.""")
     scope = colander.SchemaNode(
