@@ -21,15 +21,7 @@ class Ldap(SettingsView):
         # Get LDAP settings
         ldap_settings = self.db.ldap.find_one()
         if ldap_settings is None:
-            # FK: TODO: Clear these defaults for release.
-            ldap_settings = {
-                    'server'     : 'ldap://ldap.example.com',
-                    'bind'       : 'CN=admin,DC=example,DC=com',
-                    'passwd'     : '',
-                    'base_dn'    : 'DC=example,DC=com',
-                    'filter_tmpl': '(uid=%(login)s)',
-                    'scope'      : 'ONELEVEL',
-                    'email'      : 'mail'}
+            ldap_settings = dict()
 
         # Generate form
         from phoenix.schema.settings import LdapSchema
