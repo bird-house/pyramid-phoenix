@@ -21,6 +21,7 @@ class Ldap(SettingsView):
         # Get LDAP settings
         ldap_settings = self.db.ldap.find_one()
         if ldap_settings is None:
+            # FK: TODO: Clear these defaults for release.
             ldap_settings = {
                     'server'     : 'ldap://ldap.example.com',
                     'bind'       : 'CN=admin,DC=example,DC=com',

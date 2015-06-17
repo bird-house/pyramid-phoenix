@@ -60,7 +60,7 @@ class Account(MyView):
             return dict(active=protocol, form=e.render())
         else:
             if protocol == 'ldap':
-                return self.ldap() # No redirect, just call the ldap login handler
+                return self.ldap_login()
             else:
                 logger.debug('openid route = %s', self.request.route_path('account_openid', _query=appstruct.items()))
                 return HTTPFound(location=self.request.route_path('account_openid', _query=appstruct.items()))
@@ -109,31 +109,11 @@ class Account(MyView):
 
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
-        protocol = self.request.matchdict.get('protocol', 'esgf') # FK: What is the second arg for?
-        if protocol == 'ldap':
-            ldap_settings = self.db.ldap.find_one()
-            if ldap_settings is None:
-                # Warn if LDAP is about to be used but not set up.
-                self.session.flash('LDAP does not seem to be set up correctly!', queue = 'danger')
-            elif getattr(self.request, 'ldap_connector', None) is None:
-                # Load LDAP settings
-                import ldap
-                if ldap_settings['scope'] == 'ONELEVEL':
-                    ldap_scope = ldap.SCOPE_ONELEVEL
-                else:
-                    ldap_scope = ldap.SCOPE_SUBTREE
+        protocol = self.request.matchdict.get('protocol', 'esgf')
 
-                # FK: Do we have to think about race conditions here?
-                from pyramid.config import Configurator
-                config = Configurator(registry = self.request.registry)
-                config.ldap_setup(ldap_settings['server'],
-                        bind = ldap_settings['bind'],
-                        passwd = ldap_settings['passwd'])
-                config.ldap_set_login_query(
-                        base_dn = ldap_settings['base_dn'],
-                        filter_tmpl = ldap_settings['filter_tmpl'],
-                        scope = ldap_scope)
-                config.commit()
+        # Ensure that the ldap connector is created
+        if protocol == 'ldap':
+            self.ldap_prepare()
 
         form = self.generate_form(protocol)
         if 'submit' in self.request.POST:
@@ -190,8 +170,38 @@ class Account(MyView):
 
         return response
 
-    def ldap(self):
-        """ldap login"""
+    def ldap_prepare(self):
+        """Lazy LDAP connector construction"""
+        ldap_settings = self.db.ldap.find_one()
+
+        if ldap_settings is None:
+            # Warn if LDAP is about to be used but not set up.
+            self.session.flash('LDAP does not seem to be set up correctly!', queue = 'danger')
+        elif getattr(self.request, 'ldap_connector', None) is None:
+            logger.debug('Set up LDAP connector...')
+
+            # Set LDAP settings
+            import ldap
+            if ldap_settings['scope'] == 'ONELEVEL':
+                ldap_scope = ldap.SCOPE_ONELEVEL
+            else:
+                ldap_scope = ldap.SCOPE_SUBTREE
+
+            # FK: Do we have to think about race conditions here?
+            from pyramid.config import Configurator
+            config = Configurator(registry = self.request.registry)
+            config.ldap_setup(ldap_settings['server'],
+                    bind = ldap_settings['bind'],
+                    passwd = ldap_settings['passwd'])
+            config.ldap_set_login_query(
+                    base_dn = ldap_settings['base_dn'],
+                    filter_tmpl = ldap_settings['filter_tmpl'],
+                    scope = ldap_scope)
+            config.commit()
+            # FK: TODO: For some reason, the first login after server restart will fail.
+
+    def ldap_login(self):
+        """LDAP login"""
         username = self.request.params.get('username')
         password = self.request.params.get('password')
 
