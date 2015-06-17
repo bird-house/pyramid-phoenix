@@ -208,11 +208,11 @@ class Account(MyView):
             #     identifier, but for now (and for testing) we just assume
             #     there is always an LDAP attribute 'mail' which gives as an
             #     unique identification.
-            email = auth[1].get('mail')[0]
-            name  = auth[1].get('cn')[0]
+            ldap_settings = self.db.ldap.find_one()
+            email = auth[1].get(ldap_settings['email'])[0]
 
             # Authentication successful
-            self.login_success(email = email, name = name)
+            self.login_success(email = email)
 
             # TODO: Rename template?
             response = render_to_response('phoenix:templates/account/openid_success.pt',

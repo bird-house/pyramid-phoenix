@@ -27,7 +27,8 @@ class Ldap(SettingsView):
                     'passwd'     : '',
                     'base_dn'    : 'DC=example,DC=com',
                     'filter_tmpl': '(uid=%(login)s)',
-                    'scope'      : 'ONELEVEL'}
+                    'scope'      : 'ONELEVEL',
+                    'email'      : 'mail'}
 
         # Generate form
         from phoenix.schema.settings import LdapSchema
@@ -48,6 +49,7 @@ class Ldap(SettingsView):
                 ldap_settings['base_dn']     = appstruct['base_dn']
                 ldap_settings['filter_tmpl'] = appstruct['filter_tmpl']
                 ldap_settings['scope']       = appstruct['scope']
+                ldap_settings['email']       = appstruct['email']
                 self.db.ldap.save(ldap_settings)
 
                 import ldap
