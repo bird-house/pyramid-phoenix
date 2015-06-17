@@ -44,7 +44,6 @@ def main(global_config, **settings):
     # ldap
     config.include('pyramid_ldap')
     # FK: Ldap setup functions will be called on demand.
-    # TODO: At the moment, there is no good way to configure ldap on a clean installation.
 
     # static views (stylesheets etc)
     config.add_static_view('static', 'static', cache_max_age=3600)
