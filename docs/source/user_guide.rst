@@ -176,7 +176,13 @@ Open the ``Settings/Users`` page. Here you activate/deactivate users and also re
 .. image:: _images/settings_users.png
 
 
+LDAP Support
+~~~~~~~~~~~~
 
+Basic support for authentication via LDAP has been added recently. To enable LDAP login for your environment, make sure you already have admin access to Phoenix, e.g. with your OpenID account. Navigate to ``Settings/LDAP`` and configure Phoenix to match your LDAP environment.
 
+.. image:: _images/settings_ldap.png
 
+The Phonix account system is build around the e-mail address a the key identifier for any user. For now, it is required for your LDAP system to provide an e-mail address as an attribute with every user entry. (This is most likely already the case.)
 
+There is no support for LDAP authorization yet. Use the ``Settings/Users`` backend to manage the access privileges for your users. There will be an entry for each user that has been logged in once before.

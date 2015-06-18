@@ -6,6 +6,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from phoenix.security import groupfinder, root_factory
 
 import pymongo
+import ldap
 
 import logging
 logger = logging.getLogger(__name__)
@@ -39,6 +40,10 @@ def main(global_config, **settings):
     # celery
     config.include('pyramid_celery')
     config.configure_celery(global_config['__file__'])
+
+    # ldap
+    config.include('pyramid_ldap')
+    # FK: Ldap setup functions will be called on demand.
 
     # static views (stylesheets etc)
     config.add_static_view('static', 'static', cache_max_age=3600)
@@ -77,6 +82,7 @@ def main(global_config, **settings):
     config.add_route('settings_edit_user', '/settings/users/{email}/edit')
     config.add_route('remove_user', '/settings/users/{email}/remove')
     config.add_route('settings_jobs', '/settings/jobs')
+    config.add_route('settings_ldap', '/settings/ldap')
 
     # supervisor
     config.add_route('settings_supervisor', '/settings/supervisor')

@@ -3,7 +3,7 @@ import datetime
 from pyramid.view import view_config, view_defaults, forbidden_view_config
 from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
-from pyramid.renderers import render
+from pyramid.renderers import render, render_to_response
 from pyramid.security import remember, forget, authenticated_userid
 from deform import Form, ValidationFailure
 from authomatic import Authomatic
@@ -40,12 +40,14 @@ class Account(MyView):
         return dict(provider='DKRZ')
 
     def generate_form(self, protocol):
-        from phoenix.schema import OpenIDSchema, ESGFOpenIDSchema
+        from phoenix.schema import OpenIDSchema, ESGFOpenIDSchema, LdapSchema
         schema = None
         if protocol == 'esgf':
             schema = ESGFOpenIDSchema()
-        else:
+        elif protocol == 'openid':
             schema = OpenIDSchema()
+        else:
+            schema = LdapSchema()
         form = Form(schema=schema, buttons=('submit',), formid='deform')
         return form
 
@@ -57,8 +59,11 @@ class Account(MyView):
             logger.exception('validation of form failed.')
             return dict(active=protocol, form=e.render())
         else:
-            logger.debug('openid route = %s', self.request.route_path('account_openid', _query=appstruct.items()))
-            return HTTPFound(location=self.request.route_path('account_openid', _query=appstruct.items()))
+            if protocol == 'ldap':
+                return self.ldap_login()
+            else:
+                logger.debug('openid route = %s', self.request.route_path('account_openid', _query=appstruct.items()))
+                return HTTPFound(location=self.request.route_path('account_openid', _query=appstruct.items()))
 
     def send_notification(self, email, subject, message):
         """Sends email notification to admins.
@@ -105,9 +110,17 @@ class Account(MyView):
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
         protocol = self.request.matchdict.get('protocol', 'esgf')
+
+        if protocol == 'ldap':
+            # Ensure that the ldap connector is created
+            redirect = self.ldap_prepare()
+            if redirect is not None:
+                return redirect
+
         form = self.generate_form(protocol)
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
+        # TODO: Add ldap to title?
         return dict(active=protocol, title="ESGF OpenID", form=form.render( self.appstruct() ))
 
     @view_config(route_name='account_logout', permission='edit')
@@ -159,5 +172,72 @@ class Account(MyView):
 
         return response
 
-    
+    def ldap_prepare(self):
+        """Lazy LDAP connector construction"""
+        ldap_settings = self.db.ldap.find_one()
 
+        if ldap_settings is None:
+            # Warn if LDAP is about to be used but not set up.
+            self.session.flash('LDAP does not seem to be set up correctly!', queue = 'danger')
+        elif getattr(self.request, 'ldap_connector', None) is None:
+            logger.debug('Set up LDAP connector...')
+
+            # Set LDAP settings
+            import ldap
+            if ldap_settings['scope'] == 'ONELEVEL':
+                ldap_scope = ldap.SCOPE_ONELEVEL
+            else:
+                ldap_scope = ldap.SCOPE_SUBTREE
+
+            # FK: Do we have to think about race conditions here?
+            from pyramid.config import Configurator
+            config = Configurator(registry = self.request.registry)
+            config.ldap_setup(ldap_settings['server'],
+                    bind = ldap_settings['bind'],
+                    passwd = ldap_settings['passwd'])
+            config.ldap_set_login_query(
+                    base_dn = ldap_settings['base_dn'],
+                    filter_tmpl = ldap_settings['filter_tmpl'],
+                    scope = ldap_scope)
+            config.commit()
+
+            # FK: For some reason, this happens to be called multiple times after the server has been started.
+            #     As a workaround, redirect to the login page as long as this function is being called.
+            # TODO: Fix this, so that this set up will always be called once.
+            #self.session.flash('Set up LDAP connector! Please log in!', queue = 'success')
+            return HTTPFound(location = self.request.current_route_url())
+
+    def ldap_login(self):
+        """LDAP login"""
+        username = self.request.params.get('username')
+        password = self.request.params.get('password')
+
+        # Performing ldap login
+        from pyramid_ldap import get_ldap_connector
+        connector = get_ldap_connector(self.request)
+        auth = connector.authenticate(username, password)
+
+        if auth is not None:
+            # FK: At the moment, all user identification is build around the
+            #     email address as one primary, unique key. While this is fine
+            #     with OpenID, it is no longer true when LDAP comes into play.
+            #     Maybe we should move away from the email address being a key
+            #     identifier, but for now (and for testing) we just assume
+            #     there is always an LDAP attribute 'mail' which gives as an
+            #     unique identification.
+            ldap_settings = self.db.ldap.find_one()
+            email = auth[1].get(ldap_settings['email'])[0]
+
+            # Authentication successful
+            self.login_success(email = email)
+
+            # TODO: Rename template?
+            response = render_to_response('phoenix:templates/account/openid_success.pt',
+                    # FK: What is 'result' for? Just an old debug argument?
+                    {'result': email}, request = self.request)
+            response.headers.extend(remember(self.request, email))
+            return response
+        else:
+            # Authentification failed
+            self.session.flash('Sorry, login failed!', queue='danger')
+            return HTTPFound(location = self.request.current_route_url())

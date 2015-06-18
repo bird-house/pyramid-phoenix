@@ -38,6 +38,7 @@ requires = [
     'pyramid_celery',
     'celery',
     #'threddsclient',
+    'pyramid_ldap',
     ]
 
 setup(name='Phoenix',

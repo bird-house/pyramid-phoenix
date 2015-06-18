@@ -30,7 +30,7 @@ def admin_users(request):
 def groupfinder(email, request):
     admins = admin_users(request)
     user = request.db.users.find_one({'email':email})
-    
+
     if email in admins or user.get('group') == Admin:
         return [Admin]
     elif user.get('group') == User:

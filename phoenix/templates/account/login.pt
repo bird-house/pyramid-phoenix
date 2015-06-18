@@ -12,6 +12,9 @@
       <li role="presentation" class="${'active' if active=='openid' else ''}">
         <a href="${request.route_path('account_login', protocol='openid')}">OpenID</a>
       </li>
+      <li role="presentation" class="${'active' if active=='ldap' else ''}">
+        <a href="${request.route_path('account_login', protocol='ldap')}">LDAP</a>
+      </li>
     </ul>
 
     <div class="panel panel-default">
