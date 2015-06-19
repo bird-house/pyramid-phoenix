@@ -62,8 +62,7 @@ class Account(MyView):
             if protocol == 'ldap':
                 return self.ldap_login()
             else:
-                logger.debug('openid route = %s', self.request.route_path('account_openid', _query=appstruct.items()))
-                return HTTPFound(location=self.request.route_path('account_openid', _query=appstruct.items()))
+                return HTTPFound(location=self.request.route_path('account_auth', provider_name=protocol, _query=appstruct.items()))
 
     def send_notification(self, email, subject, message):
         """Sends email notification to admins.
@@ -121,34 +120,36 @@ class Account(MyView):
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
         # TODO: Add ldap to title?
-        return dict(active=protocol, title="ESGF OpenID", form=form.render( self.appstruct() ))
+        return dict(active=protocol, title="Login", form=form.render( self.appstruct() ))
 
     @view_config(route_name='account_logout', permission='edit')
     def logout(self):
         headers = forget(self.request)
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
-    @view_config(route_name='account_openid')
-    def openid(self):
-        """authomatic openid login"""
-        username = self.request.params.get('username')
-        # esgf openid login with username and provider
-        if username is not None:
-            provider = self.request.params.get('provider')
-            logger.debug('username=%s, provider=%s', username, provider)
-            openid = ESGF_Provider.get(provider) % username
-            self.request.GET['id'] = openid
-            del self.request.GET['username']
-            del self.request.GET['provider']
+    @view_config(route_name='account_auth')
+    def authomatic_login(self):
+        provider_name = self.request.matchdict.get('provider_name')
+
+        if provider_name == 'esgf':
+            username = self.request.params.get('username')
+            provider_name = 'openid'
+            # esgf openid login with username and provider
+            if username is not None:
+                provider = self.request.params.get('provider')
+                logger.debug('username=%s, provider=%s', username, provider)
+                openid = ESGF_Provider.get(provider) % username
+                self.request.GET['id'] = openid
+                del self.request.GET['username']
+                del self.request.GET['provider']
             
         # Start the login procedure.
         response = Response()
         #response = request.response
-        result = self.authomatic.login(WebObAdapter(self.request, response), "openid")
+        result = self.authomatic.login(WebObAdapter(self.request, response), provider_name)
 
         #logger.debug('authomatic login result: %s', result)
 
-        # TODO: refactor handling of result and response
         if result:
             if result.error:
                 # Login procedure finished with an error.
@@ -158,11 +159,6 @@ class Account(MyView):
             elif result.user:
                 # Hooray, we have the user!
                 logger.info("openid login successful for user %s", result.user.email)
-                #logger.debug("user=%s, id=%s, email=%s, credentials=%s",
-                #          result.user.name, result.user.id, result.user.email, result.user.credentials)
-                #logger.debug("provider=%s", result.provider.name )
-                #logger.debug("response headers=%s", response.headers.keys())
-                #logger.debug("response cookie=%s", response.headers['Set-Cookie'])
                 self.login_success(email=result.user.email, openid=result.user.id, name=result.user.name)
                 response.text = render('phoenix:templates/account/openid_success.pt', {'result': result}, request=self.request)
                 # Add the headers required to remember the user to the response
