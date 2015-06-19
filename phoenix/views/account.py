@@ -91,7 +91,7 @@ class Account(MyView):
         logger.debug('login success: email=%s', email)
         user = self.get_user(email)
         if user is None:
-            logger.warn("openid login: new user %s", email)
+            logger.warn("new user: %s", email)
             user = add_user(self.request, email=email, group=Guest)
             subject = 'New user %s logged in on %s' % (email, self.request.server_name)
             message = 'Please check the activation of the user %s on the Phoenix host %s' % (email, self.request.server_name)
