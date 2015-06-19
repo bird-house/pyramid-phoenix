@@ -113,9 +113,7 @@ class Account(MyView):
 
         if protocol == 'ldap':
             # Ensure that the ldap connector is created
-            redirect = self.ldap_prepare()
-            if redirect is not None:
-                return redirect
+            self.ldap_prepare()
 
         form = self.generate_form(protocol)
         if 'submit' in self.request.POST:
@@ -201,12 +199,6 @@ class Account(MyView):
                     scope = ldap_scope)
             config.commit()
 
-            # FK: For some reason, this happens to be called multiple times after the server has been started.
-            #     As a workaround, redirect to the login page as long as this function is being called.
-            # TODO: Fix this, so that this set up will always be called once.
-            #self.session.flash('Set up LDAP connector! Please log in!', queue = 'success')
-            return HTTPFound(location = self.request.current_route_url())
-
     def ldap_login(self):
         """LDAP login"""
         username = self.request.params.get('username')
@@ -218,13 +210,6 @@ class Account(MyView):
         auth = connector.authenticate(username, password)
 
         if auth is not None:
-            # FK: At the moment, all user identification is build around the
-            #     email address as one primary, unique key. While this is fine
-            #     with OpenID, it is no longer true when LDAP comes into play.
-            #     Maybe we should move away from the email address being a key
-            #     identifier, but for now (and for testing) we just assume
-            #     there is always an LDAP attribute 'mail' which gives as an
-            #     unique identification.
             ldap_settings = self.db.ldap.find_one()
             email = auth[1].get(ldap_settings['email'])[0]
 

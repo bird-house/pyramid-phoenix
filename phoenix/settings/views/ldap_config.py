@@ -61,7 +61,6 @@ class Ldap(SettingsView):
                         filter_tmpl = ldap_settings['filter_tmpl'],
                         scope = ldap_scope)
                 config.commit()
-                # FK: It happens that the first login after updating will fail. I can't tell why.
 
                 self.session.flash('Successfully updated LDAP settings!', queue = 'success')
 
