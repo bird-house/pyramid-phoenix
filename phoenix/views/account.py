@@ -33,9 +33,11 @@ class Account(MyView):
         return dict(provider='DKRZ')
 
     def generate_form(self, protocol):
-        from phoenix.schema import OAuthSchema, OpenIDSchema, ESGFOpenIDSchema, LdapSchema
+        from phoenix.schema import PhoenixSchema, OAuthSchema, OpenIDSchema, ESGFOpenIDSchema, LdapSchema
         schema = None
-        if protocol == 'esgf':
+        if protocol == 'phoenix':
+            schema = PhoenixSchema()
+        elif protocol == 'esgf':
             schema = ESGFOpenIDSchema()
         elif protocol == 'openid':
             schema = OpenIDSchema()
@@ -54,7 +56,9 @@ class Account(MyView):
             logger.exception('validation of form failed.')
             return dict(active=protocol, form=e.render())
         else:
-            if protocol == 'ldap':
+            if protocol == 'phoenix':
+                raise NotImplemented
+            elif protocol == 'ldap':
                 return self.ldap_login()
             elif protocol == 'oauth2':
                 return HTTPFound(location=self.request.route_path('account_auth', provider_name=appstruct.get('provider')))

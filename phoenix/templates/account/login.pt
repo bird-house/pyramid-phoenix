@@ -5,6 +5,9 @@
  
   <div metal:fill-slot="content">
     <ul class="nav nav-pills">
+      <li role="presentation" class="${'active' if active=='phoenix' else ''}">
+        <a href="${request.route_path('account_login', protocol='phoenix')}">Phoenix</a>
+      </li>
       <li role="presentation" class="${'active' if active=='esgf' else ''}">
         <a href="${request.route_path('account_login', protocol='esgf')}">ESGF</a>
       </li>

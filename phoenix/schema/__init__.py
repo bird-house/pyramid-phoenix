@@ -10,6 +10,18 @@ from phoenix.widget import (
 import logging
 logger = logging.getLogger(__name__)
 
+
+class PhoenixSchema(colander.MappingSchema):
+    choices = [('admin', 'Admin'), ('user', 'User'), ('guest', 'Guest')]
+    
+    user = colander.SchemaNode(
+        colander.String(),
+        validator=colander.OneOf([x[0] for x in choices]),
+        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
+        title='Phoenix User',
+        description='Select Phoenix User.')
+
+
 class OAuthSchema(colander.MappingSchema):
     choices = [('github', 'GitHub')]
     
