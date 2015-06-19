@@ -40,12 +40,14 @@ class Account(MyView):
         return dict(provider='DKRZ')
 
     def generate_form(self, protocol):
-        from phoenix.schema import OpenIDSchema, ESGFOpenIDSchema, LdapSchema
+        from phoenix.schema import OAuthSchema, OpenIDSchema, ESGFOpenIDSchema, LdapSchema
         schema = None
         if protocol == 'esgf':
             schema = ESGFOpenIDSchema()
         elif protocol == 'openid':
             schema = OpenIDSchema()
+        elif protocol == 'oauth2':
+            schema = OAuthSchema()
         else:
             schema = LdapSchema()
         form = Form(schema=schema, buttons=('submit',), formid='deform')
@@ -61,6 +63,8 @@ class Account(MyView):
         else:
             if protocol == 'ldap':
                 return self.ldap_login()
+            elif protocol == 'oauth2':
+                return HTTPFound(location=self.request.route_path('account_auth', provider_name=appstruct.get('provider')))
             else:
                 return HTTPFound(location=self.request.route_path('account_auth', provider_name=protocol, _query=appstruct.items()))
 

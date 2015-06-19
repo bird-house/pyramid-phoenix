@@ -1,7 +1,6 @@
 <metal:block use-macro="main_template">
   <div metal:fill-slot="javascript">
     <script src="${request.static_url('phoenix:static/scripts/authomatic.js')}"></script>
-    <!-- script src="${request.static_url('phoenix:static/scripts/account.js')}"></script -->
   </div>
  
   <div metal:fill-slot="content">
@@ -11,6 +10,9 @@
       </li>
       <li role="presentation" class="${'active' if active=='openid' else ''}">
         <a href="${request.route_path('account_login', protocol='openid')}">OpenID</a>
+      </li>
+      <li role="presentation" class="${'active' if active=='oauth2' else ''}">
+        <a href="${request.route_path('account_login', protocol='oauth2')}">OAuth 2.0</a>
       </li>
       <li role="presentation" class="${'active' if active=='ldap' else ''}">
         <a href="${request.route_path('account_login', protocol='ldap')}">LDAP</a>

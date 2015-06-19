@@ -1,6 +1,5 @@
-from authomatic.providers import openid
+from authomatic.providers import oauth2, openid
 
-DEFAULT_MESSAGE = 'Have you got a bandage?'
 DEFAULTS = {
     'popup': True,
 }
@@ -8,6 +7,13 @@ DEFAULTS = {
 AUTHENTICATION = {
     'openid': {
         'class_': openid.OpenID,
+    },
+    
+    'github': {
+        'class_': oauth2.GitHub,
+        'consumer_key': '#####',
+        'consumer_secret': '#####',
+        'access_headers': {'User-Agent': 'Awesome-Octocat-App'},
     },
 }
 
