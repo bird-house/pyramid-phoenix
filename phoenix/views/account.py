@@ -87,7 +87,10 @@ class Account(MyView):
                           sender=sender,
                           recipients=recipients,
                           body=message)
-        mailer.send_immediately(message, fail_silently=True)
+        try:
+            mailer.send_immediately(message, fail_silently=True)
+        except:
+            logger.exception("failed to send notification")
 
     def login_success(self, email, openid=None, name="Unknown"):
         from phoenix.models import add_user

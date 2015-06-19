@@ -20,6 +20,12 @@ def update_config(request):
             'consumer_key': request.registry.settings.get('github.consumer.key'),
             'consumer_secret': request.registry.settings.get('github.consumer.secret'),
             'access_headers': {'User-Agent': 'Phoenix'},
+            'id': authomatic.provider_id(),
+            'scope': oauth2.GitHub.user_info_scope,
+            '_apis': {
+                'Get your events': ('GET', 'https://api.github.com/users/{user.username}/events'),
+                'Get your watched repos': ('GET', 'https://api.github.com/user/subscriptions'),
+            },
         },
     }
 
