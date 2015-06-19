@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-Keys with leading underscore are our custom provider-specific data.
-"""
 
 from authomatic.providers import openid
-import authomatic
-#import copy
 
 DEFAULT_MESSAGE = 'Have you got a bandage?'
 
