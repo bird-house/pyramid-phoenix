@@ -6,12 +6,9 @@ from pyramid.response import Response
 from pyramid.renderers import render, render_to_response
 from pyramid.security import remember, forget, authenticated_userid
 from deform import Form, ValidationFailure
-from authomatic import Authomatic
-from authomatic.adapters import WebObAdapter
 
 from phoenix.views import MyView
-from phoenix.security import Admin, Guest, admin_users, ESGF_Provider
-from phoenix import config
+from phoenix.security import Admin, Guest, admin_users, ESGF_Provider, authomatic
 
 import logging
 logger = logging.getLogger(__name__)
@@ -31,10 +28,6 @@ def register(request):
 class Account(MyView):
     def __init__(self, request):
         super(Account, self).__init__(request, name="account", title='Account')
-        self.authomatic = Authomatic(config=config.update_config(self.request),
-                                secret=self.request.registry.settings.get('authomatic.secret'),
-                                report_errors=True,
-                                logging_level=logging.DEBUG)
 
     def appstruct(self):
         return dict(provider='DKRZ')
@@ -134,6 +127,9 @@ class Account(MyView):
 
     @view_config(route_name='account_auth')
     def authomatic_login(self):
+        from authomatic.adapters import WebObAdapter
+        _authomatic = authomatic(self.request)
+        
         provider_name = self.request.matchdict.get('provider_name')
 
         if provider_name == 'esgf':
@@ -151,9 +147,7 @@ class Account(MyView):
         # Start the login procedure.
         response = Response()
         #response = request.response
-        result = self.authomatic.login(WebObAdapter(self.request, response), provider_name)
-
-        #logger.debug('authomatic login result: %s', result)
+        result = _authomatic.login(WebObAdapter(self.request, response), provider_name)
 
         if result:
             if result.error:
