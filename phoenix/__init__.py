@@ -41,6 +41,9 @@ def main(global_config, **settings):
     config.include('pyramid_celery')
     config.configure_celery(global_config['__file__'])
 
+    # mozilla browserid
+    #config.include("pyramid_persona")
+
     # ldap
     config.include('pyramid_ldap')
     # FK: Ldap setup functions will be called on demand.
