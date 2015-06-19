@@ -3,6 +3,7 @@ extends = buildout.cfg
 
 [settings]
 hostname = localhost
+secret = Jkl8763klkjsfnbbhqy34P
 http-port = 8081
 log-level = INFO
 esgf-search-url = http://136.172.30.96/esg-search

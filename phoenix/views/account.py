@@ -11,15 +11,11 @@ from authomatic.adapters import WebObAdapter
 
 from phoenix.views import MyView
 from phoenix.security import Admin, Guest, admin_users, ESGF_Provider
+from phoenix import config
 
 import logging
 logger = logging.getLogger(__name__)
 
-from phoenix import config_public as config
-authomatic = Authomatic(config=config.config,
-                        secret=config.SECRET,
-                        report_errors=True,
-                        logging_level=logging.DEBUG)
 
 @forbidden_view_config(renderer='phoenix:templates/account/forbidden.pt', layout="frontpage")
 def forbidden(request):
@@ -35,6 +31,10 @@ def register(request):
 class Account(MyView):
     def __init__(self, request):
         super(Account, self).__init__(request, name="account", title='Account')
+        self.authomatic = Authomatic(config=config.config,
+                                secret=self.request.registry.settings.get('authomatic.secret'),
+                                report_errors=True,
+                                logging_level=logging.DEBUG)
 
     def appstruct(self):
         return dict(provider='DKRZ')
@@ -144,7 +144,7 @@ class Account(MyView):
         # Start the login procedure.
         response = Response()
         #response = request.response
-        result = authomatic.login(WebObAdapter(self.request, response), "openid")
+        result = self.authomatic.login(WebObAdapter(self.request, response), "openid")
 
         #logger.debug('authomatic login result: %s', result)
 
