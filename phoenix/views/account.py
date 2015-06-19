@@ -31,7 +31,7 @@ def register(request):
 class Account(MyView):
     def __init__(self, request):
         super(Account, self).__init__(request, name="account", title='Account')
-        self.authomatic = Authomatic(config=config.config,
+        self.authomatic = Authomatic(config=config.update_config(self.request),
                                 secret=self.request.registry.settings.get('authomatic.secret'),
                                 report_errors=True,
                                 logging_level=logging.DEBUG)
@@ -158,18 +158,28 @@ class Account(MyView):
             if result.error:
                 # Login procedure finished with an error.
                 self.session.flash('Sorry, login failed: %s' % (result.error.message), queue='danger')
-                logger.warn('openid login failed: %s', result.error.message)
+                logger.warn('login failed: %s', result.error.message)
                 response.text = render('phoenix:templates/account/forbidden.pt', dict(), self.request)
             elif result.user:
+                if not (result.user.name and result.user.id):
+                    result.user.update()
                 # Hooray, we have the user!
-                logger.info("openid login successful for user %s", result.user.email)
-                self.login_success(email=result.user.email, openid=result.user.id, name=result.user.name)
-                response.text = render('phoenix:templates/account/openid_success.pt', {'result': result}, request=self.request)
-                # Add the headers required to remember the user to the response
-                response.headers.extend(remember(self.request, result.user.email))
+                logger.info("login successful for user %s", result.user.name)
+                if result.provider.name == 'openid':
+                    self.login_success(email=result.user.email, openid=result.user.id, name=result.user.name)
+                    response.text = render('phoenix:templates/account/openid_success.pt', {'result': result}, request=self.request)
+                    # Add the headers required to remember the user to the response
+                    response.headers.extend(remember(self.request, result.user.name))
+                elif result.provider.name == 'github':
+                    self.login_success(email=result.user.name, openid='', name=result.user.name)
+                    response.text = render('phoenix:templates/account/openid_success.pt', {'result': result}, request=self.request)
+                    # Add the headers required to remember the user to the response
+                    response.headers.extend(remember(self.request, result.user.name))
 
-        #logger.debug('response: %s', response)
-
+                if result.user.credentials:
+                    if result.provider.name == 'github':
+                        logger.debug('logged in with github')
+                        
         return response
 
     def ldap_prepare(self):
