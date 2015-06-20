@@ -139,11 +139,10 @@ conda_config: anaconda
 	@"$(ANACONDA_HOME)/bin/conda" config --set ssl_verify false
 	@"$(ANACONDA_HOME)/bin/conda" config --add channels defaults
 	@"$(ANACONDA_HOME)/bin/conda" config --add channels birdhouse
-	@"$(ANACONDA_HOME)/bin/conda" config --add channels pingucarsti
 
 .PHONY: conda_env
 conda_env: anaconda conda_config
-	@test -d $(PREFIX) || "$(ANACONDA_HOME)/bin/conda" create -m -p $(PREFIX) -c birdhouse --yes python=2.7.8 setuptools=14.3 curl pyopenssl genshi mako
+	@test -d $(PREFIX) || "$(ANACONDA_HOME)/bin/conda" create -m -p $(PREFIX) -c birdhouse --yes python setuptools curl pyopenssl genshi mako
 
 .PHONY: conda_pinned
 conda_pinned: conda_env
