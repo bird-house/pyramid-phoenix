@@ -30,7 +30,7 @@ class Account(MyView):
         super(Account, self).__init__(request, name="account", title='Account')
 
     def appstruct(self):
-        return dict(provider='DKRZ')
+        return dict(provider='github')
 
     def generate_form(self, protocol):
         from phoenix.schema import PhoenixSchema, OAuthSchema, OpenIDSchema, ESGFOpenIDSchema, LdapSchema

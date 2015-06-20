@@ -18,7 +18,7 @@
           When you are not registered you will be asked for group registration once.
         </li>
         <li>
-          <a class="btn btn-mini btn-success" href="${request.route_path('account_login', protocol='esgf')}">Sign in</a> with your OpenID at Phoenix.
+          <a class="btn btn-mini btn-success" href="${request.route_path('account_login', protocol='oauth2')}">Sign in</a> with your OpenID at Phoenix.
         </li>
         <li>
           You will only have <b>guest</b> status and an admin needs to activate your account.

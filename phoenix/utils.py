@@ -11,7 +11,7 @@ def button(request):
     import markupsafe
     from pyramid.security import authenticated_userid
     if not authenticated_userid(request):
-        return markupsafe.Markup(SIGNIN_HTML) % (request.route_path('account_login', protocol='esgf'))
+        return markupsafe.Markup(SIGNIN_HTML) % (request.route_path('account_login', protocol='oauth2'))
     else:
         return markupsafe.Markup(SIGNOUT_HTML) % (request.route_path('account_logout'), authenticated_userid(request))
 

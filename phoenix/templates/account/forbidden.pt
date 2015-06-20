@@ -6,7 +6,7 @@
       <h1>403 Forbidden</h1>
       <p class="lead">Access was denied to this resource.</p>
       <p class="lead"> Please 
-        <a class="btn btn-success" href="${request.route_path('account_login', protocol='esgf')}">Sign in</a>
+        <a class="btn btn-success" href="${request.route_path('account_login', protocol='oauth2')}">Sign in</a>
         or
         <a class="btn btn-success" href="${request.route_path('account_register')}">Register</a>.
       </p>
