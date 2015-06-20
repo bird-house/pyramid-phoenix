@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class PhoenixSchema(colander.MappingSchema):
-    choices = [('admin', 'Admin'), ('user', 'User'), ('guest', 'Guest')]
+    choices = [('phoenix@localhost', 'Phoenix')]
     
     user = colander.SchemaNode(
         colander.String(),

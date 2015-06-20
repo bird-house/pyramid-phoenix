@@ -57,7 +57,9 @@ class Account(MyView):
             return dict(active=protocol, form=e.render())
         else:
             if protocol == 'phoenix':
-                raise NotImplemented
+                headers = remember(self.request, appstruct.get('user'))
+                self.login_success(appstruct.get('user'), name="Phoenix")
+                return HTTPFound(location = self.request.route_path('home'), headers = headers)
             elif protocol == 'ldap':
                 return self.ldap_login()
             elif protocol == 'oauth2':
