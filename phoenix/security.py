@@ -27,16 +27,20 @@ def admin_users(request):
             admins.add(email)
     return admins
 
-def groupfinder(email, request):
+def groupfinder(userid, request):
     admins = admin_users(request)
-    user = request.db.users.find_one({'email':email})
-
-    if email in admins or user.get('group') == Admin:
+    if userid in admin_users(request):
         return [Admin]
-    elif user.get('group') == User:
-        return [User]
-    else:
-        return [Guest]
+    
+    user = request.db.users.find_one({'email':userid})
+    if user:
+        if user.get('group') == Admin:
+            return [Admin]
+        elif user.get('group') == User:
+            return [User]
+        else:
+            return [Guest]
+    return [Everyone]
 
 from pyramid.security import (
         Allow, 

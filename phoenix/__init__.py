@@ -17,8 +17,9 @@ def main(global_config, **settings):
     """
 
     # security
+    # TODO: move to security
     authn_policy = AuthTktAuthenticationPolicy(
-        'tellnoone', callback=groupfinder, hashalg='sha512')
+        settings.get('authomatic.secret'), callback=groupfinder, hashalg='sha512')
     authz_policy = ACLAuthorizationPolicy()
     config = Configurator(root_factory=root_factory, settings=settings)
     config.set_authentication_policy(authn_policy)

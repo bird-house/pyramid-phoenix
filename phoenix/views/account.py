@@ -172,10 +172,12 @@ class Account(MyView):
                     # Add the headers required to remember the user to the response
                     response.headers.extend(remember(self.request, result.user.name))
                 elif result.provider.name == 'github':
-                    self.login_success(email=result.user.name, openid='', name=result.user.name)
+                    # TODO: dont use email as user id
+                    email = "{0.username}@github.com".format(result.user)
+                    self.login_success(email=email, openid='', name=result.user.name)
                     response.text = render('phoenix:templates/account/openid_success.pt', {'result': result}, request=self.request)
                     # Add the headers required to remember the user to the response
-                    response.headers.extend(remember(self.request, result.user.name))
+                    response.headers.extend(remember(self.request, email))
 
                 if result.user.credentials:
                     if result.provider.name == 'github':
