@@ -27,7 +27,7 @@ def add_user(
     email='',
     openid='',
     name='unknown',
-    organisation='unknown',
+    organisation='',
     notes='',
     group=Guest):
     user=dict(

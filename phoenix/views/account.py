@@ -103,7 +103,6 @@ class Account(MyView):
             subject = 'New user %s logged in on %s' % (name, self.request.server_name)
             message = 'Please check the activation of the user %s on the Phoenix host %s' % (name, self.request.server_name)
             self.send_notification(email, subject, message)
-        # TODO: dont use email
         if userid in admin_users(self.request):
             user['group'] = Admin
         user['last_login'] = datetime.datetime.now()
@@ -184,10 +183,12 @@ class Account(MyView):
                 # Hooray, we have the user!
                 logger.info("login successful for user %s", result.user.name)
                 if result.provider.name == 'openid':
+                    # TODO: change userid ... more infos ...
                     return self.login_success(userid=result.user.id, email=result.user.email, openid=result.user.id, name=result.user.name)
                 elif result.provider.name == 'github':
                     logger.debug('logged in with github')
-                    userid='github_{0}'.format(result.user.id)
+                    # TODO: fix email ... get more infos ... which userid?
+                    userid = "{0.username}@github.com".format(result.user)
                     email = "{0.username}@github.com".format(result.user)
                     # get extra info
                     if result.user.credentials:
@@ -237,7 +238,7 @@ class Account(MyView):
         if auth is not None:
             ldap_settings = self.db.ldap.find_one()
             email = auth[1].get(ldap_settings['email'])[0]
-            # TODO: get more ldap infos
+            # TODO: fix userid ... get more ldap infos
             userid = 'ldap_{0}'.format(email)
             
             # Authentication successful
