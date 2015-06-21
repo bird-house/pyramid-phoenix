@@ -30,7 +30,7 @@ class AccountPanel(ProfilePanel):
             user = models.get_user(self.request)
             for key in ['name', 'organisation', 'notes']:
                 user[key] = appstruct.get(key)
-            self.request.db.users.update({'email':authenticated_userid(self.request)}, user)
+            self.request.db.users.update({'userid':authenticated_userid(self.request)}, user)
         except ValidationFailure, e:
             logger.exception('validation of form failed.')
             return dict(form=e.render())

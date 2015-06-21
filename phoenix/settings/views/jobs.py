@@ -22,7 +22,7 @@ class Jobs(SettingsView):
         
         from phoenix.grid.jobs import JobsGrid
         grid = JobsGrid(self.request, jobs,
-                ['status', 'job', 'email', 'duration', 'finished', 'progress'],
+                ['status', 'job', 'userid', 'duration', 'finished', 'progress'],
             )
         return dict(grid=grid)
 

@@ -14,7 +14,7 @@ def swift_upload(request, storage_url, auth_token, container, prefix, source):
 
     from phoenix.tasks import execute
     execute.delay(
-        email=authenticated_userid(request),
+        userid=authenticated_userid(request),
         url=request.wps.url,
         identifier='swift_upload',
         inputs=inputs,

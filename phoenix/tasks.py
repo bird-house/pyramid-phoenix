@@ -37,7 +37,7 @@ def add_job(db, user_id, task_id, service, title, abstract, status_location, is_
     job = dict(
         identifier = str(uuid.uuid1()),
         task_id = task_id,
-        email = user_id,
+        userid = user_id,
         is_workflow = is_workflow,
         service = service,
         title = title,
@@ -49,7 +49,7 @@ def add_job(db, user_id, task_id, service, title, abstract, status_location, is_
     return job
 
 @app.task(bind=True)
-def esgf_logon(self, email, url, openid, password):
+def esgf_logon(self, userid, url, openid, password):
     registry = app.conf['PYRAMID_REGISTRY']
     inputs = []
     inputs.append( ('openid', openid.encode('ascii', 'ignore')) )
@@ -64,10 +64,10 @@ def esgf_logon(self, email, url, openid, password):
         credentials = execution.processOutputs[0].reference
         cert_expires = execution.processOutputs[1].data[0]
         db = mongodb(registry)
-        user = db.users.find_one({'email':email})
+        user = db.users.find_one({'userid':userid})
         user['credentials'] = credentials
         user['cert_expires'] = cert_expires
-        db.users.update({'email':email}, user)
+        db.users.update({'userid':userid}, user)
     return execution.status
 
 @app.task(bind=True)

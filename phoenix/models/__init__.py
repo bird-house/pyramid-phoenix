@@ -42,7 +42,7 @@ def add_user(
         creation_time = datetime.now(),
         last_login = datetime.now())
     request.db.users.save(user)
-    return request.db.users.find_one({'email':email})
+    return request.db.users.find_one({'userid':userid})
 
 def user_stats(request):
     num_unregistered = request.db.users.find({"group": Guest}).count()

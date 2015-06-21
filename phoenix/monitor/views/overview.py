@@ -17,7 +17,7 @@ class Overview(Monitor):
 
     @view_config(renderer='json', route_name='update_myjobs')
     def update_jobs(self):
-        return list(self.jobsdb.find({'email': authenticated_userid(self.request)}).sort('created', -1))
+        return list(self.jobsdb.find({'userid': authenticated_userid(self.request)}).sort('created', -1))
 
     @view_config(route_name='monitor', renderer='../templates/monitor/overview.pt')
     def view(self):
