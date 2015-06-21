@@ -43,7 +43,6 @@ class WizardFavorite(object):
         try:
             fav = dict(userid=self.userid, favorite=yaml.dump(self.session.get(wizard_favorite, {})))
             self.favdb.update({'userid':self.userid}, fav)
-            logger.debug('saved favorite for %s', self.userid)
         except:
             logger.exception('saving favorite for %s failed.', self.userid)
 
