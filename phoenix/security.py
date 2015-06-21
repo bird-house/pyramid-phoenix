@@ -1,3 +1,5 @@
+from pyramid.exceptions import HTTPForbidden
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -28,19 +30,15 @@ def admin_users(request):
     return admins
 
 def groupfinder(userid, request):
-    admins = admin_users(request)
-    if userid in admin_users(request):
-        return [Admin]
-    
     user = request.db.users.find_one({'email':userid})
     if user:
-        if user.get('group') == Admin:
+        if userid in admin_users(request):
             return [Admin]
         elif user.get('group') == User:
             return [User]
         else:
             return [Guest]
-    return [Everyone]
+    return HTTPForbidden()
 
 from pyramid.security import (
         Allow, 

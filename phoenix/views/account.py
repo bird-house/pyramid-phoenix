@@ -29,8 +29,13 @@ class Account(MyView):
     def __init__(self, request):
         super(Account, self).__init__(request, name="account", title='Account')
 
-    def appstruct(self):
-        return dict(provider='github')
+    def appstruct(self, protocol):
+        if protocol == 'oauth2':
+            return dict(provider='github')
+        elif protocol == 'esgf':
+            return dict(provider='DKRZ')
+        else:
+            return dict()
 
     def generate_form(self, protocol):
         from phoenix.schema import PhoenixSchema, OAuthSchema, OpenIDSchema, ESGFOpenIDSchema, LdapSchema
@@ -57,9 +62,7 @@ class Account(MyView):
             return dict(active=protocol, form=e.render())
         else:
             if protocol == 'phoenix':
-                headers = remember(self.request, appstruct.get('user'))
-                self.login_success(appstruct.get('user'), name="Phoenix")
-                return HTTPFound(location = self.request.route_path('home'), headers = headers)
+                return self.phoenix_login(appstruct)
             elif protocol == 'ldap':
                 return self.ldap_login()
             elif protocol == 'oauth2':
@@ -124,11 +127,16 @@ class Account(MyView):
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
         # TODO: Add ldap to title?
-        return dict(active=protocol, title="Login", form=form.render( self.appstruct() ))
+        return dict(active=protocol, title="Login", form=form.render( self.appstruct(protocol) ))
 
     @view_config(route_name='account_logout', permission='edit')
     def logout(self):
         headers = forget(self.request)
+        return HTTPFound(location = self.request.route_path('home'), headers = headers)
+
+    def phoenix_login(self, appstruct):
+        headers = remember(self.request, appstruct.get('user'))
+        self.login_success(appstruct.get('user'), name="Phoenix")
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
     @view_config(route_name='account_auth')
