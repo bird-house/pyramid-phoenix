@@ -1,4 +1,4 @@
-VERSION := 0.2.2
+VERSION := 0.2.3
 RELEASE := master
 
 # Application
@@ -56,6 +56,7 @@ help:
 	@echo "\t clean       \t- Deletes all files that are created by running buildout."
 	@echo "\t distclean   \t- Removes *all* files that are not controlled by 'git'.\n\t\t\tWARNING: use it *only* if you know what you do!"
 	@echo "\t sysinstall  \t- Installs system packages from requirements.sh. You can also call 'bash requirements.sh' directly."
+	@echo "\t passwd      \t- Generate password for 'phoenix-password' in custom.cfg."
 	@echo "\t docs        \t- Generates HTML documentation with Sphinx."
 	@echo "\t selfupdate  \t- Updates this Makefile."
 	@echo "\nSupervisor targets:\n"
@@ -142,7 +143,7 @@ conda_config: anaconda
 
 .PHONY: conda_env
 conda_env: anaconda conda_config
-	@test -d $(PREFIX) || "$(ANACONDA_HOME)/bin/conda" create -m -p $(PREFIX) -c birdhouse --yes python setuptools curl pyopenssl genshi mako
+	@test -d $(PREFIX) || "$(ANACONDA_HOME)/bin/conda" create -m -p $(PREFIX) -c birdhouse --yes python setuptools ipython curl pyopenssl genshi mako
 
 .PHONY: conda_pinned
 conda_pinned: conda_env
@@ -193,6 +194,15 @@ distclean: backup clean
 buildclean:
 	@echo "Removing bootstrap.sh ..."
 	@test -e bootstrap.sh && rm -v bootstrap.sh
+
+.PHONY: bootstrap
+passwd:
+	@echo "Generate Phoenix password ..."
+	@echo "Enter a password with at least 8 characters."
+	@bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);python -c 'from IPython.lib import passwd; print passwd(algorithm=\"sha256\")'"
+	@echo ""
+	@echo "Add this password to custom.cfg: phoenix-password = ..." 
+	@echo "Run 'make install restart' to activate this password." 
 
 .PHONY: test
 test:
