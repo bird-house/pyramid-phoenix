@@ -12,15 +12,12 @@ logger = logging.getLogger(__name__)
 
 
 class PhoenixSchema(colander.MappingSchema):
-    choices = [('phoenix@localhost', 'Phoenix')]
-    
-    user = colander.SchemaNode(
+    password = colander.SchemaNode(
         colander.String(),
-        validator=colander.OneOf([x[0] for x in choices]),
-        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
-        title='Phoenix User',
-        description='Select Phoenix User.')
-
+        title = 'Password',
+        description = 'Enter the Phoenix Password',
+        validator = colander.Length(min=8),
+        widget = deform.widget.PasswordWidget())
 
 class OAuthSchema(colander.MappingSchema):
     choices = [('github', 'GitHub')]

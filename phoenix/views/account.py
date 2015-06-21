@@ -8,7 +8,7 @@ from pyramid.security import remember, forget, authenticated_userid
 from deform import Form, ValidationFailure
 
 from phoenix.views import MyView
-from phoenix.security import Admin, Guest, admin_users, ESGF_Provider, authomatic
+from phoenix.security import Admin, Guest, ESGF_Provider, authomatic, admin_users
 
 import logging
 logger = logging.getLogger(__name__)
@@ -96,7 +96,6 @@ class Account(MyView):
 
     def login_success(self, email, openid=None, name="Unknown"):
         from phoenix.models import add_user
-        logger.debug('login success: email=%s', email)
         user = self.get_user(email)
         if user is None:
             logger.warn("new user: %s", email)
@@ -104,6 +103,7 @@ class Account(MyView):
             subject = 'New user %s logged in on %s' % (email, self.request.server_name)
             message = 'Please check the activation of the user %s on the Phoenix host %s' % (email, self.request.server_name)
             self.send_notification(email, subject, message)
+        # TODO: dont use email
         if email in admin_users(self.request):
             user['group'] = Admin
         user['last_login'] = datetime.datetime.now()
@@ -145,7 +145,8 @@ class Account(MyView):
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
     def phoenix_login(self, appstruct):
-        return self.login_success(appstruct.get('user'), name="Phoenix")
+        password = appstruct.get('password')
+        return self.login_success(email="phoenix@localhost", name="Phoenix")
 
     @view_config(route_name='account_auth')
     def authomatic_login(self):

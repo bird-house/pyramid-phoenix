@@ -18,27 +18,30 @@ ESGF_Provider = dict(
     SMHI='https://esg-dn1.nsc.liu.se/esgf-idp/openid/%s',
     )
 
+
 def admin_users(request):
+    # TODO: dont use email
     admins = set()
+    admins.add('phoenix@localhost')
     for admin in request.db.users.find({'group':Admin}):
         admins.add(admin.get('email'))
-    value = request.registry.settings.get('phoenix.admin_users')
-    if value is not None:
-        import re
-        for email in map(str.strip, re.split("\\s+", value.strip())):
-            admins.add(email)
     return admins
+
 
 def groupfinder(userid, request):
     user = request.db.users.find_one({'email':userid})
     if user:
-        if userid in admin_users(request):
+        # TODO: don't use email as userid
+        if userid == 'phoenix@localhost':
+            return [Admin]
+        elif user.get('group') == Admin:
             return [Admin]
         elif user.get('group') == User:
             return [User]
         else:
             return [Guest]
     return HTTPForbidden()
+
 
 from pyramid.security import (
         Allow, 
