@@ -117,6 +117,14 @@ class Account(MyView):
         headers = remember(self.request, email)
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
+    def login_failure(self, message=None):
+        msg = 'Sorry, login failed.'
+        if message:
+            msg = 'Sorry, login failed: {0}'.format(message)
+        self.session.flash(msg, queue='danger')
+        logger.warn(msg)
+        return HTTPFound(location = self.request.route_path('home'))
+    
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
         protocol = self.request.matchdict.get('protocol', 'esgf')
@@ -138,7 +146,6 @@ class Account(MyView):
 
     def phoenix_login(self, appstruct):
         return self.login_success(appstruct.get('user'), name="Phoenix")
-       
 
     @view_config(route_name='account_auth')
     def authomatic_login(self):
@@ -166,9 +173,7 @@ class Account(MyView):
         if result:
             if result.error:
                 # Login procedure finished with an error.
-                self.session.flash('Sorry, login failed: {0}'.format(result.error.message), queue='danger')
-                logger.warn('login failed: %s', result.error.message)
-                return HTTPForbidden()
+                return self.login_failure(message=result.error.message)
             elif result.user:
                 if not (result.user.name and result.user.id):
                     result.user.update()
@@ -233,5 +238,5 @@ class Account(MyView):
             return self.login_success(email = email)
         else:
             # Authentification failed
-            self.session.flash('Sorry, login failed!', queue='danger')
-            return HTTPFound(location = self.request.current_route_url())
+            return self.login_failure()
+           
