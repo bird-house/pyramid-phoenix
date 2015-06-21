@@ -21,8 +21,8 @@ class MyView(object):
                 route_path=item.get('route_path'),
                 title=item.get('title'))
 
-    def get_user(self, email=None):
-        return models.get_user(self.request, email)
+    def get_user(self, userid=None):
+        return models.get_user(self.request, userid)
 
     def breadcrumbs(self):
         return [dict(route_path=self.request.route_path("home"), title="Home")]

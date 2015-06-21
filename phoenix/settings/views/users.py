@@ -19,10 +19,10 @@ class Users(SettingsView):
 
     @view_config(route_name='remove_user')
     def remove(self):
-        email = self.request.matchdict.get('email')
-        if email is not None:
-            self.userdb.remove(dict(email=email))
-            self.session.flash('User %s removed' % (email), queue="info")
+        userid = self.request.matchdict.get('userid')
+        if userid is not None:
+            self.userdb.remove(dict(userid=userid))
+            self.session.flash('User %s removed' % (userid), queue="info")
         return HTTPFound(location=self.request.route_path(self.name))
 
     @view_config(route_name='settings_users', renderer='../templates/settings/users.pt')
@@ -59,9 +59,9 @@ class UsersGrid(MyGrid):
 
     def action_td(self, col_num, i, item):
         buttongroup = []
-        buttongroup.append( ("edit", item.get('email'), "glyphicon glyphicon-pencil", "Edit",
-                             self.request.route_path('settings_edit_user', email=item.get('email')), False))
-        buttongroup.append( ("remove", item.get('email'), "glyphicon glyphicon-trash text-danger", "Remove", 
-                             self.request.route_path('remove_user', email=item.get('email')),
+        buttongroup.append( ("edit", item.get('userid'), "glyphicon glyphicon-pencil", "Edit",
+                             self.request.route_path('settings_edit_user', userid=item.get('userid')), False))
+        buttongroup.append( ("remove", item.get('userid'), "glyphicon glyphicon-trash text-danger", "Remove", 
+                             self.request.route_path('remove_user', userid=item.get('userid')),
                              False) )
         return self.render_action_td(buttongroup)

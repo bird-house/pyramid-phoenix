@@ -52,16 +52,15 @@ def passwd_check(request, passphrase):
 
 
 def admin_users(request):
-    # TODO: dont use email
     admins = set()
     admins.add('phoenix@localhost')
     for admin in request.db.users.find({'group':Admin}):
-        admins.add(admin.get('email'))
+        admins.add(admin.get('userid'))
     return admins
 
 
 def groupfinder(userid, request):
-    user = request.db.users.find_one({'email':userid})
+    user = request.db.users.find_one({'userid':userid})
     if user:
         # TODO: don't use email as userid
         if userid == 'phoenix@localhost':
