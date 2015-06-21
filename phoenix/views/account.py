@@ -8,7 +8,7 @@ from pyramid.security import remember, forget, authenticated_userid
 from deform import Form, ValidationFailure
 
 from phoenix.views import MyView
-from phoenix.security import Admin, Guest, ESGF_Provider, authomatic, admin_users
+from phoenix.security import Admin, Guest, ESGF_Provider, authomatic, admin_users, passwd_check
 
 import logging
 logger = logging.getLogger(__name__)
@@ -146,7 +146,10 @@ class Account(MyView):
 
     def phoenix_login(self, appstruct):
         password = appstruct.get('password')
-        return self.login_success(email="phoenix@localhost", name="Phoenix")
+        if passwd_check(self.request, password):
+            return self.login_success(email="phoenix@localhost", name="Phoenix")
+        else:
+            return self.login_failure()
 
     @view_config(route_name='account_auth')
     def authomatic_login(self):

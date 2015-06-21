@@ -18,6 +18,38 @@ ESGF_Provider = dict(
     SMHI='https://esg-dn1.nsc.liu.se/esgf-idp/openid/%s',
     )
 
+def passwd_check(request, passphrase):
+    """
+    code taken from IPython.lib.security
+    TODO: maybe import ipython
+    
+    >>> passwd_check('sha1:0e112c3ddfce:a68df677475c2b47b6e86d0467eec97ac5f4b85a',
+    ...              'anotherpassword')
+    False
+    """
+    import hashlib
+    hashed_passphrase = request.registry.settings.get('phoenix.password', u'')
+    
+    try:
+        algorithm, salt, pw_digest = hashed_passphrase.split(':', 2)
+    except (ValueError, TypeError):
+        return False
+
+    try:
+        h = hashlib.new(algorithm)
+    except ValueError:
+        return False
+
+    if len(pw_digest) == 0:
+        return False
+
+    try:
+        h.update(passphrase.encode('utf-8') + salt.encode('ascii'))
+    except:
+        return False
+
+    return h.hexdigest() == pw_digest
+
 
 def admin_users(request):
     # TODO: dont use email
