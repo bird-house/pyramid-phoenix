@@ -1,7 +1,7 @@
 import datetime
 
 from pyramid.view import view_config, view_defaults, forbidden_view_config
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from pyramid.response import Response
 from pyramid.renderers import render, render_to_response
 from pyramid.security import remember, forget, authenticated_userid
@@ -114,6 +114,8 @@ class Account(MyView):
         self.session.flash("Welcome %s (%s)." % (name, email), queue='success')
         if user.get('group') == Guest:
             self.session.flash("You are logged in as guest. You are not allowed to submit any process.", queue='danger')
+        headers = remember(self.request, email)
+        return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
@@ -135,9 +137,8 @@ class Account(MyView):
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
     def phoenix_login(self, appstruct):
-        headers = remember(self.request, appstruct.get('user'))
-        self.login_success(appstruct.get('user'), name="Phoenix")
-        return HTTPFound(location = self.request.route_path('home'), headers = headers)
+        return self.login_success(appstruct.get('user'), name="Phoenix")
+       
 
     @view_config(route_name='account_auth')
     def authomatic_login(self):
@@ -160,37 +161,29 @@ class Account(MyView):
             
         # Start the login procedure.
         response = Response()
-        #response = request.response
         result = _authomatic.login(WebObAdapter(self.request, response), provider_name)
 
         if result:
             if result.error:
                 # Login procedure finished with an error.
-                self.session.flash('Sorry, login failed: %s' % (result.error.message), queue='danger')
+                self.session.flash('Sorry, login failed: {0}'.format(result.error.message), queue='danger')
                 logger.warn('login failed: %s', result.error.message)
-                response.text = render('phoenix:templates/account/forbidden.pt', dict(), self.request)
+                return HTTPForbidden()
             elif result.user:
                 if not (result.user.name and result.user.id):
                     result.user.update()
                 # Hooray, we have the user!
                 logger.info("login successful for user %s", result.user.name)
                 if result.provider.name == 'openid':
-                    self.login_success(email=result.user.email, openid=result.user.id, name=result.user.name)
-                    response.text = render('phoenix:templates/account/openid_success.pt', {'result': result}, request=self.request)
-                    # Add the headers required to remember the user to the response
-                    response.headers.extend(remember(self.request, result.user.name))
+                    return self.login_success(email=result.user.email, openid=result.user.id, name=result.user.name)
                 elif result.provider.name == 'github':
+                    logger.debug('logged in with github')
                     # TODO: dont use email as user id
                     email = "{0.username}@github.com".format(result.user)
-                    self.login_success(email=email, openid='', name=result.user.name)
-                    response.text = render('phoenix:templates/account/openid_success.pt', {'result': result}, request=self.request)
-                    # Add the headers required to remember the user to the response
-                    response.headers.extend(remember(self.request, email))
-
-                if result.user.credentials:
-                    if result.provider.name == 'github':
-                        logger.debug('logged in with github')
-                        
+                    # get extra info
+                    if result.user.credentials:
+                        pass
+                    return self.login_success(email=email, name=result.user.name)
         return response
 
     def ldap_prepare(self):
@@ -237,14 +230,7 @@ class Account(MyView):
             email = auth[1].get(ldap_settings['email'])[0]
 
             # Authentication successful
-            self.login_success(email = email)
-
-            # TODO: Rename template?
-            response = render_to_response('phoenix:templates/account/openid_success.pt',
-                    # FK: What is 'result' for? Just an old debug argument?
-                    {'result': email}, request = self.request)
-            response.headers.extend(remember(self.request, email))
-            return response
+            return self.login_success(email = email)
         else:
             # Authentification failed
             self.session.flash('Sorry, login failed!', queue='danger')
