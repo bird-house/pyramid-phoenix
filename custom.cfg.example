@@ -7,6 +7,9 @@ http-port = 8081
 log-level = INFO
 # run 'make passwd' and add password here
 phoenix-password = 
+# generate secret
+# python -c "import os; print(''.join('%02x' % ord(x) for x in os.urandom(16)))"
+phoenix-secret = d5e8417934247ccb6cdbdb5144e3b130
 esgf-search-url = http://136.172.30.96/esg-search
 wps-url = http://localhost:8091/wps
 csw-url = http://localhost:8082/csw
