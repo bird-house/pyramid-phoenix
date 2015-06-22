@@ -67,8 +67,19 @@ class Account(MyView):
                 return self.ldap_login()
             elif protocol == 'oauth2':
                 return HTTPFound(location=self.request.route_path('account_auth', provider_name=appstruct.get('provider')))
+            elif protocol == 'esgf':
+                username = appstruct.get('username')
+                provider = appstruct.get('provider')
+                if username and provider:
+                    openid = ESGF_Provider.get(provider) % username
+                    return HTTPFound(location=self.request.route_path('account_auth', provider_name='openid', _query=dict(id=openid)))
+                else:
+                    return HTTPForbidden()
+            elif protocol == 'openid':
+                openid = appstruct.get('openid')
+                return HTTPFound(location=self.request.route_path('account_auth', provider_name='openid', _query=dict(id=openid)))
             else:
-                return HTTPFound(location=self.request.route_path('account_auth', provider_name=protocol, _query=appstruct.items()))
+                return HTTPForbidden()
 
     def send_notification(self, email, subject, message):
         """Sends email notification to admins.
@@ -158,18 +169,6 @@ class Account(MyView):
         
         provider_name = self.request.matchdict.get('provider_name')
 
-        if provider_name == 'esgf':
-            username = self.request.params.get('username')
-            provider_name = 'openid'
-            # esgf openid login with username and provider
-            if username is not None:
-                provider = self.request.params.get('provider')
-                logger.debug('username=%s, provider=%s', username, provider)
-                openid = ESGF_Provider.get(provider) % username
-                self.request.GET['id'] = openid
-                del self.request.GET['username']
-                del self.request.GET['provider']
-            
         # Start the login procedure.
         response = Response()
         result = _authomatic.login(WebObAdapter(self.request, response), provider_name)

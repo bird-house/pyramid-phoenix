@@ -30,11 +30,12 @@ class OAuthSchema(colander.MappingSchema):
         description='Select your OAuth Provider.')
 
 class OpenIDSchema(colander.MappingSchema):
-    id = colander.SchemaNode(
+    openid = colander.SchemaNode(
         colander.String(),
         validator = colander.url,
         title = "OpenID",
-        description = "Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname")
+        description = "Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname or https://openid.stackexchange.com/",
+        default = 'https://openid.stackexchange.com/')
         
 class ESGFOpenIDSchema(colander.MappingSchema):
     from phoenix.security import ESGF_Provider
