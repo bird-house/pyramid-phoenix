@@ -62,8 +62,11 @@ class ExecuteProcess(Processes):
             outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
 
         from phoenix.tasks import execute_process
-        result = execute_process.delay(authenticated_userid(self.request), self.wps.url, self.process.identifier, 
-                                    inputs=inputs, outputs=outputs)
+        result = execute_process.delay(
+            userid=authenticated_userid(self.request),
+            url=self.wps.url,
+            identifier=self.process.identifier, 
+            inputs=inputs, outputs=outputs)
         self.request.registry.notify(JobStarted(self.request, result.id))
     
     @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt')

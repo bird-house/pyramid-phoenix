@@ -19,10 +19,11 @@ class Users(SettingsView):
 
     @view_config(route_name='remove_user')
     def remove(self):
+        # TODO: fix handling of userids
         userid = self.request.matchdict.get('userid')
         if userid is not None:
-            self.userdb.remove(dict(userid=userid))
-            self.session.flash('User %s removed' % (userid), queue="info")
+            self.userdb.remove(dict(identifier=userid))
+            self.session.flash('User removed', queue="info")
         return HTTPFound(location=self.request.route_path(self.name))
 
     @view_config(route_name='settings_users', renderer='../templates/settings/users.pt')
@@ -31,17 +32,21 @@ class Users(SettingsView):
         grid = UsersGrid(
                 self.request,
                 user_items,
-                ['name', 'email', 'organisation', 'notes', 'group', 'last_login', ''],
+                ['name', 'userid', 'organisation', 'notes', 'group', 'last_login', ''],
             )
         return dict(grid=grid)
 
 class UsersGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(UsersGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['userid'] = self.userid_td
         self.column_formats['group'] = self.group_td
         self.column_formats['last_login'] = self.last_login_td
         self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
+
+    def userid_td(self, col_num, i, item):
+        return self.render_label_td(item.get('userid'))
 
     def last_login_td(self, col_num, i, item):
         return self.render_time_ago_td(item.get('last_login'))
@@ -59,9 +64,9 @@ class UsersGrid(MyGrid):
 
     def action_td(self, col_num, i, item):
         buttongroup = []
-        buttongroup.append( ("edit", item.get('userid'), "glyphicon glyphicon-pencil", "Edit",
-                             self.request.route_path('settings_edit_user', userid=item.get('userid')), False))
+        buttongroup.append( ("edit", item.get('identifier'), "glyphicon glyphicon-pencil", "Edit",
+                             self.request.route_path('settings_edit_user', userid=item.get('identifier')), False))
         buttongroup.append( ("remove", item.get('userid'), "glyphicon glyphicon-trash text-danger", "Remove", 
-                             self.request.route_path('remove_user', userid=item.get('userid')),
+                             self.request.route_path('remove_user', userid=item.get('identifier')),
                              False) )
         return self.render_action_td(buttongroup)

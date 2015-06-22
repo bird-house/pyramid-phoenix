@@ -33,11 +33,11 @@ def log_error(job, error):
         job['log'].append(log_msg)
         logger.error(log_msg)
 
-def add_job(db, user_id, task_id, service, title, abstract, status_location, is_workflow=False):
+def add_job(db, userid, task_id, service, title, abstract, status_location, is_workflow=False):
     job = dict(
         identifier = str(uuid.uuid1()),
         task_id = task_id,
-        userid = user_id,
+        userid = userid,
         is_workflow = is_workflow,
         service = service,
         title = title,
@@ -71,7 +71,7 @@ def esgf_logon(self, userid, url, openid, password):
     return execution.status
 
 @app.task(bind=True)
-def execute_workflow(self, user_id, url, workflow):
+def execute_workflow(self, userid, url, workflow):
     registry = app.conf['PYRAMID_REGISTRY']
 
     # generate and run dispel workflow
@@ -83,7 +83,7 @@ def execute_workflow(self, user_id, url, workflow):
     worker_wps = WebProcessingService(url=workflow['worker']['url'], skip_caps=False)
     execution = wps.execute(identifier='workflow', inputs=inputs, output=outputs)
     db = mongodb(registry)
-    job = add_job(db, user_id,
+    job = add_job(db, userid,
                   task_id = self.request.id,
                   is_workflow = True,
                   service = worker_wps.identification.title,
@@ -119,13 +119,13 @@ def execute_workflow(self, user_id, url, workflow):
     return execution.getStatus()
 
 @app.task(bind=True)
-def execute_process(self, user_id, url, identifier, inputs, outputs, keywords=None):
+def execute_process(self, userid, url, identifier, inputs, outputs, keywords=None):
     registry = app.conf['PYRAMID_REGISTRY']
 
     wps = WebProcessingService(url=url, skip_caps=False)
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     db = mongodb(registry)
-    job = add_job(db, user_id,
+    job = add_job(db, userid,
                   task_id = self.request.id,
                   is_workflow = False,
                   service = wps.identification.title,

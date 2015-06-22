@@ -79,8 +79,10 @@ class Done(Wizard):
             self.favorite.save()
 
         from phoenix.tasks import execute_workflow
-        result = execute_workflow.delay(authenticated_userid(self.request), self.request.wps.url,
-                               workflow=self.workflow_description())
+        result = execute_workflow.delay(
+            userid=authenticated_userid(self.request),
+            url=self.request.wps.url,
+            workflow=self.workflow_description())
         self.request.registry.notify(JobStarted(self.request, result.id))
         
     def next_success(self, appstruct):
