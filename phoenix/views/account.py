@@ -111,7 +111,7 @@ class Account(MyView):
     def login_success(self, userid, email=None, name="Unknown", openid=None, local=False):
         from phoenix.models import add_user
         # TODO: fix handling of userid
-        user = self.get_user(userid)
+        user = self.request.db.users.find_one(dict(userid=userid))
         if user is None:
             logger.warn("new user: %s", userid)
             user = add_user(self.request, userid=userid, email=email, group=Guest)
@@ -125,10 +125,11 @@ class Account(MyView):
             user['openid'] = openid
         user['name'] = name
         self.userdb.update({'userid':userid}, user)
+        logger.debug('user = %s', user)
         self.session.flash("Welcome {0}.".format(name), queue='success')
         if user.get('group') == Guest:
             self.session.flash("You are logged in as guest. You are not allowed to submit any process.", queue='danger')
-        headers = remember(self.request, userid)
+        headers = remember(self.request, user['identifier'])
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
     def login_failure(self, message=None):

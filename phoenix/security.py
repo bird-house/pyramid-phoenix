@@ -52,7 +52,7 @@ def passwd_check(request, passphrase):
 
 
 def groupfinder(userid, request):
-    user = request.db.users.find_one({'userid':userid})
+    user = request.db.users.find_one({'identifier':userid})
     if user:
         if user.get('group') == Admin:
             return [Admin]

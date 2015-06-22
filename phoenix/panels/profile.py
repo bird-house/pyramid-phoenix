@@ -1,7 +1,7 @@
 from pyramid_layout.panel import panel_config
 from pyramid.security import authenticated_userid
 from deform import Form, ValidationFailure
-from phoenix import models
+from phoenix.models import get_user
 
 import logging
 logger = logging.getLogger(__name__)
@@ -12,7 +12,7 @@ class ProfilePanel(object):
         self.request = request
 
     def appstruct(self):
-        appstruct = models.get_user(self.request)
+        appstruct = get_user(self.request)
         if appstruct is None:
             appstruct = {}
         return appstruct
@@ -27,10 +27,10 @@ class AccountPanel(ProfilePanel):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
-            user = models.get_user(self.request)
+            user = get_user(self.request)
             for key in ['name', 'organisation', 'notes']:
                 user[key] = appstruct.get(key)
-            self.request.db.users.update({'userid':authenticated_userid(self.request)}, user)
+            self.request.db.users.update({'identifier':authenticated_userid(self.request)}, user)
         except ValidationFailure, e:
             logger.exception('validation of form failed.')
             return dict(form=e.render())
