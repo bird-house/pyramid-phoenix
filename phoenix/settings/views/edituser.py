@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 class EditUser(SettingsView):
     def __init__(self, request):
+        # TODO: fix handling of userid
         self.userid = request.matchdict.get('userid')
         super(EditUser, self).__init__(request, name='settings_edit_user', title='Edit User')
        
@@ -29,10 +30,10 @@ class EditUser(SettingsView):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
-            user = self.get_user(self.userid)
+            user = self.userdb.find_one(dict(identifier=self.userid))
             for key in ['name', 'organisation', 'notes', 'group']:
                 user[key] = appstruct.get(key)
-            self.db.users.update({'userid':self.userid}, user)
+            self.db.users.update({'identifier':self.userid}, user)
         except ValidationFailure, e:
             logger.exception('validation of user form failed')
             return dict(title=self.title, form = e.render())
@@ -42,7 +43,7 @@ class EditUser(SettingsView):
         return HTTPFound(location=self.request.route_path('settings_users'))
 
     def appstruct(self):
-        return self.get_user(self.userid)
+        return self.userdb.find_one(dict(identifier=self.userid))
 
     @view_config(route_name='settings_edit_user', renderer='../templates/settings/edit_user.pt')
     def view(self):

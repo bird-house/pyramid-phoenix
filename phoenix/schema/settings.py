@@ -15,9 +15,8 @@ class UserSchema(colander.MappingSchema):
         title = "Name",
         missing = colander.drop,
         )
-    email = colander.SchemaNode(
+    userid = colander.SchemaNode(
         colander.String(),
-        validator = colander.Email(),
         missing = colander.drop,
         widget = deform.widget.TextInputWidget(readonly=True),
         )
