@@ -96,6 +96,7 @@ class Account(MyView):
 
     def login_success(self, userid, email=None, name="Unknown", openid=None):
         from phoenix.models import add_user
+        # TODO: fix handling of userid
         user = self.get_user(userid)
         if user is None:
             logger.warn("new user: %s", userid)
