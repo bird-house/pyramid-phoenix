@@ -108,24 +108,22 @@ class Account(MyView):
         except:
             logger.exception("failed to send notification")
 
-    def login_success(self, userid, email=None, name="Unknown", openid=None, local=False):
+    def login_success(self, login_id, email=None, name="Unknown", openid=None, local=False):
         from phoenix.models import add_user
-        # TODO: fix handling of userid
-        user = self.request.db.users.find_one(dict(userid=userid))
+        user = self.request.db.users.find_one(dict(login_id=login_id))
         if user is None:
-            logger.warn("new user: %s", userid)
-            user = add_user(self.request, userid=userid, email=email, group=Guest)
+            logger.warn("new user: %s", login_id)
+            user = add_user(self.request, login_id=login_id, email=email, group=Guest)
             subject = 'New user %s logged in on %s' % (name, self.request.server_name)
             message = 'Please check the activation of the user %s on the Phoenix host %s' % (name, self.request.server_name)
             self.send_notification(email, subject, message)
-        if local and userid == 'phoenix@localhost':
+        if local and login_id == 'phoenix@localhost':
             user['group'] = Admin
         user['last_login'] = datetime.datetime.now()
         if openid:
             user['openid'] = openid
         user['name'] = name
-        self.userdb.update({'userid':userid}, user)
-        logger.debug('user = %s', user)
+        self.userdb.update({'login_id':login_id}, user)
         self.session.flash("Welcome {0}.".format(name), queue='success')
         if user.get('group') == Guest:
             self.session.flash("You are logged in as guest. You are not allowed to submit any process.", queue='danger')
@@ -162,7 +160,7 @@ class Account(MyView):
     def phoenix_login(self, appstruct):
         password = appstruct.get('password')
         if passwd_check(self.request, password):
-            return self.login_success(userid="phoenix@localhost", email="phoenix@localhost", name="Phoenix", local=True)
+            return self.login_success(login_id="phoenix@localhost", email="phoenix@localhost", name="Phoenix", local=True)
         else:
             return self.login_failure()
 
@@ -187,17 +185,16 @@ class Account(MyView):
                 # Hooray, we have the user!
                 logger.info("login successful for user %s", result.user.name)
                 if result.provider.name == 'openid':
-                    # TODO: change userid ... more infos ...
-                    return self.login_success(userid=result.user.id, email=result.user.email, openid=result.user.id, name=result.user.name)
+                    # TODO: change login_id ... more infos ...
+                    return self.login_success(login_id=result.user.id, email=result.user.email, openid=result.user.id, name=result.user.name)
                 elif result.provider.name == 'github':
-                    logger.debug('logged in with github')
-                    # TODO: fix email ... get more infos ... which userid?
-                    userid = "{0.username}@github.com".format(result.user)
+                    # TODO: fix email ... get more infos ... which login_id?
+                    login_id = "{0.username}@github.com".format(result.user)
                     email = "{0.username}@github.com".format(result.user)
                     # get extra info
                     if result.user.credentials:
                         pass
-                    return self.login_success(userid=userid, email=email, name=result.user.name)
+                    return self.login_success(login_id=login_id, email=email, name=result.user.name)
         return response
 
     def ldap_prepare(self):
@@ -243,10 +240,10 @@ class Account(MyView):
             ldap_settings = self.db.ldap.find_one()
             email = auth[1].get(ldap_settings['email'])[0]
             # TODO: fix userid ... get more ldap infos
-            userid = 'ldap_{0}'.format(email)
+            login_id = 'ldap_{0}'.format(email)
             
             # Authentication successful
-            return self.login_success(userid=userid, email=email, name=email)
+            return self.login_success(login_id=login_id, email=email, name=email)
         else:
             # Authentification failed
             return self.login_failure()
