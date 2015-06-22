@@ -16,14 +16,13 @@ def mongodb(registry):
     settings = registry.settings
     return pymongo.Connection(settings['mongodb.url'])[settings['mongodb.db_name']]
 
-def get_user(request, userid=None):
-    if userid is None:
-        userid = authenticated_userid(request)
-    return request.db.users.find_one(dict(userid=userid))
+def get_user(request):
+    userid = authenticated_userid(request)
+    return request.db.users.find_one(dict(identifier=userid))
 
 def add_user(
     request,
-    userid,
+    login_id,
     email='',
     openid='',
     name='unknown',
@@ -31,8 +30,8 @@ def add_user(
     notes='',
     group=Guest):
     user=dict(
-        identifier = uuid.uuid4().get_urn(),
-        userid = userid,
+        identifier =  str(uuid.uuid1()),
+        login_id = login_id,
         email = email,
         openid = openid,
         name = name,
@@ -42,7 +41,7 @@ def add_user(
         creation_time = datetime.now(),
         last_login = datetime.now())
     request.db.users.save(user)
-    return request.db.users.find_one({'userid':userid})
+    return request.db.users.find_one({'identifier':user['identifier']})
 
 def user_stats(request):
     num_unregistered = request.db.users.find({"group": Guest}).count()

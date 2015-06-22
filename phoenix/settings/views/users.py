@@ -46,7 +46,7 @@ class UsersGrid(MyGrid):
         self.exclude_ordering = self.columns
 
     def userid_td(self, col_num, i, item):
-        return self.render_label_td(item.get('userid'))
+        return self.render_label_td(item.get('login_id'))
 
     def last_login_td(self, col_num, i, item):
         return self.render_time_ago_td(item.get('last_login'))

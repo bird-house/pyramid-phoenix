@@ -8,7 +8,7 @@ from pyramid.security import remember, forget, authenticated_userid
 from deform import Form, ValidationFailure
 
 from phoenix.views import MyView
-from phoenix.security import Admin, Guest, ESGF_Provider, authomatic, admin_users, passwd_check
+from phoenix.security import Admin, Guest, ESGF_Provider, authomatic, passwd_check
 
 import logging
 logger = logging.getLogger(__name__)
@@ -67,8 +67,19 @@ class Account(MyView):
                 return self.ldap_login()
             elif protocol == 'oauth2':
                 return HTTPFound(location=self.request.route_path('account_auth', provider_name=appstruct.get('provider')))
+            elif protocol == 'esgf':
+                username = appstruct.get('username')
+                provider = appstruct.get('provider')
+                if username and provider:
+                    openid = ESGF_Provider.get(provider) % username
+                    return HTTPFound(location=self.request.route_path('account_auth', provider_name='openid', _query=dict(id=openid)))
+                else:
+                    return HTTPForbidden()
+            elif protocol == 'openid':
+                openid = appstruct.get('openid')
+                return HTTPFound(location=self.request.route_path('account_auth', provider_name='openid', _query=dict(id=openid)))
             else:
-                return HTTPFound(location=self.request.route_path('account_auth', provider_name=protocol, _query=appstruct.items()))
+                return HTTPForbidden()
 
     def send_notification(self, email, subject, message):
         """Sends email notification to admins.
@@ -81,8 +92,11 @@ class Account(MyView):
 
         sender = "noreply@%s" % (self.request.server_name)
 
-        from phoenix.security import admin_users
-        recipients = admin_users(self.request)
+        recipients = set()
+        for user in self.request.db.users.find({'group':Admin}):
+            email = user.get('email')
+            if email:
+                recipients.add(email)
         
         from pyramid_mailer.message import Message
         message = Message(subject=subject,
@@ -94,27 +108,26 @@ class Account(MyView):
         except:
             logger.exception("failed to send notification")
 
-    def login_success(self, userid, email=None, name="Unknown", openid=None):
+    def login_success(self, login_id, email=None, name="Unknown", openid=None, local=False):
         from phoenix.models import add_user
-        # TODO: fix handling of userid
-        user = self.get_user(userid)
+        user = self.request.db.users.find_one(dict(login_id=login_id))
         if user is None:
-            logger.warn("new user: %s", userid)
-            user = add_user(self.request, userid=userid, email=email, group=Guest)
+            logger.warn("new user: %s", login_id)
+            user = add_user(self.request, login_id=login_id, email=email, group=Guest)
             subject = 'New user %s logged in on %s' % (name, self.request.server_name)
             message = 'Please check the activation of the user %s on the Phoenix host %s' % (name, self.request.server_name)
             self.send_notification(email, subject, message)
-        if userid in admin_users(self.request):
+        if local and login_id == 'phoenix@localhost':
             user['group'] = Admin
         user['last_login'] = datetime.datetime.now()
-        if openid is not None:
+        if openid:
             user['openid'] = openid
         user['name'] = name
-        self.userdb.update({'userid':userid}, user)
+        self.userdb.update({'login_id':login_id}, user)
         self.session.flash("Welcome {0}.".format(name), queue='success')
         if user.get('group') == Guest:
             self.session.flash("You are logged in as guest. You are not allowed to submit any process.", queue='danger')
-        headers = remember(self.request, userid)
+        headers = remember(self.request, user['identifier'])
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
     def login_failure(self, message=None):
@@ -147,7 +160,7 @@ class Account(MyView):
     def phoenix_login(self, appstruct):
         password = appstruct.get('password')
         if passwd_check(self.request, password):
-            return self.login_success(userid="phoenix@localhost", email="phoenix@localhost", name="Phoenix")
+            return self.login_success(login_id="phoenix@localhost", email="phoenix@localhost", name="Phoenix", local=True)
         else:
             return self.login_failure()
 
@@ -158,18 +171,6 @@ class Account(MyView):
         
         provider_name = self.request.matchdict.get('provider_name')
 
-        if provider_name == 'esgf':
-            username = self.request.params.get('username')
-            provider_name = 'openid'
-            # esgf openid login with username and provider
-            if username is not None:
-                provider = self.request.params.get('provider')
-                logger.debug('username=%s, provider=%s', username, provider)
-                openid = ESGF_Provider.get(provider) % username
-                self.request.GET['id'] = openid
-                del self.request.GET['username']
-                del self.request.GET['provider']
-            
         # Start the login procedure.
         response = Response()
         result = _authomatic.login(WebObAdapter(self.request, response), provider_name)
@@ -184,17 +185,16 @@ class Account(MyView):
                 # Hooray, we have the user!
                 logger.info("login successful for user %s", result.user.name)
                 if result.provider.name == 'openid':
-                    # TODO: change userid ... more infos ...
-                    return self.login_success(userid=result.user.id, email=result.user.email, openid=result.user.id, name=result.user.name)
+                    # TODO: change login_id ... more infos ...
+                    return self.login_success(login_id=result.user.id, email=result.user.email, openid=result.user.id, name=result.user.name)
                 elif result.provider.name == 'github':
-                    logger.debug('logged in with github')
-                    # TODO: fix email ... get more infos ... which userid?
-                    userid = "{0.username}@github.com".format(result.user)
+                    # TODO: fix email ... get more infos ... which login_id?
+                    login_id = "{0.username}@github.com".format(result.user)
                     email = "{0.username}@github.com".format(result.user)
                     # get extra info
                     if result.user.credentials:
                         pass
-                    return self.login_success(userid=userid, email=email, name=result.user.name)
+                    return self.login_success(login_id=login_id, email=email, name=result.user.name)
         return response
 
     def ldap_prepare(self):
@@ -243,7 +243,7 @@ class Account(MyView):
             email = auth[1].get(ldap_settings['email'])[0]
 
             # Authentication successful
-            return self.login_success(userid = auth[0], # userdn
+            return self.login_success(login_id = auth[0], # userdn
                     name = name if name != '' else 'Unknown',
                     email = email if email != '' else None)
         else:

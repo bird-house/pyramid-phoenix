@@ -22,7 +22,14 @@ class JobsGrid(MyGrid):
             title=item.get('identifier'))
     
     def userid_td(self, col_num, i, item):
-        return self.render_label_td(item.get('userid'))
+        #TODO: avoid database access ... maybe store additional info at job
+        userid = item.get('userid')
+        provider_id = 'Unknown'
+        if userid:
+            user = self.request.db.users.find_one(dict(identifier=userid))
+            if user:
+                provider_id = user.get('login_id')
+        return self.render_label_td(provider_id)
     
     def process_td(self, col_num, i, item):
         return self.render_label_td(item.get('title'))

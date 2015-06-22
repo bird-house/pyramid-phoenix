@@ -51,21 +51,10 @@ def passwd_check(request, passphrase):
     return h.hexdigest() == pw_digest
 
 
-def admin_users(request):
-    admins = set()
-    admins.add('phoenix@localhost')
-    for admin in request.db.users.find({'group':Admin}):
-        admins.add(admin.get('userid'))
-    return admins
-
-
 def groupfinder(userid, request):
-    user = request.db.users.find_one({'userid':userid})
+    user = request.db.users.find_one({'identifier':userid})
     if user:
-        # TODO: don't use email as userid
-        if userid == 'phoenix@localhost':
-            return [Admin]
-        elif user.get('group') == Admin:
+        if user.get('group') == Admin:
             return [Admin]
         elif user.get('group') == User:
             return [User]
