@@ -16,4 +16,7 @@ csw-url = http://localhost:8082/csw
 thredds-url = http://localhost:8080/thredds
 swift-auth-url = http://localhost/auth/v1.0
 swift-auth-version = 1
+# register at github: https://github.com/settings/applications/new 
+github-consumer-key = '#######'
+github-consumer-secret = '######'
 
