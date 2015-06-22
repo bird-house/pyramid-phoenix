@@ -1,7 +1,15 @@
 Changes
 *******
 
-0.4.0 (2015-06-24)
+0.4.1 (2015-06-22)
+==================
+
+* added Phoenix login
+* added GitHub login
+* added LDAP login
+* refactored
+
+0.4.0 (2015-06-14)
 ==================
 
 * register thredds catalogs.
