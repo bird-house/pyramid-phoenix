@@ -8,7 +8,7 @@ from pyramid.security import remember, forget, authenticated_userid
 from deform import Form, ValidationFailure
 
 from phoenix.views import MyView
-from phoenix.security import Admin, Guest, ESGF_Provider, authomatic, admin_users, passwd_check
+from phoenix.security import Admin, Guest, ESGF_Provider, authomatic, passwd_check
 
 import logging
 logger = logging.getLogger(__name__)
@@ -92,8 +92,11 @@ class Account(MyView):
 
         sender = "noreply@%s" % (self.request.server_name)
 
-        from phoenix.security import admin_users
-        recipients = admin_users(self.request)
+        recipients = set()
+        for user in self.request.db.users.find({'group':Admin}):
+            email = user.get('email')
+            if email:
+                recipients.add(email)
         
         from pyramid_mailer.message import Message
         message = Message(subject=subject,
@@ -105,7 +108,7 @@ class Account(MyView):
         except:
             logger.exception("failed to send notification")
 
-    def login_success(self, userid, email=None, name="Unknown", openid=None):
+    def login_success(self, userid, email=None, name="Unknown", openid=None, local=False):
         from phoenix.models import add_user
         # TODO: fix handling of userid
         user = self.get_user(userid)
@@ -115,10 +118,10 @@ class Account(MyView):
             subject = 'New user %s logged in on %s' % (name, self.request.server_name)
             message = 'Please check the activation of the user %s on the Phoenix host %s' % (name, self.request.server_name)
             self.send_notification(email, subject, message)
-        if userid in admin_users(self.request):
+        if local and userid == 'phoenix@localhost':
             user['group'] = Admin
         user['last_login'] = datetime.datetime.now()
-        if openid is not None:
+        if openid:
             user['openid'] = openid
         user['name'] = name
         self.userdb.update({'userid':userid}, user)
@@ -158,7 +161,7 @@ class Account(MyView):
     def phoenix_login(self, appstruct):
         password = appstruct.get('password')
         if passwd_check(self.request, password):
-            return self.login_success(userid="phoenix@localhost", email="phoenix@localhost", name="Phoenix")
+            return self.login_success(userid="phoenix@localhost", email="phoenix@localhost", name="Phoenix", local=True)
         else:
             return self.login_failure()
 
