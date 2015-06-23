@@ -42,9 +42,6 @@ def main(global_config, **settings):
     config.include('pyramid_celery')
     config.configure_celery(global_config['__file__'])
 
-    # mozilla browserid
-    #config.include("pyramid_persona")
-
     # ldap
     config.include('pyramid_ldap')
     # FK: Ldap setup functions will be called on demand.
@@ -156,7 +153,6 @@ def main(global_config, **settings):
             try:
                 from phoenix.models import mongodb
                 settings['db'] = mongodb(event.request.registry)
-                logger.debug("Connected to mongodb %s.", settings['mongodb.url'])
             except:
                 logger.exception('Could not connect to mongodb %s.', settings['mongodb.url'])
         event.request.db = settings.get('db')
@@ -171,7 +167,6 @@ def main(global_config, **settings):
             try:
                 from owslib.wps import WebProcessingService
                 settings['wps'] = WebProcessingService(url=settings['wps.url'])
-                logger.debug('Connected to malleefowl wps %s', settings['wps.url'])
             except:
                 logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
         event.request.wps = settings.get('wps')
@@ -185,7 +180,6 @@ def main(global_config, **settings):
             try:
                 from owslib.csw import CatalogueServiceWeb
                 settings['csw'] = CatalogueServiceWeb(url=settings['csw.url'])
-                logger.debug('Connected to catalog service %s', settings['csw.url'])
             except:
                 logger.exception('Could not connect catalog service %s', settings['csw.url'])
         event.request.csw = settings.get('csw')
