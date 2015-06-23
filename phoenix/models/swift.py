@@ -42,6 +42,8 @@ def get_containers(storage_url, auth_token):
         logger.exception("Could not get containers")
         if exc.http_status == 403:
             logger.warn("Container listing failed")
+    except:
+        logger.exception("Could not get containers")
     return containers
 
 def get_objects(storage_url, auth_token, container, prefix=None):
