@@ -1,20 +1,22 @@
-from pyramid.config import Configurator
-from pyramid.events import subscriber
-from pyramid.events import NewRequest
-from pyramid.authentication import AuthTktAuthenticationPolicy
-from pyramid.authorization import ACLAuthorizationPolicy
-from phoenix.security import groupfinder, root_factory
-
-import pymongo
-import ldap
-
 import logging
 logger = logging.getLogger(__name__)
+
+__version__ = (0, 4, 2, 'alpha', 1)
+
+def get_version():
+    import phoenix.version
+    return phoenix.version.get_version(__version__)
 
 def main(global_config, **settings):
     """
     This function returns a Pyramid WSGI application.
     """
+    from pyramid.config import Configurator
+    from pyramid.events import subscriber
+    from pyramid.events import NewRequest
+    from pyramid.authentication import AuthTktAuthenticationPolicy
+    from pyramid.authorization import ACLAuthorizationPolicy
+    from phoenix.security import groupfinder, root_factory
 
     # security
     # TODO: move to security
