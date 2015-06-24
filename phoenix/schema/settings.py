@@ -73,11 +73,13 @@ class LdapSchema(colander.MappingSchema):
                 ('ONELEVEL', 'One level'),
                 ('SUBTREE',  'Subtree')))
             )
+    name = colander.SchemaNode(
+            colander.String(),
+            title = 'User name attribute',
+            description = 'Optional: LDAP attribute to receive user name from query, e.g. "mail"',
+            missing = '')
     email = colander.SchemaNode(
             colander.String(),
-            title = 'User E-Mail attribute',
-            description = """At the moment, Phonix' account system is heavily
-                    build around the user email address. As an early adoption,
-                    we also use the email address here and pull it from the
-                    users LDAP entry. Name the name of the E-Mail attribute
-                    here, e.g. "mail" """)
+            title = 'User e-mail attribute',
+            description = 'Optional: LDAP attribute to receive user e-mail from query, e.g. "cn"',
+            missing = '')

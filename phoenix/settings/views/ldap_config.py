@@ -42,6 +42,8 @@ class Ldap(SettingsView):
                 ldap_settings['base_dn']     = appstruct['base_dn']
                 ldap_settings['filter_tmpl'] = appstruct['filter_tmpl']
                 ldap_settings['scope']       = appstruct['scope']
+                # Optional:
+                ldap_settings['name']        = appstruct['name']
                 ldap_settings['email']       = appstruct['email']
                 self.db.ldap.save(ldap_settings)
 
