@@ -14,13 +14,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-@forbidden_view_config(renderer='phoenix:templates/account/forbidden.pt', layout="frontpage")
+@forbidden_view_config(renderer='phoenix:templates/account/forbidden.pt', layout="default")
 def forbidden(request):
     request.response.status = 403
     return dict()
 
 @view_config(route_name='account_register', renderer='phoenix:templates/account/register.pt',
-             permission='view', layout="frontpage")
+             permission='view', layout="default")
 def register(request):
     return dict()
 

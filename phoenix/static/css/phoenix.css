@@ -1,28 +1,30 @@
-/* taken from moveme example */
 
-.intro-block {
-    background: url(../images/purpalt.png) repeat;
-    padding: 100px 15px 60px;
-    color: #fff;
+/* Header
+----------------------- */
+.navbar {
+  margin-bottom: 10;
 }
 
-.tpad {
-    padding-top: 20px;
+/* Home
+----------------------- */
+.jumbotron {
+  background: rgb(2, 139, 175);
+  color: white;
+  padding: 40px 0 60px;
+  margin-top: -20px;
 }
 
-/* common */
 
-body {
-    padding-top: 70px;
+/* Footer
+----------------------- */
+.footer {
+  background: grey;
+  border-top: 1px solid;
+  padding: 20px;
 }
 
-
-/* Footer */
-footer {
-    border-top: 1px solid @gray-light;
-    padding: 20px;
-}
-
+/* more ... 
+----------------------- */
 
 /* log output */
 pre.log-output {

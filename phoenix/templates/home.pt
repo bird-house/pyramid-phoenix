@@ -2,42 +2,35 @@
 
   <div metal:fill-slot="content">
     
-    <div class="intro-block">
+    <div class="jumbotron">
       <div class="container">
-        <div class="row">
-          <div class="col-xs-3">
-            <img class="img-responsive tpad" src="${request.static_url('phoenix:static/images/Phoenix.jpg')}">
-          </div>
-          <div class="col-xs-9">
-            <h1>Phoenix <span class="text-muted">&raquo; Making WPS easy</span></h1>
-            <p class="lead"> This is a <b>Demo</b> installation. If you want to try it out please <a class="btn btn-mini btn-success" href="${request.route_path('account_register')}">Sign up</a> and ask for account activation.</p>
-          </div>
-        </div>
-      </div>       
+        <h1>Phoenix <span class="text-muted">&raquo; Making WPS easy</span></h1>
+        <p class="lead"> This is a <b>Demo</b> installation. If you want to try it out please <a class="btn btn-mini btn-success" href="${request.route_path('account_register')}">Sign up</a> and ask for account activation.</p>
+      </div>
     </div>
 
      <!-- info boxes -->
-     <div class="container padded tpad">
+     <div class="container">
        <div class="row">
-         <div class="col-sm-6 col-md-3 text-center">
+         <div class="col-md-3 text-center">
            <a class="btn btn-success btn-lg" href="${request.route_url('readthedocs', part='tutorial')}" target="_">
              <span class="fa fa-bolt"></span> Quickstart
            </a>
            <p>Quickstart guide to getting startet with using Phoenix.</p>
          </div>
-         <div class="col-sm-6 col-md-3 text-center">
+         <div class="col-md-3 text-center">
            <a class="btn btn-success btn-lg" href="${request.route_url('processes')}">
              <span class="fa fa-cogs"></span> Processes
            </a>
            <p>Choose a process form a <b>Web Processing Service</b> and start it.</p>
          </div>
-         <div class="col-sm-6 col-md-3 text-center">
+         <div class="col-md-3 text-center">
            <a class="btn btn-success btn-lg" href="${request.route_url('monitor')}">
              <span class="fa fa-tasks"></span> Monitor Jobs
            </a>
            <p>Monitor the status of your running jobs/processes.</p>
          </div>
-         <div class="col-sm-6 col-md-3 text-center">
+         <div class="col-md-3 text-center">
            <a class="btn btn-success btn-lg" href="${request.route_url('wizard')}">
              <span class="fa fa-magic"></span> Wizard
            </a>
