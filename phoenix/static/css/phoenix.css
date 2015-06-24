@@ -16,10 +16,13 @@ body {
     padding-top: 70px;
 }
 
-.text-footer {
+
+/* Footer */
+footer {
     border-top: 1px solid @gray-light;
     padding: 20px;
 }
+
 
 /* log output */
 pre.log-output {
