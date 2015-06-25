@@ -1,6 +1,18 @@
 Changes
 *******
 
+0.4.3 (2015-06-25)
+==================
+
+* cleaned up nginx template.
+* added user option for supervisor, nginx.
+
+0.4.2 (2015-06-24)
+==================
+
+* cleaned up default layout.
+* enabled https.
+
 0.4.1 (2015-06-22)
 ==================
 
