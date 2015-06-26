@@ -31,13 +31,14 @@ If you want to use a different hostname/port then edit the default values in ``c
 
 To be able to login with the ``phoenix`` admin user you need to create a password. For this run::
 
-```bash
+.. code-block:: sh
+
    $ make passwd
-```
+
 
 Add the password hash to ``phoenix-password``:
 
-.. code:: python
+.. code-block:: python
 
    [settings]
    # run 'make passwd' and add password here
