@@ -5,13 +5,13 @@ Configuration
 
 You can configure Phoenix by editing ``custom.cfg`` in the Phoenix source folder:
 
-.. code:: sh
+.. code-block:: sh
 
    $ cd pyramid-phoenix
    $ vim custom.cfg
    $ cat custom.cfg
 
-.. code:: ini
+.. code-block:: ini
 
    [settings]
    hostname = localhost
@@ -27,7 +27,9 @@ You can configure Phoenix by editing ``custom.cfg`` in the Phoenix source folder
    github-consumer-secret = ############################
 
 By default Phoenix runs on localhost. The HTTP port 8081 is redirected to the HTTPS port 8443.
-If you want to use a different hostname/port then edit the default values in ``custom.cfg``::
+If you want to use a different hostname/port then edit the default values in ``custom.cfg``:
+
+.. code-block:: ini
 
    [settings]
    hostname = localhost
@@ -36,14 +38,14 @@ If you want to use a different hostname/port then edit the default values in ``c
 
 To be able to login with the ``phoenix`` admin user you need to create a password. For this run:
 
-.. code:: sh
+.. code-block:: sh
 
    $ make passwd
 
 
 Add the password hash to ``phoenix-password``:
 
-.. code:: ini
+.. code-block:: ini
 
    [settings]
    # run 'make passwd' and add password here
@@ -51,7 +53,7 @@ Add the password hash to ``phoenix-password``:
 
 To activate the GitHub login for external users you need to configure a GitHub application key for your Phoenix web application:
 
-.. code:: python
+.. code-block:: python
 
    [settings]
    # register at github: 
@@ -60,17 +62,23 @@ To activate the GitHub login for external users you need to configure a GitHub a
 
 See the `GitHub Settings <https://github.com/settings/applications/new>`_ on how to generate the application key for Phoenix.
 
-If you want to use a different Malleefowl WPS service then change the ``wps-url`` value::
+If you want to use a different Malleefowl WPS service then change the ``wps-url`` value:
+
+.. code-block:: ini
 
    [settings]
    wps-url = http://localhost:8091/wps
 
-If you want to use a differnet ESGF index service then change the ``esgf-search-url`` value::
+If you want to use a differnet ESGF index service then change the ``esgf-search-url`` value:
+
+.. code-block:: ini
 
    [settings]
    esgf-search-url = http://example.org/esg-search
 
-After any change to your ``custom.cfg`` you **need** to run ``make install`` again and restart the ``supervisor`` service::
+After any change to your ``custom.cfg`` you **need** to run ``make install`` again and restart the ``supervisor`` service:
+
+.. code-block:: sh
 
   $ make install
   $ make restart
