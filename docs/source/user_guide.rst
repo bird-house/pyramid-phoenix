@@ -156,11 +156,7 @@ In ``My Account`` you can change your user settings (user name, organisation, op
 
 .. image:: _images/myaccount.png
 
-If you have a valid ESGF OpenID you can update your X509 credentials. This is a X509 proxy certificate which is used to access ESGF data. To update press the button ``Update Credentials`` and enter your OpenID password in the dialog.
 
-.. image:: _images/update_creds.png
-
-For security reasons the X509 proxy certificate is time limited. But don't worry; Phoenix will remind you to update if necessary.
 
 Settings (admins only)
 ----------------------
@@ -171,18 +167,22 @@ When you are logged-in as admin user you have the ``Settings`` page. Here you ca
 
 .. _register_wps:
 
-Register a WPS service
-~~~~~~~~~~~~~~~~~~~~~~
+Register a WPS or Thredds service
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Open the ``Settings/Catalog`` page. Here you can see which services are registered in the catalog service (we are using :term:`birdhouse:PyCSW`). All theses services are known and useable by Phoenix.
+Open the ``Settings/Services`` page. Here you can see which services are registered in the catalog service (we are using :term:`birdhouse:PyCSW`). All theses services are known and useable by Phoenix.
 
-.. image:: _images/settings_catalog.png
+.. image:: _images/settings_services.png
 
-To add a new WPS service press the ``Add Service`` button and enter the WPS URL in the field ``Service URL``, for example Malleefowl WPS:
+To add a new WPS service press the ``Register a new Service`` button and enter the WPS URL in the field ``Service URL``, for example Malleefowl WPS:
 
 http://localhost:8091/wps
 
-.. image:: _images/add_service.png
+.. image:: _images/add_wps_service.png
+
+To add a new Thredds service press the ``Register a new Service`` button again, enter the Thredds URL and choose ``Thredds Catalog`` as service type.
+
+.. image:: _images/add_thredds_service.png
 
 
 .. _activate_users:
@@ -191,8 +191,6 @@ Activate Users
 ~~~~~~~~~~~~~~
 
 Open the ``Settings/Users`` page. Here you activate/deactivate users and also remove them. When a user has registerd to the Phoenix web application the user needs to be activated before the user can login.
-
-.. image:: _images/settings_users.png
 
 
 LDAP Support
