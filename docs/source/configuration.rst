@@ -31,9 +31,13 @@ If you want to use a different hostname/port then edit the default values in ``c
 
 To be able to login with the ``phoenix`` admin user you need to create a password. For this run::
 
+```bash
    $ make passwd
+```
 
-Add the password hash to ``phoenix-password``::
+Add the password hash to ``phoenix-password``:
+
+.. code:: python
 
    [settings]
    # run 'make passwd' and add password here
@@ -46,7 +50,7 @@ To activate the GitHub login for external users you need to configure a GitHub a
    github-consumer-key = ########################
    github-consumer-secret = ############################
 
-See the `GitHub Settings <https://github.com/settings/applications/new >`_ on how to generate the application key for Phoenix.
+See the `GitHub Settings <https://github.com/settings/applications/new>`_ on how to generate the application key for Phoenix.
 
 If you want to use a different Malleefowl WPS service then change the ``wps-url`` value::
 
