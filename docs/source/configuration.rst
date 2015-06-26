@@ -3,11 +3,16 @@
 Configuration
 =============
 
-You can configure Phoenix by editing ``custom.cfg`` in the Phoenix source folder::
+You can configure Phoenix by editing ``custom.cfg`` in the Phoenix source folder:
+
+.. code:: sh
 
    $ cd pyramid-phoenix
    $ vim custom.cfg
    $ cat custom.cfg
+
+.. code:: ini
+
    [settings]
    hostname = localhost
    http-port = 8081
@@ -29,22 +34,24 @@ If you want to use a different hostname/port then edit the default values in ``c
    http-port = 8081
    https-port = 8443
 
-To be able to login with the ``phoenix`` admin user you need to create a password. For this run::
+To be able to login with the ``phoenix`` admin user you need to create a password. For this run:
 
-.. code-block:: sh
+.. code:: sh
 
    $ make passwd
 
 
 Add the password hash to ``phoenix-password``:
 
-.. code-block:: python
+.. code:: ini
 
    [settings]
    # run 'make passwd' and add password here
    phoenix-password = sha256:#######################
 
-To activate the GitHub login for external users you need to configure a GitHub application key for your Phoenix web application::
+To activate the GitHub login for external users you need to configure a GitHub application key for your Phoenix web application:
+
+.. code:: python
 
    [settings]
    # register at github: 
