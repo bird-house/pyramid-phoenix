@@ -53,7 +53,7 @@ Add the password hash to ``phoenix-password``:
 
 To activate the GitHub login for external users you need to configure a GitHub application key for your Phoenix web application:
 
-.. code-block:: python
+.. code-block:: ini
 
    [settings]
    # register at github: 

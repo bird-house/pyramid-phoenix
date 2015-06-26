@@ -14,18 +14,42 @@ The user guide explains how to use the Phoenix web application to interact with 
 Login
 -----
 
-You need an :term:`birdhouse:OpenID` account to login to Phoenix. You should use a `ESGF OpenID <https://github.com/ESGF/esgf.github.io/wiki/ESGF_Data_Download>`_ which is used later to access files from :term:`birdhouse:ESGF`. Make sure, that you have a valid OpenID of one of the ESGF datanodes (http://esgf-data.dkrz.de/esgf-web-fe/) and that you are able to download a datafile. 
-
-Now, press the ``Sign in`` button in the upper right corner.
+Press the ``Sign in`` button in the upper right corner.
 
 .. image:: _images/signin.png
 
-Next you will have a page where you can enter the account name of your ESGF OpenID. 
-Choose the according ESGF OpenID provider (by default this is DKRZ).
+The login page offers you several options to login to Phoenix.
+
+.. image:: _images/login.png
+
+If you login for the first time your account needs to be activated by an administrator.
+
+**Phoenix**
+
+Enter the password of the Phoenix user. Phoneix login might not be available.
+
+**OpenID**
+
+You can use an :term:`birdhouse:OpenID` account to login to Phoenix (for example from https://openid.stackexchange.com/).
 
 .. image:: _images/openid.png 
 
-In the current state of Phoenix (March 2015) you have to be :ref:`personally activated <activate_users>` in the Phoenix web application. 
+**ESGF OpenID**
+
+You can use an `ESGF OpenID <https://github.com/ESGF/esgf.github.io/wiki/ESGF_Data_Download>`_. The ESGF OpenID is used later to access files from :term:`birdhouse:ESGF`. Make sure, that you have a valid ESGF OpenID of one of the ESGF Providers (http://esgf-data.dkrz.de/esgf-web-fe/) and that you are able to download a datafile. 
+
+Enter the account name of your ESGF OpenID and choose the according ESGF OpenID provider (by default this is DKRZ).
+
+.. image:: _images/esgfopenid.png
+
+**OAuth2**
+
+Choose one of your OAuth providers: GitHub, Google, ...
+
+**LDAP**
+
+Enter your LDAP username and password. LDAP might not be available.
+
 
 Dashboard
 ---------
@@ -44,11 +68,7 @@ When you have registered WPS services you can run a process. Go to the
 
 .. image:: _images/processes.png
 
-Use the ``Choose WPS`` button to choose one of your registered WPS services. 
-
-.. image:: _images/processes_choose.png
-
-You will get a list of available processes (WPS ``GetCapabilities`` request). 
+Choose one of your registered WPS services. You will get a list of available processes (WPS ``GetCapabilities`` request). 
 
 .. image:: _images/processes_list.png
 
@@ -56,25 +76,24 @@ Choose one of these processes by using the ``Execute`` button.
 
 .. _execute:
 
-In case of Malleefowl you may try the ``Logon with ESGF OpenID`` process. You will then be
-prompted to enter your ESGF OpenID (e.a. https://esgf-data.dkrz.de/esgf-idp/openid/justatest) and
-password. 
+In case of Emu you may try the ``Hello World`` process. You will then be
+prompted to enter your username:
 
 .. image:: _images/processes_execute.png
 
-Press the ``Submit`` button. When the process is submitted you will be shown your job list in ``My Jobs``. 
+Press the ``Submit`` button. When the process is submitted you will be shown your job list in ``Monitor``. 
 
 .. _myjobs:
 
-My Jobs
+Monitor
 -------
 
-In ``My Jobs`` all your running or finished jobs are listed. 
+In ``Monitor`` all your running or finished jobs are listed. 
 The list shows the status and progress of your jobs. 
 
 .. image:: _images/myjobs.png
 
-When a job has finished with success you can see the results by using the ``Show`` button.  
+When a job has finished with success you can see the results by clicking the Job ID link.  
 
 .. image:: _images/myjobs_output.png
 
