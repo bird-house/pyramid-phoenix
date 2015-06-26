@@ -195,7 +195,7 @@ buildclean:
 	@echo "Removing bootstrap.sh ..."
 	@test -e bootstrap.sh && rm -v bootstrap.sh
 
-.PHONY: bootstrap
+.PHONY: passwd
 passwd:
 	@echo "Generate Phoenix password ..."
 	@echo "Enter a password with at least 8 characters."
