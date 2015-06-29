@@ -80,7 +80,7 @@ def main(global_config, **settings):
     config.add_route('profile', '/profile/{tab}')
 
     # settings
-    config.add_route('settings', '/settings/overview')
+    config.add_route('settings', '/settings')
     config.add_route('settings_users', '/settings/users')
     config.add_route('settings_edit_user', '/settings/users/{userid}/edit')
     config.add_route('remove_user', '/settings/users/{userid}/remove')
