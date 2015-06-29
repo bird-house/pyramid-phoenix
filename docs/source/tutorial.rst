@@ -8,6 +8,8 @@ In the following tutorial will guide you though the first steps to get familliar
 .. toctree::
    :maxdepth: 1
 
+   tutorial/helloworld
+   tutorial/cdosinfo
    tutorial/visualisation
 
    

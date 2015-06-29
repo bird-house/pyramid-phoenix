@@ -97,16 +97,19 @@ class Account(MyView):
             email = user.get('email')
             if email:
                 recipients.add(email)
-        
-        from pyramid_mailer.message import Message
-        message = Message(subject=subject,
-                          sender=sender,
-                          recipients=recipients,
-                          body=message)
-        try:
-            mailer.send_immediately(message, fail_silently=True)
-        except:
-            logger.exception("failed to send notification")
+
+        if len(recipients) > 0:
+            from pyramid_mailer.message import Message
+            message = Message(subject=subject,
+                            sender=sender,
+                            recipients=recipients,
+                            body=message)
+            try:
+                mailer.send_immediately(message, fail_silently=True)
+            except:
+                logger.exception("failed to send notification")
+        else:
+            logger.warn("Can't send notification. No admin emails are available.")
 
     def login_success(self, login_id, email=None, name="Unknown", openid=None, local=False):
         from phoenix.models import add_user
@@ -160,7 +163,7 @@ class Account(MyView):
     def phoenix_login(self, appstruct):
         password = appstruct.get('password')
         if passwd_check(self.request, password):
-            return self.login_success(login_id="phoenix@localhost", email="phoenix@localhost", name="Phoenix", local=True)
+            return self.login_success(login_id="phoenix@localhost", name="Phoenix", local=True)
         else:
             return self.login_failure()
 
@@ -190,11 +193,11 @@ class Account(MyView):
                 elif result.provider.name == 'github':
                     # TODO: fix email ... get more infos ... which login_id?
                     login_id = "{0.username}@github.com".format(result.user)
-                    email = "{0.username}@github.com".format(result.user)
+                    #email = "{0.username}@github.com".format(result.user)
                     # get extra info
                     if result.user.credentials:
                         pass
-                    return self.login_success(login_id=login_id, email=email, name=result.user.name)
+                    return self.login_success(login_id=login_id, name=result.user.name)
         return response
 
     def ldap_prepare(self):

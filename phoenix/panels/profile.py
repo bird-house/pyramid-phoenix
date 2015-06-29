@@ -28,7 +28,7 @@ class AccountPanel(ProfilePanel):
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
             user = get_user(self.request)
-            for key in ['name', 'organisation', 'notes']:
+            for key in ['name', 'email', 'organisation', 'notes']:
                 user[key] = appstruct.get(key)
             self.request.db.users.update({'identifier':authenticated_userid(self.request)}, user)
         except ValidationFailure, e:

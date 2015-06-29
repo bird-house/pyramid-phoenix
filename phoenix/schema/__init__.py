@@ -105,8 +105,8 @@ class UserProfileSchema(colander.MappingSchema):
         colander.String(),
         title = "EMail",
         validator = colander.Email(),
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        missing = colander.drop,
+        widget = deform.widget.TextInputWidget(),
         )
     organisation = colander.SchemaNode(
         colander.String(),
