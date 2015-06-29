@@ -57,10 +57,10 @@ class LdapSchema(colander.MappingSchema):
     name = colander.SchemaNode(
             colander.String(),
             title = 'User name attribute',
-            description = 'Optional: LDAP attribute to receive user name from query, e.g. "mail"',
+            description = 'Optional: LDAP attribute to receive user name from query, e.g. "cn"',
             missing = '')
     email = colander.SchemaNode(
             colander.String(),
             title = 'User e-mail attribute',
-            description = 'Optional: LDAP attribute to receive user e-mail from query, e.g. "cn"',
+            description = 'Optional: LDAP attribute to receive user e-mail from query, e.g. "mail"',
             missing = '')
