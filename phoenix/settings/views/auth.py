@@ -38,6 +38,9 @@ class Auth(SettingsView):
             self.settings['auth'] = {}
             self.settings['auth']['protocol'] = list(appstruct.get('protocol'))
             self.db.settings.save(self.settings)
+
+            # TODO: use events, config, settings, ... to update auth
+            
             self.session.flash('Successfully updated Auth settings!', queue = 'success')
         return HTTPFound(location=self.request.route_path('settings_auth'))
 

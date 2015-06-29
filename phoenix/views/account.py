@@ -28,7 +28,8 @@ def register(request):
 class Account(MyView):
     def __init__(self, request):
         super(Account, self).__init__(request, name="account", title='Account')
-
+        
+        
     def appstruct(self, protocol):
         if protocol == 'oauth2':
             return dict(provider='github')
@@ -143,17 +144,26 @@ class Account(MyView):
     
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
-        protocol = self.request.matchdict.get('protocol', 'esgf')
+        protocol = self.request.matchdict.get('protocol', 'oauth2')
 
         if protocol == 'ldap':
             # Ensure that the ldap connector is created
             self.ldap_prepare()
 
+        # TODO: refactor auth settings handling
+        settings = self.db.settings.find_one()
+        auth_protocols = {'phoenix', 'oauth2'}
+        if settings is not None:
+            auth_protocols = settings.get('auth', {}).get('protocol', auth_protocols)
+
         form = self.generate_form(protocol)
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
         # TODO: Add ldap to title?
-        return dict(active=protocol, title="Login", form=form.render( self.appstruct(protocol) ))
+        return dict(active=protocol,
+                    title="Login",
+                    auth_protocols=auth_protocols,
+                    form=form.render( self.appstruct(protocol) ))
 
     @view_config(route_name='account_logout', permission='edit')
     def logout(self):
