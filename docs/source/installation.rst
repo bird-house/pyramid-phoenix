@@ -15,17 +15,16 @@ To install Malleefowl follow the instructions given in the :ref:`Malleefowl docu
    $ cd malleefowl
    $ make
 
-Now start with installing Phoenix with sources from github:
+Now start with downloading Phoenix with sources from github:
 
 .. code-block:: sh
 
    $ git clone https://github.com/bird-house/pyramid-phoenix.git
    $ cd pyramid-phoenix
-   $ make
 
-For other install options run ``make help`` and read the documention for the :ref:`Makefile <bootstrap:makefile>`.
+For install options run ``make help`` and read the documention for the :ref:`Makefile <bootstrap:makefile>`.
 
-After that you *need* to create a password for the local ``phoenix`` user which is used to login to the Phoenix web application:
+Before installation you *need* to create a password for the local ``phoenix`` user which is used to login to the Phoenix web application:
 
 .. code-block:: sh
 
@@ -35,18 +34,15 @@ After that you *need* to create a password for the local ``phoenix`` user which 
    Enter password: 
    Verify password:
 
-   sha256:#############
-   
-   Add this password to custom.cfg: phoenix-password = ...
    Run 'make install restart' to activate this password.
 
-Follow the instructions given and add the password hash as ``phoenix-password = sha256:###`` in ``custom.cfg``. After that run:
+Optionally take a look at ``custom.cfg`` and make additional changes. When you're finished, run ``make`` to install Phoenix:
 
 .. code-block:: sh
 
-   $ make install
+   $ make
      
-You always have to run ``make install`` after changes in custom.cfg. 
+You always have to rerun ``make install`` after making changes in custom.cfg.
 
 After successful installation you need to start the services. All installed files (config etc ...) are below the conda environment ``birdhouse`` which is by default in your home directory ``~/.conda/envs/birdhouse``. Now, start the services:
 

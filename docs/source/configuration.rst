@@ -18,7 +18,7 @@ You can configure Phoenix by editing ``custom.cfg`` in the Phoenix source folder
    http-port = 8081
    https-port = 8443
    log-level = INFO
-   # run 'make passwd' and add password here
+   # run 'make passwd' and to generate password hash
    phoenix-password = sha256:#######################
    esgf-search-url = http://example.org/esg-search
    wps-url = http://localhost:8091/wps
@@ -41,15 +41,6 @@ To be able to login with the ``phoenix`` admin user you need to create a passwor
 .. code-block:: sh
 
    $ make passwd
-
-
-Add the password hash to ``phoenix-password``:
-
-.. code-block:: ini
-
-   [settings]
-   # run 'make passwd' and add password here
-   phoenix-password = sha256:#######################
 
 To activate the GitHub login for external users you need to configure a GitHub application key for your Phoenix web application:
 
