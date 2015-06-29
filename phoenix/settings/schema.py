@@ -18,6 +18,21 @@ class UserSchema(UserProfileSchema):
         title='Group',
         description='Select Group')
 
+class AuthSchema(colander.MappingSchema):
+    choices = [
+        ('phoenix', 'Phoenix'),
+        ('esgf', 'ESGF OpenID'),
+        ('openid', 'OpenID'),
+        ('oauth2', 'OAuth 2.0'),
+        ('ldap', 'LDAP')]
+
+    protocol = colander.SchemaNode(
+        colander.String(),
+        validator=colander.OneOf([x[0] for x in choices]),
+        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
+        title='Auth Protocol',
+        description='Choose at least one Auth Protocol')
+
 class LdapSchema(colander.MappingSchema):
     server = colander.SchemaNode(
             colander.String(),

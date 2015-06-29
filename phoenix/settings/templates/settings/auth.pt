@@ -8,11 +8,11 @@
           <a href="${request.route_path('settings')}">
             <i class="fa fa-fw fa-chevron-left" ></i>
           </a>
-          Auth
+          ${title}
         </span>
       </div>
       <div class="panel-body">
-      
+        <tal:form replace="structure form">The form will render here</tal:form>
       </div>
     </div>
 
