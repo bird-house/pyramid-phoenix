@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class Auth(SettingsView):
     def __init__(self, request):
-        super(Auth, self).__init__(request, name='settings_auth', title='auth')
+        super(Auth, self).__init__(request, name='settings_auth', title='Auth')
 
     def breadcrumbs(self):
         breadcrumbs = super(Auth, self).breadcrumbs()

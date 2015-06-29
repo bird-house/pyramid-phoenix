@@ -27,11 +27,12 @@ class AuthSchema(colander.MappingSchema):
         ('ldap', 'LDAP')]
 
     protocol = colander.SchemaNode(
-        colander.String(),
-        validator=colander.OneOf([x[0] for x in choices]),
-        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
+        colander.Set(),
+        default = ['phoenix', 'oauth2'],
         title='Auth Protocol',
-        description='Choose at least one Auth Protocol')
+        description='Choose at least one Auth Protocol',
+        validator=colander.Length(min=1),
+        widget=deform.widget.CheckboxChoiceWidget(values=choices, inline=True))
 
 class LdapSchema(colander.MappingSchema):
     server = colander.SchemaNode(
