@@ -111,7 +111,7 @@ class Account(MyView):
         else:
             logger.warn("Can't send notification. No admin emails are available.")
 
-    def login_success(self, login_id, email=None, name="Unknown", openid=None, local=False):
+    def login_success(self, login_id, email='', name="Unknown", openid=None, local=False):
         from phoenix.models import add_user
         user = self.request.db.users.find_one(dict(login_id=login_id))
         if user is None:
