@@ -242,13 +242,14 @@ class Account(MyView):
         if auth is not None:
             # Get user name and email
             ldap_settings = self.db.ldap.find_one()
-            name  = auth[1].get(ldap_settings['name'])[0]
-            email = auth[1].get(ldap_settings['email'])[0]
+            name  = (auth[1].get(ldap_settings['name'])[0]
+                    if ldap_settings['name'] != '' else 'Unknown')
+            email = (auth[1].get(ldap_settings['email'])[0]
+                    if ldap_settings['email'] != '' else None)
 
             # Authentication successful
             return self.login_success(login_id = auth[0], # userdn
-                    name = name if name != '' else 'Unknown',
-                    email = email if email != '' else None)
+                    name = name, email = email)
         else:
             # Authentification failed
             return self.login_failure()
