@@ -30,7 +30,7 @@ class AuthSchema(colander.MappingSchema):
         colander.Set(),
         default = ['phoenix', 'oauth2'],
         title='Auth Protocol',
-        description='Choose at least one Auth Protocol',
+        description='Choose at least one Authentication Protocol which is used in Phoenix',
         validator=colander.Length(min=1),
         widget=deform.widget.CheckboxChoiceWidget(values=choices, inline=True))
 
