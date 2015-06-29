@@ -23,8 +23,8 @@ class EditUser(SettingsView):
         return breadcrumbs
 
     def generate_form(self):
-        from phoenix.settings.schema import UserSchema
-        return Form(schema=UserSchema(), buttons=('submit',), formid='deform')
+        from phoenix.settings.schema import EditUserSchema
+        return Form(schema=EditUserSchema(), buttons=('submit',), formid='deform')
 
     def process_form(self, form):
         try:

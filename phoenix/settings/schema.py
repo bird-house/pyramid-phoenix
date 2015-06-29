@@ -8,7 +8,7 @@ from phoenix.schema import UserProfileSchema
 import logging
 logger = logging.getLogger(__name__)
 
-class UserSchema(UserProfileSchema):
+class EditUserSchema(UserProfileSchema):
     choices = ((Admin, 'Admin'), (User, 'User'), (Guest, 'Guest'))
     
     group = colander.SchemaNode(
