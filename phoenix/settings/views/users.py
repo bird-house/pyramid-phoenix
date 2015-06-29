@@ -32,7 +32,7 @@ class Users(SettingsView):
         grid = UsersGrid(
                 self.request,
                 user_items,
-                ['name', 'userid', 'organisation', 'notes', 'group', 'last_login', ''],
+                ['name', 'userid', 'email', 'organisation', 'notes', 'group', 'last_login', ''],
             )
         return dict(grid=grid)
 
