@@ -3,33 +3,14 @@ import colander
 from colander import Invalid
 
 from phoenix.security import Admin, User, Guest
+from phoenix.schema import UserProfileSchema
 
 import logging
 logger = logging.getLogger(__name__)
 
-class UserSchema(colander.MappingSchema):
+class UserSchema(UserProfileSchema):
     choices = ((Admin, 'Admin'), (User, 'User'), (Guest, 'Guest'))
     
-    name = colander.SchemaNode(
-        colander.String(),
-        title = "Name",
-        missing = colander.drop,
-        )
-    userid = colander.SchemaNode(
-        colander.String(),
-        missing = colander.drop,
-        widget = deform.widget.TextInputWidget(readonly=True),
-        )
-    organisation = colander.SchemaNode(
-        colander.String(),
-        title = "Organisation",
-        missing = colander.drop,
-        )
-    notes = colander.SchemaNode(
-        colander.String(),
-        title = "Notes",
-        missing = colander.drop,
-        )
     group = colander.SchemaNode(
         colander.String(),
         validator=colander.OneOf([x[0] for x in choices]),
