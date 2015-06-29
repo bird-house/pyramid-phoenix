@@ -4,9 +4,21 @@
 
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h4>${name}
-          <a class="btn btn-success pull-right" href="${request.route_path('supervisor_log', name=name)}"><i class="fa fa-lg fa-repeat"></i></a>
-        </h4>
+        <span class="panel-title">
+          <a href="${request.route_path('supervisor')}">
+            <i class="fa fa-fw fa-chevron-left" ></i>
+          </a>
+          ${name}
+          <div class="pull-right">
+            <a class="btn btn-success btn-xs"
+               rel="tooltip"
+               data-toggle="tooltip"
+               title="Refresh"
+               href="${request.route_path('supervisor_log', name=name)}">
+              <i class="fa fa-lg fa-repeat"></i>
+            </a>
+          </div>
+        </span>
       </div>
       <div class="panel-body">
         <pre class="pre-scrollable log-output">
