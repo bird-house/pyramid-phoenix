@@ -11,7 +11,7 @@ class SupervisorLog(SettingsView):
         
     def breadcrumbs(self):
         breadcrumbs = super(SupervisorLog, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path('settings_supervisor'), title='Supervisor'))
+        breadcrumbs.append(dict(route_path=self.request.route_path('supervisor'), title='Supervisor'))
         breadcrumbs.append(dict(route_path=self.request.current_route_path(), title=self.title))
         return breadcrumbs
 

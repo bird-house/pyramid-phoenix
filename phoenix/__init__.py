@@ -88,7 +88,7 @@ def main(global_config, **settings):
     config.add_route('settings_ldap', '/settings/ldap')
 
     # supervisor
-    config.add_route('settings_supervisor', '/settings/supervisor')
+    config.add_route('supervisor', '/supervisor')
     config.add_route('supervisor_process', '/supervisor/{action}/{name}')
     config.add_route('supervisor_log', '/supervisor_log/{name}')
 

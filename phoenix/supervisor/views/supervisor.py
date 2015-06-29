@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class Supervisor(SettingsView):
     def __init__(self, request):
-        super(Supervisor, self).__init__(request, name='settings_supervisor', title='Supervisor')
+        super(Supervisor, self).__init__(request, name='supervisor', title='Supervisor')
         import xmlrpclib
         # TODO: dont use hardcoded url
         self.server = xmlrpclib.Server('http://localhost:9001/RPC2')
@@ -38,8 +38,9 @@ class Supervisor(SettingsView):
             self.session.flash("Logs of service {0} cleared.".format(name), queue="success")
         return HTTPFound(location=self.request.route_path(self.name))
         
-    @view_config(route_name="settings_supervisor", renderer='../templates/supervisor/supervisor.pt')
+    @view_config(route_name="supervisor", renderer='../templates/supervisor/supervisor.pt')
     def view(self):
+        # TODO: show only wps processes
         grid = Grid(self.request, self.server.supervisor.getAllProcessInfo(), ['state', 'description', 'name', ''])
         return dict(grid=grid)
 

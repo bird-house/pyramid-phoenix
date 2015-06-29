@@ -14,7 +14,7 @@
                rel="tooltip"
                data-toggle="tooltip"
                title="Refresh"
-               href="${request.route_path('settings_supervisor')}">
+               href="${request.route_path('supervisor')}">
               <i class="fa fa-lg fa-repeat"></i>
             </a>
           </div>
