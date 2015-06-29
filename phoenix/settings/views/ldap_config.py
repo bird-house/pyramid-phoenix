@@ -24,7 +24,7 @@ class Ldap(SettingsView):
             ldap_settings = dict()
 
         # Generate form
-        from phoenix.schema.settings import LdapSchema
+        from phoenix.settings.schema import LdapSchema
         ldap_form = Form(schema = LdapSchema(), buttons = ('submit',), formid = 'deform')
 
         if 'submit' in self.request.params:
