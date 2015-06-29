@@ -16,11 +16,11 @@ class Overview(SettingsView):
 
         buttons.append(dict(url=self.request.route_path('settings_supervisor'), icon="monitor_edit.png", title="Supervisor"))
         buttons.append(dict(url=self.request.route_path('services'), icon="bookshelf.png", title="Services"))
-        buttons.append(dict(url="/settings/users", icon="user_catwomen.png", title="Users"))
+        buttons.append(dict(url=self.request.route_path('settings_users'), icon="user_catwomen.png", title="Users"))
         buttons.append(dict(url=self.settings.get('celery.url'),
                             icon="celery_128.png", title="Celery", id="external-url"))
-        buttons.append(dict(url="/settings/jobs", icon="blackboard_sum.png", title="Monitor"))
-        buttons.append(dict(url = "/settings/ldap", icon = "ldap.png", title = "LDAP"))
+        buttons.append(dict(url=self.request.route_path('settings_jobs'), icon="blackboard_sum.png", title="Monitor"))
+        buttons.append(dict(url=self.request.route_path('settings_ldap'), icon = "ldap.png", title = "LDAP"))
         buttongroups.append(dict(title='Settings', buttons=buttons))
 
         return dict(buttongroups=buttongroups)
