@@ -5,10 +5,10 @@
      <div class="panel panel-default">
       <div class="panel-heading">
         <span class="panel-title">
-	  <a href="${request.route_path('settings')}">
+          <a href="${request.route_path('settings')}">
             <i class="fa fa-fw fa-chevron-left" ></i>
-	  </a>
-	  Services
+          </a>
+          Services
           <div class="pull-right">
             <a class="btn btn-success btn-xs"
                rel="tooltip"
@@ -21,26 +21,26 @@
         </span>
       </div>
       <div class="panel-body">
-	<ul class="list-group">
-	  <li class="list-group-item" tal:repeat="item items">
-	    <div class="media">
-	      <span class="pull-left text-muted" aria-hidden="true">
-		<i class="fa fa-globe"></i>
-	      </span>
-	      <div class="media-body">
-		<h4 class="media-heading">
-		  <a href="${request.route_path('service_details', service_id=item.identifier)}">${item.title}</a>
-		</h4>
-		<div class="pull-right text-muted text-right" style="font-size: .75em;">
-		  <span>
-		    ${item.format}
-		  </span>
-		</div>
-		${item.abstract}
-	      </div>
-	    </div>
-	  </li>
-	</ul>
+        <ul class="list-group">
+          <li class="list-group-item" tal:repeat="item items">
+            <div class="media">
+              <span class="pull-left text-muted" aria-hidden="true">
+                <i class="fa fa-globe"></i>
+              </span>
+              <div class="media-body">
+                <h4 class="media-heading">
+                  <a href="${request.route_path('service_details', service_id=item.identifier)}">${item.title}</a>
+                </h4>
+                <div class="pull-right text-muted text-right" style="font-size: .75em;">
+                  <span>
+                    ${item.format}
+                  </span>
+                </div>
+                ${item.abstract}
+              </div>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
 
