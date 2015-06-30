@@ -150,25 +150,29 @@ class Account(MyView):
             # Ensure that the ldap connector is created
             self.ldap_prepare()
 
-        # TODO: refactor auth settings handling
-        settings = self.db.settings.find_one()
-        auth_protocols = {'phoenix', 'oauth2'}
-        if settings is not None:
-            auth_protocols = settings.get('auth', {}).get('protocol', auth_protocols)
-
         form = self.generate_form(protocol)
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
         # TODO: Add ldap to title?
         return dict(active=protocol,
                     title="Login",
-                    auth_protocols=auth_protocols,
+                    auth_protocols=self.auth_protocols(),
                     form=form.render( self.appstruct(protocol) ))
 
     @view_config(route_name='account_logout', permission='edit')
     def logout(self):
         headers = forget(self.request)
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
+
+    def auth_protocols(self):
+        # TODO: refactor auth settings handling
+        settings = self.db.settings.find_one()
+        protocols = {'oauth2'}
+        if settings is not None:
+            if settings.has_key('auth'):
+                if settings['auth'].has_key('protocol'):
+                    protocols = settings['auth']['protocol']
+        return protocols
 
     def phoenix_login(self, appstruct):
         password = appstruct.get('password')

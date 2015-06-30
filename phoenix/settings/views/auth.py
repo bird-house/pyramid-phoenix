@@ -40,8 +40,7 @@ class Auth(SettingsView):
             self.db.settings.save(self.settings)
 
             # TODO: use events, config, settings, ... to update auth
-            
-            self.session.flash('Successfully updated Auth settings!', queue = 'success')
+            self.session.flash('Successfully updated Auth settings!', queue='success')
         return HTTPFound(location=self.request.route_path('settings_auth'))
 
     def appstruct(self):
