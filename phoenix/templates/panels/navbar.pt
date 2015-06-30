@@ -27,7 +27,11 @@
       </ul>
 
       <!-- nav with icons -->
+     
       <ul class="nav navbar-nav navbar-right">
+        <li tal:condition="username">
+          <p class="navbar-text navbar-right">${username}</p>
+        </li>
         <div tal:repeat="item subitems" class="nav navbar-nav">
           <li class="${'active' if item['active'] else ''}">
             <a class="navbar-link btn-lg" href="${item.url}" data-toggle="tooltip" title="${item.name}">
