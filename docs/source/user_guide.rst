@@ -192,6 +192,13 @@ Activate Users
 
 Open the ``Settings/Users`` page. Here you activate/deactivate users and also remove them. When a user has registerd to the Phoenix web application the user needs to be activated before the user can login.
 
+Choose Authentication Protocol
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Open the ``Settings/Auth`` page. Here you can choose the different authentication protocols (OpenID, LDAP, ...) which users can use on the login page.
+
+.. image:: _images/settings_auth.png 
+
 
 LDAP Support
 ~~~~~~~~~~~~
