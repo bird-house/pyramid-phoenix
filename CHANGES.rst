@@ -7,6 +7,7 @@ Changes
 * auth settings page added.
 * fixed swiftlogin.
 * allow edit of user emails.
+* fixed wizard favorites loading.
 
 0.4.3 (2015-06-25)
 ==================
