@@ -15,10 +15,9 @@ wizard_favorite = "wizard_favorite"
 no_favorite = "No Favorite"
 
 class WizardFavorite(object):
-    def __init__(self, request, session, userid):
+    def __init__(self, request, session):
         self.request = request
         self.session = session
-        self.userid = userid
         self.favdb = self.request.db.favorites
         if not wizard_favorite in self.session:
             self.load()
@@ -41,23 +40,25 @@ class WizardFavorite(object):
 
     def save(self):
         try:
-            fav = dict(userid=self.userid, favorite=yaml.dump(self.session.get(wizard_favorite, {})))
-            self.favdb.update({'userid':self.userid}, fav)
+            userid = authenticated_userid(self.request)
+            fav = dict(userid=userid, favorite=yaml.dump(self.session.get(wizard_favorite, {})))
+            self.favdb.update({'userid':userid}, fav)
         except:
             logger.exception('saving favorite for %s failed.', self.userid)
 
     def load(self):
         try:
-            fav = self.favdb.find_one({'userid': self.userid})
+            userid = authenticated_userid(self.request)
+            fav = self.favdb.find_one({'userid': userid})
             if fav is None:
-                fav = dict(userid=self.userid)
+                fav = dict(userid=userid)
                 self.favdb.save(fav)
             self.session[wizard_favorite] = yaml.load(fav.get('favorite', '{}'))
             self.session[wizard_favorite][no_favorite] = {}
             self.session.changed()
         except:
             self.clear()
-            logger.exception('loading favorite for %s failed.', self.userid)
+            logger.exception('loading favorite for %s failed.', userid)
 
     def drop(self):
         self.favdb.remove({'userid': authenticated_userid(self.request)})
@@ -122,7 +123,7 @@ class Wizard(MyView):
         super(Wizard, self).__init__(request, name, title, description)
         self.csw = self.request.csw
         self.wizard_state = WizardState(self.session)
-        self.favorite = WizardFavorite(self.request, self.session, userid=authenticated_userid(self.request))
+        self.favorite = WizardFavorite(self.request, self.session)
 
     def buttons(self):
         prev_disabled = not self.prev_ok()
