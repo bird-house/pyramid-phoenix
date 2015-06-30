@@ -23,6 +23,7 @@ class Start(Wizard):
     def __init__(self, request):
         super(Start, self).__init__(request, name='wizard', title='Choose a Favorite')
         self.wizard_state.clear()
+        self.favorite.load()
 
     def schema(self):
         return Schema().bind(favorites=self.favorite.names())

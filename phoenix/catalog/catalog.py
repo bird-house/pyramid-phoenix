@@ -2,10 +2,20 @@ from mako.template import Template
 import uuid
 
 def wps_url(request, identifier):
+    return get_wps(request, identifier).source
+
+def wps_caps_url(request, identifier):
+    wps = get_wps(request, identifier)
+    for ref in wps.references:
+        if 'get-capabilities' in ref.get('scheme'):
+            return ref.get('url')
+    return None
+
+def get_wps(request, identifier):
     csw = request.csw
     csw.getrecordbyid(id=[identifier])
-    return csw.records[identifier].source
-
+    return csw.records[identifier]
+    
 def get_wps_list(request):
     csw = request.csw
     from owslib.fes import PropertyIsEqualTo

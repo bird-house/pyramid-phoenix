@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 SIGNIN_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign in"><span class="fa fa-sign-in"></span></a>'
 SIGNOUT_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign out %s"><span class="fa fa-sign-out"></span></a>'
 
+
 def button(request):
     """If the user is logged in, returns the logout button, otherwise returns the login button"""
     import markupsafe

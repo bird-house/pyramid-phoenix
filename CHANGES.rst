@@ -1,12 +1,15 @@
 Changes
 *******
 
-0.4.4 (2015)
+0.4.4 (2015i-06-30)
 ==================
 
 * auth settings page added.
 * fixed swiftlogin.
 * allow edit of user emails.
+* fixed wizard favorites loading.
+* fixed account validation form.
+* show username in navigation bar.
 
 0.4.3 (2015-06-25)
 ==================
