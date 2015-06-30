@@ -9,6 +9,7 @@ from deform import Form, ValidationFailure
 
 from phoenix.views import MyView
 from phoenix.security import Admin, Guest, ESGF_Provider, authomatic, passwd_check
+from phoenix.models import auth_protocols
 
 import logging
 logger = logging.getLogger(__name__)
@@ -144,7 +145,7 @@ class Account(MyView):
     
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
-        protocol = self.request.matchdict.get('protocol', 'oauth2')
+        protocol = self.request.matchdict.get('protocol', 'phoenix')
 
         if protocol == 'ldap':
             # Ensure that the ldap connector is created
@@ -156,23 +157,13 @@ class Account(MyView):
         # TODO: Add ldap to title?
         return dict(active=protocol,
                     title="Login",
-                    auth_protocols=self.auth_protocols(),
+                    auth_protocols=auth_protocols(self.request),
                     form=form.render( self.appstruct(protocol) ))
 
     @view_config(route_name='account_logout', permission='edit')
     def logout(self):
         headers = forget(self.request)
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
-
-    def auth_protocols(self):
-        # TODO: refactor auth settings handling
-        settings = self.db.settings.find_one()
-        protocols = {'oauth2'}
-        if settings is not None:
-            if settings.has_key('auth'):
-                if settings['auth'].has_key('protocol'):
-                    protocols = settings['auth']['protocol']
-        return protocols
 
     def phoenix_login(self, appstruct):
         password = appstruct.get('password')
