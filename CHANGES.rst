@@ -1,6 +1,13 @@
 Changes
 *******
 
+0.4.4 (2015)
+==================
+
+* auth settings page added.
+* fixed swiftlogin.
+* allow edit of user emails.
+
 0.4.3 (2015-06-25)
 ==================
 
