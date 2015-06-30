@@ -5,7 +5,7 @@
  
   <div metal:fill-slot="content">
     <ul class="nav nav-pills">
-      <li tal:condition="'phoenix' in auth_protocols" role="presentation" class="${'active' if active=='phoenix' else ''}">
+      <li role="presentation" class="${'active' if active=='phoenix' else ''}">
         <a href="${request.route_path('account_login', protocol='phoenix')}">Phoenix</a>
       </li>
       <li tal:condition="'esgf' in auth_protocols" role="presentation" class="${'active' if active=='esgf' else ''}">

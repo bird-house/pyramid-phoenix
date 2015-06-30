@@ -20,7 +20,6 @@ class EditUserSchema(UserProfileSchema):
 
 class AuthSchema(colander.MappingSchema):
     choices = [
-        ('phoenix', 'Phoenix'),
         ('esgf', 'ESGF OpenID'),
         ('openid', 'OpenID'),
         ('oauth2', 'OAuth 2.0'),
@@ -28,7 +27,7 @@ class AuthSchema(colander.MappingSchema):
 
     protocol = colander.SchemaNode(
         colander.Set(),
-        default = ['phoenix', 'oauth2'],
+        default = ['oauth2'],
         title='Auth Protocol',
         description='Choose at least one Authentication Protocol which is used in Phoenix',
         validator=colander.Length(min=1),
