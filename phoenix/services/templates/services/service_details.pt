@@ -5,10 +5,10 @@
      <div class="panel panel-default">
       <div class="panel-heading">
         <span class="panel-title">
-	  <a href="${request.route_path('services')}">
+          <a href="${request.route_path('services')}">
             <i class="fa fa-fw fa-chevron-left" ></i>
-	  </a>
-	  ${service.title}
+          </a>
+          ${service.title}
           <div class="pull-right">
             <a class="btn btn-danger btn-xs"
                rel="tooltip"
@@ -21,13 +21,13 @@
         </span>
       </div>
       <div class="panel-body">
-	<p><strong>Name:</strong> ${service.title}</p>
-	<p><strong>URL:</strong> <a href="${service.source}">${service.source}</a></p>
-	<p><strong>Service Type:</strong> <span class="label label-warning">${service.format}</span></p>
-	<p><strong>Abstract:</strong> ${service.abstract}</p>
-	<p><strong>Keywords:</strong> <span class="label label-info" tal:repeat="keyword service.subjects">${keyword}</span></p>
-	<p><strong>References:</strong> <a href="${ref.get('url')}" class="label label-warning" tal:repeat="ref service.references">${ref.get('scheme')}</a></p>
-	<p><strong>Creator:</strong> ${service.creator}</p>
+        <p><strong>Name:</strong> ${service.title}</p>
+        <p><strong>URL:</strong> <a href="${service.source}">${service.source}</a></p>
+        <p><strong>Service Type:</strong> <span class="label label-warning">${service.format}</span></p>
+        <p><strong>Abstract:</strong> ${service.abstract}</p>
+        <p><strong>Keywords:</strong> <span class="label label-info" tal:repeat="keyword service.subjects">${keyword}</span></p>
+        <p><strong>References:</strong> <a href="${ref.get('url')}" class="label label-warning" tal:repeat="ref service.references">${ref.get('scheme')}</a></p>
+        <p><strong>Creator:</strong> ${service.creator}</p>
       </div>
     </div>
 
