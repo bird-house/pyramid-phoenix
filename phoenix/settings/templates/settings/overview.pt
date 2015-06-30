@@ -14,18 +14,16 @@
       <div class="panel-body">
         <div tal:repeat="group buttongroups">
           <ul class="row">
-     
-            <div class="col-2 col-lg-2 col-sm-2" tal:repeat="button group['buttons']">
+            <div class="col-md-2" tal:repeat="button group['buttons']">
               <a tal:attributes="href button['url'];id button.get('id')" class="thumbnail">
                 <img
                    tal:define="icon_url '/static/images/' + button['icon']"
                    tal:attributes="src icon_url" alt="" width="32">
-                <div align="center">
-                  <h4 tal:content="button['title']">title</h4>
+                <div class="text-center">
+                  <h4>${button['title']}</h4>
                 </div>
               </a>
             </div>
-
           </ul>
         </div>
       </div>
