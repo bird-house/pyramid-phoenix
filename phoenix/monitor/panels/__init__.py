@@ -15,7 +15,7 @@ def job_details(request, job_id):
     details['progress'] = job.get('progress')
     details['duration'] = job.get('duration')
     details['status_message'] = job.get('progress')
-    details['status_location'] = job.get('progress')
+    details['status_location'] = job.get('status_location')
     return details
 
 @panel_config(name='monitor_details', renderer='../templates/panels/monitor_details.pt')
