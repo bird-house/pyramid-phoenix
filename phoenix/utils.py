@@ -10,8 +10,14 @@ def button(request):
     """If the user is logged in, returns the logout button, otherwise returns the login button"""
     import markupsafe
     from pyramid.security import authenticated_userid
+    from phoenix.models import auth_protocols
     if not authenticated_userid(request):
-        return markupsafe.Markup(SIGNIN_HTML) % (request.route_path('account_login', protocol='oauth2'))
+        protocols = auth_protocols(request)
+        if len(protocols) > 0:
+            protocol = protocols[-1]
+        else:
+            protocol = 'oauth2'
+        return markupsafe.Markup(SIGNIN_HTML) % (request.route_path('account_login', protocol=protocol))
     else:
         return markupsafe.Markup(SIGNOUT_HTML) % (request.route_path('account_logout'), authenticated_userid(request))
 

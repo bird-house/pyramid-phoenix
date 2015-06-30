@@ -64,10 +64,10 @@ def esgf_logon(self, userid, url, openid, password):
         credentials = execution.processOutputs[0].reference
         cert_expires = execution.processOutputs[1].data[0]
         db = mongodb(registry)
-        user = db.users.find_one({'userid':userid})
+        user = db.users.find_one({'identifier':userid})
         user['credentials'] = credentials
         user['cert_expires'] = cert_expires
-        db.users.update({'userid':userid}, user)
+        db.users.update({'identifier':userid}, user)
     return execution.status
 
 @app.task(bind=True)

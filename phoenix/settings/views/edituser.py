@@ -4,7 +4,7 @@ from pyramid.httpexceptions import HTTPFound
 from deform import Form
 from deform import ValidationFailure
 
-from . import SettingsView
+from phoenix.settings.views import SettingsView
 
 import logging
 logger = logging.getLogger(__name__)
@@ -23,8 +23,8 @@ class EditUser(SettingsView):
         return breadcrumbs
 
     def generate_form(self):
-        from phoenix.settings.schema import UserSchema
-        return Form(schema=UserSchema(), buttons=('submit',), formid='deform')
+        from phoenix.settings.schema import EditUserSchema
+        return Form(schema=EditUserSchema(), buttons=('submit',), formid='deform')
 
     def process_form(self, form):
         try:

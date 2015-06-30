@@ -8,7 +8,7 @@ from phoenix.schema import UserProfileSchema
 import logging
 logger = logging.getLogger(__name__)
 
-class UserSchema(UserProfileSchema):
+class EditUserSchema(UserProfileSchema):
     choices = ((Admin, 'Admin'), (User, 'User'), (Guest, 'Guest'))
     
     group = colander.SchemaNode(
@@ -17,6 +17,21 @@ class UserSchema(UserProfileSchema):
         widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
         title='Group',
         description='Select Group')
+
+class AuthSchema(colander.MappingSchema):
+    choices = [
+        ('esgf', 'ESGF OpenID'),
+        ('openid', 'OpenID'),
+        ('oauth2', 'OAuth 2.0'),
+        ('ldap', 'LDAP')]
+
+    protocol = colander.SchemaNode(
+        colander.Set(),
+        default = ['oauth2'],
+        title='Auth Protocol',
+        description='Choose at least one Authentication Protocol which is used in Phoenix',
+        validator=colander.Length(min=1),
+        widget=deform.widget.CheckboxChoiceWidget(values=choices, inline=True))
 
 class LdapSchema(colander.MappingSchema):
     server = colander.SchemaNode(

@@ -80,15 +80,16 @@ def main(global_config, **settings):
     config.add_route('profile', '/profile/{tab}')
 
     # settings
-    config.add_route('settings', '/settings/overview')
+    config.add_route('settings', '/settings')
     config.add_route('settings_users', '/settings/users')
     config.add_route('settings_edit_user', '/settings/users/{userid}/edit')
     config.add_route('remove_user', '/settings/users/{userid}/remove')
-    config.add_route('settings_jobs', '/settings/jobs')
+    config.add_route('settings_monitor', '/settings/monitor')
+    config.add_route('settings_auth', '/settings/auth')
     config.add_route('settings_ldap', '/settings/ldap')
 
     # supervisor
-    config.add_route('settings_supervisor', '/settings/supervisor')
+    config.add_route('supervisor', '/supervisor')
     config.add_route('supervisor_process', '/supervisor/{action}/{name}')
     config.add_route('supervisor_log', '/supervisor_log/{name}')
 

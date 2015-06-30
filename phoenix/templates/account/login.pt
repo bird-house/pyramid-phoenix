@@ -1,6 +1,6 @@
 <metal:block use-macro="main_template">
   <div metal:fill-slot="javascript">
-    <script src="${request.static_url('phoenix:static/scripts/authomatic.js')}"></script>
+    <script src="${request.static_path('phoenix:static/scripts/authomatic.js')}"></script>
   </div>
  
   <div metal:fill-slot="content">
@@ -8,16 +8,16 @@
       <li role="presentation" class="${'active' if active=='phoenix' else ''}">
         <a href="${request.route_path('account_login', protocol='phoenix')}">Phoenix</a>
       </li>
-      <li role="presentation" class="${'active' if active=='esgf' else ''}">
+      <li tal:condition="'esgf' in auth_protocols" role="presentation" class="${'active' if active=='esgf' else ''}">
         <a href="${request.route_path('account_login', protocol='esgf')}">ESGF</a>
       </li>
-      <li role="presentation" class="${'active' if active=='openid' else ''}">
+      <li tal:condition="'openid' in auth_protocols" role="presentation" class="${'active' if active=='openid' else ''}">
         <a href="${request.route_path('account_login', protocol='openid')}">OpenID</a>
       </li>
-      <li role="presentation" class="${'active' if active=='oauth2' else ''}">
+      <li tal:condition="'oauth2' in auth_protocols" role="presentation" class="${'active' if active=='oauth2' else ''}">
         <a href="${request.route_path('account_login', protocol='oauth2')}">OAuth 2.0</a>
       </li>
-      <li role="presentation" class="${'active' if active=='ldap' else ''}">
+      <li tal:condition="'ldap' in auth_protocols" role="presentation" class="${'active' if active=='ldap' else ''}">
         <a href="${request.route_path('account_login', protocol='ldap')}">LDAP</a>
       </li>
     </ul>

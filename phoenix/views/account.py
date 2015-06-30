@@ -9,6 +9,7 @@ from deform import Form, ValidationFailure
 
 from phoenix.views import MyView
 from phoenix.security import Admin, Guest, ESGF_Provider, authomatic, passwd_check
+from phoenix.models import auth_protocols
 
 import logging
 logger = logging.getLogger(__name__)
@@ -28,7 +29,8 @@ def register(request):
 class Account(MyView):
     def __init__(self, request):
         super(Account, self).__init__(request, name="account", title='Account')
-
+        
+        
     def appstruct(self, protocol):
         if protocol == 'oauth2':
             return dict(provider='github')
@@ -143,7 +145,7 @@ class Account(MyView):
     
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
-        protocol = self.request.matchdict.get('protocol', 'esgf')
+        protocol = self.request.matchdict.get('protocol', 'phoenix')
 
         if protocol == 'ldap':
             # Ensure that the ldap connector is created
@@ -153,7 +155,10 @@ class Account(MyView):
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
         # TODO: Add ldap to title?
-        return dict(active=protocol, title="Login", form=form.render( self.appstruct(protocol) ))
+        return dict(active=protocol,
+                    title="Login",
+                    auth_protocols=auth_protocols(self.request),
+                    form=form.render( self.appstruct(protocol) ))
 
     @view_config(route_name='account_logout', permission='edit')
     def logout(self):

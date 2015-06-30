@@ -8,7 +8,16 @@
           <a href="${request.route_path('settings')}">
             <i class="fa fa-fw fa-chevron-left" ></i>
           </a>
-          Users
+          Supervisor
+          <div class="pull-right">
+            <a class="btn btn-success btn-xs"
+               rel="tooltip"
+               data-toggle="tooltip"
+               title="Refresh"
+               href="${request.route_path('supervisor')}">
+              <i class="fa fa-lg fa-repeat"></i>
+            </a>
+          </div>
         </span>
       </div>
       <div class="panel-body">
