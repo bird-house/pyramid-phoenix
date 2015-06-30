@@ -61,7 +61,10 @@ class Account(MyView):
             appstruct = form.validate(controls)
         except ValidationFailure, e:
             logger.exception('validation of form failed.')
-            return dict(active=protocol, form=e.render())
+            return dict(
+                active=protocol,
+                auth_protocols=auth_protocols(self.request),
+                form=e.render())
         else:
             if protocol == 'phoenix':
                 return self.phoenix_login(appstruct)
