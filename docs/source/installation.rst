@@ -3,7 +3,7 @@
 Installation
 ============
 
-This installation works on Linux 64-bit (Ubuntu 14.04, Centos 6, ...). It might still work on MacOSX but packages are updated only from time to time. Most of the dependencies come from :term:`birdhouse:Anaconda` Python distribution system. Additional conda packages come from the `Binstar channel Birdhouse <https://binstar.org/birdhouse>`_. The installation is done with :term:`birdhouse:Buildout`.
+This installation works on Linux 64-bit (Ubuntu 14.04, Centos 6, ...). It might still work on MacOSX but packages are updated only from time to time. Most of the dependencies come from :term:`birdhouse:Anaconda` Python distribution system. Additional conda packages come from the `Binstar channel Birdhouse <https://anaconda.org/birdhouse>`_. The installation is done with :term:`birdhouse:Buildout`.
 
 Phoenix uses WPS processes provided by Malleefowl. As a requiste you should install a local Malleefowl WPS (this will become part of the Phoenix installer). Alternatively you could configure the WPS URL of a running Malleefowl WPS instance in the Phoenix ``custom.cfg``.
 
