@@ -13,7 +13,7 @@ def deferred_widget(node, kw):
     for data_input in process.dataInputs:
         if data_input.dataType == 'ComplexData':
             title = data_input.title
-            abstract = getattr(data_input, 'abstract')
+            abstract = getattr(data_input, 'abstract', '')
             mime_types = ', '.join([value.mimeType for value in data_input.supportedValues])
             description = "{0} - {1} ({2})".format(title, abstract, mime_types)
             choices.append( (data_input.identifier, description) )
