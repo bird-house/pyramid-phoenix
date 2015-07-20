@@ -106,6 +106,7 @@ def main(global_config, **settings):
     config.add_route('wizard_literal_inputs', '/wizard/literal_inputs')
     config.add_route('wizard_complex_inputs', '/wizard/complex_inputs')
     config.add_route('wizard_source', '/wizard/source')
+    config.add_route('wizard_solr_search', '/wizard/solr')
     config.add_route('wizard_csw', '/wizard/csw')
     config.add_route('wizard_csw_select', '/wizard/csw/{recordid}/select.json')
     config.add_route('wizard_esgf_search', '/wizard/esgf_search')
