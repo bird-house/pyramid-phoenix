@@ -1,6 +1,8 @@
 from pyramid.view import view_config
 
 from phoenix.wizard.views import Wizard
+import pysolr
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -30,6 +32,12 @@ class SolrSearch(Wizard):
     def next_success(self, appstruct):
         self.success(appstruct)
         return self.next('wizard_done')
+
+    def custom_view(self):
+        query = self.request.params.get('query', 'surface')
+        solr = pysolr.Solr('http://localhost:8983/solr/birdhouse/', timeout=10)
+        results = solr.search('surface')
+        return dict(results=results)
 
     @view_config(route_name='wizard_solr_search', renderer='../templates/wizard/solrsearch.pt')
     def view(self):

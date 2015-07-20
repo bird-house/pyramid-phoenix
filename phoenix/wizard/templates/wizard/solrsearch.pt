@@ -9,8 +9,26 @@
         </h3>
       </div>
       <div class="panel-body">
-       
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search datasets...">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+          </span>
+        </div>
       </div>
+
+      <ul class="media-list">
+        <li class="media" tal:repeat="result results">
+          <div class="media-body">
+            <h4 class="media-heading">${result.title}</h4>
+            ${result.resourcename}
+            <p>
+              <a href="${result.url}"><i class="fa fa-download"></i> ${result.url}</a> |
+              <a href="${result.wms_url}"><i class="fa fa-map-marker"></i> Map</a>
+            </p>
+          </div>
+        </li>
+      </ul>
     </div>
 
     <tal:form replace="structure form">The form will render here</tal:form>
