@@ -36,7 +36,7 @@ class SolrSearch(Wizard):
     def custom_view(self):
         query = self.request.params.get('query', 'surface')
         solr = pysolr.Solr('http://localhost:8983/solr/birdhouse/', timeout=10)
-        results = solr.search('surface')
+        results = solr.search(query)
         return dict(results=results)
 
     @view_config(route_name='wizard_solr_search', renderer='../templates/wizard/solrsearch.pt')
