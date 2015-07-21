@@ -37,7 +37,7 @@
           </li>
         </ul>
 
-        <h3 class="pull-right"> Showing 0-25 of 25 </h3>
+        <h3 class="pull-right"> Showing 0-25 of ${hits} </h3>
       </div>
 
       <ul class="media-list">
