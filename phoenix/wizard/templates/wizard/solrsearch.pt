@@ -56,7 +56,7 @@
               </h4>
               <div class="pull-right text-muted text-right" style="font-size: .75em;" tal:condition="'content_type' in result">
                 <span>
-                  ${result.content_type[0]}
+                  ${result.content_type}
                 </span>
               </div>
               ${result.resourcename}
