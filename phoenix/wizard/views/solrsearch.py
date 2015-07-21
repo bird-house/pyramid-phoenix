@@ -36,7 +36,7 @@ class SolrSearch(Wizard):
     def custom_view(self):
         query = self.request.params.get('q', '')
         page = int(self.request.params.get('page', '0'))
-        rows = 25
+        rows = 10
         start = page * rows
         solr_query = query
         if len(solr_query.strip()) == 0:

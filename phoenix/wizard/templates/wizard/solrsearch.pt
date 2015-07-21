@@ -28,12 +28,16 @@
       <div class="clearfix">
 
         <ul class="pagination pagination-sm pull-left">
-          <li  class="previous">
-            <a href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page-1)])}">&laquo;</a>
+          <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
+            <a href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page-1)])}">
+              <strong><i class="fa fa-angle-left"></i></strong>
+            </a>
           </li>
           
-          <li class="next ">
-            <a href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page+1)])}">&raquo;</a>
+          <li class="next" tal:attributes="class 'next' if end < hits else 'next disabled'">
+            <a href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page+1)])}">
+              <strong><i class="fa fa-angle-right"></i></strong>
+            </a>
           </li>
         </ul>
         
