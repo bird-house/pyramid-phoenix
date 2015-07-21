@@ -38,8 +38,13 @@ class SolrSearch(Wizard):
         solr_query = query
         if len(solr_query.strip()) == 0:
             solr_query = '*:*'
-        solr = pysolr.Solr('http://localhost:8983/solr/birdhouse/', timeout=10)
-        results = solr.search(solr_query)
+        try:
+            solr = pysolr.Solr('http://localhost:8983/solr/birdhouse/', timeout=10)
+            results = solr.search(solr_query)
+        except:
+            logger.warn("solr search failed")
+            self.session.flash("Solr service is not available.", queue='danger')
+            results = []
         return dict(results=results, query=query)
 
     @view_config(route_name='wizard_solr_search', renderer='../templates/wizard/solrsearch.pt')

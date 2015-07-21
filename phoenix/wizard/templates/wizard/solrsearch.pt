@@ -23,6 +23,23 @@
         </form>
       </div>
 
+      <hr>
+
+      <div class="clearfix">
+
+        <ul class="pagination pagination-sm pull-left">
+          <li  class="previous disabled">
+            <a disabled href="">&laquo;</a>
+          </li>
+
+          <li class="next disabled">
+            <a disabled href="">&raquo;</a>
+          </li>
+        </ul>
+
+        <h3 class="pull-right"> Showing 0-25 of 25 </h3>
+      </div>
+
       <ul class="media-list">
         <li class="media" tal:repeat="result results">
           <div class="media-body">
