@@ -9,12 +9,18 @@
         </h3>
       </div>
       <div class="panel-body">
-        <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search datasets...">
-          <span class="input-group-btn">
-            <a href="/wizard/solr?query=surface" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></a>
-          </span>
-        </div>
+        <form>
+          <div class="form-group">
+            <div class="input-group">
+              <input type="text" class="form-control input-lg" name="q" value="${query}" placeholder="Search datasets...">
+              <span class="input-group-btn">
+                <button class="btn btn-default btn-lg input-lg btn-primary">
+                  <span><i class="fa fa-search"></i></span>
+                </button>
+              </span>
+            </div>
+          </div>
+        </form>
       </div>
 
       <ul class="media-list">
@@ -23,8 +29,9 @@
             <h4 class="media-heading">${result.title}</h4>
             ${result.resourcename}
             <p>
-              <a href="${result.url}"><i class="fa fa-download"></i> ${result.url}</a> |
-              <a href="${result.wms_url}"><i class="fa fa-map-marker"></i> Map</a>
+              <a href="${result.url}"><i class="fa fa-download"></i> </a> |
+              <a href="${result.opendap_url}"><i class="fa fa-cube"></i> OpenDAP</a> |
+              <a href="${result.wms_url}"><i class="fa fa-map-marker"></i> Create Map</a>
             </p>
           </div>
         </li>

@@ -34,10 +34,13 @@ class SolrSearch(Wizard):
         return self.next('wizard_done')
 
     def custom_view(self):
-        query = self.request.params.get('query', 'surface')
+        query = self.request.params.get('q', '')
+        solr_query = query
+        if len(solr_query.strip()) == 0:
+            solr_query = '*:*'
         solr = pysolr.Solr('http://localhost:8983/solr/birdhouse/', timeout=10)
-        results = solr.search(query)
-        return dict(results=results)
+        results = solr.search(solr_query)
+        return dict(results=results, query=query)
 
     @view_config(route_name='wizard_solr_search', renderer='../templates/wizard/solrsearch.pt')
     def view(self):
