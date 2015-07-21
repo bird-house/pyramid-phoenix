@@ -44,16 +44,29 @@
         <h3 class="pull-right"> Showing ${start}-${end} of ${hits} </h3>
       </div>
 
-      <ul class="media-list">
-        <li class="media" tal:repeat="result results">
-          <div class="media-body">
-            <h4 class="media-heading">${result.title}</h4>
-            ${result.resourcename}
-            <p>
-              <a href="${result.url}"><i class="fa fa-download"></i> </a> |
-              <a href="${result.opendap_url}"><i class="fa fa-cube"></i> OpenDAP</a> |
-              <a href="${result.wms_url}"><i class="fa fa-map-marker"></i> Create Map</a>
-            </p>
+      <ul class="list-group">
+        <li class="list-group-item" tal:repeat="result results">
+          <div class="media">
+            <span class="pull-left text-muted" aria-hidden="true">
+              <i class="fa fa-globe"></i>
+            </span>
+            <div class="media-body">
+              <h4 class="media-heading">
+                ${result.title}
+              </h4>
+              <div class="pull-right text-muted text-right" style="font-size: .75em;" tal:condition="hasattr(result, 'content_type')">
+                <span>
+                  ${result.content_type[0]}
+                </span>
+              </div>
+              ${result.resourcename}
+              <p>
+                <a href="${result.url}"><i class="fa fa-download"></i> Download</a> |
+                <a tal:condition="hasattr(result, 'catalog_url')" href="${result.catalog_url}"><i class="fa fa-book"></i> Catalog</a> |
+                <a tal:condition="hasattr(result, 'opendap_url')" href="${result.opendap_url}"><i class="fa fa-cube"></i> OpenDAP</a> |
+                <a tal:condition="hasattr(result, 'wms_url')" href="${result.wms_url}"><i class="fa fa-map-marker"></i> Create a Map</a>
+              </p>
+            </div>
           </div>
         </li>
       </ul>
