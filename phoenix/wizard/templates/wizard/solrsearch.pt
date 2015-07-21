@@ -54,7 +54,7 @@
               <h4 class="media-heading">
                 ${result.title}
               </h4>
-              <div class="pull-right text-muted text-right" style="font-size: .75em;" tal:condition="hasattr(result, 'content_type')">
+              <div class="pull-right text-muted text-right" style="font-size: .75em;" tal:condition="'content_type' in result">
                 <span>
                   ${result.content_type[0]}
                 </span>
@@ -62,9 +62,9 @@
               ${result.resourcename}
               <p>
                 <a href="${result.url}"><i class="fa fa-download"></i> Download</a> |
-                <a tal:condition="hasattr(result, 'catalog_url')" href="${result.catalog_url}"><i class="fa fa-book"></i> Catalog</a> |
-                <a tal:condition="hasattr(result, 'opendap_url')" href="${result.opendap_url}"><i class="fa fa-cube"></i> OpenDAP</a> |
-                <a tal:condition="hasattr(result, 'wms_url')" href="${result.wms_url}"><i class="fa fa-map-marker"></i> Create a Map</a>
+                <a tal:condition="'catalog_url' in result" href="${result.catalog_url}"><i class="fa fa-book"></i> Catalog</a> |
+                <a tal:condition="'opendap_url' in result" href="${result.opendap_url}"><i class="fa fa-cube"></i> OpenDAP</a> |
+                <a tal:condition="'wms_url' in result" href="${result.wms_url}"><i class="fa fa-map-marker"></i> Create a Map</a>
               </p>
             </div>
           </div>
