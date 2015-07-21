@@ -28,16 +28,16 @@
       <div class="clearfix">
 
         <ul class="pagination pagination-sm pull-left">
-          <li  class="previous disabled">
-            <a disabled href="">&laquo;</a>
+          <li  class="previous">
+            <a href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page-1)])}">&laquo;</a>
           </li>
-
-          <li class="next disabled">
-            <a disabled href="">&raquo;</a>
+          
+          <li class="next ">
+            <a href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page+1)])}">&raquo;</a>
           </li>
         </ul>
-
-        <h3 class="pull-right"> Showing 0-25 of ${hits} </h3>
+        
+        <h3 class="pull-right"> Showing ${start}-${end} of ${hits} </h3>
       </div>
 
       <ul class="media-list">

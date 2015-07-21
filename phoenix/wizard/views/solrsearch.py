@@ -35,12 +35,15 @@ class SolrSearch(Wizard):
 
     def custom_view(self):
         query = self.request.params.get('q', '')
+        page = int(self.request.params.get('page', '0'))
+        rows = 25
+        start = page * rows
         solr_query = query
         if len(solr_query.strip()) == 0:
             solr_query = '*:*'
         try:
             solr = pysolr.Solr('http://localhost:8983/solr/birdhouse/', timeout=10)
-            options =  dict(start=0, rows=25)
+            options =  dict(start=start, rows=rows)
             results = solr.search(solr_query, **options)
             hits = results.hits
         except:
@@ -48,7 +51,8 @@ class SolrSearch(Wizard):
             self.session.flash("Solr service is not available.", queue='danger')
             results = []
             hits = 0
-        return dict(results=results, query=query, hits=hits)
+        end = min(hits, ((page + 1) * rows))
+        return dict(results=results, query=query, hits=hits, start=start+1, end=end, page=page)
 
     @view_config(route_name='wizard_solr_search', renderer='../templates/wizard/solrsearch.pt')
     def view(self):
