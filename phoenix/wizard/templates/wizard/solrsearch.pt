@@ -59,7 +59,10 @@
                   ${result.content_type}
                 </span>
               </div>
-              ${result.resourcename}
+              ${result.description}
+              <div tal:condition="'keywords' in result">
+                <a href="" class="label label-info" tal:repeat="keyword result.keywords">${keyword} </a>
+              </div>
               <p>
                 <a href="${result.url}"><i class="fa fa-download"></i> Download</a> |
                 <a tal:condition="'catalog_url' in result" href="${result.catalog_url}"><i class="fa fa-book"></i> Catalog</a> |
