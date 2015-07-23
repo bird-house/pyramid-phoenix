@@ -61,7 +61,9 @@
               </div>
               ${result.description}
               <div tal:condition="'keywords' in result">
-                <a href="" class="label label-info" tal:repeat="keyword result.keywords">${keyword} </a>
+                <a href="" class="label label-info" tal:repeat="keyword result.keywords">
+                  
+                  ${keyword}</a>
               </div>
               <p>
                 <a href="${result.url}"><i class="fa fa-download"></i> Download</a> |
