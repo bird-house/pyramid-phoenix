@@ -21,60 +21,76 @@
             </div>
           </div>
         </form>
-      </div>
 
-      <hr>
-
-      <div class="clearfix">
-
-        <ul class="pagination pagination-sm pull-left">
-          <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
-            <a href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page-1)])}">
-              <strong><i class="fa fa-angle-left"></i></strong>
-            </a>
-          </li>
-          
-          <li class="next" tal:attributes="class 'next' if end < hits else 'next disabled'">
-            <a href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page+1)])}">
-              <strong><i class="fa fa-angle-right"></i></strong>
-            </a>
-          </li>
-        </ul>
-        
-        <h3 class="pull-right"> Showing ${start}-${end} of ${hits} </h3>
-      </div>
-
-      <ul class="list-group">
-        <li class="list-group-item" tal:repeat="result results">
-          <div class="media">
-            <span class="pull-left text-muted" aria-hidden="true">
-              <i class="fa fa-globe"></i>
-            </span>
-            <div class="media-body">
-              <h4 class="media-heading">
-                ${result.title}
-              </h4>
-              <div class="pull-right text-muted text-right" style="font-size: .75em;" tal:condition="'content_type' in result">
-                <span>
-                  ${result.content_type}
-                </span>
-              </div>
-              ${result.description}
-              <div tal:condition="'keywords' in result">
-                <a href="" class="label label-info" tal:repeat="keyword result.keywords">
-                  
-                  ${keyword}</a>
-              </div>
-              <p>
-                <a href="${result.url}"><i class="fa fa-download"></i> Download</a> |
-                <a tal:condition="'catalog_url' in result" href="${result.catalog_url}"><i class="fa fa-book"></i> Catalog</a> |
-                <a tal:condition="'opendap_url' in result" href="${result.opendap_url}"><i class="fa fa-cube"></i> OpenDAP</a> |
-                <a tal:condition="'wms_url' in result" href="${result.wms_url}"><i class="fa fa-map-marker"></i> Create a Map</a>
-              </p>
+        <div class="form-group">
+          <div class="btn-toolbar">
+            <div class="btn-group">
+              <a  class="btn btn-default active"
+                  href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page)])}">
+                All</a>
+              <a  class="btn btn-default "
+                  href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page), ('category', 'thredds')])}">
+                Thredds</a>
+              <a  class="btn btn-default "
+                  href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page), ('category', 'files')])}">
+                Files</a>
             </div>
           </div>
-        </li>
-      </ul>
+        </div>
+        
+        <hr>
+        
+        <div class="clearfix">
+
+          <ul class="pagination pagination-sm pull-left">
+            <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
+              <a href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page-1)])}">
+                <strong><i class="fa fa-angle-left"></i></strong>
+              </a>
+            </li>
+          
+            <li class="next" tal:attributes="class 'next' if end < hits else 'next disabled'">
+              <a href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page+1)])}">
+                <strong><i class="fa fa-angle-right"></i></strong>
+              </a>
+            </li>
+          </ul>
+        
+          <h3 class="pull-right"> Showing ${start}-${end} of ${hits} </h3>
+        </div>
+
+        <ul class="list-group">
+          <li class="list-group-item" tal:repeat="result results">
+            <div class="media">
+              <span class="pull-left text-muted" aria-hidden="true">
+                <i class="fa fa-globe"></i>
+              </span>
+              <div class="media-body">
+                <h4 class="media-heading">
+                  ${result.title}
+                </h4>
+                <div class="pull-right text-muted text-right" style="font-size: .75em;" tal:condition="'category' in result">
+                  <span>
+                    ${result.category}
+                  </span>
+                </div>
+                ${result.abstract}
+                <div tal:condition="'keywords' in result">
+                  <a href="" class="label label-info" tal:repeat="keyword result.keywords">
+                    
+                    ${keyword}</a>
+                </div>
+                <p>
+                  <a href="${result.url}"><i class="fa fa-download"></i> Download</a> |
+                  <a tal:condition="'catalog_url' in result" href="${result.catalog_url}"><i class="fa fa-book"></i> Catalog</a> |
+                  <a tal:condition="'opendap_url' in result" href="${result.opendap_url}"><i class="fa fa-cube"></i> OpenDAP</a> |
+                  <a tal:condition="'wms_url' in result" href="${result.wms_url}"><i class="fa fa-map-marker"></i> Create a Map</a>
+                </p>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <tal:form replace="structure form">The form will render here</tal:form>
