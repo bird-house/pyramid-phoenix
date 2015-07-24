@@ -35,6 +35,27 @@
                   href="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page), ('category', 'files')])}">
                 Files</a>
             </div>
+
+            <div class="col-md-2">
+              <script type="text/javascript" charset="utf-8">
+                function select_source(sel){
+                  default_location = "${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page)])}"
+                  var location = $('#source-select :selected').data('url');
+                  if (location){
+                    window.location = location;
+                  } else {
+                    window.location = default_location;
+                  }
+                };
+              </script>
+              <select id="source-select" class="form-control" onchange="select_source(this)">
+                <option data-url="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page)])}">All Sources</option>
+                <optgroup>
+                  <option data-url="${request.route_path('wizard_solr_search', _query=[('q', query), ('page', page)])}"  tal:repeat="source sources">${source}</option>
+                </optgroup>
+              </select>
+            </div>
+
           </div>
         </div>
         
