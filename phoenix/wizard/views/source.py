@@ -10,7 +10,7 @@ class Schema(colander.MappingSchema):
         ('wizard_esgf_search', "Earth System Grid (ESGF)"),
         ('wizard_swift_login', "Swift Cloud"),
         ('wizard_threddsservice', "Thredds Catalog Service"),
-        ('wizard_solr_search', "Birdhouse Solr Search")
+        ('wizard_solr', "Birdhouse Solr Search")
         ]
     source = colander.SchemaNode(
         colander.String(),

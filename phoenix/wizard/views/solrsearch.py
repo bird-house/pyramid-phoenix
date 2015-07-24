@@ -19,7 +19,7 @@ class Schema(colander.MappingSchema):
 
 class SolrSearch(Wizard):
     def __init__(self, request):
-        super(SolrSearch, self).__init__(request, name='wizard_solr_search', title="Solr Search")
+        super(SolrSearch, self).__init__(request, name='wizard_solr', title="Solr Search")
 
     def breadcrumbs(self):
         breadcrumbs = super(SolrSearch, self).breadcrumbs()
@@ -54,6 +54,6 @@ class SolrSearch(Wizard):
         end = min(hits, ((page + 1) * rows))
         return dict(results=results, query=query, sources=[], hits=hits, start=start+1, end=end, page=page)
 
-    @view_config(route_name='wizard_solr_search', renderer='../templates/wizard/solrsearch.pt')
+    @view_config(route_name='wizard_solr', renderer='../templates/wizard/solrsearch.pt')
     def view(self):
         return super(SolrSearch, self).view()
