@@ -36,6 +36,8 @@ class SolrSearch(Wizard):
     def custom_view(self):
         query = self.request.params.get('q', '')
         page = int(self.request.params.get('page', '0'))
+        category = self.request.params.get('category')
+        source = self.request.params.get('source', '')
         rows = 10
         start = page * rows
         solr_query = query
@@ -43,16 +45,21 @@ class SolrSearch(Wizard):
             solr_query = '*:*'
         try:
             solr = pysolr.Solr('http://localhost:8983/solr/birdhouse/', timeout=10)
-            options =  dict(start=start, rows=rows)
+            options = {'start':start, 'rows':rows, 'facet':'true', 'facet.field':'category'}
+            if category:
+                options['fq'] = 'category:{0}'.format(category)
             results = solr.search(solr_query, **options)
+            #sources = results.facets['facet_fields']['source'][::2]
+            sources = []
             hits = results.hits
         except:
             logger.exception("solr search failed")
             self.session.flash("Solr service is not available.", queue='danger')
             results = []
+            sources = []
             hits = 0
         end = min(hits, ((page + 1) * rows))
-        return dict(results=results, query=query, sources=[], hits=hits, start=start+1, end=end, page=page)
+        return dict(results=results, query=query, category=category, sources=sources, hits=hits, start=start+1, end=end, page=page)
 
     @view_config(route_name='wizard_solr', renderer='../templates/wizard/solrsearch.pt')
     def view(self):

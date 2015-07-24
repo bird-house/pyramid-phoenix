@@ -25,14 +25,14 @@
         <div class="form-group">
           <div class="btn-toolbar">
             <div class="btn-group">
-              <a  class="btn btn-default active"
-                  href="${request.route_path('wizard_solr', _query=[('q', query), ('page', page)])}">
+              <a tal:attributes="class 'btn btn-default' if category else 'btn btn-default active'"
+                 href="${request.route_path('wizard_solr', _query=[('q', query), ('page', page)])}">
                 All</a>
-              <a  class="btn btn-default "
-                  href="${request.route_path('wizard_solr', _query=[('q', query), ('page', page), ('category', 'thredds')])}">
+              <a tal:attributes="class 'btn btn-default active' if category=='thredds' else 'btn btn-default'"
+                 href="${request.route_path('wizard_solr', _query=[('q', query), ('category', 'thredds')])}">
                 Thredds</a>
-              <a  class="btn btn-default "
-                  href="${request.route_path('wizard_solr', _query=[('q', query), ('page', page), ('category', 'files')])}">
+              <a tal:attributes="class 'btn btn-default active' if category=='files' else 'btn btn-default'"
+                 href="${request.route_path('wizard_solr', _query=[('q', query), ('category', 'files')])}">
                 Files</a>
             </div>
 
@@ -51,7 +51,7 @@
               <select id="source-select" class="form-control" onchange="select_source(this)">
                 <option data-url="${request.route_path('wizard_solr', _query=[('q', query), ('page', page)])}">All Sources</option>
                 <optgroup>
-                  <option data-url="${request.route_path('wizard_solr', _query=[('q', query), ('page', page)])}"  tal:repeat="source sources">${source}</option>
+                  <option data-url="${request.route_path('wizard_solr', _query=[('q', query), ('source', '')])}"  tal:repeat="source sources">${source}</option>
                 </optgroup>
               </select>
             </div>
