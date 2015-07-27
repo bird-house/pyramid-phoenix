@@ -57,6 +57,7 @@ class Done(Wizard):
         elif 'solr' in source_type:
             state = self.wizard_state.get('wizard_solr')
             source = dict()
+            source['url'] = 'http://localhost:8983/solr/birdhouse/'
             solr_query = state.get('query', '')
             if len(solr_query.strip()) == 0:
                 solr_query = '*:*'
