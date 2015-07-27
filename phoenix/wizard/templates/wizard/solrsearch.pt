@@ -54,7 +54,9 @@
               <select id="source-select" class="form-control" onchange="selectSource()">
                 <option value="${request.route_path('wizard_solr', _query=[('q', query), ('page', page)])}">All Sources</option>
                 <optgroup>
-                  <option value="${request.route_path('wizard_solr', _query=[('q', query), ('source', source)])}" tal:repeat="source sources">${source}</option>
+                  <option value="${request.route_path('wizard_solr', _query=[('q', query), ('source', source)])}"
+                          tal:attributes="selected True if source==selected_source else False"
+                          tal:repeat="source sources">${source}</option>
                 </optgroup>
               </select>
             </div>

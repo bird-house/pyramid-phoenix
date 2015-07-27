@@ -63,7 +63,7 @@ class SolrSearch(Wizard):
             sources = []
             hits = 0
         end = min(hits, ((page + 1) * rows))
-        return dict(results=results, query=query, category=category, sources=sources, hits=hits, start=start+1, end=end, page=page)
+        return dict(results=results, query=query, category=category, sources=sources, selected_source=source, hits=hits, start=start+1, end=end, page=page)
 
     @view_config(route_name='wizard_solr', renderer='../templates/wizard/solrsearch.pt')
     def view(self):
