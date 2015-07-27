@@ -37,7 +37,7 @@ class SolrSearch(Wizard):
         query = self.request.params.get('q', '')
         page = int(self.request.params.get('page', '0'))
         category = self.request.params.get('category')
-        source = self.request.params.get('source', '')
+        source = self.request.params.get('source')
         rows = 10
         start = page * rows
         solr_query = query
@@ -45,12 +45,16 @@ class SolrSearch(Wizard):
             solr_query = '*:*'
         try:
             solr = pysolr.Solr('http://localhost:8983/solr/birdhouse/', timeout=10)
-            options = {'start':start, 'rows':rows, 'facet':'true', 'facet.field':'category'}
-            if category:
-                options['fq'] = 'category:{0}'.format(category)
+            options = {'start':start, 'rows':rows, 'facet':'true', 'facet.field':['category', 'source']}
+            if category or source:
+                options['fq'] = []
+                if category:
+                    options['fq'].append('category:{0}'.format(category))
+                if source:
+                    options['fq'].append( 'source:{0}'.format(source))
+            logger.debug('solr options %s', options)
             results = solr.search(solr_query, **options)
-            #sources = results.facets['facet_fields']['source'][::2]
-            sources = []
+            sources = results.facets['facet_fields']['source'][::2]
             hits = results.hits
         except:
             logger.exception("solr search failed")
