@@ -102,7 +102,9 @@
                 </div>
                 ${result.abstract}
                 <div tal:condition="'keywords' in result">
-                  <a href="" class="label label-info" tal:repeat="keyword result.keywords">
+                  <a href="${request.route_path('wizard_solr', _query=[('q', 'keywords:'+keyword)])}" 
+                     class="label label-info" 
+                     tal:repeat="keyword result.keywords">
                     
                     ${keyword}</a>
                 </div>
