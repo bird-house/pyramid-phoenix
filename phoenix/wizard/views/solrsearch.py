@@ -10,13 +10,23 @@ logger = logging.getLogger(__name__)
 import colander
 import deform
 class Schema(colander.MappingSchema):
-    url = colander.SchemaNode(
+    query = colander.SchemaNode(
         colander.String(),
         missing = '',
         default = '',
-        widget = deform.widget.HiddenWidget()
-        )
+        widget = deform.widget.HiddenWidget())
+    category = colander.SchemaNode(
+        colander.String(),
+        missing = '',
+        default = '',
+        widget = deform.widget.HiddenWidget())
+    source = colander.SchemaNode(
+        colander.String(),
+        missing = '',
+        default = '',
+        widget = deform.widget.HiddenWidget())
 
+    
 class SolrSearch(Wizard):
     def __init__(self, request):
         super(SolrSearch, self).__init__(request, name='wizard_solr', title="Solr Search")
@@ -28,6 +38,13 @@ class SolrSearch(Wizard):
 
     def schema(self):
         return Schema()
+
+    def appstruct(self):
+        appstruct = super(SolrSearch, self).appstruct()
+        appstruct['query'] = self.request.params.get('q', colander.null)
+        appstruct['category'] = self.request.params.get('category', colander.null)
+        appstruct['source'] = self.request.params.get('source', colander.null)
+        return appstruct
 
     def next_success(self, appstruct):
         self.success(appstruct)
@@ -52,7 +69,6 @@ class SolrSearch(Wizard):
                     options['fq'].append('category:{0}'.format(category))
                 if source:
                     options['fq'].append( 'source:{0}'.format(source))
-            logger.debug('solr options %s', options)
             results = solr.search(solr_query, **options)
             sources = results.facets['facet_fields']['source'][::2]
             hits = results.hits

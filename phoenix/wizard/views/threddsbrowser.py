@@ -33,11 +33,7 @@ class ThreddsBrowser(Wizard):
 
     def appstruct(self):
         appstruct = super(ThreddsBrowser, self).appstruct()
-        url = self.request.params.get('url')
-        if url:
-            appstruct['url'] = url
-        else:
-            appstruct['url'] = colander.null
+        appstruct['url'] = self.request.params.get('url', colander.null)
         return appstruct
 
     def next_success(self, appstruct):

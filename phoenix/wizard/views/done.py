@@ -54,6 +54,12 @@ class Done(Wizard):
             source = json.loads(selection)
             source['credentials'] = user.get('credentials')
             workflow['source']['esgf'] = source
+        elif 'solr' in source_type:
+            source = dict()
+            source['query'] = self.wizard_state.get('wizard_solr').get('query')
+            source['category'] = self.wizard_state.get('wizard_solr').get('category')
+            source['source'] = self.wizard_state.get('wizard_solr').get('source')
+            workflow['source']['solr'] = source
         else:
             raise Exception('Unknown source type')
 
