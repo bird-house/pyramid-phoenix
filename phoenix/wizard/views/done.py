@@ -55,10 +55,17 @@ class Done(Wizard):
             source['credentials'] = user.get('credentials')
             workflow['source']['esgf'] = source
         elif 'solr' in source_type:
+            state = self.wizard_state.get('wizard_solr')
             source = dict()
-            source['query'] = self.wizard_state.get('wizard_solr').get('query')
-            source['category'] = self.wizard_state.get('wizard_solr').get('category')
-            source['source'] = self.wizard_state.get('wizard_solr').get('source')
+            solr_query = state.get('query', '')
+            if len(solr_query.strip()) == 0:
+                solr_query = '*:*'
+            source['query'] = solr_query
+            source['filter_query'] = []
+            if state.get('category'):
+                source['filter_query'].append( "category:{0}".format(state.get('category')) )
+            if state.get('source'):
+                source['filter_query'].append( "source:{0}".format(state.get('source')) )
             workflow['source']['solr'] = source
         else:
             raise Exception('Unknown source type')
