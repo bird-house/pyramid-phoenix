@@ -109,7 +109,7 @@
                     ${keyword}</a>
                 </div>
                 <p>
-                  <a href="${result.url}"><i class="fa fa-download"></i> Download</a> |
+                  <a tal:condition="'url' in result" href="${result.url}"><i class="fa fa-download"></i> Download</a> |
                   <a tal:condition="'catalog_url' in result" href="${result.catalog_url}"><i class="fa fa-book"></i> Catalog</a> |
                   <a tal:condition="'opendap_url' in result" href="${result.opendap_url}"><i class="fa fa-cube"></i> OpenDAP</a> |
                   <a tal:condition="'wms_url' in result" href="${result.wms_url}"><i class="fa fa-map-marker"></i> Create a Map</a>

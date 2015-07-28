@@ -160,5 +160,15 @@ def execute_process(self, userid, url, identifier, inputs, outputs, keywords=Non
 @app.task(bind=True)
 def index_thredds(self, url):
     registry = app.conf['PYRAMID_REGISTRY']
+    db = mongodb(registry)
+    task = dict(task_id=self.request.id, url=url, status='started')
+    db.tasks.save(task)
     service = registry.settings.get('solr.url')
-    feed_from_thredds(service=service, catalog_url=url, depth=2, maxrecords=-1, batch_size=50000)
+    try:
+        feed_from_thredds(service=service, catalog_url=url, depth=2, maxrecords=-1, batch_size=50000)
+        task['status'] = 'success'
+    except:
+        task['status'] = 'failure'
+        raise
+    finally:
+        db.tasks.update({'url': task['url']}, task)

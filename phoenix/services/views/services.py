@@ -21,7 +21,14 @@ class Services(SettingsView):
     def details(self):
         service_id = self.request.matchdict.get('service_id')
         self.csw.getrecordbyid(id=[service_id])
-        return dict(service=self.csw.records[service_id])
+        service = self.csw.records[service_id]
+        tasksdb = self.request.db.tasks
+        task = tasksdb.find_one({'url':service.source})
+        if task:
+            status=task.get('status')
+        else:
+            status="new"
+        return dict(service=service, status=status)
         
     @view_config(route_name='remove_service')
     def remove(self):
