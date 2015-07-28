@@ -61,7 +61,8 @@ class SolrSearch(Wizard):
         if len(solr_query.strip()) == 0:
             solr_query = '*:*'
         try:
-            solr = pysolr.Solr('http://localhost:8983/solr/birdhouse/', timeout=10)
+            url = self.request.registry.settings.get('solr.url')
+            solr = pysolr.Solr(url, timeout=10)
             options = {'start':start, 'rows':rows, 'facet':'true', 'facet.field':['category', 'source']}
             if category or source:
                 options['fq'] = []
