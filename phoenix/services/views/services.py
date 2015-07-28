@@ -38,7 +38,11 @@ class Services(SettingsView):
     @view_config(route_name="index_service")
     def index(self):
         service_id = self.request.matchdict.get('service_id')
-        self.session.flash('Start Indexing of Service %s.' % service_id, queue="info")
+        self.csw.getrecordbyid(id=[service_id])
+        service=self.csw.records[service_id]
+        from phoenix.tasks import index_thredds
+        index_thredds.delay(url=service.source)
+        self.session.flash('Start Indexing of Service %s.' % service.title, queue="info")
         return HTTPFound(location=self.request.route_path('service_details', service_id=service_id))
 
     @view_config(route_name="services", renderer='../templates/services/service_list.pt')

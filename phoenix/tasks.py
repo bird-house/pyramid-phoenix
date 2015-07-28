@@ -6,6 +6,7 @@ import yaml
 import uuid
 import urllib
 from datetime import datetime
+from birdfeeder import feed_from_thredds
 
 from phoenix.models import mongodb
 
@@ -155,3 +156,9 @@ def execute_process(self, userid, url, identifier, inputs, outputs, keywords=Non
             log(job)
         db.jobs.update({'identifier': job['identifier']}, job)
     return execution.getStatus()
+
+@app.task(bind=True)
+def index_thredds(self, url):
+    registry = app.conf['PYRAMID_REGISTRY']
+    service = registry.settings.get('solr.url')
+    feed_from_thredds(service=service, catalog_url=url, depth=2, maxrecords=-1, batch_size=50000)
