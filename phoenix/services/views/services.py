@@ -27,8 +27,10 @@ class Services(SettingsView):
     def remove(self):
         try:
             service_id = self.request.matchdict.get('service_id')
+            self.csw.getrecordbyid(id=[service_id])
+            service=self.csw.records[service_id]
             self.csw.transaction(ttype='delete', typename='csw:Record', identifier=service_id )
-            self.session.flash('Removed Service %s.' % service_id, queue="info")
+            self.session.flash('Removed Service %s.' % service.title, queue="info")
         except Exception,e:
             msg = "Could not remove service %s" % e
             logger.exception(msg)
