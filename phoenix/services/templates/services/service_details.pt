@@ -28,6 +28,7 @@
         <p><strong>Keywords:</strong> <span class="label label-info" tal:repeat="keyword service.subjects">${keyword}</span></p>
         <p><strong>References:</strong> <a href="${ref.get('url')}" class="label label-warning" tal:repeat="ref service.references">${ref.get('scheme')}</a></p>
         <p><strong>Creator:</strong> ${service.creator}</p>
+        <p tal:condition="service.format=='THREDDS'"><strong>Publish to Solr Index:</strong> <a href="${request.route_path('index_service', service_id=service.identifier)}"> <i class="fa fa-square-o text-danger"></i> Off</a></p>
       </div>
     </div>
 
