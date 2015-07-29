@@ -87,7 +87,7 @@ def main(global_config, **settings):
     config.add_route('settings_monitor', '/settings/monitor')
     config.add_route('settings_auth', '/settings/auth')
     config.add_route('settings_ldap', '/settings/ldap')
-    config.add_route('settings_solr', '/settings/solr')
+    config.add_route('settings_solr', '/settings/solr/{tab}')
 
     # supervisor
     config.add_route('supervisor', '/supervisor')

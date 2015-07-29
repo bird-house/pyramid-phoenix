@@ -1,8 +1,6 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
-from owslib.fes import PropertyIsEqualTo
-
 from . import SettingsView
 
 import logging
@@ -18,7 +16,7 @@ class SolrSettings(SettingsView):
         
     def breadcrumbs(self):
         breadcrumbs = super(SolrSettings, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name, tab="index"), title=self.title))
         return breadcrumbs
 
     
@@ -30,7 +28,7 @@ class SolrSettings(SettingsView):
         from phoenix.tasks import index_thredds
         index_thredds.delay(url=service.source)
         self.session.flash('Start Indexing of Service %s.' % service.title, queue="info")
-        return HTTPFound(location=self.request.route_path(self.name))
+        return HTTPFound(location=self.request.route_path(self.name, tab="index"))
 
     
     @view_config(route_name="clear_index")
@@ -38,21 +36,19 @@ class SolrSettings(SettingsView):
         from phoenix.tasks import clear_index
         clear_index.delay()
         self.session.flash('Cleaning Index ...', queue="info")
-        return HTTPFound(location=self.request.route_path(self.name))
+        return HTTPFound(location=self.request.route_path(self.name, tab="index"))
 
     
     @view_config(route_name='settings_solr', renderer='../templates/settings/solr.pt')
     def view(self):
-        query = PropertyIsEqualTo('dc:format', 'THREDDS')
-        self.csw.getrecords2(esn="full", constraints=[query], maxrecords=100)
-        items = []
-        for rec in self.csw.records.values():
-            item = dict(title=rec.title, status='new', service_id=rec.identifier)
-            task = self.tasksdb.find_one({'url': rec.source})
-            if task:
-                item['status'] = task['status']
-            items.append(item)
-        return dict(items=items)
+        tab = self.request.matchdict.get('tab', 'params')
+    
+        lm = self.request.layout_manager
+        if tab == 'params':
+            lm.layout.add_heading('solr_params')
+        elif tab == 'index':
+            lm.layout.add_heading('solr_index')
+        return dict(active=tab)
         
 
 
