@@ -10,11 +10,17 @@ import colander
 import deform
 class Schema(colander.MappingSchema):
     maxrecords = colander.SchemaNode(
-        colander.Integer(),
-        default = -1)
+        colander.Int(),
+        missing = -1,
+        default = -1,
+        validator = colander.Range(-1),
+        description = "Maximum number of documents to index. Default: -1 (no limit)")
     depth = colander.SchemaNode(
-        colander.Integer(),
-        default = 5)
+        colander.Int(),
+        missing = 2,
+        default = 2,
+        validator = colander.Range(1,100),
+        description = "Maximum depth level for crawling Thredds catalogs. Default: 2")
 
     
 class SolrPanel(object):
@@ -24,20 +30,18 @@ class SolrPanel(object):
 
 
 class SolrIndexPanel(SolrPanel):
-    def __init__(self, context, request):
-        super(SolrIndexPanel, self).__init__(context, request)
-        self.csw = self.request.csw
-        self.tasksdb = self.request.db.tasks
-
         
     @panel_config(name='solr_index', renderer='phoenix:templates/panels/solr_index.pt')
     def panel(self):
+        csw = self.request.csw
+        tasksdb = self.request.db.tasks
+        
         query = PropertyIsEqualTo('dc:format', 'THREDDS')
-        self.csw.getrecords2(esn="full", constraints=[query], maxrecords=100)
+        csw.getrecords2(esn="full", constraints=[query], maxrecords=100)
         items = []
-        for rec in self.csw.records.values():
+        for rec in csw.records.values():
             item = dict(title=rec.title, status='new', service_id=rec.identifier)
-            task = self.tasksdb.find_one({'url': rec.source})
+            task = tasksdb.find_one({'url': rec.source})
             if task:
                 item['status'] = task['status']
             items.append(item)
@@ -48,32 +52,31 @@ class SolrParamsPanel(SolrPanel):
 
     def appstruct(self):
         appstruct = {}
+        settings = self.request.db.settings.find_one()
+        if settings:
+            appstruct['maxrecords'] = settings.get('solr_maxrecords')
+            appstruct['depth'] = settings.get('solr_depth')
         return appstruct
 
-    
-    def generate_form(self):
-        form = Form(schema=Schema(), buttons=('update',))
-        return form
-
-    
-    def process_form(self, form):
-        try:
-            controls = self.request.POST.items()
-            appstruct = form.validate(controls)
-        except ValidationFailure, e:
-            logger.exception('validation of form failed.')
-            return dict(form=e.render())
-        except Exception, e:
-            logger.exception('update failed.')
-            self.request.session.flash('Update of Solr parameters failed. %s' % (e), queue='danger')
-        else:
-            self.request.session.flash("Solr parameters updated.", queue='success')
-
-            
+             
     @panel_config(name='solr_params', renderer='phoenix:templates/panels/form.pt')
     def panel(self):
-        form = self.generate_form()
+        form = Form(schema=Schema(), buttons=('update',))
         if 'update' in self.request.POST:
-            self.process_form(form)
-        return dict(title="Parameters", form=form.render())
+            try:
+                controls = self.request.POST.items()
+                appstruct = form.validate(controls)
+                settings = self.request.db.settings.find_one()
+                settings['solr_maxrecords'] = appstruct['maxrecords']
+                settings['solr_depth'] = appstruct['depth']
+                self.request.db.settings.save(settings)
+            except ValidationFailure, e:
+                logger.exception('validation of form failed.')
+                return dict(title="Parameters", form=e.render())
+            except Exception, e:
+                logger.exception('update failed.')
+                self.request.session.flash('Update of Solr parameters failed. %s' % (e), queue='danger')
+            else:
+                self.request.session.flash("Solr parameters updated.", queue='success')
+        return dict(title="Parameters", form=form.render(self.appstruct()))
 
