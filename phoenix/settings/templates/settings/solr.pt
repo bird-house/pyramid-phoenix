@@ -13,9 +13,9 @@
             <a class="btn btn-danger btn-xs"
                rel="tooltip"
                data-toggle="tooltip"
-               title="Remove all Jobs"
-               href="${request.route_path('remove_all_jobs')}">
-              Remove all Jobs
+               title="Clear Solr Index"
+               href="${request.route_path('clear_index')}">
+              Clear Solr Index
             </a>
           </div>
         </span>

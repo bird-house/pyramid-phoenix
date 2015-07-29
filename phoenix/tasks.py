@@ -6,7 +6,7 @@ import yaml
 import uuid
 import urllib
 from datetime import datetime
-from birdfeeder import feed_from_thredds
+from birdfeeder import feed_from_thredds, clear
 
 from phoenix.models import mongodb
 
@@ -172,3 +172,11 @@ def index_thredds(self, url):
         raise
     finally:
         db.tasks.update({'url': task['url']}, task)
+
+@app.task(bind=True)
+def clear_index(self):
+    registry = app.conf['PYRAMID_REGISTRY']
+    db = mongodb(registry)
+    service = registry.settings.get('solr.url')
+    clear(service=service)
+    db.tasks.drop()
