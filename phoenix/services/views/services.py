@@ -12,24 +12,21 @@ class Services(SettingsView):
             request, name='services', title='Services')
         self.csw = self.request.csw
 
+        
     def breadcrumbs(self):
         breadcrumbs = super(Services, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
+    
     @view_config(route_name='service_details', renderer='../templates/services/service_details.pt')
     def details(self):
         service_id = self.request.matchdict.get('service_id')
         self.csw.getrecordbyid(id=[service_id])
         service = self.csw.records[service_id]
-        tasksdb = self.request.db.tasks
-        task = tasksdb.find_one({'url':service.source})
-        if task:
-            status=task.get('status')
-        else:
-            status="new"
-        return dict(service=service, status=status)
-        
+        return dict(service=service)
+
+    
     @view_config(route_name='remove_service')
     def remove(self):
         try:
@@ -44,16 +41,7 @@ class Services(SettingsView):
             self.session.flash(msg, queue="danger")
         return HTTPFound(location=self.request.route_path(self.name))
 
-    @view_config(route_name="index_service")
-    def index(self):
-        service_id = self.request.matchdict.get('service_id')
-        self.csw.getrecordbyid(id=[service_id])
-        service=self.csw.records[service_id]
-        from phoenix.tasks import index_thredds
-        index_thredds.delay(url=service.source)
-        self.session.flash('Start Indexing of Service %s.' % service.title, queue="info")
-        return HTTPFound(location=self.request.route_path('service_details', service_id=service_id))
-
+    
     @view_config(route_name="services", renderer='../templates/services/service_list.pt')
     def view(self):
         self.csw.getrecords2(esn="full", maxrecords=100)

@@ -25,7 +25,13 @@
           <li class="list-group-item" tal:repeat="item items">
             <div class="media">
               <span class="pull-left" aria-hidden="true">
-                <a href=""><i tal:attributes="class 'fa fa-toggle-on' if item.status=='new' else 'fa fa-toggle-off'"></i></a>
+                <a href="${request.route_path('index_service', service_id=item.service_id)}">
+                  <i tal:attributes="class 'fa fa-toggle-on' if item.status=='new' else 'fa fa-toggle-off'"></i>
+                </a>
+                <i tal:condition="item.status=='new'" class="fa fa-plus-circle text-muted"></i>
+                <i tal:condition="item.status=='success'" class="fa fa-check-circle text-success"></i>
+                <i tal:condition="item.status=='failure'" class="fa fa-times-circle text-danger"></i>
+                <i tal:condition="item.status=='started'" class="fa fa-cog fa-spin text-muted"></i>
               </span>
               <div class="media-body">
                 <h4 class="media-heading">${item.title}</h4>
