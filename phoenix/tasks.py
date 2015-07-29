@@ -158,14 +158,14 @@ def execute_process(self, userid, url, identifier, inputs, outputs, keywords=Non
     return execution.getStatus()
 
 @app.task(bind=True)
-def index_thredds(self, url):
+def index_thredds(self, url, maxrecords=-1, depth=2):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
     task = dict(task_id=self.request.id, url=url, status='started')
     db.tasks.save(task)
     service = registry.settings.get('solr.url')
     try:
-        feed_from_thredds(service=service, catalog_url=url, depth=5, maxrecords=100000, batch_size=50000)
+        feed_from_thredds(service=service, catalog_url=url, depth=depth, maxrecords=maxrecords, batch_size=50000)
         task['status'] = 'success'
     except:
         task['status'] = 'failure'
