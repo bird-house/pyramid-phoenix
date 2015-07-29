@@ -165,7 +165,7 @@ def index_thredds(self, url):
     db.tasks.save(task)
     service = registry.settings.get('solr.url')
     try:
-        feed_from_thredds(service=service, catalog_url=url, depth=2, maxrecords=-1, batch_size=50000)
+        feed_from_thredds(service=service, catalog_url=url, depth=5, maxrecords=100000, batch_size=50000)
         task['status'] = 'success'
     except:
         task['status'] = 'failure'

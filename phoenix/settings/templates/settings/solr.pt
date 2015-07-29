@@ -25,7 +25,10 @@
           <li class="list-group-item" tal:repeat="item items">
             <div class="media">
               <span class="pull-left" aria-hidden="true">
-                <a href="${request.route_path('index_service', service_id=item.service_id)}">
+                <a rel="tooltip"
+                   data-toggle="tooltip"
+                   title="Index Thredds Service"
+                   href="${request.route_path('index_service', service_id=item.service_id)}">
                   <i tal:attributes="class 'fa fa-toggle-on' if item.status=='new' else 'fa fa-toggle-off'"></i>
                 </a>
                 <i tal:condition="item.status=='new'" class="fa fa-plus-circle text-muted"></i>
