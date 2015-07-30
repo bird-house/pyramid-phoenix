@@ -1,7 +1,13 @@
 Changes
 *******
 
-0.4.4 (2015i-06-30)
+0.4.5 (2015-07-30)
+==================
+
+* added solr search in wizard.
+* index thredds services to solr in settings.
+
+0.4.4 (2015-06-30)
 ==================
 
 * auth settings page added.
