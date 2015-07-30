@@ -64,7 +64,9 @@ class SolrSearch(Wizard):
         try:
             url = self.request.registry.settings.get('solr.url')
             solr = pysolr.Solr(url, timeout=10)
-            options = {'start':start, 'rows':rows, 'facet':'true', 'facet.field':['category', 'source', 'text']}
+            options = {'start':start, 'rows':rows,
+                       'facet':'true', 'facet.field':['category', 'source', 'text'],
+                       'facet.limit': 300, 'facet.mincount': 1}
             if tag or category or source:
                 options['fq'] = []
                 if category:
@@ -77,15 +79,9 @@ class SolrSearch(Wizard):
             sources = results.facets['facet_fields']['source'][::2]
             tag_values = results.facets['facet_fields']['text'][::2]
             tag_counts = results.facets['facet_fields']['text'][1::2]
-            logger.debug(tag_counts)
+            logger.debug(results.facets['facet_fields']['text'])
             tags = []
             for i in xrange(0, len(tag_counts)):
-                if tag_counts[i] <= 0:
-                    # no dataset has the following tags
-                    break
-                if i > 200:
-                    # dont show too many tags ...
-                    break
                 if tag_counts[i] == results.hits:
                     # each dataset has the same tag
                     continue
