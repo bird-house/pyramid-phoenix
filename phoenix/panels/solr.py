@@ -54,8 +54,8 @@ class SolrParamsPanel(SolrPanel):
         appstruct = {}
         settings = self.request.db.settings.find_one()
         if settings:
-            appstruct['maxrecords'] = settings.get('solr_maxrecords')
-            appstruct['depth'] = settings.get('solr_depth')
+            appstruct['maxrecords'] = settings.get('solr_maxrecords', '-1')
+            appstruct['depth'] = settings.get('solr_depth', '2')
         return appstruct
 
              

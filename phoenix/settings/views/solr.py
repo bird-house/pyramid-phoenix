@@ -34,7 +34,7 @@ class SolrSettings(SettingsView):
             maxrecords = -1
             depth = 2
         index_thredds.delay(url=service.source, maxrecords=maxrecords, depth=depth)
-        self.session.flash('Start Indexing of Service %s.' % service.title, queue="info")
+        self.session.flash('Start Indexing of Service %s. Reload page to see status ...' % service.title, queue="danger")
         return HTTPFound(location=self.request.route_path(self.name, tab="index"))
 
     
@@ -42,7 +42,7 @@ class SolrSettings(SettingsView):
     def clear_index(self):
         from phoenix.tasks import clear_index
         clear_index.delay()
-        self.session.flash('Cleaning Index ...', queue="info")
+        self.session.flash('Cleaning Index ... Reload page to see status ...', queue="danger")
         return HTTPFound(location=self.request.route_path(self.name, tab="index"))
 
     
