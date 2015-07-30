@@ -11,5 +11,6 @@ In the following tutorial will guide you though the first steps to get familliar
    tutorial/helloworld
    tutorial/cdosinfo
    tutorial/visualisation
+   tutorial/solrsearch
 
    
