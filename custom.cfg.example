@@ -5,7 +5,7 @@ extends = buildout.cfg
 hostname = localhost
 http-port = 8081
 https-port = 8443
-log-level = INFO
+log-level = WARN
 # run 'make passwd' and to generate password hash
 phoenix-password = 
 # generate secret
