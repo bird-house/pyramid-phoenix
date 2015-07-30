@@ -1,6 +1,8 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
+from phoenix.models import load_settings
+
 from . import SettingsView
 
 import logging
@@ -25,15 +27,9 @@ class SolrSettings(SettingsView):
         service_id = self.request.matchdict.get('service_id')
         self.csw.getrecordbyid(id=[service_id])
         service = self.csw.records[service_id]
-        settings = self.request.db.settings.find_one()
+        settings = load_settings(self.request)
         from phoenix.tasks import index_thredds
-        if settings:
-            maxrecords = int(settings.get('solr_maxrecords', '-1'))
-            depth = int(settings.get('solr_depth', '2'))
-        else:
-            maxrecords = -1
-            depth = 2
-        index_thredds.delay(url=service.source, maxrecords=maxrecords, depth=depth)
+        index_thredds.delay(url=service.source, maxrecords=settings.get('solr_maxrecords'), depth=settings.get('solr_depth'))
         self.session.flash('Start Indexing of Service %s. Reload page to see status ...' % service.title, queue="danger")
         return HTTPFound(location=self.request.route_path(self.name, tab="index"))
 
