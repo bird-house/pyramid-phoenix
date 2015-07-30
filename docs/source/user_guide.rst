@@ -208,3 +208,26 @@ Basic support for authentication via LDAP has been added recently. To enable LDA
 .. image:: _images/settings_ldap.png
 
 There is no support for LDAP authorization yet. Use the ``Settings/Users`` backend to manage the access privileges for your users. There will be an entry for each user that has been logged in once before.
+
+Solr
+~~~~
+
+You can publish the datasets of a registered Thredds service to a Solr index server. The Solr server is setup with the Phoenix installation.
+
+.. image:: _images/solr_index.png
+
+Use the toggle button on the left side the Thredds service name to activate the publishing. Publishing takes some time. Use the reload button to update the status.
+The Solr search can then be used in the ``Wizard`` to select input files.
+
+To clear the whole Solr index use the trash button.
+
+The publisher has two parameters.
+
+maxrecords
+    Maximum number of datasets that will be published. Use -1 for unlimited.
+
+depth
+    The maximum depth level when crawling Thredds catalogs. Default is 2.
+
+.. image:: _images/solr_params.png
+   
