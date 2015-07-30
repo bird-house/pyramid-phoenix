@@ -55,6 +55,7 @@ class SolrSearch(Wizard):
         page = int(self.request.params.get('page', '0'))
         category = self.request.params.get('category')
         source = self.request.params.get('source')
+        tag = self.request.params.get('tag')
         rows = 10
         start = page * rows
         solr_query = query
@@ -63,24 +64,42 @@ class SolrSearch(Wizard):
         try:
             url = self.request.registry.settings.get('solr.url')
             solr = pysolr.Solr(url, timeout=10)
-            options = {'start':start, 'rows':rows, 'facet':'true', 'facet.field':['category', 'source']}
-            if category or source:
+            options = {'start':start, 'rows':rows, 'facet':'true', 'facet.field':['category', 'source', 'text']}
+            if tag or category or source:
                 options['fq'] = []
                 if category:
                     options['fq'].append('category:{0}'.format(category))
                 if source:
                     options['fq'].append( 'source:{0}'.format(source))
+                if tag:
+                    options['fq'].append( 'text:{0}'.format(tag))
             results = solr.search(solr_query, **options)
             sources = results.facets['facet_fields']['source'][::2]
+            tag_values = results.facets['facet_fields']['text'][::2]
+            tag_counts = results.facets['facet_fields']['text'][1::2]
+            logger.debug(tag_counts)
+            tags = []
+            for i in xrange(0, len(tag_counts)):
+                if tag_counts[i] <= 0:
+                    # no dataset has the following tags
+                    break
+                if i > 200:
+                    # dont show too many tags ...
+                    break
+                if tag_counts[i] == results.hits:
+                    # each dataset has the same tag
+                    continue
+                tags.append(tag_values[i])
             hits = results.hits
         except:
             logger.exception("solr search failed")
             self.session.flash("Solr service is not available.", queue='danger')
             results = []
             sources = []
+            tags = []
             hits = 0
         end = min(hits, ((page + 1) * rows))
-        return dict(results=results, query=query, category=category, sources=sources, selected_source=source, hits=hits, start=start+1, end=end, page=page)
+        return dict(results=results, query=query, category=category, sources=sources, tags=tags, selected_source=source, hits=hits, start=start+1, end=end, page=page)
 
     @view_config(route_name='wizard_solr', renderer='../templates/wizard/solrsearch.pt')
     def view(self):

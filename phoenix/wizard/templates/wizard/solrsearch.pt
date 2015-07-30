@@ -18,9 +18,7 @@
 
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title">
-          ${title}
-        </h3>
+        <h3 class="panel-title">${title}</h3>
       </div>
       <div class="panel-body">
         <form>
@@ -63,6 +61,19 @@
 
           </div>
         </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">Tag Cloud</h4>
+          </div>
+          <div class="panel-body">
+            <a href="${request.route_path('wizard_solr', _query=[('q', tag)])}" 
+               class="label label-success" 
+               tal:repeat="tag tags">
+                    
+              ${tag}</a>
+          </div>
+        </div>
         
         <hr>
         
@@ -92,9 +103,7 @@
                 <i class="fa fa-globe"></i>
               </span>
               <div class="media-body">
-                <h4 class="media-heading">
-                  ${result.title}
-                </h4>
+                <h4 class="media-heading">${result.title}</h4>
                 <div class="pull-right text-muted text-right" style="font-size: .75em;" tal:condition="'category' in result">
                   <span>
                     ${result.category}
