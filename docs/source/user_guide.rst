@@ -216,7 +216,7 @@ You can publish the datasets of a registered Thredds service to a Solr index ser
 
 .. image:: _images/solr_index.png
 
-Use the toggle button on the left side the Thredds service name to activate the publishing. Publishing takes some time. Use the reload button to update the status.
+Use the toggle button on the left side of the Thredds service name to activate the publishing. Publishing takes some time. Use the reload button to update the status.
 The Solr search can then be used in the ``Wizard`` to select input files.
 
 To clear the whole Solr index use the trash button.

@@ -74,12 +74,12 @@ Click on the Job ID link to get to the result of the submitted process.
 
 **Job Log**
 
-.. image:: ../_images/tutorial/ci_log.png
+.. image:: ../_images/tutorial/solr_log.png
 
 
 **Job Outputs**
 
-.. image:: ../_images/tutorial/ci_outputs.png
+.. image:: ../_images/tutorial/solr_outputs.png
 
 
 
