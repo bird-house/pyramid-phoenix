@@ -1,4 +1,4 @@
-VERSION := 0.2.5
+VERSION := 0.2.6
 RELEASE := master
 
 # Application
@@ -12,7 +12,7 @@ CPU_ARCH := $(shell uname -m 2>/dev/null || uname -p 2>/dev/null || echo "unknow
 # Anaconda 
 ANACONDA_HOME ?= $(HOME)/anaconda
 CONDA_ENV := birdhouse
-CONDA_ENVS_DIR := $(HOME)/.conda/envs
+CONDA_ENVS_DIR ?= $(HOME)/.conda/envs
 PREFIX := $(CONDA_ENVS_DIR)/$(CONDA_ENV)
 
 # choose anaconda installer depending on your OS
@@ -199,11 +199,7 @@ buildclean:
 passwd: custom.cfg
 	@echo "Generate Phoenix password ..."
 	@echo "Enter a password with at least 8 characters."
-	@bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV); \
-		python -c 'from IPython.lib import passwd; pw = passwd(algorithm=\"sha256\"); \
-			lines = [\"phoenix-password = \" + pw + \"\\n\" if line.startswith(\"phoenix-password\") else line for line in open(\"custom.cfg\", \"r\")]; \
-			lines = lines + [\"phoenix-password = \" + pw + \"\\n\"] if not any(line.startswith(\"phoenix-password\") for line in lines) else lines; \
-			file = open(\"custom.cfg\", \"w\"); file.writelines(lines); file.close()'"
+	@bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV); python -c 'from IPython.lib import passwd; pw = passwd(algorithm=\"sha256\"); lines = [\"phoenix-password = \" + pw + \"\\n\" if line.startswith(\"phoenix-password\") else line for line in open(\"custom.cfg\", \"r\")]; file = open(\"custom.cfg\", \"w\"); file.writelines(lines); file.close()'"
 	@echo ""
 	@echo "Run 'make install restart' to activate this password." 
 
