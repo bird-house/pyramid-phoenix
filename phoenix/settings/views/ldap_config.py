@@ -37,6 +37,7 @@ class Ldap(SettingsView):
             else:
                 # Update LDAP settings
                 ldap_settings['server']      = appstruct['server']
+                ldap_settings['use_tls']     = appstruct['use_tls']
                 ldap_settings['bind']        = appstruct['bind']
                 ldap_settings['passwd']      = appstruct['passwd']
                 ldap_settings['base_dn']     = appstruct['base_dn']
@@ -57,7 +58,8 @@ class Ldap(SettingsView):
                 config = Configurator(registry = self.request.registry)
                 config.ldap_setup(ldap_settings['server'],
                         bind = ldap_settings['bind'],
-                        passwd = ldap_settings['passwd'])
+                        passwd = ldap_settings['passwd'],
+                        use_tls = ldap_settings['use_tls'])
                 config.ldap_set_login_query(
                         base_dn = ldap_settings['base_dn'],
                         filter_tmpl = ldap_settings['filter_tmpl'],

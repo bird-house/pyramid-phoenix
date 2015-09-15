@@ -39,6 +39,11 @@ class LdapSchema(colander.MappingSchema):
             title = 'Server',
             validator = colander.url,
             description = 'URI of LDAP server to connect to, e.g. "ldap://ldap.example.com"')
+    use_tls = colander.SchemaNode(
+            colander.Boolean(),
+            title = 'Use TLS',
+            description = 'Activate TLS when connecting',
+            widget = deform.widget.CheckboxWidget())
     bind = colander.SchemaNode(
             colander.String(),
             title = 'Bind',
