@@ -1,4 +1,4 @@
-VERSION := 0.2.6
+VERSION := 0.2.7
 RELEASE := master
 
 # Application
@@ -206,7 +206,7 @@ passwd: custom.cfg
 .PHONY: test
 test:
 	@echo "Running tests (skip slow tests) ..."
-	bin/nosetests -A 'not slow and not online' unit_tests
+	bin/nosetests -A 'not slow and not online and not testdata' unit_tests
 
 .PHONY: testall
 testall:
