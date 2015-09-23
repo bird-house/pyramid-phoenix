@@ -3,6 +3,10 @@ phoenix:
   ports:
     - "8081:8081"
     - "8443:8443"
+  environment:
+    HOSTNAME: localhost
+    PHOENIX_PASSWORD: sha256:02a01f056c23:fa4be057d0d82b2a8cef96f7ad532ec0ffbb7ae27213c1bc43a437a93eefad99
+    WPS_URL: http://malleefowl:8094/wps
   links:
     - malleefowl
 malleefowl:

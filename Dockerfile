@@ -30,6 +30,8 @@ VOLUME /data
 
 # Configure hostname and user for services 
 ENV HOSTNAME localhost
+ENV PHOENIX_PASSWORD ""
+ENV WPS_URL http://localhost:8094/wps
 
 # Ports used in birdhouse
 EXPOSE 8090 9001 8094 28094
