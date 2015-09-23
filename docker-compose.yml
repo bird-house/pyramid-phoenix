@@ -1,0 +1,13 @@
+phoenix:
+  build: .
+  ports:
+    - "8081:8081"
+    - "8443:8443"
+  volumes:
+    - .:/data
+  links:
+    - malleefowl
+malleefowl:
+  image: birdhouse/malleefowl
+
+
