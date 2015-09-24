@@ -188,7 +188,7 @@ update:
 .PHONY: update-config
 update-config:
 	@echo "Update application config with buildout ..."
-	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout settings:hostname=$(HOSTNAME) settings:user=$(USER) settings:output-port=$(OUTPUT_PORT) settings:phoenix-password=$(PHOENIX_PASSWORD) settings:wps-url=$(WPS_URL) -o"
+	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout settings:hostname=$(HOSTNAME) settings:output-port=$(OUTPUT_PORT) settings:phoenix-password=$(PHOENIX_PASSWORD) settings:wps-url=$(WPS_URL) -o"
 	chown -R $(USER) $(PREFIX)/var/.
 
 .PHONY: build
