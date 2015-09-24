@@ -3,13 +3,25 @@ phoenix:
   ports:
     - "8081:8081"
     - "8443:8443"
+    - "8983:8983"
   environment:
     HOSTNAME: localhost
     PHOENIX_PASSWORD: sha256:02a01f056c23:fa4be057d0d82b2a8cef96f7ad532ec0ffbb7ae27213c1bc43a437a93eefad99
-    WPS_URL: http://malleefowl:8094/wps
+    WPS_URL: http://malleefowl:8091/wps
   links:
     - malleefowl
+    - emu
+    - hummingbird
 malleefowl:
   image: birdhouse/malleefowl
-
+  environment:
+    HOSTNAME: malleefowl
+emu:
+  image: birdhouse/emu
+  environment:
+    HOSTNAME: emu
+hummingbird:
+  image: birdhouse/hummingbird
+  environment:
+    HOSTNAME: hummingbird
 
