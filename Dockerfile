@@ -37,10 +37,10 @@ RUN mv $CONDA_ENVS_DIR/birdhouse/var /data && ln -s /data $CONDA_ENVS_DIR/birdho
 VOLUME /data
 
 # Ports used in birdhouse
-EXPOSE $OUTPUT_PORT 9001 8094 28094
+EXPOSE $OUTPUT_PORT 9001 8081 8443
 
 # Start supervisor in foreground
-ENV DAEMON_OPTS --nodaemon
+ENV DAEMON_OPTS --nodaemon --user $USER
 
 # Update config and start supervisor ...
 CMD ["make", "update-config", "start"]
