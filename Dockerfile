@@ -1,3 +1,4 @@
+# vim:set ft=dockerfile:
 FROM birdhouse/bird-base:latest
 MAINTAINER https://github.com/bird-house
 
