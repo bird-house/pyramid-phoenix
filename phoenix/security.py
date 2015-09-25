@@ -90,6 +90,22 @@ def root_factory(request):
 from authomatic.providers import oauth2, openid
 from authomatic import Authomatic, provider_id
 
+class Ceda(oauth2.OAuth2):
+    """
+    TODO: ask Phil :)
+    """
+    user_authorization_url = 'https://slcs.ceda.ac.uk/oauth/certificate/'
+    access_token_url = ''
+    user_info_url = ''
+
+    user_info_scope = ['basic']
+    
+    @staticmethod
+    def _x_user_parser(user, data):
+        user.id = user.username = data.get('user')
+        return user
+
+
 def authomatic(request):
     return Authomatic(
         config=authomatic_config(request),
@@ -122,6 +138,15 @@ def authomatic_config(request):
                 'Get your watched repos': ('GET', 'https://api.github.com/user/subscriptions'),
             },
         },
+        'ceda': {
+            'class_': Ceda,
+            'consumer_key': request.registry.settings.get('ceda.consumer.key'),
+            'consumer_secret': request.registry.settings.get('ceda.consumer.secret'),
+            'id': provider_id(),
+            'scope': Ceda.user_info_scope,
+            'state': '', 
+            'redirect_uri': request.registry.settings.get('ceda.consumer.redirect.uri'),
+        },
     }
 
 
@@ -132,3 +157,5 @@ def authomatic_config(request):
     config['__defaults__'] = DEFAULTS
     return config
 
+# TODO: move this to oauth2 module
+PROVIDER_ID_MAP = [Ceda]

@@ -20,7 +20,7 @@ class PhoenixSchema(colander.MappingSchema):
         widget = deform.widget.PasswordWidget())
 
 class OAuthSchema(colander.MappingSchema):
-    choices = [('github', 'GitHub')]
+    choices = [('github', 'GitHub'), ('ceda', 'Ceda')]
     
     provider = colander.SchemaNode(
         colander.String(),
