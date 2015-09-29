@@ -134,7 +134,7 @@ class Account(MyView):
         self.userdb.update({'login_id':login_id}, user)
         self.session.flash("Welcome {0}.".format(name), queue='success')
         if user.get('group') == Guest:
-            self.session.flash("You are logged in as guest. You are not allowed to submit any process.", queue='danger')
+            self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any process.", queue='danger')
         headers = remember(self.request, user['identifier'])
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
