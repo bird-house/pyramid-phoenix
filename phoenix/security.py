@@ -88,6 +88,7 @@ def root_factory(request):
 # Authomatic
 
 from authomatic.providers import oauth2, openid
+from phoenix.providers import oauth2 as myoauth2
 from authomatic import Authomatic, provider_id
 
 def authomatic(request):
@@ -122,6 +123,15 @@ def authomatic_config(request):
                 'Get your watched repos': ('GET', 'https://api.github.com/user/subscriptions'),
             },
         },
+        'ceda': {
+            'class_': myoauth2.Ceda,
+            'consumer_key': request.registry.settings.get('ceda.consumer.key'),
+            'consumer_secret': request.registry.settings.get('ceda.consumer.secret'),
+            'id': provider_id(),
+            'scope': myoauth2.Ceda.user_info_scope,
+            'state': '', 
+            'redirect_uri': request.registry.settings.get('ceda.consumer.redirect.uri'),
+        },
     }
 
 
@@ -131,4 +141,5 @@ def authomatic_config(request):
     config.update(AUTHENTICATION)
     config['__defaults__'] = DEFAULTS
     return config
+
 

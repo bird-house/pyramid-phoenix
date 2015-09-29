@@ -33,7 +33,7 @@ class ThreddsBrowser(Wizard):
 
     def appstruct(self):
         appstruct = super(ThreddsBrowser, self).appstruct()
-        appstruct['url'] = self.request.params.get('url', colander.null)
+        appstruct['url'] = self.request.params.get('url', self.wizard_state.get('wizard_threddsservice')['url'])
         return appstruct
 
     def next_success(self, appstruct):
