@@ -255,7 +255,7 @@ class Account(MyView):
             name  = (auth[1].get(ldap_settings['name'])[0]
                     if ldap_settings['name'] != '' else 'Unknown')
             email = (auth[1].get(ldap_settings['email'])[0]
-                    if ldap_settings['email'] != '' else None)
+                    if ldap_settings['email'] != '' else '')
 
             # Authentication successful
             return self.login_success(login_id = auth[0], # userdn
