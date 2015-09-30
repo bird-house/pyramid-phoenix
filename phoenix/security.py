@@ -129,7 +129,7 @@ def authomatic_config(request):
             'consumer_secret': request.registry.settings.get('ceda.consumer.secret'),
             'id': provider_id(),
             'scope': myoauth2.Ceda.user_info_scope,
-            'state': 'ceda', 
+            #'state': 'ceda', 
             'redirect_uri': request.registry.settings.get('ceda.consumer.redirect.uri'),
         },
     }
