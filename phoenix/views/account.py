@@ -207,7 +207,8 @@ class Account(MyView):
                         pass
                     return self.login_success(login_id=login_id, name=result.user.name)
                 elif result.provider.name == 'ceda':
-                    logger.warn('ceda login user=%s', result.user)
+                    logger.warn('ceda login user=%s', result.user.name)
+                    return self.login_success(login_id='cedatest', name='cedatest')
         return response
 
     def ldap_prepare(self):
