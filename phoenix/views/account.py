@@ -207,7 +207,7 @@ class Account(MyView):
                         pass
                     return self.login_success(login_id=login_id, name=result.user.name)
                 elif result.provider.name == 'ceda':
-                    logger.warn('ceda login user=%s', result.user.name)
+                    logger.warn('ceda login user=%s', result.user.data)
                     return self.login_success(login_id='cedatest', name='cedatest')
         return response
 
