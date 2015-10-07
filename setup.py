@@ -9,7 +9,7 @@ requires = [
     'pyramid>=1.5.7',
     'pyramid-chameleon',
     'pyramid-mako',
-    'pymongo',
+    'pymongo>=3.0.3',
     'pyramid_layout',
     'pyramid_deform',
     'pyramid_beaker',

@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 
 def mongodb(registry):
     settings = registry.settings
-    return pymongo.Connection(settings['mongodb.url'])[settings['mongodb.db_name']]
+    client = pymongo.MongoClient(settings['mongodb.host'], int(settings['mongodb.port']))
+    return client[settings['mongodb.db_name']]
 
 def auth_protocols(request):
     # TODO: refactor auth settings handling

@@ -163,7 +163,7 @@ def main(global_config, **settings):
                 from phoenix.models import mongodb
                 settings['db'] = mongodb(event.request.registry)
             except:
-                logger.exception('Could not connect to mongodb %s.', settings['mongodb.url'])
+                logger.exception('Could not connect to mongodb')
         event.request.db = settings.get('db')
     config.add_subscriber(add_mongodb, NewRequest)
     
