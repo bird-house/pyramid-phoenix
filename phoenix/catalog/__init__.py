@@ -1,1 +1,1 @@
-from .catalog import *
+from phoenix.catalog import *
