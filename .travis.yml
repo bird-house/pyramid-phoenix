@@ -9,6 +9,7 @@ sudo: false
 install:
   - make install
 script:
+  - make docs
   - make test
 #after_success:
 # - coveralls
