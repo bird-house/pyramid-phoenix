@@ -13,8 +13,6 @@ phoenix-password =
 phoenix-secret = d5e8417934247ccb6cdbdb5144e3b130
 esgf-search-url = http://136.172.30.96/esg-search
 wps-url = http://localhost:8091/wps
-csw-url = http://localhost:8082/csw
-thredds-url = http://localhost:8080/thredds
 # swift access
 swift-auth-url = http://localhost/auth/v1.0
 swift-auth-version = 1
