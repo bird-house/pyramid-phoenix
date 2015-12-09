@@ -16,6 +16,7 @@ requires = [
     'pyramid_mailer',
     'pyramid_deform',
     'pyramid_ldap',
+    'pyramid_celery',
     'deform>=2.0a2',
     'js.deform',
     'js.bootstrap',
@@ -32,7 +33,6 @@ requires = [
     'pytz',
     'python-swiftclient',
     'pyramid_celery',
-    'celery',
     #'threddsclient',
     ]
 
