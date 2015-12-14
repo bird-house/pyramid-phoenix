@@ -15,11 +15,12 @@ ENV PHOENIX_PASSWORD "sha256:10761810a2f2:8535bf8468e0045ec2d33bd4d2f513d669bd31
 # Set current home
 ENV HOME /root
 
-# Add application sources
-ADD . /opt/birdhouse
+# Copy application sources
+COPY . /opt/birdhouse
 
 # cd into application
 WORKDIR /opt/birdhouse
+
 
 # Install system dependencies
 RUN bash bootstrap.sh -i && bash requirements.sh
