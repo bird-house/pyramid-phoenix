@@ -18,8 +18,8 @@ requires = [
     'pyramid_ldap',
     'pyramid_celery',
     'deform>=2.0a2',
-    'js.deform',
-    'js.bootstrap',
+    #'js.deform',
+    #'js.bootstrap',
     'PasteDeploy',
     'authomatic',
     'python-openid',
@@ -33,7 +33,6 @@ requires = [
     'pytz',
     'python-swiftclient',
     'pyramid_celery',
-    #'threddsclient',
     ]
 
 setup(name='Phoenix',
