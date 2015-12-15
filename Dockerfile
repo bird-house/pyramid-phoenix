@@ -21,6 +21,8 @@ COPY . /opt/birdhouse
 # cd into application
 WORKDIR /opt/birdhouse
 
+# Overwrite buildout.cfg in source folder
+COPY minimal.cfg buildout.cfg
 
 # Install system dependencies
 RUN bash bootstrap.sh -i && bash requirements.sh
@@ -39,7 +41,7 @@ VOLUME /data/cache
 VOLUME /data/lib
 
 # Ports used in birdhouse
-EXPOSE 8090 9001 8081 8443
+EXPOSE 8090 8081 8443
 
 # Start supervisor in foreground
 ENV DAEMON_OPTS --nodaemon --user $USER
