@@ -15,8 +15,8 @@ ENV PHOENIX_PASSWORD "sha256:10761810a2f2:8535bf8468e0045ec2d33bd4d2f513d669bd31
 # Set current home
 ENV HOME /root
 
-# Copy application sources
-COPY . /opt/birdhouse
+# Load sources from github
+RUN mkdir -p /opt/birdhouse && curl -ksL https://github.com/bird-house/flyingpigeon/archive/master.tar.gz | tar -xzC /opt/birdhouse --strip-components=1
 
 # cd into application
 WORKDIR /opt/birdhouse
