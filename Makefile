@@ -1,4 +1,4 @@
-VERSION := 0.2.9
+VERSION := 0.2.10
 RELEASE := master
 
 # Application
@@ -148,10 +148,11 @@ conda_config: anaconda
 	@"$(ANACONDA_HOME)/bin/conda" config --set ssl_verify false
 	@"$(ANACONDA_HOME)/bin/conda" config --add channels defaults
 	@"$(ANACONDA_HOME)/bin/conda" config --add channels birdhouse
+	@"$(ANACONDA_HOME)/bin/conda" config --add channels ioos
 
 .PHONY: conda_env
 conda_env: anaconda conda_config
-	@test -d $(PREFIX) || "$(ANACONDA_HOME)/bin/conda" create -m -p $(PREFIX) -c birdhouse --yes python setuptools ipython curl pyopenssl genshi mako
+	@test -d $(PREFIX) || "$(ANACONDA_HOME)/bin/conda" create -m -p $(PREFIX) -c ioos --yes python setuptools curl pyopenssl genshi mako
 
 .PHONY: conda_pinned
 conda_pinned: conda_env
