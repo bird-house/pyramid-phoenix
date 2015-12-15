@@ -33,6 +33,7 @@ requires = [
     'pytz',
     'python-swiftclient',
     'pyramid_celery',
+    'bird-feeder',
     ]
 
 setup(name='Phoenix',
