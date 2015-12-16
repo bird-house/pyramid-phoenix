@@ -7,8 +7,6 @@ LABEL Description="Phoenix WPS Application" Vendor="Birdhouse" Version="0.4.5"
 # Configure hostname and user for services 
 ENV HOSTNAME localhost
 ENV USER www-data
-ENV HOSTNAME localhost
-ENV PHOENIX_PASSWORD "sha256:10761810a2f2:8535bf8468e0045ec2d33bd4d2f513d669bd31b79794614f23632c3b2cadc51c"
 
 
 # Set current home
@@ -43,7 +41,7 @@ VOLUME /data/cache
 VOLUME /data/lib
 
 # Ports used in birdhouse
-EXPOSE 8081 8443 9001
+EXPOSE 8081 8443
 
 # Start supervisor in foreground
 ENV DAEMON_OPTS --nodaemon --user $USER

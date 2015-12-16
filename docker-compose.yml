@@ -1,9 +1,9 @@
 phoenix:
   image: birdhouse/pyramid-phoenix
+  command: make start
   ports:
     - "8081:8081"
     - "8443:8443"
-    - "9001:9001"
   links:
     - mongodb
     - redis
@@ -11,19 +11,24 @@ phoenix:
     - ncwms2
     - solr
     - malleefowl
-  environment:
-    HOSTNAME: localhost
-    PHOENIX_PASSWORD: sha256:02a01f056c23:fa4be057d0d82b2a8cef96f7ad532ec0ffbb7ae27213c1bc43a437a93eefad99
 mongodb:
   image: birdhouse/mongodb
+  command: make start
 redis:
   image: birdhouse/redis
+  command: make start
 pycsw:
   image: birdhouse/pycsw
+  command: make start
 ncwms2:
   image: birdhouse/ncwms2
+  command: make start
 solr:
   image: birdhouse/solr
+  command: make start
 malleefowl:
   image: birdhouse/malleefowl
+  command: make update-config start
+  environment:
+    HOSTNAME: malleefowl
 
