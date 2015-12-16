@@ -31,4 +31,5 @@ malleefowl:
   command: make update-config start
   environment:
     HOSTNAME: malleefowl
-
+wpsdata:
+  image: ubuntu:14.04
