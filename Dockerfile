@@ -22,7 +22,7 @@ WORKDIR /opt/birdhouse
 COPY minimal.cfg buildout.cfg
 
 # Provide custom.cfg with settings for docker image
-COPY docker.cfg custom.cfg
+COPY .docker.cfg custom.cfg
 
 # Install system dependencies
 RUN bash bootstrap.sh -i && bash requirements.sh
@@ -46,6 +46,6 @@ EXPOSE 8081 8443
 # Start supervisor in foreground
 ENV DAEMON_OPTS --nodaemon --user $USER
 
-# Update config and start supervisor ...
-CMD ["make", "update-config", "start"]
+# Start service ...
+CMD ['make', 'update-config', 'start']
 

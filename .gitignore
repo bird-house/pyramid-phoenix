@@ -6,7 +6,7 @@
 
 # custom configs
 custom.cfg
-docker.cfg
+.docker.cfg
 
 # Python / Extensions etc.
 *~
