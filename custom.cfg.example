@@ -6,7 +6,7 @@ hostname = localhost
 http-port = 8081
 https-port = 8443
 log-level = WARN
-# run 'make passwd' and to generate password hash
+# run 'make passwd' to generate password hash
 phoenix-password = 
 # generate secret
 # python -c "import os; print(''.join('%02x' % ord(x) for x in os.urandom(16)))"
