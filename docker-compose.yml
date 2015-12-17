@@ -11,25 +11,23 @@ phoenix:
     - ncwms2
     - solr
     - malleefowl
+    - emu
 mongodb:
   image: birdhouse/mongodb
-  command: make start
 redis:
   image: birdhouse/redis
-  command: make start
 pycsw:
   image: birdhouse/pycsw
-  command: make start
+  links:
+    - malleefowl
+    - emu
 ncwms2:
   image: birdhouse/ncwms2
-  command: make start
 solr:
   image: birdhouse/solr
-  command: make start
 malleefowl:
   image: birdhouse/malleefowl
   command: make update-config start
   environment:
     HOSTNAME: malleefowl
-wpsdata:
-  image: ubuntu:14.04
+  
