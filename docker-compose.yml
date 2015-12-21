@@ -17,6 +17,9 @@ redis:
   image: birdhouse/redis
 pycsw:
   image: birdhouse/pycsw
+  command: make update-config start
+  environment:
+    - HOSTNAME=pycsw
   links:
     - malleefowl
 ncwms2:
@@ -27,5 +30,7 @@ malleefowl:
   image: birdhouse/malleefowl
   command: make update-config start
   environment:
-    HOSTNAME: malleefowl
+    - HOSTNAME=malleefowl
+  links:
+    - solr
   
