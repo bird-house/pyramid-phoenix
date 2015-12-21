@@ -10,7 +10,6 @@ phoenix:
     - pycsw
     - ncwms2
     - solr
-    - malleefowl
 mongodb:
   image: birdhouse/mongodb
 redis:
@@ -20,8 +19,6 @@ pycsw:
   command: make update-config start
   environment:
     - HOSTNAME=pycsw
-  links:
-    - malleefowl
 ncwms2:
   image: birdhouse/ncwms2
 solr:
@@ -30,7 +27,10 @@ malleefowl:
   image: birdhouse/malleefowl
   command: make update-config start
   environment:
-    - HOSTNAME=malleefowl
+    - HOSTNAME=adelie.d.dkrz.de
+  ports:
+    - "8091:8091"
+    - "8090:8090"
   links:
     - solr
   
