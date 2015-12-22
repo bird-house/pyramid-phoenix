@@ -1,6 +1,8 @@
 phoenix:
   image: birdhouse/pyramid-phoenix
-  command: make start
+  command: make update start
+  volumes:
+    - .docker.cfg:/opt/birdhouse/custom.cfg
   ports:
     - "8081:8081"
     - "8443:8443"
@@ -8,8 +10,6 @@ phoenix:
     - mongodb
     - redis
     - pycsw
-    - ncwms2
-    - solr
 mongodb:
   image: birdhouse/mongodb
 redis:
@@ -21,16 +21,10 @@ pycsw:
     - HOSTNAME=pycsw
 ncwms2:
   image: birdhouse/ncwms2
+  ports:
+    - "8080:8080"
 solr:
   image: birdhouse/solr
-malleefowl:
-  image: birdhouse/malleefowl
-  command: make update-config start
-  environment:
-    - HOSTNAME=adelie.d.dkrz.de
   ports:
-    - "8091:8091"
-    - "8090:8090"
-  links:
-    - solr
-  
+    - "8983:8983"
+ 
