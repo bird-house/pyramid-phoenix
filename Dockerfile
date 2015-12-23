@@ -36,16 +36,16 @@ RUN make clean install
 
 # Volume for data, cache, logfiles, ...
 RUN chown -R $USER $CONDA_ENVS_DIR/birdhouse
-RUN mkdir /data
-RUN mkdir -p $CONDA_ENVS_DIR/birdhouse/var/lib && mv $CONDA_ENVS_DIR/birdhouse/var/lib /data && ln -s /data/lib $CONDA_ENVS_DIR/birdhouse/var
+RUN mkdir -p $CONDA_ENVS_DIR/birdhouse/var/lib && mv $CONDA_ENVS_DIR/birdhouse/var/lib /data && ln -s /data $CONDA_ENVS_DIR/birdhouse/var/lib
+RUN chown -R $USER /data
 VOLUME /data
 
 # Ports used in birdhouse
-EXPOSE 8081 8443
+EXPOSE 9001 8081 8443
 
 # Start supervisor in foreground
 ENV DAEMON_OPTS --nodaemon --user $USER
 
 # Start service ...
-CMD ["make", "update-config", "start"]
+CMD ["make", "update-config", "update-user", "start"]
 

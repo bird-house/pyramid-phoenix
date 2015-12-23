@@ -1,9 +1,10 @@
 phoenix:
   image: birdhouse/pyramid-phoenix
-  command: make update start
+  command: make update update-user start
   volumes:
     - .docker.cfg:/opt/birdhouse/custom.cfg
   ports:
+    - "9001:9001"
     - "8081:8081"
     - "8443:8443"
   links:
