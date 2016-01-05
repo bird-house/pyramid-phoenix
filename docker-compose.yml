@@ -28,4 +28,17 @@ solr:
   image: birdhouse/solr
   ports:
     - "8983:8983"
+malleefowl:
+  image: birdhouse/malleefowl
+  command: make update-config update-user start
+  ports:
+    - "48091:9001"
+    - "38091:38091"
+    - "28091:28091"
+    - "8091:8091"
+  environment:
+    - HOSTNAME=adelie.d.dkrz.de
+  volumes:
+    - data:/data
+  volume_driver: local
  
