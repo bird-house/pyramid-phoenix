@@ -1,5 +1,8 @@
 from phoenix.grid import MyGrid
 
+import logging
+logger = logging.getLogger(__name__)
+
 class ProcessOutputsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(ProcessOutputsGrid, self).__init__(request, *args, **kwargs)
@@ -10,9 +13,9 @@ class ProcessOutputsGrid(MyGrid):
         self.exclude_ordering = self.columns
 
         from string import Template
-        url_templ = Template("${url}/godiva2/godiva2.html?server=${url}/wms/test")
-        thredds_url = request.registry.settings.get('thredds.url')
-        self.wms_url = url_templ.substitute({'url': thredds_url})
+        url_templ = Template("${url}/Godiva3.html?dataset=outputs")
+        base_url = request.registry.settings.get('wms.url')
+        self.wms_url = url_templ.substitute({'url': base_url})
 
     def output_td(self, col_num, i, item):
         return self.render_title_td(
@@ -34,6 +37,7 @@ class ProcessOutputsGrid(MyGrid):
         if item.get('reference') is not None:
             # TODO: dirty hack for show on map
             wms_reference = self.wms_url + item.get('reference').split('wpsoutputs')[1]
+            logger.debug(item.get('reference'))
             buttongroup.append( ("publish", item.get('identifier'), "glyphicon glyphicon-share", "Publish", "#", False) )
             buttongroup.append( ("view", item.get('identifier'), "glyphicon glyphicon-eye-open", "View", 
                                  item.get('reference', "#"), True) )

@@ -1,11 +1,31 @@
 phoenix:
   image: birdhouse/pyramid-phoenix
+  command: make update update-user start
+  volumes:
+    - .docker.cfg:/opt/birdhouse/custom.cfg
   ports:
+    - "9001:9001"
     - "8081:8081"
     - "8443:8443"
-    - "8983:8983"
+  links:
+    - mongodb
+    - redis
+    - pycsw
+mongodb:
+  image: birdhouse/mongodb
+redis:
+  image: birdhouse/redis
+pycsw:
+  image: birdhouse/pycsw
+  command: make update-config start
   environment:
-    HOSTNAME: localhost
-    PHOENIX_PASSWORD: sha256:02a01f056c23:fa4be057d0d82b2a8cef96f7ad532ec0ffbb7ae27213c1bc43a437a93eefad99
-    WPS_URL: http://localhost:8091/wps
-
+    - HOSTNAME=pycsw
+ncwms2:
+  image: birdhouse/ncwms2
+  ports:
+    - "8080:8080"
+solr:
+  image: birdhouse/solr
+  ports:
+    - "8983:8983"
+ 

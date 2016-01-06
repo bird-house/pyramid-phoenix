@@ -11,7 +11,7 @@ class Supervisor(SettingsView):
         super(Supervisor, self).__init__(request, name='supervisor', title='Supervisor')
         import xmlrpclib
         # TODO: dont use hardcoded url
-        self.server = xmlrpclib.Server('http://localhost:9001/RPC2')
+        self.server = xmlrpclib.Server(self.settings.get('supervisor.url'))
 
     def breadcrumbs(self):
         breadcrumbs = super(Supervisor, self).breadcrumbs()

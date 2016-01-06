@@ -3,12 +3,18 @@ branches:
   only:
     - develop
     - master
+os:
+  - linux
 python:
   - "2.7"
 sudo: false
 install:
   - make install
+  - make start
+before_script:
+  - sleep 15
 script:
+  - make docs
   - make test
 #after_success:
 # - coveralls
