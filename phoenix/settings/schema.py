@@ -47,12 +47,14 @@ class LdapSchema(colander.MappingSchema):
     bind = colander.SchemaNode(
             colander.String(),
             title = 'Bind',
-            description = 'Bind to use for the LDAP connection, e.g. "CN=admin,DC=example,DC=com"')
+            description = 'Bind to use for the LDAP connection, e.g. "CN=admin,DC=example,DC=com"', 
+            missing = '')
     passwd = colander.SchemaNode(
             colander.String(),
             title = 'Password',
             description = 'Password for the LDAP bind',
-            widget = deform.widget.PasswordWidget())
+            widget = deform.widget.PasswordWidget(), 
+            missing = '')
     base_dn = colander.SchemaNode(
             colander.String(),
             title = 'Base DN',
