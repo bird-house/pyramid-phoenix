@@ -10,24 +10,39 @@ phoenix:
   links:
     - mongodb
     - redis
-    - pycsw
 mongodb:
   image: birdhouse/mongodb
+  command: make update-config update-user start
+  volumes_from:
+    - malleefowl
 redis:
   image: birdhouse/redis
+  command: make update-config update-user start
+  volumes_from:
+    - malleefowl
 pycsw:
   image: birdhouse/pycsw
-  command: make update-config start
+  command: make update-config update-user start
+  ports:
+    - "8082:8082"
   environment:
-    - HOSTNAME=pycsw
+    - HOSTNAME=adelie.d.dkrz.de
+  volumes_from:
+    - malleefowl
 ncwms2:
   image: birdhouse/ncwms2
+  command: make start
   ports:
     - "8080:8080"
+  volumes_from:
+    - malleefowl
 solr:
   image: birdhouse/solr
+  command: make update-config update-user start
   ports:
     - "8983:8983"
+  volumes_from:
+    - malleefowl
 malleefowl:
   image: birdhouse/malleefowl
   command: make update-config update-user start
