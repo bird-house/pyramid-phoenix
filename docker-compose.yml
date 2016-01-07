@@ -1,12 +1,14 @@
 phoenix:
   image: birdhouse/pyramid-phoenix
-  command: make update update-user start
-  volumes:
-    - .docker.cfg:/opt/birdhouse/custom.cfg
+  command: make update-config update-user start
   ports:
     - "9001:9001"
     - "8081:8081"
     - "8443:8443"
+  environment:
+    - HOSTNAME=adelie.d.dkrz.de
+  volumes_from:
+    - malleefowl
   links:
     - mongodb
     - redis
@@ -31,7 +33,6 @@ pycsw:
     - malleefowl
 ncwms2:
   image: birdhouse/ncwms2
-  command: make start
   ports:
     - "8080:8080"
   volumes_from:
