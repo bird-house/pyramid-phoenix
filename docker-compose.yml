@@ -1,49 +1,37 @@
 phoenix:
   image: birdhouse/pyramid-phoenix
-  command: make update-config update-user start
   ports:
     - "9001:9001"
     - "8081:8081"
     - "8443:8443"
   environment:
-    - HOSTNAME=adelie.d.dkrz.de
+    - HOSTNAME
   volumes_from:
-    - malleefowl
+    - mongodb
   links:
     - mongodb
     - redis
+    - pycsw
 mongodb:
   image: birdhouse/mongodb
   command: make update-config update-user start
-  volumes_from:
-    - malleefowl
+  volumes:
+    - data:/data
+  volume_driver: local
 redis:
   image: birdhouse/redis
   command: make update-config update-user start
   volumes_from:
-    - malleefowl
+    - mongodb
 pycsw:
   image: birdhouse/pycsw
   command: make update-config update-user start
-  ports:
-    - "8082:8082"
   environment:
-    - HOSTNAME=adelie.d.dkrz.de
+    - HOSTNAME=pycsw
+  extra_hosts:
+    - "pycsw:127.0.0.1" 
   volumes_from:
-    - malleefowl
-ncwms2:
-  image: birdhouse/ncwms2
-  ports:
-    - "8080:8080"
-  volumes_from:
-    - malleefowl
-solr:
-  image: birdhouse/solr
-  command: make update-config update-user start
-  ports:
-    - "8983:8983"
-  volumes_from:
-    - malleefowl
+    - mongodb
 malleefowl:
   image: birdhouse/malleefowl
   command: make update-config update-user start
@@ -53,8 +41,21 @@ malleefowl:
     - "28091:28091"
     - "8091:8091"
   environment:
-    - HOSTNAME=adelie.d.dkrz.de
-  volumes:
-    - data:/data
-  volume_driver: local
- 
+    - HOSTNAME
+  volumes_from:
+    - mongodb
+ncwms2:
+  image: birdhouse/ncwms2
+  ports:
+    - "48080:9001"
+    - "8080:8080"
+  volumes_from:
+    - mongodb
+solr:
+  image: birdhouse/solr
+  ports:
+    - "48983:9001"
+    - "8983:8983"
+  volumes_from:
+    - mongodb
+
