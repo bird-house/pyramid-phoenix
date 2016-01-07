@@ -5,16 +5,21 @@ from phoenix.wizard.views import Wizard
 import colander
 from deform.widget import RadioChoiceWidget
 
+class SourceSchemaNode(colander.SchemaNode):
+    schema_type = colander.String
+
+    def after_bind(self, node, kw):
+        choices = [
+            ('wizard_esgf_search', "Earth System Grid (ESGF)"),
+            ('wizard_swift_login', "Swift Cloud"),
+            ('wizard_threddsservice', "Thredds Catalog Service"),           
+            ]
+        if kw['request'].solr_activated:
+            choices.append( ('wizard_solr', "Birdhouse Solr Search") )
+        self.widget = RadioChoiceWidget(values = choices)
+
 class Schema(colander.MappingSchema):
-    choices = [
-        ('wizard_esgf_search', "Earth System Grid (ESGF)"),
-        ('wizard_swift_login', "Swift Cloud"),
-        ('wizard_threddsservice', "Thredds Catalog Service"),
-        ('wizard_solr', "Birdhouse Solr Search")
-        ]
-    source = colander.SchemaNode(
-        colander.String(),
-        widget = RadioChoiceWidget(values = choices))
+    source = SourceSchemaNode()
 
 class ChooseSource(Wizard):
     def __init__(self, request):
@@ -28,7 +33,7 @@ class ChooseSource(Wizard):
         return breadcrumbs
         
     def schema(self):
-        return Schema()
+        return Schema().bind(request=self.request)
 
     def next_success(self, appstruct):
         self.success(appstruct)

@@ -16,6 +16,7 @@ def main(global_config, **settings):
     from pyramid.events import NewRequest
     from pyramid.authentication import AuthTktAuthenticationPolicy
     from pyramid.authorization import ACLAuthorizationPolicy
+    from pyramid.settings import asbool
     from phoenix.security import groupfinder, root_factory
 
     # security
@@ -133,6 +134,12 @@ def main(global_config, **settings):
     # A quick access to the login button
     from phoenix.utils import button
     config.add_request_method(button, 'login_button', reify=True)
+
+    # check if solr is activated
+    def _solr_activated(request):
+        settings = request.registry.settings
+        return asbool(settings.get('phoenix.solr', True))
+    config.add_request_method(_solr_activated, 'solr_activated', reify=True)
 
     # use json_adapter for datetime
     # http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
