@@ -16,8 +16,12 @@ For installation and configuration read the `documentation on ReadTheDocs <http:
 
 Phoenix is part of the `Birdhouse <http://bird-house.github.io/>`_ project.
 
+Run Docker
+----------
 
+Set the `HOSTNAME` environment variable (not `localhost`) and run `docker-compose`:
 
+.. code-block:: sh
 
-
+   HOSTNAME='adelie.d.dkrz.de' bash -c 'docker-compose up'
 
