@@ -147,6 +147,12 @@ def main(global_config, **settings):
         return asbool(settings.get('phoenix.wms', True))
     config.add_request_method(wms_activated, reify=True)
 
+    # check if flower is activated
+    def flower_activated(request):
+        settings = request.registry.settings
+        return asbool(settings.get('phoenix.flower', True))
+    config.add_request_method(flower_activated, reify=True)
+
     # use json_adapter for datetime
     # http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
     from pyramid.renderers import JSON
