@@ -136,10 +136,16 @@ def main(global_config, **settings):
     config.add_request_method(button, 'login_button', reify=True)
 
     # check if solr is activated
-    def _solr_activated(request):
+    def solr_activated(request):
         settings = request.registry.settings
         return asbool(settings.get('phoenix.solr', True))
-    config.add_request_method(_solr_activated, 'solr_activated', reify=True)
+    config.add_request_method(solr_activated, reify=True)
+
+    # check if wms is activated
+    def wms_activated(request):
+        settings = request.registry.settings
+        return asbool(settings.get('phoenix.wms', True))
+    config.add_request_method(wms_activated, reify=True)
 
     # use json_adapter for datetime
     # http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
