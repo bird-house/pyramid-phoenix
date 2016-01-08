@@ -153,6 +153,12 @@ def main(global_config, **settings):
         return asbool(settings.get('phoenix.flower', True))
     config.add_request_method(flower_activated, reify=True)
 
+     # check if wizard is activated
+    def wizard_activated(request):
+        settings = request.registry.settings
+        return asbool(settings.get('phoenix.wizard', True))
+    config.add_request_method(wizard_activated, reify=True)
+
     # use json_adapter for datetime
     # http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
     from pyramid.renderers import JSON
@@ -187,18 +193,17 @@ def main(global_config, **settings):
     config.add_subscriber(add_mongodb, NewRequest)
     
     # malleefowl wps
-    # TODO: subscriber annotation does not work
-    #@subscriber(NewRequest)
-    def add_wps(event):
-        settings = event.request.registry.settings
-        if settings.get('wps') is None:
-            try:
-                from owslib.wps import WebProcessingService
-                settings['wps'] = WebProcessingService(url=settings['wps.url'])
-            except:
-                logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
-        event.request.wps = settings.get('wps')
-    config.add_subscriber(add_wps, NewRequest)
+    if asbool(settings.get('phoenix.wizard', True)):
+        def add_wps(event):
+            settings = event.request.registry.settings
+            if settings.get('wps') is None:
+                try:
+                    from owslib.wps import WebProcessingService
+                    settings['wps'] = WebProcessingService(url=settings['wps.url'])
+                except:
+                    logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
+            event.request.wps = settings.get('wps')
+        config.add_subscriber(add_wps, NewRequest)
         
     # catalog service
     #@subscriber(NewRequest)
