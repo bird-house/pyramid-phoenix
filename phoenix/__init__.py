@@ -153,11 +153,17 @@ def main(global_config, **settings):
         return asbool(settings.get('phoenix.flower', True))
     config.add_request_method(flower_activated, reify=True)
 
-     # check if wizard is activated
+    # check if wizard is activated
     def wizard_activated(request):
         settings = request.registry.settings
         return asbool(settings.get('phoenix.wizard', True))
     config.add_request_method(wizard_activated, reify=True)
+
+    # check if csw is activated
+    def csw_activated(request):
+        settings = request.registry.settings
+        return asbool(settings.get('phoenix.csw', True))
+    config.add_request_method(csw_activated, reify=True)
 
     # use json_adapter for datetime
     # http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
@@ -206,17 +212,17 @@ def main(global_config, **settings):
         config.add_subscriber(add_wps, NewRequest)
         
     # catalog service
-    #@subscriber(NewRequest)
-    def add_csw(event):
-        settings = event.request.registry.settings
-        if settings.get('csw') is None:
-            try:
-                from owslib.csw import CatalogueServiceWeb
-                settings['csw'] = CatalogueServiceWeb(url=settings['csw.url'])
-            except:
-                logger.exception('Could not connect catalog service %s', settings['csw.url'])
-        event.request.csw = settings.get('csw')
-    config.add_subscriber(add_csw, NewRequest)
+    if asbool(settings.get('phoenix.csw', True)):
+        def add_csw(event):
+            settings = event.request.registry.settings
+            if settings.get('csw') is None:
+                try:
+                    from owslib.csw import CatalogueServiceWeb
+                    settings['csw'] = CatalogueServiceWeb(url=settings['csw.url'])
+                except:
+                    logger.exception('Could not connect catalog service %s', settings['csw.url'])
+            event.request.csw = settings.get('csw')
+        config.add_subscriber(add_csw, NewRequest)
     
     config.scan('phoenix')
 
