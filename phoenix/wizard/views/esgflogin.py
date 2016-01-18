@@ -29,7 +29,7 @@ class ESGFLogin(Wizard):
         return appstruct
 
     def success(self, appstruct):
-        appstruct['openid'] = self.get_user().get('openid')
+        #appstruct['openid'] = self.get_user().get('openid')
         super(ESGFLogin, self).success(appstruct)
 
         self.wizard_state.set('password', appstruct.get('password'))

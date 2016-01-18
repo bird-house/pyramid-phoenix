@@ -53,8 +53,8 @@ def add_job(db, userid, task_id, service, title, abstract, status_location, is_w
 def esgf_logon(self, userid, url, openid, password):
     registry = app.conf['PYRAMID_REGISTRY']
     inputs = []
-    inputs.append( ('openid', openid.encode('ascii', 'ignore')) )
-    inputs.append( ('password', password.encode('ascii', 'ignore')) )
+    inputs.append( ('openid', openid) )
+    inputs.append( ('password', password) )
     outputs = [('output',True),('expires',False)]
 
     wps = WebProcessingService(url=url, skip_caps=True)
