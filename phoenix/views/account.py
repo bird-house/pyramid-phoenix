@@ -77,6 +77,7 @@ class Account(MyView):
                 provider = appstruct.get('provider')
                 if username and provider:
                     openid = ESGF_Provider.get(provider) % username
+                    logger.debug('openid=%s', openid)
                     return HTTPFound(location=self.request.route_path('account_auth', provider_name='openid', _query=dict(id=openid)))
                 else:
                     return HTTPForbidden()

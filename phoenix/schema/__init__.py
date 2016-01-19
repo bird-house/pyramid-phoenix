@@ -48,7 +48,7 @@ class ESGFOpenIDSchema(colander.MappingSchema):
         description='Select the Provider for your ESGF OpenID.')
     username = colander.SchemaNode(
         colander.String(),
-        validator = colander.Length(min=6),
+        validator = colander.Length(min=8),
         title = "Username",
         description = "Your ESGF OpenID Username."
         )
