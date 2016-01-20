@@ -245,7 +245,10 @@ class Account(MyView):
                 logger.info("login successful for user %s", result.user.name)
                 if result.provider.name == 'openid':
                     # TODO: change login_id ... more infos ...
-                    return self.login_success(login_id=result.user.id, email=result.user.email, openid=result.user.id, name=result.user.name)
+                    return self.login_success(login_id=result.user.id,
+                                              email=result.user.email,
+                                              openid=result.user.id,
+                                              name=result.user.name)
                 elif result.provider.name == 'github':
                     # TODO: fix email ... get more infos ... which login_id?
                     login_id = "{0.username}@github.com".format(result.user)
@@ -255,7 +258,6 @@ class Account(MyView):
                         pass
                     return self.login_success(login_id=login_id, name=result.user.name)
                 elif result.provider.name == 'ceda':
-                    logger.warn('ceda login user=%s', result.user.data)
                     return self.login_success(login_id='cedatest', name='cedatest')
         return response
 
