@@ -45,7 +45,7 @@ class ESGFOpenIDSchema(colander.MappingSchema):
         validator=colander.OneOf([x[0] for x in choices]),
         widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
         title='ESGF Provider',
-        description='Select the Provider for your ESGF OpenID.')
+        description='Select the Provider of your ESGF OpenID.')
     username = colander.SchemaNode(
         colander.String(),
         validator = colander.Length(min=8),

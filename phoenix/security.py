@@ -78,7 +78,7 @@ def root_factory(request):
 
 from authomatic.providers import oauth2, openid
 from phoenix.providers import oauth2 as myoauth2
-from phoenix.providers import openid as myopenid
+from phoenix.providers import esgfopenid
 from authomatic import Authomatic, provider_id
 
 def authomatic(request):
@@ -87,6 +87,7 @@ def authomatic(request):
         secret=request.registry.settings.get('authomatic.secret'),
         report_errors=True,
         logging_level=logger.level)
+
 
 def authomatic_config(request):
 
@@ -102,7 +103,25 @@ def authomatic_config(request):
 
     ESGF = {
         'dkrz': {
-            'class_': myopenid.DKRZ,
+            'class_': esgfopenid.ESGFOpenID,
+            'hostname': 'esgf-data.dkrz.de',
+        },
+        'ipsl': {
+            'class_': esgfopenid.ESGFOpenID,
+            'hostname': 'esgf-node.ipsl.fr',
+        },
+        'badc': {
+            'class_': esgfopenid.ESGFOpenID,
+            'hostname': 'ceda.ac.uk',
+            'provider_url': 'https://{hostname}/openid/{username}'
+        },
+        'pcmdi': {
+            'class_': esgfopenid.ESGFOpenID,
+            'hostname': 'pcmdi9.llnl.gov',
+        },
+         'smhi': {
+            'class_': esgfopenid.ESGFOpenID,
+            'hostname': 'esg-dn1.nsc.liu.se',
         },
     }
     
