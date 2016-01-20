@@ -5,6 +5,8 @@ from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from pyramid.response import Response
 from pyramid.renderers import render, render_to_response
 from pyramid.security import remember, forget, authenticated_userid
+import colander
+import deform
 from deform import Form, ValidationFailure
 
 from phoenix.views import MyView
@@ -14,6 +16,57 @@ from phoenix.models import auth_protocols
 import logging
 logger = logging.getLogger(__name__)
 
+class PhoenixSchema(colander.MappingSchema):
+    password = colander.SchemaNode(
+        colander.String(),
+        title = 'Password',
+        description = 'Enter the Phoenix Password',
+        validator = colander.Length(min=8),
+        widget = deform.widget.PasswordWidget())
+
+class OAuthSchema(colander.MappingSchema):
+    choices = [('github', 'GitHub'), ('ceda', 'Ceda')]
+    
+    provider = colander.SchemaNode(
+        colander.String(),
+        validator=colander.OneOf([x[0] for x in choices]),
+        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
+        title='OAuth 2.0 Provider',
+        description='Select your OAuth Provider.')
+
+class OpenIDSchema(colander.MappingSchema):
+    openid = colander.SchemaNode(
+        colander.String(),
+        validator = colander.url,
+        title = "OpenID",
+        description = "Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname or https://openid.stackexchange.com/",
+        default = 'https://openid.stackexchange.com/')
+    
+class ESGFOpenIDSchema(colander.MappingSchema):
+    choices = [('dkrz', 'DKRZ'), ('ipsl', 'IPSL')]
+
+    provider = colander.SchemaNode(
+        colander.String(),
+        validator=colander.OneOf([x[0] for x in choices]),
+        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
+        title='ESGF Provider',
+        description='Select the Provider of your ESGF OpenID.')
+    username = colander.SchemaNode(
+        colander.String(),
+        validator = colander.Length(min=8),
+        title = "Username",
+        description = "Your ESGF OpenID Username."
+        )
+
+class LdapSchema(colander.MappingSchema):
+    username = colander.SchemaNode(
+        colander.String(),
+        title = "Username",
+        )
+    password = colander.SchemaNode(
+        colander.String(),
+        title = 'Password',
+        widget = deform.widget.PasswordWidget())
 
 @forbidden_view_config(renderer='phoenix:templates/account/forbidden.pt', layout="default")
 def forbidden(request):
@@ -35,12 +88,11 @@ class Account(MyView):
         if protocol == 'oauth2':
             return dict(provider='github')
         elif protocol == 'esgf':
-            return dict(provider='DKRZ')
+            return dict(provider='dkrz')
         else:
             return dict()
 
     def generate_form(self, protocol):
-        from phoenix.schema import PhoenixSchema, OAuthSchema, OpenIDSchema, ESGFOpenIDSchema, LdapSchema
         schema = None
         if protocol == 'phoenix':
             schema = PhoenixSchema()
