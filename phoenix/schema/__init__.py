@@ -38,8 +38,8 @@ class OpenIDSchema(colander.MappingSchema):
         default = 'https://openid.stackexchange.com/')
         
 class ESGFOpenIDSchema(colander.MappingSchema):
-    from phoenix.security import ESGF_Provider
-    choices = zip(ESGF_Provider.keys(), ESGF_Provider.keys())
+    choices = [('dkrz', 'DKRZ'), ('ipsl', 'IPSL')]
+
     provider = colander.SchemaNode(
         colander.String(),
         validator=colander.OneOf([x[0] for x in choices]),

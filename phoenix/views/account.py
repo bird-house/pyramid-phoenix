@@ -8,7 +8,7 @@ from pyramid.security import remember, forget, authenticated_userid
 from deform import Form, ValidationFailure
 
 from phoenix.views import MyView
-from phoenix.security import Admin, Guest, ESGF_Provider, authomatic, passwd_check
+from phoenix.security import Admin, Guest, authomatic, passwd_check
 from phoenix.models import auth_protocols
 
 import logging
@@ -73,14 +73,9 @@ class Account(MyView):
             elif protocol == 'oauth2':
                 return HTTPFound(location=self.request.route_path('account_auth', provider_name=appstruct.get('provider')))
             elif protocol == 'esgf':
-                username = appstruct.get('username')
-                provider = appstruct.get('provider')
-                if username and provider:
-                    openid = ESGF_Provider.get(provider) % username
-                    logger.debug('openid=%s', openid)
-                    return HTTPFound(location=self.request.route_path('account_auth', provider_name='openid', _query=dict(id=openid)))
-                else:
-                    return HTTPForbidden()
+                return HTTPFound(location=self.request.route_path('account_auth',
+                            provider_name=appstruct.get('provider'),
+                            _query=dict(username=appstruct.get('username'))))
             elif protocol == 'openid':
                 openid = appstruct.get('openid')
                 return HTTPFound(location=self.request.route_path('account_auth', provider_name='openid', _query=dict(id=openid)))
