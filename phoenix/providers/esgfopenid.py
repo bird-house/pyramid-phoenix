@@ -49,8 +49,6 @@ class ESGFOpenID(OpenID):
             self.username = self.params.get('username')
             self.identifier = self.provider_url.format(hostname=self.hostname, username=self.username)
 
-        self.identifier = 'https://esgf-data.dkrz.de/esgf-idp/openid/macpingu'
-
         # use fetcher with disabled ssl verification
         setDefaultFetcher( MyFetcher() )
 
