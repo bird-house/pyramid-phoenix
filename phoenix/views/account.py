@@ -53,7 +53,7 @@ class ESGFOpenIDSchema(colander.MappingSchema):
         description='Select the Provider of your ESGF OpenID.')
     username = colander.SchemaNode(
         colander.String(),
-        validator = colander.Length(min=8),
+        validator = colander.Length(min=2),
         title = "Username",
         description = "Your ESGF OpenID Username."
         )
@@ -243,7 +243,7 @@ class Account(MyView):
                     result.user.update()
                 # Hooray, we have the user!
                 logger.info("login successful for user %s", result.user.name)
-                if result.provider.name == 'openid':
+                if result.provider.name in ['openid', 'dkrz', 'ipsl']:
                     # TODO: change login_id ... more infos ...
                     return self.login_success(login_id=result.user.id,
                                               email=result.user.email,
