@@ -8,6 +8,7 @@ from pyramid.security import remember, forget, authenticated_userid
 import colander
 import deform
 from deform import Form, ValidationFailure
+from authomatic.adapters import WebObAdapter
 
 from phoenix.views import MyView
 from phoenix.security import Admin, Guest, authomatic, passwd_check
@@ -43,7 +44,7 @@ class OpenIDSchema(colander.MappingSchema):
         default = 'https://openid.stackexchange.com/')
     
 class ESGFOpenIDSchema(colander.MappingSchema):
-    choices = [('dkrz', 'DKRZ'), ('ipsl', 'IPSL')]
+    choices = [ ('badc', 'BADC'), ('dkrz', 'DKRZ'), ('ipsl', 'IPSL'), ('smhi', 'SMHI'), ('pcmdi', 'PCMDI')]
 
     provider = colander.SchemaNode(
         colander.String(),
@@ -225,7 +226,6 @@ class Account(MyView):
 
     @view_config(route_name='account_auth')
     def authomatic_login(self):
-        from authomatic.adapters import WebObAdapter
         _authomatic = authomatic(self.request)
         
         provider_name = self.request.matchdict.get('provider_name')
@@ -243,7 +243,7 @@ class Account(MyView):
                     result.user.update()
                 # Hooray, we have the user!
                 logger.info("login successful for user %s", result.user.name)
-                if result.provider.name in ['openid', 'dkrz', 'ipsl']:
+                if result.provider.name in ['openid', 'dkrz', 'ipsl', 'smhi', 'badc', 'pcmdi']:
                     # TODO: change login_id ... more infos ...
                     return self.login_success(login_id=result.user.id,
                                               email=result.user.email,

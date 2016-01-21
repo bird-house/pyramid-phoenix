@@ -119,7 +119,7 @@ def authomatic_config(request):
             'class_': esgfopenid.ESGFOpenID,
             'hostname': 'pcmdi9.llnl.gov',
         },
-         'smhi': {
+        'smhi': {
             'class_': esgfopenid.ESGFOpenID,
             'hostname': 'esg-dn1.nsc.liu.se',
         },
