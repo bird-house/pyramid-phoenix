@@ -117,7 +117,7 @@ def authomatic_config(request):
         },
         'pcmdi': {
             'class_': esgfopenid.ESGFOpenID,
-            'hostname': 'pcmdi9.llnl.gov',
+            'hostname': 'pcmdi.llnl.gov',
         },
         'smhi': {
             'class_': esgfopenid.ESGFOpenID,
