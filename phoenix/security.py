@@ -7,17 +7,6 @@ Admin = 'group.admin'
 User = 'group.user'
 Guest = 'group.guest'
 
-# TODO: make this configurable
-ESGF_Provider = dict(
-    BADC='https://ceda.ac.uk/openid/%s',
-    BNU='https://esg.bnu.edu.cn/esgf-idp/openid/%s',
-    DKRZ='https://esgf-data.dkrz.de/esgf-idp/openid/%s',
-    IPSL='https://esgf-node.ipsl.fr/esgf-idp/openid/%s',
-    NCI='https://esg2.nci.org.au/esgf-idp/openid/%s',
-    PCMDI='https://pcmdi9.llnl.gov/esgf-idp/openid/%s',
-    SMHI='https://esg-dn1.nsc.liu.se/esgf-idp/openid/%s',
-    )
-
 def passwd_check(request, passphrase):
     """
     code taken from IPython.lib.security
@@ -89,6 +78,7 @@ def root_factory(request):
 
 from authomatic.providers import oauth2, openid
 from phoenix.providers import oauth2 as myoauth2
+from phoenix.providers import esgfopenid
 from authomatic import Authomatic, provider_id
 
 def authomatic(request):
@@ -98,15 +88,40 @@ def authomatic(request):
         report_errors=True,
         logging_level=logger.level)
 
+
 def authomatic_config(request):
 
     DEFAULTS = {
         'popup': True,
     }
 
-    AUTHENTICATION = {
+    OPENID = {
         'openid': {
             'class_': openid.OpenID,
+        },
+    }
+
+    ESGF = {
+        'dkrz': {
+            'class_': esgfopenid.ESGFOpenID,
+            'hostname': 'esgf-data.dkrz.de',
+        },
+        'ipsl': {
+            'class_': esgfopenid.ESGFOpenID,
+            'hostname': 'esgf-node.ipsl.fr',
+        },
+        'badc': {
+            'class_': esgfopenid.ESGFOpenID,
+            'hostname': 'ceda.ac.uk',
+            'provider_url': 'https://{hostname}/openid/{username}'
+        },
+        'pcmdi': {
+            'class_': esgfopenid.ESGFOpenID,
+            'hostname': 'pcmdi.llnl.gov',
+        },
+        'smhi': {
+            'class_': esgfopenid.ESGFOpenID,
+            'hostname': 'esg-dn1.nsc.liu.se',
         },
     }
     
@@ -138,7 +153,8 @@ def authomatic_config(request):
     # Concatenate the configs.
     config = {}
     config.update(OAUTH2)
-    config.update(AUTHENTICATION)
+    config.update(OPENID)
+    config.update(ESGF)
     config['__defaults__'] = DEFAULTS
     return config
 

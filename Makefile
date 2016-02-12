@@ -19,6 +19,7 @@ PREFIX := $(CONDA_ENVS_DIR)/$(CONDA_ENV)
 HOSTNAME ?= localhost
 USER ?= www-data
 OUTPUT_PORT ?= 8090
+LOG_LEVEL ?= WARN
 
 # choose anaconda installer depending on your OS
 ANACONDA_URL = http://repo.continuum.io/miniconda
@@ -174,7 +175,7 @@ sysinstall:
 	@echo "\nInstalling system packages for bootstrap ..."
 	@bash bootstrap.sh -i
 	@echo "\nInstalling system packages for your application ..."
-	@bash requirements.sh
+	@test -f requirements.sh || bash requirements.sh
 
 .PHONY: install
 install: bootstrap
@@ -183,13 +184,13 @@ install: bootstrap
 
 .PHONY: update
 update:
-	@echo "Update application config with buildout ..."
+	@echo "Update application config with buildout (offline mode) ..."
 	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout -o -c custom.cfg"
 
 .PHONY: update-config
 update-config:
-	@echo "Update application config with buildout ..."
-	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout settings:hostname=$(HOSTNAME) settings:output-port=$(OUTPUT_PORT) -o -c custom.cfg"
+	@echo "Update application config with buildout (offline mode) and enviroment variables..."
+	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout settings:hostname=$(HOSTNAME) settings:output-port=$(OUTPUT_PORT) settings:log-level=$(LOG_LEVEL) -o -c custom.cfg"
 
 .PHONY: update-user
 update-user:

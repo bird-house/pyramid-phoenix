@@ -5,15 +5,69 @@ from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from pyramid.response import Response
 from pyramid.renderers import render, render_to_response
 from pyramid.security import remember, forget, authenticated_userid
+import colander
+import deform
 from deform import Form, ValidationFailure
+from authomatic.adapters import WebObAdapter
 
 from phoenix.views import MyView
-from phoenix.security import Admin, Guest, ESGF_Provider, authomatic, passwd_check
+from phoenix.security import Admin, Guest, authomatic, passwd_check
 from phoenix.models import auth_protocols
 
 import logging
 logger = logging.getLogger(__name__)
 
+class PhoenixSchema(colander.MappingSchema):
+    password = colander.SchemaNode(
+        colander.String(),
+        title = 'Password',
+        description = 'Enter the Phoenix Password',
+        validator = colander.Length(min=8),
+        widget = deform.widget.PasswordWidget())
+
+class OAuthSchema(colander.MappingSchema):
+    choices = [('github', 'GitHub'), ('ceda', 'Ceda')]
+    
+    provider = colander.SchemaNode(
+        colander.String(),
+        validator=colander.OneOf([x[0] for x in choices]),
+        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
+        title='OAuth 2.0 Provider',
+        description='Select your OAuth Provider.')
+
+class OpenIDSchema(colander.MappingSchema):
+    openid = colander.SchemaNode(
+        colander.String(),
+        validator = colander.url,
+        title = "OpenID",
+        description = "Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname or https://openid.stackexchange.com/",
+        default = 'https://openid.stackexchange.com/')
+    
+class ESGFOpenIDSchema(colander.MappingSchema):
+    choices = [ ('badc', 'BADC'), ('dkrz', 'DKRZ'), ('ipsl', 'IPSL'), ('smhi', 'SMHI'), ('pcmdi', 'PCMDI')]
+
+    provider = colander.SchemaNode(
+        colander.String(),
+        validator=colander.OneOf([x[0] for x in choices]),
+        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
+        title='ESGF Provider',
+        description='Select the Provider of your ESGF OpenID.')
+    username = colander.SchemaNode(
+        colander.String(),
+        validator = colander.Length(min=2),
+        title = "Username",
+        description = "Your ESGF OpenID Username."
+        )
+
+class LdapSchema(colander.MappingSchema):
+    username = colander.SchemaNode(
+        colander.String(),
+        title = "Username",
+        )
+    password = colander.SchemaNode(
+        colander.String(),
+        title = 'Password',
+        widget = deform.widget.PasswordWidget())
 
 @forbidden_view_config(renderer='phoenix:templates/account/forbidden.pt', layout="default")
 def forbidden(request):
@@ -35,12 +89,11 @@ class Account(MyView):
         if protocol == 'oauth2':
             return dict(provider='github')
         elif protocol == 'esgf':
-            return dict(provider='DKRZ')
+            return dict(provider='dkrz')
         else:
             return dict()
 
     def generate_form(self, protocol):
-        from phoenix.schema import PhoenixSchema, OAuthSchema, OpenIDSchema, ESGFOpenIDSchema, LdapSchema
         schema = None
         if protocol == 'phoenix':
             schema = PhoenixSchema()
@@ -73,13 +126,9 @@ class Account(MyView):
             elif protocol == 'oauth2':
                 return HTTPFound(location=self.request.route_path('account_auth', provider_name=appstruct.get('provider')))
             elif protocol == 'esgf':
-                username = appstruct.get('username')
-                provider = appstruct.get('provider')
-                if username and provider:
-                    openid = ESGF_Provider.get(provider) % username
-                    return HTTPFound(location=self.request.route_path('account_auth', provider_name='openid', _query=dict(id=openid)))
-                else:
-                    return HTTPForbidden()
+                return HTTPFound(location=self.request.route_path('account_auth',
+                            provider_name=appstruct.get('provider'),
+                            _query=dict(username=appstruct.get('username'))))
             elif protocol == 'openid':
                 openid = appstruct.get('openid')
                 return HTTPFound(location=self.request.route_path('account_auth', provider_name='openid', _query=dict(id=openid)))
@@ -177,7 +226,6 @@ class Account(MyView):
 
     @view_config(route_name='account_auth')
     def authomatic_login(self):
-        from authomatic.adapters import WebObAdapter
         _authomatic = authomatic(self.request)
         
         provider_name = self.request.matchdict.get('provider_name')
@@ -195,9 +243,12 @@ class Account(MyView):
                     result.user.update()
                 # Hooray, we have the user!
                 logger.info("login successful for user %s", result.user.name)
-                if result.provider.name == 'openid':
+                if result.provider.name in ['openid', 'dkrz', 'ipsl', 'smhi', 'badc', 'pcmdi']:
                     # TODO: change login_id ... more infos ...
-                    return self.login_success(login_id=result.user.id, email=result.user.email, openid=result.user.id, name=result.user.name)
+                    return self.login_success(login_id=result.user.id,
+                                              email=result.user.email,
+                                              openid=result.user.id,
+                                              name=result.user.name)
                 elif result.provider.name == 'github':
                     # TODO: fix email ... get more infos ... which login_id?
                     login_id = "{0.username}@github.com".format(result.user)
@@ -207,7 +258,6 @@ class Account(MyView):
                         pass
                     return self.login_success(login_id=login_id, name=result.user.name)
                 elif result.provider.name == 'ceda':
-                    logger.warn('ceda login user=%s', result.user.data)
                     return self.login_success(login_id='cedatest', name='cedatest')
         return response
 

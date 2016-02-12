@@ -38,11 +38,13 @@ class ProcessOutputsGrid(MyGrid):
             # TODO: dirty hack for show on map
             wms_reference = self.wms_url + item.get('reference').split('wpsoutputs')[1]
             logger.debug(item.get('reference'))
-            buttongroup.append( ("publish", item.get('identifier'), "glyphicon glyphicon-share", "Publish", "#", False) )
+            if self.request.csw_activated:
+                buttongroup.append( ("publish", item.get('identifier'), "glyphicon glyphicon-share", "Publish", "#", False) )
             buttongroup.append( ("view", item.get('identifier'), "glyphicon glyphicon-eye-open", "View", 
                                  item.get('reference', "#"), True) )
-            buttongroup.append( ("mapit", item.get('identifier'), "glyphicon glyphicon-globe", "Show on Map",
-                                 wms_reference, True) )
+            if self.request.wms_activated:
+                buttongroup.append( ("mapit", item.get('identifier'), "glyphicon glyphicon-globe", "Show on Map",
+                                    wms_reference, True) )
             buttongroup.append( ("upload", item.get('identifier'), "glyphicon glyphicon-upload", "Upload",
                                  "#", False) )
         return self.render_action_td(buttongroup)
