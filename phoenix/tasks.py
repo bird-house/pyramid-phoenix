@@ -93,30 +93,34 @@ def execute_workflow(self, userid, url, workflow):
                   status_location = execution.statusLocation)
 
     while execution.isNotComplete():
-        execution.checkStatus(sleepSecs=1)
-        job['status'] = execution.getStatus()
-        job['status_message'] = execution.statusMessage
-        job['is_complete'] = execution.isComplete()
-        job['is_succeded'] = execution.isSucceded()
-        job['progress'] = execution.percentCompleted
-        duration = datetime.now() - job.get('created', datetime.now())
-        job['duration'] = str(duration).split('.')[0]
-        if execution.isComplete():
-            job['finished'] = datetime.now()
-            if execution.isSucceded():
-                for output in execution.processOutputs:
-                    if 'output' == output.identifier:
-                        result = yaml.load(urllib.urlopen(output.reference))
-                        job['worker_status_location'] = result['worker']['status_location']
-                job['progress'] = 100
-                log(job)
+        try:
+            execution.checkStatus(sleepSecs=1)
+            job['status'] = execution.getStatus()
+            job['status_message'] = execution.statusMessage
+            job['is_complete'] = execution.isComplete()
+            job['is_succeded'] = execution.isSucceded()
+            job['progress'] = execution.percentCompleted
+            duration = datetime.now() - job.get('created', datetime.now())
+            job['duration'] = str(duration).split('.')[0]
+            if execution.isComplete():
+                job['finished'] = datetime.now()
+                if execution.isSucceded():
+                    for output in execution.processOutputs:
+                        if 'output' == output.identifier:
+                            result = yaml.load(urllib.urlopen(output.reference))
+                            job['worker_status_location'] = result['worker']['status_location']
+                    job['progress'] = 100
+                    log(job)
+                else:
+                    job['status_message'] = '\n'.join(error.text for error in execution.errors)
+                    for error in execution.errors:
+                        log_error(job, error)
             else:
-                job['status_message'] = '\n'.join(error.text for error in execution.errors)
-                for error in execution.errors:
-                    log_error(job, error)
+                log(job)
+        except:
+            logger.exception("Could not read status xml document.")
         else:
-            log(job)
-        db.jobs.update({'identifier': job['identifier']}, job)
+            db.jobs.update({'identifier': job['identifier']}, job)
     return execution.getStatus()
 
 @app.task(bind=True)
@@ -135,26 +139,30 @@ def execute_process(self, userid, url, identifier, inputs, outputs, keywords=Non
                   status_location = execution.statusLocation)
 
     while execution.isNotComplete():
-        execution.checkStatus(sleepSecs=1)
-        job['status'] = execution.getStatus()
-        job['status_message'] = execution.statusMessage
-        job['is_complete'] = execution.isComplete()
-        job['is_succeded'] = execution.isSucceded()
-        job['progress'] = execution.percentCompleted
-        duration = datetime.now() - job.get('created', datetime.now())
-        job['duration'] = str(duration).split('.')[0]
-        if execution.isComplete():
-            job['finished'] = datetime.now()
-            if execution.isSucceded():
-                job['progress'] = 100
-                log(job)
+        try:
+            execution.checkStatus(sleepSecs=3)
+            job['status'] = execution.getStatus()
+            job['status_message'] = execution.statusMessage
+            job['is_complete'] = execution.isComplete()
+            job['is_succeded'] = execution.isSucceded()
+            job['progress'] = execution.percentCompleted
+            duration = datetime.now() - job.get('created', datetime.now())
+            job['duration'] = str(duration).split('.')[0]
+            if execution.isComplete():
+                job['finished'] = datetime.now()
+                if execution.isSucceded():
+                    job['progress'] = 100
+                    log(job)
+                else:
+                    job['status_message'] = '\n'.join(error.text for error in execution.errors)
+                    for error in execution.errors:
+                        log_error(job, error)
             else:
-                job['status_message'] = '\n'.join(error.text for error in execution.errors)
-                for error in execution.errors:
-                    log_error(job, error)
+                log(job)
+        except:
+            logger.exception("Could not read status xml document.")
         else:
-            log(job)
-        db.jobs.update({'identifier': job['identifier']}, job)
+            db.jobs.update({'identifier': job['identifier']}, job)
     return execution.getStatus()
 
 @app.task(bind=True)
