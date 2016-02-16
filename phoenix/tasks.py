@@ -94,7 +94,7 @@ def execute_workflow(self, userid, url, workflow):
 
     while execution.isNotComplete():
         try:
-            execution.checkStatus(sleepSecs=1)
+            execution.checkStatus(sleepSecs=3)
             job['status'] = execution.getStatus()
             job['status_message'] = execution.statusMessage
             job['is_complete'] = execution.isComplete()
