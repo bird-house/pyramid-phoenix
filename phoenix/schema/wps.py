@@ -2,6 +2,7 @@ import colander
 import deform
 import dateutil
 import re
+from deform.interfaces import FileUploadTempStore 
 
 import logging
 logger = logging.getLogger(__name__)
