@@ -199,21 +199,21 @@ class WPSSchema(colander.MappingSchema):
         logger.debug("choosen widget, identifier=%s, widget=%s", data_input.identifier, node.widget)
 
     def complex_data(self, data_input):
-        # TODO: refactor upload, url, text-input choice ...
-        ## if metadata is None or metadata == {} or data_input.identifier in metadata.get('uploads', []):
-        ##     node = colander.SchemaNode(
-        ##         deform.FileData(),
-        ##         name=data_input.identifier,
-        ##         title=data_input.title,
-        ##         widget=deform.widget.FileUploadWidget(tmpstore)
-        ##         )
-        ## else:
-        node = colander.SchemaNode(
-            colander.String(),
-            name = data_input.identifier,
-            title = data_input.title,
-            widget = deform.widget.TextInputWidget(),
-            validator = colander.url)
+        # TODO: refactor upload
+        node = None
+        if True:
+            node = colander.SchemaNode(
+                deform.FileData(),
+                name=data_input.identifier,
+                title=data_input.title,
+                widget=deform.widget.FileUploadWidget(tmpstore))
+        else:
+            node = colander.SchemaNode(
+                colander.String(),
+                name = data_input.identifier,
+                title = data_input.title,
+                widget = deform.widget.TextInputWidget(),
+                validator = colander.url)
            
         # sometimes abstract is not set
         if hasattr(data_input, 'abstract'):
