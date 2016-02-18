@@ -1,4 +1,5 @@
 import os
+import deform
 
 import logging
 logger = logging.getLogger(__name__)
@@ -76,11 +77,16 @@ def root_path(path):
     
 def appstruct_to_inputs(appstruct):
     import types
+    import base64
     inputs = []
     for key,values in appstruct.items():
         if type(values) != types.ListType:
             values = [values]
         for value in values:
+            #logger.debug("key=%s, value=%s, type=%s", key, value, type(value))
+            if isinstance(value, deform.widget.filedict):
+                logger.debug('uploading file %s', key)
+                value = base64.b64encode(value['fp'].read())
             inputs.append( (str(key).strip(), str(value).strip()) )
     return inputs
 
