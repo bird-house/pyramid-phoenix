@@ -1,6 +1,17 @@
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">${title}</h3>
+    <span class="panel-title">
+      ${title}
+      <div class="pull-right">
+        <a class="btn btn-danger btn-xs"
+           rel="tooltip"
+           data-toggle="tooltip"
+           title="Remove Service"
+           href="">
+          Forget Credenial
+        </a>
+      </div>
+    </span>
   </div>
   <div class="panel-body">
     <tal:form replace="structure form">The form will render here</tal:form>
