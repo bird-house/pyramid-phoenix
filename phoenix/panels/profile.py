@@ -1,10 +1,57 @@
 from pyramid_layout.panel import panel_config
 from pyramid.security import authenticated_userid
 from deform import Form, ValidationFailure
+import colander
+import deform
 from phoenix.models import get_user
 
 import logging
 logger = logging.getLogger(__name__)
+
+class ESGFCredentialsSchema(colander.MappingSchema):
+    openid = colander.SchemaNode(
+        colander.String(),
+        title = "OpenID",
+        description = "OpenID to access ESGF data",
+        validator = colander.url,
+        missing = '',
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
+    credentials = colander.SchemaNode(
+        colander.String(),
+        title = "Credentials",
+        description = "URL to ESGF Proxy Certificate",
+        validator = colander.url,
+        missing = '',
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
+    cert_expires = colander.SchemaNode(
+        colander.String(),
+        title = "Expires",
+        description = "When your Proxy Certificate expires",
+        missing = '',
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
+
+class SwiftSchema(colander.MappingSchema):
+    swift_username = colander.SchemaNode(
+        colander.String(),
+        title = "Swift Username",
+        missing = '',
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
+    swift_storage_url = colander.SchemaNode(
+        colander.String(),
+        title = "Swift Storage URL",
+        missing = '',
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
+    swift_auth_token = colander.SchemaNode(
+        colander.String(),
+        title = "Swift Auth Token",
+        missing = '',
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
 
 class ProfilePanel(object):
     def __init__(self, context, request):
@@ -49,7 +96,6 @@ class AccountPanel(ProfilePanel):
 
 class ESGFPanel(ProfilePanel):
     def generate_form(self):
-        from phoenix.schema import ESGFCredentialsSchema
         form = Form(schema=ESGFCredentialsSchema(), formid='deform')
         return form
 
@@ -60,7 +106,6 @@ class ESGFPanel(ProfilePanel):
 
 class SwiftPanel(ProfilePanel):
     def generate_form(self):
-        from phoenix.schema import SwiftSchema
         form = Form(schema=SwiftSchema(), formid='deform')
         return form
 

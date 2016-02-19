@@ -1,11 +1,28 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
+import colander
+import deform
+
 from phoenix.tasks import esgf_logon, task_result
 from phoenix.wizard.views import Wizard
 
 import logging
 logger = logging.getLogger(__name__)
+
+class ESGFLoginSchema(colander.MappingSchema):
+    openid = colander.SchemaNode(
+        colander.String(),
+        title = "OpenID",
+        description = "Type your OpenID from your ESGF provider. For example: https://esgf-data.dkrz.de/esgf-idp/openid/username",
+        validator = colander.url
+        )
+    password = colander.SchemaNode(
+        colander.String(),
+        title = 'Password',
+        description = 'Type your password for your ESGF OpenID',
+        validator = colander.Length(min=6),
+        widget = deform.widget.PasswordWidget())
 
 class ESGFLogin(Wizard):
     def __init__(self, request):
@@ -20,7 +37,6 @@ class ESGFLogin(Wizard):
         return breadcrumbs
 
     def schema(self):
-        from phoenix.schema import ESGFLoginSchema
         return ESGFLoginSchema()
 
     def appstruct(self):

@@ -66,6 +66,7 @@ def esgf_logon(self, userid, url, openid, password):
         cert_expires = execution.processOutputs[1].data[0]
         db = mongodb(registry)
         user = db.users.find_one({'identifier':userid})
+        user['openid'] = openid
         user['credentials'] = credentials
         user['cert_expires'] = cert_expires
         db.users.update({'identifier':userid}, user)

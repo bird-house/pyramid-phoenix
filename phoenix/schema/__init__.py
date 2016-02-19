@@ -10,20 +10,6 @@ from phoenix.widget import (
 import logging
 logger = logging.getLogger(__name__)
 
-class ESGFLoginSchema(colander.MappingSchema):
-    openid = colander.SchemaNode(
-        colander.String(),
-        title = "OpenID",
-        description = "Type your OpenID from your ESGF provider",
-        validator = colander.url
-        )
-    password = colander.SchemaNode(
-        colander.String(),
-        title = 'Password',
-        description = 'Type your password for your ESGF OpenID',
-        validator = colander.Length(min=6),
-        widget = deform.widget.PasswordWidget())
-
 class SwiftLoginSchema(colander.MappingSchema):
     username = colander.SchemaNode(
         colander.String(),
@@ -67,50 +53,6 @@ class UserProfileSchema(colander.MappingSchema):
         default = '',
         )
 
-class ESGFCredentialsSchema(colander.MappingSchema):
-    openid = colander.SchemaNode(
-        colander.String(),
-        title = "OpenID",
-        description = "OpenID to access ESGF data",
-        validator = colander.url,
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-    credentials = colander.SchemaNode(
-        colander.String(),
-        title = "Credentials",
-        description = "URL to ESGF Proxy Certificate",
-        validator = colander.url,
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-    cert_expires = colander.SchemaNode(
-        colander.String(),
-        title = "Expires",
-        description = "When your Proxy Certificate expires",
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-
-class SwiftSchema(colander.MappingSchema):
-    swift_username = colander.SchemaNode(
-        colander.String(),
-        title = "Swift Username",
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-    swift_storage_url = colander.SchemaNode(
-        colander.String(),
-        title = "Swift Storage URL",
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-    swift_auth_token = colander.SchemaNode(
-        colander.String(),
-        title = "Swift Auth Token",
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
 
 def esgfsearch_validator(node, value):
     import json

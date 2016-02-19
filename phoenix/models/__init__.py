@@ -68,7 +68,7 @@ def user_stats(request):
                 num_logins_3h=num_logins_3h,
                 num_logins_7d=num_logins_7d)
 
-def user_cert_valid(request, valid_hours=2):
+def user_cert_valid(request, valid_hours=6):
     cert_expires = get_user(request).get('cert_expires')
     if cert_expires != None:
         timestamp = datetime_parser.parse(cert_expires)
