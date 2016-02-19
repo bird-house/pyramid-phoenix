@@ -79,6 +79,7 @@ def main(global_config, **settings):
 
     # user profile
     config.add_route('profile', '/profile/{tab}')
+    config.add_route('forget_esgf_certs', '/forget_esgf_certs')
 
     # settings
     config.add_route('settings', '/settings')

@@ -7,7 +7,7 @@
            rel="tooltip"
            data-toggle="tooltip"
            title="Remove Service"
-           href="">
+           href="${request.route_path('forget_esgf_certs')}">
           Forget Credenial
         </a>
       </div>

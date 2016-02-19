@@ -1,6 +1,7 @@
 from pyramid.view import view_config, view_defaults
 
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
+from pyramid.security import authenticated_userid
 from deform import Form, ValidationFailure
 
 from phoenix.views import MyView
@@ -12,6 +13,16 @@ logger = logging.getLogger(__name__)
 class Profile(MyView):
     def __init__(self, request):
         super(Profile, self).__init__(request, name='profile', title='')
+
+    @view_config(route_name='forget_esgf_certs')
+    def forget_esgf_certs(self):
+        userid = authenticated_userid(self.request)
+        user = self.request.db.users.find_one({'identifier':userid})
+        user['credentials'] = None
+        user['cert_expires'] = None
+        self.request.db.users.update({'identifier':userid}, user)
+        self.request.session.flash("ESGF Certficate removed.", queue='info')
+        return HTTPFound(location=self.request.route_path('profile', tab='esgf'))
 
     @view_config(route_name='profile', renderer='phoenix:templates/profile.pt')
     def view(self):
@@ -25,3 +36,5 @@ class Profile(MyView):
         elif tab == 'swift':
             lm.layout.add_heading('profile_swift')
         return dict(active=tab)
+
+    
