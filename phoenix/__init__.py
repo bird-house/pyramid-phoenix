@@ -1,3 +1,5 @@
+import os
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -165,6 +167,15 @@ def main(global_config, **settings):
         settings = request.registry.settings
         return asbool(settings.get('phoenix.csw', True))
     config.add_request_method(csw_activated, reify=True)
+
+    # get upload dir
+    def upload_dir(request):
+        settings = request.registry.settings
+        directory = settings.get('phoenix.upload_dir', '/tmp/phoenix/upload')
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        return directory
+    config.add_request_method(upload_dir, reify=True)
 
     # use json_adapter for datetime
     # http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
