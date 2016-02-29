@@ -7,16 +7,48 @@ from deform.interfaces import FileUploadTempStore
 import logging
 logger = logging.getLogger(__name__)
 
-# Memory tempstore for file uploads
+# Storage for file uploads
+# http://docs.pylonsproject.org/projects/deform/en/latest/interfaces.html?highlight=fileupload#deform.interfaces.FileUploadTempStore
+# https://pythonhosted.org/pyramid_storage/
 # ---------------------------------
 
 class MemoryTmpStore(dict):
     """ Instances of this class implement the
     :class:`deform.interfaces.FileUploadTempStore` interface"""
+    
     def preview_url(self, uid):
         return None
 
 tmpstore = MemoryTmpStore()
+
+class Storage(dict):
+    """ Instances of this class implement the
+    :class:`deform.interfaces.FileUploadTempStore` interface"""
+
+    def __init__(self, request):
+        self.request = request
+    
+    def get(self, name, default=None):
+        """Same as dict.get."""
+        return self.__getitem__(name)
+
+    def __getitem__(self, name):
+        """Get a value."""
+        #logger.debug("getitem %s", name)
+        return self.request.storage.path(filename=name)
+        
+    def __setitem__(self, name, value):
+        """Set a value."""
+        logger.debug("setitem %s", name)
+        self.request.storage.save_file(value, filename=name)
+
+    def __contains__(self, name):
+        """This should return True if we have a value for the name supplied, False otherwise."""
+        logger.debug("contains %s", name)
+        return self.request.storage.exists(filename=name)
+
+    def preview_url(self, uid):
+        return None
 
 
 # wps input schema
