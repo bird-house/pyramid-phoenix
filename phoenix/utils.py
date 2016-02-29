@@ -1,4 +1,5 @@
 import os
+import tempfile
 import deform
 
 import logging
@@ -75,18 +76,25 @@ def root_path(path):
     except:
         return None
     
-def appstruct_to_inputs(appstruct):
+def appstruct_to_inputs(appstruct, upload_dir=None):
     import types
     import base64
     inputs = []
     for key,values in appstruct.items():
-        if type(values) != types.ListType:
+        if not isinstance(values, types.ListType):
             values = [values]
         for value in values:
             #logger.debug("key=%s, value=%s, type=%s", key, value, type(value))
             if isinstance(value, deform.widget.filedict):
-                logger.debug('uploading file %s', key)
-                value = base64.b64encode(value['fp'].read())
+                content = value['fp'].read()
+                if len(content) <= 2*1048576:
+                    value = base64.encodestring(content)
+                    logger.debug('upload base64 encoded file, length=%d', len(value))
+                else:
+                    with tempfile.NamedTemporaryFile(dir=upload_dir, delete=False) as fo:
+                        fo.write(content)
+                        value = 'file://' + fo.name
+                        logger.debug('upload file as reference = %s', value)
             inputs.append( (str(key).strip(), str(value).strip()) )
     return inputs
 

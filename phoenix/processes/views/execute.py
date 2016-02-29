@@ -7,6 +7,7 @@ from deform import ValidationFailure
 from phoenix.events import JobStarted
 from phoenix.processes.views import Processes
 from phoenix.catalog import wps_url
+from phoenix.utils import appstruct_to_inputs
 
 from owslib.wps import WebProcessingService
 
@@ -55,8 +56,7 @@ class ExecuteProcess(Processes):
         return HTTPFound(location=self.request.route_url('monitor'))
 
     def execute(self, appstruct):
-        from phoenix.utils import appstruct_to_inputs
-        inputs = appstruct_to_inputs(appstruct)
+        inputs = appstruct_to_inputs(appstruct, upload_dir=self.request.upload_dir)
         outputs = []
         for output in self.process.processOutputs:
             outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
