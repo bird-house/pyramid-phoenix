@@ -8,6 +8,7 @@ from phoenix.events import JobStarted
 from phoenix.processes.views import Processes
 from phoenix.catalog import wps_url
 from phoenix.utils import appstruct_to_inputs
+from phoenix.schema.wps import WPSSchema
 
 from owslib.wps import WebProcessingService
 
@@ -35,7 +36,6 @@ class ExecuteProcess(Processes):
         return {}
 
     def generate_form(self, formid='deform'):
-        from phoenix.schema.wps import WPSSchema
         schema = WPSSchema(request=self.request, process=self.process, user=self.get_user())
         return Form(
             schema,
