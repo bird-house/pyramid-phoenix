@@ -36,7 +36,7 @@ class ExecuteProcess(Processes):
 
     def generate_form(self, formid='deform'):
         from phoenix.schema.wps import WPSSchema
-        schema = WPSSchema(process = self.process, user=self.get_user())
+        schema = WPSSchema(request=self.request, process=self.process, user=self.get_user())
         return Form(
             schema,
             buttons=('submit',),

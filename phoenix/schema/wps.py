@@ -2,53 +2,11 @@ import colander
 import deform
 import dateutil
 import re
-from deform.interfaces import FileUploadTempStore 
+
+from phoenix.views.form import FileUploadTempStore, MemoryTempStore
 
 import logging
 logger = logging.getLogger(__name__)
-
-# Storage for file uploads
-# http://docs.pylonsproject.org/projects/deform/en/latest/interfaces.html?highlight=fileupload#deform.interfaces.FileUploadTempStore
-# https://pythonhosted.org/pyramid_storage/
-# ---------------------------------
-
-class MemoryTmpStore(dict):
-    """ Instances of this class implement the
-    :class:`deform.interfaces.FileUploadTempStore` interface"""
-    
-    def preview_url(self, uid):
-        return None
-
-tmpstore = MemoryTmpStore()
-
-class Storage(dict):
-    """ Instances of this class implement the
-    :class:`deform.interfaces.FileUploadTempStore` interface"""
-
-    def __init__(self, request):
-        self.request = request
-    
-    def get(self, name, default=None):
-        """Same as dict.get."""
-        return self.__getitem__(name)
-
-    def __getitem__(self, name):
-        """Get a value."""
-        #logger.debug("getitem %s", name)
-        return self.request.storage.path(filename=name)
-        
-    def __setitem__(self, name, value):
-        """Set a value."""
-        logger.debug("setitem %s", name)
-        self.request.storage.save_file(value, filename=name)
-
-    def __contains__(self, name):
-        """This should return True if we have a value for the name supplied, False otherwise."""
-        logger.debug("contains %s", name)
-        return self.request.storage.exists(filename=name)
-
-    def preview_url(self, uid):
-        return None
 
 
 # wps input schema
@@ -67,7 +25,7 @@ class WPSSchema(colander.MappingSchema):
 
     appstruct = {}
 
-    def __init__(self, hide_complex=False, process=None, unknown='ignore', user=None, **kw):
+    def __init__(self, request, hide_complex=False, process=None, unknown='ignore', user=None, **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
@@ -101,6 +59,7 @@ class WPSSchema(colander.MappingSchema):
 
         # The default type of this SchemaNode is Mapping.
         colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
+        self.request = request
         self.hide_complex = hide_complex
         self.process = process
         self.unknown = unknown
@@ -235,6 +194,7 @@ class WPSSchema(colander.MappingSchema):
         # TODO: refactor upload
         node = None
         if True:
+            tmpstore = MemoryTempStore(self.request)
             node = colander.SchemaNode(
                 deform.FileData(),
                 name=data_input.identifier,
@@ -324,8 +284,11 @@ class WPSSchema(colander.MappingSchema):
 
     def clone(self):
         cloned = self.__class__(
+            self.request,
+            self.hide_complex,
             self.process,
             self.unknown,
+            self.user,
             **self.kwargs)
         cloned.__dict__.update(self.__dict__)
         cloned.children = [node.clone() for node in self.children]
