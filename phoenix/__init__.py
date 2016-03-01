@@ -177,6 +177,12 @@ def main(global_config, **settings):
         return directory
     config.add_request_method(upload_dir, reify=True)
 
+    # max file size for upload in MB
+    def max_file_size(request):
+        settings = request.registry.settings
+        return int(settings.get('phoenix.max_file_size', '200'))
+    config.add_request_method(max_file_size, reify=True)
+
     # use json_adapter for datetime
     # http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer
     from pyramid.renderers import JSON

@@ -201,7 +201,7 @@ class WPSSchema(colander.MappingSchema):
                 name=data_input.identifier,
                 title=data_input.title,
                 widget=deform.widget.FileUploadWidget(tmpstore),
-                validator=FileSizeLimitValidator(max_size=2))
+                validator=FileSizeLimitValidator(max_size=self.request.max_file_size))
         else:
             node = colander.SchemaNode(
                 colander.String(),
