@@ -13,14 +13,13 @@ logger = logging.getLogger(__name__)
 # ----------------
 
 class WPSSchema(colander.MappingSchema):
-    """ Build a Colander Schema based on the WPS data inputs.
+    """
+    Build a Colander Schema based on the WPS data inputs.
 
     This Schema generator is based on:
     http://colanderalchemy.readthedocs.org/en/latest/
 
-    TODO: use widget category as grouping info
     TODO: fix dataType in wps client
-    TODO: use insert_before, add_before, insert etc for ordering of elements
     """
 
     appstruct = {}
