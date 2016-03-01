@@ -195,8 +195,8 @@ class WPSSchema(colander.MappingSchema):
         # TODO: refactor upload
         node = None
         if True:
-            #tmpstore = MemoryTempStore(self.request)
-            tmpstore = FileUploadTempStore(self.request)
+            tmpstore = MemoryTempStore(self.request)
+            #tmpstore = FileUploadTempStore(self.request)
             node = colander.SchemaNode(
                 deform.FileData(),
                 name=data_input.identifier,
