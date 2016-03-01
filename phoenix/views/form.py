@@ -58,20 +58,25 @@ class FileUploadTempStore(DictMixin):
         return None
 
 
-def validate_file_size_limit(node, value):
+class FileSizeLimitValidator(object):
     """
     File size limit validator.
 
-    You can configure the maximum size by setting the kotti.max_file_size
-    option to the maximum number of bytes that you want to allow.
+    You can configure the maximum size by setting the max_size
+    option to the maximum number of megabytes that you want to allow.
     """
+    def __init__(self, max_size):
+        self.max_size = max_size
 
-    value['fp'].seek(0, 2)
-    size = value['fp'].tell()
-    value['fp'].seek(0)
-    #max_size = get_settings()['kotti.max_file_size']
-    max_size = 2
-    if size > int(max_size) * 1024 * 1024:
-        msg = _('Maximum file size: ${size}MB', mapping={'size': max_size})
-        raise colander.Invalid(node, msg)
+    def __call__(self, node, value):
+        value['fp'].seek(0, 2)
+        size = value['fp'].tell()
+        value['fp'].seek(0)
+        if size > int(self.max_size) * 1024 * 1024:
+            msg = 'Maximum file size: {size}MB'.format(size=self.max_size)
+            raise colander.Invalid(node, msg)
+    
+   
+
+    
 

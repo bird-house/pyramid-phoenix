@@ -3,7 +3,9 @@ import deform
 import dateutil
 import re
 
-from phoenix.views.form import FileUploadTempStore, MemoryTempStore
+from phoenix.views.form import FileUploadTempStore
+from phoenix.views.form import MemoryTempStore
+from phoenix.views.form import FileSizeLimitValidator
 
 import logging
 logger = logging.getLogger(__name__)
@@ -198,7 +200,8 @@ class WPSSchema(colander.MappingSchema):
                 deform.FileData(),
                 name=data_input.identifier,
                 title=data_input.title,
-                widget=deform.widget.FileUploadWidget(tmpstore))
+                widget=deform.widget.FileUploadWidget(tmpstore),
+                validator=FileSizeLimitValidator(max_size=2))
         else:
             node = colander.SchemaNode(
                 colander.String(),
