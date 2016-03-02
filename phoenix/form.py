@@ -1,7 +1,7 @@
-from deform.interfaces import FileUploadTempStore
 from UserDict import DictMixin
 from StringIO import StringIO
 
+from deform.interfaces import FileUploadTempStore
 import colander
 
 import logging
@@ -22,8 +22,8 @@ class MemoryTempStore(dict):
     def preview_url(self, name):
         return None
 
-    
-class FileUploadTempStore(DictMixin):
+
+class SessionTempStore(DictMixin):
     """
     A temporary storage for file uploads
 

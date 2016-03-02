@@ -3,9 +3,8 @@ import deform
 import dateutil
 import re
 
-from phoenix.views.form import FileUploadTempStore
-from phoenix.views.form import MemoryTempStore
-from phoenix.views.form import FileSizeLimitValidator
+from phoenix.form import MemoryTempStore
+from phoenix.form import FileSizeLimitValidator
 
 import logging
 logger = logging.getLogger(__name__)
