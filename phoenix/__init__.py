@@ -168,15 +168,6 @@ def main(global_config, **settings):
         return asbool(settings.get('phoenix.csw', True))
     config.add_request_method(csw_activated, reify=True)
 
-    # get upload dir
-    def upload_dir(request):
-        settings = request.registry.settings
-        directory = settings.get('phoenix.upload_dir', '/tmp/phoenix/upload')
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-        return directory
-    config.add_request_method(upload_dir, reify=True)
-
     # max file size for upload in MB
     def max_file_size(request):
         settings = request.registry.settings

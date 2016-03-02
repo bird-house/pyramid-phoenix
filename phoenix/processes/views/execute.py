@@ -48,7 +48,7 @@ class ExecuteProcess(Processes):
         try:
             logger.debug("before validate")
             appstruct = form.validate(controls)
-            logger.debug("before execute")
+            logger.debug("before execute %s", appstruct)
             self.execute(appstruct)
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
@@ -58,7 +58,7 @@ class ExecuteProcess(Processes):
         return HTTPFound(location=self.request.route_url('monitor'))
 
     def execute(self, appstruct):
-        inputs = appstruct_to_inputs(appstruct, upload_dir=self.request.upload_dir)
+        inputs = appstruct_to_inputs(self.request, appstruct)
         outputs = []
         for output in self.process.processOutputs:
             outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )

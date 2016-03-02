@@ -76,7 +76,7 @@ def root_path(path):
     except:
         return None
     
-def appstruct_to_inputs(appstruct, upload_dir=None):
+def appstruct_to_inputs(request, appstruct):
     import types
     import base64
     inputs = []
@@ -86,16 +86,9 @@ def appstruct_to_inputs(appstruct, upload_dir=None):
         for value in values:
             #logger.debug("key=%s, value=%s, type=%s", key, value, type(value))
             if isinstance(value, deform.widget.filedict):
-                logger.debug('upload file %s (%s) (%s) url=%s', value['filename'], value['mimetype'], value['size'], value.get('url'))
-                content = value['fp'].read()
-                if len(content) <= 2*1048576: # send file base64 encoded if less than 2 MB
-                    value = base64.encodestring(content)
-                    logger.debug('upload base64 encoded file, length=%d', len(content))
-                else:
-                    with tempfile.NamedTemporaryFile(dir=upload_dir, prefix=value['filename'], delete=False) as fo:
-                        fo.write(content)
-                        value = 'file://' + fo.name
-                        logger.debug('upload file as reference = %s', value)
+                logger.debug('uploaded file %s', value)
+                value = 'file://' + request.storage.path(value['filename'])
+                logger.debug('uploaded file as reference = %s', value)
             inputs.append( (str(key).strip(), str(value).strip()) )
     return inputs
 

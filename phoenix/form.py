@@ -3,6 +3,7 @@ from StringIO import StringIO
 
 from deform.interfaces import FileUploadTempStore
 import colander
+from pyramid.security import authenticated_userid
 
 from pyramid_storage.exceptions import FileNotAllowed
 
@@ -24,7 +25,7 @@ class MemoryTempStore(dict):
     def preview_url(self, name):
         return None
 
-class LocalTempStore(DictMixin):
+class FileUploadTempStore(DictMixin):
     """
     A temporary storage for file uploads
 
@@ -40,28 +41,22 @@ class LocalTempStore(DictMixin):
         self.session = request.session
 
     def keys(self):
-        logger.debug("keys")
         return [k for k in self.session.keys() if not k.startswith('_')]
 
     def __setitem__(self, name, value):
-        logger.debug("setitem %s", name)
         value = value.copy()
         fp = value.pop('fp')
-        value['stored_filename'] = self.request.storage.save_file(fp, value['filename'])
+        #folder = authenticated_userid(self.request)
+        if self.request.storage.exists(value.get('filename')):
+            self.request.storage.delete(value['filename'])
+        value['filename'] = self.request.storage.save_file(fp, value['filename'])
+        logger.debug("setitem %s %s", name, value)
         self.session[name] = value
 
     def __getitem__(self, name):
-        value = self.session[name].copy()
-        value['path'] = self.request.storage.path(value['stored_filename'])
-        #value['url'] = self.request.storage.url(value['stored_filename'])
-        value['url'] = 'file://{path}'.format(path=self.request.storage.path(value['stored_filename']))
-        logger.debug("getitem %s, path=%s, url=%s", name, value['path'], value['url'])
-        return value
+        return self.session[name].copy()
 
     def __delitem__(self, name):
-        logger.debug("delitem %s", name)
-        value = self.session[name]
-        self.request.storage.delete(value['stored_filename'])
         del self.session[name]
         
     def preview_url(self, name):

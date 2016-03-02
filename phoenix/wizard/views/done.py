@@ -5,6 +5,8 @@ import json
 from phoenix.events import JobStarted
 from phoenix.wizard.views import Wizard
 from phoenix.catalog import wps_url
+from phoenix.utils import appstruct_to_inputs
+
 import threddsclient
 
 import logging
@@ -72,8 +74,7 @@ class Done(Wizard):
             raise Exception('Unknown source type')
 
         # worker
-        from phoenix.utils import appstruct_to_inputs
-        inputs = appstruct_to_inputs(self.wizard_state.get('wizard_literal_inputs', {}))
+        inputs = appstruct_to_inputs(self.request, self.wizard_state.get('wizard_literal_inputs', {}))
         worker_inputs = ['%s=%s' % (key, value) for key,value in inputs]
         worker = dict(
             url = self.wps.url,
