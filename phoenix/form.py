@@ -1,3 +1,4 @@
+import os
 from UserDict import DictMixin
 from StringIO import StringIO
 
@@ -46,10 +47,11 @@ class FileUploadTempStore(DictMixin):
     def __setitem__(self, name, value):
         value = value.copy()
         fp = value.pop('fp')
-        #folder = authenticated_userid(self.request)
-        if self.request.storage.exists(value.get('filename')):
-            self.request.storage.delete(value['filename'])
-        value['filename'] = self.request.storage.save_file(fp, value['filename'])
+        folder = authenticated_userid(self.request)
+        relpath = os.path.join(folder, value['filename'])
+        if self.request.storage.exists(relpath):
+            self.request.storage.delete(relpath)
+        value['filename'] = self.request.storage.save_file(fp, value['filename'], folder=folder)
         logger.debug("setitem %s %s", name, value)
         self.session[name] = value
 

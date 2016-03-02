@@ -1,7 +1,10 @@
+import os
 import colander
 import deform
 import dateutil
 import re
+
+from pyramid.security import authenticated_userid
 
 from phoenix.form import FileUploadTempStore
 from phoenix.form import FileSizeLimitValidator
@@ -23,7 +26,9 @@ def appstruct_to_inputs(request, appstruct):
             #logger.debug("key=%s, value=%s, type=%s", key, value, type(value))
             if isinstance(value, deform.widget.filedict):
                 logger.debug('uploaded file %s', value)
-                value = 'file://' + request.storage.path(value['filename'])
+                folder = authenticated_userid(request)
+                relpath = os.path.join(folder, value['filename'])
+                value = 'file://' + request.storage.path(relpath)
                 logger.debug('uploaded file as reference = %s', value)
             inputs.append( (str(key).strip(), str(value).strip()) )
     return inputs
