@@ -8,7 +8,7 @@ from phoenix.events import JobStarted
 from phoenix.processes.views import Processes
 from phoenix.catalog import wps_url
 from phoenix.utils import appstruct_to_inputs
-from phoenix.schema.wps import WPSSchema
+from phoenix.wps import WPSSchema
 
 from owslib.wps import WebProcessingService
 
@@ -46,7 +46,9 @@ class ExecuteProcess(Processes):
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
+            logger.debug("before validate")
             appstruct = form.validate(controls)
+            logger.debug("before execute")
             self.execute(appstruct)
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
