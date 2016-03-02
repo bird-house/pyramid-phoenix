@@ -10,6 +10,26 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def appstruct_to_inputs(request, appstruct):
+    """
+    Transfroms appstruct to wps inputs.
+    """
+    import types
+    inputs = []
+    for key,values in appstruct.items():
+        if not isinstance(values, types.ListType):
+            values = [values]
+        for value in values:
+            #logger.debug("key=%s, value=%s, type=%s", key, value, type(value))
+            if isinstance(value, deform.widget.filedict):
+                logger.debug('uploaded file %s', value)
+                value = 'file://' + request.storage.path(value['filename'])
+                logger.debug('uploaded file as reference = %s', value)
+            inputs.append( (str(key).strip(), str(value).strip()) )
+    return inputs
+
+
+
 # wps input schema
 # ----------------
 

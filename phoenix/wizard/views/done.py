@@ -5,7 +5,7 @@ import json
 from phoenix.events import JobStarted
 from phoenix.wizard.views import Wizard
 from phoenix.catalog import wps_url
-from phoenix.utils import appstruct_to_inputs
+from phoenix.wps import appstruct_to_inputs
 
 import threddsclient
 
