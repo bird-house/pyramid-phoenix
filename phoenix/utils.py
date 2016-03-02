@@ -86,7 +86,7 @@ def appstruct_to_inputs(appstruct, upload_dir=None):
         for value in values:
             #logger.debug("key=%s, value=%s, type=%s", key, value, type(value))
             if isinstance(value, deform.widget.filedict):
-                logger.debug('upload file %s (%s) (%s)', value['filename'], value['mimetype'], value['size'])
+                logger.debug('upload file %s (%s) (%s) url=%s', value['filename'], value['mimetype'], value['size'], value.get('url'))
                 content = value['fp'].read()
                 if len(content) <= 2*1048576: # send file base64 encoded if less than 2 MB
                     value = base64.encodestring(content)
