@@ -28,7 +28,9 @@ def appstruct_to_inputs(request, appstruct):
                 logger.debug('uploaded file %s', value)
                 folder = authenticated_userid(request)
                 relpath = os.path.join(folder, value['filename'])
-                value = 'file://' + request.storage.path(relpath)
+                #value = 'file://' + request.storage.path(relpath)
+                #value = request.route_url('download', filename=relpath)
+                value = request.storage.url(relpath)
                 logger.debug('uploaded file as reference = %s', value)
             inputs.append( (str(key).strip(), str(value).strip()) )
     return inputs
