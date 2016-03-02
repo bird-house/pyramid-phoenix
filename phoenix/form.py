@@ -4,6 +4,8 @@ from UserDict import DictMixin
 import colander
 from pyramid.security import authenticated_userid
 
+from pyramid_storage.exceptions import FileNotAllowed
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -47,24 +49,62 @@ class FileUploadTempStore(DictMixin):
     def __setitem__(self, name, value):
         value = value.copy()
         fp = value.pop('fp')
-        folder = authenticated_userid(self.request)
-        relpath = os.path.join(folder, value['filename'])
-        if self.request.storage.exists(relpath):
-            self.request.storage.delete(relpath)
-        value['filename'] = self.request.storage.save_file(fp, value['filename'], folder=folder)
+        filename = self._filename(value)
+        if self.request.storage.exists(filename):
+            self.request.storage.delete(filename)
+        try:
+            value['filename'] = self.request.storage.save_file(fp, value['filename'], folder=self._folder())
+            fp.seek(0, 2)
+            value['size'] = fp.tell()
+            fp.seek(0)
+            logger.debug('saved file to upload storage: %s', value['filename'])
+        except FileNotAllowed:
+            logger.warn("File format is not allowed in storage: %s", value['filename'])
         logger.debug("setitem %s %s", name, value)
         self.session[name] = value
-
+        
     def __getitem__(self, name):
-        return self.session[name].copy()
+        value = self.session[name].copy()
+        if self.request.storage.exists(value['filename']):
+            value['fp'] = open(self.request.storage.path(value['filename']), 'r')
+        logger.debug("getitem %s", value)
+        return value
 
     def __delitem__(self, name):
         del self.session[name]
-        
-    def preview_url(self, name):
+
+    @staticmethod
+    def preview_url(name):
         return None
+
+    def _folder(self):
+        return authenticated_userid(self.request)
+    
+    def _filename(self, value):
+        return os.path.join(self._folder(), value['filename'])
+
+class FileUploadValidator(colander.All):
+    """
+    Runs all validators for file upload checks.
+    """
+    def __init__(self, storage, max_size):
+        self.validators = [FileFormatAllowedValidator(storage), FileSizeLimitValidator(max_size)]
     
 
+class FileFormatAllowedValidator(object):
+    """
+    File format extension is allowed.
+    
+    https://pythonhosted.org/pyramid_storage/
+    """
+    def __init__(self, storage):
+        self.storage = storage
+    
+    def __call__(self, node, value):
+        if not self.storage.filename_allowed(value['filename']):
+            msg = 'File format is not allowed: {filename}'.format(filename=value['filename'])
+            raise colander.Invalid(node, msg)
+    
 class FileSizeLimitValidator(object):
     """
     File size limit validator.

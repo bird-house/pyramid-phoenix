@@ -7,7 +7,7 @@ import re
 from pyramid.security import authenticated_userid
 
 from phoenix.form import FileUploadTempStore
-from phoenix.form import FileSizeLimitValidator
+from phoenix.form import FileUploadValidator
 
 import logging
 logger = logging.getLogger(__name__)
@@ -227,7 +227,7 @@ class WPSSchema(colander.MappingSchema):
                 name=data_input.identifier,
                 title=data_input.title,
                 widget=deform.widget.FileUploadWidget(tmpstore),
-                validator=FileSizeLimitValidator(max_size=self.request.max_file_size))
+                validator=FileUploadValidator(storage=self.request.storage, max_size=self.request.max_file_size))
         else:
             node = colander.SchemaNode(
                 colander.String(),
