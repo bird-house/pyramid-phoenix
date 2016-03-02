@@ -1,12 +1,8 @@
 import os
 from UserDict import DictMixin
-from StringIO import StringIO
 
-from deform.interfaces import FileUploadTempStore
 import colander
 from pyramid.security import authenticated_userid
-
-from pyramid_storage.exceptions import FileNotAllowed
 
 import logging
 logger = logging.getLogger(__name__)
@@ -28,13 +24,17 @@ class MemoryTempStore(dict):
 
 class FileUploadTempStore(DictMixin):
     """
-    A temporary storage for file uploads
+    A temporary storage for file uploads.
 
-    File uploads are stored in the local file storage so that you don't need
-    to upload your file again if validation of another schema node
-    fails.
+    File uploads are stored in the local file storage and referenced in session
+    so that you don't need to upload your file again if validation of another
+    schema node fails.
 
     https://pythonhosted.org/pyramid_storage/
+
+    See deform.interfaces.FileUploadTempStore
+
+    See also FileUploadTempStore in Kotti: http://kotti.pylonsproject.org/
     """
 
     def __init__(self, request):
@@ -64,43 +64,6 @@ class FileUploadTempStore(DictMixin):
     def preview_url(self, name):
         return None
     
-
-class SessionTempStore(DictMixin):
-    """
-    A temporary storage for file uploads
-
-    File uploads are stored in the session so that you don't need
-    to upload your file again if validation of another schema node
-    fails.
-
-    http://kotti.pylonsproject.org/
-    """
-
-    def __init__(self, request):
-        self.session = request.session
-
-    def keys(self):
-        return [k for k in self.session.keys() if not k.startswith('_')]
-
-    def __setitem__(self, name, value):
-        value = value.copy()
-        fp = value.pop('fp')
-        value['file_contents'] = fp.read()
-        fp.seek(0)
-        self.session[name] = value
-
-    def __getitem__(self, name):
-        value = self.session[name].copy()
-        value['fp'] = StringIO(value.pop('file_contents'))
-        return value
-
-    def __delitem__(self, name):
-        del self.session[name]
-
-    @staticmethod
-    def preview_url(name):
-        return None
-
 
 class FileSizeLimitValidator(object):
     """
