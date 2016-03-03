@@ -24,11 +24,10 @@ def appstruct_to_inputs(request, appstruct):
             values = [values]
         for value in values:
             logger.debug("key=%s, value=%s, type=%s", key, value, type(value))
-            # check if dataset mapping type
+            # check if we have a mapping type for complex input
             if isinstance(value, dict):
-                if value.get('url', colander.null) is not colander.null:
-                    value = value['url']
-                else:
+                # prefer upload if available
+                if value.get('upload', colander.null) is not colander.null:
                     value = value['upload']
                     logger.debug('uploaded file %s', value)
                     folder = authenticated_userid(request)
@@ -37,6 +36,9 @@ def appstruct_to_inputs(request, appstruct):
                     #value = request.route_url('download', filename=relpath)
                     value = request.storage.url(relpath)
                     logger.debug('uploaded file as reference = %s', value)
+                # otherwise use url
+                else:
+                    value = value['url']
             inputs.append( (str(key).strip(), str(value).strip()) )
     return inputs
 
@@ -223,9 +225,9 @@ class WPSSchema(colander.MappingSchema):
         logger.debug("choosen widget, identifier=%s, widget=%s", data_input.identifier, node.widget)
 
     def complex_data(self, data_input):
-        node = colander.SchemaNode(colander.Mapping(), name = data_input.identifier)
-        node.add(self._url_node(data_input))
+        node = colander.SchemaNode(colander.Mapping(), name=data_input.identifier)
         node.add(self._upload_node(data_input))
+        node.add(self._url_node(data_input))
 
         # sequence of nodes ...
         if data_input.maxOccurs > 1:
@@ -248,11 +250,24 @@ class WPSSchema(colander.MappingSchema):
             
         return node
 
+    def _upload_node(self, data_input):
+        tmpstore = FileUploadTempStore(self.request)
+        node = colander.SchemaNode(
+            deform.schema.FileData(),
+            name="upload",
+            title="Upload",
+            description="Either upload a file ...",
+            missing = colander.null,
+            widget=deform.widget.FileUploadWidget(tmpstore),
+            validator=FileUploadValidator(storage=self.request.storage, max_size=self.request.max_file_size))
+        return node
+    
     def _url_node(self, data_input):
         node = colander.SchemaNode(
             colander.String(),
             name = "url",
-            title = "URL",
+            title = "URL (alternative to upload)",
+            description = "... or enter a URL pointing to your resource.",
             widget = deform.widget.TextInputWidget(),
             missing = colander.null,
             validator = colander.url)
@@ -267,17 +282,6 @@ class WPSSchema(colander.MappingSchema):
             # TODO: check if certificate is still valid
             node.default = self.user.get('credentials')
 
-        return node
-
-    def _upload_node(self, data_input):
-        tmpstore = FileUploadTempStore(self.request)
-        node = colander.SchemaNode(
-            deform.schema.FileData(),
-            name="upload",
-            title="Upload",
-            missing = colander.null,
-            widget=deform.widget.FileUploadWidget(tmpstore),
-            validator=FileUploadValidator(storage=self.request.storage, max_size=self.request.max_file_size))
         return node
 
     def boundingbox(self, data_input):
