@@ -198,6 +198,11 @@ class Account(MyView):
     @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
     def login(self):
         protocol = self.request.matchdict.get('protocol', 'phoenix')
+        allowed_protocols = auth_protocols(self.request)
+
+        # Make sure disabled protocols are not accessed directly
+        if protocol not in allowed_protocols:
+            return HTTPForbidden()
 
         if protocol == 'ldap':
             # Ensure that the ldap connector is created
@@ -209,7 +214,7 @@ class Account(MyView):
         # TODO: Add ldap to title?
         return dict(active=protocol,
                     title="Login",
-                    auth_protocols=auth_protocols(self.request),
+                    auth_protocols=allowed_protocols,
                     form=form.render( self.appstruct(protocol) ))
 
     @view_config(route_name='account_logout', permission='edit')
