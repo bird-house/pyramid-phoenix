@@ -13,9 +13,9 @@ First you need to login. Please follow the login instructions in the :ref:`user 
 Prepare Solr Search (Admins only)
 ---------------------------------
 
-Register a thredds catalog in ``Settings/Services``. For example use:
+Register a thredds catalog in ``Settings/Services``. For example use::
 
-http://www.esrl.noaa.gov/psd/thredds/catalog/Datasets/ncep.reanalysis2.dailyavgs/catalog.html
+    http://www.esrl.noaa.gov/psd/thredds/catalog/Datasets/ncep.reanalysis2.dailyavgs/catalog.html
 
 Index this Thredds Catalog in ``Settings/Solr``. 
 
