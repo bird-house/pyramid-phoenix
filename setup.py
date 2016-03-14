@@ -17,6 +17,7 @@ requires = [
     'pyramid_deform',
     'pyramid_ldap',
     'pyramid_celery',
+    'pyramid_storage',
     'deform>=2.0a2',
     #'js.deform',
     #'js.bootstrap',

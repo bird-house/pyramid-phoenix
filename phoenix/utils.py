@@ -1,4 +1,6 @@
 import os
+import tempfile
+import deform
 
 import logging
 logger = logging.getLogger(__name__)
@@ -74,13 +76,3 @@ def root_path(path):
     except:
         return None
     
-def appstruct_to_inputs(appstruct):
-    import types
-    inputs = []
-    for key,values in appstruct.items():
-        if type(values) != types.ListType:
-            values = [values]
-        for value in values:
-            inputs.append( (str(key).strip(), str(value).strip()) )
-    return inputs
-

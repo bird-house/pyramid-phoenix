@@ -1,3 +1,5 @@
+import os
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -55,6 +57,7 @@ def main(global_config, **settings):
 
     # routes 
     config.add_route('home', '/')
+    config.add_route('download', 'download/{filename:.*}')
 
     # login
     config.add_route('account_login', '/account/login/{protocol}')
@@ -165,6 +168,12 @@ def main(global_config, **settings):
         settings = request.registry.settings
         return asbool(settings.get('phoenix.csw', True))
     config.add_request_method(csw_activated, reify=True)
+
+    # max file size for upload in MB
+    def max_file_size(request):
+        settings = request.registry.settings
+        return int(settings.get('phoenix.max_file_size', '200'))
+    config.add_request_method(max_file_size, reify=True)
 
     # use json_adapter for datetime
     # http://docs.pylonsproject.org/projects/pyramid/en/1.5-branch/narr/renderers.html#json-renderer

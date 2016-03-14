@@ -1,4 +1,10 @@
-from phoenix import models
+from pyramid.view import view_config
+from pyramid.view import notfound_view_config
+from pyramid.response import Response
+from pyramid.response import FileResponse
+from pyramid.events import subscriber, BeforeRender
+
+from phoenix.models import get_user
 
 import logging
 logger = logging.getLogger(__name__)
@@ -22,17 +28,11 @@ class MyView(object):
                 title=item.get('title'))
 
     def get_user(self):
-        return models.get_user(self.request)
+        return get_user(self.request)
 
     def breadcrumbs(self):
         return [dict(route_path=self.request.route_path("home"), title="Home")]
 
-from pyramid.view import (
-    view_config,
-    notfound_view_config
-    )
-from pyramid.response import Response
-from pyramid.events import subscriber, BeforeRender
 
 @notfound_view_config(renderer='phoenix:templates/404.pt')
 def notfound(request):
@@ -56,3 +56,8 @@ def unknown_failure(request, exc):
     response.status_int = 500
     return response
 
+@view_config(route_name='download')
+def download(request):
+    filename = request.matchdict.get('filename')
+    #filename = request.params['filename']
+    return FileResponse(request.storage.path(filename))

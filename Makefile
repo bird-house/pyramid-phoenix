@@ -1,4 +1,4 @@
-VERSION := 0.2.14
+VERSION := 0.2.15
 RELEASE := master
 
 # Application
@@ -44,7 +44,7 @@ DOCKER_CONTAINER := $(APP_NAME)
 .DEFAULT_GOAL := all
 
 .PHONY: all
-all: sysinstall clean install
+all: clean install
 	@echo "\nRun 'make help' for a description of all make targets."
 	@echo "Read also the README.rst on GitHub: https://github.com/bird-house/birdhousebuilder.bootstrap"
 
@@ -152,7 +152,7 @@ conda_config: anaconda
 
 .PHONY: conda_env
 conda_env: anaconda conda_config
-	@test -d $(PREFIX) || "$(ANACONDA_HOME)/bin/conda" create -m -p $(PREFIX) -c ioos --yes python setuptools curl pyopenssl genshi mako
+	@test -d $(PREFIX) || "$(ANACONDA_HOME)/bin/conda" create -m -p $(PREFIX) -c ioos --yes python setuptools=20.1.1 curl pyopenssl genshi mako
 
 .PHONY: conda_pinned
 conda_pinned: conda_env
@@ -168,7 +168,7 @@ conda_clean: anaconda conda_config
 .PHONY: bootstrap
 bootstrap: init conda_env conda_pinned bootstrap-buildout.py
 	@echo "Bootstrap buildout ..."
-	@test -f bin/buildout || bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);python bootstrap-buildout.py -c custom.cfg --allow-site-packages --setuptools-version=17.1.1 --buildout-version=2.4.0"
+	@test -f bin/buildout || bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);python bootstrap-buildout.py -c custom.cfg --allow-site-packages --setuptools-version=20.1.1 --buildout-version=2.5.0"
 
 .PHONY: sysinstall
 sysinstall:
@@ -181,6 +181,7 @@ sysinstall:
 install: bootstrap
 	@echo "Installing application with buildout ..."
 	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout -c custom.cfg"
+	@echo "\nStart service with 'make start'"
 
 .PHONY: update
 update:
@@ -240,7 +241,7 @@ testall:
 .PHONY: docs
 docs:
 	@echo "Generating docs with Sphinx ..."
-	$(MAKE) -C $@ clean html
+	$(MAKE) -C $@ clean linkcheck html
 	@echo "open your browser: firefox docs/build/html/index.html"
 
 .PHONY: selfupdate

@@ -10,6 +10,7 @@ from phoenix.widget import (
 import logging
 logger = logging.getLogger(__name__)
 
+
 class SwiftLoginSchema(colander.MappingSchema):
     username = colander.SchemaNode(
         colander.String(),

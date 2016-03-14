@@ -1,40 +1,65 @@
+import os
 import colander
 import deform
 import dateutil
 import re
 
+from pyramid.security import authenticated_userid
+
+from phoenix.form import FileUploadTempStore
+from phoenix.form import FileUploadValidator
+
 import logging
 logger = logging.getLogger(__name__)
 
-# Memory tempstore for file uploads
-# ---------------------------------
 
-class MemoryTmpStore(dict):
-    """ Instances of this class implement the
-    :class:`deform.interfaces.FileUploadTempStore` interface"""
-    def preview_url(self, uid):
-        return None
+def appstruct_to_inputs(request, appstruct):
+    """
+    Transfroms appstruct to wps inputs.
+    """
+    import types
+    inputs = []
+    for key,values in appstruct.items():
+        if not isinstance(values, types.ListType):
+            values = [values]
+        for value in values:
+            logger.debug("key=%s, value=%s, type=%s", key, value, type(value))
+            # check if we have a mapping type for complex input
+            if isinstance(value, dict):
+                # prefer upload if available
+                if value.get('upload', colander.null) is not colander.null:
+                    value = value['upload']
+                    logger.debug('uploaded file %s', value)
+                    folder = authenticated_userid(request)
+                    relpath = os.path.join(folder, value['filename'])
+                    #value = 'file://' + request.storage.path(relpath)
+                    #value = request.route_url('download', filename=relpath)
+                    value = request.storage.url(relpath)
+                    logger.debug('uploaded file as reference = %s', value)
+                # otherwise use url
+                else:
+                    value = value['url']
+            inputs.append( (str(key).strip(), str(value).strip()) )
+    return inputs
 
-tmpstore = MemoryTmpStore()
 
 
 # wps input schema
 # ----------------
 
 class WPSSchema(colander.MappingSchema):
-    """ Build a Colander Schema based on the WPS data inputs.
+    """
+    Build a Colander Schema based on the WPS data inputs.
 
     This Schema generator is based on:
     http://colanderalchemy.readthedocs.org/en/latest/
 
-    TODO: use widget category as grouping info
     TODO: fix dataType in wps client
-    TODO: use insert_before, add_before, insert etc for ordering of elements
     """
 
     appstruct = {}
 
-    def __init__(self, hide_complex=False, process=None, unknown='ignore', user=None, **kw):
+    def __init__(self, request, hide_complex=False, process=None, unknown='ignore', user=None, **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
@@ -68,6 +93,7 @@ class WPSSchema(colander.MappingSchema):
 
         # The default type of this SchemaNode is Mapping.
         colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
+        self.request = request
         self.hide_complex = hide_complex
         self.process = process
         self.unknown = unknown
@@ -199,22 +225,21 @@ class WPSSchema(colander.MappingSchema):
         logger.debug("choosen widget, identifier=%s, widget=%s", data_input.identifier, node.widget)
 
     def complex_data(self, data_input):
-        # TODO: refactor upload, url, text-input choice ...
-        ## if metadata is None or metadata == {} or data_input.identifier in metadata.get('uploads', []):
-        ##     node = colander.SchemaNode(
-        ##         deform.FileData(),
-        ##         name=data_input.identifier,
-        ##         title=data_input.title,
-        ##         widget=deform.widget.FileUploadWidget(tmpstore)
-        ##         )
-        ## else:
-        node = colander.SchemaNode(
-            colander.String(),
-            name = data_input.identifier,
-            title = data_input.title,
-            widget = deform.widget.TextInputWidget(),
-            validator = colander.url)
-           
+        node = colander.SchemaNode(colander.Mapping(), name=data_input.identifier)
+        node.add(self._upload_node(data_input))
+        node.add(self._url_node(data_input))
+
+        # sequence of nodes ...
+        if data_input.maxOccurs > 1:
+            node = colander.SchemaNode(
+                colander.Sequence(), 
+                node,
+                name = data_input.identifier,
+                validator=colander.Length(max=data_input.maxOccurs))
+
+        # title
+        node.title = data_input.title
+        
         # sometimes abstract is not set
         if hasattr(data_input, 'abstract'):
             node.description = data_input.abstract
@@ -222,7 +247,31 @@ class WPSSchema(colander.MappingSchema):
         # optional value?
         if data_input.minOccurs == 0:
             node.missing = colander.drop
+            
+        return node
 
+    def _upload_node(self, data_input):
+        tmpstore = FileUploadTempStore(self.request)
+        node = colander.SchemaNode(
+            deform.schema.FileData(),
+            name="upload",
+            title="Upload",
+            description="Either upload a file ...",
+            missing = colander.null,
+            widget=deform.widget.FileUploadWidget(tmpstore),
+            validator=FileUploadValidator(storage=self.request.storage, max_size=self.request.max_file_size))
+        return node
+    
+    def _url_node(self, data_input):
+        node = colander.SchemaNode(
+            colander.String(),
+            name = "url",
+            title = "URL (alternative to upload)",
+            description = "... or enter a URL pointing to your resource.",
+            widget = deform.widget.TextInputWidget(),
+            missing = colander.null,
+            validator = colander.url)
+        
         # check mime-type
         mime_types = []
         if len(data_input.supportedValues) > 0: 
@@ -233,17 +282,6 @@ class WPSSchema(colander.MappingSchema):
             # TODO: check if certificate is still valid
             node.default = self.user.get('credentials')
 
-        # finally add node to root schema
-        # sequence of nodes ...
-        if data_input.maxOccurs > 1:
-            node = colander.SchemaNode(
-                colander.Sequence(), 
-                node,
-                name=data_input.identifier,
-                title=data_input.title,
-                validator=colander.Length(max=data_input.maxOccurs)
-                )
-        
         return node
 
     def boundingbox(self, data_input):
@@ -291,8 +329,11 @@ class WPSSchema(colander.MappingSchema):
 
     def clone(self):
         cloned = self.__class__(
+            self.request,
+            self.hide_complex,
             self.process,
             self.unknown,
+            self.user,
             **self.kwargs)
         cloned.__dict__.update(self.__dict__)
         cloned.children = [node.clone() for node in self.children]

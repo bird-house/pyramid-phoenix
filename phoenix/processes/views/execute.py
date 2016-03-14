@@ -7,6 +7,8 @@ from deform import ValidationFailure
 from phoenix.events import JobStarted
 from phoenix.processes.views import Processes
 from phoenix.catalog import wps_url
+from phoenix.wps import appstruct_to_inputs
+from phoenix.wps import WPSSchema
 
 from owslib.wps import WebProcessingService
 
@@ -34,8 +36,7 @@ class ExecuteProcess(Processes):
         return {}
 
     def generate_form(self, formid='deform'):
-        from phoenix.schema.wps import WPSSchema
-        schema = WPSSchema(process = self.process, user=self.get_user())
+        schema = WPSSchema(request=self.request, process=self.process, user=self.get_user())
         return Form(
             schema,
             buttons=('submit',),
@@ -45,7 +46,9 @@ class ExecuteProcess(Processes):
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
+            logger.debug("before validate")
             appstruct = form.validate(controls)
+            logger.debug("before execute %s", appstruct)
             self.execute(appstruct)
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
@@ -55,8 +58,7 @@ class ExecuteProcess(Processes):
         return HTTPFound(location=self.request.route_url('monitor'))
 
     def execute(self, appstruct):
-        from phoenix.utils import appstruct_to_inputs
-        inputs = appstruct_to_inputs(appstruct)
+        inputs = appstruct_to_inputs(self.request, appstruct)
         outputs = []
         for output in self.process.processOutputs:
             outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )

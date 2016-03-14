@@ -2,6 +2,7 @@ from pyramid.view import view_config
 
 from phoenix.wizard.views import Wizard
 from phoenix.catalog import wps_url
+from phoenix.wps import WPSSchema
 
 class LiteralInputs(Wizard):
     def __init__(self, request):
@@ -17,8 +18,7 @@ class LiteralInputs(Wizard):
         return breadcrumbs
 
     def schema(self):
-        from phoenix.schema.wps import WPSSchema
-        return WPSSchema(hide_complex=True, process = self.process)
+        return WPSSchema(request=self.request, hide_complex=True, process=self.process)
 
     def next_success(self, appstruct):
         self.success(appstruct)
