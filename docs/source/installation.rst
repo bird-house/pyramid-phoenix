@@ -51,7 +51,7 @@ After successful installation you need to start the services. All installed file
    $ make start    # starts supervisor services
    $ make status   # shows status of supervisor services
 
-Phoenix web application is available on http://localhost:8081. 
+Phoenix web application is available on `http://localhost:8081`. 
 
 Check the log file for errors:
 
