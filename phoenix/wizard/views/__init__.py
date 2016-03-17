@@ -3,6 +3,7 @@ from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPFound
 
 from deform import Form, Button
+from deform import ValidationFailure
 
 from phoenix.views import MyView
 
@@ -199,21 +200,20 @@ class Wizard(MyView):
 
     def generate_form(self, formid='deform'):
         return Form(
-            schema = self.schema(),
+            schema=self.schema(),
             buttons=self.buttons(),
             formid=formid,
-            use_ajax=self.use_ajax(),
-            ajax_options=self.ajax_options(),
+            #use_ajax=self.use_ajax(),
+            #ajax_options=self.ajax_options(),
             )
 
     def process_form(self, form, action):
-        from deform import ValidationFailure
-        
         success_method = getattr(self, '%s_success' % action)
         failure_method = getattr(self, '%s_failure' % action)
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
+            logger.debug("before success appstruct=%s", appstruct)
             result = success_method(appstruct)
         except ValidationFailure as e:
             logger.exception('Validation of wizard view failed.')

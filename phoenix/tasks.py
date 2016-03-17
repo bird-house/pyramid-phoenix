@@ -78,7 +78,9 @@ def execute_workflow(self, userid, url, workflow):
 
     # generate and run dispel workflow
     # TODO: fix owslib wps for unicode/yaml parameters
+    logger.debug('workflow=%s', workflow)
     inputs=[('workflow', json.dumps(workflow))]
+    logger.debug('inputs=%s', inputs)
     outputs=[('output', True), ('logfile', True)]
     
     wps = WebProcessingService(url=url, skip_caps=True)

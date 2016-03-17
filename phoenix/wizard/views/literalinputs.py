@@ -4,6 +4,9 @@ from phoenix.wizard.views import Wizard
 from phoenix.catalog import wps_url
 from phoenix.wps import WPSSchema
 
+import logging
+logger = logging.getLogger(__name__)
+
 class LiteralInputs(Wizard):
     def __init__(self, request):
         super(LiteralInputs, self).__init__(request, name='wizard_literal_inputs', title="Literal Inputs")
@@ -21,6 +24,7 @@ class LiteralInputs(Wizard):
         return WPSSchema(request=self.request, hide_complex=True, process=self.process)
 
     def next_success(self, appstruct):
+        logger.debug("literal inputs appstruct=%s", appstruct)
         self.success(appstruct)
         return self.next('wizard_complex_inputs')
     

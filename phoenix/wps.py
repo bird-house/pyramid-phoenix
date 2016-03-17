@@ -3,6 +3,7 @@ import colander
 import deform
 import dateutil
 import re
+import types
 
 from pyramid.security import authenticated_userid
 
@@ -17,7 +18,7 @@ def appstruct_to_inputs(request, appstruct):
     """
     Transfroms appstruct to wps inputs.
     """
-    import types
+    logger.debug("appstruct=%s", appstruct)
     inputs = []
     for key,values in appstruct.items():
         if not isinstance(values, types.ListType):
