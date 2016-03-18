@@ -12,7 +12,8 @@ class SourceSchemaNode(colander.SchemaNode):
         choices = [
             ('wizard_esgf_search', "Earth System Grid (ESGF)"),
             ('wizard_swift_login', "Swift Cloud"),
-            ('wizard_threddsservice', "Thredds Catalog Service"),           
+            ('wizard_threddsservice', "Thredds Catalog Service"),
+            ('wizard_storage', "Local Storage"),           
             ]
         if kw['request'].solr_activated:
             choices.append( ('wizard_solr', "Birdhouse Solr Search") )
