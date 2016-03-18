@@ -6,6 +6,8 @@ from phoenix.events import JobStarted
 from phoenix.wizard.views import Wizard
 from phoenix.catalog import wps_url
 from phoenix.wps import appstruct_to_inputs
+from phoenix.tasks import execute_workflow
+from phoenix.tasks import execute_process
 
 import threddsclient
 
@@ -93,12 +95,25 @@ class Done(Wizard):
                 state=self.wizard_state.dump())
             self.favorite.save()
 
-        from phoenix.tasks import execute_workflow
-        result = execute_workflow.delay(
-            userid=authenticated_userid(self.request),
-            url=self.request.wps.url,
-            workflow=self.workflow_description())
-        self.request.registry.notify(JobStarted(self.request, result.id))
+        source_type = self.wizard_state.get('wizard_source')['source']
+        if source_type == 'wizard_storage':
+            inputs = appstruct_to_inputs(self.request, self.wizard_state.get('wizard_literal_inputs', {}))
+            resource = self.wizard_state.get('wizard_complex_inputs')['identifier']
+            for url in self.wizard_state.get('wizard_storage')['url']:
+                inputs.append( (resource, url) )
+            logger.debug('storage inputs=%s', inputs)
+            result = execute_process.delay(
+                userid=authenticated_userid(self.request),
+                url=self.wps.url,
+                identifier=self.wizard_state.get('wizard_process')['identifier'],
+                inputs=inputs, outputs=[])
+            self.request.registry.notify(JobStarted(self.request, result.id))
+        else:
+            result = execute_workflow.delay(
+                userid=authenticated_userid(self.request),
+                url=self.request.wps.url,
+                workflow=self.workflow_description())
+            self.request.registry.notify(JobStarted(self.request, result.id))
         
     def next_success(self, appstruct):
         from pyramid.httpexceptions import HTTPFound
