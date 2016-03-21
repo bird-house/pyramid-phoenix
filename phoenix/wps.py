@@ -8,6 +8,7 @@ import types
 from pyramid.security import authenticated_userid
 
 from phoenix.widget import BBoxWidget
+from phoenix.form import BBoxValidator
 from phoenix.form import FileUploadTempStore
 from phoenix.form import FileUploadValidator
 
@@ -233,6 +234,7 @@ class WPSSchema(colander.MappingSchema):
             colander.String(),
             name = data_input.identifier,
             title = data_input.title,
+            validator = BBoxValidator(),
             widget = BBoxWidget()
             )
 
