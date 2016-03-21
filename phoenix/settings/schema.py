@@ -20,6 +20,7 @@ class EditUserSchema(UserProfileSchema):
 
 class AuthSchema(colander.MappingSchema):
     choices = [
+        ('phoenix', 'Local Auth'),
         ('esgf', 'ESGF OpenID'),
         ('openid', 'OpenID'),
         ('oauth2', 'OAuth 2.0'),
@@ -27,7 +28,7 @@ class AuthSchema(colander.MappingSchema):
 
     protocol = colander.SchemaNode(
         colander.Set(),
-        default = ['oauth2'],
+        default = ['phoenix', 'oauth2'],
         title='Auth Protocol',
         description='Choose at least one Authentication Protocol which is used in Phoenix',
         validator=colander.Length(min=1),
@@ -47,12 +48,12 @@ class LdapSchema(colander.MappingSchema):
     bind = colander.SchemaNode(
             colander.String(),
             title = 'Bind',
-            description = 'Bind to use for the LDAP connection, e.g. "CN=admin,DC=example,DC=com"', 
+            description = 'Bind to use for the LDAP connection, e.g. "CN=admin,DC=example,DC=com". Leave empty for anonymous bind.', 
             missing = '')
     passwd = colander.SchemaNode(
             colander.String(),
             title = 'Password',
-            description = 'Password for the LDAP bind',
+            description = 'Password for the LDAP bind. Leave empty for anonymous bind.',
             widget = deform.widget.PasswordWidget(), 
             missing = '')
     base_dn = colander.SchemaNode(
@@ -64,8 +65,8 @@ class LdapSchema(colander.MappingSchema):
             title = 'LDAP filter',
             description = """Is used to filter the LDAP search.
                     Should always contain the placeholder "%(login)s".
-                    Example for OpenLDAP: "(uid=%(login)s)"
-                    Example for MS AD:    "(sAMAccountName=%(login)s)"
+                    Example for OpenLDAP: "(uid=%(login)s)";
+                    Example for MS AD: "(sAMAccountName=%(login)s)".
                     Have a look at http://pyramid-ldap.readthedocs.org/en/latest/
                     for more information.""")
     scope = colander.SchemaNode(
