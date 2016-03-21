@@ -2,6 +2,11 @@ from dateutil import parser as datetime_parser
 
 from colander import (
     Invalid,
+    Mapping,
+    SchemaNode,
+    SchemaType,
+    Sequence,
+    String,
     null,
     )
 
@@ -20,6 +25,91 @@ import logging
 import json
 
 log = logging.getLogger(__name__)
+
+
+# TODO: classes taken from next deform version
+# --------------------------
+
+class _PossiblyEmptyString(String):
+    def deserialize(self, node, cstruct):
+        if cstruct == '':
+            return _BLANK               # String.deserialize returns null
+        return super(_PossiblyEmptyString, self).deserialize(node, cstruct)
+
+class _StrippedString(_PossiblyEmptyString):
+    def deserialize(self, node, cstruct):
+        appstruct = super(_StrippedString, self).deserialize(node, cstruct)
+        if isinstance(appstruct, string_types):
+            appstruct = appstruct.strip()
+        return appstruct
+
+# --------------------------
+
+class BBoxWidget(Widget):
+    """
+    Renders a BoundingBox Widget.
+    
+    **Attributes/Arguments**
+    template
+        The template name used to render the input widget.  Default:
+        ``bbox``.
+    readonly_template
+        The template name used to render the widget in read-only mode.
+        Default: ``readonly/bbox``.
+    """
+    template = 'bbox'
+    readonly_template = 'readonly/bbox'
+
+    _pstruct_schema = SchemaNode(
+        Mapping(),
+        SchemaNode(_StrippedString(), name='minx'),
+        SchemaNode(_StrippedString(), name='miny'),
+        SchemaNode(_StrippedString(), name='maxx'),
+        SchemaNode(_StrippedString(), name='maxy'))
+
+    def serialize(self, field, cstruct, **kw):
+        if cstruct is null:
+            minx = '0'
+            miny = '-90'
+            maxx = '180'
+            maxy = '90'
+        else:
+            minx, miny, maxx, maxy = cstruct.split(',', 3)
+
+        kw.setdefault('minx', minx)
+        kw.setdefault('miny', miny)
+        kw.setdefault('maxx', maxx)
+        kw.setdefault('maxy', maxy)
+        
+        readonly = kw.get('readonly', self.readonly)
+        # TODO: add readonly template
+        readonly = False
+        template = readonly and self.readonly_template or self.template
+        values = self.get_template_values(field, cstruct, kw)
+        return field.renderer(template, **values)
+
+    def deserialize(self, field, pstruct):
+        if pstruct is null:
+            return null
+        else:
+            try:
+                validated = self._pstruct_schema.deserialize(pstruct)
+            except Invalid as exc:
+                raise Invalid(field.schema, text_("Invalid pstruct: %s" % exc))
+            minx = validated['minx']
+            miny = validated['miny']
+            maxx = validated['maxx']
+            maxy = validated['maxy']
+
+            if (not minx and not minx and not maxx and not maxy):
+                return null
+
+            result = ','.join([minx, miny, maxx, maxy])
+
+            if (not minx or not miny or not maxx or not maxy):
+                raise Invalid(field.schema, _('Incomplete bbox'), result)
+
+            return result
 
 class TagsWidget(Widget):
     template = 'tags'

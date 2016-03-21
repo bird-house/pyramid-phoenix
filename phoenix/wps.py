@@ -7,6 +7,7 @@ import types
 
 from pyramid.security import authenticated_userid
 
+from phoenix.widget import BBoxWidget
 from phoenix.form import FileUploadTempStore
 from phoenix.form import FileUploadValidator
 
@@ -117,6 +118,8 @@ class WPSSchema(colander.MappingSchema):
                 node = self.literal_data(data_input)
             elif not self.hide_complex and 'ComplexData' in data_input.dataType:
                 node = self.complex_data(data_input)
+            elif 'BoxData' in data_input.dataType:
+                node = self.bbox_data(data_input)
             elif 'LiteralData' in data_input.dataType:# TODO: workaround for geoserver wps
                 node = self.literal_data(data_input)
             else:
@@ -224,6 +227,33 @@ class WPSSchema(colander.MappingSchema):
             node.widget = deform.widget.TextInputWidget()
 
         logger.debug("choosen widget, identifier=%s, widget=%s", data_input.identifier, node.widget)
+
+    def bbox_data(self, data_input):
+        node = colander.SchemaNode(
+            colander.String(),
+            name = data_input.identifier,
+            title = data_input.title,
+            widget = BBoxWidget()
+            )
+
+        # sometimes abstract is not set
+        if hasattr(data_input, 'abstract'):
+            node.description = data_input.abstract
+        # optional value?
+        if data_input.minOccurs == 0:
+            node.missing = colander.drop
+
+        # sequence of nodes ...
+        if data_input.maxOccurs > 1:
+            node = colander.SchemaNode(
+                colander.Sequence(), 
+                node,
+                name=data_input.identifier,
+                title=data_input.title,
+                validator=colander.Length(max=data_input.maxOccurs)
+                )
+
+        return node
 
     def complex_data(self, data_input):
         node = colander.SchemaNode(colander.Mapping(), name=data_input.identifier)
