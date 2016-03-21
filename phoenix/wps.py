@@ -119,7 +119,7 @@ class WPSSchema(colander.MappingSchema):
                 node = self.literal_data(data_input)
             elif not self.hide_complex and 'ComplexData' in data_input.dataType:
                 node = self.complex_data(data_input)
-            elif 'BoxData' in data_input.dataType:
+            elif 'BoundingBoxData' in data_input.dataType:
                 node = self.bbox_data(data_input)
             elif 'LiteralData' in data_input.dataType:# TODO: workaround for geoserver wps
                 node = self.literal_data(data_input)
