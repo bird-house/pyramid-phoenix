@@ -195,7 +195,7 @@ Open the ``Settings/Users`` page. Here you activate/deactivate users and also re
 Choose Authentication Protocol
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Open the ``Settings/Auth`` page. Here you can choose the different authentication protocols (OpenID, LDAP, ...) which users can use on the login page.
+Open the ``Settings/Auth`` page. Here you can choose the different authentication protocols (OpenID, LDAP, ...) which users can use on the login page. ``Local Auth`` enables the local admin account whose password is set in ``custom.cfg`` in your Phoenix installation.
 
 .. image:: _images/settings_auth.png 
 
