@@ -20,7 +20,7 @@ def mongodb(registry):
 def auth_protocols(request):
     # TODO: refactor auth settings handling
     settings = request.db.settings.find_one()
-    protocols = ['esgf', 'openid', 'ldap', 'oauth2']
+    protocols = ['phoenix', 'esgf', 'openid', 'ldap', 'oauth2']
     if settings is not None:
         if settings.has_key('auth'):
             if settings['auth'].has_key('protocol'):
