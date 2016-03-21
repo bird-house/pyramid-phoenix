@@ -11,7 +11,7 @@
       <input type="text" name="minx" value="${minx}"
              class="span2 form-control ${css_class or ''}"
              tal:attributes="style style"
-             maxlength="4"
+             maxlength="6"
              id="${oid}"/>
     </div></div>
     <div class="col-xs-3"><div class="input-group">
@@ -19,7 +19,7 @@
       <input type="text" name="miny" value="${miny}"
              class="span2 form-control ${css_class or ''}"
              tal:attributes="style style"
-             maxlength="4"
+             maxlength="6"
              id="${oid}-miny"/>
     </div></div>
     <div class="col-xs-3"><div class="input-group">
@@ -27,7 +27,7 @@
       <input type="text" name="maxx" value="${maxx}"
              class="span2 form-control ${css_class or ''}"
              tal:attributes="style style"
-             maxlength="4"
+             maxlength="6"
              id="${oid}-maxx"/>
     </div></div>
     <div class="col-xs-3"><div class="input-group">
@@ -35,7 +35,7 @@
       <input type="text" name="maxy" value="${maxy}"
              class="span2 form-control ${css_class or ''}"
              tal:attributes="style style"
-             maxlength="4"
+             maxlength="6"
              id="${oid}-maxy"/>
     </div></div>
   </div>

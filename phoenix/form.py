@@ -83,6 +83,26 @@ class FileUploadTempStore(DictMixin):
     def _filename(self, value):
         return os.path.join(self._folder(), value['filename'])
 
+class BBoxValidator(object):
+    def __call__(self, node, value):
+        try:
+            minx, miny, maxx, maxy = [ float(val) for val in value.split(',', 3)]
+        except:
+            raise colander.Invalid(node, "Could not parse BBox.")
+        else:
+            if minx < 0 or minx > 180:
+                raise colander.Invalid(node, "MinX out of range [0, 180].")
+            if miny < -90 or miny > 90:
+                raise colander.Invalid(node, "MinY out of range [-90, 90].")
+            if maxx < 0 or maxx > 180:
+                raise colander.Invalid(node, "MaxX out of range [0, 180].")
+            if maxy < -90 or maxy > 90:
+                raise colander.Invalid(node, "MaxY out of range [-90, 90].")
+            if minx > maxx:
+                raise colander.Invalid(node, "MinX greater than MaxX")
+            if miny > maxy:
+                raise colander.Invalid(node, "MinY greater than MaxY")
+    
 class FileUploadValidator(colander.All):
     """
     Runs all validators for file upload checks.
