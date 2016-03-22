@@ -104,28 +104,7 @@ def main(global_config, **settings):
     config.add_route('clear_index', '/solr/clear')
     
     # wizard
-    config.add_route('wizard', '/wizard')
-    config.add_route('wizard_wps', '/wizard/wps')
-    config.add_route('wizard_process', '/wizard/process')
-    config.add_route('wizard_literal_inputs', '/wizard/literal_inputs')
-    config.add_route('wizard_complex_inputs', '/wizard/complex_inputs')
-    config.add_route('wizard_source', '/wizard/source')
-    config.add_route('wizard_solr', '/wizard/solr')
-    config.add_route('wizard_csw', '/wizard/csw')
-    config.add_route('wizard_csw_select', '/wizard/csw/{recordid}/select.json')
-    config.add_route('wizard_esgf_search', '/wizard/esgf_search')
-    config.add_route('wizard_esgf_login', '/wizard/esgf_login')
-    config.add_route('wizard_loading', '/wizard/loading')
-    config.add_route('wizard_check_logon', '/wizard/check_logon.json')
-    config.add_route('wizard_swift_login', '/wizard/swift_login')
-    config.add_route('wizard_swiftbrowser', '/wizard/swiftbrowser')
-    config.add_route('wizard_threddsservice', '/wizard/threddsservice')
-    config.add_route('wizard_threddsbrowser', '/wizard/threddsbrowser')
-    config.add_route('wizard_storage', '/wizard/storage')
-    config.add_route('wizard_done', '/wizard/done')
-
-    # wizard actions
-    config.add_route('wizard_clear_favorites', '/wizard/clear_favorites')
+    config.include('phoenix.wizard')
 
     # readthedocs
     config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/en/latest/{part}.html')
@@ -151,12 +130,6 @@ def main(global_config, **settings):
         settings = request.registry.settings
         return asbool(settings.get('phoenix.flower', True))
     config.add_request_method(flower_activated, reify=True)
-
-    # check if wizard is activated
-    def wizard_activated(request):
-        settings = request.registry.settings
-        return asbool(settings.get('phoenix.wizard', True))
-    config.add_request_method(wizard_activated, reify=True)
 
     # check if csw is activated
     def csw_activated(request):
