@@ -1,0 +1,28 @@
+# conda env create environment.yml
+name: phoenix
+channels:
+  - ioos
+  - birdhouse
+dependencies:
+  - python=2
+# - pyramid
+# - pyramid_chameleon
+# - pyramid_mako
+# - pyramid_celery
+# - repoze.sendmail
+  - gunicorn
+  - lxml
+  - mako 
+  - dateutil 
+  - requests 
+  - pyyaml
+  - pygments 
+  - owslib
+  - pymongo=3
+  - pyopenssl
+  - pytz
+  - python-swiftclient
+  - threddsclient       
+  - python-ldap
+  - bird-feeder
+  - nose
