@@ -87,8 +87,7 @@ def main(global_config, **settings):
     config.include('phoenix.services')
 
     # solr
-    config.add_route('index_service', '/solr/{service_id}/index')
-    config.add_route('clear_index', '/solr/clear')
+    config.include('phoenix.solr')
     
     # wizard
     config.include('phoenix.wizard')

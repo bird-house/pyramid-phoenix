@@ -33,7 +33,7 @@ class SolrPanel(object):
 
 class SolrIndexPanel(SolrPanel):
         
-    @panel_config(name='solr_index', renderer='phoenix:templates/panels/solr_index.pt')
+    @panel_config(name='solr_index', renderer='templates/panels/solr_index.pt')
     def panel(self):
         csw = self.request.csw
         tasksdb = self.request.db.tasks
