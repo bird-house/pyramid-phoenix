@@ -1,4 +1,4 @@
-from pyramid.view import view_config
+from pyramid.view import view_config, view_defaults
 from pyramid.view import notfound_view_config
 from pyramid.response import Response
 from pyramid.response import FileResponse
@@ -61,3 +61,13 @@ def download(request):
     filename = request.matchdict.get('filename')
     #filename = request.params['filename']
     return FileResponse(request.storage.path(filename))
+
+@view_defaults(permission='view', layout='default')
+class Home(object):
+    def __init__(self, request):
+        self.request = request
+        self.session = self.request.session
+
+    @view_config(route_name='home', renderer='phoenix:templates/home.pt')
+    def view(self):
+        return {}
