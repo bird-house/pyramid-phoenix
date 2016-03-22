@@ -75,8 +75,7 @@ def main(global_config, **settings):
     config.include('phoenix.monitor')
 
     # user profile
-    config.add_route('profile', '/profile/{tab}')
-    config.add_route('forget_esgf_certs', '/forget_esgf_certs')
+    config.include('phoenix.profile')
 
     # settings
     config.include('phoenix.settings')

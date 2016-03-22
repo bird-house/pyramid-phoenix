@@ -99,7 +99,7 @@ class ESGFPanel(ProfilePanel):
         form = Form(schema=ESGFCredentialsSchema(), formid='deform')
         return form
 
-    @panel_config(name='profile_esgf', renderer='phoenix:templates/panels/profile_esgf.pt')
+    @panel_config(name='profile_esgf', renderer='templates/panels/profile_esgf.pt')
     def panel(self):
         form = self.generate_form()
         return dict(title="ESGF access token", form=form.render( self.appstruct() ))

@@ -24,7 +24,7 @@ class Profile(MyView):
         self.request.session.flash("ESGF Certficate removed.", queue='info')
         return HTTPFound(location=self.request.route_path('profile', tab='esgf'))
 
-    @view_config(route_name='profile', renderer='phoenix:templates/profile.pt')
+    @view_config(route_name='profile', renderer='templates/profile/profile.pt')
     def view(self):
         tab = self.request.matchdict.get('tab', 'account')
     
