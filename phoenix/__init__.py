@@ -59,11 +59,8 @@ def main(global_config, **settings):
     config.add_route('home', '/')
     config.add_route('download', 'download/{filename:.*}')
 
-    # login
-    config.add_route('account_login', '/account/login/{protocol}')
-    config.add_route('account_logout', '/account/logout')
-    config.add_route('account_auth', '/account/auth/{provider_name}')
-    config.add_route('account_register', '/account/register')
+    # account
+    config.include('phoenix.account')
 
     # dashboard
     config.include('phoenix.dashboard')

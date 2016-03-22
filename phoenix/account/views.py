@@ -69,12 +69,12 @@ class LdapSchema(colander.MappingSchema):
         title = 'Password',
         widget = deform.widget.PasswordWidget())
 
-@forbidden_view_config(renderer='phoenix:templates/account/forbidden.pt', layout="default")
+@forbidden_view_config(renderer='templates/account/forbidden.pt', layout="default")
 def forbidden(request):
     request.response.status = 403
     return dict()
 
-@view_config(route_name='account_register', renderer='phoenix:templates/account/register.pt',
+@view_config(route_name='account_register', renderer='templates/account/register.pt',
              permission='view', layout="default")
 def register(request):
     return dict()
@@ -195,7 +195,7 @@ class Account(MyView):
         logger.warn(msg)
         return HTTPFound(location = self.request.route_path('home'))
     
-    @view_config(route_name='account_login', renderer='phoenix:templates/account/login.pt')
+    @view_config(route_name='account_login', renderer='templates/account/login.pt')
     def login(self):
         protocol = self.request.matchdict.get('protocol', 'phoenix')
         allowed_protocols = auth_protocols(self.request)
