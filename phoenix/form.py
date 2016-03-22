@@ -71,6 +71,7 @@ class FileUploadTempStore(DictMixin):
         return value
 
     def __delitem__(self, name):
+        logger.debug('delitem %s', name)
         del self.session[name]
 
     @staticmethod
@@ -108,7 +109,7 @@ class FileUploadValidator(colander.All):
     Runs all validators for file upload checks.
     """
     def __init__(self, storage, max_size):
-        self.validators = [FileFormatAllowedValidator(storage), FileSizeLimitValidator(max_size)]
+        self.validators = [FileFormatAllowedValidator(storage), FileSizeLimitValidator(storage, max_size)]
     
 
 class FileFormatAllowedValidator(object):
@@ -132,7 +133,8 @@ class FileSizeLimitValidator(object):
     You can configure the maximum size by setting the max_size
     option to the maximum number of megabytes that you want to allow.
     """
-    def __init__(self, max_size):
+    def __init__(self, storage, max_size=2):
+        self.storage = storage
         self.max_size = max_size
 
     def __call__(self, node, value):
