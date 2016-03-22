@@ -10,7 +10,7 @@ class Dashboard(MyView):
     def __init__(self, request):
         super(Dashboard, self).__init__(request, name='dashboard', title='Dashboard')
 
-    @view_config(route_name='dashboard', renderer='phoenix:templates/dashboard.pt')
+    @view_config(route_name='dashboard', renderer='templates/dashboard/dashboard.pt')
     def view(self):
         tab = self.request.matchdict.get('tab', 'jobs')
 

@@ -1,8 +1,9 @@
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.security import authenticated_userid
-from . import Monitor
-from .. panels.outputs import process_outputs
+
+from phoenix.monitor.views import Monitor
+from phoenix.monitor.panels.outputs import process_outputs
 
 import logging
 logger = logging.getLogger(__name__)
