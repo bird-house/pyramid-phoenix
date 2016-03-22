@@ -74,11 +74,7 @@ def main(global_config, **settings):
     config.add_route('processes_execute', '/processes/execute')
 
     # job monitor
-    config.add_route('monitor', '/monitor')
-    config.add_route('remove_job', '/monitor/{job_id}/remove')
-    config.add_route('remove_all_jobs', '/monitor/remove_all')
-    config.add_route('update_myjobs', '/monitor/update.json')
-    config.add_route('monitor_details', '/monitor/{job_id}/{tab}')
+    config.include('phoenix.monitor')
 
     # user profile
     config.add_route('profile', '/profile/{tab}')
