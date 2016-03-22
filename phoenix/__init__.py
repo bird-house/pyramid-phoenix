@@ -69,9 +69,7 @@ def main(global_config, **settings):
     config.add_route('dashboard', '/dashboard/{tab}')
     
     # processes
-    config.add_route('processes', '/processes')
-    config.add_route('processes_list', '/processes/list')
-    config.add_route('processes_execute', '/processes/execute')
+    config.include('phoenix.processes')
 
     # job monitor
     config.include('phoenix.monitor')
