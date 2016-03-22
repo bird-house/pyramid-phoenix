@@ -1,4 +1,5 @@
 from pyramid.settings import asbool
+from pyramid.events import NewRequest
 
 import logging
 logger = logging.getLogger(__name__)
@@ -33,6 +34,18 @@ def includeme(config):
         # actions
         config.add_route('wizard_clear_favorites', '/wizard/clear_favorites')
 
+        # add malleefowl wps
+        def add_wps(event):
+            settings = event.request.registry.settings
+            if settings.get('wps') is None:
+                try:
+                    from owslib.wps import WebProcessingService
+                    settings['wps'] = WebProcessingService(url=settings['wps.url'])
+                except:
+                    logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
+            event.request.wps = settings.get('wps')
+        config.add_subscriber(add_wps, NewRequest)
+        
     # check if wizard is activated
     def wizard_activated(request):
         settings = request.registry.settings

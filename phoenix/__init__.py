@@ -14,7 +14,6 @@ def main(global_config, **settings):
     This function returns a Pyramid WSGI application.
     """
     from pyramid.config import Configurator
-    from pyramid.events import subscriber
     from pyramid.events import NewRequest
     from pyramid.authentication import AuthTktAuthenticationPolicy
     from pyramid.authorization import ACLAuthorizationPolicy
@@ -159,19 +158,6 @@ def main(global_config, **settings):
         event.request.db = settings.get('db')
     config.add_subscriber(add_mongodb, NewRequest)
     
-    # malleefowl wps
-    if asbool(settings.get('phoenix.wizard', True)):
-        def add_wps(event):
-            settings = event.request.registry.settings
-            if settings.get('wps') is None:
-                try:
-                    from owslib.wps import WebProcessingService
-                    settings['wps'] = WebProcessingService(url=settings['wps.url'])
-                except:
-                    logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
-            event.request.wps = settings.get('wps')
-        config.add_subscriber(add_wps, NewRequest)
-        
     # catalog service
     if asbool(settings.get('phoenix.csw', True)):
         def add_csw(event):
