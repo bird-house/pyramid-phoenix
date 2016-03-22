@@ -14,7 +14,7 @@ def job_details(request, job_id):
     details['finished'] = time_ago_in_words(job.get('finished'))
     details['progress'] = job.get('progress')
     details['duration'] = job.get('duration')
-    details['status_message'] = job.get('progress')
+    details['status_message'] = job.get('status_message')
     details['status_location'] = job.get('status_location')
     return details
 
