@@ -32,6 +32,7 @@ def remove_all_jobs(request):
 @view_config(route_name='remove_job', permission='submit', layout='default')
 def remove_job(request):
     job_id = request.matchdict.get('job_id')
+    logger.debug("jobid: %s", job_id)
     # TODO: check permission ... either admin or owner.
     request.db.jobs.remove({'identifier': job_id})
     request.session.flash("Job {0} deleted.".format(job_id), queue='info')

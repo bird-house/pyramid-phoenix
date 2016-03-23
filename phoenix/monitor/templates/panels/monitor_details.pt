@@ -22,46 +22,46 @@
       <a href="${request.route_path('monitor')}">
         <i class="fa fa-fw fa-chevron-left" ></i>
       </a>
-      ${job.title}
-      <i class="${icon_class}" data-toggle="tooltip" title="${job.status}"></i>
+      ${job.get('title')}
+      <i class="${icon_class}" data-toggle="tooltip" title="${job.get('status')}"></i>
       <div class="pull-right">
         <a class="btn btn-danger btn-xs"
            rel="tooltip"
            data-toggle="tooltip"
            title="Remove Job"
-           href="${request.route_path('remove_job', job_id=job.identifier)}">
+           href="${request.route_path('remove_job', job_id=job.get('identifier'))}">
           Remove Job
         </a>
       </div>
     </h3>
   </div>
   <div class="panel-body">
-    ${job.abstract}
+    ${job.get('abstract')}
     <div>
       <div class="col-xs-6 col-md-3">
         <dl>
           <dt>Status</dt>
-          <dd class="${status_class}">${job.status}</dd>
+          <dd class="${status_class}">${job.get('status')}</dd>
           <dt>Duration</dt>
-          <dd>${job.duration}</dd>
+          <dd>${job.get('duration')}</dd>
           <dt>Finished</dt>
-          <dd>${job.finished}</dd>
+          <dd>${job.get('finished')}</dd>
         </dl>
       </div>
       <div class="col-xs-6 col-md-3">
         <dl>
           <dt>Progress</dt>
-          <dd>${job.progress}%</dd>
+          <dd>${job.get('progress')}%</dd>
           <dt>Status Location</dt>
           <dd>
-            <a class="label label-warning" href="${job.status_location}" target="_blank">XML</a>
+            <a class="label label-warning" href="${job.get('status_location')}" target="_blank">XML</a>
           </dd>
         </dl>
       </div>
       <div class="col-xs-6 col-md-3">
         <dl>
           <dt>Status Message</dt>
-          <dd>${job.status_message}</dd>
+          <dd>${job.get('status_message')}</dd>
         </dl>
       </div>
     </div>
