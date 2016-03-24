@@ -82,6 +82,17 @@
             request: {
                 endpoint: '/upload'
             },
+            deleteFile: {
+                enabled: true,
+                endpoint: '/upload'
+            },
+            resume: {
+                enabled: true
+            },
+            retry: {
+                enableAuto: true,
+                showButton: true
+            },
             thumbnails: {
                 placeholders: {
                     waitingPath: '${request.static_path("phoenix:static/jquery.fine-uploader/placeholders/waiting-generic.png")}',
@@ -92,7 +103,17 @@
                 allowedExtensions: ['nc', 'csv'],
                 itemLimit: 10,
                 sizeLimit: 1073741824, // 1 GB = 1014 * 1024 * 1024 bytes
-            }
+            },
+            callbacks: {
+                onComplete: function(id, name, response) {
+                    //var previewLink = qq(this.getItemByFileId(id)).getByClass('preview-link')[0];
+
+                    if (response.success) {
+                        //previewLink.setAttribute("href", response.tempLink)
+                        //alert('success')
+                    }
+                }
+            },
           });
         </script>
         <table class="table table-striped">
