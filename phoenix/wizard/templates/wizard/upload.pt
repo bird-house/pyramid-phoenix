@@ -90,8 +90,8 @@
             },
             validation: {
                 allowedExtensions: ['nc', 'csv'],
-                itemLimit: 3,
-                sizeLimit: 524288000, // 500 MB = 500 * 1024 * 1024 bytes
+                itemLimit: 10,
+                sizeLimit: 1073741824, // 1 GB = 1014 * 1024 * 1024 bytes
             }
           });
         </script>
