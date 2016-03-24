@@ -1,8 +1,14 @@
+import os
+from cgi import FieldStorage
+
 from pyramid.view import view_config, view_defaults
 from pyramid.view import notfound_view_config
 from pyramid.response import Response
 from pyramid.response import FileResponse
 from pyramid.events import subscriber, BeforeRender
+from pyramid.security import authenticated_userid
+
+from pyramid_storage.exceptions import FileNotAllowed
 
 from phoenix.models import get_user
 
@@ -61,6 +67,36 @@ def download(request):
     filename = request.matchdict.get('filename')
     #filename = request.params['filename']
     return FileResponse(request.storage.path(filename))
+
+@view_config(route_name='upload', renderer='json', request_method="POST", xhr=True, accept="application/json")
+def upload(request):
+    logger.debug("upload post=%s", request.POST)
+    result = {'error': 'Could not upload files'}
+    if 'qqfile' in request.POST:
+        fs = request.POST['qqfile']
+        # We can fail hard, as somebody is trying to cheat on us if that fails.
+        assert isinstance(fs, FieldStorage)
+        
+        fid = request.POST.get('qquuid')
+        logger.debug('uuid=%s', fid)
+        filename = request.POST.get('qqfilename')
+        logger.debug('filename=%s', filename)
+        logger.debug('size=%s', request.POST.get('qqtotalfilesize'))
+        #logger.debug('content type=%s', request.POST.get('content_type'))
+        try:
+            folder=authenticated_userid(request)
+            filepath = os.path.join(folder, filename)
+            if request.storage.exists(filepath):
+                request.storage.delete(filepath)
+            stored_filename = request.storage.save_file(fs.file, filename, folder=folder)
+            logger.debug('saved file to upload storage: %s', stored_filename)
+        except FileNotAllowed:
+            msg = "File format is not allowed in storage: {0}".format(filename)
+            logger.warn(msg)
+            result = {'error': msg}
+        else:
+            result = {'success': True, 'uuid': fid}
+    return result
 
 @view_defaults(permission='view', layout='default')
 class Home(object):

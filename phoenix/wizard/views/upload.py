@@ -1,15 +1,11 @@
 from pyramid.view import view_config
-from pyramid.security import authenticated_userid
 
 import colander
 
 from phoenix.wizard.views import Wizard
 
 class Schema(colander.Schema):
-    url = colander.SchemaNode(
-        colander.Set(),
-        title="Filename",
-        )
+    pass
 
 class Upload(Wizard):
     def __init__(self, request):
