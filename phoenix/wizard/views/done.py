@@ -96,7 +96,7 @@ class Done(Wizard):
             self.favorite.save()
 
         source_type = self.wizard_state.get('wizard_source')['source']
-        if source_type == 'wizard_upload':
+        if source_type == 'wizard_storage':
             inputs = appstruct_to_inputs(self.request, self.wizard_state.get('wizard_literal_inputs', {}))
             resource = self.wizard_state.get('wizard_complex_inputs')['identifier']
             for url in self.wizard_state.get('wizard_storage')['url']:

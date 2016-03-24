@@ -50,7 +50,7 @@ class Storage(Wizard):
         self.success(appstruct)
         return self.next('wizard_done')
 
-    @view_config(route_name='wizard_storage', renderer='../templates/wizard/default.pt')
+    @view_config(route_name='wizard_storage', renderer='../templates/wizard/storage.pt')
     def view(self):
         return super(Storage, self).view()
 
