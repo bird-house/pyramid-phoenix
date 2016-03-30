@@ -15,13 +15,18 @@
             <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
                 <span class="qq-upload-drop-area-text-selector"></span>
             </div>
-            <div class="qq-upload-button-selector btn btn-primary">
-                <div>Upload a file</div>
+            <div class="qq-upload-button-selector btn btn-success">
+                <div>Select file(s) to upload...</div>
             </div>
-                <span class="qq-drop-processing-selector qq-drop-processing">
-                    <span>Processing dropped files...</span>
-                    <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
-                </span>
+            <a id="btn-upload-all" class="btn btn-primary">
+              <i class="fa fa-arrow-up"></i>
+              <span>
+                Upload files.</span>
+            </a>
+            <span class="qq-drop-processing-selector qq-drop-processing">
+              <span>Processing dropped files...</span>
+              <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+            </span>
             <ul class="qq-upload-list-selector qq-upload-list" aria-live="polite" aria-relevant="additions removals">
                 <li>
                     <div class="progress qq-progress-bar-container-selector">
@@ -76,18 +81,29 @@
         <div id="fine-uploader"></div>
 
         <script>
-          var galleryUploader = new qq.FineUploader({
+          var uploader = new qq.FineUploader({
+            debug: true,
+            autoUpload: false,
             element: document.getElementById("fine-uploader"),
             template: 'qq-template',
             request: {
                 endpoint: '/upload'
             },
+            chunking: {
+                enabled: false,
+                concurrent: {
+                    enabled: false
+                },
+                success: {
+                    endpoint: "/upload"
+                }
+            },
             deleteFile: {
-                enabled: true,
+                enabled: false,
                 endpoint: '/upload'
             },
             resume: {
-                enabled: true
+                enabled: false
             },
             retry: {
                 enableAuto: true,
@@ -114,6 +130,10 @@
                     }
                 }
             },
+          });
+
+          qq(document.getElementById("btn-upload-all")).attach('click', function() {
+             uploader.uploadStoredFiles();
           });
         </script>
       </div>
