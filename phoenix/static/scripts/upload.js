@@ -12,7 +12,7 @@ $('#fine-uploader').fineUploader({
   },
   autoUpload: false,
   chunking: {
-    enabled: false,
+    enabled: true,
     concurrent: {
       enabled: false
     },

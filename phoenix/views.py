@@ -1,4 +1,6 @@
 import os
+import os.path
+import shutil
 from cgi import FieldStorage
 
 from pyramid.view import view_config, view_defaults
@@ -68,34 +70,94 @@ def download(request):
     #filename = request.params['filename']
     return FileResponse(request.storage.path(filename))
 
+def handle_upload(request, fileattrs):
+    """
+    Handle a chunked or non-chunked upload.
+
+    See example code: https://github.com/FineUploader/server-examples/blob/master/python/django-fine-uploader/fine_uploader/views.py
+    """
+    chunked = False
+    
+    fs = fileattrs['qqfile']
+    # We can fail hard, as somebody is trying to cheat on us if that fails.
+    assert isinstance(fs, FieldStorage)
+
+    fid = fileattrs['qquuid']
+       
+    # Chunked?
+    if int(fileattrs['qqtotalparts']) > 1:
+        dest_folder = os.path.join(request.storage.path('chunks'), fileattrs['qquuid'])
+        dest = os.path.join(dest_folder, fileattrs['qqfilename'], str(fileattrs['qqpartindex']))
+        logger.info('Chunked upload received')
+        save_upload(fs.file, dest)
+        
+        # If the last chunk has been sent, combine the parts.
+        if int(fileattrs['qqtotalparts']) - 1 == int(fileattrs['qqpartindex']):
+            logger.info('Combining chunks: %s' % os.path.dirname(dest))
+            combine_chunks(int(fileattrs['qqtotalparts']),
+                int(fileattrs['qqtotalfilesize']),
+                source_folder=os.path.dirname(dest),
+                dest=os.path.join(request.storage.path(authenticated_userid(request)), fileattrs['qqfilename']))
+            logger.info('Combined')
+
+            shutil.rmtree(dest_folder)
+    else:
+        folder=authenticated_userid(request)
+        filename=fileattrs['qqfilename']
+        filepath = os.path.join(folder, filename)
+        if request.storage.exists(filepath):
+            request.storage.delete(filepath)
+        stored_filename = request.storage.save_file(fs.file, filename, folder=folder)
+        logger.debug('saved file to upload storage: %s', stored_filename)
+
+    
+
+def combine_chunks(total_parts, total_size, source_folder, dest):
+    """ Combine a chunked file into a whole file again. Goes through each part
+    , in order, and appends that part's bytes to another destination file.
+    Chunks are stored in media/chunks
+    Uploads are saved in media/uploads
+    """
+
+    if not os.path.exists(os.path.dirname(dest)):
+        os.makedirs(os.path.dirname(dest))
+
+    with open(dest, 'wb+') as destination:
+        for i in xrange(total_parts):
+            part = os.path.join(source_folder, str(i))
+            with open(part, 'rb') as source:
+                destination.write(source.read())
+
+
+def save_upload(f, path):
+    """ Save an upload. Django will automatically "chunk" incoming files
+    (even when previously chunked by fine-uploader) to prevent large files
+    from taking up your server's memory. If Django has chunked the file, then
+    write the chunks, otherwise, save as you would normally save a file in
+    Python.
+    Uploads are stored in media/uploads
+    """
+    if not os.path.exists(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
+    with open(path, 'wb+') as destination:
+        if hasattr(f, 'multiple_chunks') and f.multiple_chunks():
+            for chunk in f.chunks():
+                destination.write(chunk)
+        else:
+            destination.write(f.read())
+
 @view_config(route_name='upload', renderer='json', request_method="POST", xhr=True, accept="application/json")
 def upload(request):
     logger.debug("upload post=%s", request.POST)
-    result = {'error': 'Could not upload files'}
+    result = {"success": False, 'error': 'Could not upload files'}
     if 'qqfile' in request.POST:
-        fs = request.POST['qqfile']
-        # We can fail hard, as somebody is trying to cheat on us if that fails.
-        assert isinstance(fs, FieldStorage)
-        
-        fid = request.POST.get('qquuid')
-        logger.debug('uuid=%s', fid)
-        filename = request.POST.get('qqfilename')
-        logger.debug('filename=%s', filename)
-        logger.debug('size=%s', request.POST.get('qqtotalfilesize'))
-        #logger.debug('content type=%s', request.POST.get('content_type'))
         try:
-            folder=authenticated_userid(request)
-            filepath = os.path.join(folder, filename)
-            if request.storage.exists(filepath):
-                request.storage.delete(filepath)
-            stored_filename = request.storage.save_file(fs.file, filename, folder=folder)
-            logger.debug('saved file to upload storage: %s', stored_filename)
-        except FileNotAllowed:
-            msg = "File format is not allowed in storage: {0}".format(filename)
-            logger.warn(msg)
-            result = {'error': msg}
-        else:
-            result = {'success': True, 'uuid': fid}
+            handle_upload(request, request.POST)
+            result = {'success': True}
+        except Exception as e:
+            msg = "upload failed"
+            logger.exception(msg)
+            result = {"success": False, 'error': msg}
     return result
 
 @view_defaults(permission='view', layout='default')
