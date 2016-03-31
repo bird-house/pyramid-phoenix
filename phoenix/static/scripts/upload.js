@@ -1,19 +1,24 @@
-var uploader = new qq.FineUploader({
+$('#fine-uploader').fineUploader({
   debug: true,
-  autoUpload: false,
-  element: document.getElementById("fine-uploader"),
   template: 'qq-template',
   request: {
     endpoint: '/upload'
   },
+  thumbnails: {
+    placeholders: {
+      //waitingPath: '/static/jquery.fine-uploader/placeholders/waiting-generic.png',
+      //notAvailablePath: '/static/jquery.fine-uploader/placeholders/not_available-generic.png',
+    }
+  },
+  autoUpload: false,
   chunking: {
     enabled: false,
     concurrent: {
       enabled: false
     },
-    success: {
-      endpoint: "/upload"
-    }
+    //success: {
+    //  endpoint: "/upload"
+    //}
   },
   deleteFile: {
     enabled: false,
@@ -26,29 +31,42 @@ var uploader = new qq.FineUploader({
     enableAuto: true,
     showButton: true
   },
-  thumbnails: {
-    placeholders: {
-      waitingPath: '${request.static_path("phoenix:static/jquery.fine-uploader/placeholders/waiting-generic.png")}',
-      notAvailablePath: '${request.static_path("phoenix:static/jquery.fine-uploader/placeholders/not_available-generic.png")}'
-    }
-  },
   validation: {
     allowedExtensions: ['nc', 'csv'],
     itemLimit: 10,
     sizeLimit: 1073741824, // 1 GB = 1014 * 1024 * 1024 bytes
   },
   callbacks: {
+    onValidate: function(id, name) {
+      console.log("onValidate");
+    },
+    onSubmit: function(id, name) {
+      console.log("onSubmit");
+    },
+    onUpload: function(id, name) {
+      console.log("onUpload");
+    },
+    onProgress: function(id, name) {
+      console.log("onProgress");
+    },
+    onCancel: function(id, name) {
+      console.log("onCancel");
+    },
+    onError: function(id, name) {
+      console.log("onError");
+    },
     onComplete: function(id, name, response) {
+      console.log("onComplete");
       //var previewLink = qq(this.getItemByFileId(id)).getByClass('preview-link')[0];
       
       if (response.success) {
         //previewLink.setAttribute("href", response.tempLink)
-        //alert('success')
       }
     }
   },
 });
 
-qq(document.getElementById("btn-upload-all")).attach('click', function() {
-  uploader.uploadStoredFiles();
+$('#trigger-upload').click(function() {
+  $('#fine-uploader').fineUploader('uploadStoredFiles');
 });
+
