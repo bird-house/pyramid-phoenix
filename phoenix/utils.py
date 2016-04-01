@@ -8,6 +8,35 @@ logger = logging.getLogger(__name__)
 SIGNIN_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign in"><span class="fa fa-sign-in"></span></a>'
 SIGNOUT_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign out %s"><span class="fa fa-sign-out"></span></a>'
 
+# upload helpers
+
+def save_upload(f, path):
+    """ Save an upload.
+    Uploads are stored in media/uploads
+    """
+    if not os.path.exists(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
+    with open(path, 'wb+') as destination:
+        destination.write(f.read())
+
+def combine_chunks(total_parts, total_size, source_folder, dest):
+    """ Combine a chunked file into a whole file again. Goes through each part
+    , in order, and appends that part's bytes to another destination file.
+    Chunks are stored in media/chunks
+    Uploads are saved in media/uploads
+    """
+
+    if not os.path.exists(os.path.dirname(dest)):
+        os.makedirs(os.path.dirname(dest))
+
+    with open(dest, 'wb+') as destination:
+        for i in xrange(int(total_parts)):
+            part = os.path.join(source_folder, str(i))
+            with open(part, 'rb') as source:
+                destination.write(source.read())
+
+# misc
+
 
 def button(request):
     """If the user is logged in, returns the logout button, otherwise returns the login button"""
