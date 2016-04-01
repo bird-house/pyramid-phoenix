@@ -33,8 +33,8 @@ $('#fine-uploader').fineUploader({
   },
   validation: {
     allowedExtensions: ['nc', 'csv'],
-    itemLimit: 10,
-    sizeLimit: 1073741824, // 1 GB = 1014 * 1024 * 1024 bytes
+    itemLimit: 20,
+    sizeLimit: 2126512128, // 2 GB = 2 * 1014 * 1024 * 1024 bytes
   },
   callbacks: {
     onValidate: function(id, name) {
