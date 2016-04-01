@@ -21,7 +21,7 @@ def save_upload(request, filename, fs=None):
     if fs is None:
         stored_filename = request.storage.save_filename(filename, folder=folder)
     else:
-        stored_filename = request.storage.save(fs, filename=os.path.basename(path), folder=folder)
+        stored_filename = request.storage.save_file(fs.file, filename=os.path.basename(path), folder=folder)
     logger.debug('saved file to upload storage %s', stored_filename)
 
     

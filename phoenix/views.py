@@ -68,6 +68,7 @@ def unknown_failure(request, exc):
 def download(request):
     filename = request.matchdict.get('filename')
     #filename = request.params['filename']
+    logger.debug("download: %s", request.storage.path(filename))
     return FileResponse(request.storage.path(filename))
 
 def handle_upload(request, attrs):
@@ -77,11 +78,12 @@ def handle_upload(request, attrs):
     See example code:
     https://github.com/FineUploader/server-examples/blob/master/python/flask-fine-uploader/app.py
     """
-    chunked = False
-    
     fs = attrs['qqfile']
     # We can fail hard, as somebody is trying to cheat on us if that fails.
     assert isinstance(fs, FieldStorage)
+
+    # extension allowed?
+    request.storage.filename_allowed(attrs['qqfilename'])
 
     # Chunked?
     if attrs.has_key('qqtotalparts') and int(attrs['qqtotalparts']) > 1:
@@ -108,13 +110,17 @@ def handle_upload(request, attrs):
 @view_config(route_name='upload', renderer='json', request_method="POST", xhr=True, accept="application/json")
 def upload(request):
     logger.debug("upload post=%s", request.POST)
-    result = {"success": False, 'error': 'Could not upload files'}
+    result = {"success": False}
     if 'qqfile' in request.POST:
         try:
             handle_upload(request, request.POST)
             result = {'success': True}
-        except Exception as e:
-            msg = "upload failed"
+        except FileNotAllowed:
+            msg = "Filename extension not allowed"
+            logger.warn(msg)
+            result = {"success": False, 'error': msg, "preventRetry": True}
+        except Exception:
+            msg = "Upload failed"
             logger.exception(msg)
             result = {"success": False, 'error': msg}
     return result
