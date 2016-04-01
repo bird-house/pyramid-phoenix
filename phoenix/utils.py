@@ -2,6 +2,8 @@ import os
 import tempfile
 import deform
 
+from pyramid.security import authenticated_userid
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -10,22 +12,41 @@ SIGNOUT_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" ti
 
 # upload helpers
 
-def save_upload(f, path):
-    """ Save an upload.
-    Uploads are stored in media/uploads
+def save_upload(request, filename, fs=None):
+    folder=authenticated_userid(request)
+    path = os.path.join(folder, os.path.basename(filename))
+    if request.storage.exists(path):
+        request.storage.delete(path)
+    stored_filename = None
+    if fs is None:
+        stored_filename = request.storage.save_filename(filename, folder=folder)
+    else:
+        stored_filename = request.storage.save(fs, filename=os.path.basename(path), folder=folder)
+    logger.debug('saved file to upload storage %s', stored_filename)
+
+    
+def save_chunk(fs, path):
+    """
+    Save an uploaded chunk.
+    
+    Chunks are stored in chunks/
     """
     if not os.path.exists(os.path.dirname(path)):
         os.makedirs(os.path.dirname(path))
     with open(path, 'wb+') as destination:
-        destination.write(f.read())
+        destination.write(fs.read())
 
-def combine_chunks(total_parts, total_size, source_folder, dest):
-    """ Combine a chunked file into a whole file again. Goes through each part
+        
+def combine_chunks(total_parts, source_folder, dest):
+    """
+    Combine a chunked file into a whole file again. Goes through each part
     , in order, and appends that part's bytes to another destination file.
-    Chunks are stored in media/chunks
-    Uploads are saved in media/uploads
+    
+    Chunks are stored in chunks/
     """
 
+    logger.debug("Combining chunks: %s", source_folder)
+    
     if not os.path.exists(os.path.dirname(dest)):
         os.makedirs(os.path.dirname(dest))
 
@@ -34,6 +55,7 @@ def combine_chunks(total_parts, total_size, source_folder, dest):
             part = os.path.join(source_folder, str(i))
             with open(part, 'rb') as source:
                 destination.write(source.read())
+        logger.debug("Combined: %s", dest)
 
 # misc
 

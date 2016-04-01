@@ -8,12 +8,11 @@ from pyramid.view import notfound_view_config
 from pyramid.response import Response
 from pyramid.response import FileResponse
 from pyramid.events import subscriber, BeforeRender
-from pyramid.security import authenticated_userid
 
 from pyramid_storage.exceptions import FileNotAllowed
 
 from phoenix.models import get_user
-from phoenix.utils import save_upload, combine_chunks
+from phoenix.utils import save_upload, save_chunk, combine_chunks
 
 import logging
 logger = logging.getLogger(__name__)
@@ -71,7 +70,7 @@ def download(request):
     #filename = request.params['filename']
     return FileResponse(request.storage.path(filename))
 
-def handle_upload(request, fileattrs):
+def handle_upload(request, attrs):
     """
     Handle a chunked or non-chunked upload.
 
@@ -80,38 +79,32 @@ def handle_upload(request, fileattrs):
     """
     chunked = False
     
-    fs = fileattrs['qqfile']
+    fs = attrs['qqfile']
     # We can fail hard, as somebody is trying to cheat on us if that fails.
     assert isinstance(fs, FieldStorage)
 
-    fid = fileattrs['qquuid']
-       
     # Chunked?
-    if int(fileattrs['qqtotalparts']) > 1:
-        dest_folder = os.path.join(request.storage.path('chunks'), fileattrs['qquuid'])
-        dest = os.path.join(dest_folder, fileattrs['qqfilename'], str(fileattrs['qqpartindex']))
-        logger.info('Chunked upload received')
-        save_upload(fs.file, dest)
+    if attrs.has_key('qqtotalparts') and int(attrs['qqtotalparts']) > 1:
+        dest_folder = os.path.join(request.storage.path('chunks'), attrs['qquuid'])
+        dest = os.path.join(dest_folder, "parts", str(attrs['qqpartindex']))
+        logger.debug('Chunked upload received')
+        save_chunk(fs.file, dest)
         
         # If the last chunk has been sent, combine the parts.
-        if int(fileattrs['qqtotalparts']) - 1 == int(fileattrs['qqpartindex']):
-            logger.info('Combining chunks: %s' % os.path.dirname(dest))
-            combine_chunks(int(fileattrs['qqtotalparts']),
-                int(fileattrs['qqtotalfilesize']),
+        if int(attrs['qqtotalparts']) - 1 == int(attrs['qqpartindex']):
+            filename = os.path.join(dest_folder, attrs['qqfilename'])
+            combine_chunks(
+                int(attrs['qqtotalparts']),
                 source_folder=os.path.dirname(dest),
-                dest=os.path.join(request.storage.path(authenticated_userid(request)), fileattrs['qqfilename']))
-            logger.info('Combined')
+                dest=filename)
+            
+            save_upload(request, filename=filename)
 
             shutil.rmtree(dest_folder)
-    else:
-        folder=authenticated_userid(request)
-        filename=fileattrs['qqfilename']
-        filepath = os.path.join(folder, filename)
-        if request.storage.exists(filepath):
-            request.storage.delete(filepath)
-        stored_filename = request.storage.save_file(fs.file, filename, folder=folder)
-        logger.debug('saved file to upload storage: %s', stored_filename)
+    else: # not chunked
+        save_upload(request, fs=fs, filename=attrs['qqfilename'])
 
+        
 @view_config(route_name='upload', renderer='json', request_method="POST", xhr=True, accept="application/json")
 def upload(request):
     logger.debug("upload post=%s", request.POST)
