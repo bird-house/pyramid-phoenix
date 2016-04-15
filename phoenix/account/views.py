@@ -22,7 +22,7 @@ class PhoenixSchema(colander.MappingSchema):
         colander.String(),
         title = 'Password',
         description = 'Enter the Phoenix Password',
-        validator = colander.Length(min=8),
+        validator = colander.Length(min=6),
         widget = deform.widget.PasswordWidget())
 
 class OAuthSchema(colander.MappingSchema):
