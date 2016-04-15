@@ -24,6 +24,7 @@ class Overview(SettingsView):
         buttons.append(dict(url=self.request.route_path('settings_monitor'), icon="blackboard_sum.png", title="Monitor"))
         buttons.append(dict(url=self.request.route_path('settings_auth'), icon="lock_edit.png", title="Auth"))
         buttons.append(dict(url=self.request.route_path('settings_ldap'), icon="ldap.png", title="LDAP"))
+        buttons.append(dict(url=self.request.route_path('settings_github'), icon="Octocat.jpg", title="GitHub"))
         buttongroups.append(dict(title='Settings', buttons=buttons))
 
         return dict(buttongroups=buttongroups)

@@ -87,3 +87,17 @@ class LdapSchema(colander.MappingSchema):
             title = 'User e-mail attribute',
             description = 'Optional: LDAP attribute to receive user e-mail from query, e.g. "mail"',
             missing = '')
+
+class GitHubSchema(colander.MappingSchema):
+    consumer_key = colander.SchemaNode(
+        colander.String(),
+        title='GitHub Consumer Key',
+        description="Register at GitHub: https://github.com/settings/applications/new",
+        validator=colander.Length(min=1),
+        )
+    consumer_secret = colander.SchemaNode(
+        colander.String(),
+        title='GitHub Consumer Secret',
+        validator=colander.Length(min=1),
+        )
+
