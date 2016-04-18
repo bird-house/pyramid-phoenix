@@ -50,6 +50,12 @@ def add_job(db, userid, task_id, service, title, abstract, status_location, is_w
     db.jobs.save(job)
     return job
 
+def secure_url(db, url, userid):
+    user = db.users.find_one(dict(identifier=userid))
+    parsed = urlparse(url)
+    secure_url = "%s://%s%s/%s" % (parsed.scheme, parsed.netloc, parsed.path, user.get('twitcher_token', ''))
+    return secure_url
+
 @app.task(bind=True)
 def esgf_logon(self, userid, url, openid, password):
     registry = app.conf['PYRAMID_REGISTRY']
@@ -132,12 +138,7 @@ def execute_process(self, userid, url, identifier, inputs, outputs, keywords=Non
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
 
-    # append access token
-    user = db.users.find_one(dict(identifier=userid))
-    parsed = urlparse(url)
-    secure_url = "%s://%s%s/%s" % (parsed.scheme, parsed.netloc, parsed.path, user.get('twitcher_token', ''))
-
-    wps = WebProcessingService(url=secure_url, skip_caps=False)
+    wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=False)
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     job = add_job(db, userid,
                   task_id = self.request.id,
