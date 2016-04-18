@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pyramid.view import view_config, view_defaults
 
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
@@ -37,9 +39,10 @@ class Profile(MyView):
         access_token = tokengenerator.create_access_token(valid_in_hours=1, user_environ={})
         tokenstore.save_token(access_token)
         
-        user['twitcher_token'] = access_token
+        user['twitcher_token'] = access_token['token']
+        user['twitcher_token_expires'] = datetime.utcfromtimestamp(int(access_token['expires_at'])).strftime(format="%Y-%m-%d %H:%M:%S UTC")
         self.request.db.users.update({'identifier':userid}, user)
-        self.request.session.flash("Twitcher token generated.", queue='info')
+        self.request.session.flash("Twitcher access token generated.", queue='info')
         return HTTPFound(location=self.request.route_path('profile', tab='twitcher'))
 
     @view_config(route_name='profile', renderer='templates/profile/profile.pt')

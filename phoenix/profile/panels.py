@@ -15,6 +15,12 @@ class TwitcherSchema(colander.MappingSchema):
         missing = '',
         widget = deform.widget.TextInputWidget(template='readonly/textinput'),
         )
+    twitcher_token_expires = colander.SchemaNode(
+        colander.String(),
+        title = "Expires",
+        missing = '',
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
 
 class ESGFCredentialsSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
@@ -107,7 +113,7 @@ class TwitcherPanel(ProfilePanel):
         form = Form(schema=TwitcherSchema(), formid='deform')
         return form
 
-    @panel_config(name='profile_twitcher', renderer='phoenix:templates/panels/profile_twitcher.pt')
+    @panel_config(name='profile_twitcher', renderer='templates/panels/profile_twitcher.pt')
     def panel(self):
         form = self.generate_form()
         return dict(title="Twitcher access token", form=form.render( self.appstruct() ))
