@@ -5,37 +5,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
-requires = [
-    'pyramid>=1.5.7',
-    'pyramid-chameleon',
-    'pyramid-mako',
-    'pymongo>=3.0.3',
-    'pyramid_layout',
-    'pyramid_deform',
-    'pyramid_beaker',
-    'pyramid_mailer',
-    'pyramid_deform',
-    'pyramid_ldap',
-    'pyramid_celery',
-    'pyramid_storage',
-    'deform>=2.0a2',
-    #'js.deform',
-    #'js.bootstrap',
-    'PasteDeploy',
-    'authomatic',
-    'python-openid',
-    'webhelpers2',
-    'webhelpers2_grid',
-    'mako',
-    'pyyaml',
-    'owslib',
-    'lxml',
-    'python-dateutil',
-    'pytz',
-    'python-swiftclient',
-    'pyramid_celery',
-    'bird-feeder',
-    ]
+reqs = [line.strip() for line in open('requirements/deploy.txt')]
 
 setup(name='Phoenix',
       version=__import__('phoenix').get_version(),
@@ -57,7 +27,7 @@ setup(name='Phoenix',
       include_package_data=True,
       zip_safe=False,
       test_suite='phoenix',
-      install_requires=requires,
+      install_requires=reqs,
       entry_points="""\
       [paste.app_factory]
       main = phoenix:main
