@@ -1,15 +1,11 @@
-from datetime import datetime
-
 from pyramid.view import view_config, view_defaults
 
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.security import authenticated_userid
 from deform import Form, ValidationFailure
 
+from phoenix.security import generate_access_token
 from phoenix.views import MyView
-
-from twitcher.tokens import tokengenerator_factory
-from twitcher.tokens import tokenstore_factory
 
 import logging
 logger = logging.getLogger(__name__)
@@ -31,18 +27,7 @@ class Profile(MyView):
 
     @view_config(route_name='generate_twitcher_token')
     def generate_twitcher_token(self):
-        userid = authenticated_userid(self.request)
-        user = self.request.db.users.find_one({'identifier':userid})
-
-        tokengenerator = tokengenerator_factory(self.request.registry)
-        tokenstore = tokenstore_factory(self.request.registry)
-        access_token = tokengenerator.create_access_token(valid_in_hours=8, user_environ={})
-        tokenstore.save_token(access_token)
-        
-        user['twitcher_token'] = str(access_token['token'])
-        user['twitcher_token_expires'] = datetime.utcfromtimestamp(int(access_token['expires_at'])).strftime(format="%Y-%m-%d %H:%M:%S UTC")
-        self.request.db.users.update({'identifier':userid}, user)
-        self.request.session.flash("Twitcher access token generated.", queue='info')
+        generate_access_token(self.request, authenticated_userid(self.request))
         return HTTPFound(location=self.request.route_path('profile', tab='twitcher'))
 
     @view_config(route_name='profile', renderer='templates/profile/profile.pt')

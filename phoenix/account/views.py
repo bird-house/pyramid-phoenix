@@ -13,6 +13,7 @@ from authomatic.adapters import WebObAdapter
 from phoenix.views import MyView
 from phoenix.security import Admin, Guest, authomatic, passwd_check
 from phoenix.models import auth_protocols
+from phoenix.security import generate_access_token
 
 import logging
 logger = logging.getLogger(__name__)
@@ -183,7 +184,9 @@ class Account(MyView):
         self.userdb.update({'login_id':login_id}, user)
         self.session.flash("Welcome {0}.".format(name), queue='success')
         if user.get('group') == Guest:
-            self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any process.", queue='danger')
+            self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any process.", queue='info')
+        else:
+            generate_access_token(self.request, user['identifier'])
         headers = remember(self.request, user['identifier'])
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
