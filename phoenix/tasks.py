@@ -59,19 +59,19 @@ def secure_url(db, url, userid):
 @app.task(bind=True)
 def esgf_logon(self, userid, url, openid, password):
     registry = app.conf['PYRAMID_REGISTRY']
+    db = mongodb(registry)
     inputs = []
     inputs.append( ('openid', openid) )
     inputs.append( ('password', password) )
     outputs = [('output',True),('expires',False)]
 
-    wps = WebProcessingService(url=url, skip_caps=True)
+    wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=True)
     execution = wps.execute(identifier="esgf_logon", inputs=inputs, output=outputs)
     monitorExecution(execution)
     
     if execution.isSucceded():
         credentials = execution.processOutputs[0].reference
         cert_expires = execution.processOutputs[1].data[0]
-        db = mongodb(registry)
         user = db.users.find_one({'identifier':userid})
         user['openid'] = openid
         user['credentials'] = credentials
@@ -93,7 +93,7 @@ def execute_workflow(self, userid, url, workflow):
     logger.debug('inputs=%s', inputs)
     outputs=[('output', True), ('logfile', True)]
     
-    wps = WebProcessingService(url=url, skip_caps=True)
+    wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=True)
     worker_wps = WebProcessingService(url=workflow['worker']['url'], skip_caps=False)
     execution = wps.execute(identifier='workflow', inputs=inputs, output=outputs)
     

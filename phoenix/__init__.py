@@ -163,8 +163,6 @@ def main(global_config, **settings):
     ## json_renderer.add_adapter(wps.WPSException, wpsexception_adapter)
     config.add_renderer('json', json_renderer)
 
-   
-    
     # catalog service
     if asbool(settings.get('phoenix.csw', True)):
         def add_csw(event):
