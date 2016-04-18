@@ -82,10 +82,13 @@ def esgf_logon(self, userid, url, openid, password):
 @app.task(bind=True)
 def execute_workflow(self, userid, url, workflow):
     registry = app.conf['PYRAMID_REGISTRY']
+    db = mongodb(registry)
 
     # generate and run dispel workflow
     # TODO: fix owslib wps for unicode/yaml parameters
     logger.debug('workflow=%s', workflow)
+    # using secure url
+    workflow['worker']['url'] = secure_url(db, workflow['worker']['url'], userid)
     inputs=[('workflow', json.dumps(workflow))]
     logger.debug('inputs=%s', inputs)
     outputs=[('output', True), ('logfile', True)]
@@ -93,7 +96,7 @@ def execute_workflow(self, userid, url, workflow):
     wps = WebProcessingService(url=url, skip_caps=True)
     worker_wps = WebProcessingService(url=workflow['worker']['url'], skip_caps=False)
     execution = wps.execute(identifier='workflow', inputs=inputs, output=outputs)
-    db = mongodb(registry)
+    
     job = add_job(db, userid,
                   task_id = self.request.id,
                   is_workflow = True,
