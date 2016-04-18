@@ -8,6 +8,14 @@ from phoenix.models import get_user
 import logging
 logger = logging.getLogger(__name__)
 
+class TwitcherSchema(colander.MappingSchema):
+    twitcher_token = colander.SchemaNode(
+        colander.String(),
+        title = "Twitcher access token",
+        missing = '',
+        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
+
 class ESGFCredentialsSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
         colander.String(),
@@ -93,6 +101,16 @@ class AccountPanel(ProfilePanel):
         if 'update' in self.request.POST:
             self.process_form(form)
         return dict(title="Account settings", form=form.render( self.appstruct() ))
+
+class TwitcherPanel(ProfilePanel):
+    def generate_form(self):
+        form = Form(schema=TwitcherSchema(), formid='deform')
+        return form
+
+    @panel_config(name='profile_twitcher', renderer='phoenix:templates/panels/form.pt')
+    def panel(self):
+        form = self.generate_form()
+        return dict(title="Twitcher access token", form=form.render( self.appstruct() ))
 
 class ESGFPanel(ProfilePanel):
     def generate_form(self):

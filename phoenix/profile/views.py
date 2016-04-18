@@ -31,6 +31,8 @@ class Profile(MyView):
         lm = self.request.layout_manager
         if tab == 'account':
             lm.layout.add_heading('profile_account')
+        elif tab == 'twitcher':
+            lm.layout.add_heading('profile_twitcher')
         elif tab == 'esgf':
             lm.layout.add_heading('profile_esgf')
         elif tab == 'swift':
