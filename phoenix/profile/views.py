@@ -6,6 +6,9 @@ from deform import Form, ValidationFailure
 
 from phoenix.views import MyView
 
+from twitcher.tokens import tokengenerator_factory
+from twitcher.tokens import tokenstore_factory
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -23,6 +26,21 @@ class Profile(MyView):
         self.request.db.users.update({'identifier':userid}, user)
         self.request.session.flash("ESGF Certficate removed.", queue='info')
         return HTTPFound(location=self.request.route_path('profile', tab='esgf'))
+
+    @view_config(route_name='generate_twitcher_token')
+    def generate_twitcher_token(self):
+        userid = authenticated_userid(self.request)
+        user = self.request.db.users.find_one({'identifier':userid})
+
+        tokengenerator = tokengenerator_factory(self.request.registry)
+        tokenstore = tokenstore_factory(self.request.registry)
+        access_token = tokengenerator.create_access_token(valid_in_hours=1, user_environ={})
+        tokenstore.save_token(access_token)
+        
+        user['twitcher_token'] = access_token
+        self.request.db.users.update({'identifier':userid}, user)
+        self.request.session.flash("Twitcher token generated.", queue='info')
+        return HTTPFound(location=self.request.route_path('profile', tab='twitcher'))
 
     @view_config(route_name='profile', renderer='templates/profile/profile.pt')
     def view(self):

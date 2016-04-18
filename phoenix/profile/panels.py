@@ -107,7 +107,7 @@ class TwitcherPanel(ProfilePanel):
         form = Form(schema=TwitcherSchema(), formid='deform')
         return form
 
-    @panel_config(name='profile_twitcher', renderer='phoenix:templates/panels/form.pt')
+    @panel_config(name='profile_twitcher', renderer='phoenix:templates/panels/profile_twitcher.pt')
     def panel(self):
         form = self.generate_form()
         return dict(title="Twitcher access token", form=form.render( self.appstruct() ))
