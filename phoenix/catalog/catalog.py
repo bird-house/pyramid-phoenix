@@ -1,6 +1,11 @@
 from mako.template import Template
 import uuid
 
+from twitcher.registry import service_registry_factory, proxy_url
+
+import logging
+logger = logging.getLogger(__name__)
+
 def wps_url(request, identifier):
     return get_wps(request, identifier).source
 
@@ -56,6 +61,9 @@ def harvest_service(request, url, service_type, service_name=None):
             rights = '')
         publish(request, record)
     else: # ogc services
-        request.csw.harvest(source=url, resourcetype=service_type)
+        registry = service_registry_factory(request.registry)
+        registry.register_service(name=service_name, url=url)
+        request.csw.harvest(source=proxy_url(request, service_name), resourcetype=service_type)
+       
 
 

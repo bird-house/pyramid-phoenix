@@ -103,6 +103,10 @@ def main(global_config, **settings):
     # wizard
     config.include('phoenix.wizard')
 
+    # twitcher
+    config.include('twitcher.owsproxy')
+    config.include('twitcher.tweens')
+
     # readthedocs
     config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/en/latest/{part}.html')
 
