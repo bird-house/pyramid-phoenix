@@ -36,10 +36,10 @@ class Profile(MyView):
 
         tokengenerator = tokengenerator_factory(self.request.registry)
         tokenstore = tokenstore_factory(self.request.registry)
-        access_token = tokengenerator.create_access_token(valid_in_hours=1, user_environ={})
+        access_token = tokengenerator.create_access_token(valid_in_hours=8, user_environ={})
         tokenstore.save_token(access_token)
         
-        user['twitcher_token'] = access_token['token']
+        user['twitcher_token'] = str(access_token['token'])
         user['twitcher_token_expires'] = datetime.utcfromtimestamp(int(access_token['expires_at'])).strftime(format="%Y-%m-%d %H:%M:%S UTC")
         self.request.db.users.update({'identifier':userid}, user)
         self.request.session.flash("Twitcher access token generated.", queue='info')

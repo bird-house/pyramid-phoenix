@@ -5,6 +5,7 @@ import json
 import yaml
 import uuid
 import urllib
+from urlparse import urlparse
 from datetime import datetime
 from birdfeeder import feed_from_thredds, clear
 
@@ -129,10 +130,15 @@ def execute_workflow(self, userid, url, workflow):
 @app.task(bind=True)
 def execute_process(self, userid, url, identifier, inputs, outputs, keywords=None):
     registry = app.conf['PYRAMID_REGISTRY']
-
-    wps = WebProcessingService(url=url, skip_caps=False)
-    execution = wps.execute(identifier, inputs=inputs, output=outputs)
     db = mongodb(registry)
+
+    # append access token
+    user = db.users.find_one(dict(identifier=userid))
+    parsed = urlparse(url)
+    secure_url = "%s://%s%s/%s" % (parsed.scheme, parsed.netloc, parsed.path, user.get('twitcher_token', ''))
+
+    wps = WebProcessingService(url=secure_url, skip_caps=False)
+    execution = wps.execute(identifier, inputs=inputs, output=outputs)
     job = add_job(db, userid,
                   task_id = self.request.id,
                   is_workflow = False,
