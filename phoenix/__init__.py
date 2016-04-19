@@ -98,6 +98,9 @@ def main(global_config, **settings):
     # supervisor
     config.include('phoenix.supervisor')
 
+    # catalog
+    config.include('phoenix.catalog')
+
     # services
     config.include('phoenix.services')
 
@@ -114,12 +117,7 @@ def main(global_config, **settings):
     from phoenix.utils import button
     config.add_request_method(button, 'login_button', reify=True)
 
-    # check if solr is activated
-    def solr_activated(request):
-        settings = request.registry.settings
-        return asbool(settings.get('phoenix.solr', True))
-    config.add_request_method(solr_activated, reify=True)
-
+   
     # check if wms is activated
     def wms_activated(request):
         settings = request.registry.settings
@@ -131,12 +129,6 @@ def main(global_config, **settings):
         settings = request.registry.settings
         return asbool(settings.get('phoenix.flower', True))
     config.add_request_method(flower_activated, reify=True)
-
-    # check if csw is activated
-    def csw_activated(request):
-        settings = request.registry.settings
-        return asbool(settings.get('phoenix.csw', True))
-    config.add_request_method(csw_activated, reify=True)
 
     # max file size for upload in MB
     def max_file_size(request):
@@ -162,23 +154,7 @@ def main(global_config, **settings):
     ## from owslib import wps
     ## json_renderer.add_adapter(wps.WPSException, wpsexception_adapter)
     config.add_renderer('json', json_renderer)
-
-    # catalog service
-    if asbool(settings.get('phoenix.csw', True)):
-        def add_csw(event):
-            settings = event.request.registry.settings
-            if settings.get('csw') is None:
-                try:
-                    from owslib.csw import CatalogueServiceWeb
-                    settings['csw'] = CatalogueServiceWeb(url=settings['csw.url'])
-                    logger.debug("init csw")
-                except:
-                    logger.exception('Could not connect catalog service %s', settings['csw.url'])
-            else:
-                logger.debug("csw already initialized")
-            event.request.csw = settings.get('csw')
-        config.add_subscriber(add_csw, NewRequest)
-    
+ 
     config.scan('phoenix')
 
     return config.make_wsgi_app()

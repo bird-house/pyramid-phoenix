@@ -65,6 +65,8 @@ def harvest_service(request, url, service_type, service_name=None):
         publish(request, record)
     else: # ogc services
         request.csw.harvest(source=url, resourcetype=service_type)
+
+
        
 
 
