@@ -9,7 +9,7 @@ from urlparse import urlparse
 from datetime import datetime
 from birdfeeder import feed_from_thredds, clear
 
-from phoenix.models import mongodb
+from phoenix.db import mongodb
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)

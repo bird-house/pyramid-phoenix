@@ -2,7 +2,6 @@ from pyramid.security import authenticated_userid
 
 import uuid
 from datetime import datetime, timedelta
-import pymongo
 from phoenix.utils import localize_datetime
 from dateutil import parser as datetime_parser
 
@@ -11,11 +10,6 @@ from phoenix.security import Guest
 
 import logging
 logger = logging.getLogger(__name__)
-
-def mongodb(registry):
-    settings = registry.settings
-    client = pymongo.MongoClient(settings['mongodb.host'], int(settings['mongodb.port']))
-    return client[settings['mongodb.db_name']]
 
 def auth_protocols(request):
     # TODO: refactor auth settings handling

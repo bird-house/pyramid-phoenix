@@ -54,19 +54,8 @@ def main(global_config, **settings):
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_static_view('deform_static', 'deform:static', cache_max_age=3600)
 
-    # MongoDB
-    # TODO: maybe move this to models.py?
-    #@subscriber(NewRequest)
-    def add_mongodb(event):
-        settings = event.request.registry.settings
-        if settings.get('db') is None:
-            try:
-                from phoenix.models import mongodb
-                settings['db'] = mongodb(event.request.registry)
-            except:
-                logger.exception('Could not connect to mongodb')
-        event.request.db = settings.get('db')
-    config.add_subscriber(add_mongodb, NewRequest)
+    # database
+    config.include('twitcher.db')
 
     # twitcher
     config.include('twitcher.owsproxy')
