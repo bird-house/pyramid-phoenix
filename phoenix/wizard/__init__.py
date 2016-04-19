@@ -51,8 +51,8 @@ def includeme(config):
                     logger.debug("register: name=%s, url=%s", service_name, settings['wps.url'])
                     registry.register_service(name=service_name, url=settings['wps.url'])
                     # TODO: we need to register wps when proxy service is up
-                    #settings['wps'] = WebProcessingService(url=proxy_url(request, service_name))
-                    settings['wps'] = WebProcessingService(url=settings['wps.url'])
+                    settings['wps'] = WebProcessingService(url=proxy_url(request, service_name), skip_caps=True)
+                    #settings['wps'] = WebProcessingService(url=settings['wps.url'], skip_caps=True)
                     logger.debug("init wps")
                 except:
                     logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
