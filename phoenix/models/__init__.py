@@ -63,20 +63,7 @@ def user_cert_valid(request, valid_hours=6):
             return True
     return False
 
-def load_settings(request):
-    defaults = dict(solr_maxrecords = -1, solr_depth = 2)
-    
-    settings = request.db.settings.find_one()
-    if not settings:
-        settings = save_settings(request, defaults)
-    for key in defaults.keys():
-        if not key in settings:
-            settings[key] = defaults[key]
-    return settings
 
-def save_settings(request, settings):
-    request.db.settings.save(settings)
-    return request.db.settings.find_one()
     
 
 

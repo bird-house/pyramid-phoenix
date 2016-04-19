@@ -1,7 +1,7 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
-from phoenix.models import load_settings
+from phoenix.settings import load_settings
 
 from . import SettingsView
 

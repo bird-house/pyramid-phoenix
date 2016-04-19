@@ -3,7 +3,7 @@ from deform import Form, ValidationFailure
 
 from owslib.fes import PropertyIsEqualTo
 
-from phoenix.models import load_settings, save_settings
+from phoenix.settings import load_settings, save_settings
 
 import logging
 logger = logging.getLogger(__name__)
