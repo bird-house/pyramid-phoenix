@@ -1,6 +1,9 @@
 from mako.template import Template
 import uuid
 from urlparse import urlparse
+from os.path import join, dirname
+
+from owslib.fes import PropertyIsEqualTo
 
 from twitcher.registry import service_registry_factory, proxy_url
 
@@ -8,9 +11,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 def wps_url(request, identifier):
-    csw = request.csw
-    csw.getrecordbyid(id=[identifier])
-    record = csw.records[identifier]
+    request.csw.getrecordbyid(id=[identifier])
+    record = request.csw.records[identifier]
     registry = service_registry_factory(request.registry)
     # TODO: fix service name
     service_name = record.title.lower()
@@ -25,22 +27,16 @@ def wps_caps_url(request, identifier):
     return caps_url
 
 def get_wps_list(request):
-    csw = request.csw
-    from owslib.fes import PropertyIsEqualTo
     wps_query = PropertyIsEqualTo('dc:format', 'WPS')
-    csw.getrecords2(esn="full", constraints=[wps_query], maxrecords=100)
-    return csw.records.values()
+    request.csw.getrecords2(esn="full", constraints=[wps_query], maxrecords=100)
+    return request.csw.records.values()
 
 def get_thredds_list(request):
-    csw = request.csw
-    from owslib.fes import PropertyIsEqualTo
     wps_query = PropertyIsEqualTo('dc:format', 'THREDDS')
-    csw.getrecords2(esn="full", constraints=[wps_query], maxrecords=100)
-    return csw.records.values()
+    request.csw.getrecords2(esn="full", constraints=[wps_query], maxrecords=100)
+    return request.csw.records.values()
 
 def publish(request, record):
-    from os.path import join, dirname
-   
     record['identifier'] = uuid.uuid4().get_urn()
     templ_dc = Template(filename=join(dirname(__file__), "templates", "dublin_core.xml"))
     request.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
