@@ -38,20 +38,6 @@ def add_user(
     request.db.users.save(user)
     return request.db.users.find_one({'identifier':user['identifier']})
 
-def user_stats(request):
-    num_unregistered = request.db.users.find({"group": Guest}).count()
-    
-    d = datetime.now() - timedelta(hours=3)
-    num_logins_3h = request.db.users.find({"last_login": {"$gt": d}}).count()
-
-    d = datetime.now() - timedelta(days=7)
-    num_logins_7d = request.db.users.find({"last_login": {"$gt": d}}).count()
-
-    return dict(num_users=request.db.users.count(),
-                num_unregistered=num_unregistered,
-                num_logins_3h=num_logins_3h,
-                num_logins_7d=num_logins_7d)
-
 def user_cert_valid(request, valid_hours=6):
     cert_expires = get_user(request).get('cert_expires')
     if cert_expires != None:
