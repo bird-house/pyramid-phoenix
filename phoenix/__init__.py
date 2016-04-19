@@ -78,6 +78,9 @@ def main(global_config, **settings):
     # job monitor
     config.include('phoenix.monitor')
 
+    # wms
+    config.include('phoenix.wms')
+
     # user profile
     config.include('phoenix.profile')
 
@@ -105,13 +108,6 @@ def main(global_config, **settings):
     # A quick access to the login button
     from phoenix.utils import button
     config.add_request_method(button, 'login_button', reify=True)
-
-   
-    # check if wms is activated
-    def wms_activated(request):
-        settings = request.registry.settings
-        return asbool(settings.get('phoenix.wms', True))
-    config.add_request_method(wms_activated, reify=True)
 
     # check if flower is activated
     def flower_activated(request):
