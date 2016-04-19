@@ -4,6 +4,8 @@
 
 import pymongo
 
+from pyramid.events import NewRequest
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -14,12 +16,16 @@ def mongodb(registry):
     #db.services.create_index("name", unique=True)
     return db
 
-def _add_db(request):
-    db = request.registry.db
-    #if db_url.username and db_url.password:
-    #    db.authenticate(db_url.username, db_url.password)
-    return db
-
 def includeme(config):
-    config.registry.db = mongodb(config.registry)
-    config.add_request_method(_add_db, 'db', reify=True)
+    def _add_db(event):
+        settings = event.request.registry.settings
+        if settings.get('db') is None:
+            try:
+                settings['db'] = mongodb(event.request.registry)
+                logger.debug("init db")
+            except:
+                logger.exception('Could not connect mongodb.')
+            else:
+                logger.debug("db already initialized")
+        event.request.db = settings.get('db')
+    config.add_subscriber(_add_db, NewRequest)

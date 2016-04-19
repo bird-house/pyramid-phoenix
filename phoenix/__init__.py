@@ -55,7 +55,7 @@ def main(global_config, **settings):
     config.add_static_view('deform_static', 'deform:static', cache_max_age=3600)
 
     # database
-    config.include('twitcher.db')
+    config.include('phoenix.db')
 
     # twitcher
     config.include('twitcher.owsproxy')
