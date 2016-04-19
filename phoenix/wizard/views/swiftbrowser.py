@@ -4,7 +4,7 @@ from pyramid.httpexceptions import HTTPFound
 from swiftclient import client, ClientException
 
 from phoenix.wizard.views import Wizard
-from phoenix.models import swift
+from phoenix import swift
 
 import logging
 logger = logging.getLogger(__name__)

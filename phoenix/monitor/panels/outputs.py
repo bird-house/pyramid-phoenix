@@ -4,6 +4,8 @@ from pyramid.httpexceptions import HTTPFound
 from deform import Form
 from deform import ValidationFailure
 
+from phoenix import swift
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -66,8 +68,6 @@ class Outputs(object):
         return Form(schema = UploadSchema(), buttons=('upload',), formid=formid)
 
     def process_upload_form(self, form, job_id):
-        from phoenix.models import swift
-        
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)

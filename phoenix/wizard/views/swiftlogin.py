@@ -1,7 +1,9 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
+
 from phoenix.wizard.views import Wizard
+from phoenix import swift
 
 import logging
 logger = logging.getLogger(__name__)
@@ -29,7 +31,6 @@ class SwiftLogin(Wizard):
         return appstruct
 
     def login(self, appstruct):
-        from phoenix.models import swift
         result = swift.swift_login(
             self.request,
             username = appstruct.get('username'),
