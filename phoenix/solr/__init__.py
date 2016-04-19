@@ -1,3 +1,5 @@
+from pyramid.settings import asbool
+
 import logging
 logger = logging.getLogger(__name__)
 

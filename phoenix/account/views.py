@@ -12,7 +12,7 @@ from authomatic.adapters import WebObAdapter
 
 from phoenix.views import MyView
 from phoenix.security import Admin, Guest, authomatic, passwd_check
-from phoenix.models import auth_protocols
+from phoenix.security import auth_protocols
 from phoenix.security import generate_access_token
 
 import logging

@@ -11,16 +11,6 @@ from phoenix.security import Guest
 import logging
 logger = logging.getLogger(__name__)
 
-def auth_protocols(request):
-    # TODO: refactor auth settings handling
-    settings = request.db.settings.find_one()
-    protocols = ['phoenix', 'esgf', 'openid', 'ldap', 'oauth2']
-    if settings is not None:
-        if settings.has_key('auth'):
-            if settings['auth'].has_key('protocol'):
-                protocols = settings['auth']['protocol']
-    return protocols
-
 def get_user(request):
     userid = authenticated_userid(request)
     return request.db.users.find_one(dict(identifier=userid))

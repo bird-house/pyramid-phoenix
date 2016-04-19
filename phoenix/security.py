@@ -26,6 +26,16 @@ def generate_access_token(request, userid):
             int(access_token['expires_at'])).strftime(format="%Y-%m-%d %H:%M:%S UTC")
     request.db.users.update({'identifier':userid}, user)
 
+def auth_protocols(request):
+    # TODO: refactor auth settings handling
+    settings = request.db.settings.find_one()
+    protocols = ['phoenix', 'esgf', 'openid', 'ldap', 'oauth2']
+    if settings is not None:
+        if settings.has_key('auth'):
+            if settings['auth'].has_key('protocol'):
+                protocols = settings['auth']['protocol']
+    return protocols
+
 def passwd_check(request, passphrase):
     """
     code taken from IPython.lib.security

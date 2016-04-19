@@ -3,6 +3,7 @@ import tempfile
 import deform
 
 from pyramid.security import authenticated_userid
+from phoenix.security import auth_protocols
 
 import logging
 logger = logging.getLogger(__name__)
@@ -63,8 +64,7 @@ def combine_chunks(total_parts, source_folder, dest):
 def button(request):
     """If the user is logged in, returns the logout button, otherwise returns the login button"""
     import markupsafe
-    from pyramid.security import authenticated_userid
-    from phoenix.models import auth_protocols
+    
     if not authenticated_userid(request):
         protocols = auth_protocols(request)
         if len(protocols) > 0:
