@@ -1,5 +1,7 @@
 import os
 import tempfile
+from dateutil import parser as datetime_parser
+
 import deform
 
 from pyramid.security import authenticated_userid
@@ -86,6 +88,17 @@ def localize_datetime(dt, tz_name='UTC'):
     timezone = pytz.timezone(tz_name)
     tz_aware_dt = aware.astimezone(timezone)
     return tz_aware_dt
+
+def user_cert_valid(request, valid_hours=6):
+    cert_expires = get_user(request).get('cert_expires')
+    if cert_expires != None:
+        timestamp = datetime_parser.parse(cert_expires)
+        now = localize_datetime(datetime.utcnow())
+        valid_hours = timedelta(hours=valid_hours)
+        # cert must be valid for some hours
+        if timestamp > now + valid_hours:
+            return True
+    return False
 
 def is_url(url):
     """Check wheather given text is url or not
