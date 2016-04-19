@@ -43,17 +43,21 @@ def includeme(config):
         # add malleefowl wps
         def add_wps(event):
             request = event.request
-            settings = request.registry.settings
+            settings = event.request.registry.settings
             if settings.get('wps') is None:
                 try:
                     service_name = 'malleefowl'
                     registry = service_registry_factory(request.registry)
                     logger.debug("register: name=%s, url=%s", service_name, settings['wps.url'])
                     registry.register_service(name=service_name, url=settings['wps.url'])
-                    settings['wps'] = WebProcessingService(url=proxy_url(request, service_name))
-                    #settings['wps'] = WebProcessingService(url=settings['wps.url'])
+                    # TODO: we need to register wps when proxy service is up
+                    #settings['wps'] = WebProcessingService(url=proxy_url(request, service_name))
+                    settings['wps'] = WebProcessingService(url=settings['wps.url'])
+                    logger.debug("init wps")
                 except:
                     logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
+            else:
+                logger.debug("wps already initialized")
             event.request.wps = settings.get('wps')
         config.add_subscriber(add_wps, NewRequest)
         

@@ -68,6 +68,10 @@ def main(global_config, **settings):
         event.request.db = settings.get('db')
     config.add_subscriber(add_mongodb, NewRequest)
 
+    # twitcher
+    config.include('twitcher.owsproxy')
+    config.include('twitcher.tweens')
+
     # routes 
     config.add_route('home', '/')
     config.add_route('download', 'download/{filename:.*}')
@@ -102,10 +106,6 @@ def main(global_config, **settings):
     
     # wizard
     config.include('phoenix.wizard')
-
-    # twitcher
-    config.include('twitcher.owsproxy')
-    config.include('twitcher.tweens')
 
     # readthedocs
     config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/en/latest/{part}.html')
@@ -171,8 +171,11 @@ def main(global_config, **settings):
                 try:
                     from owslib.csw import CatalogueServiceWeb
                     settings['csw'] = CatalogueServiceWeb(url=settings['csw.url'])
+                    logger.debug("init csw")
                 except:
                     logger.exception('Could not connect catalog service %s', settings['csw.url'])
+            else:
+                logger.debug("csw already initialized")
             event.request.csw = settings.get('csw')
         config.add_subscriber(add_csw, NewRequest)
     
