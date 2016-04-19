@@ -18,6 +18,30 @@ from phoenix.security import generate_access_token
 import logging
 logger = logging.getLogger(__name__)
 
+def add_user(
+    request,
+    login_id,
+    email='',
+    openid='',
+    name='unknown',
+    organisation='',
+    notes='',
+    group=Guest):
+    user=dict(
+        identifier =  str(uuid.uuid1()),
+        login_id = login_id,
+        email = email,
+        openid = openid,
+        name = name,
+        organisation = organisation,
+        notes = notes,
+        group = group,
+        creation_time = datetime.now(),
+        last_login = datetime.now())
+    request.db.users.save(user)
+    return request.db.users.find_one({'identifier':user['identifier']})
+
+
 class PhoenixSchema(colander.MappingSchema):
     password = colander.SchemaNode(
         colander.String(),
@@ -167,7 +191,6 @@ class Account(MyView):
             logger.warn("Can't send notification. No admin emails are available.")
 
     def login_success(self, login_id, email='', name="Unknown", openid=None, local=False):
-        from phoenix.models import add_user
         user = self.request.db.users.find_one(dict(login_id=login_id))
         if user is None:
             logger.warn("new user: %s", login_id)
