@@ -11,7 +11,7 @@ from pyramid.events import subscriber, BeforeRender
 
 from pyramid_storage.exceptions import FileNotAllowed
 
-from phoenix.models import get_user
+from phoenix.utils import get_user
 from phoenix.utils import save_upload, save_chunk, combine_chunks
 
 import logging

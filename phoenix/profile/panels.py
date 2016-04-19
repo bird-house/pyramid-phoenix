@@ -1,9 +1,11 @@
 from pyramid_layout.panel import panel_config
 from pyramid.security import authenticated_userid
+
 from deform import Form, ValidationFailure
 import colander
 import deform
-from phoenix.models import get_user
+
+from phoenix.utils import get_user
 
 import logging
 logger = logging.getLogger(__name__)

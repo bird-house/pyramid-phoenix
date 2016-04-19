@@ -89,6 +89,10 @@ def localize_datetime(dt, tz_name='UTC'):
     tz_aware_dt = aware.astimezone(timezone)
     return tz_aware_dt
 
+def get_user(request):
+    userid = authenticated_userid(request)
+    return request.db.users.find_one(dict(identifier=userid))
+
 def user_cert_valid(request, valid_hours=6):
     cert_expires = get_user(request).get('cert_expires')
     if cert_expires != None:

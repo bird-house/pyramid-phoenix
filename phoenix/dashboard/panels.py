@@ -1,5 +1,4 @@
 from pyramid_layout.panel import panel_config
-from phoenix import models
 
 import logging
 logger = logging.getLogger(__name__)
