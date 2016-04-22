@@ -26,3 +26,4 @@ python-dateutil
 pytz
 python-swiftclient
 bird-feeder
+birdhouse-twitcher

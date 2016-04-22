@@ -156,6 +156,11 @@ In ``My Account`` you can change your user settings (user name, organisation, op
 
 .. image:: _images/myaccount.png
 
+You can also see your current `Twitcher access token <http://twitcher.readthedocs.org/en/latest/>`_ which you can use to access a registered WPS service directly.
+
+.. image:: _images/twitcher-token.png
+
+See the Twitcher :ref:`twitcher:tutorial` on how to use the token to access a WPS service.
 
 
 Settings (admins only)
@@ -198,6 +203,14 @@ Choose Authentication Protocol
 Open the ``Settings/Auth`` page. Here you can choose the different authentication protocols (OpenID, LDAP, ...) which users can use on the login page. ``Local Auth`` enables the local admin account whose password is set in ``custom.cfg`` in your Phoenix installation.
 
 .. image:: _images/settings_auth.png 
+
+
+GitHub Support
+~~~~~~~~~~~~~~
+
+You can use GitHub accounts to login to Phoenix. GitHub uses OAuth2. First you need to register your Phoenix application at `GitHub <https://github.com/settings/applications/new>`_. Then go to ``Settings/GitHub`` in your Phoenix application and enter the ``GitHub Consumer Key/Client ID`` and ``GitHub Consumer Secret/Client Secret``:
+
+.. image:: _images/settings_github.png 
 
 
 LDAP Support

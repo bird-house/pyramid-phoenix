@@ -1,8 +1,13 @@
 import os
 import tempfile
+from datetime import datetime
+from datetime import timedelta
+from dateutil import parser as datetime_parser
+
 import deform
 
 from pyramid.security import authenticated_userid
+from phoenix.security import auth_protocols
 
 import logging
 logger = logging.getLogger(__name__)
@@ -63,8 +68,7 @@ def combine_chunks(total_parts, source_folder, dest):
 def button(request):
     """If the user is logged in, returns the logout button, otherwise returns the login button"""
     import markupsafe
-    from pyramid.security import authenticated_userid
-    from phoenix.models import auth_protocols
+    
     if not authenticated_userid(request):
         protocols = auth_protocols(request)
         if len(protocols) > 0:
@@ -86,6 +90,21 @@ def localize_datetime(dt, tz_name='UTC'):
     timezone = pytz.timezone(tz_name)
     tz_aware_dt = aware.astimezone(timezone)
     return tz_aware_dt
+
+def get_user(request):
+    userid = authenticated_userid(request)
+    return request.db.users.find_one(dict(identifier=userid))
+
+def user_cert_valid(request, valid_hours=6):
+    cert_expires = get_user(request).get('cert_expires')
+    if cert_expires != None:
+        timestamp = datetime_parser.parse(cert_expires)
+        now = localize_datetime(datetime.utcnow())
+        valid_hours = timedelta(hours=valid_hours)
+        # cert must be valid for some hours
+        if timestamp > now + valid_hours:
+            return True
+    return False
 
 def is_url(url):
     """Check wheather given text is url or not

@@ -1,7 +1,7 @@
 from pyramid.view import view_config
 
 from phoenix.wizard.views import Wizard
-from phoenix.models import user_cert_valid
+from phoenix.utils import user_cert_valid
 
 import logging
 logger = logging.getLogger(__name__)

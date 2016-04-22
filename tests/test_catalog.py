@@ -4,7 +4,6 @@ from nose.plugins.attrib import attr
 
 import __init__ as base
 
-from phoenix import models
 
 # TODO: need request object to run these tests
 

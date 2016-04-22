@@ -1,14 +1,15 @@
 Changes
 *******
 
-0.4.6 (2015-10-dd)
+0.4.6 (2016-mm-dd)
+==================
+
+* using twitcher security proxy.
+
+0.4.5 (2016-04-22)
 ==================
 
 * updated mongodb: using non default port.
-
-0.4.5 (2015-07-30)
-==================
-
 * added solr search in wizard.
 * index thredds services to solr in settings.
 

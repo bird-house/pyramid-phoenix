@@ -38,7 +38,7 @@ class RegisterService(SettingsView):
     def __init__(self, request):
         super(RegisterService, self).__init__(
             request, name='register_service', title='Register New Service')
-
+       
     def breadcrumbs(self):
         breadcrumbs = super(RegisterService, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path('services'), title="Services"))

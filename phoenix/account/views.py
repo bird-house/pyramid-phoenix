@@ -1,4 +1,5 @@
-import datetime
+from datetime import datetime
+import uuid
 
 from pyramid.view import view_config, view_defaults, forbidden_view_config
 from pyramid.httpexceptions import HTTPFound, HTTPForbidden
@@ -12,10 +13,35 @@ from authomatic.adapters import WebObAdapter
 
 from phoenix.views import MyView
 from phoenix.security import Admin, Guest, authomatic, passwd_check
-from phoenix.models import auth_protocols
+from phoenix.security import auth_protocols
+from phoenix.security import generate_access_token
 
 import logging
 logger = logging.getLogger(__name__)
+
+def add_user(
+    request,
+    login_id,
+    email='',
+    openid='',
+    name='unknown',
+    organisation='',
+    notes='',
+    group=Guest):
+    user=dict(
+        identifier =  str(uuid.uuid1()),
+        login_id = login_id,
+        email = email,
+        openid = openid,
+        name = name,
+        organisation = organisation,
+        notes = notes,
+        group = group,
+        creation_time = datetime.now(),
+        last_login = datetime.now())
+    request.db.users.save(user)
+    return request.db.users.find_one({'identifier':user['identifier']})
+
 
 class PhoenixSchema(colander.MappingSchema):
     password = colander.SchemaNode(
@@ -166,7 +192,6 @@ class Account(MyView):
             logger.warn("Can't send notification. No admin emails are available.")
 
     def login_success(self, login_id, email='', name="Unknown", openid=None, local=False):
-        from phoenix.models import add_user
         user = self.request.db.users.find_one(dict(login_id=login_id))
         if user is None:
             logger.warn("new user: %s", login_id)
@@ -176,14 +201,16 @@ class Account(MyView):
             self.send_notification(email, subject, message)
         if local and login_id == 'phoenix@localhost':
             user['group'] = Admin
-        user['last_login'] = datetime.datetime.now()
+        user['last_login'] = datetime.now()
         if openid:
             user['openid'] = openid
         user['name'] = name
         self.userdb.update({'login_id':login_id}, user)
         self.session.flash("Welcome {0}.".format(name), queue='success')
         if user.get('group') == Guest:
-            self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any process.", queue='danger')
+            self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any process.", queue='info')
+        else:
+            generate_access_token(self.request, user['identifier'])
         headers = remember(self.request, user['identifier'])
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 

@@ -1,0 +1,19 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <span class="panel-title">
+      ${title}
+      <div class="pull-right">
+        <a class="btn btn-success btn-xs"
+           rel="tooltip"
+           data-toggle="tooltip"
+           title="Generate token"
+           href="${request.route_path('generate_twitcher_token')}">
+          Generate token
+        </a>
+      </div>
+    </span>
+  </div>
+  <div class="panel-body">
+    <tal:form replace="structure form">The form will render here</tal:form>
+  </div>
+</div>

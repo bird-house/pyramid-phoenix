@@ -4,6 +4,7 @@ from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.security import authenticated_userid
 from deform import Form, ValidationFailure
 
+from phoenix.security import generate_access_token
 from phoenix.views import MyView
 
 import logging
@@ -24,6 +25,11 @@ class Profile(MyView):
         self.request.session.flash("ESGF Certficate removed.", queue='info')
         return HTTPFound(location=self.request.route_path('profile', tab='esgf'))
 
+    @view_config(route_name='generate_twitcher_token')
+    def generate_twitcher_token(self):
+        generate_access_token(self.request, authenticated_userid(self.request))
+        return HTTPFound(location=self.request.route_path('profile', tab='twitcher'))
+
     @view_config(route_name='profile', renderer='templates/profile/profile.pt')
     def view(self):
         tab = self.request.matchdict.get('tab', 'account')
@@ -31,6 +37,8 @@ class Profile(MyView):
         lm = self.request.layout_manager
         if tab == 'account':
             lm.layout.add_heading('profile_account')
+        elif tab == 'twitcher':
+            lm.layout.add_heading('profile_twitcher')
         elif tab == 'esgf':
             lm.layout.add_heading('profile_esgf')
         elif tab == 'swift':

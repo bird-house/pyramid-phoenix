@@ -1,6 +1,8 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
+from twitcher.registry import service_registry_factory
+
 from phoenix.settings.views import SettingsView
 
 import logging
@@ -34,6 +36,10 @@ class Services(SettingsView):
             self.csw.getrecordbyid(id=[service_id])
             service=self.csw.records[service_id]
             self.csw.transaction(ttype='delete', typename='csw:Record', identifier=service_id )
+            # TODO: use events to unregister service
+            registry = service_registry_factory(self.request.registry)
+            # TODO: fix service name
+            registry.unregister_service(name=service.title.lower())
             self.session.flash('Removed Service %s.' % service.title, queue="info")
         except Exception,e:
             msg = "Could not remove service %s" % e
