@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import uuid
 
 from pyramid.view import view_config, view_defaults, forbidden_view_config
@@ -201,7 +201,7 @@ class Account(MyView):
             self.send_notification(email, subject, message)
         if local and login_id == 'phoenix@localhost':
             user['group'] = Admin
-        user['last_login'] = datetime.datetime.now()
+        user['last_login'] = datetime.now()
         if openid:
             user['openid'] = openid
         user['name'] = name
