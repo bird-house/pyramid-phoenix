@@ -160,7 +160,7 @@ You can also see your current `Twitcher access token <http://twitcher.readthedoc
 
 .. image:: _images/twitcher-token.png
 
-See the Twitcher :ref:twitcher:`tutorial` on how to use the token to access a WPS service.
+See the Twitcher :ref:`twitcher:tutorial` on how to use the token to access a WPS service.
 
 
 Settings (admins only)
