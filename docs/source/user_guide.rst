@@ -200,6 +200,14 @@ Open the ``Settings/Auth`` page. Here you can choose the different authenticatio
 .. image:: _images/settings_auth.png 
 
 
+GitHub Support
+~~~~~~~~~~~~~~
+
+You can use GitHub accounts to login to Phoenix. GitHub uses OAuth2. First you need to register your Phoenix application at `GitHub <https://github.com/settings/applications/new>`_. Then go to ``Settings/GitHub`` in your Phoenix application and enter the ``GitHub Consumer Key/Client ID`` and ``GitHub Consumer Secret/Client Secret``:
+
+.. image:: _images/settings_github.png 
+
+
 LDAP Support
 ~~~~~~~~~~~~
 
