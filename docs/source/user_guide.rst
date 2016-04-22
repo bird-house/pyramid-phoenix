@@ -156,6 +156,11 @@ In ``My Account`` you can change your user settings (user name, organisation, op
 
 .. image:: _images/myaccount.png
 
+You can also see your current `Twitcher access token <http://twitcher.readthedocs.org/en/latest/>`_ which you can use to access a registered WPS service directly.
+
+.. image:: _images/twitcher-token.png
+
+See the Twitcher :ref:twitcher:`tutorial` on how to use the token to access a WPS service.
 
 
 Settings (admins only)
