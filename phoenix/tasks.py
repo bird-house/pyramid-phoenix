@@ -65,7 +65,7 @@ def esgf_logon(self, userid, url, openid, password):
     inputs.append( ('password', password) )
     outputs = [('output',True),('expires',False)]
 
-    wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=True)
+    wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=True, verify=False)
     execution = wps.execute(identifier="esgf_logon", inputs=inputs, output=outputs)
     monitorExecution(execution)
     
@@ -93,8 +93,8 @@ def execute_workflow(self, userid, url, workflow):
     logger.debug('inputs=%s', inputs)
     outputs=[('output', True), ('logfile', True)]
     
-    wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=True)
-    worker_wps = WebProcessingService(url=workflow['worker']['url'], skip_caps=False)
+    wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=True, verify=False)
+    worker_wps = WebProcessingService(url=workflow['worker']['url'], skip_caps=False, verify=False)
     execution = wps.execute(identifier='workflow', inputs=inputs, output=outputs)
     
     job = add_job(db, userid,
@@ -141,7 +141,7 @@ def execute_process(self, userid, url, identifier, inputs, outputs, keywords=Non
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
 
-    wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=False)
+    wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=False, verify=False)
     execution = wps.execute(identifier, inputs=inputs, output=outputs)
     job = add_job(db, userid,
                   task_id = self.request.id,

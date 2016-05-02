@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class ProcessList(Processes):
     def __init__(self, request):
         self.wps_id = request.params.get('wps')
-        self.wps = WebProcessingService(url=wps_url(request, self.wps_id))
+        self.wps = WebProcessingService(url=wps_url(request, self.wps_id), verify=False)
         super(ProcessList, self).__init__(request, name='processes_list', title='')
         
     def breadcrumbs(self):

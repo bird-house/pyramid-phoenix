@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class ExecuteProcess(Processes):
     def __init__(self, request):
         self.wps_id = request.params.get('wps')
-        self.wps = WebProcessingService(url=wps_url(request, self.wps_id))
+        self.wps = WebProcessingService(url=wps_url(request, self.wps_id), verify=False)
         identifier = request.params.get('process')
         # TODO: need to fix owslib to handle special identifiers
         self.process = self.wps.describeprocess(identifier)
