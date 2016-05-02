@@ -6,7 +6,7 @@ from webhelpers2_grid import Grid
 import string # TODO replace by mako template
 from mako.template import Template
 from mako.lookup import TemplateLookup
-mylookup = TemplateLookup([join(dirname(__file__), "..", "templates", "grid")])
+mylookup = TemplateLookup([join(dirname(__file__), "templates", "grid")])
 
 import logging
 logger = logging.getLogger(__name__)
