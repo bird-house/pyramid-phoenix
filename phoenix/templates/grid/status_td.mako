@@ -6,9 +6,9 @@
    elif status == 'ProcessPaused':
      icon_class="fa fa-pause text-muted"
    elif status == 'ProcessStarted' or status == 'ProcessAccepted':
-     icon_class="fa fa-cog fa-spin text-muted"
+     icon_class="fa fa-gear fa-spin text-muted"
    else:
-     icon_class="fa fa-question-circle text-danger"
+     icon_class="fa fa-fw fa-clock-o pulse text-muted"
 %>
 <div>
   <i class="${icon_class}" data-toggle="tooltip" title="${status}"
