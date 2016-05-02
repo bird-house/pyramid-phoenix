@@ -19,8 +19,9 @@ class Jobs(SettingsView):
     @view_config(route_name='settings_monitor', renderer='../templates/settings/monitor.pt')
     def view(self):
         jobs = list(self.jobsdb.find().sort('created', -1))
-        
-        from phoenix.grid.jobs import JobsGrid
+
+        # TODO: use common monitor view
+        from phoenix.monitor.views.overview import JobsGrid
         grid = JobsGrid(self.request, jobs,
                 ['status', 'job', 'userid', 'duration', 'finished', 'progress'],
             )
