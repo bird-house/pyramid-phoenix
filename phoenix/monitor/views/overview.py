@@ -22,12 +22,15 @@ class Overview(Monitor):
 
     @view_config(route_name='monitor', renderer='../templates/monitor/overview.pt')
     def view(self):
+        page = int(self.request.params.get('page', '0'))
+        category = self.request.params.get('category')
+
         items = self.update_jobs()
 
         grid = JobsGrid(self.request, items,
                 ['status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
             )
-        return dict(grid=grid)
+        return dict(grid=grid, category=category, page=page)
 
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
