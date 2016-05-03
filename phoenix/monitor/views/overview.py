@@ -17,23 +17,27 @@ class Overview(Monitor):
         return breadcrumbs
 
     @view_config(renderer='json', route_name='update_myjobs')
-    def update_jobs(self, category='public'):
+    def update_jobs(self, category='public', status=None):
         search_filter =  { 'userid': authenticated_userid(self.request) }
         if category == 'private':
             search_filter['public'] = False
+        if status:
+            search_filter['status'] = status
+        logger.debug('search filter = %s', search_filter)
         return list(self.jobsdb.find(search_filter).sort('created', -1))
 
     @view_config(route_name='monitor', renderer='../templates/monitor/overview.pt')
     def view(self):
         page = int(self.request.params.get('page', '0'))
         category = self.request.params.get('category')
+        status = self.request.params.get('status')
 
-        items = self.update_jobs()
+        items = self.update_jobs(category, status)
 
         grid = JobsGrid(self.request, items,
                 ['status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
             )
-        return dict(grid=grid, category=category, selected_status='All', page=page, start=0, end=0, hits=0)
+        return dict(grid=grid, category=category, selected_status=status, page=page, start=0, end=0, hits=0)
 
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
