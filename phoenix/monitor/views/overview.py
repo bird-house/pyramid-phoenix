@@ -25,7 +25,7 @@ class Overview(Monitor):
         items = self.update_jobs()
 
         grid = JobsGrid(self.request, items,
-                ['status', 'job', 'process', 'service', 'duration', 'finished', 'progress'],
+                ['status', 'job', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
             )
         return dict(grid=grid)
 
@@ -39,6 +39,7 @@ class JobsGrid(MyGrid):
         self.column_formats['service'] = self.service_td
         self.column_formats['duration'] = self.duration_td
         self.column_formats['finished'] = self.finished_td
+        self.column_formats['public'] = self.public_td
         self.column_formats['progress'] = self.progress_td
         self.exclude_ordering = self.columns
 
@@ -73,6 +74,9 @@ class JobsGrid(MyGrid):
         
     def finished_td(self, col_num, i, item):
         return self.render_time_ago_td(item.get('finished'))
+
+    def public_td(self, col_num, i, item):
+        return self.render_td(renderer="public_td.mako", public=item.get('public', False))
 
     def progress_td(self, col_num, i, item):
         return self.render_progress_td(identifier=item.get('identifier'), progress = item.get('progress', 0))

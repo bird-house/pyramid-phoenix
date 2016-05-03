@@ -46,7 +46,8 @@ def add_job(db, userid, task_id, service, title, abstract, status_location, is_w
         abstract = abstract,
         status_location = status_location,
         created = datetime.now(),
-        is_complete = False)
+        is_complete = False,
+        is_public = False)
     db.jobs.save(job)
     return job
 
