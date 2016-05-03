@@ -17,8 +17,11 @@ class Overview(Monitor):
         return breadcrumbs
 
     @view_config(renderer='json', route_name='update_myjobs')
-    def update_jobs(self):
-        return list(self.jobsdb.find({'userid': authenticated_userid(self.request)}).sort('created', -1))
+    def update_jobs(self, category='public'):
+        search_filter =  { 'userid': authenticated_userid(self.request) }
+        if category == 'private':
+            search_filter['public'] = False
+        return list(self.jobsdb.find(search_filter).sort('created', -1))
 
     @view_config(route_name='monitor', renderer='../templates/monitor/overview.pt')
     def view(self):
