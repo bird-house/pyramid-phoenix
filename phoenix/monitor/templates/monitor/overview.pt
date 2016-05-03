@@ -26,6 +26,25 @@
           </div>
         </div>
 
+        <div class="clearfix">
+
+          <ul class="pagination pagination-sm pull-left">
+            <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
+              <a href="${request.route_path('monitor', _query=[('page', page-1)])}">
+                <strong><i class="fa fa-angle-left"></i></strong>
+              </a>
+            </li>
+          
+            <li class="next" tal:attributes="class 'next' if end < hits else 'next disabled'">
+              <a href="${request.route_path('monitor', _query=[('page', page+1)])}">
+                <strong><i class="fa fa-angle-right"></i></strong>
+              </a>
+            </li>
+          </ul>
+        
+          <h3 class="pull-right"> Showing ${start}-${end} of ${hits} </h3>
+        </div>
+
 
         <table class="table table-striped">
           <tal:rows replace="structure grid" />

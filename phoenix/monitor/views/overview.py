@@ -33,7 +33,7 @@ class Overview(Monitor):
         grid = JobsGrid(self.request, items,
                 ['status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
             )
-        return dict(grid=grid, category=category, page=page)
+        return dict(grid=grid, category=category, page=page, start=0, end=0, hits=0)
 
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
