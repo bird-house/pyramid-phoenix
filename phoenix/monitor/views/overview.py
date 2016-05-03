@@ -25,7 +25,7 @@ class Overview(Monitor):
         items = self.update_jobs()
 
         grid = JobsGrid(self.request, items,
-                ['status', 'job', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
+                ['status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
             )
         return dict(grid=grid)
 
