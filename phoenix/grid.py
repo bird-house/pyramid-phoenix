@@ -1,12 +1,11 @@
-from os.path import join, dirname
+import os.path
 
 from webhelpers2.html.builder import HTML
 from webhelpers2_grid import Grid
 
 import string # TODO replace by mako template
-from mako.template import Template
+#from mako.template import Template
 from mako.lookup import TemplateLookup
-mylookup = TemplateLookup([join(dirname(__file__), "templates", "grid")])
 
 import logging
 logger = logging.getLogger(__name__)
@@ -18,23 +17,24 @@ class MyGrid(Grid):
             kwargs['url'] = request.current_route_url
         super(MyGrid, self).__init__(*args, **kwargs)
         self.exclude_ordering = ['', 'preview', 'action', '_numbered']
+        self.lookup = TemplateLookup([os.path.join(os.path.dirname(__file__), 'templates', 'grid')])
         #self.user_tz = u'UTC'
 
     def render_td(self, renderer, **data):
-        mytemplate = mylookup.get_template(renderer + ".mako")
+        mytemplate = self.lookup.get_template(renderer)
         return HTML.td(HTML.literal(mytemplate.render(**data)))
 
     def render_button_td(self, url, title):
-        return self.render_td(renderer="button_td", url=url, title=title)
+        return self.render_td(renderer="button_td.mako", url=url, title=title)
 
     def render_label_td(self, label):
-        return self.render_td(renderer="label_td", label=label)
+        return self.render_td(renderer="label_td.mako", label=label)
 
     def render_title_td(self, title, abstract="", keywords=[], data=[], format=None, source="#"):
-        return self.render_td(renderer="title_td", title=title, abstract=abstract, keywords=keywords, data=data, format=format, source=source)
+        return self.render_td(renderer="title_td.mako", title=title, abstract=abstract, keywords=keywords, data=data, format=format, source=source)
 
     def render_status_td(self, item):
-        return self.render_td(renderer="status_td", status=item.get('status'), identifier=item.get('identifier'))
+        return self.render_td(renderer="status_td.mako", status=item.get('status'), identifier=item.get('identifier'))
 
     def render_time_ago_td(self, from_time):
         from phoenix.utils import time_ago_in_words
@@ -48,7 +48,7 @@ class MyGrid(Grid):
         return self.render_label_td(size)
 
     def render_flag_td(self, flag=False, tooltip=''):
-        return self.render_td(renderer="flag_td", flag=flag, tooltip=tooltip)
+        return self.render_td(renderer="flag_td.mako", flag=flag, tooltip=tooltip)
     
     def render_timestamp_td(self, timestamp):
         import datetime
@@ -85,13 +85,13 @@ class MyGrid(Grid):
             {'source': source, 'span_class': span_class, 'format': format} )))
 
     def render_progress_td(self, identifier, progress=0):
-        return self.render_td(renderer="progress_td", identifier=identifier, progress=progress)
+        return self.render_td(renderer="progress_td.mako", identifier=identifier, progress=progress)
 
     def render_preview_td(self, format, source):
-        return self.render_td(renderer="preview_td", format=format, source=source)
+        return self.render_td(renderer="preview_td.mako", format=format, source=source)
 
     def render_action_td(self, buttongroup=[]):
-        return self.render_td(renderer="action_td", buttongroup=buttongroup)
+        return self.render_td(renderer="action_td.mako", buttongroup=buttongroup)
 
     def generate_header_link(self, column_number, column, label_text):
         """Override of the ObjectGrid to customize the headers. This is

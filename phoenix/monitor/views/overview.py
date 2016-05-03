@@ -67,7 +67,7 @@ class JobsGrid(MyGrid):
         return self.render_label_td(item.get('service'))
 
     def duration_td(self, col_num, i, item):
-        return self.render_td(renderer="duration_td",
+        return self.render_td(renderer="duration_td.mako",
                               duration=item.get('duration', "???"),
                               identifier=item.get('identifier'))
         
