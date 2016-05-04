@@ -17,14 +17,24 @@ class Overview(Monitor):
         return breadcrumbs
 
     @view_config(renderer='json', route_name='update_myjobs')
-    def update_jobs(self, category='public', status=None):
-        search_filter =  { 'userid': authenticated_userid(self.request) }
-        if category == 'private':
-            search_filter['public'] = False
+    def update_jobs(self, page=0, limit=10, category=None, status=None):
+        search_filter =  {}
+        if category == 'public':
+            search_filter['is_public'] = True
+        elif category == 'private':
+            search_filter['is_public'] = False
+            search_filter['userid'] = authenticated_userid(self.request)
+        else:
+            search_filter['userid'] = authenticated_userid(self.request)
         if status:
             search_filter['status'] = status
         logger.debug('search filter = %s', search_filter)
-        return list(self.jobsdb.find(search_filter).sort('created', -1))
+        count = self.jobsdb.find(search_filter).count()
+        items = list(self.jobsdb.find(search_filter).skip(page*limit).limit(limit).sort('created', -1))
+        start = min((page * limit) + 1, count)
+        end = min((page + 1) * limit, count)
+        logger.debug("items %s", items)
+        return items, count, start, end
 
     @view_config(route_name='monitor', renderer='../templates/monitor/overview.pt')
     def view(self):
@@ -32,12 +42,12 @@ class Overview(Monitor):
         category = self.request.params.get('category')
         status = self.request.params.get('status')
 
-        items = self.update_jobs(category, status)
+        items, count, start, end = self.update_jobs(page=page, category=category, status=status)
 
         grid = JobsGrid(self.request, items,
-                ['status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
-            )
-        return dict(grid=grid, category=category, selected_status=status, page=page, start=0, end=0, hits=0)
+                    ['status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
+                    )
+        return dict(grid=grid, category=category, selected_status=status, page=page, start=start, end=end, count=count)
 
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
@@ -86,7 +96,7 @@ class JobsGrid(MyGrid):
         return self.render_time_ago_td(item.get('finished'))
 
     def public_td(self, col_num, i, item):
-        return self.render_td(renderer="public_td.mako", public=item.get('public', False))
+        return self.render_td(renderer="public_td.mako", public=item.get('is_public', False))
 
     def progress_td(self, col_num, i, item):
         return self.render_progress_td(identifier=item.get('identifier'), progress = item.get('progress', 0))

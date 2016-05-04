@@ -14,7 +14,7 @@
             <div class="btn-group">
               <a tal:attributes="class 'btn btn-default' if category else 'btn btn-default active'"
                  href="${request.route_path('monitor', _query=[('page', page)])}">
-                All</a>
+                My Jobs</a>
               <a tal:attributes="class 'btn btn-default active' if category=='public' else 'btn btn-default'"
                  href="${request.route_path('monitor', _query=[('category', 'public')])}">
                 Public</a>
@@ -49,14 +49,14 @@
               </a>
             </li>
           
-            <li class="next" tal:attributes="class 'next' if end < hits else 'next disabled'">
+            <li class="next" tal:attributes="class 'next' if end < count else 'next disabled'">
               <a href="${request.route_path('monitor', _query=[('page', page+1)])}">
                 <strong><i class="fa fa-angle-right"></i></strong>
               </a>
             </li>
           </ul>
         
-          <h3 class="pull-right"> Showing ${start}-${end} of ${hits} </h3>
+          <h3 class="pull-right"> Showing ${start}-${end} of ${count} </h3>
         </div>
 
 
