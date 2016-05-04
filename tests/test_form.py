@@ -14,12 +14,12 @@ def invalid_exc(func, *arg, **kw):
 class TestBBoxValidator(unittest.TestCase):
     def test_default(self):
         validator = BBoxValidator()
-        self.assertEqual(validator(None, "0,-90,180,90"), None)
+        self.assertEqual(validator(None, "-180,-90,180,90"), None)
 
     def test_minx(self):
         validator = BBoxValidator()
-        e = invalid_exc(validator, None, "-1,-90,180,90")
-        self.assertEqual(e.msg, 'MinX out of range [0, 180].')
+        e = invalid_exc(validator, None, "-181,-90,180,90")
+        self.assertEqual(e.msg, 'MinX out of range [-180, 180].')
 
     def test_miny(self):
         validator = BBoxValidator()
@@ -29,7 +29,7 @@ class TestBBoxValidator(unittest.TestCase):
     def test_maxx(self):
         validator = BBoxValidator()
         e = invalid_exc(validator, None, "0,-90,181,90")
-        self.assertEqual(e.msg, 'MaxX out of range [0, 180].')
+        self.assertEqual(e.msg, 'MaxX out of range [-180, 180].')
 
     def test_maxy(self):
         validator = BBoxValidator()
