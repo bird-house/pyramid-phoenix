@@ -57,4 +57,17 @@ $(function() {
     updateJobs();
   }, 3000); 
 
+
+  var selectStatus = function() {
+    default_location = '/monitor/';
+    var location = $('#status-select option:selected').val();
+    if (location){
+      window.location = location;
+    } else {
+      window.location = default_location;
+    }
+  };
+
+  $('#status-select').change( selectStatus );
+
 });
