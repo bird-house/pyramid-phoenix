@@ -8,7 +8,8 @@
 
     <div class="panel panel-default">
       <div class="panel-body">
-        
+        <form id="from-contents" method="post"
+              action="${request.route_path('monitor', _query=[('page', page)])}">
         <div class="form-group">
           <div class="btn-toolbar">
             <div class="btn-group">
@@ -24,7 +25,7 @@
             </div>
 
             <div class="col-md-2">
-              <label class="control-inline required">
+              <label class="control-label required">
                 <select id="status-select" class="form-control">
                   <option value="${request.route_path('monitor', _query=[('page', page)])}">All</option>
                   <optgroup>
@@ -33,8 +34,17 @@
                             tal:repeat="status ['ProcessQueued', 'ProcessPaused', 'ProcessSucceeded', 'ProcessFailed', 'ProcessStarted', 'ProcessAccepted']">${status}</option>
                   </optgroup>
                 </select>
-                Process Status:
+                Process Status
               </label>
+            </div>
+
+            <div class="btn-group" role="group" aria-label="...">
+              <button type="submit" class="btn btn-danger">Delete all</button>
+              <button type="submit" class="btn btn-danger">Delete</button>
+              <button type="submit" class="btn btn-primary">Select all</button>
+              <button type="submit" class="btn btn-primary">Unselect all</button>
+              <button type="submit" class="btn btn-info">Make Public</button>
+              <button type="submit" class="btn btn-info">Make Private</button>
             </div>
 
           </div>
@@ -63,7 +73,9 @@
         <table class="table table-striped">
           <tal:rows replace="structure grid" />
         </table>
+        </form>
       </div>
+     
     </div>
 
   </div>

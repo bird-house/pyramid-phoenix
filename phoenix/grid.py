@@ -24,6 +24,9 @@ class MyGrid(Grid):
         mytemplate = self.lookup.get_template(renderer)
         return HTML.td(HTML.literal(mytemplate.render(**data)))
 
+    def render_checkbox_td(self, name, title):
+        return self.render_td(renderer="checkbox_td.mako", name=name, title=title)
+
     def render_button_td(self, url, title):
         return self.render_td(renderer="button_td.mako", url=url, title=title)
 

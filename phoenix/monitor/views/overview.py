@@ -28,12 +28,10 @@ class Overview(Monitor):
             search_filter['userid'] = authenticated_userid(self.request)
         if status:
             search_filter['status'] = status
-        logger.debug('search filter = %s', search_filter)
         count = self.jobsdb.find(search_filter).count()
         items = list(self.jobsdb.find(search_filter).skip(page*limit).limit(limit).sort('created', -1))
         start = min((page * limit) + 1, count)
         end = min((page + 1) * limit, count)
-        logger.debug("items %s", items)
         return items, count, start, end
 
     @view_config(route_name='monitor', renderer='../templates/monitor/overview.pt')
@@ -42,16 +40,21 @@ class Overview(Monitor):
         category = self.request.params.get('category')
         status = self.request.params.get('status')
 
+        children = self.request.POST.getall('children')
+        logger.debug("children %s", children)
+        logger.debug("POST %s", self.request.POST)
+        
         items, count, start, end = self.update_jobs(page=page, category=category, status=status)
 
         grid = JobsGrid(self.request, items,
-                    ['status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
+                    ['select', 'status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
                     )
         return dict(grid=grid, category=category, selected_status=status, page=page, start=start, end=end, count=count)
 
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
+        self.column_formats['select'] = self.select_td
         self.column_formats['status'] = self.status_td
         self.column_formats['job'] = self.uuid_td
         self.column_formats['userid'] = self.userid_td
@@ -62,6 +65,9 @@ class JobsGrid(MyGrid):
         self.column_formats['public'] = self.public_td
         self.column_formats['progress'] = self.progress_td
         self.exclude_ordering = self.columns
+        
+    def select_td(self, col_num, i, item):
+        return self.render_checkbox_td(name=item.get('identifier'), title="Select item")
 
     def status_td(self, col_num, i, item):
         return self.render_status_td(item)
