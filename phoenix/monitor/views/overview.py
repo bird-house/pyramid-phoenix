@@ -25,7 +25,8 @@ class Overview(Monitor):
             search_filter['is_public'] = True
         elif category == 'private':
             search_filter['is_public'] = False
-            search_filter['userid'] = authenticated_userid(self.request)
+            if not self.request.has_permission('admin'):
+                search_filter['userid'] = authenticated_userid(self.request)
         elif category == 'all':
             pass
         else:
