@@ -61,7 +61,7 @@ class Overview(Monitor):
         grid = JobsGrid(self.request, items,
                     ['select', 'status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
                     )
-        return dict(grid=grid, category=category, selected_status=status, page=page, start=start, end=end, count=count,
+        return dict(grid=grid, category=category, status=status, page=page, start=start, end=end, count=count,
                     buttons=buttons)
 
 class JobsGrid(MyGrid):

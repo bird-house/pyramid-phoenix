@@ -9,33 +9,33 @@
     <div class="panel panel-default">
       <div class="panel-body">
         <form id="from-contents" method="post"
-              action="${request.route_path('monitor', _query=[('page', page)])}">
+              action="${request.route_path('monitor', _query=[('status', status)])}">
         <div class="form-group">
           <div class="btn-toolbar">
             <div class="btn-group">
               <a tal:attributes="class 'btn btn-default' if category else 'btn btn-default active'"
-                 href="${request.route_path('monitor', _query=[('page', page)])}">
+                 href="${request.route_path('monitor', _query=[('status', status)])}">
                 My Jobs</a>
               <a tal:attributes="class 'btn btn-default active' if category=='public' else 'btn btn-default'"
-                 href="${request.route_path('monitor', _query=[('category', 'public')])}">
+                 href="${request.route_path('monitor', _query=[('category', 'public'), ('status', status)])}">
                 Public</a>
               <a tal:attributes="class 'btn btn-default active' if category=='private' else 'btn btn-default'"
-                 href="${request.route_path('monitor', _query=[('category', 'private')])}">
+                 href="${request.route_path('monitor', _query=[('category', 'private'), ('status', status)])}">
                 Private</a>
               <a tal:condition="request.has_permission('admin')" 
                  tal:attributes="class 'btn btn-default active' if category=='all' else 'btn btn-default'"
-                 href="${request.route_path('monitor', _query=[('category', 'all')])}">
+                 href="${request.route_path('monitor', _query=[('category', 'all'), ('status', status)])}">
                 All</a>
             </div>
 
             <div class="col-md-2">
               <label class="control-label">
                 <select id="status-select" class="form-control">
-                  <option value="${request.route_path('monitor', _query=[('page', page)])}">All</option>
+                  <option value="${request.route_path('monitor', _query=[('category', category)])}">All</option>
                   <optgroup>
-                    <option value="${request.route_path('monitor', _query=[('status', status)])}"
-                            tal:attributes="selected True if status==selected_status else False"
-                            tal:repeat="status ['ProcessQueued', 'ProcessPaused', 'ProcessSucceeded', 'ProcessFailed', 'ProcessStarted', 'ProcessAccepted']">${status}</option>
+                    <option value="${request.route_path('monitor', _query=[('status', new_status), ('category', category)])}"
+                            tal:attributes="selected True if new_status==status else False"
+                            tal:repeat="new_status ['ProcessQueued', 'ProcessPaused', 'ProcessSucceeded', 'ProcessFailed', 'ProcessStarted', 'ProcessAccepted']">${new_status}</option>
                   </optgroup>
                 </select>
                 Process Status
@@ -55,13 +55,13 @@
 
           <ul class="pagination pagination-sm pull-left">
             <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
-              <a href="${request.route_path('monitor', _query=[('page', page-1)])}">
+              <a href="${request.route_path('monitor', _query=[('page', page-1), ('status', status), ('category', category)])}">
                 <strong><i class="fa fa-angle-left"></i></strong>
               </a>
             </li>
           
             <li class="next" tal:attributes="class 'next' if end < count else 'next disabled'">
-              <a href="${request.route_path('monitor', _query=[('page', page+1)])}">
+              <a href="${request.route_path('monitor', _query=[('page', page+1), ('status', status), ('category', category)])}">
                 <strong><i class="fa fa-angle-right"></i></strong>
               </a>
             </li>
