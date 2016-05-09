@@ -26,7 +26,6 @@ class NodeActions(object):
         """
         ids = self.session.pop('phoenix.selected-children')
         self.session.changed()
-        logger.debug('ids = %s', ids)
         return ids
 
     @view_config(route_name='delete_jobs')
@@ -36,9 +35,30 @@ class NodeActions(object):
         """
         ids = self._selected_children()
         if ids is not None:
-            for id in ids:
-                self.db.remove({'identifier': id})
+            self.db.delete_many({'identifier': {'$in': ids} })
             self.flash(u"Selected jobs were deleted.", 'info')
+        return HTTPFound(location=self.request.route_path('monitor'))
+
+    @view_config(route_name='make_public')
+    def make_public(self):
+        """
+        Make selected jobs public.
+        """
+        ids = self._selected_children()
+        if ids is not None:
+            self.db.update_many({'identifier':  {'$in': ids}}, {'$set': {'is_public': True}})
+            self.flash(u"Selected jobs were made public.", 'info')
+        return HTTPFound(location=self.request.route_path('monitor'))
+
+    @view_config(route_name='make_private')
+    def make_private(self):
+        """
+        Make selected jobs private.
+        """
+        ids = self._selected_children()
+        if ids is not None:
+            self.db.update_many({'identifier':  {'$in': ids}}, {'$set': {'is_public': False}})
+            self.flash(u"Selected jobs were made private.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
 
@@ -51,8 +71,10 @@ def monitor_buttons(context, request):
     :rtype: list
     """
     buttons = []
-    buttons.append(ActionButton('delete_jobs', title=(u'Delete'),
+    buttons.append(ActionButton('delete_jobs', title=u'Delete',
                                 css_class=u'btn btn-danger'))
+    buttons.append(ActionButton('make_public', title=u'Make Public'))
+    buttons.append(ActionButton('make_private', title=u'Make Private'))
     return [button for button in buttons if button.permitted(context, request)]
 
 def includeme(config):
@@ -63,3 +85,5 @@ def includeme(config):
     """
 
     config.add_route('delete_jobs', 'delete_jobs')
+    config.add_route('make_public', 'make_public')
+    config.add_route('make_private', 'make_private')
