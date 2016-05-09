@@ -69,7 +69,7 @@ class BBoxWidget(Widget):
 
     def serialize(self, field, cstruct, **kw):
         if cstruct is null:
-            minx = '0'
+            minx = '-180'
             miny = '-90'
             maxx = '180'
             maxy = '90'

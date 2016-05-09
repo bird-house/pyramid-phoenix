@@ -91,12 +91,12 @@ class BBoxValidator(object):
         except:
             raise colander.Invalid(node, "Could not parse BBox.")
         else:
-            if minx < 0 or minx > 180:
-                raise colander.Invalid(node, "MinX out of range [0, 180].")
+            if minx < -180 or minx > 180:
+                raise colander.Invalid(node, "MinX out of range [-180, 180].")
             if miny < -90 or miny > 90:
                 raise colander.Invalid(node, "MinY out of range [-90, 90].")
-            if maxx < 0 or maxx > 180:
-                raise colander.Invalid(node, "MaxX out of range [0, 180].")
+            if maxx < -180 or maxx > 180:
+                raise colander.Invalid(node, "MaxX out of range [-180, 180].")
             if maxy < -90 or maxy > 90:
                 raise colander.Invalid(node, "MaxY out of range [-90, 90].")
             if minx > maxx:
