@@ -29,7 +29,7 @@
             </div>
 
             <div class="col-md-2">
-              <label class="control-label required">
+              <label class="control-label">
                 <select id="status-select" class="form-control">
                   <option value="${request.route_path('monitor', _query=[('page', page)])}">All</option>
                   <optgroup>
@@ -41,14 +41,12 @@
                 Process Status
               </label>
             </div>
-
-            <div class="btn-group" role="group" aria-label="...">
-              <tal:button tal:repeat="button buttons">
-                <button name="${button.name}" type="submit" class="${button.css_class}">
-                  ${button.title}
-                </button>
-              </tal:button>
-            </div>
+            
+            <tal:button tal:repeat="button buttons">
+              <button name="${button.name}" type="submit" class="${button.css_class}">
+                ${button.title}
+              </button>
+            </tal:button>
 
           </div>
         </div>
