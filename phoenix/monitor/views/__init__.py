@@ -22,13 +22,6 @@ def notify_job_finished(event):
         logger.warn("job %s failed.", event.job.get('title'))
         event.session.flash("Job <b>{0}</b> failed.".format(event.job.get('title')), queue='danger')
 
-@view_config(route_name='remove_all_jobs', permission='admin', layout='default')
-def remove_all_jobs(request):
-    count = request.db.jobs.count()
-    request.db.jobs.drop()
-    request.session.flash("%d Jobs deleted." % count, queue='info')
-    return HTTPFound(location=request.route_path('monitor'))
-
 @view_defaults(permission='submit', layout='default')
 class Monitor(MyView):
     def __init__(self, request, name, title, description=None):

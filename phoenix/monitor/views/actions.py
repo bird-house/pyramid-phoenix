@@ -1,5 +1,6 @@
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
+from pyramid.security import has_permission
 
 from phoenix.utils import ActionButton
 
@@ -49,6 +50,13 @@ class NodeActions(object):
             self.flash(u"Selected jobs were deleted.", queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
+    @view_config(route_name='delete_all_jobs', permission='admin')
+    def delete_all_jobs(self):
+        count = self.db.count()
+        self.db.drop()
+        self.flash("%d Jobs deleted." % count, queue='info')
+        return HTTPFound(location=self.request.route_path('monitor'))
+
     @view_config(route_name='make_public')
     def make_public(self):
         """
@@ -81,6 +89,9 @@ def monitor_buttons(context, request):
     :rtype: list
     """
     buttons = []
+    if has_permission('admin', request.context, request):
+        buttons.append(ActionButton('delete_all_jobs', title=u'Delete all',
+                                    css_class=u'btn btn-danger'))
     buttons.append(ActionButton('delete_jobs', title=u'Delete',
                                 css_class=u'btn btn-danger'))
     buttons.append(ActionButton('make_public', title=u'Make Public'))
@@ -96,5 +107,6 @@ def includeme(config):
 
     config.add_route('delete_job', 'delete_job/{job_id}')
     config.add_route('delete_jobs', 'delete_jobs')
+    config.add_route('delete_all_jobs', 'delete_all_jobs')
     config.add_route('make_public', 'make_public')
     config.add_route('make_private', 'make_private')

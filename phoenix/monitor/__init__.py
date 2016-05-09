@@ -11,7 +11,6 @@ def includeme(config):
     config.add_route('monitor_details', '/monitor/details/{job_id}/{tab}')
 
     # actions
-    config.add_route('remove_all_jobs', '/monitor/remove_all')
     config.add_route('update_myjobs', '/monitor/update.json')
 
     config.include('phoenix.monitor.views.actions')
