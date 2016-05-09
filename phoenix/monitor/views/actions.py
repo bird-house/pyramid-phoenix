@@ -6,7 +6,7 @@ from phoenix.utils import ActionButton
 import logging
 logger = logging.getLogger(__name__)
 
-@view_defaults(permission='edit')
+@view_defaults(permission='submit')
 class NodeActions(object):
     """Actions related to job monitor."""
 
@@ -28,6 +28,16 @@ class NodeActions(object):
         self.session.changed()
         return ids
 
+    @view_config(route_name='delete_job')
+    def delete_job(self):
+        job_id = self.request.matchdict.get('job_id')
+        logger.debug("jobid: %s", job_id)
+        # TODO: check permission ... either admin or owner.
+        self.db.delete_one({'identifier': job_id})
+        self.flash("Job {0} deleted.".format(job_id), queue='info')
+        return HTTPFound(location=self.request.route_path('monitor'))
+
+
     @view_config(route_name='delete_jobs')
     def delete_jobs(self):
         """
@@ -36,7 +46,7 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.db.delete_many({'identifier': {'$in': ids} })
-            self.flash(u"Selected jobs were deleted.", 'info')
+            self.flash(u"Selected jobs were deleted.", queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     @view_config(route_name='make_public')
@@ -84,6 +94,7 @@ def includeme(config):
     :type config: :class:`pyramid.config.Configurator`
     """
 
+    config.add_route('delete_job', 'delete_job/{job_id}')
     config.add_route('delete_jobs', 'delete_jobs')
     config.add_route('make_public', 'make_public')
     config.add_route('make_private', 'make_private')

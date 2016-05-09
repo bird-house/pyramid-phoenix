@@ -29,15 +29,6 @@ def remove_all_jobs(request):
     request.session.flash("%d Jobs deleted." % count, queue='info')
     return HTTPFound(location=request.route_path('monitor'))
 
-@view_config(route_name='remove_job', permission='submit', layout='default')
-def remove_job(request):
-    job_id = request.matchdict.get('job_id')
-    logger.debug("jobid: %s", job_id)
-    # TODO: check permission ... either admin or owner.
-    request.db.jobs.remove({'identifier': job_id})
-    request.session.flash("Job {0} deleted.".format(job_id), queue='info')
-    return HTTPFound(location=request.route_path('monitor'))
-
 @view_defaults(permission='submit', layout='default')
 class Monitor(MyView):
     def __init__(self, request, name, title, description=None):

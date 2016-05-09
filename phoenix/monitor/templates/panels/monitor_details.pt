@@ -28,9 +28,9 @@
         <a class="btn btn-danger btn-xs"
            rel="tooltip"
            data-toggle="tooltip"
-           title="Remove Job"
-           href="${request.route_path('remove_job', job_id=job.get('identifier'))}">
-          Remove Job
+           title="Delete Job"
+           href="${request.route_path('delete_job', job_id=job.get('identifier'))}">
+          Delete Job
         </a>
       </div>
     </h3>
