@@ -1,5 +1,5 @@
 from pyramid_layout.panel import panel_config
-from pyramid.security import authenticated_userid, has_permission
+from pyramid.security import authenticated_userid
 
 from phoenix.utils import get_user
 
@@ -15,18 +15,18 @@ def navbar(context, request):
         return dict(name=name, url=url, active=active, icon=icon)
 
     items = []
-    if has_permission('edit', request.context, request):
+    if request.has_permission('edit'):
         items.append( nav_item('Processes', request.route_path('processes')) )
-    if has_permission('submit', request.context, request):
+    if request.has_permission('submit'):
         if request.wizard_activated:
             items.append( nav_item('Wizard', request.route_path('wizard')) )
         items.append( nav_item('Monitor', request.route_path('monitor')) )
         
     subitems = []
-    if has_permission('edit', request.context, request):
+    if request.has_permission('edit'):
         subitems.append( nav_item('Profile', request.route_path('profile', tab='account'), icon="fa fa-user") )
         subitems.append( nav_item('Dashboard', request.route_path('dashboard', tab='jobs'), icon='fa fa-dashboard') )
-    if has_permission('admin', request.context, request):
+    if request.has_permission('admin'):
         subitems.append( nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench") )
     
     login = 'login' in request.current_route_url()
