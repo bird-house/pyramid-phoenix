@@ -6,7 +6,9 @@ from dateutil import parser as datetime_parser
 
 import deform
 
+from pyramid.url import resource_url
 from pyramid.security import authenticated_userid
+
 from phoenix.security import auth_protocols
 
 import logging
@@ -14,6 +16,32 @@ logger = logging.getLogger(__name__)
 
 SIGNIN_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign in"><span class="fa fa-sign-in"></span></a>'
 SIGNOUT_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign out %s"><span class="fa fa-sign-out"></span></a>'
+
+# buttons
+# see kotti: https://github.com/Kotti/Kotti
+
+class ActionButton(object):
+    def __init__(self, name, title=None, no_children=False,
+                 css_class=u"btn btn-default"):
+        self.name = name
+        if title is None:
+            title = name.replace('-', ' ').replace('_', ' ').title()
+        self.title = title
+        self.no_children = no_children
+        self.css_class = css_class
+        
+    def url(self, context, request):
+        return '/' + self.name
+
+    def permitted(self, context, request):
+        return True
+
+    def __eq__(self, other):
+        return isinstance(other, ActionButton) and repr(self) == repr(other)
+
+    def __repr__(self):
+        return u'ActionButton({0}, {1})'.format(self.name, self.title)
+
 
 # upload helpers
 

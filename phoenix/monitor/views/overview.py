@@ -1,8 +1,10 @@
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.security import authenticated_userid
-from phoenix.monitor.views import Monitor
+
 from phoenix.grid import MyGrid
+from phoenix.monitor.views import Monitor
+from phoenix.monitor.views.actions import monitor_buttons
 
 import logging
 logger = logging.getLogger(__name__)
@@ -40,16 +42,24 @@ class Overview(Monitor):
         category = self.request.params.get('category')
         status = self.request.params.get('status')
 
-        children = self.request.POST.getall('children')
-        logger.debug("children %s", children)
         logger.debug("POST %s", self.request.POST)
+        buttons = monitor_buttons(self.context, self.request)
+        for button in buttons:
+            if button.name in self.request.POST:
+                children = self.request.POST.getall('children')
+                self.session['phoenix.selected-children'] = children
+                self.session.changed()
+                location = button.url(self.context, self.request)
+                logger.debug("button url = %s", location)
+                return HTTPFound(location, request=self.request)
         
         items, count, start, end = self.update_jobs(page=page, category=category, status=status)
 
         grid = JobsGrid(self.request, items,
                     ['select', 'status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
                     )
-        return dict(grid=grid, category=category, selected_status=status, page=page, start=start, end=end, count=count)
+        return dict(grid=grid, category=category, selected_status=status, page=page, start=start, end=end, count=count,
+                    buttons=buttons)
 
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):

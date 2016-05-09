@@ -21,6 +21,7 @@ class MyView(object):
     def __init__(self, request, name, title, description=None):
         self.request = request
         self.session = self.request.session
+        self.context = self.request.context
         self.name = name
         self.title = title
         self.description = description

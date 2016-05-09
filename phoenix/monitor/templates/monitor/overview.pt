@@ -39,12 +39,11 @@
             </div>
 
             <div class="btn-group" role="group" aria-label="...">
-              <button type="submit" class="btn btn-danger">Delete all</button>
-              <button type="submit" class="btn btn-danger">Delete</button>
-              <button type="submit" class="btn btn-primary">Select all</button>
-              <button type="submit" class="btn btn-primary">Unselect all</button>
-              <button type="submit" class="btn btn-info">Make Public</button>
-              <button type="submit" class="btn btn-info">Make Private</button>
+              <tal:button tal:repeat="button buttons">
+                <button name="${button.name}" type="submit" class="${button.css_class}">
+                  ${button.title}
+                </button>
+              </tal:button>
             </div>
 
           </div>
