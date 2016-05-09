@@ -22,6 +22,10 @@
               <a tal:attributes="class 'btn btn-default active' if category=='private' else 'btn btn-default'"
                  href="${request.route_path('monitor', _query=[('category', 'private')])}">
                 Private</a>
+              <a tal:condition="request.has_permission('admin')" 
+                 tal:attributes="class 'btn btn-default active' if category=='all' else 'btn btn-default'"
+                 href="${request.route_path('monitor', _query=[('category', 'all')])}">
+                All</a>
             </div>
 
             <div class="col-md-2">

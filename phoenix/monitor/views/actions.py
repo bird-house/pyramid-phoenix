@@ -1,6 +1,5 @@
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
-from pyramid.security import has_permission
 
 from phoenix.utils import ActionButton
 
@@ -89,7 +88,7 @@ def monitor_buttons(context, request):
     :rtype: list
     """
     buttons = []
-    if has_permission('admin', request.context, request):
+    if request.has_permission('admin'):
         buttons.append(ActionButton('delete_all_jobs', title=u'Delete all',
                                     css_class=u'btn btn-danger'))
     buttons.append(ActionButton('delete_jobs', title=u'Delete',
