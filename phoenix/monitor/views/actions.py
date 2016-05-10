@@ -82,7 +82,7 @@ class NodeActions(object):
 def monitor_buttons(context, request):
     """
     Build the action buttons for the monitor view based on the current
-    state and the persmissions of the user.
+    state and the permissions of the user.
 
     :result: List of ActionButtons.
     :rtype: list
@@ -92,10 +92,13 @@ def monitor_buttons(context, request):
         buttons.append(ActionButton('delete_all_jobs', title=u'Delete all',
                                     css_class=u'btn btn-danger'))
     buttons.append(ActionButton('delete_jobs', title=u'Delete',
-                                css_class=u'btn btn-danger'))
-    buttons.append(ActionButton('make_public', title=u'Make Public'))
-    buttons.append(ActionButton('make_private', title=u'Make Private'))
-    return [button for button in buttons if button.permitted(context, request)]
+                                css_class=u'btn btn-danger',
+                                disabled=not request.has_permission('submit')))
+    buttons.append(ActionButton('make_public', title=u'Make Public',
+                                disabled=not request.has_permission('submit')))
+    buttons.append(ActionButton('make_private', title=u'Make Private',
+                                disabled=not request.has_permission('submit')))
+    return buttons
 
 def includeme(config):
     """ Pyramid includeme hook.

@@ -22,13 +22,15 @@ SIGNOUT_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" ti
 
 class ActionButton(object):
     def __init__(self, name, title=None, no_children=False,
-                 css_class=u"btn btn-default"):
+                 disabled=False, css_class=u"btn btn-default"):
         self.name = name
         if title is None:
             title = name.replace('-', ' ').replace('_', ' ').title()
         self.title = title
         self.no_children = no_children
         self.css_class = css_class
+        if disabled:
+            self.css_class = self.css_class + " disabled"
         
     def url(self, context, request):
         return '/' + self.name
