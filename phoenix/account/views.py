@@ -210,7 +210,7 @@ class Account(MyView):
         if user.get('group') == Guest:
             self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any process.", queue='info')
         else:
-            generate_access_token(self.request, user['identifier'])
+            generate_access_token(self.request.registry, user['identifier'])
         headers = remember(self.request, user['identifier'])
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 

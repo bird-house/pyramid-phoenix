@@ -10,6 +10,7 @@ from datetime import datetime
 from birdfeeder import feed_from_thredds, clear
 
 from phoenix.db import mongodb
+from phoenix.security import generate_access_token
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -47,7 +48,8 @@ def add_job(db, userid, task_id, service, title, abstract, status_location, is_w
         status_location = status_location,
         created = datetime.now(),
         is_complete = False,
-        is_public = False)
+        is_public = False,
+        status = "ProcessQueued")
     db.jobs.save(job)
     return job
 
@@ -61,6 +63,10 @@ def secure_url(db, url, userid):
 def esgf_logon(self, userid, url, openid, password):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
+
+    # update access token
+    generate_access_token(registry, userid)
+    
     inputs = []
     inputs.append( ('openid', openid) )
     inputs.append( ('password', password) )
@@ -84,6 +90,9 @@ def esgf_logon(self, userid, url, openid, password):
 def execute_workflow(self, userid, url, workflow):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
+
+    # update access token
+    generate_access_token(registry, userid)
 
     # generate and run dispel workflow
     # TODO: fix owslib wps for unicode/yaml parameters
@@ -141,6 +150,9 @@ def execute_workflow(self, userid, url, workflow):
 def execute_process(self, userid, url, identifier, inputs, outputs, keywords=None):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
+
+    # update access token
+    generate_access_token(registry, userid)
 
     wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=False, verify=False)
     execution = wps.execute(identifier, inputs=inputs, output=outputs)

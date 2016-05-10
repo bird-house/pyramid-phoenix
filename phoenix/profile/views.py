@@ -15,7 +15,7 @@ class Profile(MyView):
     def __init__(self, request):
         super(Profile, self).__init__(request, name='profile', title='')
 
-    @view_config(route_name='forget_esgf_certs')
+    @view_config(route_name='forget_esgf_certs', permission='submit')
     def forget_esgf_certs(self):
         userid = authenticated_userid(self.request)
         user = self.request.db.users.find_one({'identifier':userid})
@@ -25,9 +25,9 @@ class Profile(MyView):
         self.request.session.flash("ESGF Certficate removed.", queue='info')
         return HTTPFound(location=self.request.route_path('profile', tab='esgf'))
 
-    @view_config(route_name='generate_twitcher_token')
+    @view_config(route_name='generate_twitcher_token', permission='submit')
     def generate_twitcher_token(self):
-        generate_access_token(self.request, authenticated_userid(self.request))
+        generate_access_token(self.request.registry, authenticated_userid(self.request))
         return HTTPFound(location=self.request.route_path('profile', tab='twitcher'))
 
     @view_config(route_name='profile', renderer='templates/profile/profile.pt')
