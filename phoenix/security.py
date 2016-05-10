@@ -6,6 +6,8 @@ from pyramid.security import authenticated_userid
 from twitcher.tokens import tokengenerator_factory
 from twitcher.tokens import tokenstore_factory
 
+from phoenix.db import mongodb
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -13,18 +15,19 @@ Admin = 'group.admin'
 User = 'group.user'
 Guest = 'group.guest'
 
-def generate_access_token(request, userid):
-    user = request.db.users.find_one({'identifier':userid})
+def generate_access_token(registry, userid):
+    db = mongodb(registry)
 
-    tokengenerator = tokengenerator_factory(request.registry)
+    tokengenerator = tokengenerator_factory(registry)
     access_token = tokengenerator.create_access_token(valid_in_hours=8, user_environ={})
-    tokenstore = tokenstore_factory(request.registry)
+    tokenstore = tokenstore_factory(registry)
     tokenstore.save_token(access_token)
         
-    user['twitcher_token'] = access_token['token']
-    user['twitcher_token_expires'] = datetime.utcfromtimestamp(
-            int(access_token['expires_at'])).strftime(format="%Y-%m-%d %H:%M:%S UTC")
-    request.db.users.update({'identifier':userid}, user)
+    token = access_token['token']
+    expires = datetime.utcfromtimestamp(
+        int(access_token['expires_at'])).strftime(format="%Y-%m-%d %H:%M:%S UTC")
+    db.users.update_one({'identifier':userid}, {'$set': {'twitcher_token': token,
+                                                         'twitcher_token_expires': expires}})
 
 def auth_protocols(request):
     # TODO: refactor auth settings handling

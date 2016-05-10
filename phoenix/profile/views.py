@@ -27,7 +27,7 @@ class Profile(MyView):
 
     @view_config(route_name='generate_twitcher_token', permission='submit')
     def generate_twitcher_token(self):
-        generate_access_token(self.request, authenticated_userid(self.request))
+        generate_access_token(self.request.registry, authenticated_userid(self.request))
         return HTTPFound(location=self.request.route_path('profile', tab='twitcher'))
 
     @view_config(route_name='profile', renderer='templates/profile/profile.pt')
