@@ -1,9 +1,12 @@
 Changes
 *******
 
-0.4.6 (2016-mm-dd)
+0.4.6 (2016-05-10)
 ==================
 
+* added public access for jobs.
+* enabled guest account.
+* added filter and pagination in monitor view.
 * using twitcher security proxy.
 
 0.4.5 (2016-04-22)
