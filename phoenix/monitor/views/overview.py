@@ -35,13 +35,12 @@ class Overview(Monitor):
             search_filter['status'] = status
         count = self.jobsdb.find(search_filter).count()
         items = list(self.jobsdb.find(search_filter).skip(page*limit).limit(limit).sort('created', -1))
-        start = min((page * limit) + 1, count)
-        end = min((page + 1) * limit, count)
-        return items, count, start, end
+        return items, count
 
     @view_config(route_name='monitor', renderer='../templates/monitor/overview.pt')
     def view(self):
         page = int(self.request.params.get('page', '0'))
+        limit = int(self.request.params.get('limit', '10'))
         access = self.request.params.get('access')
         status = self.request.params.get('status')
 
@@ -55,12 +54,12 @@ class Overview(Monitor):
                 logger.debug("button url = %s", location)
                 return HTTPFound(location, request=self.request)
         
-        items, count, start, end = self.update_jobs(page=page, access=access, status=status)
+        items, count = self.update_jobs(page=page, limit=limit, access=access, status=status)
 
         grid = JobsGrid(self.request, items,
                     ['select', 'status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
                     )
-        return dict(grid=grid, access=access, status=status, page=page, start=start, end=end, count=count,
+        return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count,
                     buttons=buttons)
 
 class JobsGrid(MyGrid):

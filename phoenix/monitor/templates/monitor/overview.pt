@@ -51,7 +51,8 @@
           </div>
         </div>
 
-        <div class="clearfix">
+        <div tal:define="offset min((page * limit) + 1, count); last min((page + 1) * limit, count)" 
+             class="clearfix">
 
           <ul class="pagination pagination-sm pull-left">
             <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
@@ -60,14 +61,14 @@
               </a>
             </li>
           
-            <li class="next" tal:attributes="class 'next' if end < count else 'next disabled'">
+            <li class="next" tal:attributes="class 'next' if last < count else 'next disabled'">
               <a href="${request.route_path('monitor', _query=[('page', page+1), ('status', status), ('access', access)])}">
                 <strong><i class="fa fa-angle-right"></i></strong>
               </a>
             </li>
           </ul>
-        
-          <h3 class="pull-right"> Showing ${start}-${end} of ${count} </h3>
+         
+          <h3 class="pull-right"> Showing ${offset}-${last} of ${count} </h3>
         </div>
 
 
