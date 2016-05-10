@@ -19,15 +19,14 @@ class Overview(Monitor):
         return breadcrumbs
 
     @view_config(renderer='json', route_name='update_myjobs')
-    def update_jobs(self, page=0, limit=10, access='all', status=None):
+    def update_jobs(self, page=0, limit=10, access=None, status=None):
         search_filter =  {}
         if access == 'public':
             search_filter['access'] = 'public'
         elif access == 'private':
             search_filter['access'] = 'private'
-            if not self.request.has_permission('admin'):
-                search_filter['userid'] = authenticated_userid(self.request)
-        elif access == 'all':
+            search_filter['userid'] = authenticated_userid(self.request)
+        elif access == 'all' and self.request.has_permission('admin'):
             pass
         else:
             search_filter['userid'] = authenticated_userid(self.request)
