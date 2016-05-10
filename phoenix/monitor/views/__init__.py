@@ -22,7 +22,7 @@ def notify_job_finished(event):
         logger.warn("job %s failed.", event.job.get('title'))
         event.session.flash("Job <b>{0}</b> failed.".format(event.job.get('title')), queue='danger')
 
-@view_defaults(permission='submit', layout='default')
+@view_defaults(permission='edit', layout='default')
 class Monitor(MyView):
     def __init__(self, request, name, title, description=None):
         super(Monitor, self).__init__(request, name, title, description)

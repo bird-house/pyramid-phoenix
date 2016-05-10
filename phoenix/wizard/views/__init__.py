@@ -118,7 +118,7 @@ class WizardState(object):
         self.session['wizard'] = dict(state={}, chain=[self.initial_step])
         self.session.changed()
 
-@view_defaults(permission='submit', layout='default')
+@view_defaults(permission='edit', layout='default')
 class Wizard(MyView):
     def __init__(self, request, name, title, description=None):
         super(Wizard, self).__init__(request, name, title, description)
@@ -135,7 +135,7 @@ class Wizard(MyView):
         next_button = Button(name='next', title='Next',
                              disabled=next_disabled)
         done_button = Button(name='next', title='Done',
-                             disabled=next_disabled)
+                             disabled=next_disabled or not self.request.has_permission('submit'))
         cancel_button = Button(name='cancel', title='Cancel',
                                css_class='btn btn-danger',
                                disabled=False)

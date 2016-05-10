@@ -23,7 +23,7 @@ class ESGFSearch(Wizard):
         self.success(appstruct)
 
         # TODO: need to check pre conditions in wizard
-        if user_cert_valid(self.request):
+        if not self.request.has_permission('submit') or user_cert_valid(self.request) :
             return self.next('wizard_done')
         return self.next('wizard_esgf_login')
 
