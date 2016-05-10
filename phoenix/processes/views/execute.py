@@ -15,7 +15,7 @@ from owslib.wps import WebProcessingService
 import logging
 logger = logging.getLogger(__name__)
 
-@view_defaults(permission='submit', layout='default')
+@view_defaults(permission='edit', layout='default')
 class ExecuteProcess(Processes):
     def __init__(self, request):
         self.wps_id = request.params.get('wps')
@@ -37,9 +37,12 @@ class ExecuteProcess(Processes):
 
     def generate_form(self, formid='deform'):
         schema = WPSSchema(request=self.request, process=self.process, user=self.get_user())
+        submit_button = Button(name='submit', title='Execute',
+                               css_class='btn btn-default',
+                               disabled=not self.request.has_permission('submit'))
         return Form(
             schema,
-            buttons=('submit',),
+            buttons=(submit_button,),
             formid=formid,
             )
     
