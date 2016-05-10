@@ -117,18 +117,19 @@ class MyGrid(Grid):
                                                         column,
                                                         label_text)
     
-    def default_header_column_format(self, column_number, column_name,
-        header_label):
+    def default_header_column_format(self, column_number, column_name, header_label):
         """Override of the ObjectGrid to use <th> for header columns
         """
         if column_name == "_numbered":
             column_name = "numbered"
+
         if column_name in self.exclude_ordering:
             class_name = "c%s %s" % (column_number, column_name)
             return HTML.tag("th", header_label, class_=class_name)
         else:
             header_label = HTML(
                 header_label, HTML.tag("span", class_="marker"))
+            logger.debug("header label = %s", header_label)
             class_name = "c%s ordering %s" % (column_number, column_name)
             return HTML.tag("th", header_label, class_=class_name)
 

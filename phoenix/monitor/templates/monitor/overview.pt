@@ -56,18 +56,18 @@
 
           <ul class="pagination pagination-sm pull-left">
             <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
-              <a href="${request.route_path('monitor', _query=[('page', page-1), ('status', status), ('access', access)])}">
-                <strong><i class="fa fa-angle-left"></i></strong>
+              <a href="${request.route_path('monitor', _query=[('page', page-1), ('limit', limit), ('status', status), ('access', access)])}">
+                <strong><i class="fa fa-angle-double-left"></i></strong>
               </a>
             </li>
           
             <li class="next" tal:attributes="class 'next' if last < count else 'next disabled'">
-              <a href="${request.route_path('monitor', _query=[('page', page+1), ('status', status), ('access', access)])}">
-                <strong><i class="fa fa-angle-right"></i></strong>
+              <a href="${request.route_path('monitor', _query=[('page', page+1), ('limit', limit), ('status', status), ('access', access)])}">
+                <strong><i class="fa fa-angle-double-right"></i></strong>
               </a>
             </li>
           </ul>
-         
+    
           <h3 class="pull-right"> Showing ${offset}-${last} of ${count} </h3>
         </div>
 
