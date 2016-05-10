@@ -144,7 +144,7 @@ class ProcessOutputsGrid(MyGrid):
             abstract=item.get('abstract', ""))
 
     def value_td(self, col_num, i, item):
-        return self.render_td(renderer="value_td",
+        return self.render_td(renderer="value_td.mako",
                 data=item.get('data', []),
                 format=item.get('mime_type'),
                 source=item.get('reference'))
