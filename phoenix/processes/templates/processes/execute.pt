@@ -6,7 +6,12 @@
         <h2 class="panel-title">Description</h2>
       </div>
       <div class="panel-body">
-        ${description}
+         <div>
+           ${description}
+         </div>
+        <div>
+          <a class="label label-warning" href="${url}" target="_blank">XML</a>
+        </div>
       </div>
     </div>
 

@@ -26,6 +26,12 @@ def wps_caps_url(request, identifier):
     caps_url = "%s://%s%s?service=WPS&request=GetCapabilities" % (parsed.scheme, parsed.netloc, parsed.path)
     return caps_url
 
+def wps_describe_url(request, identifier, processid):
+    parsed = urlparse( wps_url(request, identifier) )
+    desc_url = "{0}://{1}{2}?service=WPS&version=1.0.0&request=DescribeProcess&identifier={3}".format(
+        parsed.scheme, parsed.netloc, parsed.path, processid)
+    return desc_url
+
 def get_wps_list(request):
     wps_query = PropertyIsEqualTo('dc:format', 'WPS')
     request.csw.getrecords2(esn="full", constraints=[wps_query], maxrecords=100)

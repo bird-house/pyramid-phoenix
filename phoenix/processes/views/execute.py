@@ -6,7 +6,7 @@ from deform import ValidationFailure
 
 from phoenix.events import JobStarted
 from phoenix.processes.views import Processes
-from phoenix.catalog import wps_url
+from phoenix.catalog import wps_url, wps_describe_url
 from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
 
@@ -20,9 +20,9 @@ class ExecuteProcess(Processes):
     def __init__(self, request):
         self.wps_id = request.params.get('wps')
         self.wps = WebProcessingService(url=wps_url(request, self.wps_id), verify=False)
-        identifier = request.params.get('process')
+        self.processid = request.params.get('process')
         # TODO: need to fix owslib to handle special identifiers
-        self.process = self.wps.describeprocess(identifier)
+        self.process = self.wps.describeprocess(self.processid)
         super(ExecuteProcess, self).__init__(request, name='processes_execute', title='')
 
     def breadcrumbs(self):
@@ -78,5 +78,6 @@ class ExecuteProcess(Processes):
             return self.process_form(form)
         return dict(
             description=getattr(self.process, 'abstract', ''),
+            url=wps_describe_url(self.request, self.wps_id, self.processid),
             form=form.render(self.appstruct()))
     
