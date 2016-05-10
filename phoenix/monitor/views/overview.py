@@ -19,15 +19,15 @@ class Overview(Monitor):
         return breadcrumbs
 
     @view_config(renderer='json', route_name='update_myjobs')
-    def update_jobs(self, page=0, limit=10, category=None, status=None):
+    def update_jobs(self, page=0, limit=10, access='all', status=None):
         search_filter =  {}
-        if category == 'public':
-            search_filter['is_public'] = True
-        elif category == 'private':
-            search_filter['is_public'] = False
+        if access == 'public':
+            search_filter['access'] = 'public'
+        elif access == 'private':
+            search_filter['access'] = 'private'
             if not self.request.has_permission('admin'):
                 search_filter['userid'] = authenticated_userid(self.request)
-        elif category == 'all':
+        elif access == 'all':
             pass
         else:
             search_filter['userid'] = authenticated_userid(self.request)
@@ -42,10 +42,9 @@ class Overview(Monitor):
     @view_config(route_name='monitor', renderer='../templates/monitor/overview.pt')
     def view(self):
         page = int(self.request.params.get('page', '0'))
-        category = self.request.params.get('category')
+        access = self.request.params.get('access')
         status = self.request.params.get('status')
 
-        logger.debug("POST %s", self.request.POST)
         buttons = monitor_buttons(self.context, self.request)
         for button in buttons:
             if button.name in self.request.POST:
@@ -56,12 +55,12 @@ class Overview(Monitor):
                 logger.debug("button url = %s", location)
                 return HTTPFound(location, request=self.request)
         
-        items, count, start, end = self.update_jobs(page=page, category=category, status=status)
+        items, count, start, end = self.update_jobs(page=page, access=access, status=status)
 
         grid = JobsGrid(self.request, items,
                     ['select', 'status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
                     )
-        return dict(grid=grid, category=category, status=status, page=page, start=start, end=end, count=count,
+        return dict(grid=grid, access=access, status=status, page=page, start=start, end=end, count=count,
                     buttons=buttons)
 
 class JobsGrid(MyGrid):
@@ -75,7 +74,7 @@ class JobsGrid(MyGrid):
         self.column_formats['service'] = self.service_td
         self.column_formats['duration'] = self.duration_td
         self.column_formats['finished'] = self.finished_td
-        self.column_formats['public'] = self.public_td
+        self.column_formats['public'] = self.access_td
         self.column_formats['progress'] = self.progress_td
         self.exclude_ordering = self.columns
         
@@ -114,8 +113,8 @@ class JobsGrid(MyGrid):
     def finished_td(self, col_num, i, item):
         return self.render_time_ago_td(item.get('finished'))
 
-    def public_td(self, col_num, i, item):
-        return self.render_td(renderer="public_td.mako", public=item.get('is_public', False))
+    def access_td(self, col_num, i, item):
+        return self.render_td(renderer="access_td.mako", access=item.get('access', 'private'))
 
     def progress_td(self, col_num, i, item):
         return self.render_progress_td(identifier=item.get('identifier'), progress = item.get('progress', 0))
