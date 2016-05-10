@@ -8,7 +8,7 @@ from pyramid.renderers import render, render_to_response
 from pyramid.security import remember, forget, authenticated_userid
 import colander
 import deform
-from deform import Form, ValidationFailure
+from deform import Form, Button, ValidationFailure
 from authomatic.adapters import WebObAdapter
 
 from phoenix.views import MyView
@@ -44,11 +44,14 @@ def add_user(
 
 
 class PhoenixSchema(colander.MappingSchema):
+    username = colander.SchemaNode(
+        colander.String(),
+        title='Username',
+        description='Guest? Use username "guest" and password "demo".')
     password = colander.SchemaNode(
         colander.String(),
         title = 'Password',
-        description = 'Enter the Phoenix Password',
-        validator = colander.Length(min=6),
+        validator = colander.Length(min=4),
         widget = deform.widget.PasswordWidget())
 
 class OAuthSchema(colander.MappingSchema):
@@ -131,7 +134,8 @@ class Account(MyView):
             schema = OAuthSchema()
         else:
             schema = LdapSchema()
-        form = Form(schema=schema, buttons=('submit',), formid='deform')
+        login_button = Button(name='submit', title='Log in')
+        form = Form(schema=schema, buttons=(login_button,), formid='deform')
         return form
 
     def process_form(self, form, protocol):
@@ -250,9 +254,12 @@ class Account(MyView):
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
     def phoenix_login(self, appstruct):
+        username = appstruct.get('username')
         password = appstruct.get('password')
-        if passwd_check(self.request, password):
+        if username=='admin' and passwd_check(self.request, password):
             return self.login_success(login_id="phoenix@localhost", name="Phoenix", local=True)
+        elif username=='guest' and password=='demo':
+            return self.login_success(login_id="guest@localhost", name="Guest", local=True)
         else:
             return self.login_failure()
 
