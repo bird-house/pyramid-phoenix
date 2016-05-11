@@ -51,26 +51,6 @@
             </div>
           </div>
           
-          <div tal:define="offset min((page * limit) + 1, count); last min((page + 1) * limit, count)" 
-               class="clearfix">
-
-            <ul class="pagination pagination-sm pull-left">
-              <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
-                <a href="${request.route_path('monitor', _query=[('page', page-1), ('limit', limit), ('status', status), ('access', access)])}">
-                  <strong><i class="fa fa-angle-double-left"></i></strong>
-                </a>
-              </li>
-          
-              <li class="next" tal:attributes="class 'next' if last < count else 'next disabled'">
-                <a href="${request.route_path('monitor', _query=[('page', page+1), ('limit', limit), ('status', status), ('access', access)])}">
-                  <strong><i class="fa fa-angle-double-right"></i></strong>
-                </a>
-              </li>
-            </ul>
-    
-            <h3 class="pull-right"> Showing ${offset}-${last} of ${count} </h3>
-          </div>
-
           <div class="panel panel-default">
             <div class="panel-body">
               <table class="table table-condensed table-striped table-hover">
@@ -78,6 +58,35 @@
               </table>
             </div>
           </div>
+
+
+          <div tal:define="offset min((page * limit) + 1, count); last min((page + 1) * limit, count)" 
+               class="clearfix">
+            
+            <nav>
+              <ul class="pager">
+                <li class="" tal:attributes="class '' if page > 0 else 'disabled'">
+                  <a href="${request.route_path('monitor', _query=[('page', page-1), ('limit', limit), ('status', status), ('access', access)])}">
+                    Previous
+                  </a>
+                </li>
+          
+                <li class="" tal:attributes="class '' if last < count else 'disabled'">
+                  <a href="${request.route_path('monitor', _query=[('page', page+1), ('limit', limit), ('status', status), ('access', access)])}">
+                    Next
+                  </a>
+                </li>
+                <li>
+                  <span class="pull-right"> Showing ${offset}-${last} of ${count} </span>
+                </li>
+              </ul>
+              
+             
+            </nav>
+            
+            
+          </div>
+
         </form>
       </div>
      
