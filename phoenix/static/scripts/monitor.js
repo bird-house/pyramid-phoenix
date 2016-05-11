@@ -53,9 +53,11 @@ $(function() {
   };
 
   // refresh job list each 5 secs ...
+  /* disabled timer
   timerId = setInterval(function() {
     updateJobs();
   }, 5000); 
+  */
 
 
   var selectStatus = function() {

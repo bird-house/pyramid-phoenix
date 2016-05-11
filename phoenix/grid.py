@@ -45,7 +45,8 @@ class MyGrid(Grid):
     def time_ago_td(self, attribute):
         def _column_format(column_number, i, record):
             from phoenix.utils import time_ago_in_words
-            return HTML.td(time_ago_in_words(record[attribute]))
+            timestamp = get_value(record, attribute)
+            return HTML.td(time_ago_in_words(timestamp))
         return _column_format
 
     def timestamp_td(self, attribute):

@@ -52,6 +52,20 @@
           </div>
           
           <div class="panel panel-default">
+            <div class="panel-heading">
+              <span class="panel-title">
+                Job List
+                <div class="btn-group pull-right">
+                  <a class="btn btn-success btn-xs"
+                     rel="tooltip"
+                     data-toggle="tooltip"
+                     title="Refresh job list"
+                     href="${request.route_path('monitor')}">
+                    <i class="fa fa-lg fa-refresh"></i>
+                  </a>
+                </div>
+              </span>
+            </div>
             <div class="panel-body">
               <table class="table table-condensed table-striped table-hover">
                 <tal:rows replace="structure grid" />
