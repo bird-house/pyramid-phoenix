@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 import colander
 import deform
+
 class Schema(colander.MappingSchema):
     url = colander.SchemaNode(
         colander.String(),
@@ -83,7 +84,7 @@ class Grid(MyGrid):
         super(Grid, self).__init__(request, *args, **kwargs)
         self.column_formats['name'] = self.name_td
         self.column_formats['size'] = self.size_td
-        self.column_formats['modified'] = self.modified_td
+        self.column_formats['modified'] = self.timestamp_td('modified')
         self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
 
@@ -100,9 +101,6 @@ class Grid(MyGrid):
     def size_td(self, col_num, i, item):
         return self.render_size_td(item.bytes)
     
-    def modified_td(self, col_num, i, item):
-        return self.render_timestamp_td(item.modified)
-
     def action_td(self, col_num, i, item):
         buttongroup = []
         return self.render_action_td(buttongroup)

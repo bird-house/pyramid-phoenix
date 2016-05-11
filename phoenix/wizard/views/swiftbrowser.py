@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 import colander
 from deform.widget import HiddenWidget
+
 class Schema(colander.MappingSchema):
     container = colander.SchemaNode(
         colander.String(),
@@ -114,7 +115,7 @@ class SwiftBrowserGrid(MyGrid):
         super(SwiftBrowserGrid, self).__init__(request, *args, **kwargs)
         self.container = container
         self.column_formats['name'] = self.name_td
-        self.column_formats['created'] = self.created_td
+        self.column_formats['created'] = self.timestamp_td('last_modified')
         self.column_formats['objects'] = self.label_td('count')
         self.column_formats['size'] = self.size_td
         self.column_formats[''] = self.action_td
@@ -137,9 +138,6 @@ class SwiftBrowserGrid(MyGrid):
         name = name.split('/')[-1]
         url = self.request.route_path('wizard_swiftbrowser', _query=query)
         return self.render_td(renderer="folder_element_td", url=url, name=name, content_type=content_type)
-
-    def created_td(self, col_num, i, item):
-        return self.render_timestamp_td(item.get('last_modified'))
 
     def size_td(self, col_num, i, item):
         size = None

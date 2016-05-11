@@ -107,16 +107,13 @@ class CatalogSearchGrid(MyGrid):
         self.column_formats['selected'] = self.selected_td
         self.column_formats['title'] = self.title_td
         self.column_formats['format'] = self.format_td
-        self.column_formats['modified'] = self.modified_td
+        self.column_formats['modified'] = self.timestamp_td('modified')
 
     def title_td(self, col_num, i, item):
         return self.render_title_td(item['title'], item['abstract'], item.get('subjects'))
 
     def format_td(self, col_num, i, item):
         return self.render_format_td(item['format'], item['source'])
-
-    def modified_td(self, col_num, i, item):
-        return self.render_timestamp_td(timestamp=item.get('modified'))
 
     def selected_td(self, col_num, i, item):
         from string import Template

@@ -11,6 +11,14 @@ from mako.lookup import TemplateLookup
 import logging
 logger = logging.getLogger(__name__)
 
+def get_value(record, attribute, default=None):
+    value = default
+    if isinstance(record, dict):
+        value = record.get(attribute, default)
+    elif hasattr(record, attribute):
+        value = getattr(record, attribute)
+    return value
+
 class MyGrid(Grid):
     def __init__(self, request, *args, **kwargs):
         self.request = request
@@ -40,6 +48,27 @@ class MyGrid(Grid):
             return HTML.td(time_ago_in_words(record[attribute]))
         return _column_format
 
+    def timestamp_td(self, attribute):
+        def _column_format(column_number, i, record):
+            import datetime
+
+            timestamp = get_value(record, attribute)
+            
+            if timestamp is None:            
+                return HTML.td('')
+            if type(timestamp) is not datetime.datetime:
+                from dateutil import parser as datetime_parser
+                timestamp = datetime_parser.parse(str(timestamp))
+            span_class = 'due-date badge'
+        
+            span = HTML.tag(
+                "span",
+                c=HTML.literal(timestamp.strftime('%Y-%m-%d %H:%M:%S')),
+                class_=span_class,
+            )
+            return HTML.td(span)
+        return _column_format
+
     def render_td(self, renderer, **data):
         mytemplate = self.lookup.get_template(renderer)
         return HTML.td(HTML.literal(mytemplate.render(**data)))
@@ -63,22 +92,6 @@ class MyGrid(Grid):
     def render_flag_td(self, flag=False, tooltip=''):
         return self.render_td(renderer="flag_td.mako", flag=flag, tooltip=tooltip)
     
-    def render_timestamp_td(self, timestamp):
-        import datetime
-        if timestamp is None:            
-            return HTML.td('')
-        if type(timestamp) is not datetime.datetime:
-            from dateutil import parser as datetime_parser
-            timestamp = datetime_parser.parse(str(timestamp))
-        span_class = 'due-date badge'
-        
-        span = HTML.tag(
-            "span",
-            c=HTML.literal(timestamp.strftime('%Y-%m-%d %H:%M:%S')),
-            class_=span_class,
-        )
-        return HTML.td(span)
-
     def render_format_td(self, format, source):
         span_class = 'label'
         if format is None:
