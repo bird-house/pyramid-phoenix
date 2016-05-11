@@ -28,6 +28,12 @@ class MyGrid(Grid):
     def checkbox_column_format(self, column_number, i, record):
         return HTML.td(checkbox(name="children", value=record.get('identifier'), title="Select item"))
 
+    def time_ago_td(self, attribute):
+        def _column_format(column_number, i, record):
+            from phoenix.utils import time_ago_in_words
+            return HTML.td(time_ago_in_words(record[attribute]))
+        return _column_format
+
     def render_td(self, renderer, **data):
         mytemplate = self.lookup.get_template(renderer)
         return HTML.td(HTML.literal(mytemplate.render(**data)))
@@ -43,10 +49,6 @@ class MyGrid(Grid):
 
     def render_status_td(self, item):
         return self.render_td(renderer="status_td.mako", status=item.get('status'), identifier=item.get('identifier'))
-
-    def render_time_ago_td(self, from_time):
-        from phoenix.utils import time_ago_in_words
-        return self.render_label_td(time_ago_in_words(from_time))
 
     def render_size_td(self, size_in_bytes):
         from webhelpers2.number import format_byte_size

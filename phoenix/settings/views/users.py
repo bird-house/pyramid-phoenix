@@ -41,15 +41,12 @@ class UsersGrid(MyGrid):
         super(UsersGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['userid'] = self.userid_td
         self.column_formats['group'] = self.group_td
-        self.column_formats['last_login'] = self.last_login_td
+        self.column_formats['last_login'] = self.time_ago_td('last_login')
         self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
 
     def userid_td(self, col_num, i, item):
         return self.render_label_td(item.get('login_id'))
-
-    def last_login_td(self, col_num, i, item):
-        return self.render_time_ago_td(item.get('last_login'))
 
     def group_td(self, col_num, i, item):
         group = item.get('group')

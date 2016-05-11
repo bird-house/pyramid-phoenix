@@ -70,7 +70,7 @@ class JobsGrid(MyGrid):
         self.column_formats['process'] = self.process_td
         self.column_formats['service'] = self.service_td
         self.column_formats['duration'] = self.duration_td
-        self.column_formats['finished'] = self.finished_td
+        self.column_formats['finished'] = self.time_ago_td('finished')
         self.column_formats['public'] = self.access_td
         self.column_formats['progress'] = self.progress_td
         self.exclude_ordering = self.columns
@@ -104,9 +104,6 @@ class JobsGrid(MyGrid):
                               duration=item.get('duration', "???"),
                               identifier=item.get('identifier'))
         
-    def finished_td(self, col_num, i, item):
-        return self.render_time_ago_td(item.get('finished'))
-
     def access_td(self, col_num, i, item):
         return self.render_td(renderer="access_td.mako", access=item.get('access', 'private'))
 
