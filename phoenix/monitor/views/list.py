@@ -66,7 +66,7 @@ class JobsGrid(MyGrid):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['status'] = self.status_td
         self.column_formats['job'] = self.uuid_td
-        self.column_formats['userid'] = self.userid_td
+        self.column_formats['userid'] = self.userid_td('userid')
         self.column_formats['process'] = self.label_td('title')
         self.column_formats['duration'] = self.label_td('duration', '???')
         self.column_formats['finished'] = self.time_ago_td('finished')
@@ -82,17 +82,6 @@ class JobsGrid(MyGrid):
             url=self.request.route_path('monitor_details', tab='log', job_id=item.get('identifier')),
             title=item.get('identifier'))
     
-    def userid_td(self, col_num, i, item):
-        from webhelpers2.html.builder import HTML
-        #TODO: avoid database access ... maybe store additional info at job
-        userid = item.get('userid')
-        provider_id = 'Unknown'
-        if userid:
-            user = self.request.db.users.find_one(dict(identifier=userid))
-            if user:
-                provider_id = user.get('login_id')
-        return HTML.td(provider_id)
-         
     def access_td(self, col_num, i, item):
         return self.render_td(renderer="access_td.mako", access=item.get('access', 'private'))
 

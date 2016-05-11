@@ -89,6 +89,18 @@ class MyGrid(Grid):
             progress = get_value(record, attribute, 0)
             return self.render_td(renderer="progress_td.mako", identifier=i, progress=progress)
         return _column_format
+
+    def userid_td(self, attribute):
+        def _column_format(column_number, i, record):
+            #TODO: avoid database access ... maybe store additional info at job
+            userid = get_value(record, attribute)
+            provider_id = 'Unknown'
+            if userid:
+                user = self.request.db.users.find_one(dict(identifier=userid))
+                if user:
+                    provider_id = user.get('login_id')
+            return HTML.td(provider_id)
+        return _column_format
     
     def render_button_td(self, url, title):
         return self.render_td(renderer="button_td.mako", url=url, title=title)
