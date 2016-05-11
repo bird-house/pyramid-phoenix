@@ -2,6 +2,7 @@ import os.path
 
 from webhelpers2.html.builder import HTML
 from webhelpers2.html.tags import checkbox
+from webhelpers2.number import format_byte_size
 from webhelpers2_grid import Grid
 
 import string # TODO replace by mako template
@@ -17,16 +18,20 @@ class MyGrid(Grid):
         if 'url' not in kwargs:
             kwargs['url'] = request.current_route_url
         super(MyGrid, self).__init__(*args, **kwargs)
-        self.exclude_ordering = ['', 'preview', 'action', '_numbered', '_checked']
+        self.exclude_ordering = ['', 'preview', 'action', '_numbered', '_checkbox']
+        if "_checkbox" in self.columns:
+            self.labels["_checkbox"] = ""
+        if "_checkbox" not in self.column_formats: 
+            self.column_formats["_checkbox"] = self.checkbox_column_format 
         self.lookup = TemplateLookup([os.path.join(os.path.dirname(__file__), 'templates', 'grid')])
         #self.user_tz = u'UTC'
+
+    def checkbox_column_format(self, column_number, i, record):
+        return HTML.td(checkbox(name="children", value=record.get('identifier'), title="Select item"))
 
     def render_td(self, renderer, **data):
         mytemplate = self.lookup.get_template(renderer)
         return HTML.td(HTML.literal(mytemplate.render(**data)))
-
-    def render_checkbox_td(self, value, title="Select item"):
-        return HTML.td(checkbox(name="children", value=value, title=title))
 
     def render_button_td(self, url, title):
         return self.render_td(renderer="button_td.mako", url=url, title=title)
@@ -45,7 +50,6 @@ class MyGrid(Grid):
         return self.render_label_td(time_ago_in_words(from_time))
 
     def render_size_td(self, size_in_bytes):
-        from webhelpers2.number import format_byte_size
         size = ''
         if size_in_bytes is not None:
             size = format_byte_size( size_in_bytes )
@@ -124,16 +128,14 @@ class MyGrid(Grid):
         if column_name == "_numbered":
             column_name = "numbered"
 
-        if column_name == "_checked":
+        if column_name == "_checkbox":
             header_label = checkbox(name="children", title="Select / deselect all", data_toggle="checkbox")
             return HTML.tag("th", header_label)
         elif column_name in self.exclude_ordering:
             class_name = "c%s %s" % (column_number, column_name)
             return HTML.tag("th", header_label, class_=class_name)
         else:
-            header_label = HTML(
-                header_label, HTML.tag("span", class_="marker"))
-            logger.debug("header label = %s", header_label)
+            header_label = HTML(header_label, HTML.tag("span", class_="marker"))
             class_name = "c%s ordering %s" % (column_number, column_name)
             return HTML.tag("th", header_label, class_=class_name)
 

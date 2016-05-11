@@ -56,7 +56,7 @@ class Overview(Monitor):
         items, count = self.update_jobs(page=page, limit=limit, access=access, status=status)
 
         grid = JobsGrid(self.request, items,
-                    ['_checked', 'status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
+                    ['_checkbox', 'status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
                     )
         return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count,
                     buttons=buttons)
@@ -64,7 +64,6 @@ class Overview(Monitor):
 class JobsGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats['_checked'] = self.checkbox_td
         self.column_formats['status'] = self.status_td
         self.column_formats['job'] = self.uuid_td
         self.column_formats['userid'] = self.userid_td
@@ -76,9 +75,6 @@ class JobsGrid(MyGrid):
         self.column_formats['progress'] = self.progress_td
         self.exclude_ordering = self.columns
         
-    def checkbox_td(self, col_num, i, item):
-        return self.render_checkbox_td(value=item.get('identifier'))
-
     def status_td(self, col_num, i, item):
         return self.render_status_td(item)
 
