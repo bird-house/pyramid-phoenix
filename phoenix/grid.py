@@ -58,7 +58,7 @@ class MyGrid(Grid):
         size = ''
         if size_in_bytes is not None:
             size = format_byte_size( size_in_bytes )
-        return self.render_label_td(size)
+        return HTML.td(size)
 
     def render_flag_td(self, flag=False, tooltip=''):
         return self.render_td(renderer="flag_td.mako", flag=flag, tooltip=tooltip)

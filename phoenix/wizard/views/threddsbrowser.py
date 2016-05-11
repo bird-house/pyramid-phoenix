@@ -95,13 +95,13 @@ class Grid(MyGrid):
         query.append( ('url', url) )
         query.append( ('prev', item.catalog.url) )
         url = self.request.route_path('wizard_threddsbrowser', _query=query)
-        return self.render_td(renderer="folder_element_td", url=url, name=item.name, content_type=item.content_type)
-
-    def modified_td(self, col_num, i, item):
-        return self.render_timestamp_td(item.modified)
+        return self.render_td(renderer="folder_element_td.mako", url=url, name=item.name, content_type=item.content_type)
 
     def size_td(self, col_num, i, item):
         return self.render_size_td(item.bytes)
+    
+    def modified_td(self, col_num, i, item):
+        return self.render_timestamp_td(item.modified)
 
     def action_td(self, col_num, i, item):
         buttongroup = []
