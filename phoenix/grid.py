@@ -36,6 +36,10 @@ class MyGrid(Grid):
     def checkbox_column_format(self, column_number, i, record):
         return HTML.td(checkbox(name="children", value=record.get('identifier'), title="Select item"))
 
+    def render_td(self, renderer, **data):
+        mytemplate = self.lookup.get_template(renderer)
+        return HTML.td(HTML.literal(mytemplate.render(**data)))
+
     def label_td(self, attribute, default=None):
         def _column_format(column_number, i, record):
             label = get_value(record, attribute, default)
@@ -80,10 +84,12 @@ class MyGrid(Grid):
             return HTML.td(size)
         return _column_format
 
-    def render_td(self, renderer, **data):
-        mytemplate = self.lookup.get_template(renderer)
-        return HTML.td(HTML.literal(mytemplate.render(**data)))
-
+    def progress_td(self, attribute):
+        def _column_format(column_number, i, record):
+            progress = get_value(record, attribute, 0)
+            return self.render_td(renderer="progress_td.mako", identifier=i, progress=progress)
+        return _column_format
+    
     def render_button_td(self, url, title):
         return self.render_td(renderer="button_td.mako", url=url, title=title)
 
@@ -113,9 +119,6 @@ class MyGrid(Grid):
         """)
         return HTML.td(HTML.literal(anchor.substitute(
             {'source': source, 'span_class': span_class, 'format': format} )))
-
-    def render_progress_td(self, identifier, progress=0):
-        return self.render_td(renderer="progress_td.mako", identifier=identifier, progress=progress)
 
     def render_preview_td(self, format, source):
         return self.render_td(renderer="preview_td.mako", format=format, source=source)

@@ -71,7 +71,7 @@ class JobsGrid(MyGrid):
         self.column_formats['duration'] = self.label_td('duration', '???')
         self.column_formats['finished'] = self.time_ago_td('finished')
         self.column_formats['public'] = self.access_td
-        self.column_formats['progress'] = self.progress_td
+        self.column_formats['progress'] = self.progress_td('progress')
         self.exclude_ordering = self.columns
         
     def status_td(self, col_num, i, item):
@@ -96,8 +96,6 @@ class JobsGrid(MyGrid):
     def access_td(self, col_num, i, item):
         return self.render_td(renderer="access_td.mako", access=item.get('access', 'private'))
 
-    def progress_td(self, col_num, i, item):
-        return self.render_progress_td(identifier=item.get('identifier'), progress = item.get('progress', 0))
         
 
 
