@@ -28,6 +28,12 @@ class MyGrid(Grid):
     def checkbox_column_format(self, column_number, i, record):
         return HTML.td(checkbox(name="children", value=record.get('identifier'), title="Select item"))
 
+    def label_td(self, attribute):
+        def _column_format(column_number, i, record):
+            class_name = "c%s" % (column_number)
+            return HTML.tag("td", record[attribute], class_=class_name)
+        return _column_format
+
     def time_ago_td(self, attribute):
         def _column_format(column_number, i, record):
             from phoenix.utils import time_ago_in_words
@@ -40,9 +46,6 @@ class MyGrid(Grid):
 
     def render_button_td(self, url, title):
         return self.render_td(renderer="button_td.mako", url=url, title=title)
-
-    def render_label_td(self, label):
-        return self.render_td(renderer="label_td.mako", label=label)
 
     def render_title_td(self, title, abstract="", keywords=[], data=[], format=None, source="#"):
         return self.render_td(renderer="title_td.mako", title=title, abstract=abstract, keywords=keywords, data=data, format=format, source=source)

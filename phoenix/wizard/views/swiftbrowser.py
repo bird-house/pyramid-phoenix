@@ -115,7 +115,7 @@ class SwiftBrowserGrid(MyGrid):
         self.container = container
         self.column_formats['name'] = self.name_td
         self.column_formats['created'] = self.created_td
-        self.column_formats['objects'] = self.objects_td
+        self.column_formats['objects'] = self.label_td('count')
         self.column_formats['size'] = self.size_td
         self.column_formats[''] = self.action_td
 
@@ -140,9 +140,6 @@ class SwiftBrowserGrid(MyGrid):
 
     def created_td(self, col_num, i, item):
         return self.render_timestamp_td(item.get('last_modified'))
-
-    def objects_td(self, col_num, i, item):
-        return self.render_label_td(item.get('count') )
 
     def size_td(self, col_num, i, item):
         size = None

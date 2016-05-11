@@ -49,20 +49,12 @@ class Grid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(Grid, self).__init__(request, *args, **kwargs)
         self.column_formats['state'] = self.state_td
-        self.column_formats['description'] = self.description_td
-        self.column_formats['name'] = self.name_td
         self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
 
     def state_td(self, col_num, i, item):
-        return self.render_td(renderer="supervisor_state_td", state=item.get('state'), statename=item.get('statename'))
+        return self.render_td(renderer="supervisor_state_td.mako", state=item.get('state'), statename=item.get('statename'))
         
-    def description_td(self, col_num, i, item):
-        return self.render_label_td(item.get('description'))
-    
-    def name_td(self, col_num, i, item):
-        return self.render_label_td(item.get('name'))
-
     def action_td(self, col_num, i, item):
         buttongroup = []
         if item.get('state') == 20:

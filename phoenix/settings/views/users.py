@@ -39,16 +39,14 @@ class Users(SettingsView):
 class UsersGrid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(UsersGrid, self).__init__(request, *args, **kwargs)
-        self.column_formats['userid'] = self.userid_td
+        self.column_formats['userid'] = self.label_td('login_id')
         self.column_formats['group'] = self.group_td
         self.column_formats['last_login'] = self.time_ago_td('last_login')
         self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
 
-    def userid_td(self, col_num, i, item):
-        return self.render_label_td(item.get('login_id'))
-
     def group_td(self, col_num, i, item):
+        from webhelpers2.html.builder import HTML
         group = item.get('group')
         label = "???"
         if group == Admin:
@@ -57,7 +55,7 @@ class UsersGrid(MyGrid):
             label = "User"
         elif group == Guest:
             label = "Guest"
-        return self.render_label_td(label)
+        return HTML.td(label)
 
     def action_td(self, col_num, i, item):
         buttongroup = []

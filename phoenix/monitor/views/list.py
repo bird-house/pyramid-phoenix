@@ -67,8 +67,7 @@ class JobsGrid(MyGrid):
         self.column_formats['status'] = self.status_td
         self.column_formats['job'] = self.uuid_td
         self.column_formats['userid'] = self.userid_td
-        self.column_formats['process'] = self.process_td
-        self.column_formats['service'] = self.service_td
+        self.column_formats['process'] = self.label_td('title')
         self.column_formats['duration'] = self.duration_td
         self.column_formats['finished'] = self.time_ago_td('finished')
         self.column_formats['public'] = self.access_td
@@ -84,6 +83,7 @@ class JobsGrid(MyGrid):
             title=item.get('identifier'))
     
     def userid_td(self, col_num, i, item):
+        from webhelpers2.html.builder import HTML
         #TODO: avoid database access ... maybe store additional info at job
         userid = item.get('userid')
         provider_id = 'Unknown'
@@ -91,14 +91,8 @@ class JobsGrid(MyGrid):
             user = self.request.db.users.find_one(dict(identifier=userid))
             if user:
                 provider_id = user.get('login_id')
-        return self.render_label_td(provider_id)
+        return HTML.td(provider_id)
     
-    def process_td(self, col_num, i, item):
-        return self.render_label_td(item.get('title'))
-
-    def service_td(self, col_num, i, item):
-        return self.render_label_td(item.get('service'))
-
     def duration_td(self, col_num, i, item):
         return self.render_td(renderer="duration_td.mako",
                               duration=item.get('duration', "???"),
