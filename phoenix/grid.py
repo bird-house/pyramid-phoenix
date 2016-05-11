@@ -36,10 +36,10 @@ class MyGrid(Grid):
     def checkbox_column_format(self, column_number, i, record):
         return HTML.td(checkbox(name="children", value=record.get('identifier'), title="Select item"))
 
-    def label_td(self, attribute):
+    def label_td(self, attribute, default=None):
         def _column_format(column_number, i, record):
-            class_name = "c%s" % (column_number)
-            return HTML.tag("td", record[attribute], class_=class_name)
+            label = get_value(record, attribute, default)
+            return HTML.td(label)
         return _column_format
 
     def time_ago_td(self, attribute):

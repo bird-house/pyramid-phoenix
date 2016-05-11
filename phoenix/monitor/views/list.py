@@ -68,7 +68,7 @@ class JobsGrid(MyGrid):
         self.column_formats['job'] = self.uuid_td
         self.column_formats['userid'] = self.userid_td
         self.column_formats['process'] = self.label_td('title')
-        self.column_formats['duration'] = self.duration_td
+        self.column_formats['duration'] = self.label_td('duration', '???')
         self.column_formats['finished'] = self.time_ago_td('finished')
         self.column_formats['public'] = self.access_td
         self.column_formats['progress'] = self.progress_td
@@ -92,12 +92,7 @@ class JobsGrid(MyGrid):
             if user:
                 provider_id = user.get('login_id')
         return HTML.td(provider_id)
-    
-    def duration_td(self, col_num, i, item):
-        return self.render_td(renderer="duration_td.mako",
-                              duration=item.get('duration', "???"),
-                              identifier=item.get('identifier'))
-        
+         
     def access_td(self, col_num, i, item):
         return self.render_td(renderer="access_td.mako", access=item.get('access', 'private'))
 
