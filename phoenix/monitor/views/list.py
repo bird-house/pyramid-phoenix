@@ -9,13 +9,13 @@ from phoenix.monitor.views.actions import monitor_buttons
 import logging
 logger = logging.getLogger(__name__)
 
-class Overview(Monitor):
+class JobList(Monitor):
     def __init__(self, request):
-        super(Overview, self).__init__(request, name='monitor', title='Overview')
-        self.jobsdb = self.request.db.jobs
+        super(JobList, self).__init__(request, name='monitor', title='Job List')
+        self.db = self.request.db.jobs
 
     def breadcrumbs(self):
-        breadcrumbs = super(Overview, self).breadcrumbs()
+        breadcrumbs = super(JobList, self).breadcrumbs()
         return breadcrumbs
 
     @view_config(renderer='json', route_name='update_myjobs')
@@ -32,11 +32,11 @@ class Overview(Monitor):
             search_filter['userid'] = authenticated_userid(self.request)
         if status:
             search_filter['status'] = status
-        count = self.jobsdb.find(search_filter).count()
-        items = list(self.jobsdb.find(search_filter).skip(page*limit).limit(limit).sort('created', -1))
+        count = self.db.find(search_filter).count()
+        items = list(self.db.find(search_filter).skip(page*limit).limit(limit).sort('created', -1))
         return items, count
 
-    @view_config(route_name='monitor', renderer='../templates/monitor/overview.pt')
+    @view_config(route_name='monitor', renderer='../templates/monitor/list.pt')
     def view(self):
         page = int(self.request.params.get('page', '0'))
         limit = int(self.request.params.get('limit', '10'))
