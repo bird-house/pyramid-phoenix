@@ -149,10 +149,8 @@ def build_url(url, query):
     return url + urllib.urlencode(query)
 
 def time_ago_in_words(from_time):
+    from webhelpers2.date import time_ago_in_words as _time_ago_in_words
     try:
-        from datetime import datetime
-        from webhelpers2 import date
-        logger.debug("from_time: %s, type=%s", from_time, type(from_time))
         delta = datetime.now() - from_time
         granularity='minute'
         if delta.days > 365:
@@ -163,7 +161,7 @@ def time_ago_in_words(from_time):
             granularity = 'day'
         elif delta.total_seconds() > 3600:
             granularity = 'hour'
-        time_ago = date.time_ago_in_words(from_time, granularity=granularity)
+        time_ago = _time_ago_in_words(from_time, granularity=granularity)
         time_ago = time_ago + " ago"
     except:
         time_ago = '???'

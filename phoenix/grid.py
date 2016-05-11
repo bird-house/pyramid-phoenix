@@ -2,7 +2,6 @@ import os.path
 
 from webhelpers2.html.builder import HTML
 from webhelpers2.html.tags import checkbox
-from webhelpers2.number import format_byte_size
 from webhelpers2_grid import Grid
 
 import string # TODO replace by mako template
@@ -50,6 +49,7 @@ class MyGrid(Grid):
         return self.render_label_td(time_ago_in_words(from_time))
 
     def render_size_td(self, size_in_bytes):
+        from webhelpers2.number import format_byte_size
         size = ''
         if size_in_bytes is not None:
             size = format_byte_size( size_in_bytes )
