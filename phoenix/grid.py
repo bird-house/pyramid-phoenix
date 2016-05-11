@@ -125,7 +125,7 @@ class MyGrid(Grid):
             column_name = "numbered"
 
         if column_name == "_checked":
-            header_label = checkbox(name="children", title="Select / deselect all", id="toggle-all")
+            header_label = checkbox(name="children", title="Select / deselect all", data_toggle="checkbox")
             return HTML.tag("th", header_label)
         elif column_name in self.exclude_ordering:
             class_name = "c%s %s" % (column_number, column_name)
