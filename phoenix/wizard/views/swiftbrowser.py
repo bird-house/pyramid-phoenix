@@ -140,10 +140,9 @@ class SwiftBrowserGrid(MyGrid):
         return self.render_td(renderer="folder_element_td", url=url, name=name, content_type=content_type)
 
     def size_td(self, col_num, i, item):
-        size = None
-        if not item.has_key('subdir'):
-            size = item.get('bytes')
-        return self.render_size_td(size)
+        if item.has_key('subdir'):
+            return HTML.td('')
+        return super(SwiftBrowserGrid, self).size_td('bytes')(col_num, i, item)
 
     def action_td(self, col_num, i, item):
         buttongroup = []

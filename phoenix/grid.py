@@ -69,6 +69,16 @@ class MyGrid(Grid):
             return HTML.td(span)
         return _column_format
 
+    def size_td(self, attribute):
+        def _column_format(column_number, i, record):
+            from webhelpers2.number import format_byte_size
+            size_in_bytes = get_value(record, attribute)
+            size = ''
+            if size_in_bytes is not None:
+                size = format_byte_size( size_in_bytes )
+            return HTML.td(size)
+        return _column_format
+
     def render_td(self, renderer, **data):
         mytemplate = self.lookup.get_template(renderer)
         return HTML.td(HTML.literal(mytemplate.render(**data)))
@@ -81,13 +91,6 @@ class MyGrid(Grid):
 
     def render_status_td(self, item):
         return self.render_td(renderer="status_td.mako", status=item.get('status'), identifier=item.get('identifier'))
-
-    def render_size_td(self, size_in_bytes):
-        from webhelpers2.number import format_byte_size
-        size = ''
-        if size_in_bytes is not None:
-            size = format_byte_size( size_in_bytes )
-        return HTML.td(size)
 
     def render_flag_td(self, flag=False, tooltip=''):
         return self.render_td(renderer="flag_td.mako", flag=flag, tooltip=tooltip)

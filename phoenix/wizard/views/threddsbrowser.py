@@ -83,7 +83,7 @@ class Grid(MyGrid):
     def __init__(self, request, *args, **kwargs):
         super(Grid, self).__init__(request, *args, **kwargs)
         self.column_formats['name'] = self.name_td
-        self.column_formats['size'] = self.size_td
+        self.column_formats['size'] = self.size_td('bytes')
         self.column_formats['modified'] = self.timestamp_td('modified')
         self.column_formats[''] = self.action_td
         self.exclude_ordering = self.columns
@@ -98,9 +98,6 @@ class Grid(MyGrid):
         url = self.request.route_path('wizard_threddsbrowser', _query=query)
         return self.render_td(renderer="folder_element_td.mako", url=url, name=item.name, content_type=item.content_type)
 
-    def size_td(self, col_num, i, item):
-        return self.render_size_td(item.bytes)
-    
     def action_td(self, col_num, i, item):
         buttongroup = []
         return self.render_action_td(buttongroup)
