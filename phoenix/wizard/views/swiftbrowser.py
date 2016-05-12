@@ -118,7 +118,6 @@ class SwiftBrowserGrid(CustomGrid):
         self.column_formats['created'] = self.timestamp_td('last_modified')
         self.column_formats['objects'] = self.label_td('count')
         self.column_formats['size'] = self.size_td
-        self.column_formats[''] = self.action_td
 
     def name_td(self, col_num, i, item):
         prefix = content_type = None
@@ -144,8 +143,5 @@ class SwiftBrowserGrid(CustomGrid):
             return HTML.td('')
         return super(SwiftBrowserGrid, self).size_td('bytes')(col_num, i, item)
 
-    def action_td(self, col_num, i, item):
-        buttongroup = []
-        return self.render_action_td(buttongroup)
 
     

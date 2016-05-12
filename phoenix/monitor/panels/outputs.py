@@ -130,7 +130,7 @@ class ProcessOutputsGrid(CustomGrid):
         self.column_formats['output'] = self.output_td
         self.column_formats['value'] = self.value_td
         #self.column_formats['preview'] = self.preview_td
-        self.column_formats[''] = self.action_td
+        self.column_formats[''] = self.buttongroup_td
         self.exclude_ordering = self.columns
 
         from string import Template
@@ -152,7 +152,7 @@ class ProcessOutputsGrid(CustomGrid):
     def preview_td(self, col_num, i, item):
         return self.render_preview_td(format=item.get('mime_type'), source=item.get('reference'))
 
-    def action_td(self, col_num, i, item):
+    def buttongroup_td(self, col_num, i, item):
         # TODO: dirty hack ...
         buttongroup = []
         if item.get('reference') is not None:
@@ -168,4 +168,4 @@ class ProcessOutputsGrid(CustomGrid):
                                     wms_reference, True) )
             buttongroup.append( ("upload", item.get('identifier'), "glyphicon glyphicon-upload", "Upload",
                                  "#", False) )
-        return self.render_action_td(buttongroup)
+        return self.render_buttongroup_td(buttongroup)

@@ -43,7 +43,7 @@ class UsersGrid(CustomGrid):
         self.column_formats['userid'] = self.label_td('login_id')
         self.column_formats['group'] = self.group_td
         self.column_formats['last_login'] = self.time_ago_td('last_login')
-        self.column_formats[''] = self.action_td
+        self.column_formats[''] = self.buttongroup_td
         self.exclude_ordering = self.columns
 
     def group_td(self, col_num, i, item):
@@ -58,11 +58,11 @@ class UsersGrid(CustomGrid):
             label = "Guest"
         return HTML.td(label)
 
-    def action_td(self, col_num, i, item):
+    def buttongroup_td(self, col_num, i, item):
         buttongroup = []
         buttongroup.append( ("edit", item.get('identifier'), "glyphicon glyphicon-pencil", "Edit",
                              self.request.route_path('settings_edit_user', userid=item.get('identifier')), False))
         buttongroup.append( ("remove", item.get('userid'), "glyphicon glyphicon-trash text-danger", "Remove", 
                              self.request.route_path('remove_user', userid=item.get('identifier')),
                              False) )
-        return self.render_action_td(buttongroup)
+        return self.render_buttongroup_td(buttongroup)

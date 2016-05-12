@@ -50,13 +50,13 @@ class Grid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
         super(Grid, self).__init__(request, *args, **kwargs)
         self.column_formats['state'] = self.state_td
-        self.column_formats[''] = self.action_td
+        self.column_formats[''] = self.buttongroup_td
         self.exclude_ordering = self.columns
 
     def state_td(self, col_num, i, item):
         return self.render_td(renderer="supervisor_state_td.mako", state=item.get('state'), statename=item.get('statename'))
         
-    def action_td(self, col_num, i, item):
+    def buttongroup_td(self, col_num, i, item):
         buttongroup = []
         if item.get('state') == 20:
             buttongroup.append(
@@ -76,5 +76,5 @@ class Grid(CustomGrid):
         buttongroup.append(
             ("tail", item.get('name'), "fa fa-align-left", "",
              self.request.route_path('supervisor_log', name=item.get('name'), offset=0), False) )
-        return self.render_action_td(buttongroup)
+        return self.render_buttongroup_td(buttongroup)
        
