@@ -89,7 +89,8 @@ class JobsGrid(CustomGrid):
     def buttongroup_td(self, col_num, i, item):
         from phoenix.utils import ActionButton
         buttons = []
-        buttons.append( ActionButton('restart_job', title=u'Restart', css_class=u'btn btn-success', icon="fa fa-refresh"))
+        buttons.append( ActionButton('restart_job', title=u'Restart', css_class=u'btn btn-success', icon="fa fa-refresh",
+                                     href="/restart_job/%s" % item.get('identifier')))
         return self.render_td(renderer="buttongroup2_td.mako", buttons=buttons)
 
 

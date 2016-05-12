@@ -21,7 +21,7 @@ SIGNOUT_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" ti
 # see kotti: https://github.com/Kotti/Kotti
 
 class ActionButton(object):
-    def __init__(self, name, title=None, no_children=False,
+    def __init__(self, name, title=None, no_children=False, href=None,
                  disabled=False, css_class=u"btn btn-default",
                  icon=None):
         self.name = name
@@ -33,7 +33,9 @@ class ActionButton(object):
         if disabled:
             self.css_class = self.css_class + " disabled"
         self.icon = icon
-        self.href = '/' + self.name
+        if href is None:
+            href = '/' + self.name
+        self.href = href
 
     def url(self, context, request):
         return self.href

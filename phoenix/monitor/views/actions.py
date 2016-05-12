@@ -30,8 +30,8 @@ class NodeActions(object):
 
     @view_config(route_name='restart_job')
     def restart_job(self):
-        #job_id = self.request.matchdict.get('job_id')
-        self.flash("Job {0} deleted.".format('123'), queue='info')
+        job_id = self.request.matchdict.get('job_id')
+        self.flash("Job {0} restarted.".format(job_id), queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
     
     @view_config(route_name='delete_job')
@@ -113,7 +113,7 @@ def includeme(config):
     :type config: :class:`pyramid.config.Configurator`
     """
 
-    config.add_route('restart_job', 'restart_job')
+    config.add_route('restart_job', 'restart_job/{job_id}')
     config.add_route('delete_job', 'delete_job/{job_id}')
     config.add_route('delete_jobs', 'delete_jobs')
     config.add_route('delete_all_jobs', 'delete_all_jobs')
