@@ -57,24 +57,21 @@ class Grid(CustomGrid):
         return self.render_td(renderer="supervisor_state_td.mako", state=item.get('state'), statename=item.get('statename'))
         
     def buttongroup_td(self, col_num, i, item):
-        buttongroup = []
+        from phoenix.utils import ActionButton
+        buttons = []
         if item.get('state') == 20:
-            buttongroup.append(
-                ("restart", item.get('name'), "fa fa-refresh", "",
-                self.request.route_path('supervisor_process', action='restart', name=item.get('name')), False) )
-            buttongroup.append(
-                ("stop", item.get('name'), "fa fa-stop", "",
-                self.request.route_path('supervisor_process', action='stop', name=item.get('name')), False) )
+            buttons.append( ActionButton('restart', css_class="btn btn-success", icon="fa fa-refresh",
+                                     href=self.request.route_path('supervisor_process', action='restart', name=item.get('name'))))
+            buttons.append( ActionButton('stop', css_class="btn btn-danger", icon="fa fa-stop",
+                                     href=self.request.route_path('supervisor_process', action='stop', name=item.get('name'))))
         else:
-            buttongroup.append(
-                ("start", item.get('name'), "fa fa-play", "",
-                self.request.route_path('supervisor_process', action='start', name=item.get('name')), False) )
+            buttons.append( ActionButton('start', icon="fa fa-play",
+                                     href=self.request.route_path('supervisor_process', action='start', name=item.get('name'))))
         # TODO: enable clear button again
-        ## buttongroup.append(
-        ##     ("clear", item.get('name'), "fa fa-eraser", "",
-        ##      self.request.route_path('supervisor_process', action='clear', name=item.get('name')), False) )
-        buttongroup.append(
-            ("tail", item.get('name'), "fa fa-align-left", "",
-             self.request.route_path('supervisor_log', name=item.get('name'), offset=0), False) )
-        return self.render_buttongroup_td(buttongroup)
+        buttons.append( ActionButton('tail', icon="fa fa-align-left",
+                                     href=self.request.route_path('supervisor_log', name=item.get('name'), offset=0)))
+
+        return self.render_td(renderer="buttongroup2_td.mako", buttons=buttons)
+
+
        
