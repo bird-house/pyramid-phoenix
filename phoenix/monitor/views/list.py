@@ -90,7 +90,7 @@ class JobsGrid(CustomGrid):
         from phoenix.utils import ActionButton
         buttons = []
         buttons.append( ActionButton('restart_job', title=u'Restart', css_class=u'btn btn-success', icon="fa fa-refresh",
-                                     href="/restart_job/%s" % item.get('identifier')))
+                                     href="/restart_job/%s" % item.get('identifier'), disabled=True))
         return self.render_buttongroup_td(buttons=buttons)
 
 
