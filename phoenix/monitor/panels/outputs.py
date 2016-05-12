@@ -153,19 +153,15 @@ class ProcessOutputsGrid(CustomGrid):
         return self.render_preview_td(format=item.get('mime_type'), source=item.get('reference'))
 
     def buttongroup_td(self, col_num, i, item):
-        # TODO: dirty hack ...
-        buttongroup = []
+        from phoenix.utils import ActionButton
+        buttons = []
         if item.get('reference') is not None:
-            # TODO: dirty hack for show on map
-            wms_reference = self.wms_url + item.get('reference').split('wpsoutputs')[1]
-            logger.debug(item.get('reference'))
-            if self.request.csw_activated:
-                buttongroup.append( ("publish", item.get('identifier'), "glyphicon glyphicon-share", "Publish", "#", False) )
-            buttongroup.append( ("view", item.get('identifier'), "glyphicon glyphicon-eye-open", "View", 
-                                 item.get('reference', "#"), True) )
+            buttons.append( ActionButton('view', title=u'View', icon="fa fa-eye",
+                                        href=item.get('reference', "#"), new_window=True))
             if self.request.wms_activated:
-                buttongroup.append( ("mapit", item.get('identifier'), "glyphicon glyphicon-globe", "Show on Map",
-                                    wms_reference, True) )
-            buttongroup.append( ("upload", item.get('identifier'), "glyphicon glyphicon-upload", "Upload",
-                                 "#", False) )
-        return self.render_buttongroup_td(buttongroup)
+                # TODO: check mimetype netcdf
+                wms_reference = self.wms_url + item.get('reference').split('wpsoutputs')[1]
+                buttons.append( ActionButton("mapit", title=u'Show on Map', icon="fa fa-globe",
+                                        href=wms_reference, new_window=True))
+        return self.render_td(renderer="buttongroup2_td.mako", buttons=buttons)
+        
