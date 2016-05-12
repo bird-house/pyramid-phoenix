@@ -56,7 +56,7 @@ class JobList(Monitor):
         items, count = self.update_jobs(page=page, limit=limit, access=access, status=status)
 
         grid = JobsGrid(self.request, items,
-                    ['_checkbox', 'status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress'],
+                    ['_checkbox', 'status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress', ''],
                     )
         return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count,
                     buttons=buttons)
@@ -72,6 +72,7 @@ class JobsGrid(CustomGrid):
         self.column_formats['finished'] = self.time_ago_td('finished')
         self.column_formats['public'] = self.access_td
         self.column_formats['progress'] = self.progress_td('progress')
+        self.column_formats[''] = self.buttongroup_td
         self.exclude_ordering = self.columns
         
     def status_td(self, col_num, i, item):
@@ -84,6 +85,13 @@ class JobsGrid(CustomGrid):
     
     def access_td(self, col_num, i, item):
         return self.render_td(renderer="access_td.mako", access=item.get('access', 'private'))
+
+    def buttongroup_td(self, col_num, i, item):
+        from phoenix.utils import ActionButton
+        buttons = []
+        buttons.append( ActionButton('restart_job', title=u'Restart', css_class=u'btn btn-success', icon="fa fa-refresh"))
+        return self.render_td(renderer="buttongroup2_td.mako", buttons=buttons)
+
 
         
 
