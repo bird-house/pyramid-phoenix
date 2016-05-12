@@ -59,10 +59,13 @@ class UsersGrid(CustomGrid):
         return HTML.td(label)
 
     def buttongroup_td(self, col_num, i, item):
-        buttongroup = []
-        buttongroup.append( ("edit", item.get('identifier'), "glyphicon glyphicon-pencil", "Edit",
-                             self.request.route_path('settings_edit_user', userid=item.get('identifier')), False))
-        buttongroup.append( ("remove", item.get('userid'), "glyphicon glyphicon-trash text-danger", "Remove", 
-                             self.request.route_path('remove_user', userid=item.get('identifier')),
-                             False) )
-        return self.render_buttongroup_td(buttongroup)
+        from phoenix.utils import ActionButton
+        buttons = []
+        buttons.append( ActionButton('edit', css_class="btn btn-success", icon="fa fa-pencil",
+                                     href=self.request.route_path('settings_edit_user', userid=item.get('identifier'))))
+        buttons.append( ActionButton('remove', css_class="btn btn-danger", icon="fa fa-trash",
+                                     href=self.request.route_path('remove_user', userid=item.get('identifier'))))
+
+        return self.render_td(renderer="buttongroup2_td.mako", buttons=buttons)
+    
+
