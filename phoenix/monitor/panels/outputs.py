@@ -163,5 +163,5 @@ class ProcessOutputsGrid(CustomGrid):
                 wms_reference = self.wms_url + item.get('reference').split('wpsoutputs')[1]
                 buttons.append( ActionButton("mapit", title=u'Show on Map', icon="fa fa-globe",
                                         href=wms_reference, new_window=True))
-        return self.render_td(renderer="buttongroup2_td.mako", buttons=buttons)
+        return self.render_buttongroup_td(buttons=buttons)
         

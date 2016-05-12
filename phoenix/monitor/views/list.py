@@ -91,7 +91,8 @@ class JobsGrid(CustomGrid):
         buttons = []
         buttons.append( ActionButton('restart_job', title=u'Restart', css_class=u'btn btn-success', icon="fa fa-refresh",
                                      href="/restart_job/%s" % item.get('identifier')))
-        return self.render_td(renderer="buttongroup2_td.mako", buttons=buttons)
+        return self.render_buttongroup_td(buttons=buttons)
+
 
 
         

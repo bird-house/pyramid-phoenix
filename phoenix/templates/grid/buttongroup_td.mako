@@ -1,9 +1,7 @@
 <div class="btn-group" role="group">
-  % if len(buttongroup) > 0:
-  % for name,value,icon,title,href,new_window in buttongroup:
-  <% target = 'target="_blank"' if new_window else '' %>
-  <a class="btn btn-default ${name}" data-toggle="tooltip" title="${title}" data-value="${value}" href="${href}" ${target}><i class="${icon}"></i></a>
+  % for button in buttons:
+  <% target = 'target="_blank"' if button.new_window else '' %>       
+  <a class="${button.css_class}" data-toggle="tooltip" title="${button.title}" data-value="value" href="${button.href}" ${target}><i class="${button.icon}"></i></a>
   % endfor
-  % endif
 </div>
 

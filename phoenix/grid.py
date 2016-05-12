@@ -135,8 +135,8 @@ class CustomGrid(Grid):
     def render_preview_td(self, format, source):
         return self.render_td(renderer="preview_td.mako", format=format, source=source)
 
-    def render_buttongroup_td(self, buttongroup=[]):
-        return self.render_td(renderer="buttongroup_td.mako", buttongroup=buttongroup)
+    def render_buttongroup_td(self, buttons=[]):
+        return self.render_td(renderer="buttongroup_td.mako", buttons=buttons)
 
     def generate_header_link(self, column_number, column, label_text):
         """Override of the ObjectGrid to customize the headers. This is

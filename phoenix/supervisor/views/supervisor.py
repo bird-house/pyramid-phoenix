@@ -71,7 +71,7 @@ class Grid(CustomGrid):
         buttons.append( ActionButton('tail', icon="fa fa-align-left",
                                      href=self.request.route_path('supervisor_log', name=item.get('name'), offset=0)))
 
-        return self.render_td(renderer="buttongroup2_td.mako", buttons=buttons)
+        return self.render_buttongroup_td(buttons=buttons)
 
 
        

@@ -65,7 +65,6 @@ class UsersGrid(CustomGrid):
                                      href=self.request.route_path('settings_edit_user', userid=item.get('identifier'))))
         buttons.append( ActionButton('remove', css_class="btn btn-danger", icon="fa fa-trash",
                                      href=self.request.route_path('remove_user', userid=item.get('identifier'))))
-
-        return self.render_td(renderer="buttongroup2_td.mako", buttons=buttons)
+        return self.render_buttongroup_td(buttons=buttons)
     
 
