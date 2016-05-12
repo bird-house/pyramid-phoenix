@@ -61,7 +61,7 @@
                      data-toggle="tooltip"
                      title="Refresh job list"
                      href="${request.route_path('monitor', _query=[('page', page), ('limit', limit), ('status', status), ('access', access)])}">
-                    <i class="fa fa-lg fa-refresh"></i>
+                    <i class="fa fa-lg fa-repeat"></i>
                   </a>
                 </div>
               </span>
