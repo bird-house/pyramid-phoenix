@@ -56,7 +56,7 @@ class JobList(Monitor):
         items, count = self.update_jobs(page=page, limit=limit, access=access, status=status)
 
         grid = JobsGrid(self.request, items,
-                    ['_checkbox', 'status', 'job', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress', ''],
+                    ['_checkbox', 'status', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress', ''],
                     )
         return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count,
                     buttons=buttons)
@@ -65,7 +65,7 @@ class JobsGrid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['status'] = self.status_td
-        self.column_formats['job'] = self.uuid_td
+        #self.column_formats['job'] = self.uuid_td
         self.column_formats['userid'] = self.userid_td('userid')
         self.column_formats['process'] = self.label_td('title')
         self.column_formats['duration'] = self.label_td('duration', '???')
@@ -89,7 +89,9 @@ class JobsGrid(CustomGrid):
     def buttongroup_td(self, col_num, i, item):
         from phoenix.utils import ActionButton
         buttons = []
-        buttons.append( ActionButton('restart_job', title=u'Restart', css_class=u'btn btn-success', icon="fa fa-refresh",
+        buttons.append( ActionButton('results', title=u'Results', css_class=u'btn btn-success btn-xs', icon="fa fa-info-circle",
+                                     href=self.request.route_path('monitor_details', tab='log', job_id=item.get('identifier'))))
+        buttons.append( ActionButton('restart_job', title=u'Restart', css_class=u'btn btn-success btn-xs', icon="fa fa-refresh",
                                      href="/restart_job/%s" % item.get('identifier'), disabled=True))
         return self.render_buttongroup_td(buttons=buttons)
 
