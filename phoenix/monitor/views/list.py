@@ -2,7 +2,7 @@ from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.security import authenticated_userid
 
-from phoenix.grid import MyGrid
+from phoenix.grid import CustomGrid
 from phoenix.monitor.views import Monitor
 from phoenix.monitor.views.actions import monitor_buttons
 
@@ -61,7 +61,7 @@ class JobList(Monitor):
         return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count,
                     buttons=buttons)
 
-class JobsGrid(MyGrid):
+class JobsGrid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['status'] = self.status_td

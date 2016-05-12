@@ -5,7 +5,7 @@ from deform import Form
 from deform import ValidationFailure
 
 from phoenix import swift
-from phoenix.grid import MyGrid
+from phoenix.grid import CustomGrid
 
 import logging
 logger = logging.getLogger(__name__)
@@ -124,7 +124,7 @@ class Outputs(object):
                     publish_form=publish_form.render(),
                     upload_form=upload_form.render())
 
-class ProcessOutputsGrid(MyGrid):
+class ProcessOutputsGrid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
         super(ProcessOutputsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['output'] = self.output_td

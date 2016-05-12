@@ -99,9 +99,9 @@ class CatalogSearch(Wizard):
     def view(self):
         return super(CatalogSearch, self).view()
 
-from phoenix.grid import MyGrid
+from phoenix.grid import CustomGrid
 
-class CatalogSearchGrid(MyGrid):
+class CatalogSearchGrid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
         super(CatalogSearchGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['selected'] = self.selected_td

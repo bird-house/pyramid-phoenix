@@ -76,10 +76,9 @@ class ThreddsBrowser(Wizard):
     def view(self):
         return super(ThreddsBrowser, self).view()
 
-from webhelpers2.html.builder import HTML
-from phoenix.grid import MyGrid
+from phoenix.grid import CustomGrid
 
-class Grid(MyGrid):
+class Grid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
         super(Grid, self).__init__(request, *args, **kwargs)
         self.column_formats['name'] = self.name_td

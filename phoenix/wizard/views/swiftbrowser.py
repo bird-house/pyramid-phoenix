@@ -108,9 +108,9 @@ class SwiftBrowser(Wizard):
         return super(SwiftBrowser, self).view()
 
 from webhelpers2.html.builder import HTML
-from phoenix.grid import MyGrid
+from phoenix.grid import CustomGrid
 
-class SwiftBrowserGrid(MyGrid):
+class SwiftBrowserGrid(CustomGrid):
     def __init__(self, request, container, *args, **kwargs):
         super(SwiftBrowserGrid, self).__init__(request, *args, **kwargs)
         self.container = container

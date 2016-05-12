@@ -2,7 +2,6 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
 from . import SettingsView
-from phoenix.grid import MyGrid
 from phoenix.security import Admin, User, Guest
 
 import logging
@@ -36,7 +35,9 @@ class Users(SettingsView):
             )
         return dict(grid=grid)
 
-class UsersGrid(MyGrid):
+from phoenix.grid import CustomGrid
+    
+class UsersGrid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
         super(UsersGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['userid'] = self.label_td('login_id')

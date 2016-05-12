@@ -44,8 +44,9 @@ class Supervisor(SettingsView):
         grid = Grid(self.request, self.server.supervisor.getAllProcessInfo(), ['state', 'description', 'name', ''])
         return dict(grid=grid)
 
-from phoenix.grid import MyGrid
-class Grid(MyGrid):
+from phoenix.grid import CustomGrid
+
+class Grid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
         super(Grid, self).__init__(request, *args, **kwargs)
         self.column_formats['state'] = self.state_td

@@ -19,12 +19,12 @@ def get_value(record, attribute, default=None):
         value = getattr(record, attribute)
     return value
 
-class MyGrid(Grid):
+class CustomGrid(Grid):
     def __init__(self, request, *args, **kwargs):
         self.request = request
         if 'url' not in kwargs:
             kwargs['url'] = request.current_route_url
-        super(MyGrid, self).__init__(*args, **kwargs)
+        super(CustomGrid, self).__init__(*args, **kwargs)
         self.exclude_ordering = ['', 'preview', 'action', '_numbered', '_checkbox']
         if "_checkbox" in self.columns:
             self.labels["_checkbox"] = ""
@@ -155,9 +155,9 @@ class MyGrid(Grid):
         new_url = self.url_generator(_query=self.additional_kw)
         # set label for header with link
         label_text = HTML.tag("a", href=new_url, c=label_text)
-        return super(MyGrid, self).generate_header_link(column_number,
-                                                        column,
-                                                        label_text)
+        return super(CustomGrid, self).generate_header_link(column_number,
+                                                            column,
+                                                            label_text)
     
     def default_header_column_format(self, column_number, column_name, header_label):
         """Override of the ObjectGrid to use <th> for header columns
