@@ -102,9 +102,6 @@ class CustomGrid(Grid):
             return HTML.td(provider_id)
         return _column_format
     
-    def render_button_td(self, url, title):
-        return self.render_td(renderer="button_td.mako", url=url, title=title)
-
     def render_title_td(self, title, abstract="", keywords=[], data=[], format=None, source="#"):
         return self.render_td(renderer="title_td.mako", title=title, abstract=abstract, keywords=keywords, data=data, format=format, source=source)
 

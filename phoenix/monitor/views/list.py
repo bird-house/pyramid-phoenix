@@ -65,7 +65,6 @@ class JobsGrid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['status'] = self.status_td
-        #self.column_formats['job'] = self.uuid_td
         self.column_formats['userid'] = self.userid_td('userid')
         self.column_formats['process'] = self.label_td('title')
         self.column_formats['duration'] = self.label_td('duration', '???')
@@ -77,12 +76,7 @@ class JobsGrid(CustomGrid):
         
     def status_td(self, col_num, i, item):
         return self.render_status_td(item)
-
-    def uuid_td(self, col_num, i, item):
-        return self.render_button_td(
-            url=self.request.route_path('monitor_details', tab='log', job_id=item.get('identifier')),
-            title=item.get('identifier'))
-    
+  
     def access_td(self, col_num, i, item):
         return self.render_td(renderer="access_td.mako", access=item.get('access', 'private'))
 
