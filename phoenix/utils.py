@@ -19,6 +19,7 @@ SIGNOUT_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" ti
 
 # buttons
 # see kotti: https://github.com/Kotti/Kotti
+# TODO: maybe use deform.Button instead of ActionButton
 
 class ActionButton(object):
     def __init__(self, name, title=None, no_children=False,
