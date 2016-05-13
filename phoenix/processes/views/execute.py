@@ -49,7 +49,7 @@ class ExecuteProcess(Processes):
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
-            logger.debug("before validate")
+            logger.debug("before validate %s", controls)
             appstruct = form.validate(controls)
             logger.debug("before execute %s", appstruct)
             self.execute(appstruct)
@@ -57,7 +57,8 @@ class ExecuteProcess(Processes):
             logger.exception('validation of exectue view failed.')
             self.session.flash("There are errors on this page.", queue='danger')
             return dict(description=getattr(self.process, 'abstract', ''),
-                        form = e.render())
+                        url=wps_describe_url(self.request, self.wps_id, self.processid),
+                        form=e.render())
         return HTTPFound(location=self.request.route_url('monitor'))
 
     def execute(self, appstruct):
