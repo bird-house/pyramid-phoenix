@@ -32,20 +32,19 @@ def appstruct_to_inputs(request, appstruct):
                 # prefer upload if available
                 if value.get('upload', colander.null) is not colander.null:
                     value = value['upload']
-                    logger.debug('uploaded file %s', value)
+                    #logger.debug('uploaded file %s', value)
                     folder = authenticated_userid(request)
                     relpath = os.path.join(folder, value['filename'])
                     #value = 'file://' + request.storage.path(relpath)
                     #value = request.route_url('download', filename=relpath)
                     value = request.storage.url(relpath)
-                    logger.debug('uploaded file as reference = %s', value)
+                    #logger.debug('uploaded file as reference = %s', value)
                 # otherwise use url
                 else:
                     value = value['url']
             inputs.append( (str(key).strip(), str(value).strip()) )
+    logger.debug("inputs form appstruct=%s", inputs)
     return inputs
-
-
 
 # wps input schema
 # ----------------
@@ -117,8 +116,9 @@ class WPSSchema(colander.MappingSchema):
                 node = self.boundingbox(data_input) 
             elif 'www.w3.org' in data_input.dataType:
                 node = self.literal_data(data_input)
-            elif not self.hide_complex and 'ComplexData' in data_input.dataType:
-                node = self.complex_data(data_input)
+            elif 'ComplexData' in data_input.dataType:
+                if not self.hide_complex:
+                    node = self.complex_data(data_input)
             elif 'BoundingBoxData' in data_input.dataType:
                 node = self.bbox_data(data_input)
             elif 'LiteralData' in data_input.dataType:# TODO: workaround for geoserver wps
@@ -139,22 +139,17 @@ class WPSSchema(colander.MappingSchema):
             )
 
         # sometimes abstract is not set
-        if hasattr(data_input, 'abstract'):
-            node.description = data_input.abstract
+        node.description = getattr(data_input, 'abstract', '')
         # optional value?
         if data_input.minOccurs == 0:
             node.missing = colander.drop
         # TODO: fix init of default
         if hasattr(data_input, 'defaultValue') and data_input.defaultValue is not None:
-            logger.debug("node typ =%s, default value = %s, type=%s",
-                         node.typ, data_input.defaultValue, type(data_input.defaultValue))
             if type(node.typ) == colander.DateTime:
-                #logger.debug('we have a datetime default value')
                 node.default = dateutil.parser.parse(data_input.defaultValue)
             elif type(node.typ) == colander.Boolean:
                 # TODO: boolean default does not work ...
                 node.default = bool(data_input.defaultValue == 'True')
-                logger.debug('boolean default value %s', node.default)
             else:
                 node.default = data_input.defaultValue
         self.colander_literal_widget(node, data_input)
@@ -172,7 +167,7 @@ class WPSSchema(colander.MappingSchema):
         return node
 
     def colander_literal_type(self, data_input):
-        logger.debug('data input type = %s', data_input.dataType)
+        #logger.debug('data input type = %s', data_input.dataType)
         if 'boolean' in data_input.dataType:
             return colander.Boolean()
         elif 'integer' in data_input.dataType:
@@ -212,22 +207,15 @@ class WPSSchema(colander.MappingSchema):
             choices = []
             for value in data_input.allowedValues:
                 choices.append([value, value])
-                #logger.debug('using select widget for %s', data_input.identifier)
             node.widget = deform.widget.SelectWidget(values=choices)
         elif type(node.typ) == colander.DateTime:
-            #logger.debug('using datetime widget for %s', data_input.identifier)
             node.widget = deform.widget.DateInputWidget()
         elif type(node.typ) == colander.Boolean:
-            #logger.debug('using checkbox widget for %s', data_input.identifier)
             node.widget = deform.widget.CheckboxWidget()
         elif 'password' in data_input.identifier:
-            #logger.debug('using password widget for %s', data_input.identifier)
             node.widget = deform.widget.PasswordWidget(size=20)
         else:
-            #logger.debug('using text widget for %s', data_input.identifier)
             node.widget = deform.widget.TextInputWidget()
-
-        logger.debug("choosen widget, identifier=%s, widget=%s", data_input.identifier, node.widget)
 
     def bbox_data(self, data_input):
         node = colander.SchemaNode(
@@ -239,8 +227,7 @@ class WPSSchema(colander.MappingSchema):
             )
 
         # sometimes abstract is not set
-        if hasattr(data_input, 'abstract'):
-            node.description = data_input.abstract
+        node.description = getattr(data_input, 'abstract', '')
         # optional value?
         if data_input.minOccurs == 0:
             node.missing = colander.drop
@@ -309,7 +296,7 @@ class WPSSchema(colander.MappingSchema):
         mime_types = []
         if len(data_input.supportedValues) > 0: 
             mime_types = [str(value.mimeType) for value in data_input.supportedValues]
-        logger.debug("mime-types: %s", mime_types)
+        #logger.debug("mime-types: %s", mime_types)
         # set current proxy certificate
         if 'application/x-pkcs7-mime' in mime_types and self.user is not None:
             # TODO: check if certificate is still valid
@@ -326,8 +313,7 @@ class WPSSchema(colander.MappingSchema):
             widget=deform.widget.TextInputWidget()
             )
         # sometimes abstract is not set
-        if hasattr(data_input, 'abstract'):
-            node.description = data_input.abstract
+        node.description = getattr(data_input, 'abstract', '')
 
         # optional value?
         if data_input.minOccurs == 0:
