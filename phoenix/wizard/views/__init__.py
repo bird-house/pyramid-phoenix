@@ -212,6 +212,7 @@ class Wizard(MyView):
         failure_method = getattr(self, '%s_failure' % action)
         try:
             controls = self.request.POST.items()
+            logger.debug("before validate controls=%s", controls)
             appstruct = form.validate(controls)
             logger.debug("before success appstruct=%s", appstruct)
             result = success_method(appstruct)

@@ -24,7 +24,6 @@ class LiteralInputs(Wizard):
         return WPSSchema(request=self.request, hide_complex=True, process=self.process)
 
     def next_success(self, appstruct):
-        logger.debug("literal inputs appstruct=%s", appstruct)
         self.success(appstruct)
         return self.next('wizard_complex_inputs')
     
