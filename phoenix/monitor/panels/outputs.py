@@ -156,16 +156,17 @@ class ProcessOutputsGrid(MyGrid):
         # TODO: dirty hack ...
         buttongroup = []
         if item.get('reference') is not None:
-            # TODO: dirty hack for show on map
-            wms_reference = self.wms_url + item.get('reference').split('wpsoutputs')[1]
             logger.debug(item.get('reference'))
             if self.request.csw_activated:
                 buttongroup.append( ("publish", item.get('identifier'), "glyphicon glyphicon-share", "Publish", "#", False) )
             buttongroup.append( ("view", item.get('identifier'), "glyphicon glyphicon-eye-open", "View", 
                                  item.get('reference', "#"), True) )
-            if self.request.wms_activated:
-                buttongroup.append( ("mapit", item.get('identifier'), "glyphicon glyphicon-globe", "Show on Map",
-                                    wms_reference, True) )
+            if self.request.wms_activated and 'netcdf' in item.get('mime_type'):
+                # TODO: dirty hack for show on map
+                if 'wpsoutputs' in item.get('reference'):
+                    wms_reference = self.wms_url + item.get('reference').split('wpsoutputs')[1]
+                    buttongroup.append( ("mapit", item.get('identifier'), "glyphicon glyphicon-globe", "Show on Map",
+                                        wms_reference, True) )
             buttongroup.append( ("upload", item.get('identifier'), "glyphicon glyphicon-upload", "Upload",
                                  "#", False) )
         return self.render_action_td(buttongroup)
