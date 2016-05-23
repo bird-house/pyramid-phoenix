@@ -158,10 +158,15 @@ class ProcessOutputsGrid(CustomGrid):
         if item.get('reference') is not None:
             buttons.append( ActionButton('view', title=u'View', icon="fa fa-eye",
                                         href=item.get('reference', "#"), new_window=True))
-            if self.request.wms_activated:
+            if self.request.wms_activated and 'netcdf' in item.get('mime_type'):
+                # TODO: dirty hack for show on map
                 # TODO: check mimetype netcdf
-                wms_reference = self.wms_url + item.get('reference').split('wpsoutputs')[1]
-                buttons.append( ActionButton("mapit", title=u'Show on Map', icon="fa fa-globe",
+                if 'wpsoutputs' in item.get('reference'):
+                    wms_reference = self.wms_url + item.get('reference').split('wpsoutputs')[1]
+                    buttons.append( ActionButton("mapit", title=u'Show on Map', icon="fa fa-globe",
                                         href=wms_reference, new_window=True))
         return self.render_buttongroup_td(buttons=buttons)
         
+
+
+
