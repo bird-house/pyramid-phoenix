@@ -114,18 +114,18 @@ class WPSSchema(colander.MappingSchema):
 
             if data_input.dataType == None:
                 node = self.boundingbox(data_input) 
-            elif 'www.w3.org' in data_input.dataType:
-                node = self.literal_data(data_input)
+            #elif 'www.w3.org' in data_input.dataType:
+            #    node = self.literal_data(data_input)
             elif 'ComplexData' in data_input.dataType:
                 if not self.hide_complex:
                     node = self.complex_data(data_input)
             elif 'BoundingBoxData' in data_input.dataType:
                 node = self.bbox_data(data_input)
-            elif 'LiteralData' in data_input.dataType:# TODO: workaround for geoserver wps
-                node = self.literal_data(data_input)
+            #elif 'LiteralData' in data_input.dataType:# TODO: workaround for geoserver wps
+            #    node = self.literal_data(data_input)
             else:
-                logger.warning('unknown data type %s', data_input.dataType)
-
+                #logger.warning('unknown data type %s', data_input.dataType)
+                node = self.literal_data(data_input)
             if node is None:
                 continue
 
