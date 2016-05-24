@@ -105,7 +105,7 @@ def execute_workflow(self, userid, url, workflow):
     
     wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=True, verify=False)
     worker_wps = WebProcessingService(url=workflow['worker']['url'], skip_caps=False, verify=False)
-    execution = wps.execute(identifier='workflow', inputs=inputs, output=outputs)
+    execution = wps.execute(identifier='workflow', inputs=inputs, output=outputs, lineage=True)
     
     job = add_job(db, userid,
                   task_id = self.request.id,
@@ -155,7 +155,7 @@ def execute_process(self, userid, url, identifier, inputs, outputs, keywords=Non
     generate_access_token(registry, userid)
 
     wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=False, verify=False)
-    execution = wps.execute(identifier, inputs=inputs, output=outputs)
+    execution = wps.execute(identifier, inputs=inputs, output=outputs, lineage=True)
     job = add_job(db, userid,
                   task_id = self.request.id,
                   is_workflow = False,
