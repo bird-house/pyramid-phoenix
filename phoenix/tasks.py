@@ -1,6 +1,6 @@
 from pyramid_celery import celery_app as app
 
-from owslib.wps import WebProcessingService, monitorExecution
+from owslib.wps import WebProcessingService, monitorExecution, ComplexDataInput
 import json
 import yaml
 import uuid
@@ -99,7 +99,7 @@ def execute_workflow(self, userid, url, workflow):
     logger.debug('workflow=%s', workflow)
     # using secure url
     workflow['worker']['url'] = secure_url(db, workflow['worker']['url'], userid)
-    inputs=[('workflow', json.dumps(workflow))]
+    inputs=[('workflow', ComplexDataInput(json.dumps(workflow), mimeType="text/yaml", encoding="UTF-8") )]
     logger.debug('inputs=%s', inputs)
     outputs=[('output', True), ('logfile', True)]
     

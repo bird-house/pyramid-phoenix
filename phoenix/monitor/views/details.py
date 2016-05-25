@@ -66,10 +66,12 @@ class Details(Monitor):
             self.session.changed()
 
         lm = self.request.layout_manager
-        if tab == 'log':
-            lm.layout.add_heading('monitor_log')
-        else:
+        if tab == 'outputs':
             lm.layout.add_heading('monitor_outputs')
+        elif tab == 'inputs':
+            lm.layout.add_heading('monitor_inputs')
+        else:
+            lm.layout.add_heading('monitor_log')
 
         return dict(active=tab, job_id=job_id)
 
