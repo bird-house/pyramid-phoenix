@@ -18,14 +18,15 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='edit', layout='default')
 class ExecuteProcess(Processes):
     def __init__(self, request):
+        self.execution = None
         if 'job_id' in request.params:
             job = request.db.jobs.find_one({'identifier': request.params['job_id']})
             from owslib.wps import WPSExecution
-            execution = WPSExecution()
-            execution.checkStatus(url=job['status_location'], sleepSecs=0)
+            self.execution = WPSExecution()
+            self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
             # TODO: fix owslib with service urls
-            self.wps = WebProcessingService(url=execution.serviceInstance.split('?')[0], verify=False)
-            self.processid = execution.process.identifier
+            self.wps = WebProcessingService(url=self.execution.serviceInstance.split('?')[0], verify=False)
+            self.processid = self.execution.process.identifier
             self.wps_id = 'missing'
             logger.debug("url=%s, pid=%s", self.wps.url, self.processid)
         else:
@@ -44,7 +45,11 @@ class ExecuteProcess(Processes):
         return breadcrumbs
 
     def appstruct(self):
-        return {}
+        result = {}
+        if self.execution:
+            for inp in self.execution.dataInputs:
+                result[inp.identifier] = inp.data[0]
+        return result
 
     def generate_form(self, formid='deform'):
         schema = WPSSchema(request=self.request, process=self.process, user=self.get_user())
