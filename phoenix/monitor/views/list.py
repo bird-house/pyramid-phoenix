@@ -86,7 +86,7 @@ class JobsGrid(CustomGrid):
         buttons.append( ActionButton('results', title=u'Results', css_class=u'btn btn-success btn-xs', icon="fa fa-info-circle",
                                      href=self.request.route_path('monitor_details', tab='log', job_id=item.get('identifier'))))
         buttons.append( ActionButton('restart_job', title=u'Restart', css_class=u'btn btn-success btn-xs', icon="fa fa-refresh",
-                                     href="/restart_job/%s" % item.get('identifier'), disabled=True))
+                                     href="/restart_job/%s" % item.get('identifier'), disabled=item['status']!='ProcessSucceeded'))
         return self.render_buttongroup_td(buttons=buttons)
 
 

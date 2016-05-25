@@ -10,6 +10,7 @@ from twitcher.registry import service_registry_factory, proxy_url
 import logging
 logger = logging.getLogger(__name__)
 
+
 def wps_url(request, identifier):
     request.csw.getrecordbyid(id=[identifier])
     record = request.csw.records[identifier]
@@ -26,8 +27,8 @@ def wps_caps_url(request, identifier):
     caps_url = "%s://%s%s?service=WPS&request=GetCapabilities" % (parsed.scheme, parsed.netloc, parsed.path)
     return caps_url
 
-def wps_describe_url(request, identifier, processid):
-    parsed = urlparse( wps_url(request, identifier) )
+def wps_describe_url(request, url, processid):
+    parsed = urlparse(url)
     desc_url = "{0}://{1}{2}?service=WPS&version=1.0.0&request=DescribeProcess&identifier={3}".format(
         parsed.scheme, parsed.netloc, parsed.path, processid)
     return desc_url

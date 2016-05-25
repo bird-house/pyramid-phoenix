@@ -18,9 +18,20 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='edit', layout='default')
 class ExecuteProcess(Processes):
     def __init__(self, request):
-        self.wps_id = request.params.get('wps')
-        self.wps = WebProcessingService(url=wps_url(request, self.wps_id), verify=False)
-        self.processid = request.params.get('process')
+        if 'job_id' in request.params:
+            job = request.db.jobs.find_one({'identifier': request.params['job_id']})
+            from owslib.wps import WPSExecution
+            execution = WPSExecution()
+            execution.checkStatus(url=job['status_location'], sleepSecs=0)
+            # TODO: fix owslib with service urls
+            self.wps = WebProcessingService(url=execution.serviceInstance.split('?')[0], verify=False)
+            self.processid = execution.process.identifier
+            self.wps_id = 'missing'
+            logger.debug("url=%s, pid=%s", self.wps.url, self.processid)
+        else:
+            self.wps_id = request.params.get('wps')
+            self.processid = request.params.get('process')
+            self.wps = WebProcessingService(url=wps_url(request, self.wps_id), verify=False)
         # TODO: need to fix owslib to handle special identifiers
         self.process = self.wps.describeprocess(self.processid)
         super(ExecuteProcess, self).__init__(request, name='processes_execute', title='')
@@ -57,7 +68,7 @@ class ExecuteProcess(Processes):
             logger.exception('validation of exectue view failed.')
             self.session.flash("There are errors on this page.", queue='danger')
             return dict(description=getattr(self.process, 'abstract', ''),
-                        url=wps_describe_url(self.request, self.wps_id, self.processid),
+                        url=wps_describe_url(self.request, self.wps.url, self.processid),
                         form=e.render())
         return HTTPFound(location=self.request.route_url('monitor'))
 
@@ -82,6 +93,6 @@ class ExecuteProcess(Processes):
             return self.process_form(form)
         return dict(
             description=getattr(self.process, 'abstract', ''),
-            url=wps_describe_url(self.request, self.wps_id, self.processid),
+            url=wps_describe_url(self.request, self.wps.url, self.processid),
             form=form.render(self.appstruct()))
     

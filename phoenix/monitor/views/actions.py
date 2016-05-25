@@ -32,12 +32,11 @@ class NodeActions(object):
     def restart_job(self):
         job_id = self.request.matchdict.get('job_id')
         self.flash("Job {0} restarted.".format(job_id), queue='info')
-        return HTTPFound(location=self.request.route_path('monitor'))
+        return HTTPFound(location=self.request.route_path('processes_execute', _query=[('job_id', job_id)]))
     
     @view_config(route_name='delete_job')
     def delete_job(self):
         job_id = self.request.matchdict.get('job_id')
-        logger.debug("jobid: %s", job_id)
         # TODO: check permission ... either admin or owner.
         self.db.delete_one({'identifier': job_id})
         self.flash("Job {0} deleted.".format(job_id), queue='info')
