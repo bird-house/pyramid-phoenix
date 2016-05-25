@@ -10,10 +10,7 @@ def collect_inputs(status_location):
     from owslib.wps import WPSExecution
     execution = WPSExecution()
     execution.checkStatus(url=status_location, sleepSecs=0)
-    inputs = {}
-    for inp in execution.dataInputs:
-        inputs[inp.identifier] = inp
-    return inputs
+    return execution.dataInputs
 
 def process_inputs(request, job_id):
     job = request.db.jobs.find_one({'identifier': job_id})
@@ -36,14 +33,13 @@ class Inputs(object):
         job_id = self.session.get('job_id')
         
         items = []
-        for inp in process_inputs(self.request, job_id).values():
+        for inp in process_inputs(self.request, job_id):
             items.append(dict(title=inp.title,
                               abstract=getattr(inp, 'abstract', ""),
                               identifier=inp.identifier,
-                              mime_type = inp.mimeType,
-                              data = inp.data,
+                              mime_type=inp.mimeType,
+                              data=inp.data,
                               reference=inp.reference))
-        logger.debug(items)
         items = sorted(items, key=lambda item: item['identifier'], reverse=1)
 
         grid = ProcessInputsGrid(
