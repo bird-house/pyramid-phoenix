@@ -1,6 +1,7 @@
 from pyramid_celery import celery_app as app
 
 from owslib.wps import WebProcessingService, monitorExecution, ComplexDataInput
+from owslib.util import build_get_url
 import json
 import yaml
 import uuid
@@ -53,26 +54,34 @@ def add_job(db, userid, task_id, service, title, abstract, status_location, is_w
     db.jobs.save(job)
     return job
 
-def secure_url(db, url, userid):
-    user = db.users.find_one(dict(identifier=userid))
-    parsed = urlparse(url)
-    secure_url = "%s://%s%s/%s" % (parsed.scheme, parsed.netloc, parsed.path, user.get('twitcher_token', ''))
-    return secure_url
-
-@app.task(bind=True)
-def esgf_logon(self, userid, url, openid, password):
+def get_access_token(userid):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
 
     # update access token
     generate_access_token(registry, userid)
     
+    user = db.users.find_one(dict(identifier=userid))
+    return user.get('twitcher_token')
+
+def wps_headers(userid):
+    headers = {}
+    access_token = get_access_token(userid)
+    if access_token is not None:
+        headers['Access-Token'] = access_token
+    return headers
+
+@app.task(bind=True)
+def esgf_logon(self, userid, url, openid, password):
+    registry = app.conf['PYRAMID_REGISTRY']
+    db = mongodb(registry)
+    
     inputs = []
     inputs.append( ('openid', openid) )
     inputs.append( ('password', password) )
     outputs = [('output',True),('expires',False)]
 
-    wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=True, verify=False)
+    wps = WebProcessingService(url=url, skip_caps=True, verify=False, headers=wps_headers(userid))
     execution = wps.execute(identifier="esgf_logon", inputs=inputs, output=outputs)
     monitorExecution(execution)
     
@@ -91,19 +100,18 @@ def execute_workflow(self, userid, url, workflow):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
 
-    # update access token
-    generate_access_token(registry, userid)
-
     # generate and run dispel workflow
     # TODO: fix owslib wps for unicode/yaml parameters
     logger.debug('workflow=%s', workflow)
-    # using secure url
-    workflow['worker']['url'] = secure_url(db, workflow['worker']['url'], userid)
+    headers=wps_headers(userid)
+    # TODO: handle access token in workflow
+    workflow['worker']['url'] = build_get_url(workflow['worker']['url'], {'access_token': headers.get('Access-Token', '') })
+    logger.debug('workflow_mod=%s', workflow)
     inputs=[('workflow', ComplexDataInput(json.dumps(workflow), mimeType="text/yaml", encoding="UTF-8") )]
     logger.debug('inputs=%s', inputs)
     outputs=[('output', True), ('logfile', True)]
     
-    wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=True, verify=False)
+    wps = WebProcessingService(url=url, skip_caps=True, verify=False, headers=headers)
     worker_wps = WebProcessingService(url=workflow['worker']['url'], skip_caps=False, verify=False)
     execution = wps.execute(identifier='workflow', inputs=inputs, output=outputs, lineage=True)
     
@@ -151,10 +159,7 @@ def execute_process(self, userid, url, identifier, inputs, outputs, keywords=Non
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
 
-    # update access token
-    generate_access_token(registry, userid)
-
-    wps = WebProcessingService(url=secure_url(db, url, userid), skip_caps=False, verify=False)
+    wps = WebProcessingService(url=url, skip_caps=False, verify=False, headers=wps_headers(userid))
     execution = wps.execute(identifier, inputs=inputs, output=outputs, lineage=True)
     job = add_job(db, userid,
                   task_id = self.request.id,
