@@ -56,6 +56,7 @@ class Done(Wizard):
         elif 'esgf' in source_type:
             selection = self.wizard_state.get('wizard_esgf_search')['selection']
             source = json.loads(selection)
+            source['url'] = self.request.registry.settings.get('esgfsearch.url')
             source['credentials'] = user.get('credentials')
             workflow['source']['esgf'] = source
         elif 'solr' in source_type:
