@@ -32,10 +32,11 @@ class NodeActions(object):
     def restart_job(self):
         job_id = self.request.matchdict.get('job_id')
         job = self.db.find_one({'identifier': job_id})
-        self.flash("Job {0} restarted.".format(job_id), queue='info')
         if job.get('is_workflow', False):
-            return HTTPFound(location=self.request.route_path('wizard'))
+            self.flash("Restarting Workflow {0}.".format(job_id), queue='info')
+            return HTTPFound(location=self.request.route_path('wizard', _query=[('job_id', job_id)]))
         else:
+            self.flash("Restarting Process {0}.".format(job_id), queue='info')
             return HTTPFound(location=self.request.route_path('processes_execute', _query=[('job_id', job_id)]))
     
     @view_config(route_name='delete_job')

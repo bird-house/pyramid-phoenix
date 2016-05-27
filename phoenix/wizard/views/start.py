@@ -1,5 +1,9 @@
+import yaml
+
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
+
+from owslib.wps import WPSExecution
 
 from phoenix.wizard.views import Wizard
 
@@ -25,8 +29,33 @@ class Start(Wizard):
         self.wizard_state.clear()
         self.favorite.load()
 
+        self.workflow = None
+        if 'job_id' in request.params:
+            job = request.db.jobs.find_one({'identifier': request.params['job_id']})
+            execution = WPSExecution()
+            execution.checkStatus(url=job['status_location'], sleepSecs=0)
+            if len(execution.dataInputs) == 1:
+                if len(execution.dataInputs[0].data) == 1:
+                    self.workflow = yaml.load(execution.dataInputs[0].data[0])
+                    logger.debug('workflow = %s', self.workflow)
+                    state = {}
+                    state['wizard_wps'] = {'identifier': u'urn:uuid:eff95915-eba8-4358-8a6f-1ab947e65ce5'}
+                    state['wizard_process'] = {'identifier': self.workflow['worker']['identifier']}
+                    state['wizard_literal_inputs'] = {}
+                    state['wizard_complex_inputs'] = {'identifier': self.workflow['worker']['resource']}
+                    state['wizard_source'] = {'source': self.workflow['name']}
+                    #state[self.workflow['name']] = {'selection': self.workflow['source']['esgf']}
+                    self.favorite.set(name=self.workflow['worker']['identifier'], state=state)
+            
     def schema(self):
-        return Schema().bind(favorites=self.favorite.names())
+        favorites = self.favorite.names()
+        return Schema().bind(favorites=favorites)
+
+    def appstruct(self):
+        result = {}
+        if self.workflow:
+            result = {'favorite': self.workflow['worker']['identifier']}
+        return result
 
     def success(self, appstruct):
         favorite_state = self.favorite.get(appstruct.get('favorite'))

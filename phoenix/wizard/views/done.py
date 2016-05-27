@@ -91,6 +91,7 @@ class Done(Wizard):
     def success(self, appstruct):
         super(Done, self).success(appstruct)
         if appstruct.get('is_favorite', False):
+            logger.debug('dump state: %s', self.wizard_state.dump())
             self.favorite.set(
                 name=appstruct.get('favorite_name'),
                 state=self.wizard_state.dump())
