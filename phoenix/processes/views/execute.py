@@ -52,15 +52,16 @@ class ExecuteProcess(Processes):
                 if len(inp.data) > 0:
                     values = inp.data
                 elif inp.reference is not None:
-                    #values = [inp.reference]
-                    pass
+                    values = [{'url': inp.reference}]
                 if values is not None:
                     if inp.identifier in result:
                         result[inp.identifier].extend(values)
                     else:
                         result[inp.identifier] = values
         for inp in self.process.dataInputs:
-            if inp.identifier in result and inp.maxOccurs < 2:
+            if 'boolean' in inp.dataType and inp.identifier in result:
+                result[inp.identifier] = [ val.lower() == 'true' for val in result[inp.identifier]]
+            if inp.maxOccurs < 2 and inp.identifier in result:
                 result[inp.identifier] = result[inp.identifier][0]
         return result
 
