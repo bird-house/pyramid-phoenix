@@ -24,7 +24,7 @@ class ExecuteProcess(Processes):
             from owslib.wps import WPSExecution
             self.execution = WPSExecution()
             self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
-            # TODO: fix owslib with service urls
+            # TODO: fix owslib for service urls
             self.wps = WebProcessingService(url=self.execution.serviceInstance, verify=False)
             self.processid = self.execution.process.identifier
             self.wps_id = 'missing'
@@ -45,6 +45,7 @@ class ExecuteProcess(Processes):
         return breadcrumbs
 
     def appstruct(self):
+        # TODO: not a nice way to get inputs ... should be cleaned up in owslib
         result = {}
         if self.execution:
             for inp in self.execution.dataInputs:
