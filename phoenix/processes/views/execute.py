@@ -25,7 +25,7 @@ class ExecuteProcess(Processes):
             self.execution = WPSExecution()
             self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
             # TODO: fix owslib with service urls
-            self.wps = WebProcessingService(url=self.execution.serviceInstance.split('?')[0], verify=False)
+            self.wps = WebProcessingService(url=self.execution.serviceInstance, verify=False)
             self.processid = self.execution.process.identifier
             self.wps_id = 'missing'
             logger.debug("url=%s, pid=%s", self.wps.url, self.processid)
@@ -48,7 +48,20 @@ class ExecuteProcess(Processes):
         result = {}
         if self.execution:
             for inp in self.execution.dataInputs:
-                result[inp.identifier] = inp.data[0]
+                values = None
+                if len(inp.data) > 0:
+                    values = inp.data
+                elif inp.reference is not None:
+                    #values = [inp.reference]
+                    pass
+                if values is not None:
+                    if inp.identifier in result:
+                        result[inp.identifier].extend(values)
+                    else:
+                        result[inp.identifier] = values
+        for inp in self.process.dataInputs:
+            if inp.identifier in result and inp.maxOccurs < 2:
+                result[inp.identifier] = result[inp.identifier][0]
         return result
 
     def generate_form(self, formid='deform'):
