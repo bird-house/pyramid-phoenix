@@ -11,7 +11,7 @@ class SourceSchemaNode(colander.SchemaNode):
     def after_bind(self, node, kw):
         choices = [
             ('wizard_esgf_search', "Earth System Grid (ESGF)"),
-            ('wizard_swift_login', "Swift Cloud"),
+            #('wizard_swift_login', "Swift Cloud"),
             ('wizard_threddsservice', "Thredds Catalog Service"),
             ('wizard_upload', "Local Storage"),           
             ]
