@@ -43,8 +43,14 @@ class Start(Wizard):
                     state['wizard_process'] = {'identifier': self.workflow['worker']['identifier']}
                     state['wizard_literal_inputs'] = {}
                     state['wizard_complex_inputs'] = {'identifier': self.workflow['worker']['resource']}
-                    state['wizard_source'] = {'source': self.workflow['name']}
-                    #state[self.workflow['name']] = {'selection': self.workflow['source']['esgf']}
+                    if self.workflow['name'] == 'wizard_esgf_search':
+                        state['wizard_source'] = {'source': 'wizard_esgf_search'}
+                        #state[self.workflow['name']] = {'selection': self.workflow['source']['esgf']}
+                    elif self.workflow['name'] == 'wizard_solr':
+                        state['wizard_source'] = {'source': 'wizard_solr'}
+                    elif self.workflow['name'] == 'wizard_threddsservice':
+                        state['wizard_source'] = {'source': 'wizard_threddsservice'}
+                        state['wizard_threddsservice'] = {'url': self.workflow['source']['thredds']['catalog_url']}
                     self.favorite.set(name=self.workflow['worker']['identifier'], state=state)
             
     def schema(self):
