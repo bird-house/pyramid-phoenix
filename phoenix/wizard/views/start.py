@@ -5,6 +5,7 @@ from pyramid.httpexceptions import HTTPFound
 
 from owslib.wps import WPSExecution, WebProcessingService
 
+from phoenix.catalog import wps_id
 from phoenix.wizard.views import Wizard
 
 import logging
@@ -39,7 +40,7 @@ class Start(Wizard):
                     self.workflow = yaml.load(execution.dataInputs[0].data[0])
                     logger.debug('workflow = %s', self.workflow)
                     state = {}
-                    state['wizard_wps'] = {'identifier': u'urn:uuid:eff95915-eba8-4358-8a6f-1ab947e65ce5'}
+                    state['wizard_wps'] = {'identifier': wps_id(request, self.workflow['worker']['url'])}
                     state['wizard_process'] = {'identifier': self.workflow['worker']['identifier']}
                     inputs = {}
                     for inp in self.workflow['worker']['inputs']:

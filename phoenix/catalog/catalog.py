@@ -11,6 +11,22 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def wps_id(request, url):
+    # TODO: fix retrieval of wps id
+    from owslib.wps import WebProcessingService
+    logger.debug("wps url %s", url)
+    wps = WebProcessingService(url=url, verify=False)
+    #wps_query = PropertyIsEqualTo('dc:format', 'WPS')
+    title_query = PropertyIsEqualTo('dc:title', wps.identification.title)
+    request.csw.getrecords2(esn="full", constraints=[title_query], maxrecords=1)
+    logger.debug("csw results %s", request.csw.results)
+    identifier = None
+    if len(request.csw.records.values()) == 1:
+        rec = request.csw.records.values()[0]
+        identifier = rec.identifier
+        logger.debug("found rec %s %s %s", rec.identifier, rec.title, rec.source)
+    return identifier
+
 def wps_url(request, identifier):
     request.csw.getrecordbyid(id=[identifier])
     record = request.csw.records[identifier]
