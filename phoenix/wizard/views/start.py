@@ -20,8 +20,11 @@ def job_to_state(request):
     if len(execution.dataInputs) == 1:
         if len(execution.dataInputs[0].data) == 1:
             workflow = yaml.load(execution.dataInputs[0].data[0])
+
+            wps = WebProcessingService(url=workflow['worker']['url'], verify=False)
+            process = wps.describeprocess(workflow['worker']['identifier'])
            
-            state['wizard_wps'] = {'identifier': wps_id(request, workflow['worker']['url'])}
+            state['wizard_wps'] = {'identifier': wps_id(request, wps.identification.title)}
             state['wizard_process'] = {'identifier': workflow['worker']['identifier']}
             inputs = {}
             for inp in workflow['worker']['inputs']:
@@ -30,8 +33,7 @@ def job_to_state(request):
                     inputs[key].extend(value)
                 else:
                     inputs[key] = [value]
-            wps = WebProcessingService(url=workflow['worker']['url'], verify=False)
-            process = wps.describeprocess(workflow['worker']['identifier'])
+            
             for inp in process.dataInputs:
                 if 'boolean' in inp.dataType and inp.identifier in result:
                     inputs[inp.identifier] = [ val.lower() == 'true' for val in inputs[inp.identifier]]

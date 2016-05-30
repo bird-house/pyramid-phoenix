@@ -27,7 +27,7 @@ class ExecuteProcess(Processes):
             # TODO: fix owslib for service urls
             self.wps = WebProcessingService(url=self.execution.serviceInstance, verify=False)
             self.processid = self.execution.process.identifier
-            self.wps_id = wps_id(request, self.wps.url)
+            self.wps_id = wps_id(request, self.wps.identification.title)
             logger.debug("url=%s, pid=%s", self.wps.url, self.processid)
         else:
             self.wps_id = request.params.get('wps')
