@@ -3,7 +3,7 @@ import yaml
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
-from owslib.wps import WPSExecution
+from owslib.wps import WPSExecution, WebProcessingService
 
 from phoenix.wizard.views import Wizard
 
@@ -41,7 +41,21 @@ class Start(Wizard):
                     state = {}
                     state['wizard_wps'] = {'identifier': u'urn:uuid:eff95915-eba8-4358-8a6f-1ab947e65ce5'}
                     state['wizard_process'] = {'identifier': self.workflow['worker']['identifier']}
-                    state['wizard_literal_inputs'] = {}
+                    inputs = {}
+                    for inp in self.workflow['worker']['inputs']:
+                        key, value = inp[0], inp[1]
+                        if key in inputs:
+                            inputs[key].extend(value)
+                        else:
+                            inputs[key] = [value]
+                    wps = WebProcessingService(url=self.workflow['worker']['url'], verify=False)
+                    process = wps.describeprocess(self.workflow['worker']['identifier'])
+                    for inp in process.dataInputs:
+                        if 'boolean' in inp.dataType and inp.identifier in result:
+                            inputs[inp.identifier] = [ val.lower() == 'true' for val in inputs[inp.identifier]]
+                        if inp.maxOccurs < 2 and inp.identifier in inputs:
+                            inputs[inp.identifier] = inputs[inp.identifier][0]
+                    state['wizard_literal_inputs'] = inputs
                     state['wizard_complex_inputs'] = {'identifier': self.workflow['worker']['resource']}
                     if self.workflow['name'] == 'wizard_esgf_search':
                         state['wizard_source'] = {'source': 'wizard_esgf_search'}
