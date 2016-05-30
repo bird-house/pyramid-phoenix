@@ -109,7 +109,7 @@
                     ${result.category}
                   </span>
                 </div>
-                ${result.abstract}
+                ${result.get('abstract', 'No summary')}
                 <div tal:condition="'keywords' in result">
                   <a href="${request.route_path('wizard_solr', _query=[('q', 'keywords:'+keyword)])}" 
                      class="label label-info" 
