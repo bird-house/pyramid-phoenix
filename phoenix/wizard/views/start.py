@@ -60,7 +60,8 @@ class Start(Wizard):
                     state['wizard_complex_inputs'] = {'identifier': self.workflow['worker']['resource']}
                     if self.workflow['name'] == 'wizard_esgf_search':
                         state['wizard_source'] = {'source': 'wizard_esgf_search'}
-                        #state[self.workflow['name']] = {'selection': self.workflow['source']['esgf']}
+                        import json
+                        state['wizard_esgf_search'] = {'selection': json.dumps(self.workflow['source']['esgf'])}
                     elif self.workflow['name'] == 'wizard_solr':
                         state['wizard_source'] = {'source': 'wizard_solr'}
                     elif self.workflow['name'] == 'wizard_threddsservice':
