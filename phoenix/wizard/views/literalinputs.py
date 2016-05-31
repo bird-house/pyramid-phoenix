@@ -11,8 +11,9 @@ class LiteralInputs(Wizard):
     def __init__(self, request):
         super(LiteralInputs, self).__init__(request, name='wizard_literal_inputs', title="Literal Inputs")
         from owslib.wps import WebProcessingService
-        self.wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['identifier']), verify=False)
-        self.process = self.wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
+        wps = WebProcessingService(url=wps_url(request, self.wizard_state.get('wizard_wps')['identifier']),
+                                    verify=False, skip_caps=True)
+        self.process = wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
         self.title = "Literal inputs of {0}".format(self.process.title)
 
     def breadcrumbs(self):

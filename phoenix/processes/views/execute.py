@@ -32,6 +32,7 @@ class ExecuteProcess(Processes):
         else:
             self.wps_id = request.params.get('wps')
             self.processid = request.params.get('process')
+            # TODO: avoid getcaps
             self.wps = WebProcessingService(url=wps_url(request, self.wps_id), verify=False)
         # TODO: need to fix owslib to handle special identifiers
         self.process = self.wps.describeprocess(self.processid)

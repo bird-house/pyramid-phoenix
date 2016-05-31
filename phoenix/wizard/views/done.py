@@ -20,7 +20,8 @@ class Done(Wizard):
             request, name='wizard_done', title="Done")
         self.description = "Describe your Job and start Workflow."
         from owslib.wps import WebProcessingService
-        self.wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['identifier']), verify=False)
+        self.wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['identifier']),
+                                        verify=False, skip_caps=True)
 
     def breadcrumbs(self):
         breadcrumbs = super(Done, self).breadcrumbs()
