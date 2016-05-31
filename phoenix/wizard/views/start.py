@@ -21,7 +21,9 @@ def job_to_state(request):
         if len(execution.dataInputs[0].data) == 1:
             workflow = yaml.load(execution.dataInputs[0].data[0])
 
-            wps = WebProcessingService(url=workflow['worker']['url'], verify=False)
+            # TODO: get the correct worker wps url
+            # TODO: avoid getcaps
+            wps = WebProcessingService(url=workflow['worker']['url'].split('?')[0], verify=False, skip_caps=False)
             process = wps.describeprocess(workflow['worker']['identifier'])
            
             state['wizard_wps'] = {'identifier': wps_id(request, wps.identification.title)}
