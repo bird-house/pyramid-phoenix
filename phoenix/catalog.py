@@ -49,6 +49,9 @@ class Catalog(object):
 
     def delete_record(self, identifier):
         raise NotImplementedError
+
+    def insert_record(self, record):
+        raise NotImplementedError
     
     def wps_id(self, name):
         raise NotImplementedError
@@ -65,8 +68,7 @@ class Catalog(object):
     def get_thredds_list(self):
         raise NotImplementedError
 
-    def publish(self, record):
-        raise NotImplementedError
+    
 
     def harvest_service(self, url, service_type, service_name=None):
         raise NotImplementedError
@@ -82,6 +84,11 @@ class CatalogService(Catalog):
 
     def delete_record(self, identifier):
         self.csw.transaction(ttype='delete', typename='csw:Record', identifier=identifier )
+
+    def insert_record(self, record):
+        record['identifier'] = uuid.uuid4().get_urn()
+        templ_dc = Template(filename=join(dirname(__file__), "templates", "catalog", "dublin_core.xml"))
+        self.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
 
     def wps_id(self, name):
         # TODO: fix retrieval of wps id
@@ -120,11 +127,6 @@ class CatalogService(Catalog):
         self.csw.getrecords2(esn="full", constraints=[query], maxrecords=100)
         return self.csw.records.values()
 
-    def publish(self, record):
-        record['identifier'] = uuid.uuid4().get_urn()
-        templ_dc = Template(filename=join(dirname(__file__), "templates", "catalog", "dublin_core.xml"))
-        self.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
-
     def harvest_service(self, url, service_type, service_name=None):
         if service_type == 'thredds_catalog':
             import threddsclient
@@ -142,7 +144,7 @@ class CatalogService(Catalog):
                 creator = '',
                 keywords = 'thredds',
                 rights = '')
-            self.publish(record)
+            self.insert_record(record)
         else: # ogc services
             self.csw.harvest(source=url, resourcetype=service_type)
 
