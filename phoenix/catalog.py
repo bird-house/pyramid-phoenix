@@ -53,6 +53,9 @@ def catalog_factory(registry):
     return catalog
 
 class Catalog(object):
+    def getrecordbyid(id):
+        raise NotImplementedError
+    
     def wps_id(self, name):
         raise NotImplementedError
 
@@ -75,6 +78,10 @@ class CatalogService(Catalog):
     def __init__(self, csw, service_registry):
         self.csw = csw
         self.service_registry = service_registry
+
+    def getrecordbyid(id):
+        self.csw.getrecordbyid(id=[id])
+        return self.csw.records[id]
 
     def wps_id(self, name):
         # TODO: fix retrieval of wps id
@@ -100,13 +107,13 @@ class CatalogService(Catalog):
         return url
 
     def get_wps_list(self):
-        wps_query = PropertyIsEqualTo('dc:format', 'WPS')
-        self.csw.getrecords2(esn="full", constraints=[wps_query], maxrecords=100)
+        query = PropertyIsEqualTo('dc:format', 'WPS')
+        self.csw.getrecords2(esn="full", constraints=[query], maxrecords=100)
         return self.csw.records.values()
 
     def get_thredds_list(self):
-        wps_query = PropertyIsEqualTo('dc:format', 'THREDDS')
-        self.csw.getrecords2(esn="full", constraints=[wps_query], maxrecords=100)
+        query = PropertyIsEqualTo('dc:format', 'THREDDS')
+        self.csw.getrecords2(esn="full", constraints=[query], maxrecords=100)
         return self.csw.records.values()
 
 class MongodbCatalog(Catalog):

@@ -4,6 +4,7 @@ from deform import Form, ValidationFailure
 from owslib.fes import PropertyIsEqualTo
 
 from phoenix.settings import load_settings, save_settings
+from phoenix.catalog import catalog_factory
 
 import logging
 logger = logging.getLogger(__name__)
@@ -35,13 +36,11 @@ class SolrIndexPanel(SolrPanel):
         
     @panel_config(name='solr_index', renderer='templates/panels/solr_index.pt')
     def panel(self):
-        csw = self.request.csw
         tasksdb = self.request.db.tasks
+        catalog = catalog_factory(self.request.registry)
         
-        query = PropertyIsEqualTo('dc:format', 'THREDDS')
-        csw.getrecords2(esn="full", constraints=[query], maxrecords=100)
         items = []
-        for rec in csw.records.values():
+        for rec in catalog.get_thredds_list():
             item = dict(title=rec.title, status='new', service_id=rec.identifier)
             task = tasksdb.find_one({'url': rec.source})
             if task:
