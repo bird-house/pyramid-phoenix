@@ -42,14 +42,21 @@ def includeme(config):
     config.add_request_method(csw_activated, reify=True)
 
 def catalog_factory(registry):
-    db = mongodb(registry)
-    return MongodbAccessTokenStore(db.catalog)
+    settings = registry.settings
+    catalog = None
+    service_registry = service_registry_factory(registry)
+    if asbool(settings.get('phoenix.csw', True)):
+        catalog = CatalogService(settings.get('csw'), service_registry)
+    else:
+        db = mongodb(registry)
+        catalog = MongodbAccessTokenStore(db.catalog)
+    return catalog
 
 class Catalog(object):
     def wps_id(self, name):
         raise NotImplementedError
 
-    def wps_url(self, identifier):
+    def wps_url(self, request, identifier):
         raise NotImplementedError
 
     def get_wps_list(self):
@@ -65,8 +72,37 @@ class Catalog(object):
         raise NotImplementedError
     
 class CatalogService(Catalog):
-    def __init__(self, csw):
+    def __init__(self, csw, service_registry):
         self.csw = csw
+        self.service_registry = service_registry
+
+    def wps_id(self, name):
+        # TODO: fix retrieval of wps id
+        #wps_query = PropertyIsEqualTo('dc:format', 'WPS')
+        title_query = PropertyIsEqualTo('dc:title', name)
+        self.csw.getrecords2(esn="full", constraints=[title_query], maxrecords=1)
+        logger.debug("csw results %s", self.csw.results)
+        identifier = None
+        if len(self.csw.records.values()) == 1:
+            rec = self.csw.records.values()[0]
+            identifier = rec.identifier
+            logger.debug("found rec %s %s %s", rec.identifier, rec.title, rec.source)
+        return identifier
+
+    def wps_url(self, request, identifier):
+        self.csw.getrecordbyid(id=[identifier])
+        record = self.csw.records[identifier]
+        # TODO: fix service name
+        service_name = record.title.lower()
+        self.service_registry.register_service(name=service_name, url=record.source)
+        url = proxy_url(request, service_name)
+        logger.debug("identifier=%s, source=%s, url=%s", identifier, record.source, url)
+        return url
+
+    def get_wps_list(self):
+        wps_query = PropertyIsEqualTo('dc:format', 'WPS')
+        self.csw.getrecords2(esn="full", constraints=[wps_query], maxrecords=100)
+        return self.csw.records.values()
 
 class MongodbCatalog(Catalog):
     def __init__(self, collection):
