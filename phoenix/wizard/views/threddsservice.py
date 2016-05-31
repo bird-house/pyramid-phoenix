@@ -3,7 +3,6 @@ import colander
 import deform
 
 from phoenix.wizard.views import Wizard
-from phoenix.catalog import catalog_factory
 
 @colander.deferred
 def deferred_widget(node, kw):
@@ -33,8 +32,7 @@ class ThreddsService(Wizard):
         return breadcrumbs
 
     def schema(self):
-        catalog = catalog_factory(self.request.registry)
-        return Schema().bind(thredds_list=catalog.get_thredds_list())
+        return Schema().bind(thredds_list=self.request.catalog.get_thredds_list())
 
     def success(self, appstruct):
         super(ThreddsService, self).success(appstruct)

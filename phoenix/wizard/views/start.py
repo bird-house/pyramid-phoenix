@@ -5,7 +5,6 @@ from pyramid.httpexceptions import HTTPFound
 
 from owslib.wps import WPSExecution, WebProcessingService
 
-from phoenix.catalog import catalog_factory
 from phoenix.wizard.views import Wizard
 
 import logging
@@ -26,8 +25,7 @@ def job_to_state(request):
             wps = WebProcessingService(url=workflow['worker']['url'].split('?')[0], verify=False, skip_caps=False)
             process = wps.describeprocess(workflow['worker']['identifier'])
 
-            catalog = catalog_factory(request.registry)
-            state['wizard_wps'] = {'identifier': catalog.wps_id(wps.identification.title)}
+            state['wizard_wps'] = {'identifier': request.catalog.wps_id(wps.identification.title)}
             state['wizard_process'] = {'identifier': workflow['worker']['identifier']}
             inputs = {}
             for inp in workflow['worker']['inputs']:

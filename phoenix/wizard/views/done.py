@@ -4,7 +4,6 @@ import json
 
 from phoenix.events import JobStarted
 from phoenix.wizard.views import Wizard
-from phoenix.catalog import catalog_factory
 from phoenix.wps import appstruct_to_inputs
 from phoenix.tasks import execute_workflow
 from phoenix.tasks import execute_process
@@ -20,8 +19,7 @@ class Done(Wizard):
             request, name='wizard_done', title="Done")
         self.description = "Describe your Job and start Workflow."
         from owslib.wps import WebProcessingService
-        catalog = catalog_factory(request.registry)
-        self.wps = WebProcessingService(catalog.wps_url(request, self.wizard_state.get('wizard_wps')['identifier']),
+        self.wps = WebProcessingService(request.catalog.wps_url(request, self.wizard_state.get('wizard_wps')['identifier']),
                                         verify=False, skip_caps=True)
 
     def breadcrumbs(self):
