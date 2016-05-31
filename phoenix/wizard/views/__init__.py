@@ -122,7 +122,6 @@ class WizardState(object):
 class Wizard(MyView):
     def __init__(self, request, name, title, description=None):
         super(Wizard, self).__init__(request, name, title, description)
-        self.csw = self.request.csw
         self.wizard_state = WizardState(self.session)
         self.favorite = WizardFavorite(self.request, self.session)
 
@@ -248,8 +247,7 @@ class Wizard(MyView):
         if resource == 'wizard_csw':
             selection = self.wizard_state.get(resource).get('selection', [])
             logger.debug("catalog selection: %s", selection)
-            self.csw.getrecordbyid(id=selection)
-            resources = [str(rec.source) for rec in self.csw.records.values()]
+            # TODO: catalog resource
         return resources
 
     def view(self):
