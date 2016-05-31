@@ -3,6 +3,7 @@ from pyramid.httpexceptions import HTTPFound
 
 from twitcher.registry import service_registry_factory
 
+from phoenix.catalog import catalog_factory
 from phoenix.settings.views import SettingsView
 
 import logging
@@ -12,7 +13,7 @@ class Services(SettingsView):
     def __init__(self, request):
         super(Services, self).__init__(
             request, name='services', title='Services')
-        self.csw = self.request.csw
+        self.catalog = catalog_factory(request.registry)
 
         
     def breadcrumbs(self):
@@ -24,8 +25,7 @@ class Services(SettingsView):
     @view_config(route_name='service_details', renderer='../templates/services/service_details.pt')
     def details(self):
         service_id = self.request.matchdict.get('service_id')
-        self.csw.getrecordbyid(id=[service_id])
-        service = self.csw.records[service_id]
+        service = self.catalog.getrecordbyid(service_id)
         return dict(service=service)
 
     
@@ -33,9 +33,8 @@ class Services(SettingsView):
     def remove(self):
         try:
             service_id = self.request.matchdict.get('service_id')
-            self.csw.getrecordbyid(id=[service_id])
-            service=self.csw.records[service_id]
-            self.csw.transaction(ttype='delete', typename='csw:Record', identifier=service_id )
+            service = self.catalog.getrecordbyid(service_id)
+            self.catalog.delete(service_id)
             # TODO: use events to unregister service
             registry = service_registry_factory(self.request.registry)
             # TODO: fix service name
@@ -50,7 +49,6 @@ class Services(SettingsView):
     
     @view_config(route_name="services", renderer='../templates/services/service_list.pt')
     def view(self):
-        self.csw.getrecords2(esn="full", maxrecords=100)
-        return dict(items=self.csw.records.values())
+        return dict(items=self.catalog.get_services())
 
 

@@ -53,7 +53,10 @@ def catalog_factory(registry):
     return catalog
 
 class Catalog(object):
-    def getrecordbyid(id):
+    def getrecordbyid(self, identifier):
+        raise NotImplementedError
+
+    def delete(self, identifier):
         raise NotImplementedError
     
     def wps_id(self, name):
@@ -62,6 +65,9 @@ class Catalog(object):
     def wps_url(self, request, identifier):
         raise NotImplementedError
 
+    def get_services(self):
+        raise NotImplementedError
+    
     def get_wps_list(self):
         raise NotImplementedError
 
@@ -79,9 +85,12 @@ class CatalogService(Catalog):
         self.csw = csw
         self.service_registry = service_registry
 
-    def getrecordbyid(id):
-        self.csw.getrecordbyid(id=[id])
-        return self.csw.records[id]
+    def getrecordbyid(self, identifier):
+        self.csw.getrecordbyid(id=[identifier])
+        return self.csw.records[identifier]
+
+    def delete(self, identifier):
+        self.csw.transaction(ttype='delete', typename='csw:Record', identifier=identifier )
 
     def wps_id(self, name):
         # TODO: fix retrieval of wps id
@@ -105,6 +114,11 @@ class CatalogService(Catalog):
         url = proxy_url(request, service_name)
         logger.debug("identifier=%s, source=%s, url=%s", identifier, record.source, url)
         return url
+
+    def get_services(self):
+        services = self.get_wps_list()
+        services.extend(self.get_thredds_list())
+        return services
 
     def get_wps_list(self):
         query = PropertyIsEqualTo('dc:format', 'WPS')
