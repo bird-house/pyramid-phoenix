@@ -4,6 +4,8 @@ from datetime import datetime
 from datetime import timedelta
 from dateutil import parser as datetime_parser
 
+from owslib.util import build_get_url
+
 import deform
 
 from pyramid.url import resource_url
@@ -154,6 +156,16 @@ def build_url(url, query):
     if not url.endswith('?'):
         url = url + '?'
     return url + urllib.urlencode(query)
+
+def wps_caps_url(url):
+    # TODO: move code to owslib?
+    params = {'service': 'WPS', 'request': 'GetCapabilities', 'version': '1.0.0'}
+    return build_get_url(url, params, overwrite=True)
+
+def wps_describe_url(url, identifier):
+    # TODO: move code to owslib?
+    params = {'service': 'WPS', 'request': 'DescribeProcess', 'version': '1.0.0', 'identifier': identifier}
+    return build_get_url(url, params, overwrite=True)
 
 def time_ago_in_words(from_time):
     from webhelpers2.date import time_ago_in_words as _time_ago_in_words
