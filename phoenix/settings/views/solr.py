@@ -2,7 +2,6 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
 from phoenix.settings import load_settings
-from phoenix.catalog import catalog_factory
 
 from . import SettingsView
 
@@ -25,8 +24,7 @@ class SolrSettings(SettingsView):
     @view_config(route_name="index_service")
     def index_service(self):
         service_id = self.request.matchdict.get('service_id')
-        catalog = catalog_factory(self.request.registry)
-        service = catalog.getrecordbyid(service_id)
+        service = self.request.catalog.getrecordbyid(service_id)
         settings = load_settings(self.request)
         from phoenix.tasks import index_thredds
         index_thredds.delay(url=service.source, maxrecords=settings.get('solr_maxrecords'), depth=settings.get('solr_depth'))
