@@ -52,7 +52,7 @@ class RegisterService(SettingsView):
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
             url = appstruct.get('url')
-            self.request.catalog.harvest_service(**appstruct)
+            self.request.catalog.harvest(**appstruct)
             self.session.flash('Registered Service %s' % (url), queue="success")
         except ValidationFailure, e:
             return dict(title=self.title, form = e.render())

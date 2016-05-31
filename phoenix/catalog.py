@@ -52,6 +52,9 @@ class Catalog(object):
 
     def insert_record(self, record):
         raise NotImplementedError
+
+    def harvest(self, url, service_type, service_name=None):
+        raise NotImplementedError
     
     def wps_id(self, name):
         raise NotImplementedError
@@ -66,11 +69,6 @@ class Catalog(object):
         raise NotImplementedError
 
     def get_thredds_list(self):
-        raise NotImplementedError
-
-    
-
-    def harvest_service(self, url, service_type, service_name=None):
         raise NotImplementedError
     
 class CatalogService(Catalog):
@@ -89,6 +87,27 @@ class CatalogService(Catalog):
         record['identifier'] = uuid.uuid4().get_urn()
         templ_dc = Template(filename=join(dirname(__file__), "templates", "catalog", "dublin_core.xml"))
         self.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
+
+    def harvest(self, url, service_type, service_name=None):
+        if service_type == 'thredds_catalog':
+            import threddsclient
+            tds = threddsclient.read_url(url)
+            title = tds.name
+            if service_name and len(service_name.strip()) > 2:
+                title = service_name
+            elif len(title.strip()) == 0:
+                title = url
+            record = dict(
+                title = title,
+                abstract = "",
+                source = url,
+                format = "THREDDS",
+                creator = '',
+                keywords = 'thredds',
+                rights = '')
+            self.insert_record(record)
+        else: # ogc services
+            self.csw.harvest(source=url, resourcetype=service_type)
 
     def wps_id(self, name):
         # TODO: fix retrieval of wps id
@@ -127,26 +146,7 @@ class CatalogService(Catalog):
         self.csw.getrecords2(esn="full", constraints=[query], maxrecords=100)
         return self.csw.records.values()
 
-    def harvest_service(self, url, service_type, service_name=None):
-        if service_type == 'thredds_catalog':
-            import threddsclient
-            tds = threddsclient.read_url(url)
-            title = tds.name
-            if service_name and len(service_name.strip()) > 2:
-                title = service_name
-            elif len(title.strip()) == 0:
-                title = url
-            record = dict(
-                title = title,
-                abstract = "",
-                source = url,
-                format = "THREDDS",
-                creator = '',
-                keywords = 'thredds',
-                rights = '')
-            self.insert_record(record)
-        else: # ogc services
-            self.csw.harvest(source=url, resourcetype=service_type)
+   
 
 class MongodbCatalog(Catalog):
     def __init__(self, collection):
