@@ -6,7 +6,6 @@ from deform import ValidationFailure
 
 from phoenix.events import JobStarted
 from phoenix.processes.views import Processes
-from phoenix.catalog import catalog_factory
 from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
 from phoenix.utils import wps_describe_url
@@ -19,7 +18,7 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='edit', layout='default')
 class ExecuteProcess(Processes):
     def __init__(self, request):
-        catalog = catalog_factory(request.registry)
+        catalog = request.catalog
         self.execution = None
         if 'job_id' in request.params:
             job = request.db.jobs.find_one({'identifier': request.params['job_id']})
