@@ -104,6 +104,11 @@ class CatalogService(Catalog):
         self.csw.getrecords2(esn="full", constraints=[wps_query], maxrecords=100)
         return self.csw.records.values()
 
+    def get_thredds_list(self):
+        wps_query = PropertyIsEqualTo('dc:format', 'THREDDS')
+        self.csw.getrecords2(esn="full", constraints=[wps_query], maxrecords=100)
+        return self.csw.records.values()
+
 class MongodbCatalog(Catalog):
     def __init__(self, collection):
         self.collection = collection

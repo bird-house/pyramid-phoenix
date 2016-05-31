@@ -3,7 +3,7 @@ import colander
 import deform
 
 from phoenix.wizard.views import Wizard
-from phoenix.catalog import wps_url
+from phoenix.catalog import catalog_factory
 
 @colander.deferred
 def deferred_widget(node, kw):
@@ -31,7 +31,8 @@ class ComplexInputs(Wizard):
             request, name='wizard_complex_inputs',
             title="Choose Input Parameter")
         from owslib.wps import WebProcessingService
-        wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['identifier']),
+        catalog = catalog_factory(request.registry)
+        wps = WebProcessingService(catalog.wps_url(request, self.wizard_state.get('wizard_wps')['identifier']),
                                     verify=False, skip_caps=True)
         self.process = wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
         self.title = "Choose Input Parameter of {0}".format(self.process.title)
