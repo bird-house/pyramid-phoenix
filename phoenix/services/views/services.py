@@ -22,7 +22,7 @@ class Services(SettingsView):
     @view_config(route_name='service_details', renderer='../templates/services/service_details.pt')
     def details(self):
         service_id = self.request.matchdict.get('service_id')
-        service = self.request.catalog.getrecordbyid(service_id)
+        service = self.request.catalog.get_record_by_id(service_id)
         return dict(service=service)
 
     
@@ -30,7 +30,7 @@ class Services(SettingsView):
     def remove(self):
         try:
             service_id = self.request.matchdict.get('service_id')
-            service = self.request.catalog.getrecordbyid(service_id)
+            service = self.request.catalog.get_record_by_id(service_id)
             self.request.catalog.delete(service_id)
             # TODO: use events to unregister service
             registry = service_registry_factory(self.request.registry)

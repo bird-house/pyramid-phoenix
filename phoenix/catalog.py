@@ -44,7 +44,7 @@ def catalog_factory(registry):
     return catalog
 
 class Catalog(object):
-    def getrecordbyid(self, identifier):
+    def get_record_by_id(self, identifier):
         raise NotImplementedError
 
     def delete(self, identifier):
@@ -76,7 +76,7 @@ class CatalogService(Catalog):
         self.csw = csw
         self.service_registry = service_registry
 
-    def getrecordbyid(self, identifier):
+    def get_record_by_id(self, identifier):
         self.csw.getrecordbyid(id=[identifier])
         return self.csw.records[identifier]
 
@@ -97,8 +97,7 @@ class CatalogService(Catalog):
         return identifier
 
     def wps_url(self, request, identifier):
-        self.csw.getrecordbyid(id=[identifier])
-        record = self.csw.records[identifier]
+        record = self.get_record_by_id(identifier)
         # TODO: fix service name
         service_name = record.title.lower()
         self.service_registry.register_service(name=service_name, url=record.source)

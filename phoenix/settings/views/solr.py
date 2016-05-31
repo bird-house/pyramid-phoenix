@@ -24,7 +24,7 @@ class SolrSettings(SettingsView):
     @view_config(route_name="index_service")
     def index_service(self):
         service_id = self.request.matchdict.get('service_id')
-        service = self.request.catalog.getrecordbyid(service_id)
+        service = self.request.catalog.get_record_by_id(service_id)
         settings = load_settings(self.request)
         from phoenix.tasks import index_thredds
         index_thredds.delay(url=service.source, maxrecords=settings.get('solr_maxrecords'), depth=settings.get('solr_depth'))
