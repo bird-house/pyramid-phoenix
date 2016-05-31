@@ -7,9 +7,42 @@ from owslib.fes import PropertyIsEqualTo
 
 from twitcher.registry import service_registry_factory, proxy_url
 
+from phoenix.db import mongodb
+
 import logging
 logger = logging.getLogger(__name__)
 
+
+def catalog_factory(registry):
+    db = mongodb(registry)
+    return MongodbAccessTokenStore(db.catalog)
+
+class Catalog(object):
+    def wps_id(self, name):
+        raise NotImplementedError
+
+    def wps_url(self, identifier):
+        raise NotImplementedError
+
+    def get_wps_list(self):
+        raise NotImplementedError
+
+    def get_thredds_list(self):
+        raise NotImplementedError
+
+    def publish(self, record):
+        raise NotImplementedError
+
+    def harvest_service(self, url, service_type, service_name=None):
+        raise NotImplementedError
+    
+class CatalogService(Catalog):
+    def __init__(self, csw):
+        self.csw = csw
+
+class MongodbCatalog(Catalog):
+    def __init__(self, collection):
+        self.collection = collection
 
 def wps_id(request, name):
     # TODO: fix retrieval of wps id
