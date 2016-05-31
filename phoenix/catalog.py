@@ -3,6 +3,7 @@ import uuid
 from urlparse import urlparse
 from os.path import join, dirname
 
+from owslib.csw import CatalogueServiceWeb
 from owslib.fes import PropertyIsEqualTo
 from twitcher.registry import service_registry_factory, proxy_url
 
@@ -18,38 +19,28 @@ def includeme(config):
     settings = config.registry.settings
 
     # catalog service
-    if asbool(settings.get('phoenix.csw', True)):
-        logger.info('Add catalog')
-        
-        def add_csw(event):
-            settings = event.request.registry.settings
-            if settings.get('csw') is None:
-                try:
-                    from owslib.csw import CatalogueServiceWeb
-                    settings['csw'] = CatalogueServiceWeb(url=settings['csw.url'])
-                    logger.debug("init csw")
-                except:
-                    logger.exception('Could not connect catalog service %s', settings['csw.url'])
-            else:
-                logger.debug("csw already initialized")
-            event.request.csw = settings.get('csw')
-        config.add_subscriber(add_csw, NewRequest)
-
-    # check if csw is activated
-    def csw_activated(request):
-        settings = request.registry.settings
-        return asbool(settings.get('phoenix.csw', True))
-    config.add_request_method(csw_activated, reify=True)
+    def add_catalog(event):
+        settings = event.request.registry.settings
+        if settings.get('catalog') is None:
+            try:
+                settings['catalog'] = catalog_factory(config.registry)
+            except:
+                logger.exception('Could not connect catalog service.')
+        else:
+            logger.debug("catalog already initialized")
+        event.request.catalog = settings.get('catalog')
+    config.add_subscriber(add_catalog, NewRequest)
 
 def catalog_factory(registry):
     settings = registry.settings
     catalog = None
     service_registry = service_registry_factory(registry)
     if asbool(settings.get('phoenix.csw', True)):
-        catalog = CatalogService(settings.get('csw'), service_registry)
+        csw = CatalogueServiceWeb(url=settings['csw.url'])
+        catalog = CatalogService(csw, service_registry)
     else:
         db = mongodb(registry)
-        catalog = MongodbAccessTokenStore(db.catalog)
+        catalog = MongodbCatalog(db.catalog)
     return catalog
 
 class Catalog(object):
