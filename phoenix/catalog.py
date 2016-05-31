@@ -108,7 +108,7 @@ def get_thredds_list(request):
 
 def publish(request, record):
     record['identifier'] = uuid.uuid4().get_urn()
-    templ_dc = Template(filename=join(dirname(__file__), "templates", "dublin_core.xml"))
+    templ_dc = Template(filename=join(dirname(__file__), "templates", "catalog", "dublin_core.xml"))
     request.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
 
 def harvest_service(request, url, service_type, service_name=None):
