@@ -31,7 +31,7 @@ class Services(SettingsView):
         try:
             service_id = self.request.matchdict.get('service_id')
             service = self.request.catalog.get_record_by_id(service_id)
-            self.request.catalog.delete(service_id)
+            self.request.catalog.delete_record(service_id)
             # TODO: use events to unregister service
             registry = service_registry_factory(self.request.registry)
             # TODO: fix service name

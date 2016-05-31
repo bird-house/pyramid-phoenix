@@ -47,7 +47,7 @@ class Catalog(object):
     def get_record_by_id(self, identifier):
         raise NotImplementedError
 
-    def delete(self, identifier):
+    def delete_record(self, identifier):
         raise NotImplementedError
     
     def wps_id(self, name):
@@ -80,7 +80,7 @@ class CatalogService(Catalog):
         self.csw.getrecordbyid(id=[identifier])
         return self.csw.records[identifier]
 
-    def delete(self, identifier):
+    def delete_record(self, identifier):
         self.csw.transaction(ttype='delete', typename='csw:Record', identifier=identifier )
 
     def wps_id(self, name):
