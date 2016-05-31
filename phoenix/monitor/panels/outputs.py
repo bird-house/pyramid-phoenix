@@ -44,15 +44,7 @@ class Outputs(object):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
-            
-            # TODO: fix template loading and location
-            from mako.template import Template
-            from os.path import join, dirname
-            import phoenix
-            templ_dc = Template(filename=join(dirname(phoenix.__file__), "templates", "dc.xml"))
-
-            record=templ_dc.render(**appstruct)
-            self.request.csw.transaction(ttype="insert", typename='csw:Record', record=str(record))
+            # TODO: publish to catalog
         except ValidationFailure, e:
             logger.exception('validation of publish form failed')
             return dict(form=e.render())
