@@ -15,7 +15,7 @@
   <dc:title>${title}</dc:title>
   <dct:modified>${datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')}</dct:modified>
   <dct:abstract>${abstract}</dct:abstract>
-  <dc:type>dataset</dc:type>
+  <dc:type>${type}</dc:type>
   % for keyword in keywords.split(','):
   <dc:subject>${keyword}</dc:subject>
   % endfor

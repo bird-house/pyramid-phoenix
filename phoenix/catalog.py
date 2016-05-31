@@ -55,14 +55,14 @@ class Catalog(object):
 
     def harvest(self, url, service_type, service_name=None):
         raise NotImplementedError
+
+    def get_services(self, maxrecords=100):
+        raise NotImplementedError
     
     def wps_id(self, name):
         raise NotImplementedError
 
     def wps_url(self, request, identifier):
-        raise NotImplementedError
-
-    def get_services(self):
         raise NotImplementedError
     
     def get_wps_list(self):
@@ -98,6 +98,7 @@ class CatalogService(Catalog):
             elif len(title.strip()) == 0:
                 title = url
             record = dict(
+                type = 'service',
                 title = title,
                 abstract = "",
                 source = url,
@@ -108,6 +109,11 @@ class CatalogService(Catalog):
             self.insert_record(record)
         else: # ogc services
             self.csw.harvest(source=url, resourcetype=service_type)
+
+    def get_services(self, maxrecords=100):
+        query = PropertyIsEqualTo('dc:type', 'service')
+        self.csw.getrecords2(esn="full", constraints=[query], maxrecords=maxrecords)
+        return self.csw.records.values()
 
     def wps_id(self, name):
         # TODO: fix retrieval of wps id
@@ -130,11 +136,6 @@ class CatalogService(Catalog):
         url = proxy_url(request, service_name)
         logger.debug("identifier=%s, source=%s, url=%s", identifier, record.source, url)
         return url
-
-    def get_services(self):
-        services = self.get_wps_list()
-        services.extend(self.get_thredds_list())
-        return services
 
     def get_wps_list(self):
         query = PropertyIsEqualTo('dc:format', 'WPS')
