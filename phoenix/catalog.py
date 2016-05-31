@@ -4,7 +4,7 @@ from urlparse import urlparse
 from os.path import join, dirname
 
 from owslib.csw import CatalogueServiceWeb
-from owslib.fes import PropertyIsEqualTo
+from owslib.fes import PropertyIsEqualTo, And
 from twitcher.registry import service_registry_factory, proxy_url
 
 from pyramid.settings import asbool
@@ -56,7 +56,7 @@ class Catalog(object):
     def harvest(self, url, service_type, service_name=None):
         raise NotImplementedError
 
-    def get_services(self, maxrecords=100):
+    def get_services(self, format=None, maxrecords=100):
         raise NotImplementedError
     
     def wps_id(self, name):
@@ -110,9 +110,12 @@ class CatalogService(Catalog):
         else: # ogc services
             self.csw.harvest(source=url, resourcetype=service_type)
 
-    def get_services(self, maxrecords=100):
-        query = PropertyIsEqualTo('dc:type', 'service')
-        self.csw.getrecords2(esn="full", constraints=[query], maxrecords=maxrecords)
+    def get_services(self, format=None, maxrecords=100):
+        cs = PropertyIsEqualTo('dc:type', 'service')
+        if format is not None:
+            cs_format = PropertyIsEqualTo('dc:format', format)
+            cs = And([cs, cs_format])
+        self.csw.getrecords2(esn="full", constraints=[cs], maxrecords=maxrecords)
         return self.csw.records.values()
 
     def wps_id(self, name):
@@ -138,14 +141,10 @@ class CatalogService(Catalog):
         return url
 
     def get_wps_list(self):
-        query = PropertyIsEqualTo('dc:format', 'WPS')
-        self.csw.getrecords2(esn="full", constraints=[query], maxrecords=100)
-        return self.csw.records.values()
+        return self.get_services(format='WPS')
 
     def get_thredds_list(self):
-        query = PropertyIsEqualTo('dc:format', 'THREDDS')
-        self.csw.getrecords2(esn="full", constraints=[query], maxrecords=100)
-        return self.csw.records.values()
+        return self.get_services(format='THREDDS')
 
    
 
