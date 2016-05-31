@@ -130,35 +130,37 @@ class CatalogService(Catalog):
         self.csw.getrecords2(esn="full", constraints=[query], maxrecords=100)
         return self.csw.records.values()
 
+    def publish(self, record):
+        record['identifier'] = uuid.uuid4().get_urn()
+        templ_dc = Template(filename=join(dirname(__file__), "templates", "catalog", "dublin_core.xml"))
+        self.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
+
+    def harvest_service(self, url, service_type, service_name=None):
+        if service_type == 'thredds_catalog':
+            import threddsclient
+            tds = threddsclient.read_url(url)
+            title = tds.name
+            if service_name and len(service_name.strip()) > 2:
+                title = service_name
+            elif len(title.strip()) == 0:
+                title = url
+            record = dict(
+                title = title,
+                abstract = "",
+                source = url,
+                format = "THREDDS",
+                creator = '',
+                keywords = 'thredds',
+                rights = '')
+            self.publish(record)
+        else: # ogc services
+            self.csw.harvest(source=url, resourcetype=service_type)
+
 class MongodbCatalog(Catalog):
     def __init__(self, collection):
         self.collection = collection
 
-def publish(request, record):
-    record['identifier'] = uuid.uuid4().get_urn()
-    templ_dc = Template(filename=join(dirname(__file__), "templates", "catalog", "dublin_core.xml"))
-    request.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
 
-def harvest_service(request, url, service_type, service_name=None):
-    if service_type == 'thredds_catalog':
-        import threddsclient
-        tds = threddsclient.read_url(url)
-        title = tds.name
-        if service_name and len(service_name.strip()) > 2:
-            title = service_name
-        elif len(title.strip()) == 0:
-            title = url
-        record = dict(
-            title = title,
-            abstract = "",
-            source = url,
-            format = "THREDDS",
-            creator = '',
-            keywords = 'thredds',
-            rights = '')
-        publish(request, record)
-    else: # ogc services
-        request.csw.harvest(source=url, resourcetype=service_type)
 
 
        

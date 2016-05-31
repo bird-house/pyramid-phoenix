@@ -5,7 +5,7 @@ from deform import Form, Button
 from deform import ValidationFailure
 
 from phoenix.settings.views import SettingsView
-from phoenix import catalog
+from phoenix.catalog import catalog_factory
 
 import deform
 import colander
@@ -53,7 +53,8 @@ class RegisterService(SettingsView):
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
             url = appstruct.get('url')
-            catalog.harvest_service(self.request, **appstruct)
+            catalog = catalog_factory(self.request.registry)
+            catalog.harvest_service(**appstruct)
             self.session.flash('Registered Service %s' % (url), queue="success")
         except ValidationFailure, e:
             return dict(title=self.title, form = e.render())
