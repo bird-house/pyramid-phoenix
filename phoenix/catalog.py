@@ -56,6 +56,12 @@ def wps_url(request, identifier):
     logger.debug("identifier=%s, source=%s, url=%s", identifier, record.source, url)
     return url
 
+def wps_id(request, service_name):
+    service = request.catalog.get_service_by_name(service_name)
+    if service is not None:
+        return service.identifier
+    return None
+
 class Catalog(object):
     def get_record_by_id(self, identifier):
         raise NotImplementedError
@@ -71,10 +77,10 @@ class Catalog(object):
 
     def get_services(self, service_type=None, maxrecords=100):
         raise NotImplementedError
-    
-    def wps_id(self, name):
-        raise NotImplementedError
 
+    def get_service_by_name(self, service_name, service_type=WPS_TYPE):
+        raise NotImplementedError
+    
 class CatalogService(Catalog):
     def __init__(self, csw):
         self.csw = csw
@@ -121,20 +127,18 @@ class CatalogService(Catalog):
         self.csw.getrecords2(esn="full", constraints=[cs], maxrecords=maxrecords)
         return self.csw.records.values()
 
-    def wps_id(self, name):
-        # TODO: fix retrieval of wps id
-        #wps_query = PropertyIsEqualTo('dc:format', 'WPS')
-        title_query = PropertyIsEqualTo('dc:title', name)
-        self.csw.getrecords2(esn="full", constraints=[title_query], maxrecords=1)
-        logger.debug("csw results %s", self.csw.results)
-        identifier = None
-        if len(self.csw.records.values()) == 1:
-            rec = self.csw.records.values()[0]
-            identifier = rec.identifier
-            logger.debug("found rec %s %s %s", rec.identifier, rec.title, rec.source)
-        return identifier
+    def get_service_by_name(self, service_name, service_type=WPS_TYPE):
+        cs_type = PropertyIsEqualTo('dc:type', 'service')
+        cs_format = PropertyIsEqualTo('dc:format', service_type)
+        cs_title = PropertyIsEqualTo('dc:title', service_name)
+        cs = And([cs_type, cs_format, cs_title])
+        self.csw.getrecords2(esn="full", constraints=[cs], maxrecords=1)
+        service = None
+        if self.csw.results['returned'] == 1:
+            service = self.csw.records.values()[0]
+        return service
+        
 
-    
 class MongodbCatalog(Catalog):
     def __init__(self, collection):
         self.collection = collection

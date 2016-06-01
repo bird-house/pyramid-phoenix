@@ -9,7 +9,7 @@ from phoenix.processes.views import Processes
 from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
 from phoenix.utils import wps_describe_url
-from phoenix.catalog import wps_url
+from phoenix.catalog import wps_url, wps_id
 
 from owslib.wps import WebProcessingService
 
@@ -28,7 +28,7 @@ class ExecuteProcess(Processes):
             # TODO: fix owslib for service urls
             self.wps = WebProcessingService(url=self.execution.serviceInstance, verify=False)
             self.processid = self.execution.process.identifier
-            self.wps_id = request.catalog.wps_id(self.wps.identification.title)
+            self.wps_id = wps_id(request, self.wps.identification.title)
             logger.debug("url=%s, pid=%s", self.wps.url, self.processid)
         else:
             self.wps_id = request.params.get('wps')
