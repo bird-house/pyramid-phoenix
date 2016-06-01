@@ -3,8 +3,8 @@ import colander
 import deform
 
 from owslib.wps import WebProcessingService
- 
-from phoenix.catalog import wps_url
+from twitcher.registry import proxy_url
+
 from phoenix.wizard.views import Wizard
 
 @colander.deferred
@@ -32,7 +32,7 @@ class ComplexInputs(Wizard):
         super(ComplexInputs, self).__init__(
             request, name='wizard_complex_inputs',
             title="Choose Input Parameter")       
-        wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['identifier']),
+        wps = WebProcessingService(proxy_url(request, self.wizard_state.get('wizard_wps')['identifier']),
                                     verify=False, skip_caps=True)
         self.process = wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
         self.title = "Choose Input Parameter of {0}".format(self.process.title)

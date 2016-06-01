@@ -9,7 +9,8 @@ from phoenix.processes.views import Processes
 from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
 from phoenix.utils import wps_describe_url
-from phoenix.catalog import wps_url, wps_id
+from phoenix.catalog import get_service_name
+from twitcher.registry import proxy_url
 
 from owslib.wps import WebProcessingService
 
@@ -25,23 +26,20 @@ class ExecuteProcess(Processes):
             from owslib.wps import WPSExecution
             self.execution = WPSExecution()
             self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
-            # TODO: fix owslib for service urls
-            self.wps = WebProcessingService(url=self.execution.serviceInstance, verify=False)
             self.processid = self.execution.process.identifier
-            self.wps_id = wps_id(request, self.wps.identification.title)
-            logger.debug("url=%s, pid=%s", self.wps.url, self.processid)
+            self.service_name = get_service_name(request, url=self.execution.serviceInstance)
         else:
-            self.wps_id = request.params.get('wps')
+            self.service_name = request.params.get('wps')
             self.processid = request.params.get('process')
-            # TODO: avoid getcaps
-            self.wps = WebProcessingService(url=wps_url(request, self.wps_id), verify=False)
+        # TODO: avoid getcaps
+        self.wps = WebProcessingService(url=proxy_url(request, self.service_name), verify=False)
         # TODO: need to fix owslib to handle special identifiers
         self.process = self.wps.describeprocess(self.processid)
         super(ExecuteProcess, self).__init__(request, name='processes_execute', title='')
 
     def breadcrumbs(self):
         breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
-        route_path = self.request.route_path('processes_list', _query=[('wps', self.wps_id)])
+        route_path = self.request.route_path('processes_list', _query=[('wps', self.service_name)])
         breadcrumbs.append(dict(route_path=route_path, title=self.wps.identification.title))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.process.title))
         return breadcrumbs

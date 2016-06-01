@@ -5,7 +5,7 @@ from os.path import join, dirname
 
 from owslib.csw import CatalogueServiceWeb
 from owslib.fes import PropertyIsEqualTo, And
-from twitcher.registry import service_registry_factory, proxy_url
+from twitcher.registry import service_registry_factory
 
 from pyramid.settings import asbool
 from pyramid.events import NewRequest
@@ -46,21 +46,18 @@ def catalog_factory(registry):
 WPS_TYPE = "WPS"
 THREDDS_TYPE = "THREDDS"
 
-def wps_url(request, identifier):
-    record = request.catalog.get_record_by_id(identifier)
-    # TODO: fix service name
-    service_name = record.title.lower()
-    service_registry = service_registry_factory(request.registry)
-    service_registry.register_service(name=service_name, url=record.source)
-    url = proxy_url(request, service_name)
-    logger.debug("identifier=%s, source=%s, url=%s", identifier, record.source, url)
-    return url
 
-def wps_id(request, service_name):
-    service = request.catalog.get_service_by_name(service_name)
-    if service is not None:
-        return service.identifier
-    return None
+def get_service_name(request, url, name=None):
+    from urlparse import urlparse
+    parsed_url = urlparse(url)
+    # TODO: need proxy reverse function
+    if parsed_url.path.startswith("/ows/proxy"):
+        service_name = parsed_url.path.strip('/').split('/')[2]
+    else:
+        service_registry = service_registry_factory(request.registry)
+        service = service_registry.register_service(url=url, name=name)
+        service_name = service.get('name')
+    return service_name
 
 class Catalog(object):
     def get_record_by_id(self, identifier):
@@ -78,8 +75,6 @@ class Catalog(object):
     def get_services(self, service_type=None, maxrecords=100):
         raise NotImplementedError
 
-    def get_service_by_name(self, service_name, service_type=WPS_TYPE):
-        raise NotImplementedError
     
 class CatalogService(Catalog):
     def __init__(self, csw):
@@ -127,18 +122,7 @@ class CatalogService(Catalog):
         self.csw.getrecords2(esn="full", constraints=[cs], maxrecords=maxrecords)
         return self.csw.records.values()
 
-    def get_service_by_name(self, service_name, service_type=WPS_TYPE):
-        cs_type = PropertyIsEqualTo('dc:type', 'service')
-        cs_format = PropertyIsEqualTo('dc:format', service_type)
-        cs_title = PropertyIsEqualTo('dc:title', service_name)
-        cs = And([cs_type, cs_format, cs_title])
-        self.csw.getrecords2(esn="full", constraints=[cs], maxrecords=1)
-        service = None
-        if self.csw.results['returned'] == 1:
-            service = self.csw.records.values()[0]
-        return service
-        
-
+   
 class MongodbCatalog(Catalog):
     def __init__(self, collection):
         self.collection = collection

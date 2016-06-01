@@ -4,15 +4,15 @@ from owslib.wps import WebProcessingService
 
 from phoenix.processes.views import Processes
 from phoenix.utils import wps_caps_url
-from phoenix.catalog import wps_url
+from twitcher.registry import proxy_url
 
 import logging
 logger = logging.getLogger(__name__)
 
 class ProcessList(Processes):
     def __init__(self, request):
-        self.wps_id = request.params.get('wps')
-        self.wps = WebProcessingService(url=wps_url(request, self.wps_id), verify=False)
+        self.service_name = request.params.get('wps')
+        self.wps = WebProcessingService(url=proxy_url(request, self.service_name), verify=False)
         super(ProcessList, self).__init__(request, name='processes_list', title='')
         
     def breadcrumbs(self):
@@ -27,7 +27,7 @@ class ProcessList(Processes):
             item = {}
             item['title'] = "{0.title} {0.processVersion}".format(process)
             item['description'] = getattr(process, 'abstract', '')
-            item['url'] = self.request.route_path('processes_execute', _query=[('wps', self.wps_id), ('process', process.identifier)])
+            item['url'] = self.request.route_path('processes_execute', _query=[('wps', self.service_name), ('process', process.identifier)])
             items.append(item)
         return dict(
             url=wps_caps_url(self.wps.url),

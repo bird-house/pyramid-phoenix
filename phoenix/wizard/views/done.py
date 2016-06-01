@@ -1,15 +1,16 @@
-from pyramid.view import view_config
-from pyramid.security import authenticated_userid
 import json
 
+from pyramid.view import view_config
+from pyramid.security import authenticated_userid
+
 from owslib.wps import WebProcessingService
+from twitcher.registry import proxy_url
 
 from phoenix.events import JobStarted
 from phoenix.wizard.views import Wizard
 from phoenix.wps import appstruct_to_inputs
 from phoenix.tasks import execute_workflow
 from phoenix.tasks import execute_process
-from phoenix.catalog import wps_url
 
 import threddsclient
 
@@ -21,7 +22,7 @@ class Done(Wizard):
         super(Done, self).__init__(
             request, name='wizard_done', title="Done")
         self.description = "Describe your Job and start Workflow."
-        self.wps = WebProcessingService(wps_url(request, self.wizard_state.get('wizard_wps')['identifier']),
+        self.wps = WebProcessingService(proxy_url(request, self.wizard_state.get('wizard_wps')['identifier']),
                                         verify=False, skip_caps=True)
 
     def breadcrumbs(self):
