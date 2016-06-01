@@ -10,6 +10,7 @@ pyramid_ldap
 pyramid_celery
 pyramid_storage
 pyramid_celery
+pyramid_twitcher
 deform>=2.0a2
 #js.deform
 #js.bootstrap
@@ -26,4 +27,3 @@ python-dateutil
 pytz
 python-swiftclient
 bird-feeder
-birdhouse-twitcher
