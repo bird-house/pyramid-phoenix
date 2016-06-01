@@ -2,6 +2,7 @@ from pyramid.view import view_config
 import colander
 import deform
 
+from phoenix.catalog import WPS_TYPE
 from phoenix.wizard.views import Wizard
 
 class ChooseWPSSchema(colander.MappingSchema):
@@ -39,7 +40,7 @@ class ChooseWPS(Wizard):
         return breadcrumbs
 
     def schema(self):
-        return ChooseWPSSchema().bind(wps_list = self.request.catalog.get_wps_list())
+        return ChooseWPSSchema().bind(wps_list=self.request.catalog.get_services(service_type=WPS_TYPE))
 
     def next_success(self, appstruct):
         self.success(appstruct)

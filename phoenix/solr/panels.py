@@ -3,6 +3,7 @@ from deform import Form, ValidationFailure
 
 from owslib.fes import PropertyIsEqualTo
 
+from phoenix.catalog import THREDDS_TYPE
 from phoenix.settings import load_settings, save_settings
 
 import logging
@@ -38,7 +39,7 @@ class SolrIndexPanel(SolrPanel):
         tasksdb = self.request.db.tasks
         
         items = []
-        for rec in self.request.catalog.get_thredds_list():
+        for rec in self.request.catalog.get_services(service_type=THREDDS_TYPE):
             item = dict(title=rec.title, status='new', service_id=rec.identifier)
             task = tasksdb.find_one({'url': rec.source})
             if task:

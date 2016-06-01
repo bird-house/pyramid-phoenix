@@ -1,5 +1,6 @@
 from pyramid.view import view_config, view_defaults
 
+from phoenix.catalog import WPS_TYPE
 from phoenix.processes.views import Processes
 
 import logging
@@ -16,7 +17,7 @@ class Overview(Processes):
     @view_config(route_name='processes', renderer='../templates/processes/overview.pt')
     def view(self):
         items = []
-        for wps in self.request.catalog.get_wps_list():
+        for wps in self.request.catalog.get_services(service_type=WPS_TYPE):
             url=self.request.route_path('processes_list', _query=[('wps', wps.identifier)])
             items.append(dict(title=wps.title, description=wps.abstract, url=url))
         return dict(title="Web Processing Services", items=items)

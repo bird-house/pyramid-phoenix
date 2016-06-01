@@ -43,6 +43,9 @@ def catalog_factory(registry):
         catalog = MongodbCatalog(db.catalog)
     return catalog
 
+WPS_TYPE = "WPS"
+THREDDS_TYPE = "THREDDS"
+
 class Catalog(object):
     def get_record_by_id(self, identifier):
         raise NotImplementedError
@@ -56,7 +59,7 @@ class Catalog(object):
     def harvest(self, url, service_type, service_name=None):
         raise NotImplementedError
 
-    def get_services(self, format=None, maxrecords=100):
+    def get_services(self, service_type=None, maxrecords=100):
         raise NotImplementedError
     
     def wps_id(self, name):
@@ -65,11 +68,6 @@ class Catalog(object):
     def wps_url(self, request, identifier):
         raise NotImplementedError
     
-    def get_wps_list(self):
-        raise NotImplementedError
-
-    def get_thredds_list(self):
-        raise NotImplementedError
     
 class CatalogService(Catalog):
     def __init__(self, csw, service_registry):
@@ -110,10 +108,10 @@ class CatalogService(Catalog):
         else: # ogc services
             self.csw.harvest(source=url, resourcetype=service_type)
 
-    def get_services(self, format=None, maxrecords=100):
+    def get_services(self, service_type=None, maxrecords=100):
         cs = PropertyIsEqualTo('dc:type', 'service')
-        if format is not None:
-            cs_format = PropertyIsEqualTo('dc:format', format)
+        if service_type is not None:
+            cs_format = PropertyIsEqualTo('dc:format', service_type)
             cs = And([cs, cs_format])
         self.csw.getrecords2(esn="full", constraints=[cs], maxrecords=maxrecords)
         return self.csw.records.values()
@@ -139,13 +137,6 @@ class CatalogService(Catalog):
         url = proxy_url(request, service_name)
         logger.debug("identifier=%s, source=%s, url=%s", identifier, record.source, url)
         return url
-
-    def get_wps_list(self):
-        return self.get_services(format='WPS')
-
-    def get_thredds_list(self):
-        return self.get_services(format='THREDDS')
-
    
 
 class MongodbCatalog(Catalog):

@@ -2,6 +2,7 @@ from pyramid.view import view_config
 import colander
 import deform
 
+from phoenix.catalog import THREDDS_TYPE
 from phoenix.wizard.views import Wizard
 
 @colander.deferred
@@ -32,7 +33,7 @@ class ThreddsService(Wizard):
         return breadcrumbs
 
     def schema(self):
-        return Schema().bind(thredds_list=self.request.catalog.get_thredds_list())
+        return Schema().bind(thredds_list=self.request.catalog.get_services(service_type=THREDDS_TYPE))
 
     def success(self, appstruct):
         super(ThreddsService, self).success(appstruct)
