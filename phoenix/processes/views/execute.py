@@ -9,6 +9,7 @@ from phoenix.processes.views import Processes
 from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
 from phoenix.utils import wps_describe_url
+from phoenix.catalog import wps_url
 
 from owslib.wps import WebProcessingService
 
@@ -18,7 +19,6 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='edit', layout='default')
 class ExecuteProcess(Processes):
     def __init__(self, request):
-        catalog = request.catalog
         self.execution = None
         if 'job_id' in request.params:
             job = request.db.jobs.find_one({'identifier': request.params['job_id']})
@@ -28,13 +28,13 @@ class ExecuteProcess(Processes):
             # TODO: fix owslib for service urls
             self.wps = WebProcessingService(url=self.execution.serviceInstance, verify=False)
             self.processid = self.execution.process.identifier
-            self.wps_id = catalog.wps_id(self.wps.identification.title)
+            self.wps_id = request.catalog.wps_id(self.wps.identification.title)
             logger.debug("url=%s, pid=%s", self.wps.url, self.processid)
         else:
             self.wps_id = request.params.get('wps')
             self.processid = request.params.get('process')
             # TODO: avoid getcaps
-            self.wps = WebProcessingService(url=catalog.wps_url(request, self.wps_id), verify=False)
+            self.wps = WebProcessingService(url=wps_url(request, self.wps_id), verify=False)
         # TODO: need to fix owslib to handle special identifiers
         self.process = self.wps.describeprocess(self.processid)
         super(ExecuteProcess, self).__init__(request, name='processes_execute', title='')

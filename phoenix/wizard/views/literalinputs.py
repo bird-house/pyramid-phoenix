@@ -1,7 +1,10 @@
 from pyramid.view import view_config
 
+from owslib.wps import WebProcessingService
+
 from phoenix.wizard.views import Wizard
 from phoenix.wps import WPSSchema
+from phoenix.catalog import wps_url
 
 import logging
 logger = logging.getLogger(__name__)
@@ -9,8 +12,7 @@ logger = logging.getLogger(__name__)
 class LiteralInputs(Wizard):
     def __init__(self, request):
         super(LiteralInputs, self).__init__(request, name='wizard_literal_inputs', title="Literal Inputs")
-        from owslib.wps import WebProcessingService
-        wps = WebProcessingService(url=request.catalog.wps_url(request, self.wizard_state.get('wizard_wps')['identifier']),
+        wps = WebProcessingService(url=wps_url(request, self.wizard_state.get('wizard_wps')['identifier']),
                                     verify=False, skip_caps=True)
         self.process = wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
         self.title = "Literal inputs of {0}".format(self.process.title)

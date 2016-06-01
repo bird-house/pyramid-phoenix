@@ -4,6 +4,7 @@ from owslib.wps import WebProcessingService
 
 from phoenix.processes.views import Processes
 from phoenix.utils import wps_caps_url
+from phoenix.catalog import wps_url
 
 import logging
 logger = logging.getLogger(__name__)
@@ -11,7 +12,7 @@ logger = logging.getLogger(__name__)
 class ProcessList(Processes):
     def __init__(self, request):
         self.wps_id = request.params.get('wps')
-        self.wps = WebProcessingService(url=request.catalog.wps_url(request, self.wps_id), verify=False)
+        self.wps = WebProcessingService(url=wps_url(request, self.wps_id), verify=False)
         super(ProcessList, self).__init__(request, name='processes_list', title='')
         
     def breadcrumbs(self):

@@ -34,10 +34,10 @@ def includeme(config):
 def catalog_factory(registry):
     settings = registry.settings
     catalog = None
-    service_registry = service_registry_factory(registry)
+
     if asbool(settings.get('phoenix.csw', True)):
         csw = CatalogueServiceWeb(url=settings['csw.url'])
-        catalog = CatalogService(csw, service_registry)
+        catalog = CatalogService(csw)
     else:
         db = mongodb(registry)
         catalog = MongodbCatalog(db.catalog)
@@ -45,6 +45,16 @@ def catalog_factory(registry):
 
 WPS_TYPE = "WPS"
 THREDDS_TYPE = "THREDDS"
+
+def wps_url(request, identifier):
+    record = request.catalog.get_record_by_id(identifier)
+    # TODO: fix service name
+    service_name = record.title.lower()
+    service_registry = service_registry_factory(request.registry)
+    service_registry.register_service(name=service_name, url=record.source)
+    url = proxy_url(request, service_name)
+    logger.debug("identifier=%s, source=%s, url=%s", identifier, record.source, url)
+    return url
 
 class Catalog(object):
     def get_record_by_id(self, identifier):
@@ -65,14 +75,9 @@ class Catalog(object):
     def wps_id(self, name):
         raise NotImplementedError
 
-    def wps_url(self, request, identifier):
-        raise NotImplementedError
-    
-    
 class CatalogService(Catalog):
-    def __init__(self, csw, service_registry):
+    def __init__(self, csw):
         self.csw = csw
-        self.service_registry = service_registry
 
     def get_record_by_id(self, identifier):
         self.csw.getrecordbyid(id=[identifier])
@@ -129,16 +134,7 @@ class CatalogService(Catalog):
             logger.debug("found rec %s %s %s", rec.identifier, rec.title, rec.source)
         return identifier
 
-    def wps_url(self, request, identifier):
-        record = self.get_record_by_id(identifier)
-        # TODO: fix service name
-        service_name = record.title.lower()
-        self.service_registry.register_service(name=service_name, url=record.source)
-        url = proxy_url(request, service_name)
-        logger.debug("identifier=%s, source=%s, url=%s", identifier, record.source, url)
-        return url
-   
-
+    
 class MongodbCatalog(Catalog):
     def __init__(self, collection):
         self.collection = collection
