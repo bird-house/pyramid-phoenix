@@ -87,7 +87,7 @@ class CatalogService(Catalog):
         self.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
 
     def harvest(self, url, service_type, service_name=None):
-        if service_type == 'thredds_catalog':
+        if service_type == THREDDS_TYPE:
             import threddsclient
             tds = threddsclient.read_url(url)
             title = tds.name
@@ -100,7 +100,7 @@ class CatalogService(Catalog):
                 title = title,
                 abstract = "",
                 source = url,
-                format = "THREDDS",
+                format = THREDDS_TYPE,
                 creator = '',
                 keywords = 'thredds',
                 rights = '')

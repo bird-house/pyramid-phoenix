@@ -4,6 +4,7 @@ from pyramid.httpexceptions import HTTPFound
 from deform import Form, Button
 from deform import ValidationFailure
 
+from phoenix.catalog import THREDDS_TYPE
 from phoenix.settings.views import SettingsView
 
 import deform
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 class Schema(colander.MappingSchema):
     service_types = [
         ('http://www.opengis.net/wps/1.0.0', "Web Processing Service"),
-        ('thredds_catalog', "Thredds Catalog")]
+        (THREDDS_TYPE, "Thredds Catalog")]
     
     url = colander.SchemaNode(
         colander.String(),
