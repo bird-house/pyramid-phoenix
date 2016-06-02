@@ -5,7 +5,7 @@ from os.path import join, dirname
 
 from owslib.csw import CatalogueServiceWeb
 from owslib.fes import PropertyIsEqualTo, And
-from twitcher.registry import service_registry_factory
+from twitcher.registry import service_registry_factory, service_name_of_proxy_url
 
 from pyramid.settings import asbool
 from pyramid.events import NewRequest
@@ -48,12 +48,8 @@ THREDDS_TYPE = "THREDDS"
 
 
 def get_service_name(request, url, name=None):
-    from urlparse import urlparse
-    parsed_url = urlparse(url)
-    # TODO: need proxy reverse function
-    if parsed_url.path.startswith("/ows/proxy"):
-        service_name = parsed_url.path.strip('/').split('/')[2]
-    else:
+    service_name = service_name_of_proxy_url(url)
+    if service_name is None:
         service_registry = service_registry_factory(request.registry)
         service = service_registry.register_service(url=url, name=name)
         service_name = service.get('name')
