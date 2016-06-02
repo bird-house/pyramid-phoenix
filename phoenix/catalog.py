@@ -36,7 +36,7 @@ def catalog_factory(registry):
     catalog = None
 
     if asbool(settings.get('phoenix.csw', True)):
-        csw = CatalogueServiceWeb(url=settings['csw.url'])
+        csw = CatalogueServiceWeb(url=settings['csw.url'], skip_caps=True)
         catalog = CatalogService(csw)
     else:
         db = mongodb(registry)
