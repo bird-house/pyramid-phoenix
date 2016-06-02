@@ -36,6 +36,7 @@ def catalog_factory(registry):
     catalog = None
 
     if asbool(settings.get('phoenix.csw', True)):
+    #if False:
         csw = CatalogueServiceWeb(url=settings['csw.url'], skip_caps=True)
         catalog = CatalogService(csw)
     else:
@@ -122,6 +123,42 @@ class CatalogService(Catalog):
 class MongodbCatalog(Catalog):
     def __init__(self, collection):
         self.collection = collection
+
+    def get_record_by_id(self, identifier):
+        return self.collection.find_one({'identifier': identifier})
+
+    def delete_record(self, identifier):
+        self.collection.delete_one({'identifier': identifier})
+
+    def insert_record(self, record):
+        record['identifier'] = uuid.uuid4().get_urn()
+        self.collection.save(record)
+
+    def harvest(self, url, service_type, service_name=None):
+        title = service_name
+        record = dict(
+            identifier = uuid.uuid4().get_urn(),
+            type = 'service',
+            title = title,
+            abstract = "",
+            source = url,
+            format = WPS_TYPE,
+            creator = '',
+            keywords = '',
+            rights = '',
+            subjects = '',
+            references = '')
+        self.collection.update_one({'source': record['source']}, {'$set': record}, True)
+
+    def get_services(self, service_type=None, maxrecords=100):
+        from collections import namedtuple
+        records = []
+        for d in self.collection.find({'type': 'service'}):
+            del d["_id"]
+            record = namedtuple('Record', d.keys())(*d.values())
+            records.append(record)
+        return records
+
 
 
 
