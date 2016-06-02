@@ -36,7 +36,7 @@ You can use an :term:`birdhouse:OpenID` account to login to Phoenix (for example
 
 **ESGF OpenID**
 
-You can use an `ESGF OpenID <https://github.com/ESGF/esgf.github.io/wiki/ESGF_Data_Download>`_. The ESGF OpenID is used later to access files from :term:`birdhouse:ESGF`. Make sure, that you have a valid ESGF OpenID of one of the ESGF Providers (http://esgf-data.dkrz.de/) and that you are able to download a datafile. 
+You can use an `ESGF OpenID <https://github.com/ESGF/esgf.github.io/wiki/ESGF_Data_Download>`_. The ESGF OpenID is used later to access files from :term:`birdhouse:ESGF`. Make sure, that you have a valid ESGF OpenID of one of the ESGF Providers (``http://esgf-data.dkrz.de/``) and that you are able to download a datafile. 
 
 Enter the account name of your ESGF OpenID and choose the according ESGF OpenID provider (by default this is DKRZ).
 

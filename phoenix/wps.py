@@ -54,7 +54,7 @@ class WPSSchema(colander.MappingSchema):
     Build a Colander Schema based on the WPS data inputs.
 
     This Schema generator is based on:
-    http://colanderalchemy.readthedocs.org/en/latest/
+    http://colanderalchemy.readthedocs.io/en/latest/
 
     TODO: fix dataType in wps client
     """
