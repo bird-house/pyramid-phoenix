@@ -19,7 +19,7 @@ You are provided with a form page to enter the parameters to :ref:`execute a pro
 You can :ref:`monitor the jobs <myjobs>` and see the results. 
 
 In the climate science community many analyses are using climate data in the :term:`birdhouse:NetCDF` format.
-Phoenix uses the :ref:`Malleefowl <malleefowl:introduction>` WPS which provides processes to access NetCDF files from
+Phoenix uses the `Malleefowl`_ WPS which provides processes to access NetCDF files from
 the :term:`birdhouse:ESGF` data archive. Malleefowl provides a :term:`birdhouse:workflow` process to chain ESGF 
 data retrieval with 
 another WPS process which needs NetCDF data as input. Phoenix has a :ref:`wizard` to collect the parameters to run 
@@ -36,8 +36,6 @@ But Phoenix should at least become *developer friendly*.
 
 Phoenix is easy to install using the :term:`birdhouse:anaconda` python distribution and :term:`birdhouse:buildout`. 
 So, Phoenix is not only available on production sites where it is close to data archives. You can also install it on your developer machine to make testing of your developed WPS processes easier and to present them to other people.   
-
-Contents:
 
 .. toctree::
    :maxdepth: 2
