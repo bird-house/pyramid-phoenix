@@ -6,6 +6,8 @@ from collections import namedtuple
 
 from owslib.csw import CatalogueServiceWeb
 from owslib.fes import PropertyIsEqualTo, And
+from owslib.wps import WebProcessingService
+
 from twitcher.registry import service_registry_factory, service_name_of_proxy_url
 
 from pyramid.settings import asbool
@@ -47,6 +49,8 @@ def catalog_factory(registry):
 
 WPS_TYPE = "WPS"
 THREDDS_TYPE = "THREDDS"
+RESOURCE_TYPES = {WPS_TYPE: 'http://www.opengis.net/wps/1.0.0',
+                  THREDDS_TYPE: 'http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0'}
 
 
 def get_service_name(request, url, name=None):
@@ -56,6 +60,44 @@ def get_service_name(request, url, name=None):
         service = service_registry.register_service(url=url, name=name)
         service_name = service.get('name')
     return service_name
+
+def _service_title(title, url, service_name=None):
+    if service_name and len(service_name.strip()) > 0:
+        title = service_name.strip()
+    elif len(title.strip()) == 0:
+        title = url
+    return title
+
+def get_thredds_metadata(url, service_name=None):
+    import threddsclient
+    tds = threddsclient.read_url(url)
+    title = _service_title(tds.name, url, service_name)
+    record = dict(
+        type = 'service',
+        title = title,
+        abstract = "",
+        source = url,
+        format = THREDDS_TYPE,
+        creator = '',
+        keywords = 'thredds',
+        rights = '')
+    return record
+
+def get_wps_metadata(url, service_name=None):
+    wps = WebProcessingService(url, verify=False, skip_caps=False)
+    title = _service_title(wps.identification.title, wps.url, service_name)
+    record = dict(
+        type = 'service',
+        title = title,
+        abstract = getattr(wps.identification, 'abstract', ''),
+        source = wps.url,
+        format = WPS_TYPE,
+        creator = wps.provider.name,
+        keywords = getattr(wps.identification, 'keywords', ''),
+        rights = getattr(wps.identification, 'accessconstraints', ''),
+        subjects = '',
+        references = '')
+    return record
 
 class Catalog(object):
     def get_record_by_id(self, identifier):
@@ -92,25 +134,10 @@ class CatalogService(Catalog):
 
     def harvest(self, url, service_type, service_name=None):
         if service_type == THREDDS_TYPE:
-            import threddsclient
-            tds = threddsclient.read_url(url)
-            title = tds.name
-            if service_name and len(service_name.strip()) > 2:
-                title = service_name
-            elif len(title.strip()) == 0:
-                title = url
-            record = dict(
-                type = 'service',
-                title = title,
-                abstract = "",
-                source = url,
-                format = THREDDS_TYPE,
-                creator = '',
-                keywords = 'thredds',
-                rights = '')
+            record = get_thredds_metadata(url, service_name)
             self.insert_record(record)
         else: # ogc services
-            self.csw.harvest(source=url, resourcetype=service_type)
+            self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
 
     def get_services(self, service_type=None, maxrecords=100):
         cs = PropertyIsEqualTo('dc:type', 'service')
@@ -145,24 +172,16 @@ class MongodbCatalog(Catalog):
 
     def insert_record(self, record):
         record['identifier'] = uuid.uuid4().get_urn()
-        self.collection.save(record)
-
-    def harvest(self, url, service_type, service_name=None):
-        title = service_name
-        record = dict(
-            identifier = uuid.uuid4().get_urn(),
-            type = 'service',
-            title = title,
-            abstract = "",
-            source = url,
-            format = WPS_TYPE,
-            creator = '',
-            keywords = '',
-            rights = '',
-            subjects = '',
-            references = '')
         self.collection.update_one({'source': record['source']}, {'$set': record}, True)
 
+    def harvest(self, url, service_type, service_name=None):
+        if service_type == THREDDS_TYPE:
+            self.insert_record(get_thredds_metadata(url, service_name))
+        elif service_type == WPS_TYPE:
+            self.insert_record(get_wps_metadata(url, service_name))
+        else:
+            raise NotImplementedError
+            
     def get_services(self, service_type=None, maxrecords=100):
         return [doc2record(doc) for doc in self.collection.find({'type': 'service'})]
 
