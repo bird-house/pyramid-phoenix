@@ -2,6 +2,7 @@ from mako.template import Template
 import uuid
 from urlparse import urlparse
 from os.path import join, dirname
+from collections import namedtuple
 
 from owslib.csw import CatalogueServiceWeb
 from owslib.fes import PropertyIsEqualTo, And
@@ -122,9 +123,12 @@ class CatalogService(Catalog):
 
 def doc2record(document):
     """Converts ``document`` from mongodb to a ``Record`` object."""
-    from collections import namedtuple
-    del document["_id"]
-    record = namedtuple('Record', document.keys())(*document.values())
+    record = None
+    if isinstance(document, dict): 
+        if document.has_key('_id'):
+            # _id field not allowed in record
+            del document["_id"]
+        record = namedtuple('Record', document.keys())(*document.values())
     return record
     
 class MongodbCatalog(Catalog):
@@ -134,7 +138,7 @@ class MongodbCatalog(Catalog):
         self.collection = collection
 
     def get_record_by_id(self, identifier):
-        return self.collection.find_one({'identifier': identifier})
+        return doc2record(self.collection.find_one({'identifier': identifier}))
 
     def delete_record(self, identifier):
         self.collection.delete_one({'identifier': identifier})
