@@ -35,8 +35,8 @@ def catalog_factory(registry):
     settings = registry.settings
     catalog = None
 
-    if asbool(settings.get('phoenix.csw', True)):
-    #if False:
+    #if asbool(settings.get('phoenix.csw', True)):
+    if False:
         csw = CatalogueServiceWeb(url=settings['csw.url'], skip_caps=True)
         catalog = CatalogService(csw)
     else:
@@ -119,8 +119,17 @@ class CatalogService(Catalog):
         self.csw.getrecords2(esn="full", constraints=[cs], maxrecords=maxrecords)
         return self.csw.records.values()
 
-   
+
+def doc2record(document):
+    """Converts ``document`` from mongodb to a ``Record`` object."""
+    from collections import namedtuple
+    del document["_id"]
+    record = namedtuple('Record', document.keys())(*document.values())
+    return record
+    
 class MongodbCatalog(Catalog):
+    """Implementation of a Catalog with MongoDB."""
+
     def __init__(self, collection):
         self.collection = collection
 
@@ -151,13 +160,8 @@ class MongodbCatalog(Catalog):
         self.collection.update_one({'source': record['source']}, {'$set': record}, True)
 
     def get_services(self, service_type=None, maxrecords=100):
-        from collections import namedtuple
-        records = []
-        for d in self.collection.find({'type': 'service'}):
-            del d["_id"]
-            record = namedtuple('Record', d.keys())(*d.values())
-            records.append(record)
-        return records
+        return [doc2record(doc) for doc in self.collection.find({'type': 'service'})]
+
 
 
 
