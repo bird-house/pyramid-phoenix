@@ -38,8 +38,7 @@ def catalog_factory(registry):
     settings = registry.settings
     catalog = None
 
-    #if asbool(settings.get('phoenix.csw', True)):
-    if False:
+    if asbool(settings.get('phoenix.csw', True)):
         csw = CatalogueServiceWeb(url=settings['csw.url'], skip_caps=True)
         catalog = CatalogService(csw)
     else:
@@ -54,6 +53,7 @@ RESOURCE_TYPES = {WPS_TYPE: 'http://www.opengis.net/wps/1.0.0',
 
 
 def get_service_name(request, url, name=None):
+    """Get service name from twitcher registry for given service (url)."""
     service_name = service_name_of_proxy_url(url)
     if service_name is None:
         service_registry = service_registry_factory(request.registry)
@@ -61,17 +61,19 @@ def get_service_name(request, url, name=None):
         service_name = service.get('name')
     return service_name
 
-def _service_title(title, url, service_name=None):
+def _gen_service_title(title, url, service_name=None):
+    """Generates service title form title, url and optional service_name."""
     if service_name and len(service_name.strip()) > 0:
         title = service_name.strip()
     elif len(title.strip()) == 0:
         title = url
     return title
 
-def get_thredds_metadata(url, service_name=None):
+def _fetch_thredds_metadata(url, service_name=None):
+    """Fetch capabilities metadata from thredds catalog service and return record dict."""
     import threddsclient
     tds = threddsclient.read_url(url)
-    title = _service_title(tds.name, url, service_name)
+    title = _gen_service_title(tds.name, url, service_name)
     record = dict(
         type = 'service',
         title = title,
@@ -83,9 +85,10 @@ def get_thredds_metadata(url, service_name=None):
         rights = '')
     return record
 
-def get_wps_metadata(url, service_name=None):
+def _fetch_wps_metadata(url, service_name=None):
+    """Fetch capabilities metadata from wps service and return record dict."""
     wps = WebProcessingService(url, verify=False, skip_caps=False)
-    title = _service_title(wps.identification.title, wps.url, service_name)
+    title = _gen_service_title(wps.identification.title, wps.url, service_name)
     record = dict(
         type = 'service',
         title = title,
@@ -134,8 +137,7 @@ class CatalogService(Catalog):
 
     def harvest(self, url, service_type, service_name=None):
         if service_type == THREDDS_TYPE:
-            record = get_thredds_metadata(url, service_name)
-            self.insert_record(record)
+            self.insert_record(_fetch_thredds_metadata(url, service_name))
         else: # ogc services
             self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
 
@@ -176,9 +178,9 @@ class MongodbCatalog(Catalog):
 
     def harvest(self, url, service_type, service_name=None):
         if service_type == THREDDS_TYPE:
-            self.insert_record(get_thredds_metadata(url, service_name))
+            self.insert_record(_fetch_thredds_metadata(url, service_name))
         elif service_type == WPS_TYPE:
-            self.insert_record(get_wps_metadata(url, service_name))
+            self.insert_record(_fetch_wps_metadata(url, service_name))
         else:
             raise NotImplementedError
             
