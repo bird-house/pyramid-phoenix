@@ -2,7 +2,7 @@
 FROM birdhouse/bird-base:latest
 MAINTAINER https://github.com/bird-house/pyramid-phoenix
 
-LABEL Description="Phoenix WPS Application" Vendor="Birdhouse" Version="0.4.5"
+LABEL Description="Phoenix WPS Application" Vendor="Birdhouse" Version="0.4.7"
 
 # Configure hostname and user for services 
 ENV HOSTNAME localhost
