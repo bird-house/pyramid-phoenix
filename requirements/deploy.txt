@@ -21,6 +21,7 @@ webhelpers2
 webhelpers2_grid
 mako
 pyyaml
+ldappool<2
 owslib
 lxml
 python-dateutil
