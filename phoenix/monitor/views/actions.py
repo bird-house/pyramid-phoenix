@@ -59,7 +59,7 @@ class NodeActions(object):
             self.flash(u"Selected jobs were deleted.", queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
-    @view_config(route_name='delete_all_jobs', permission='admin')
+    #@view_config(route_name='delete_all_jobs', permission='admin')
     def delete_all_jobs(self):
         count = self.db.count()
         self.db.drop()
@@ -98,9 +98,9 @@ def monitor_buttons(context, request):
     :rtype: list
     """
     buttons = []
-    if request.has_permission('admin'):
-        buttons.append(ActionButton('delete_all_jobs', title=u'Delete all',
-                                    css_class=u'btn btn-danger'))
+    #if request.has_permission('admin'):
+    #    buttons.append(ActionButton('delete_all_jobs', title=u'Delete all',
+    #                                css_class=u'btn btn-danger'))
     buttons.append(ActionButton('delete_jobs', title=u'Delete',
                                 css_class=u'btn btn-danger',
                                 disabled=not request.has_permission('submit')))
@@ -120,6 +120,6 @@ def includeme(config):
     config.add_route('restart_job', 'restart_job/{job_id}')
     config.add_route('delete_job', 'delete_job/{job_id}')
     config.add_route('delete_jobs', 'delete_jobs')
-    config.add_route('delete_all_jobs', 'delete_all_jobs')
+    #config.add_route('delete_all_jobs', 'delete_all_jobs')
     config.add_route('make_public', 'make_public')
     config.add_route('make_private', 'make_private')
