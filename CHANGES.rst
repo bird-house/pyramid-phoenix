@@ -1,10 +1,17 @@
 Changes
 *******
 
-0.4.7 (2016-mm-dd)
+0.4.7 (2016-06-06)
 ==================
 
-* ...
+* display process metadata in processes view.
+* ncwms, solr and pycsw are now optional build parts and moved to advanced.cfg.
+* by default using the catalog based on MongoDB ... optionally one can use pycsw.
+* update to pyramid 1.7
+* using service_name for wps from twitcher registry.
+* restart job from monitor view (using linage info).
+* using lineage info from wps protocol for input parameters.
+
 
 0.4.6 (2016-05-10)
 ==================
