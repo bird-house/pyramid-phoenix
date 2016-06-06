@@ -56,7 +56,7 @@ class JobList(Monitor):
         items, count = self.update_jobs(page=page, limit=limit, access=access, status=status)
 
         grid = JobsGrid(self.request, items,
-                    ['_checkbox', 'status', 'userid', 'process', 'service', 'duration', 'finished', 'public', 'progress', ''],
+                    ['_checkbox', 'status', 'user', 'process', 'service', 'duration', 'finished', 'public', 'progress', ''],
                     )
         return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count,
                     buttons=buttons)
@@ -65,7 +65,7 @@ class JobsGrid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['status'] = self.status_td
-        self.column_formats['userid'] = self.userid_td('userid')
+        self.column_formats['user'] = self.user_td('userid')
         self.column_formats['process'] = self.label_td('title')
         self.column_formats['duration'] = self.label_td('duration', '???')
         self.column_formats['finished'] = self.time_ago_td('finished')

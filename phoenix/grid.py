@@ -94,12 +94,24 @@ class CustomGrid(Grid):
         def _column_format(column_number, i, record):
             #TODO: avoid database access ... maybe store additional info at job
             userid = get_value(record, attribute)
-            provider_id = 'Unknown'
+            label = 'Unknown'
             if userid:
                 user = self.request.db.users.find_one(dict(identifier=userid))
                 if user:
-                    provider_id = user.get('login_id')
-            return HTML.td(provider_id)
+                    label = user.get('login_id')
+            return HTML.td(label)
+        return _column_format
+
+    def user_td(self, attribute):
+        def _column_format(column_number, i, record):
+            #TODO: avoid database access ... maybe store additional info at job
+            userid = get_value(record, attribute)
+            label = 'Unknown'
+            if userid:
+                user = self.request.db.users.find_one(dict(identifier=userid))
+                if user:
+                    label = user.get('name')
+            return HTML.td(label)
         return _column_format
     
     def render_title_td(self, title, abstract="", keywords=[], data=[], format=None, source="#"):
