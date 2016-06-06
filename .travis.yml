@@ -7,6 +7,10 @@ os:
   - linux
 python:
   - "2.7"
+  - "3.5"
+matrix:
+  - allow_failures:
+    - python: 3.5
 sudo: false
 install:
   - make install
