@@ -11,6 +11,7 @@
          </div>
         <div>
           <a class="label label-warning" href="${url}" target="_blank">XML</a>
+          <a tal:repeat="item metadata" tal:content="item.title" class="label label-info" href="${item.url}" target="_blank"/>
         </div>
       </div>
     </div>

@@ -114,5 +114,6 @@ class ExecuteProcess(Processes):
         return dict(
             description=getattr(self.process, 'abstract', ''),
             url=wps_describe_url(self.wps.url, self.processid),
+            metadata=self.process.metadata,
             form=form.render(self.appstruct()))
     
