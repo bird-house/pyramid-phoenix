@@ -1,9 +1,12 @@
-from pyramid.view import view_config
-
-from phoenix.wizard.views import Wizard
-
 import colander
 from deform.widget import RadioChoiceWidget
+
+from pyramid.view import view_config
+
+from owslib.wps import WebProcessingService
+from twitcher.registry import proxy_url
+
+from phoenix.wizard.views import Wizard
 
 class SourceSchemaNode(colander.SchemaNode):
     schema_type = colander.String
@@ -26,7 +29,14 @@ class ChooseSource(Wizard):
     def __init__(self, request):
         super(ChooseSource, self).__init__(
             request, name='wizard_source', title="Choose Data Source")
-        self.description = self.wizard_state.get('wizard_complex_inputs')['identifier']
+        wps = WebProcessingService(proxy_url(request, self.wizard_state.get('wizard_wps')['identifier']),
+                                        verify=False, skip_caps=True)
+        process = wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
+        for data_input in process.dataInputs:
+            if data_input.identifier == self.wizard_state.get('wizard_complex_inputs')['identifier']:
+                self.title = "Choose Data Source for %s" % data_input.title
+                break
+        #self.description = self.wizard_state.get('wizard_complex_inputs')['identifier']
 
     def breadcrumbs(self):
         breadcrumbs = super(ChooseSource, self).breadcrumbs()
