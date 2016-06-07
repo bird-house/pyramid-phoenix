@@ -15,7 +15,7 @@ class NodeActions(object):
         self.request = request
         self.session = self.request.session
         self.flash = self.request.session.flash
-        self.db = self.request.db.jobs
+        self.collection = self.request.db.jobs
 
     def _selected_children(self):
         """
@@ -31,7 +31,7 @@ class NodeActions(object):
     @view_config(route_name='restart_job')
     def restart_job(self):
         job_id = self.request.matchdict.get('job_id')
-        job = self.db.find_one({'identifier': job_id})
+        job = self.collection.find_one({'identifier': job_id})
         if job.get('is_workflow', False):
             self.flash("Restarting Workflow {0}.".format(job_id), queue='info')
             return HTTPFound(location=self.request.route_path('wizard', _query=[('job_id', job_id)]))
@@ -43,7 +43,7 @@ class NodeActions(object):
     def delete_job(self):
         job_id = self.request.matchdict.get('job_id')
         # TODO: check permission ... either admin or owner.
-        self.db.delete_one({'identifier': job_id})
+        self.collection.delete_one({'identifier': job_id})
         self.flash("Job {0} deleted.".format(job_id), queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
@@ -55,14 +55,14 @@ class NodeActions(object):
         """
         ids = self._selected_children()
         if ids is not None:
-            self.db.delete_many({'identifier': {'$in': ids} })
+            self.collection.delete_many({'identifier': {'$in': ids} })
             self.flash(u"Selected jobs were deleted.", queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     #@view_config(route_name='delete_all_jobs', permission='admin')
     def delete_all_jobs(self):
-        count = self.db.count()
-        self.db.drop()
+        count = self.collection.count()
+        self.collection.drop()
         self.flash("%d Jobs deleted." % count, queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
@@ -73,7 +73,7 @@ class NodeActions(object):
         """
         ids = self._selected_children()
         if ids is not None:
-            self.db.update_many({'identifier':  {'$in': ids}}, {'$set': {'access': 'public'}})
+            self.collection.update_many({'identifier':  {'$in': ids}}, {'$set': {'access': 'public'}})
             self.flash(u"Selected jobs were made public.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
@@ -84,7 +84,7 @@ class NodeActions(object):
         """
         ids = self._selected_children()
         if ids is not None:
-            self.db.update_many({'identifier':  {'$in': ids}}, {'$set': {'access': 'private'}})
+            self.collection.update_many({'identifier':  {'$in': ids}}, {'$set': {'access': 'private'}})
             self.flash(u"Selected jobs were made private.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
@@ -92,7 +92,7 @@ class NodeActions(object):
     def edit_job(self):
         job_id = self.request.params.get('job_id')
         # TODO: check permission ... either admin or owner.
-        job = self.db.find_one({'identifier': job_id})
+        job = self.collection.find_one({'identifier': job_id})
         return {'identifier': job.get('identifier'), 'caption': job.get('caption', '???')}
 
 

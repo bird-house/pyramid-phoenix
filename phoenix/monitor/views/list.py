@@ -29,7 +29,7 @@ class CaptionSchema(colander.MappingSchema):
 class JobList(Monitor):
     def __init__(self, request):
         super(JobList, self).__init__(request, name='monitor', title='Job List')
-        self.db = self.request.db.jobs
+        self.collection = self.request.db.jobs
 
     def breadcrumbs(self):
         breadcrumbs = super(JobList, self).breadcrumbs()
@@ -49,8 +49,8 @@ class JobList(Monitor):
             search_filter['userid'] = authenticated_userid(self.request)
         if status:
             search_filter['status'] = status
-        count = self.db.find(search_filter).count()
-        items = list(self.db.find(search_filter).skip(page*limit).limit(limit).sort('created', -1))
+        count = self.collection.find(search_filter).count()
+        items = list(self.collection.find(search_filter).skip(page*limit).limit(limit).sort('created', -1))
         return items, count
 
     def generate_caption_form(self, formid="deform_caption"):
@@ -66,7 +66,7 @@ class JobList(Monitor):
             controls = self.request.POST.items()
             logger.debug("controls %s", controls)
             appstruct = form.validate(controls)
-            self.db.update_one({'identifier': appstruct['identifier']}, {'$set': {'caption': appstruct['caption']}})
+            self.collection.update_one({'identifier': appstruct['identifier']}, {'$set': {'caption': appstruct['caption']}})
         except ValidationFailure, e:
             logger.exception("Validation of caption failed.")
             self.session.flash("Validation failed.", queue='danger')
