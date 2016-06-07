@@ -74,24 +74,26 @@
           </div>
 
 
-          <div tal:define="offset min((page * limit) + 1, count); last min((page + 1) * limit, count)" 
+          <div tal:define="numpages (count+limit-1)/limit; 
+                           last min((page + 1) * limit, count);
+                           previous request.route_path('monitor', _query=[('page', page-1), ('limit', limit), ('status', status), ('access', access)]);
+                           next request.route_path('monitor', _query=[('page', page+1), ('limit', limit), ('status', status), ('access', access)])"
                class="clearfix">
             
             <nav>
-              <ul class="pager">
-                <li class="" tal:attributes="class '' if page > 0 else 'disabled'">
-                  <a href="${request.route_path('monitor', _query=[('page', page-1), ('limit', limit), ('status', status), ('access', access)])}">
-                    Previous
-                  </a>
-                </li>
-          
-                <li class="" tal:attributes="class '' if last < count else 'disabled'">
-                  <a href="${request.route_path('monitor', _query=[('page', page+1), ('limit', limit), ('status', status), ('access', access)])}">
-                    Next
+              <ul class="pagination pull-right">
+                <li tal:attributes="class '' if page > 0 else 'disabled'">
+                  <a tal:attributes="href previous if page > 0 else '#'" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
                   </a>
                 </li>
                 <li>
-                  <span class="pull-right"> Showing ${offset}-${last} of ${count} </span>
+                  <span>page ${page+1} of ${numpages}</span>
+                </li>
+                <li tal:attributes="class '' if last < count else 'disabled'">
+                  <a tal:attributes="href next if last < count else '#'" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
                 </li>
               </ul>
               
