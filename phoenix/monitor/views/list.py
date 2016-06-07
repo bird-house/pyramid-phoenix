@@ -1,3 +1,9 @@
+import colander
+from deform import Form
+from deform import Button
+from deform import ValidationFailure
+from deform.widget import HiddenWidget
+
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.security import authenticated_userid
@@ -8,6 +14,17 @@ from phoenix.monitor.views.actions import monitor_buttons
 
 import logging
 logger = logging.getLogger(__name__)
+
+class CaptionSchema(colander.MappingSchema):
+    """This is the form schema to add and edit form for job captions.
+    """
+    identifier = colander.SchemaNode(
+        colander.String(),
+        missing=None,
+        widget=HiddenWidget())
+    caption = colander.SchemaNode(
+        colander.String(),
+        missing="???")
 
 class JobList(Monitor):
     def __init__(self, request):
@@ -36,8 +53,37 @@ class JobList(Monitor):
         items = list(self.db.find(search_filter).skip(page*limit).limit(limit).sort('created', -1))
         return items, count
 
+    def generate_caption_form(self, formid="deform_caption"):
+        """This helper code generates the form that will be used to add
+        and edit job captions based on the schema of the form.
+        """
+        update_button = Button(name='update', title='Update', css_class='btn btn-success')
+        return Form(schema=CaptionSchema(), buttons=(update_button,), formid=formid)
+       
+
+    def process_caption_form(self, form):
+        try:
+            controls = self.request.POST.items()
+            logger.debug("controls %s", controls)
+            appstruct = form.validate(controls)
+            self.db.update_one({'identifier': appstruct['identifier']}, {'$set': {'caption': appstruct['caption']}})
+        except ValidationFailure, e:
+            logger.exception("Validation of caption failed.")
+            self.session.flash("Validation failed.", queue='danger')
+        except Exception, e:
+            logger.exception("Could not edit job caption.")
+            self.session.flash("Edit caption failed.", queue='danger')
+        else:
+            self.session.flash("Edit caption successful.", queue='success')
+        return HTTPFound(location=self.request.route_path('monitor'))
+    
     @view_config(route_name='monitor', renderer='../templates/monitor/list.pt')
     def view(self):
+        form = self.generate_caption_form()
+        
+        if 'update' in self.request.POST:
+            return self.process_caption_form(form)
+        
         page = int(self.request.params.get('page', '0'))
         limit = int(self.request.params.get('limit', '10'))
         access = self.request.params.get('access')
@@ -56,10 +102,11 @@ class JobList(Monitor):
         items, count = self.update_jobs(page=page, limit=limit, access=access, status=status)
 
         grid = JobsGrid(self.request, items,
-                    ['_checkbox', 'status', 'user', 'process', 'service', 'duration', 'finished', 'public', 'progress', ''],
+                    ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration', 'finished', 'public', 'progress', ''],
                     )
+        
         return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count,
-                    buttons=buttons)
+                    buttons=buttons, form=form.render())
 
 class JobsGrid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
@@ -67,6 +114,7 @@ class JobsGrid(CustomGrid):
         self.column_formats['status'] = self.status_td
         self.column_formats['user'] = self.user_td('userid')
         self.column_formats['process'] = self.label_td('title')
+        self.column_formats['caption'] = self.caption_td
         self.column_formats['duration'] = self.label_td('duration', '???')
         self.column_formats['finished'] = self.time_ago_td('finished')
         self.column_formats['public'] = self.access_td
@@ -79,6 +127,9 @@ class JobsGrid(CustomGrid):
   
     def access_td(self, col_num, i, item):
         return self.render_td(renderer="access_td.mako", access=item.get('access', 'private'))
+
+    def caption_td(self, col_num, i, item):
+        return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'), caption=item.get('caption', '???'))
 
     def buttongroup_td(self, col_num, i, item):
         from phoenix.utils import ActionButton

@@ -8,6 +8,31 @@ $(function() {
     $('input[type=checkbox]').prop('checked', this.checked);
   });
 
+  // Open job caption form when caption is clicked
+  $(".caption").button({
+    text: false,
+  }).click(function( event ) {
+    var job_id = $(this).attr('data-value');
+    $.getJSON(
+      '/edit_job.json',
+      {'job_id': job_id},
+      function(json) {
+        if (json) {
+          form = $('#caption-form');
+          
+          // Set the title
+          form.find('h3').text('Edit Caption');
+          $.each(json, function(k, v) {
+            // Set the value for each field from the returned json
+            form.find('input[name="' + k + '"]').attr('value', v);
+          });
+          
+          form.modal('show');
+        }
+      }
+    );
+  });
+
   
   // Open publish form when publish is clicked
   $(".publish").button({

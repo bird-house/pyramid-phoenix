@@ -88,6 +88,13 @@ class NodeActions(object):
             self.flash(u"Selected jobs were made private.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
+    @view_config(renderer='json', name='edit_job.json')
+    def edit_job(self):
+        job_id = self.request.params.get('job_id')
+        # TODO: check permission ... either admin or owner.
+        job = self.db.find_one({'identifier': job_id})
+        return {'identifier': job.get('identifier'), 'caption': job.get('caption', '???')}
+
 
 def monitor_buttons(context, request):
     """
