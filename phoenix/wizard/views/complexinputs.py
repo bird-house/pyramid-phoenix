@@ -5,6 +5,7 @@ import deform
 from owslib.wps import WebProcessingService
 from twitcher.registry import proxy_url
 
+from phoenix.utils import wps_describe_url
 from phoenix.wizard.views import Wizard
 
 @colander.deferred
@@ -15,7 +16,9 @@ def deferred_widget(node, kw):
     for data_input in process.dataInputs:
         if data_input.dataType == 'ComplexData':
             title = data_input.title
-            abstract = getattr(data_input, 'abstract', '')
+            abstract = getattr(data_input, 'abstract', 'No summary')
+            if abstract is None:
+                abstract = 'No summary'
             mime_types = ', '.join([value.mimeType for value in data_input.supportedValues])
             description = "{0} - {1} ({2})".format(title, abstract, mime_types)
             choices.append( (data_input.identifier, description) )
@@ -32,9 +35,9 @@ class ComplexInputs(Wizard):
         super(ComplexInputs, self).__init__(
             request, name='wizard_complex_inputs',
             title="Choose Input Parameter")       
-        wps = WebProcessingService(proxy_url(request, self.wizard_state.get('wizard_wps')['identifier']),
+        self.wps = WebProcessingService(proxy_url(request, self.wizard_state.get('wizard_wps')['identifier']),
                                     verify=False, skip_caps=True)
-        self.process = wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
+        self.process = self.wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
         self.title = "Choose Input Parameter of {0}".format(self.process.title)
 
     def breadcrumbs(self):
@@ -55,6 +58,13 @@ class ComplexInputs(Wizard):
         self.success(appstruct)
         return self.next('wizard_source')
 
-    @view_config(route_name='wizard_complex_inputs', renderer='../templates/wizard/default.pt')
+    @view_config(route_name='wizard_complex_inputs', renderer='../templates/wizard/inputs.pt')
     def view(self):
         return super(ComplexInputs, self).view()
+
+    def custom_view(self):
+        return dict(
+            summary_title=self.process.title,
+            summary=getattr(self.process, 'abstract', 'No summary'),
+            url=wps_describe_url(self.wps.url, self.process.identifier),
+            metadata=self.process.metadata)
