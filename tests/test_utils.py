@@ -11,10 +11,9 @@ def test_time_ago_in_words():
     assert utils.time_ago_in_words(datetime.now() - timedelta(days=366, hours=1)) == '1 year ago'
     assert utils.time_ago_in_words('nothing') == '???'
     
-def test_format_labels():
-    assert utils.format_labels("main,dev") == "dev, main"
-    assert utils.format_labels("main,dev,Testing") == "dev, main, testing"
-    assert utils.format_labels("main, dev,Testing , Next Generation, ,,; ") == ";, dev, main, next generation, testing"
-    assert utils.format_labels("public, dev,Testing , Next Generation, ,,; ") == ";, dev, next generation, public, testing"
+def test_make_tags():
+    assert utils.make_tags("main,dev") == ['dev', 'main']
+    assert utils.make_tags("main,dev,Testing") == ['dev', 'main', 'testing']
+    assert utils.make_tags("public, dev,Testing , Next Generation, ,,; ") == [';', 'dev', 'next generation', 'public', 'testing']
     
 

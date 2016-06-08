@@ -11,7 +11,8 @@ from pyramid.security import authenticated_userid
 from phoenix.grid import CustomGrid
 from phoenix.monitor.views import Monitor
 from phoenix.monitor.views.actions import monitor_buttons
-from phoenix.utils import format_labels
+from phoenix.utils import make_tags
+from phoenix.utils import format_tags
 
 import logging
 logger = logging.getLogger(__name__)
@@ -28,7 +29,7 @@ class CaptionSchema(colander.MappingSchema):
         missing="???")
 
 class LabelsSchema(colander.MappingSchema):
-    """This is the form schema to add and edit form for job labels.
+    """This is the form schema to add and edit form for job tags/labels.
     """
     identifier = colander.SchemaNode(
         colander.String(),
@@ -48,13 +49,12 @@ class JobList(Monitor):
         breadcrumbs = super(JobList, self).breadcrumbs()
         return breadcrumbs
 
-    @view_config(renderer='json', route_name='update_myjobs')
-    def update_jobs(self, page=0, limit=10, access=None, status=None):
+    def filter_jobs(self, page=0, limit=10, access=None, status=None):
         search_filter =  {}
         if access == 'public':
-            search_filter['access'] = 'public'
+            search_filter['tags'] = 'public'
         elif access == 'private':
-            search_filter['access'] = 'private'
+            search_filter['tags'] = {'$ne': 'public'}
             search_filter['userid'] = authenticated_userid(self.request)
         elif access == 'all' and self.request.has_permission('admin'):
             pass
@@ -90,9 +90,9 @@ class JobList(Monitor):
             self.session.flash("Caption updated.", queue='success')
         return HTTPFound(location=self.request.route_path('monitor'))
 
-    def generate_labels_form(self, formid="deform_labels"):
+    def generate_labels_form(self, formid="deform_tags"):
         """This helper code generates the form that will be used to add
-        and edit job captions based on the schema of the form.
+        and edit job tags/labels based on the schema of the form.
         """
         update_button = Button(name='update_labels', title='Update', css_class='btn btn-success')
         return Form(schema=LabelsSchema(), buttons=(update_button,), formid=formid)
@@ -102,12 +102,8 @@ class JobList(Monitor):
             controls = self.request.POST.items()
             logger.debug("controls %s", controls)
             appstruct = form.validate(controls)
-            labels = format_labels(appstruct['labels'])
-            access = 'private'
-            if 'public' in labels:
-                access = 'public'
-            self.collection.update_one({'identifier': appstruct['identifier']},
-                                       {'$set': {'labels': labels, 'access': access}})
+            tags = make_tags(appstruct['labels'])
+            self.collection.update_one({'identifier': appstruct['identifier']}, {'$set': {'tags': tags}})
         except ValidationFailure, e:
             logger.exception("Validation of labels failed.")
             self.session.flash("Validation of labels failed.", queue='danger')
@@ -143,7 +139,7 @@ class JobList(Monitor):
                 logger.debug("button url = %s", location)
                 return HTTPFound(location, request=self.request)
         
-        items, count = self.update_jobs(page=page, limit=limit, access=access, status=status)
+        items, count = self.filter_jobs(page=page, limit=limit, access=access, status=status)
 
         grid = JobsGrid(self.request, items,
                     ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration', 'finished', 'progress', 'labels', ''],
@@ -179,13 +175,7 @@ class JobsGrid(CustomGrid):
         return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'), caption=item.get('caption', '???'))
 
     def labels_td(self, col_num, i, item):
-        labels = item.get('labels', 'dev')
-        if item.get('access', 'private') == 'public':
-            if 'public' not in labels:
-                labels += ', public'
-        elif 'public' in labels:
-            labels = labels.replace('public', '')
-        labels = format_labels(labels)
+        labels = format_tags(item.get('tags', ['dev']))
         return self.render_td(renderer="labels_td.mako", job_id=item.get('identifier'), labels=labels)
     
     def buttongroup_td(self, col_num, i, item):

@@ -2,6 +2,7 @@ from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
 
 from phoenix.utils import ActionButton
+from phoenix.utils import format_tags
 
 import logging
 logger = logging.getLogger(__name__)
@@ -93,7 +94,8 @@ class NodeActions(object):
         job_id = self.request.params.get('job_id')
         # TODO: check permission ... either admin or owner.
         job = self.collection.find_one({'identifier': job_id})
-        return {'identifier': job.get('identifier'), 'caption': job.get('caption', '???'), 'labels': job.get('labels', 'dev')}
+        labels = format_tags(job.get('tags', ['dev']))
+        return {'identifier': job.get('identifier'), 'caption': job.get('caption', '???'), 'labels': labels}
 
 
 def monitor_buttons(context, request):
