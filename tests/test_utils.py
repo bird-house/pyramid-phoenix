@@ -15,6 +15,8 @@ def test_make_tags():
     assert utils.make_tags("main,dev") == ['dev', 'main']
     assert utils.make_tags("main,dev,Testing") == ['dev', 'main', 'testing']
     assert utils.make_tags("public, dev,Testing , Next Generation, ,,; ") == [';', 'dev', 'next generation', 'public', 'testing']
+    assert utils.make_tags("public, dev, test, test") == ['dev', 'public', 'test']
+    assert utils.make_tags("public, dev, private, all") == ['dev', 'public']
     
 def test_format_tags():
     assert utils.format_tags(['public', 'dev']) == 'public, dev'
