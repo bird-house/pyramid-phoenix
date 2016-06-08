@@ -12,7 +12,6 @@ from phoenix.grid import CustomGrid
 from phoenix.monitor.views import Monitor
 from phoenix.monitor.views.actions import monitor_buttons
 from phoenix.utils import make_tags
-from phoenix.utils import format_tags
 
 import logging
 logger = logging.getLogger(__name__)
@@ -49,7 +48,7 @@ class JobList(Monitor):
         breadcrumbs = super(JobList, self).breadcrumbs()
         return breadcrumbs
 
-    def filter_jobs(self, page=0, limit=10, access=None, status=None):
+    def filter_jobs(self, page=0, limit=10, tag=None, access=None, status=None):
         search_filter =  {}
         if access == 'public':
             search_filter['tags'] = 'public'
@@ -59,6 +58,8 @@ class JobList(Monitor):
         elif access == 'all' and self.request.has_permission('admin'):
             pass
         else:
+            if tag is not None:
+                search_filter['tags'] = tag
             search_filter['userid'] = authenticated_userid(self.request)
         if status:
             search_filter['status'] = status
@@ -126,6 +127,7 @@ class JobList(Monitor):
         
         page = int(self.request.params.get('page', '0'))
         limit = int(self.request.params.get('limit', '10'))
+        tag = self.request.params.get('tag')
         access = self.request.params.get('access')
         status = self.request.params.get('status')
 
@@ -139,7 +141,7 @@ class JobList(Monitor):
                 logger.debug("button url = %s", location)
                 return HTTPFound(location, request=self.request)
         
-        items, count = self.filter_jobs(page=page, limit=limit, access=access, status=status)
+        items, count = self.filter_jobs(page=page, limit=limit, tag=tag, access=access, status=status)
 
         grid = JobsGrid(self.request, items,
                     ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration', 'finished', 'progress', 'labels', ''],
@@ -175,8 +177,7 @@ class JobsGrid(CustomGrid):
         return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'), caption=item.get('caption', '???'))
 
     def labels_td(self, col_num, i, item):
-        labels = format_tags(item.get('tags', ['dev']))
-        return self.render_td(renderer="labels_td.mako", job_id=item.get('identifier'), labels=labels)
+        return self.render_td(renderer="labels_td.mako", job_id=item.get('identifier'), labels=item.get('tags'))
     
     def buttongroup_td(self, col_num, i, item):
         from phoenix.utils import ActionButton

@@ -109,6 +109,8 @@ def make_tags(tags_str):
     return tags
 
 def format_tags(tags):
+    if tags is None:
+        tags = []
     return ', '.join(tags)
 
 def button(request):

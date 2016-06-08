@@ -1,15 +1,15 @@
-<%
-  clean_labels = [l.strip() for l in labels.split(',')]
-%>
 <div>
-  % for label in clean_labels:
+  % if labels:
+  %   for label in labels:
   %     if label == 'public':
-  <a href="#" class="label label-warning">${label}</a>
+  <a href="/monitor?access=public" class="label label-warning">${label}</a>
   %     else:
-  <a href="#" class="label label-info">${label}</a>
+  <a href="/monitor?tag=${label}" class="label label-info">${label}</a>
   %     endif
-  % endfor
-              
+  %   endfor
+  % else:
+  <span class="label label-default">No Labels</span>
+  % endif            
   <br>
     <a class="labels" data-value="${job_id}" href="#">
       edit labels
