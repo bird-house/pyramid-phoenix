@@ -84,12 +84,6 @@ class CustomGrid(Grid):
             return HTML.td(size)
         return _column_format
 
-    def progress_td(self, attribute):
-        def _column_format(column_number, i, record):
-            progress = get_value(record, attribute, 0)
-            return self.render_td(renderer="progress_td.mako", identifier=i, progress=progress)
-        return _column_format
-
     def userid_td(self, attribute):
         def _column_format(column_number, i, record):
             #TODO: avoid database access ... maybe store additional info at job
@@ -116,9 +110,6 @@ class CustomGrid(Grid):
     
     def render_title_td(self, title, abstract="", keywords=[], data=[], format=None, source="#"):
         return self.render_td(renderer="title_td.mako", title=title, abstract=abstract, keywords=keywords, data=data, format=format, source=source)
-
-    def render_status_td(self, item):
-        return self.render_td(renderer="status_td.mako", status=item.get('status'), identifier=item.get('identifier'))
 
     def render_flag_td(self, flag=False, tooltip=''):
         return self.render_td(renderer="flag_td.mako", flag=flag, tooltip=tooltip)

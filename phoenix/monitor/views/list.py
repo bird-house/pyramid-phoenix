@@ -144,7 +144,7 @@ class JobList(Monitor):
         items, count = self.filter_jobs(page=page, limit=limit, tag=tag, access=access, status=status)
 
         grid = JobsGrid(self.request, items,
-                    ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration', 'finished', 'progress', 'labels', ''],
+                    ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration', 'finished', 'labels', ''],
                     )
         
         return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count,
@@ -161,18 +161,13 @@ class JobsGrid(CustomGrid):
         self.column_formats['caption'] = self.caption_td
         self.column_formats['duration'] = self.label_td('duration', '???')
         self.column_formats['finished'] = self.time_ago_td('finished')
-        #self.column_formats['public'] = self.access_td
-        self.column_formats['progress'] = self.progress_td('progress')
         self.column_formats['labels'] = self.labels_td
         self.column_formats[''] = self.buttongroup_td
         self.exclude_ordering = self.columns
         
     def status_td(self, col_num, i, item):
-        return self.render_status_td(item)
+        return self.render_td(renderer="status_td.mako", job_id=item.get('identifier'), status=item.get('status'), progress=item.get('progress', 0))
   
-    ## def access_td(self, col_num, i, item):
-    ##     return self.render_td(renderer="access_td.mako", access=item.get('access', 'private'))
-
     def caption_td(self, col_num, i, item):
         return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'), caption=item.get('caption', '???'))
 
