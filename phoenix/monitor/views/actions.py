@@ -74,7 +74,7 @@ class NodeActions(object):
         """
         ids = self._selected_children()
         if ids is not None:
-            self.collection.update_many({'identifier':  {'$in': ids}}, {'$set': {'access': 'public'}})
+            self.collection.update_many({'identifier':  {'$in': ids}}, {'$addToSet': {'tags': 'public'}})
             self.flash(u"Selected jobs were made public.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
@@ -85,7 +85,7 @@ class NodeActions(object):
         """
         ids = self._selected_children()
         if ids is not None:
-            self.collection.update_many({'identifier':  {'$in': ids}}, {'$set': {'access': 'private'}})
+            self.collection.update_many({'identifier':  {'$in': ids}}, {'$pull': {'tags': 'public'}})
             self.flash(u"Selected jobs were made private.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
