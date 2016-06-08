@@ -12,10 +12,12 @@
 %>
 <div>
   <i class="${icon_class}" data-toggle="tooltip" title="${status}" id="status-${job_id}"> </i>
+  % if status in ['ProcessStarted', 'ProcessPaused', 'ProcessFailed']:
   <div class="progress">
     <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100" style="width: ${progress}%;" id="progress-${job_id}">
       <span>${progress}%</span>
     </div>
   </div>
+  % endif
  
 </div>
