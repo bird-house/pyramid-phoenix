@@ -82,12 +82,12 @@ class JobList(Monitor):
             self.collection.update_one({'identifier': appstruct['identifier']}, {'$set': {'caption': appstruct['caption']}})
         except ValidationFailure, e:
             logger.exception("Validation of caption failed.")
-            self.session.flash("Validation failed.", queue='danger')
+            self.session.flash("Validation of caption failed.", queue='danger')
         except Exception, e:
-            logger.exception("Could not edit job caption.")
+            logger.exception("Edit caption failed.")
             self.session.flash("Edit caption failed.", queue='danger')
         else:
-            self.session.flash("Edit caption successful.", queue='success')
+            self.session.flash("Caption updated.", queue='success')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     def generate_labels_form(self, formid="deform_labels"):
@@ -102,8 +102,12 @@ class JobList(Monitor):
             controls = self.request.POST.items()
             logger.debug("controls %s", controls)
             appstruct = form.validate(controls)
+            labels = format_labels(appstruct['labels'])
+            access = 'private'
+            if 'public' in labels:
+                access = 'public'
             self.collection.update_one({'identifier': appstruct['identifier']},
-                                       {'$set': {'labels': format_labels(appstruct['labels'])}})
+                                       {'$set': {'labels': labels, 'access': access}})
         except ValidationFailure, e:
             logger.exception("Validation of labels failed.")
             self.session.flash("Validation of labels failed.", queue='danger')
@@ -142,7 +146,7 @@ class JobList(Monitor):
         items, count = self.update_jobs(page=page, limit=limit, access=access, status=status)
 
         grid = JobsGrid(self.request, items,
-                    ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration', 'finished', 'public', 'progress', 'labels', ''],
+                    ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration', 'finished', 'progress', 'labels', ''],
                     )
         
         return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count,
@@ -159,7 +163,7 @@ class JobsGrid(CustomGrid):
         self.column_formats['caption'] = self.caption_td
         self.column_formats['duration'] = self.label_td('duration', '???')
         self.column_formats['finished'] = self.time_ago_td('finished')
-        self.column_formats['public'] = self.access_td
+        #self.column_formats['public'] = self.access_td
         self.column_formats['progress'] = self.progress_td('progress')
         self.column_formats['labels'] = self.labels_td
         self.column_formats[''] = self.buttongroup_td
@@ -168,14 +172,21 @@ class JobsGrid(CustomGrid):
     def status_td(self, col_num, i, item):
         return self.render_status_td(item)
   
-    def access_td(self, col_num, i, item):
-        return self.render_td(renderer="access_td.mako", access=item.get('access', 'private'))
+    ## def access_td(self, col_num, i, item):
+    ##     return self.render_td(renderer="access_td.mako", access=item.get('access', 'private'))
 
     def caption_td(self, col_num, i, item):
         return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'), caption=item.get('caption', '???'))
 
     def labels_td(self, col_num, i, item):
-        return self.render_td(renderer="labels_td.mako", job_id=item.get('identifier'), labels=item.get('labels', 'dev'))
+        labels = item.get('labels', 'dev')
+        if item.get('access', 'private') == 'public':
+            if 'public' not in labels:
+                labels += ', public'
+        elif 'public' in labels:
+            labels = labels.replace('public', '')
+        labels = format_labels(labels)
+        return self.render_td(renderer="labels_td.mako", job_id=item.get('identifier'), labels=labels)
     
     def buttongroup_td(self, col_num, i, item):
         from phoenix.utils import ActionButton
