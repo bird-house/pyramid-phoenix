@@ -26,6 +26,17 @@ class CaptionSchema(colander.MappingSchema):
         colander.String(),
         missing="???")
 
+class LabelsSchema(colander.MappingSchema):
+    """This is the form schema to add and edit form for job labels.
+    """
+    identifier = colander.SchemaNode(
+        colander.String(),
+        missing=None,
+        widget=HiddenWidget())
+    labels = colander.SchemaNode(
+        colander.String(),
+        missing="dev")
+
 class JobList(Monitor):
     def __init__(self, request):
         super(JobList, self).__init__(request, name='monitor', title='Job List')
@@ -57,7 +68,7 @@ class JobList(Monitor):
         """This helper code generates the form that will be used to add
         and edit job captions based on the schema of the form.
         """
-        update_button = Button(name='update', title='Update', css_class='btn btn-success')
+        update_button = Button(name='update_caption', title='Update', css_class='btn btn-success')
         return Form(schema=CaptionSchema(), buttons=(update_button,), formid=formid)
        
 
@@ -76,13 +87,39 @@ class JobList(Monitor):
         else:
             self.session.flash("Edit caption successful.", queue='success')
         return HTTPFound(location=self.request.route_path('monitor'))
+
+    def generate_labels_form(self, formid="deform_labels"):
+        """This helper code generates the form that will be used to add
+        and edit job captions based on the schema of the form.
+        """
+        update_button = Button(name='update_labels', title='Update', css_class='btn btn-success')
+        return Form(schema=LabelsSchema(), buttons=(update_button,), formid=formid)
+
+    def process_labels_form(self, form):
+        try:
+            controls = self.request.POST.items()
+            logger.debug("controls %s", controls)
+            appstruct = form.validate(controls)
+            self.collection.update_one({'identifier': appstruct['identifier']}, {'$set': {'labels': appstruct['labels']}})
+        except ValidationFailure, e:
+            logger.exception("Validation of labels failed.")
+            self.session.flash("Validation failed.", queue='danger')
+        except Exception, e:
+            logger.exception("Could not edit job labels.")
+            self.session.flash("Edit labels failed.", queue='danger')
+        else:
+            self.session.flash("Edit labels successful.", queue='success')
+        return HTTPFound(location=self.request.route_path('monitor'))
     
     @view_config(route_name='monitor', renderer='../templates/monitor/list.pt')
     def view(self):
-        form = self.generate_caption_form()
+        caption_form = self.generate_caption_form()
+        labels_form = self.generate_labels_form()
         
-        if 'update' in self.request.POST:
-            return self.process_caption_form(form)
+        if 'update_caption' in self.request.POST:
+            return self.process_caption_form(caption_form)
+        elif 'update_labels' in self.request.POST:
+            return self.process_labels_form(labels_form)
         
         page = int(self.request.params.get('page', '0'))
         limit = int(self.request.params.get('limit', '10'))
@@ -102,11 +139,13 @@ class JobList(Monitor):
         items, count = self.update_jobs(page=page, limit=limit, access=access, status=status)
 
         grid = JobsGrid(self.request, items,
-                    ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration', 'finished', 'public', 'progress', ''],
+                    ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration', 'finished', 'public', 'progress', 'labels', ''],
                     )
         
         return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count,
-                    buttons=buttons, form=form.render())
+                    buttons=buttons,
+                    caption_form=caption_form.render(),
+                    labels_form=labels_form.render())
 
 class JobsGrid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
@@ -119,6 +158,7 @@ class JobsGrid(CustomGrid):
         self.column_formats['finished'] = self.time_ago_td('finished')
         self.column_formats['public'] = self.access_td
         self.column_formats['progress'] = self.progress_td('progress')
+        self.column_formats['labels'] = self.labels_td
         self.column_formats[''] = self.buttongroup_td
         self.exclude_ordering = self.columns
         
@@ -131,6 +171,9 @@ class JobsGrid(CustomGrid):
     def caption_td(self, col_num, i, item):
         return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'), caption=item.get('caption', '???'))
 
+    def labels_td(self, col_num, i, item):
+        return self.render_td(renderer="labels_td.mako", job_id=item.get('identifier'), labels=item.get('labels', 'dev'))
+    
     def buttongroup_td(self, col_num, i, item):
         from phoenix.utils import ActionButton
         buttons = []

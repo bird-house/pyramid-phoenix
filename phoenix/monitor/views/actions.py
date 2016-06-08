@@ -93,7 +93,7 @@ class NodeActions(object):
         job_id = self.request.params.get('job_id')
         # TODO: check permission ... either admin or owner.
         job = self.collection.find_one({'identifier': job_id})
-        return {'identifier': job.get('identifier'), 'caption': job.get('caption', '???')}
+        return {'identifier': job.get('identifier'), 'caption': job.get('caption', '???'), 'labels': job.get('labels', 'dev')}
 
 
 def monitor_buttons(context, request):
