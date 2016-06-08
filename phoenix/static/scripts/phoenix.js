@@ -21,7 +21,7 @@ $(function() {
           form = $('#caption-form');
           
           // Set the title
-          form.find('h3').text('Edit Caption');
+          //form.find('h4').text('Edit Caption');
           $.each(json, function(k, v) {
             // Set the value for each field from the returned json
             form.find('input[name="' + k + '"]').attr('value', v);
@@ -47,7 +47,7 @@ $(function() {
           form = $('#labels-form');
           
           // Set the title
-          form.find('h3').text('Edit Labels');
+          //form.find('h4').text('Edit labels');
           $.each(json, function(k, v) {
             // Set the value for each field from the returned json
             form.find('input[name="' + k + '"]').attr('value', v);

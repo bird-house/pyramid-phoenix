@@ -35,6 +35,7 @@ class LabelsSchema(colander.MappingSchema):
         widget=HiddenWidget())
     labels = colander.SchemaNode(
         colander.String(),
+        title="Input labels as a comma-separated list",
         missing="dev")
 
 class JobList(Monitor):
