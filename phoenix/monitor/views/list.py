@@ -11,6 +11,7 @@ from pyramid.security import authenticated_userid
 from phoenix.grid import CustomGrid
 from phoenix.monitor.views import Monitor
 from phoenix.monitor.views.actions import monitor_buttons
+from phoenix.utils import format_labels
 
 import logging
 logger = logging.getLogger(__name__)
@@ -101,15 +102,16 @@ class JobList(Monitor):
             controls = self.request.POST.items()
             logger.debug("controls %s", controls)
             appstruct = form.validate(controls)
-            self.collection.update_one({'identifier': appstruct['identifier']}, {'$set': {'labels': appstruct['labels']}})
+            self.collection.update_one({'identifier': appstruct['identifier']},
+                                       {'$set': {'labels': format_labels(appstruct['labels'])}})
         except ValidationFailure, e:
             logger.exception("Validation of labels failed.")
-            self.session.flash("Validation failed.", queue='danger')
+            self.session.flash("Validation of labels failed.", queue='danger')
         except Exception, e:
-            logger.exception("Could not edit job labels.")
+            logger.exception("Edit labels failed.")
             self.session.flash("Edit labels failed.", queue='danger')
         else:
-            self.session.flash("Edit labels successful.", queue='success')
+            self.session.flash("Labels updated.", queue='success')
         return HTTPFound(location=self.request.route_path('monitor'))
     
     @view_config(route_name='monitor', renderer='../templates/monitor/list.pt')

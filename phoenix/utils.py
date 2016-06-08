@@ -103,6 +103,12 @@ def combine_chunks(total_parts, source_folder, dest):
 
 # misc
 
+def format_labels(labels):
+    label_list = [label.strip().lower() for label in labels.split(',') if len(label.strip()) > 0]
+    label_list.sort()
+    new_labels = ', '.join(label_list)
+    return new_labels
+
 
 def button(request):
     """If the user is logged in, returns the logout button, otherwise returns the login button"""
