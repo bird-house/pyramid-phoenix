@@ -54,7 +54,18 @@
           <div class="panel panel-default">
             <div class="panel-heading">
               <span class="panel-title">
-                Job List
+                <a href="${request.current_route_path()}" 
+                   class="btn btn-link" 
+                   tal:condition="not tag">
+                  ${count} items found
+                </a>
+                <a href="${request.route_path('monitor', _query=[('tag', tag)])}" 
+                   class="btn btn-link" 
+                   tal:condition="tag"
+                   tal:define="taglabel 'label-danger' if tag=='bug' else 'label-info'">
+                  ${count} items matching <span class="label ${taglabel}">${tag}</span>
+                </a>
+                
                 <div class="btn-group pull-right">
 
                   <!--

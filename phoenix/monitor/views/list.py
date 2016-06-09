@@ -147,7 +147,7 @@ class JobList(Monitor):
                     ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration', 'finished', 'labels', ''],
                     )
         
-        return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count,
+        return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count, tag=tag,
                     items=items,
                     buttons=buttons,
                     caption_form=caption_form.render(),
