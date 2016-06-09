@@ -35,7 +35,7 @@
                     <optgroup>
                       <option value="${request.route_path('monitor', _query=[('status', new_status), ('access', access)])}"
                               tal:attributes="selected True if new_status==status else False"
-                              tal:repeat="new_status ['ProcessQueued', 'ProcessPaused', 'ProcessSucceeded', 'ProcessFailed', 'ProcessStarted', 'ProcessAccepted']">${new_status}</option>
+                              tal:repeat="new_status ['ProcessPaused', 'ProcessSucceeded', 'ProcessFailed', 'ProcessStarted', 'ProcessAccepted']">${new_status}</option>
                     </optgroup>
                   </select>
                   Process Status
@@ -72,7 +72,7 @@
                     Sort <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu">
-                    <li tal:repeat="param ['user', 'process', 'service', 'duration', 'finished']">
+                    <li tal:repeat="param ['user', 'process', 'service', 'duration', 'finished', 'created']">
                       <a href="${request.route_path('monitor', _query=[('status', status), ('access', access), ('sort', param)])}">
                         <i tal:define="invisible 'invisible' if sort != param else ''" class="fa fa-check ${invisible}"></i> ${param.title()}
                       </a>

@@ -38,6 +38,11 @@ def log_error(job, error):
         logger.error(log_msg)
 
 def add_job(db, userid, task_id, service, title, abstract, status_location, is_workflow=False):
+    tags = ['dev']
+    if is_workflow:
+        tags.append('workflow')
+    else:
+        tags.append('single')
     job = dict(
         identifier = str(uuid.uuid1()),
         task_id = task_id,
@@ -49,8 +54,8 @@ def add_job(db, userid, task_id, service, title, abstract, status_location, is_w
         status_location = status_location,
         created = datetime.now(),
         is_complete = False,
-        tags = ['dev'],
-        status = "ProcessQueued")
+        tags = tags,
+        status = "ProcessAccepted")
     db.jobs.save(job)
     return job
 

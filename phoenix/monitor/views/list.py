@@ -50,7 +50,7 @@ class JobList(Monitor):
         breadcrumbs = super(JobList, self).breadcrumbs()
         return breadcrumbs
 
-    def filter_jobs(self, page=0, limit=10, tag=None, access=None, status=None, sort='finished'):
+    def filter_jobs(self, page=0, limit=10, tag=None, access=None, status=None, sort='created'):
         search_filter =  {}
         if access == 'public':
             search_filter['tags'] = 'public'
@@ -71,8 +71,8 @@ class JobList(Monitor):
         elif sort == 'process':
             sort = 'title'
             
-        sort_order = DESCENDING if sort=='finished' else ASCENDING
-        sort_criteria = [(sort, sort_order), ('created', DESCENDING)]
+        sort_order = DESCENDING if sort=='finished' or sort=='created' else ASCENDING
+        sort_criteria = [(sort, sort_order)]
         items = list(self.collection.find(search_filter).skip(page*limit).limit(limit).sort(sort_criteria))
         return items, count
 
@@ -139,7 +139,7 @@ class JobList(Monitor):
         tag = self.request.params.get('tag')
         access = self.request.params.get('access')
         status = self.request.params.get('status')
-        sort = self.request.params.get('sort', 'finished')
+        sort = self.request.params.get('sort', 'created')
 
         buttons = monitor_buttons(self.context, self.request)
         for button in buttons:
