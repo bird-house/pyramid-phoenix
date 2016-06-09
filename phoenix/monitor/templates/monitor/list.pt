@@ -35,7 +35,7 @@
                     <optgroup>
                       <option value="${request.route_path('monitor', _query=[('status', new_status), ('access', access)])}"
                               tal:attributes="selected True if new_status==status else False"
-                              tal:repeat="new_status ['ProcessPaused', 'ProcessSucceeded', 'ProcessFailed', 'ProcessStarted', 'ProcessAccepted']">${new_status}</option>
+                              tal:repeat="new_status ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused', 'ProcessSucceeded', 'ProcessFailed']">${new_status}</option>
                     </optgroup>
                   </select>
                   Process Status
