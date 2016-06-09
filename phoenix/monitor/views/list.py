@@ -148,6 +148,7 @@ class JobList(Monitor):
                     )
         
         return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count,
+                    items=items,
                     buttons=buttons,
                     caption_form=caption_form.render(),
                     labels_form=labels_form.render())

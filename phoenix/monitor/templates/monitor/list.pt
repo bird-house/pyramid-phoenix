@@ -81,14 +81,14 @@
               </span>
             </div>
             <div class="panel-body">
-              <table class="table table-condensed table-striped table-hover">
+              <table class="table table-condensed table-striped table-hover" tal:condition="items">
                 <tal:rows replace="structure grid" />
               </table>
             </div>
           </div>
 
 
-          <div tal:define="numpages (count+limit-1)/limit; 
+          <div tal:define="numpages max(1, (count+limit-1)/limit); 
                            last min((page + 1) * limit, count);
                            previous request.route_path('monitor', _query=[('page', page-1), ('limit', limit), ('status', status), ('access', access)]);
                            next request.route_path('monitor', _query=[('page', page+1), ('limit', limit), ('status', status), ('access', access)])"
