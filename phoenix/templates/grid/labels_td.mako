@@ -5,6 +5,8 @@
   <a href="/monitor?access=public" class="label label-warning">${label}</a>
   %     elif label == 'bug':
   <a href="/monitor?tag=bug" class="label label-danger">${label}</a>
+  %     elif label == 'fav':
+  <a href="/monitor?tag=fav" class="label label-success">${label}</a>
   %     else:
   <a href="/monitor?tag=${label}" class="label label-info">${label}</a>
   %     endif
