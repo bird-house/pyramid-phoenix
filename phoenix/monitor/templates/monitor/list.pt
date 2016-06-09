@@ -56,6 +56,8 @@
               <span class="panel-title">
                 Job List
                 <div class="btn-group pull-right">
+
+                  <!--
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Sort <span class="caret"></span>
                   </button>
@@ -66,6 +68,7 @@
                     <li role="separator" class="divider"></li>
                     <li><a href="#">Separated link</a></li>
                   </ul>
+                  -->
 
                   <a class="btn btn-success btn-xs"
                      rel="tooltip"
