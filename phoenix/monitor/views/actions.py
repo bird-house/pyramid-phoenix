@@ -89,6 +89,28 @@ class NodeActions(object):
             self.flash(u"Selected jobs were made private.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
+    @view_config(route_name='set_favorite')
+    def set_favorite(self):
+        """
+        Set selected jobs as favorite.
+        """
+        ids = self._selected_children()
+        if ids is not None:
+            self.collection.update_many({'identifier':  {'$in': ids}}, {'$addToSet': {'tags': 'fav'}})
+            self.flash(u"Set as favorite done.", 'info')
+        return HTTPFound(location=self.request.route_path('monitor'))
+
+    @view_config(route_name='unset_favorite')
+    def unset_favorite(self):
+        """
+        Unset selected jobs as favorite.
+        """
+        ids = self._selected_children()
+        if ids is not None:
+            self.collection.update_many({'identifier':  {'$in': ids}}, {'$pull': {'tags': 'fav'}})
+            self.flash(u"Unset as favorite done.", 'info')
+        return HTTPFound(location=self.request.route_path('monitor'))
+
     @view_config(renderer='json', name='edit_job.json')
     def edit_job(self):
         job_id = self.request.params.get('job_id')
@@ -114,8 +136,16 @@ def monitor_buttons(context, request):
                                 css_class=u'btn btn-danger',
                                 disabled=not request.has_permission('submit')))
     buttons.append(ActionButton('make_public', title=u'Make Public',
+                                css_class=u'btn btn-warning',
                                 disabled=not request.has_permission('submit')))
     buttons.append(ActionButton('make_private', title=u'Make Private',
+                                css_class=u'btn btn-warning',
+                                disabled=not request.has_permission('submit')))
+    buttons.append(ActionButton('set_favorite', title=u'Set Favorite',
+                                css_class=u'btn btn-success',
+                                disabled=not request.has_permission('submit')))
+    buttons.append(ActionButton('unset_favorite', title=u'Unset Favorite',
+                                css_class=u'btn btn-success',
                                 disabled=not request.has_permission('submit')))
     return buttons
 
@@ -132,3 +162,5 @@ def includeme(config):
     #config.add_route('delete_all_jobs', 'delete_all_jobs')
     config.add_route('make_public', 'make_public')
     config.add_route('make_private', 'make_private')
+    config.add_route('set_favorite', 'set_favorite')
+    config.add_route('unset_favorite', 'unset_favorite')

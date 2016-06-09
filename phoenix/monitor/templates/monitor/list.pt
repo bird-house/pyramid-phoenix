@@ -90,7 +90,7 @@
               </span>
             </div>
             <div class="panel-body">
-              <table class="table table-condensed table-striped table-hover" tal:condition="items">
+              <table class="table table-condensed table-striped table-hover" tal:condition="count">
                 <tal:rows replace="structure grid" />
               </table>
             </div>
