@@ -1,6 +1,13 @@
 Changes
 *******
 
+0.4.8 (2016-06-09)
+==================
+
+* possible to edit job caption in monitor view.
+* monitor view allows tagging of jobs and filter with tags.
+* using special tag "public" to set job as public accessable.
+
 0.4.7 (2016-06-06)
 ==================
 
