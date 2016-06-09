@@ -68,20 +68,18 @@
                 
                 <div class="btn-group pull-right">
 
-                  <!--
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Sort <span class="caret"></span>
-                  </button>
+                  </a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="#">Separated link</a></li>
+                    <li tal:repeat="param ['user', 'process', 'service', 'duration', 'finished']">
+                      <a href="${request.route_path('monitor', _query=[('status', status), ('access', access), ('sort', param)])}">
+                        <i tal:define="invisible 'invisible' if sort != param else ''" class="fa fa-check ${invisible}"></i> ${param.title()}
+                      </a>
+                    </li>
                   </ul>
-                  -->
 
-                  <a class="btn btn-success btn-xs"
+                  <a class="btn btn-success"
                      rel="tooltip"
                      data-toggle="tooltip"
                      title="Refresh job list"
@@ -101,8 +99,8 @@
 
           <div tal:define="numpages max(1, (count+limit-1)/limit); 
                            last min((page + 1) * limit, count);
-                           previous request.route_path('monitor', _query=[('page', page-1), ('limit', limit), ('status', status), ('access', access)]);
-                           next request.route_path('monitor', _query=[('page', page+1), ('limit', limit), ('status', status), ('access', access)])"
+                           previous request.route_path('monitor', _query=[('page', page-1), ('limit', limit), ('status', status), ('access', access), ('sort', sort)]);
+                           next request.route_path('monitor', _query=[('page', page+1), ('limit', limit), ('status', status), ('access', access), ('sort', sort)])"
                class="clearfix">
             
             <nav>

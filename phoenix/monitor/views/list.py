@@ -4,6 +4,8 @@ from deform import Button
 from deform import ValidationFailure
 from deform.widget import HiddenWidget
 
+from pymongo import ASCENDING, DESCENDING
+
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from pyramid.security import authenticated_userid
@@ -48,7 +50,7 @@ class JobList(Monitor):
         breadcrumbs = super(JobList, self).breadcrumbs()
         return breadcrumbs
 
-    def filter_jobs(self, page=0, limit=10, tag=None, access=None, status=None):
+    def filter_jobs(self, page=0, limit=10, tag=None, access=None, status=None, sort='finished'):
         search_filter =  {}
         if access == 'public':
             search_filter['tags'] = 'public'
@@ -64,7 +66,14 @@ class JobList(Monitor):
         if status:
             search_filter['status'] = status
         count = self.collection.find(search_filter).count()
-        items = list(self.collection.find(search_filter).skip(page*limit).limit(limit).sort('created', -1))
+        if sort == 'user':
+            sort = 'userid'
+        elif sort == 'process':
+            sort = 'title'
+            
+        sort_order = DESCENDING if sort=='finished' else ASCENDING
+        sort_criteria = [(sort, sort_order), ('created', DESCENDING)]
+        items = list(self.collection.find(search_filter).skip(page*limit).limit(limit).sort(sort_criteria))
         return items, count
 
     def generate_caption_form(self, formid="deform_caption"):
@@ -130,6 +139,7 @@ class JobList(Monitor):
         tag = self.request.params.get('tag')
         access = self.request.params.get('access')
         status = self.request.params.get('status')
+        sort = self.request.params.get('sort', 'finished')
 
         buttons = monitor_buttons(self.context, self.request)
         for button in buttons:
@@ -141,13 +151,15 @@ class JobList(Monitor):
                 logger.debug("button url = %s", location)
                 return HTTPFound(location, request=self.request)
         
-        items, count = self.filter_jobs(page=page, limit=limit, tag=tag, access=access, status=status)
+        items, count = self.filter_jobs(page=page, limit=limit, tag=tag, access=access, status=status, sort=sort)
 
         grid = JobsGrid(self.request, items,
                     ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration', 'finished', 'labels', ''],
                     )
         
-        return dict(grid=grid, access=access, status=status, page=page, limit=limit, count=count, tag=tag,
+        return dict(grid=grid,
+                    access=access, status=status,
+                    page=page, limit=limit, count=count, tag=tag, sort=sort,
                     items=items,
                     buttons=buttons,
                     caption_form=caption_form.render(),
