@@ -8,6 +8,7 @@ from twitcher.registry import proxy_url
 
 from phoenix.events import JobStarted
 from phoenix.wizard.views import Wizard
+from phoenix.wizard.views.source import SOURCE_TYPES
 from phoenix.wps import appstruct_to_inputs
 from phoenix.tasks import execute_workflow
 from phoenix.tasks import execute_process
@@ -19,10 +20,15 @@ logger = logging.getLogger(__name__)
 
 import colander
 class DoneSchema(colander.MappingSchema):
+    @colander.deferred
+    def deferred_caption(node, kw):
+        return kw.get('caption', '???')
+        
     caption = colander.SchemaNode(
         colander.String(),
         description = "Add an optional title for this job.",
         missing = '???',
+        default = deferred_caption,
         )
 
 class Done(Wizard):
@@ -39,7 +45,9 @@ class Done(Wizard):
         return breadcrumbs
 
     def schema(self):
-        return DoneSchema().bind()
+        source_type = self.wizard_state.get('wizard_source')['source']
+        caption = "source: {0}".format(SOURCE_TYPES.get(source_type, 'unknown'))
+        return DoneSchema().bind(caption=caption)
 
     def workflow_description(self):
         # source_type
@@ -127,15 +135,6 @@ class Done(Wizard):
         self.success(appstruct)
         self.wizard_state.clear()
         return HTTPFound(location=self.request.route_path('monitor'))
-
-    def appstruct(self):
-        appstruct = super(Done, self).appstruct()
-        #params = ', '.join(['%s=%s' % item for item in self.wizard_state.get('wizard_literal_inputs', {}).items()])
-        process_id = self.wizard_state.get('wizard_process')['identifier']
-        source_type = self.wizard_state.get('wizard_source')['source']
-        caption = "{0} ({1})".format(process_id, source_type)
-        appstruct.update( dict(caption=caption) )
-        return appstruct
 
     @view_config(route_name='wizard_done', renderer='../templates/wizard/default.pt')
     def view(self):

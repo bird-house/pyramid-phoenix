@@ -8,19 +8,20 @@ from twitcher.registry import proxy_url
 
 from phoenix.wizard.views import Wizard
 
+SOURCE_TYPES = {
+    'wizard_esgf_search': "Earth System Grid (ESGF)",
+    #'wizard_swift_login': "Swift Cloud",
+    'wizard_threddsservice': "Thredds Catalog Service",
+    'wizard_upload': "Local Storage",
+    }
+
 class SourceSchemaNode(colander.SchemaNode):
     schema_type = colander.String
 
     def after_bind(self, node, kw):
-        choices = [
-            ('wizard_esgf_search', "Earth System Grid (ESGF)"),
-            #('wizard_swift_login', "Swift Cloud"),
-            ('wizard_threddsservice', "Thredds Catalog Service"),
-            ('wizard_upload', "Local Storage"),           
-            ]
         if kw['request'].solr_activated:
             choices.append( ('wizard_solr', "Birdhouse Solr Search") )
-        self.widget = RadioChoiceWidget(values = choices)
+        self.widget = RadioChoiceWidget(values = SOURCE_TYPES.items())
 
 class Schema(colander.MappingSchema):
     source = SourceSchemaNode()

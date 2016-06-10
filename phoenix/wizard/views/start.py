@@ -54,6 +54,7 @@ def job_to_state(request, job_id):
             elif workflow['name'] == 'wizard_threddsservice':
                 state['wizard_source'] = {'source': 'wizard_threddsservice'}
                 state['wizard_threddsservice'] = {'url': workflow['source']['thredds']['catalog_url']}
+            state['wizard_done'] = {'caption': job.get('caption')}
     return state
 
 
