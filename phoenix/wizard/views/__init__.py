@@ -10,9 +10,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 wizard_favorite = "wizard_favorite"
-no_favorite = "No Favorite"
 
 class WizardFavorite(object):
+    """Stores wizard state in session with a name (favorite).
+    TODO: implement as a dict?
+    """
     def __init__(self, request, session):
         self.request = request
         self.session = session
@@ -26,13 +28,12 @@ class WizardFavorite(object):
         return self.session[wizard_favorite].get(name)
 
     def set(self, name, state):
-        if name != no_favorite:
+        if name and state:
             self.session[wizard_favorite][name] = state
             self.session.changed()
         
     def clear(self):
         self.session[wizard_favorite] = {}
-        #self.session[wizard_favorite][no_favorite] = {}
         self.session.changed()
 
 class WizardState(object):

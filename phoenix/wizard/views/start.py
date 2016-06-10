@@ -64,10 +64,13 @@ class FavoriteSchema(colander.MappingSchema):
     @colander.deferred
     def deferred_favorite_widget(node, kw):
         jobs = kw.get('jobs', [])
+        last = kw.get('last', False)
         gentitle = lambda job: "{0} - {1} - {2}".format(
             job.get('title'), job.get('caption', '???'),
             time_ago_in_words(job.get('finished')))
-        choices = [('', 'No Favorite'), ('last', 'Last')]
+        choices = [('', 'No Favorite')]
+        if last:
+             choices.append( ('last', 'Last Run') )
         logger.debug('jobs %s', jobs)
         choices.extend( [(job['identifier'], gentitle(job) ) for job in jobs] )
         return SelectWidget(values = choices)
@@ -91,7 +94,7 @@ class Start(Wizard):
             job = self.collection.find_one({'identifier': self.request.params['job_id']})
             if job:
                 jobs.append( job )
-        # search favs
+        # add fav jobs
         search_filter = {}
         search_filter['tags'] = 'fav'
         search_filter['is_workflow'] = True
@@ -100,10 +103,10 @@ class Start(Wizard):
         fav_jobs = self.collection.find(search_filter).limit(50).sort([('created', -1)])
         if fav_jobs.count() > 0:
             jobs.extend(list(fav_jobs))
-        return FavoriteSchema().bind(jobs=jobs)
+        return FavoriteSchema().bind(jobs=jobs, last='last' in self.favorite.names())
 
     def appstruct(self):
-        struct = {}
+        struct = {'job_id': 'last'}
         if 'job_id' in self.request.params:
             struct['job_id'] =self.request.params['job_id']
         return struct
