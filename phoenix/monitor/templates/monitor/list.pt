@@ -61,6 +61,18 @@
                    tal:define="taglabel 'label-danger' if tag=='bug' else 'label-info'">
                   ${count} items matching <span class="label ${taglabel}">${tag}</span>
                 </a>
+                <a href="${request.route_path('monitor', _query=[('status', 'ProcessStarted'), ('access', access), ('limit', limit)])}" 
+                   class="btn btn-link"> 
+                  0 Running
+                </a>
+                <a href="${request.route_path('monitor', _query=[('status', 'ProcessSucceeded'), ('access', access), ('limit', limit)])}" 
+                   class="btn btn-link"> 
+                  0 Succeeded
+                </a>
+                <a href="${request.route_path('monitor', _query=[('status', 'ProcessFailed'), ('access', access), ('limit', limit)])}" 
+                   class="btn btn-link"> 
+                  0 Failed
+                </a>
                 
                 <div class="btn-group pull-right">
 
