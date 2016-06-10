@@ -110,4 +110,28 @@ $(function() {
     );
   });
 
+  var selectStatus = function() {
+    default_location = '/monitor/';
+    var location = $('#status-select option:selected').val();
+    if (location){
+      window.location = location;
+    } else {
+      window.location = default_location;
+    }
+  };
+
+  $('#status-select').change( selectStatus );
+
+  var selectLimit = function() {
+    default_location = '/monitor/';
+    var location = $('#limit-select option:selected').val();
+    if (location){
+      window.location = location;
+    } else {
+      window.location = default_location;
+    }
+  };
+
+  $('#limit-select').change( selectLimit );
+
 });

@@ -135,7 +135,7 @@ class JobList(Monitor):
             return self.process_labels_form(labels_form)
         
         page = int(self.request.params.get('page', '0'))
-        limit = int(self.request.params.get('limit', '10'))
+        limit = int(self.request.params.get('limit', '50'))
         tag = self.request.params.get('tag')
         access = self.request.params.get('access')
         status = self.request.params.get('status')

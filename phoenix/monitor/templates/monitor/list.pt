@@ -1,9 +1,5 @@
 <metal:block use-macro="main_template">
 
-  <div metal:fill-slot="javascript">
-    <script src="${request.static_path('phoenix:static/scripts/monitor.js')}"></script>
-  </div>
-
   <div metal:fill-slot="content">
 
     <div class="panel panel-default">
@@ -17,14 +13,14 @@
                    href="${request.route_path('monitor', _query=[('status', status)])}">
                   My Jobs</a>
                 <a tal:attributes="class 'btn btn-default active' if access=='public' else 'btn btn-default'"
-                   href="${request.route_path('monitor', _query=[('access', 'public'), ('status', status)])}">
+                   href="${request.route_path('monitor', _query=[('access', 'public'), ('status', status), ('limit', limit)])}">
                   Public</a>
                 <a tal:attributes="class 'btn btn-default active' if access=='private' else 'btn btn-default'"
-                   href="${request.route_path('monitor', _query=[('access', 'private'), ('status', status)])}">
+                   href="${request.route_path('monitor', _query=[('access', 'private'), ('status', status), ('limit', limit)])}">
                   Private</a>
                 <a tal:condition="request.has_permission('admin')" 
                    tal:attributes="class 'btn btn-default active' if access=='all' else 'btn btn-default'"
-                   href="${request.route_path('monitor', _query=[('access', 'all'), ('status', status)])}">
+                   href="${request.route_path('monitor', _query=[('access', 'all'), ('status', status), ('limit', limit)])}">
                   All</a>
               </div>
               
@@ -33,7 +29,7 @@
                   <select id="status-select" class="form-control">
                     <option value="${request.route_path('monitor', _query=[('access', access)])}">All</option>
                     <optgroup>
-                      <option value="${request.route_path('monitor', _query=[('status', new_status), ('access', access)])}"
+                      <option value="${request.route_path('monitor', _query=[('status', new_status), ('access', access), ('limit', limit)])}"
                               tal:attributes="selected True if new_status==status else False"
                               tal:repeat="new_status ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused', 'ProcessSucceeded', 'ProcessFailed']">${new_status}</option>
                     </optgroup>
@@ -73,7 +69,7 @@
                   </a>
                   <ul class="dropdown-menu">
                     <li tal:repeat="param ['user', 'process', 'service', 'duration', 'finished', 'created']">
-                      <a href="${request.route_path('monitor', _query=[('status', status), ('access', access), ('sort', param)])}">
+                      <a href="${request.route_path('monitor', _query=[('status', status), ('access', access), ('sort', param), ('limit', limit)])}">
                         <i tal:define="invisible 'invisible' if sort != param else ''" class="fa fa-check ${invisible}"></i> ${param.title()}
                       </a>
                     </li>
@@ -96,6 +92,19 @@
             </div>
           </div>
 
+          <div class="col-md-2">
+            <label class="control-label">
+              <select id="limit-select" class="form-control">
+                <option
+                   value="${request.route_path('monitor', _query=[('status', status), ('access', access), ('limit', new_limit)])}"
+                   tal:attributes="selected True if new_limit==limit else False"
+                   tal:repeat="new_limit [10, 20, 50, 100]">
+                  ${new_limit}
+                </option>
+              </select>
+              Entries on page
+            </label>
+          </div>
 
           <div tal:define="numpages max(1, (count+limit-1)/limit); 
                            last min((page + 1) * limit, count);
