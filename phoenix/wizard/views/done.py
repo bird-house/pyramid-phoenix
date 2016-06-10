@@ -1,7 +1,5 @@
 import json
 
-import colander
-
 from pyramid.view import view_config
 from pyramid.security import authenticated_userid
 
@@ -19,11 +17,13 @@ import threddsclient
 import logging
 logger = logging.getLogger(__name__)
 
+import colander
 class DoneSchema(colander.MappingSchema):
     caption = colander.SchemaNode(
         colander.String(),
-        missing = '???')
-
+        description = "Add an optional title for this job.",
+        missing = '???',
+        )
 
 class Done(Wizard):
     def __init__(self, request):
@@ -111,13 +111,15 @@ class Done(Wizard):
                 userid=authenticated_userid(self.request),
                 url=self.wps.url,
                 identifier=self.wizard_state.get('wizard_process')['identifier'],
-                inputs=inputs, outputs=[])
+                inputs=inputs, outputs=[],
+                caption=appstruct.get('caption'))
             self.request.registry.notify(JobStarted(self.request, result.id))
         else:
             result = execute_workflow.delay(
                 userid=authenticated_userid(self.request),
                 url=self.request.wps.url,
-                workflow=self.workflow_description())
+                workflow=self.workflow_description(),
+                caption=appstruct.get('caption'))
             self.request.registry.notify(JobStarted(self.request, result.id))
         
     def next_success(self, appstruct):
@@ -129,8 +131,10 @@ class Done(Wizard):
     def appstruct(self):
         appstruct = super(Done, self).appstruct()
         #params = ', '.join(['%s=%s' % item for item in self.wizard_state.get('wizard_literal_inputs', {}).items()])
-        identifier = self.wizard_state.get('wizard_process')['identifier']
-        appstruct.update( dict(favorite_name=identifier) )
+        process_id = self.wizard_state.get('wizard_process')['identifier']
+        source_type = self.wizard_state.get('wizard_source')['source']
+        caption = "{0} ({1})".format(process_id, source_type)
+        appstruct.update( dict(caption=caption) )
         return appstruct
 
     @view_config(route_name='wizard_done', renderer='../templates/wizard/default.pt')

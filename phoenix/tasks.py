@@ -37,7 +37,7 @@ def log_error(job, error):
         job['log'].append(log_msg)
         logger.error(log_msg)
 
-def add_job(db, userid, task_id, service, title, abstract, status_location, is_workflow=False):
+def add_job(db, userid, task_id, service, title, abstract, status_location, is_workflow=False, caption=None):
     tags = ['dev']
     if is_workflow:
         tags.append('workflow')
@@ -55,8 +55,10 @@ def add_job(db, userid, task_id, service, title, abstract, status_location, is_w
         created = datetime.now(),
         is_complete = False,
         tags = tags,
-        status = "ProcessAccepted")
-    db.jobs.save(job)
+        caption = caption,
+        status = "ProcessAccepted",
+        )
+    db.jobs.insert(job)
     return job
 
 def get_access_token(userid):
@@ -101,7 +103,7 @@ def esgf_logon(self, userid, url, openid, password):
     return execution.status
 
 @app.task(bind=True)
-def execute_workflow(self, userid, url, workflow):
+def execute_workflow(self, userid, url, workflow, caption=None):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
 
@@ -126,6 +128,7 @@ def execute_workflow(self, userid, url, workflow):
                   service = worker_wps.identification.title,
                   title = workflow['worker']['identifier'],
                   abstract = '',
+                  caption = caption,
                   status_location = execution.statusLocation)
 
     while execution.isNotComplete():
@@ -160,7 +163,7 @@ def execute_workflow(self, userid, url, workflow):
     return execution.getStatus()
 
 @app.task(bind=True)
-def execute_process(self, userid, url, identifier, inputs, outputs, keywords=None):
+def execute_process(self, userid, url, identifier, inputs, outputs, caption=None):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
 
@@ -172,6 +175,7 @@ def execute_process(self, userid, url, identifier, inputs, outputs, keywords=Non
                   service = wps.identification.title,
                   title = execution.process.identifier,
                   abstract = getattr(execution.process, "abstract", ""),
+                  caption = caption,
                   status_location = execution.statusLocation)
 
     while execution.isNotComplete():
