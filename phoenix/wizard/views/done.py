@@ -1,5 +1,7 @@
 import json
 
+import colander
+
 from pyramid.view import view_config
 from pyramid.security import authenticated_userid
 
@@ -17,6 +19,12 @@ import threddsclient
 import logging
 logger = logging.getLogger(__name__)
 
+class DoneSchema(colander.MappingSchema):
+    caption = colander.SchemaNode(
+        colander.String(),
+        missing = '???')
+
+
 class Done(Wizard):
     def __init__(self, request):
         super(Done, self).__init__(
@@ -31,8 +39,7 @@ class Done(Wizard):
         return breadcrumbs
 
     def schema(self):
-        from phoenix.schema import DoneSchema
-        return DoneSchema()
+        return DoneSchema().bind()
 
     def workflow_description(self):
         # source_type
@@ -93,12 +100,6 @@ class Done(Wizard):
 
     def success(self, appstruct):
         super(Done, self).success(appstruct)
-        if appstruct.get('is_favorite', False):
-            logger.debug('dump state: %s', self.wizard_state.dump())
-            self.favorite.set(
-                name=appstruct.get('favorite_name'),
-                state=self.wizard_state.dump())
-            self.favorite.save()
 
         source_type = self.wizard_state.get('wizard_source')['source']
         if source_type == 'wizard_upload':
@@ -106,7 +107,6 @@ class Done(Wizard):
             resource = self.wizard_state.get('wizard_complex_inputs')['identifier']
             for url in self.wizard_state.get('wizard_storage')['url']:
                 inputs.append( (resource, url) )
-            logger.debug('storage inputs=%s', inputs)
             result = execute_process.delay(
                 userid=authenticated_userid(self.request),
                 url=self.wps.url,

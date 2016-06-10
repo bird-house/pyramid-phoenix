@@ -19,7 +19,7 @@ class WizardFavorite(object):
     def __init__(self, request, session):
         self.request = request
         self.session = session
-        self.favdb = self.request.db.favorites
+        self.collection = self.request.db.favorites
         if not wizard_favorite in self.session:
             self.load()
 
@@ -43,17 +43,17 @@ class WizardFavorite(object):
         try:
             userid = authenticated_userid(self.request)
             fav = dict(userid=userid, favorite=yaml.dump(self.session.get(wizard_favorite, {})))
-            self.favdb.update({'userid':userid}, fav)
+            self.collection.update({'userid':userid}, fav)
         except:
             logger.exception('saving favorite for %s failed.', self.userid)
 
     def load(self):
         try:
             userid = authenticated_userid(self.request)
-            fav = self.favdb.find_one({'userid': userid})
+            fav = self.collection.find_one({'userid': userid})
             if fav is None:
                 fav = dict(userid=userid)
-                self.favdb.save(fav)
+                self.collection.save(fav)
             self.session[wizard_favorite] = yaml.load(fav.get('favorite', '{}'))
             self.session[wizard_favorite][no_favorite] = {}
             self.session.changed()
@@ -62,7 +62,7 @@ class WizardFavorite(object):
             logger.exception('loading favorite for %s failed.', userid)
 
     def drop(self):
-        self.favdb.remove({'userid': authenticated_userid(self.request)})
+        self.collection.remove({'userid': authenticated_userid(self.request)})
         self.clear()
         self.session.flash("Cleared wizard favorites.", queue='info')
 
