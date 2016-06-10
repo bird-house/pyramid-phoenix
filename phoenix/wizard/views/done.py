@@ -108,6 +108,7 @@ class Done(Wizard):
 
     def success(self, appstruct):
         super(Done, self).success(appstruct)
+        self.favorite.set(name='last', state=self.wizard_state.dump())
 
         source_type = self.wizard_state.get('wizard_source')['source']
         if source_type == 'wizard_upload':

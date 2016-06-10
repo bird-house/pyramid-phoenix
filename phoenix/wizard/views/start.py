@@ -67,7 +67,7 @@ class FavoriteSchema(colander.MappingSchema):
         gentitle = lambda job: "{0} - {1} - {2}".format(
             job.get('title'), job.get('caption', '???'),
             time_ago_in_words(job.get('finished')))
-        choices = [('', 'No Favorite')]
+        choices = [('', 'No Favorite'), ('last', 'Last')]
         logger.debug('jobs %s', jobs)
         choices.extend( [(job['identifier'], gentitle(job) ) for job in jobs] )
         return SelectWidget(values = choices)
@@ -111,7 +111,10 @@ class Start(Wizard):
     def success(self, appstruct):
         job_id = appstruct.get('job_id')
         if job_id:
-            state = job_to_state(self.request, appstruct.get('job_id'))
+            if job_id == 'last':
+                state = self.favorite.get('last')
+            else:
+                state = job_to_state(self.request, appstruct.get('job_id'))
             self.wizard_state.load(state)
         super(Start, self).success(appstruct)
 
