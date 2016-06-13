@@ -69,11 +69,11 @@
                 </a>
                 <a href="${request.route_path('monitor', _query=[('status', 'Running'), ('access', access), ('limit', limit)])}" 
                    class="btn btn-link"> 
-                  0 Running
+                  Running <span class="badge">${count_running}</span>
                 </a>
                 <a href="${request.route_path('monitor', _query=[('status', 'Finished'), ('access', access), ('limit', limit)])}" 
                    class="btn btn-link"> 
-                  0 Finished
+                  Finished <span class="badge">${count_finished}</span>
                 </a>
                 
                 <div class="btn-group pull-right">

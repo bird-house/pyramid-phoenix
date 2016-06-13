@@ -156,6 +156,9 @@ class JobList(Monitor):
                 return HTTPFound(location, request=self.request)
         
         items, count = self.filter_jobs(page=page, limit=limit, tag=tag, access=access, status=status, sort=sort)
+        # TODO: use mongodb aggregation to get counts by status
+        _, count_running = self.filter_jobs(page=page, limit=0, tag=tag, access=access, status='Running', sort=sort)
+        _, count_finished = self.filter_jobs(page=page, limit=0, tag=tag, access=access, status='Finished', sort=sort)
 
         grid = JobsGrid(self.request, items,
                     ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration', 'finished', 'labels', ''],
@@ -163,7 +166,8 @@ class JobList(Monitor):
         
         return dict(grid=grid,
                     access=access, status=status,
-                    page=page, limit=limit, count=count, tag=tag, sort=sort,
+                    page=page, limit=limit, tag=tag, sort=sort,
+                    count=count, count_running=count_running, count_finished=count_finished,
                     buttons=buttons,
                     caption_form=caption_form.render(),
                     labels_form=labels_form.render())
