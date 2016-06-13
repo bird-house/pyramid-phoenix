@@ -1,8 +1,10 @@
 <div>
   <div>
     <h4>${title}</h4>
-    % if abstact != None:
+    % if abstract:
     <div>${abstract}</div>
+    % else:
+    <div>No summary</div>
     % endif
   </div>
   <div>

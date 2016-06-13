@@ -108,8 +108,9 @@ class CustomGrid(Grid):
             return HTML.td(label)
         return _column_format
     
-    def render_title_td(self, title, abstract="", keywords=[], data=[], format=None, source="#"):
-        return self.render_td(renderer="title_td.mako", title=title, abstract=abstract, keywords=keywords, data=data, format=format, source=source)
+    def render_title_td(self, title, abstract=None, keywords=[], data=[], format=None, source="#"):
+        return self.render_td(renderer="title_td.mako", title=title, abstract=abstract,
+                              keywords=keywords, data=data, format=format, source=source)
 
     def render_flag_td(self, flag=False, tooltip=''):
         return self.render_td(renderer="flag_td.mako", flag=flag, tooltip=tooltip)
