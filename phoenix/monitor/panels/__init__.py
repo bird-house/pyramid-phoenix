@@ -18,7 +18,7 @@ def job_details(request, job_id):
         details['duration'] = job.get('duration')
         details['status_message'] = job.get('status_message')
         details['status_location'] = job.get('status_location')
-        details['caption'] = job.get('caption')
+        details['caption'] = job.get('caption', '???')
         details['tags'] = job.get('tags')
     return details
 

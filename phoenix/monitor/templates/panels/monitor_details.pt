@@ -43,9 +43,9 @@
           <dt>Status</dt>
           <dd class="${status_class}">${job.get('status')}</dd>
           <dt>Duration</dt>
-          <dd>${job.get('duration')}</dd>
+          <dd>${job.get('duration', '???')}</dd>
           <dt>Finished</dt>
-          <dd>${job.get('finished')}</dd>
+          <dd>${job.get('finished', '???')}</dd>
         </dl>
       </div>
       <div class="col-xs-6 col-md-3">
@@ -73,7 +73,7 @@
           <dt>Status Message</dt>
           <dd>${job.get('status_message')}</dd>
           <dt>Caption</dt>
-          <dd>${job.get('caption')}</dd>
+          <dd>${job.get('caption', '???')}</dd>
         </dl>
       </div>
     </div>
