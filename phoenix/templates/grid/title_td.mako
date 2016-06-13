@@ -4,7 +4,7 @@
     % if abstract:
     <div>${abstract}</div>
     % else:
-    <div>No summary</div>
+    <div>No Summary</div>
     % endif
   </div>
   <div>
