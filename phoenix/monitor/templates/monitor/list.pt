@@ -67,11 +67,7 @@
                 </a>
                 <a href="${request.route_path('monitor', _query=[('status', 'ProcessSucceeded'), ('access', access), ('limit', limit)])}" 
                    class="btn btn-link"> 
-                  0 Succeeded
-                </a>
-                <a href="${request.route_path('monitor', _query=[('status', 'ProcessFailed'), ('access', access), ('limit', limit)])}" 
-                   class="btn btn-link"> 
-                  0 Failed
+                  0 Finished
                 </a>
                 
                 <div class="btn-group pull-right">
