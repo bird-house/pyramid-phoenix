@@ -29,6 +29,12 @@
                   <select id="status-select" class="form-control">
                     <option value="${request.route_path('monitor', _query=[('access', access)])}">All</option>
                     <optgroup>
+                      <option value="${request.route_path('monitor', _query=[('status', 'Running'), ('access', access)])}"
+                              tal:attributes="selected True if 'Running'==status else False">Running</option>
+                      <option value="${request.route_path('monitor', _query=[('status', 'Finished'), ('access', access)])}"
+                              tal:attributes="selected True if 'Finished'==status else False">Finished</option>
+                    </optgroup>
+                    <optgroup>
                       <option value="${request.route_path('monitor', _query=[('status', new_status), ('access', access), ('limit', limit)])}"
                               tal:attributes="selected True if new_status==status else False"
                               tal:repeat="new_status ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused', 'ProcessSucceeded', 'ProcessFailed']">${new_status}</option>
@@ -61,11 +67,11 @@
                    tal:define="taglabel 'label-danger' if tag=='bug' else 'label-info'">
                   ${count} items matching <span class="label ${taglabel}">${tag}</span>
                 </a>
-                <a href="${request.route_path('monitor', _query=[('status', 'ProcessStarted'), ('access', access), ('limit', limit)])}" 
+                <a href="${request.route_path('monitor', _query=[('status', 'Running'), ('access', access), ('limit', limit)])}" 
                    class="btn btn-link"> 
                   0 Running
                 </a>
-                <a href="${request.route_path('monitor', _query=[('status', 'ProcessSucceeded'), ('access', access), ('limit', limit)])}" 
+                <a href="${request.route_path('monitor', _query=[('status', 'Finished'), ('access', access), ('limit', limit)])}" 
                    class="btn btn-link"> 
                   0 Finished
                 </a>

@@ -63,7 +63,11 @@ class JobList(Monitor):
             if tag is not None:
                 search_filter['tags'] = tag
             search_filter['userid'] = authenticated_userid(self.request)
-        if status:
+        if status == 'Running':
+            search_filter['status'] = {'$in': ['ProcessAccepted', 'ProcessPaused', 'ProcessStarted']}
+        elif status == 'Finished':
+            search_filter['status'] = {'$in': ['ProcessSucceeded', 'ProcessFailed']}
+        elif status:
             search_filter['status'] = status
         count = self.collection.find(search_filter).count()
         if sort == 'user':
