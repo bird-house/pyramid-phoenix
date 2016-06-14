@@ -241,12 +241,12 @@ passwd: custom.cfg
 .PHONY: test
 test:
 	@echo "Running tests (skip slow tests) ..."
-	bin/nosetests -A 'not slow and not online and not testdata' tests
+	bin/py.test -v -m 'not slow and not online and not testdata'
 
 .PHONY: testall
 testall:
 	@echo "Running all tests (include slow tests) ..."
-	bin/nosetests tests
+	bin/py.test -v
 
 .PHONY: docs
 docs:
