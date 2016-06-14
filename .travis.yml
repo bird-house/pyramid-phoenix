@@ -18,7 +18,7 @@ install:
 before_script:
   - sleep 15
 script:
-  - make docs
+  #- make docs
   - make test
 #after_success:
 # - coveralls
