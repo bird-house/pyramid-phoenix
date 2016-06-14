@@ -55,48 +55,61 @@
           
           <div class="panel panel-default">
             <div class="panel-heading">
+             
               <span class="panel-title">
-                <a href="${request.current_route_path()}" 
-                   class="btn btn-link" 
-                   tal:condition="not tag">
-                  ${count} items found
-                </a>
-                <a href="${request.route_path('monitor', _query=[('tag', tag)])}" 
-                   class="btn btn-link" 
-                   tal:condition="tag"
-                   tal:define="taglabel 'label-danger' if tag=='bug' else 'label-info'">
-                  ${count} items matching <span class="label ${taglabel}">${tag}</span>
-                </a>
-                <a href="${request.route_path('monitor', _query=[('status', 'Running'), ('access', access), ('limit', limit)])}" 
-                   class="btn btn-link"> 
-                  Running <span class="badge">${count_running}</span>
-                </a>
-                <a href="${request.route_path('monitor', _query=[('status', 'Finished'), ('access', access), ('limit', limit)])}" 
-                   class="btn btn-link"> 
-                  Finished <span class="badge">${count_finished}</span>
-                </a>
-                
-                <div class="btn-group pull-right">
+                <ul class="nav nav-pills" role="tablist">
+                  <li role="presentation" 
+                      tal:attributes="class 'active' if status=='Running' else ''">
+                    <a href="${request.route_path('monitor', _query=[('status', 'Running'), ('access', access), ('limit', limit)])}" 
+                       class="btn btn-link"> 
+                      Running <span class="badge">${count_running}</span>
+                    </a>
+                  </li>
+                  <li role="presentation"
+                      tal:attributes="class 'active' if status=='Finished' else ''">
+                    <a href="${request.route_path('monitor', _query=[('status', 'Finished'), ('access', access), ('limit', limit)])}" 
+                       class="btn btn-link"> 
+                      Finished <span class="badge">${count_finished}</span>
+                    </a>
+                  </li>
+                  <li role="presentation">
+                    <a href="${request.current_route_path()}" 
+                       class="btn btn-link disabled" 
+                       tal:condition="not tag">
+                      Matching <span class="badge">${count}</span>
+                    </a>
+                    <a href="${request.route_path('monitor', _query=[('tag', tag)])}" 
+                       class="btn btn-link disabled" 
+                       tal:condition="tag"
+                       tal:define="taglabel 'label-danger' if tag=='bug' else 'label-info'">
+                      Matching <span class="label ${taglabel}">${tag}</span> <span class="badge">${count}</span>
+                    </a>
+                  </li>
+               
+                  <li>
+                    <div class="btn-group pull-right">
 
-                  <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Sort <span class="caret"></span>
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li tal:repeat="param ['user', 'process', 'service', 'duration', 'finished', 'created']">
-                      <a href="${request.route_path('monitor', _query=[('status', status), ('access', access), ('sort', param), ('limit', limit)])}">
-                        <i tal:define="invisible 'invisible' if sort != param else ''" class="fa fa-check ${invisible}"></i> ${param.title()}
+                      <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Sort <span class="caret"></span>
                       </a>
-                    </li>
-                  </ul>
-
-                  <a class="btn btn-success"
-                     rel="tooltip"
-                     data-toggle="tooltip"
-                     title="Refresh job list"
-                     href="${request.route_path('monitor', _query=[('page', page), ('limit', limit), ('status', status), ('access', access)])}">
-                    <i class="fa fa-lg fa-repeat"></i>
-                  </a>
-                </div>
+                      <ul class="dropdown-menu">
+                        <li tal:repeat="param ['user', 'process', 'service', 'duration', 'finished', 'created']">
+                          <a href="${request.route_path('monitor', _query=[('status', status), ('access', access), ('sort', param), ('limit', limit)])}">
+                            <i tal:define="invisible 'invisible' if sort != param else ''" class="fa fa-check ${invisible}"></i> ${param.title()}
+                          </a>
+                        </li>
+                      </ul>
+                      
+                      <a class="btn btn-success"
+                         rel="tooltip"
+                         data-toggle="tooltip"
+                         title="Refresh job list"
+                         href="${request.route_path('monitor', _query=[('page', page), ('limit', limit), ('status', status), ('access', access)])}">
+                        <i class="fa fa-lg fa-repeat"></i>
+                      </a>
+                    </div>
+                  </li>
+                </ul>
               </span>
             </div>
             <div class="panel-body">
