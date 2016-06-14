@@ -60,3 +60,11 @@ Check the log file for errors:
    $ tail -f  ~/.conda/envs/birdhouse/var/log/supervisor/phoenix.log
    $ tail -f  ~/.conda/envs/birdhouse/var/log/supervisor/celery.log
 
+Run Docker
+----------
+
+Set the ``HOSTNAME`` environment variable (not ``localhost``) and run ``docker-compose``:
+
+.. code-block:: sh
+
+   HOSTNAME='myhost.earth' bash -c 'docker-compose up'
