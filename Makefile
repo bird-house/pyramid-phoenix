@@ -1,5 +1,5 @@
-VERSION := 0.2.20
-RELEASE := master
+VERSION := 0.3.0
+RELEASE := develop
 
 # Application
 APP_ROOT := $(CURDIR)
@@ -15,9 +15,10 @@ BUILDOUT_VERSION=2.5.0
 
 # Anaconda 
 ANACONDA_HOME ?= $(HOME)/anaconda
-CONDA_ENV ?= birdhouse
+CONDA_ENV ?= $(APP_NAME)
 CONDA_ENVS_DIR ?= $(HOME)/.conda/envs
-PREFIX := $(CONDA_ENVS_DIR)/$(CONDA_ENV)
+CONDA_ENV_PATH := $(CONDA_ENVS_DIR)/$(CONDA_ENV)
+PREFIX ?= $(HOME)/birdhouse
 
 # Configuration used by update-config
 HOSTNAME ?= localhost
@@ -48,37 +49,33 @@ DOCKER_CONTAINER := $(APP_NAME)
 .DEFAULT_GOAL := help
 
 .PHONY: all
-all: clean install
-	@echo "\nRun 'make help' for a description of all make targets."
-	@echo "Read also the README.rst on GitHub: https://github.com/bird-house/birdhousebuilder.bootstrap"
+all: help
 
 .PHONY: help
 help:
-	@echo "make [target]\n"
-	@echo "targets:\n"
-	@echo "\t help        \t- Prints this help message. (Default)"
-	@echo "\t all         \t- Does a complete installation. Shortcut for 'make clean install.'"
-	@echo "\t version     \t- Prints version number of this Makefile."
-	@echo "\t info        \t- Prints information about your system."
-	@echo "\t install     \t- Installs your application by running 'bin/buildout -c custom.cfg'."
-	@echo "\t update      \t- Updates your application by running 'bin/buildout -o -c custom.cfg' (buildout offline mode)."
-	@echo "\t test        \t- Run tests (but skip long running tests)."
-	@echo "\t testall     \t- Run all tests (including long running tests)."
-	@echo "\t clean       \t- Deletes all files that are created by running buildout."
-	@echo "\t srcclean    \t- Removes all *.pyc files."
-	@echo "\t distclean   \t- Removes *all* files that are not controlled by 'git'.\n\t\t\tWARNING: use it *only* if you know what you do!"
-	@echo "\t sysinstall  \t- Installs system packages from requirements.sh. You can also call 'bash requirements.sh' directly."
-	@echo "\t passwd      \t- Generate password for 'phoenix-password' in custom.cfg."
-	@echo "\t docs        \t- Generates HTML documentation with Sphinx."
-	@echo "\t selfupdate  \t- Updates this Makefile."
-	@echo "\nSupervisor targets:\n"
-	@echo "\t start       \t- Starts supervisor service: $(PREFIX)/etc/init.d/supervisord start"
-	@echo "\t stop        \t- Stops supervisor service: $(PREFIX)/etc/init.d/supervisord stop"
-	@echo "\t restart     \t- Restarts supervisor service: $(PREFIX)/etc/init.d/supervisord restart"
-	@echo "\t status      \t- Supervisor status: $(PREFIX)/bin/supervisorctl status"
-	@echo "\nDocker targets:\n"
-	@echo "\t Dockerfile  \t- Generates a Dockerfile for this application."
-	@echo "\t dockerbuild \t- Build a docker image for this application."
+	@echo "Please use \`make <target>' where <target> is one of"
+	@echo "  help        Prints this help message. (Default)"
+	@echo "  version     Prints version number of this Makefile."
+	@echo "  info        Prints information about your system."
+	@echo "  install     Installs your application by running 'bin/buildout -c custom.cfg'."
+	@echo "  update      Updates your application by running 'bin/buildout -o -c custom.cfg' (buildout offline mode)."
+	@echo "  test        Run tests (but skip long running tests)."
+	@echo "  testall     Run all tests (including long running tests)."
+	@echo "  clean       Deletes all files that are created by running buildout."
+	@echo "  srcclean    Removes all *.pyc files."
+	@echo "  distclean   Removes *all* files that are not controlled by 'git'. WARNING: use it *only* if you know what you do!"
+	@echo "  sysinstall  Installs system packages from requirements.sh. You can also call 'bash requirements.sh' directly."
+	@echo "  passwd      Generate password for 'phoenix-password' in custom.cfg."
+	@echo "  docs        Generates HTML documentation with Sphinx."
+	@echo "  selfupdate  Updates this Makefile."
+	@echo "\nSupervisor targets:"
+	@echo "  start       Starts supervisor service: $(PREFIX)/etc/init.d/supervisord start"
+	@echo "  stop        Stops supervisor service: $(PREFIX)/etc/init.d/supervisord stop"
+	@echo "  restart     Restarts supervisor service: $(PREFIX)/etc/init.d/supervisord restart"
+	@echo "  status      Supervisor status: $(PREFIX)/bin/supervisorctl status"
+	@echo "\nDocker targets:"
+	@echo "  Dockerfile  Generates a Dockerfile for this application."
+	@echo "  dockerbuild Build a docker image for this application."
 
 .PHONY: version
 version:
@@ -86,17 +83,17 @@ version:
 
 .PHONY: info
 info:
-	@echo "Informations about your System:\n"
-	@echo "\t OS_NAME          \t= $(OS_NAME)"
-	@echo "\t CPU_ARCH         \t= $(CPU_ARCH)"
-	@echo "\t Anaconda         \t= $(FN)"
-	@echo "\t Anaconda Home    \t= $(ANACONDA_HOME)"
-	@echo "\t Birdhouse Env    \t= $(PREFIX)"
-	@echo "\t APP_NAME         \t= $(APP_NAME)"
-	@echo "\t APP_ROOT         \t= $(APP_ROOT)"
-	@echo "\t DOWNLOAD_CACHE   \t= $(DOWNLOAD_CACHE)"
-	@echo "\t DOCKER_IMAGE     \t= $(DOCKER_IMAGE)"
-	@echo "\t DOCKER_CONTAINER \t= $(DOCKER_CONTAINER)"
+	@echo "Informations about your Bird:"
+	@echo "  OS_NAME             $(OS_NAME)"
+	@echo "  CPU_ARCH            $(CPU_ARCH)"
+	@echo "  Anaconda Home       $(ANACONDA_HOME)"
+	@echo "  Conda Environment   $(CONDA_ENV). Use \`source activate $(CONDA_ENV)' to activate it."
+	@echo "  Conda Prefix        $(CONDA_ENV_PATH)"
+	@echo "  Installation Prefix $(PREFIX)"
+	@echo "  APP_NAME            $(APP_NAME)"
+	@echo "  APP_ROOT            $(APP_ROOT)"
+	@echo "  DOWNLOAD_CACHE      $(DOWNLOAD_CACHE)"
+	@echo "  DOCKER_IMAGE        $(DOCKER_IMAGE)"
 
 ## Helper targets ... ensure that Makefile etc are in place
 
@@ -127,7 +124,7 @@ custom.cfg:
 
 .PHONY: downloads
 downloads:
-	@echo "Using DOWNLOAD_CACHE = ${DOWNLOAD_CACHE}"
+	@echo "Using DOWNLOAD_CACHE $(DOWNLOAD_CACHE)"
 	@test -d $(DOWNLOAD_CACHE) || mkdir -v -p $(DOWNLOAD_CACHE)
 
 .PHONY: init
@@ -156,17 +153,14 @@ conda_config: anaconda
 
 .PHONY: conda_env
 conda_env: anaconda conda_config
-	@test -d $(PREFIX) || "$(ANACONDA_HOME)/bin/conda" create -m -p $(PREFIX) -c ioos --yes python setuptools=$(SETUPTOOLS_VERSION) curl pyopenssl cryptography=1.0.2 genshi mako pyyaml
+	@echo "Update conda environment $(CONDA_ENV) ..."
+	@test -d $(CONDA_ENV_PATH) || "$(ANACONDA_HOME)/bin/conda" env create -n $(CONDA_ENV) -f environment.yml
 	"$(ANACONDA_HOME)/bin/conda" install -y -n $(CONDA_ENV) setuptools=$(SETUPTOOLS_VERSION)
 
 .PHONY: conda_pinned
 conda_pinned: conda_env
 	@echo "Update pinned conda packages ..."
-	@test -d $(PREFIX) && curl https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/master/conda_pinned --silent --insecure --output "$(PREFIX)/conda-meta/pinned" 
-
-.PHONY: conda_clean
-conda_clean: anaconda conda_config
-	@test -d $(PREFIX) && "$(ANACONDA_HOME)/bin/conda" env remove -n $(CONDA_ENV) 
+	@test -d $(CONDA_ENV_PATH) && curl https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/master/conda_pinned --silent --insecure --output "$(CONDA_ENV_PATH)/conda-meta/pinned" 
 
 ## Build targets
 
@@ -186,7 +180,7 @@ sysinstall:
 install: bootstrap
 	@echo "Installing application with buildout ..."
 	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout -c custom.cfg"
-	@echo "\nStart service with 'make start'"
+	@echo "\nStart service with \`make start'"
 
 .PHONY: update
 update:
@@ -202,10 +196,6 @@ update-config:
 update-user:
 	@echo "Update user permission on var/ ..."
 	chown -R $(USER) $(PREFIX)/var && chown -R $(USER) $(PREFIX)/var/lib/.
-
-.PHONY: build
-build: install
-	@echo "\nPlease use 'make install' instead of 'make build'"
 
 .PHONY: clean
 clean: srcclean
@@ -236,17 +226,17 @@ passwd: custom.cfg
 	@echo "Enter a password with at least 8 characters."
 	@bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV); python -c 'from IPython.lib import passwd; pw = passwd(algorithm=\"sha256\"); lines = [\"phoenix-password = \" + pw + \"\\n\" if line.startswith(\"phoenix-password\") else line for line in open(\"custom.cfg\", \"r\")]; file = open(\"custom.cfg\", \"w\"); file.writelines(lines); file.close()'"
 	@echo ""
-	@echo "Run 'make install restart' to activate this password." 
+	@echo "Run \`make install restart' to activate this password." 
 
 .PHONY: test
 test:
-	@echo "Running tests (skip slow tests) ..."
-	bin/py.test -v -m 'not slow and not online and not testdata'
+	@echo "Running tests (skip slow and online tests) ..."
+	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV); bin/py.test -v -m 'not slow and not online'"
 
 .PHONY: testall
 testall:
-	@echo "Running all tests (include slow tests) ..."
-	bin/py.test -v
+	@echo "Running all tests (including slow and online tests) ..."
+	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV); bin/py.test -v"
 
 .PHONY: docs
 docs:
@@ -278,7 +268,7 @@ restart:
 .PHONY: status
 status:
 	@echo "Supervisor status ..."
-	$(PREFIX)/bin/supervisorctl -c ${PREFIX}/etc/supervisor/supervisord.conf status
+	$(CONDA_ENV_PATH)/bin/supervisorctl -c ${PREFIX}/etc/supervisor/supervisord.conf status
 
 
 ## Docker targets
