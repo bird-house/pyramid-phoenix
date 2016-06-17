@@ -1,4 +1,4 @@
-name: phoenix 
+name: pyramid-phoenix 
 channels:
   - defaults
   - birdhouse
