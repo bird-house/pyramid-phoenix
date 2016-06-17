@@ -13,15 +13,17 @@ SOURCE_TYPES = {
     #'wizard_swift_login': "Swift Cloud",
     'wizard_threddsservice': "Thredds Catalog Service",
     'wizard_upload': "Local Storage",
+    'wizard_solr': "Birdhouse Solr Search"
     }
 
 class SourceSchemaNode(colander.SchemaNode):
     schema_type = colander.String
 
     def after_bind(self, node, kw):
-        if kw['request'].solr_activated:
-            choices.append( ('wizard_solr', "Birdhouse Solr Search") )
-        self.widget = RadioChoiceWidget(values = SOURCE_TYPES.items())
+        values = SOURCE_TYPES.items()
+        if not kw['request'].solr_activated:
+            values.remove(('wizard_solr', SOURCE_TYPES['wizard_solr']))
+        self.widget = RadioChoiceWidget(values=values)
 
 class Schema(colander.MappingSchema):
     source = SourceSchemaNode()
