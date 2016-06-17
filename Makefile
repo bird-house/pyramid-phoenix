@@ -54,28 +54,30 @@ all: help
 .PHONY: help
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
-	@echo "  help        Prints this help message. (Default)"
-	@echo "  version     Prints version number of this Makefile."
-	@echo "  info        Prints information about your system."
-	@echo "  install     Installs your application by running 'bin/buildout -c custom.cfg'."
-	@echo "  update      Updates your application by running 'bin/buildout -o -c custom.cfg' (buildout offline mode)."
-	@echo "  test        Run tests (but skip long running tests)."
-	@echo "  testall     Run all tests (including long running tests)."
-	@echo "  clean       Deletes all files that are created by running buildout."
-	@echo "  srcclean    Removes all *.pyc files."
-	@echo "  distclean   Removes *all* files that are not controlled by 'git'. WARNING: use it *only* if you know what you do!"
-	@echo "  sysinstall  Installs system packages from requirements.sh. You can also call 'bash requirements.sh' directly."
-	@echo "  passwd      Generate password for 'phoenix-password' in custom.cfg."
-	@echo "  docs        Generates HTML documentation with Sphinx."
-	@echo "  selfupdate  Updates this Makefile."
+	@echo "  help        to print this help message. (Default)"
+	@echo "  version     to print version number of this Makefile."
+	@echo "  info        to print information about $(APP_NAME)."
+	@echo "  install     to install $(APP_NAME) by running 'bin/buildout -c custom.cfg'."
+	@echo "  sysinstall  to install system packages from requirements.sh. You can also call 'bash requirements.sh' directly."
+	@echo "  update      to update your application by running 'bin/buildout -o -c custom.cfg' (buildout offline mode)."
+	@echo "  clean       to delete all files that are created by running buildout."
+	@echo "\nTesting targets:"
+	@echo "  test        to run tests (but skip long running tests)."
+	@echo "  testall     to run all tests (including long running tests)."
+	@echo "\nSupporting targets:"
+	@echo "  srcclean    to remove all *.pyc files."
+	@echo "  distclean   to remove *all* files that are not controlled by 'git'. WARNING: use it *only* if you know what you do!"
+	@echo "  passwd      to generate password for 'phoenix-password' in custom.cfg."
+	@echo "  docs        to generate HTML documentation with Sphinx."
+	@echo "  selfupdate  to update this Makefile."
 	@echo "\nSupervisor targets:"
-	@echo "  start       Starts supervisor service: $(PREFIX)/etc/init.d/supervisord start"
-	@echo "  stop        Stops supervisor service: $(PREFIX)/etc/init.d/supervisord stop"
-	@echo "  restart     Restarts supervisor service: $(PREFIX)/etc/init.d/supervisord restart"
-	@echo "  status      Supervisor status: $(PREFIX)/bin/supervisorctl status"
+	@echo "  start       to start supervisor service."
+	@echo "  stop        to stop supervisor service."
+	@echo "  restart     to restart supervisor service."
+	@echo "  status      to show supervisor status"
 	@echo "\nDocker targets:"
-	@echo "  Dockerfile  Generates a Dockerfile for this application."
-	@echo "  dockerbuild Build a docker image for this application."
+	@echo "  Dockerfile  to generate a Dockerfile for $(APP_NAME)."
+	@echo "  dockerbuild to build a docker image for $(APP_NAME)."
 
 .PHONY: version
 version:
@@ -179,18 +181,18 @@ sysinstall:
 .PHONY: install
 install: bootstrap
 	@echo "Installing application with buildout ..."
-	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout -c custom.cfg"
+	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout buildout:anaconda-home=$(ANACONDA_HOME) buildout:birdhouse-home=$(PREFIX) -c custom.cfg"
 	@echo "\nStart service with \`make start'"
 
 .PHONY: update
 update:
 	@echo "Update application config with buildout (offline mode) ..."
-	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout -o -c custom.cfg"
+	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout buildout:anaconda-home=$(ANACONDA_HOME) buildout:birdhouse-home=$(PREFIX) -o -c custom.cfg"
 
 .PHONY: update-config
 update-config:
 	@echo "Update application config with buildout (offline mode) and enviroment variables..."
-	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout settings:hostname=$(HOSTNAME) settings:output-port=$(OUTPUT_PORT) settings:log-level=$(LOG_LEVEL) -o -c custom.cfg"
+	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout buildout:anaconda-home=$(ANACONDA_HOME) buildout:birdhouse-home=$(PREFIX) settings:hostname=$(HOSTNAME) settings:output-port=$(OUTPUT_PORT) settings:log-level=$(LOG_LEVEL) -o -c custom.cfg"
 
 .PHONY: update-user
 update-user:
