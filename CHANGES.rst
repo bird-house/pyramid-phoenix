@@ -1,9 +1,10 @@
 Changes
 *******
 
-0.4.8 (2016-06-09)
+0.5.0 (2016-06-19)
 ==================
 
+* using zc.recipe.deployment.
 * possible to edit job caption in monitor view.
 * monitor view allows tagging of jobs and filter with tags.
 * using special tag "public" to set job as public accessable.
