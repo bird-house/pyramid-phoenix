@@ -4,7 +4,7 @@ channels:
   - birdhouse
 dependencies:
   - python=2 
-  - setuptools=20.1.1 
+  - setuptools=23.0.0
   - curl=7.49.0 
   - pyopenssl=0.15.1 
   - cryptography=1.0.2 
