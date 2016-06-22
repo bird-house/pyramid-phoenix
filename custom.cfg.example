@@ -8,7 +8,8 @@ http-port = 8081
 https-port = 8443
 log-level = WARN
 # run 'make passwd' to generate password hash
-phoenix-password = 
+# by default it is "qwerty"
+phoenix-password = sha256:773eb9c05850:3e6a1122fbf0b1115e5208670a16c75ba5aca2a69df74603b0fdb2a2c3d2eed7
 # generate secret
 # python -c "import os; print(''.join('%02x' % ord(x) for x in os.urandom(16)))"
 phoenix-secret = d5e8417934247ccb6cdbdb5144e3b130
