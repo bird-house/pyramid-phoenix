@@ -1,6 +1,9 @@
 VERSION := 0.3.0
 RELEASE := develop
 
+# Include custom config if it is available
+-include Makefile.config
+
 # Application
 APP_ROOT := $(CURDIR)
 APP_NAME := $(shell basename $(APP_ROOT))
@@ -10,28 +13,27 @@ OS_NAME := $(shell uname -s 2>/dev/null || echo "unknown")
 CPU_ARCH := $(shell uname -m 2>/dev/null || uname -p 2>/dev/null || echo "unknown")
 
 # Python
-SETUPTOOLS_VERSION=23.0.0
-BUILDOUT_VERSION=2.5.2
+SETUPTOOLS_VERSION := 23.0.0
+BUILDOUT_VERSION := 2.5.2
 
 # Anaconda 
 ANACONDA_HOME ?= $(HOME)/anaconda
 CONDA_ENV ?= $(APP_NAME)
 CONDA_ENVS_DIR ?= $(HOME)/.conda/envs
 CONDA_ENV_PATH := $(CONDA_ENVS_DIR)/$(CONDA_ENV)
-PREFIX ?= $(HOME)/birdhouse
+CONDA_PINNED := $(APP_ROOT)/requirements/conda_pinned
 
 # Configuration used by update-config
 HOSTNAME ?= localhost
-USER ?= www-data
 OUTPUT_PORT ?= 8090
 LOG_LEVEL ?= WARN
 
 # choose anaconda installer depending on your OS
 ANACONDA_URL = http://repo.continuum.io/miniconda
 ifeq "$(OS_NAME)" "Linux"
-FN := Miniconda-latest-Linux-x86_64.sh
+FN := Miniconda2-latest-Linux-x86_64.sh
 else ifeq "$(OS_NAME)" "Darwin"
-FN := Miniconda-3.7.0-MacOSX-x86_64.sh
+FN := Miniconda2-latest-MacOSX-x86_64.sh
 else
 FN := unknown
 endif
@@ -61,10 +63,12 @@ help:
 	@echo "  sysinstall  to install system packages from requirements.sh. You can also call 'bash requirements.sh' directly."
 	@echo "  update      to update your application by running 'bin/buildout -o -c custom.cfg' (buildout offline mode)."
 	@echo "  clean       to delete all files that are created by running buildout."
+	@echo "  export      to export the conda environment. Caution! You always need to check it the enviroment.yml is working."
 	@echo "\nTesting targets:"
 	@echo "  test        to run tests (but skip long running tests)."
 	@echo "  testall     to run all tests (including long running tests)."
 	@echo "\nSupporting targets:"
+	@echo "  envclean    to remove the conda enviroment $(CONDA_ENV)."
 	@echo "  srcclean    to remove all *.pyc files."
 	@echo "  distclean   to remove *all* files that are not controlled by 'git'. WARNING: use it *only* if you know what you do!"
 	@echo "  passwd      to generate password for 'phoenix-password' in custom.cfg."
@@ -91,7 +95,6 @@ info:
 	@echo "  Anaconda Home       $(ANACONDA_HOME)"
 	@echo "  Conda Environment   $(CONDA_ENV). Use \`source activate $(CONDA_ENV)' to activate it."
 	@echo "  Conda Prefix        $(CONDA_ENV_PATH)"
-	@echo "  Installation Prefix $(PREFIX)"
 	@echo "  APP_NAME            $(APP_NAME)"
 	@echo "  APP_ROOT            $(APP_ROOT)"
 	@echo "  DOWNLOAD_CACHE      $(DOWNLOAD_CACHE)"
@@ -149,7 +152,9 @@ anaconda:
 conda_config: anaconda
 	@echo "Update ~/.condarc"
 	@"$(ANACONDA_HOME)/bin/conda" config --add envs_dirs $(CONDA_ENVS_DIR)
-	@"$(ANACONDA_HOME)/bin/conda" config --set ssl_verify true
+	@"$(ANACONDA_HOME)/bin/conda" config --set ssl_verify True
+	@"$(ANACONDA_HOME)/bin/conda" config --set update_dependencies True
+	@"$(ANACONDA_HOME)/bin/conda" config --set use_pip True
 	@"$(ANACONDA_HOME)/bin/conda" config --add channels defaults
 	@"$(ANACONDA_HOME)/bin/conda" config --add channels birdhouse
 
@@ -162,7 +167,12 @@ conda_env: anaconda conda_config
 .PHONY: conda_pinned
 conda_pinned: conda_env
 	@echo "Update pinned conda packages ..."
-	@test -d $(CONDA_ENV_PATH) && curl https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/$(RELEASE)/conda_pinned --silent --insecure --output "$(CONDA_ENV_PATH)/conda-meta/pinned" 
+	@test -d $(CONDA_ENV_PATH) && test -f $(CONDA_PINNED) && cp -f "$(CONDA_PINNED)" "$(CONDA_ENV_PATH)/conda-meta/pinned" 
+
+.PHONY: export
+export:
+	@echo "Exporting conda enviroment ..."
+	@test -d $(CONDA_ENV_PATH) && "$(ANACONDA_HOME)/bin/conda" env export -n $(CONDA_ENV) -f environment.yml
 
 ## Build targets
 
@@ -181,30 +191,30 @@ sysinstall:
 .PHONY: install
 install: bootstrap
 	@echo "Installing application with buildout ..."
-	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout buildout:anaconda-home=$(ANACONDA_HOME) settings:prefix=$(PREFIX) -c custom.cfg"
+	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout buildout:anaconda-home=$(ANACONDA_HOME) -c custom.cfg"
 	@echo "\nStart service with \`make start'"
 
 .PHONY: update
 update:
 	@echo "Update application config with buildout (offline mode) ..."
-	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout buildout:anaconda-home=$(ANACONDA_HOME) settings:prefix=$(PREFIX) -o -c custom.cfg"
+	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout buildout:anaconda-home=$(ANACONDA_HOME) -o -c custom.cfg"
 
 .PHONY: update-config
 update-config:
 	@echo "Update application config with buildout (offline mode) and enviroment variables..."
-	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout buildout:anaconda-home=$(ANACONDA_HOME) settings:prefix=$(PREFIX) settings:hostname=$(HOSTNAME) settings:output-port=$(OUTPUT_PORT) settings:log-level=$(LOG_LEVEL) -o -c custom.cfg"
+	bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);bin/buildout buildout:anaconda-home=$(ANACONDA_HOME) settings:hostname=$(HOSTNAME) settings:output-port=$(OUTPUT_PORT) settings:log-level=$(LOG_LEVEL) -o -c custom.cfg"
 
 .PHONY: clean
-clean: srcclean
+clean: srcclean envclean
 	@echo "Cleaning buildout files ..."
 	@-for i in $(BUILDOUT_FILES); do \
             test -e $$i && rm -v -rf $$i; \
         done
 
 .PHONY: envclean
-envclean: 
+envclean: stop
 	@echo "Removing conda env $(CONDA_ENV)"
-	@"$(ANACONDA_HOME)/bin/conda" env remove -n $(CONDA_ENV)
+	@-"$(ANACONDA_HOME)/bin/conda" remove -n $(CONDA_ENV) --yes --all
 
 .PHONY: srcclean
 srcclean:
@@ -216,11 +226,6 @@ distclean: backup clean
 	@echo "Cleaning distribution ..."
 	@git diff --quiet HEAD || echo "There are uncommited changes! Not doing 'git clean' ..."
 	@-git clean -dfx --exclude=*.bak
-
-.PHONY: buildclean
-buildclean:
-	@echo "Removing bootstrap.sh ..."
-	@test -e bootstrap.sh && rm -v bootstrap.sh
 
 .PHONY: passwd
 passwd: custom.cfg
@@ -255,22 +260,22 @@ selfupdate: bootstrap.sh requirements.sh .gitignore
 .PHONY: start
 start:
 	@echo "Starting supervisor service ..."
-	$(PREFIX)/etc/init.d/supervisord start
+	bin/supervisord start
 
 .PHONY: stop
 stop:
 	@echo "Stopping supervisor service ..."
-	$(PREFIX)/etc/init.d/supervisord stop
+	-bin/supervisord stop
 
 .PHONY: restart
 restart:
 	@echo "Restarting supervisor service ..."
-	$(PREFIX)/etc/init.d/supervisord restart
+	bin/supervisord restart
 
 .PHONY: status
 status:
 	@echo "Supervisor status ..."
-	$(CONDA_ENV_PATH)/bin/supervisorctl -c ${PREFIX}/etc/supervisor/supervisord.conf status
+	bin/supervisorctl status
 
 
 ## Docker targets
