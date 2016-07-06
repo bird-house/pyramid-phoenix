@@ -11,9 +11,12 @@ $(function() {
       '/active_jobs.json',
       {},
       function(json) {
-        location.reload();
+
         if (json.length == 0) {
           clearInterval(timerId);
+        }
+        else {
+          location.reload();
         }
       }
     );
