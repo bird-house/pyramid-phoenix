@@ -52,11 +52,11 @@ $(function() {
     );
   };
 
-  // refresh job list each 3 secs ...
+  // refresh job list each 5 secs ...
   timerId = setInterval(function() {
     //updateJobs();
     location.reload();
-  }, 3000); 
+  }, 5000); 
   
 
 });
