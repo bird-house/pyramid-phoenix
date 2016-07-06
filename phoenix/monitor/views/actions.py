@@ -119,6 +119,13 @@ class NodeActions(object):
         labels = format_tags(job.get('tags', ['dev']))
         return {'identifier': job.get('identifier'), 'caption': job.get('caption', '???'), 'labels': labels}
 
+    ## @view_config(renderer='json', route_name='active_jobs.json')
+    ## def active_jobs(self):
+    ##     search_filter =  {}
+    ##     search_filter['userid'] = authenticated_userid(self.request)
+    ##     search_filter['status'] = {'$in': ['ProcessAccepted', 'ProcessPaused', 'ProcessStarted']}
+    ##     return list(self.collection.find(search_filter).sort('created', -1))
+    
 
 def monitor_buttons(context, request):
     """
@@ -164,3 +171,4 @@ def includeme(config):
     config.add_route('make_private', 'make_private')
     config.add_route('set_favorite', 'set_favorite')
     config.add_route('unset_favorite', 'unset_favorite')
+    #config.add_route('active_jobs', 'active_jobs.json')
