@@ -81,8 +81,10 @@ def _fetch_thredds_metadata(url, service_name=None):
         source = url,
         format = THREDDS_TYPE,
         creator = '',
-        keywords = 'thredds',
-        rights = '')
+        keywords = ['thredds'],
+        rights = '',
+        #subjects = '',
+        references = [])
     return record
 
 def _fetch_wps_metadata(url, service_name=None):
@@ -96,10 +98,10 @@ def _fetch_wps_metadata(url, service_name=None):
         source = wps.url,
         format = WPS_TYPE,
         creator = wps.provider.name,
-        keywords = getattr(wps.identification, 'keywords', ''),
+        keywords = getattr(wps.identification, 'keywords', []),
         rights = getattr(wps.identification, 'accessconstraints', ''),
-        subjects = '',
-        references = '')
+        #subjects = '',
+        references = [])
     return record
 
 class Catalog(object):
