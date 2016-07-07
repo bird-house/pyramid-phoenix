@@ -4,9 +4,8 @@ class JobStarted(object):
         self.task_id = task_id
 
 class JobFinished(object):
-    def __init__(self, request, job):
-        self.request = request
+    def __init__(self, job):
         self.job = job
         
-    def succeded(self):
-        return job.get('status') == "ProcessSuceeded"
+    def succeeded(self):
+        return self.job.get('status') == "ProcessSucceeded"

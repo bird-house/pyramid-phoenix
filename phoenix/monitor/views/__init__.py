@@ -17,10 +17,10 @@ def notify_job_started(event):
 def notify_job_finished(event):
     if event.succeeded():
         logger.info("job %s succeded.", event.job.get('title'))
-        event.request.session.flash("Job <b>{0}</b> succeded.".format(event.job.get('title')), queue='success')
+        #event.request.session.flash("Job <b>{0}</b> succeded.".format(event.job.get('title')), queue='success')
     else:
         logger.warn("job %s failed.", event.job.get('title'))
-        event.session.flash("Job <b>{0}</b> failed.".format(event.job.get('title')), queue='danger')
+        #event.request.session.flash("Job <b>{0}</b> failed.".format(event.job.get('title')), queue='danger')
 
 @view_defaults(permission='edit', layout='default')
 class Monitor(MyView):

@@ -12,6 +12,7 @@ from birdfeeder import feed_from_thredds, clear
 
 from phoenix.db import mongodb
 from phoenix.security import generate_access_token
+from phoenix.events import JobFinished
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -160,6 +161,8 @@ def execute_workflow(self, userid, url, workflow, caption=None):
             logger.exception("Could not read status xml document.")
         else:
             db.jobs.update({'identifier': job['identifier']}, job)
+        finally:
+            registry.notify(JobFinished(job))
     return execution.getStatus()
 
 @app.task(bind=True)
@@ -203,6 +206,8 @@ def execute_process(self, userid, url, identifier, inputs, outputs, caption=None
             logger.exception("Could not read status xml document.")
         else:
             db.jobs.update({'identifier': job['identifier']}, job)
+        finally:
+            registry.notify(JobFinished(job))
     return execution.getStatus()
 
 @app.task(bind=True)
