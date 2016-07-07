@@ -161,8 +161,7 @@ def execute_workflow(self, userid, url, workflow, caption=None):
             logger.exception("Could not read status xml document.")
         else:
             db.jobs.update({'identifier': job['identifier']}, job)
-        finally:
-            registry.notify(JobFinished(job))
+    registry.notify(JobFinished(job))
     return execution.getStatus()
 
 @app.task(bind=True)
@@ -206,8 +205,7 @@ def execute_process(self, userid, url, identifier, inputs, outputs, caption=None
             logger.exception("Could not read status xml document.")
         else:
             db.jobs.update({'identifier': job['identifier']}, job)
-        finally:
-            registry.notify(JobFinished(job))
+    registry.notify(JobFinished(job))
     return execution.getStatus()
 
 @app.task(bind=True)

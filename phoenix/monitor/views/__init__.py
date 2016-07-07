@@ -20,6 +20,7 @@ def notify_job_finished(event):
         #event.request.session.flash("Job <b>{0}</b> succeded.".format(event.job.get('title')), queue='success')
     else:
         logger.warn("job %s failed.", event.job.get('title'))
+        #logger.warn("status = %s", event.job.get('status'))
         #event.request.session.flash("Job <b>{0}</b> failed.".format(event.job.get('title')), queue='danger')
 
 @view_defaults(permission='edit', layout='default')
