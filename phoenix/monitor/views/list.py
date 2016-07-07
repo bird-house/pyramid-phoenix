@@ -179,7 +179,7 @@ class JobsGrid(CustomGrid):
         self.column_formats['user'] = self.user_td('userid')
         self.column_formats['process'] = self.label_td('title')
         self.column_formats['caption'] = self.caption_td
-        self.column_formats['duration'] = self.label_td('duration', '???')
+        self.column_formats['duration'] = self.duration_td
         self.column_formats['finished'] = self.time_ago_td('finished')
         self.column_formats['labels'] = self.labels_td
         self.column_formats[''] = self.buttongroup_td
@@ -187,6 +187,9 @@ class JobsGrid(CustomGrid):
         
     def status_td(self, col_num, i, item):
         return self.render_td(renderer="status_td.mako", job_id=item.get('identifier'), status=item.get('status'), progress=item.get('progress', 0))
+
+    def duration_td(self, col_num, i, item):
+        return self.render_td(renderer="duration_td.mako", job_id=item.get('identifier'), duration=item.get('duration', '???'))
   
     def caption_td(self, col_num, i, item):
         return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'), caption=item.get('caption', '???'))
