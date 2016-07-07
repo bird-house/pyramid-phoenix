@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 @subscriber(JobStarted)
 def notify_job_started(event):
-    event.request.session.flash("Job added to task queue. Please wait ...", queue='danger')
+    event.request.session.flash("Job added to task queue. Please wait ...", queue='info')
     
 @subscriber(JobFinished)
 def notify_job_finished(event):
