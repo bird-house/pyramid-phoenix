@@ -187,7 +187,10 @@ class MongodbCatalog(Catalog):
             raise NotImplementedError
             
     def get_services(self, service_type=None, maxrecords=100):
-        return [doc2record(doc) for doc in self.collection.find({'type': 'service'})]
+        search_filter = {'type': 'service'}
+        if service_type:
+            search_filter['format'] = service_type
+        return [doc2record(doc) for doc in self.collection.find(search_filter)]
 
 
 
