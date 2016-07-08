@@ -28,13 +28,13 @@ If you login for the first time your account needs to be activated by an adminis
 
 Enter the Phoenix password: 
 
-username: guest
-Password: demo
+  username: guest
+  Password: demo
 
 If you are an adminstartor:
 
-unsername: admin
-Password: ****** ( enter the pheonix password )
+  unsername: admin
+  Password: ****** ( enter the pheonix password )
 
 Phoneix login might not be available.
 
