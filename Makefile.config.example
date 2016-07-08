@@ -1,0 +1,3 @@
+# Anaconda 
+ANACONDA_HOME ?= $(HOME)/anaconda
+CONDA_ENVS_DIR ?= $(HOME)/.conda/envs
