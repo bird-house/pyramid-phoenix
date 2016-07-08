@@ -47,7 +47,9 @@ class PhoenixSchema(colander.MappingSchema):
     username = colander.SchemaNode(
         colander.String(),
         title='Username',
-        description='Guest? Use username "guest" and password "demo".')
+        description='Guest? Use username "guest" and password "demo".',
+        default = 'guest',
+        widget=deform.widget.SelectWidget(values=(('guest', 'guest'), ('admin', 'admin'))))
     password = colander.SchemaNode(
         colander.String(),
         title = 'Password',
