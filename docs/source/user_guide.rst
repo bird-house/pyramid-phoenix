@@ -26,7 +26,17 @@ If you login for the first time your account needs to be activated by an adminis
 
 **Phoenix**
 
-Enter the password of the Phoenix user. Phoneix login might not be available.
+Enter the Phoenix password: 
+
+username: guest
+Password: demo
+
+If you are an adminstartor:
+
+unsername: admin
+Password: ****** ( enter the pheonix password )
+
+Phoneix login might not be available.
 
 **OpenID**
 
