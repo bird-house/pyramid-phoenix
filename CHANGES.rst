@@ -1,6 +1,17 @@
 Changes
 *******
 
+0.4.8 (2016-07-11)
+==================
+
+* Update user_guide.rst
+* fixed catalog search filter (#91)
+* fixed keywords display of thredds servcices (#91)
+* pinned mongodb=2 ... update pywps=3.2.6
+* added default password
+* pinned netcdf4=1.2.2 and added ioos channel to conda part
+* update twitcher 0.1.7
+
 0.4.7 (2016-06-06)
 ==================
 
