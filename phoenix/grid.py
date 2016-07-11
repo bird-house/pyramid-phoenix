@@ -84,29 +84,33 @@ class CustomGrid(Grid):
             return HTML.td(size)
         return _column_format
 
-    def progress_td(self, attribute):
-        def _column_format(column_number, i, record):
-            progress = get_value(record, attribute, 0)
-            return self.render_td(renderer="progress_td.mako", identifier=i, progress=progress)
-        return _column_format
-
     def userid_td(self, attribute):
         def _column_format(column_number, i, record):
             #TODO: avoid database access ... maybe store additional info at job
             userid = get_value(record, attribute)
-            provider_id = 'Unknown'
+            label = 'Unknown'
             if userid:
                 user = self.request.db.users.find_one(dict(identifier=userid))
                 if user:
-                    provider_id = user.get('login_id')
-            return HTML.td(provider_id)
+                    label = user.get('login_id')
+            return HTML.td(label)
+        return _column_format
+
+    def user_td(self, attribute):
+        def _column_format(column_number, i, record):
+            #TODO: avoid database access ... maybe store additional info at job
+            userid = get_value(record, attribute)
+            label = 'Unknown'
+            if userid:
+                user = self.request.db.users.find_one(dict(identifier=userid))
+                if user:
+                    label = user.get('name')
+            return HTML.td(label)
         return _column_format
     
-    def render_title_td(self, title, abstract="", keywords=[], data=[], format=None, source="#"):
-        return self.render_td(renderer="title_td.mako", title=title, abstract=abstract, keywords=keywords, data=data, format=format, source=source)
-
-    def render_status_td(self, item):
-        return self.render_td(renderer="status_td.mako", status=item.get('status'), identifier=item.get('identifier'))
+    def render_title_td(self, title, abstract=None, keywords=[], data=[], format=None, source="#"):
+        return self.render_td(renderer="title_td.mako", title=title, abstract=abstract,
+                              keywords=keywords, data=data, format=format, source=source)
 
     def render_flag_td(self, flag=False, tooltip=''):
         return self.render_td(renderer="flag_td.mako", flag=flag, tooltip=tooltip)

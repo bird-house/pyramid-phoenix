@@ -12,6 +12,7 @@ from birdfeeder import feed_from_thredds, clear
 
 from phoenix.db import mongodb
 from phoenix.security import generate_access_token
+from phoenix.events import JobFinished
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -37,7 +38,12 @@ def log_error(job, error):
         job['log'].append(log_msg)
         logger.error(log_msg)
 
-def add_job(db, userid, task_id, service, title, abstract, status_location, is_workflow=False):
+def add_job(db, userid, task_id, service, title, abstract, status_location, is_workflow=False, caption=None):
+    tags = ['dev']
+    if is_workflow:
+        tags.append('workflow')
+    else:
+        tags.append('single')
     job = dict(
         identifier = str(uuid.uuid1()),
         task_id = task_id,
@@ -49,9 +55,11 @@ def add_job(db, userid, task_id, service, title, abstract, status_location, is_w
         status_location = status_location,
         created = datetime.now(),
         is_complete = False,
-        access = 'private',
-        status = "ProcessQueued")
-    db.jobs.save(job)
+        tags = tags,
+        caption = caption,
+        status = "ProcessAccepted",
+        )
+    db.jobs.insert(job)
     return job
 
 def get_access_token(userid):
@@ -96,7 +104,7 @@ def esgf_logon(self, userid, url, openid, password):
     return execution.status
 
 @app.task(bind=True)
-def execute_workflow(self, userid, url, workflow):
+def execute_workflow(self, userid, url, workflow, caption=None):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
 
@@ -121,6 +129,7 @@ def execute_workflow(self, userid, url, workflow):
                   service = worker_wps.identification.title,
                   title = workflow['worker']['identifier'],
                   abstract = '',
+                  caption = caption,
                   status_location = execution.statusLocation)
 
     while execution.isNotComplete():
@@ -152,10 +161,11 @@ def execute_workflow(self, userid, url, workflow):
             logger.exception("Could not read status xml document.")
         else:
             db.jobs.update({'identifier': job['identifier']}, job)
+    registry.notify(JobFinished(job))
     return execution.getStatus()
 
 @app.task(bind=True)
-def execute_process(self, userid, url, identifier, inputs, outputs, keywords=None):
+def execute_process(self, userid, url, identifier, inputs, outputs, caption=None):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
 
@@ -165,8 +175,9 @@ def execute_process(self, userid, url, identifier, inputs, outputs, keywords=Non
                   task_id = self.request.id,
                   is_workflow = False,
                   service = wps.identification.title,
-                  title = execution.process.identifier,
+                  title = identifier,
                   abstract = getattr(execution.process, "abstract", ""),
+                  caption = caption,
                   status_location = execution.statusLocation)
 
     while execution.isNotComplete():
@@ -194,6 +205,7 @@ def execute_process(self, userid, url, identifier, inputs, outputs, keywords=Non
             logger.exception("Could not read status xml document.")
         else:
             db.jobs.update({'identifier': job['identifier']}, job)
+    registry.notify(JobFinished(job))
     return execution.getStatus()
 
 @app.task(bind=True)

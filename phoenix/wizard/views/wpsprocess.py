@@ -5,6 +5,7 @@ import deform
 from twitcher.registry import proxy_url
 from owslib.wps import WebProcessingService
 
+from phoenix.utils import wps_caps_url
 from phoenix.wizard.views import Wizard
 
 def count_literal_inputs(wps, identifier):
@@ -70,7 +71,16 @@ class ChooseWPSProcess(Wizard):
         self.wizard_state.set('wizard_literal_inputs', {})
         return self.next('wizard_complex_inputs')
         
-    @view_config(route_name='wizard_process', renderer='../templates/wizard/default.pt')
+    @view_config(route_name='wizard_process', renderer='../templates/wizard/wpsprocess.pt')
     def view(self):
         return super(ChooseWPSProcess, self).view()
+
+    def custom_view(self):
+        return dict(
+            url=wps_caps_url(self.wps.url),
+            summary_title=self.wps.identification.title,
+            summary=self.wps.identification.abstract,
+            provider_name=self.wps.provider.name,
+            provider_url=self.wps.provider.url
+            )
 

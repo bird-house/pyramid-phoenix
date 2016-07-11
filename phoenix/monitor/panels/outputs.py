@@ -99,10 +99,10 @@ class Outputs(object):
         items = []
         for output in process_outputs(self.request, job_id).values():
             items.append(dict(title=output.title,
-                              abstract=getattr(output, 'abstract', ""),
+                              abstract=output.abstract,
                               identifier=output.identifier,
-                              mime_type = output.mimeType,
-                              data = output.data,
+                              mime_type=output.mimeType,
+                              data=output.data,
                               reference=output.reference))
         items = sorted(items, key=lambda item: item['identifier'], reverse=1)
 
@@ -133,7 +133,7 @@ class ProcessOutputsGrid(CustomGrid):
     def output_td(self, col_num, i, item):
         return self.render_title_td(
             title=item.get('title'), 
-            abstract=item.get('abstract', ""))
+            abstract=item.get('abstract'))
 
     def value_td(self, col_num, i, item):
         return self.render_td(renderer="value_td.mako",

@@ -18,6 +18,8 @@ def job_details(request, job_id):
         details['duration'] = job.get('duration')
         details['status_message'] = job.get('status_message')
         details['status_location'] = job.get('status_location')
+        details['caption'] = job.get('caption', '???')
+        details['tags'] = job.get('tags')
     return details
 
 @panel_config(name='monitor_details', renderer='../templates/panels/monitor_details.pt')

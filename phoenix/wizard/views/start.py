@@ -2,19 +2,21 @@ import yaml
 
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
+from pyramid.security import authenticated_userid
 
 from owslib.wps import WPSExecution, WebProcessingService
 
+from phoenix.utils import time_ago_in_words
 from phoenix.catalog import get_service_name
 from phoenix.wizard.views import Wizard
 
 import logging
 logger = logging.getLogger(__name__)
 
-def job_to_state(request):
+def job_to_state(request, job_id):
     # TODO: quite dirty ... needs clean up
     state = {}
-    job = request.db.jobs.find_one({'identifier': request.params['job_id']})
+    job = request.db.jobs.find_one({'identifier': job_id})
     execution = WPSExecution()
     execution.checkStatus(url=job['status_location'], sleepSecs=0)
     if len(execution.dataInputs) == 1:
@@ -52,53 +54,76 @@ def job_to_state(request):
             elif workflow['name'] == 'wizard_threddsservice':
                 state['wizard_source'] = {'source': 'wizard_threddsservice'}
                 state['wizard_threddsservice'] = {'url': workflow['source']['thredds']['catalog_url']}
+            state['wizard_done'] = {'caption': job.get('caption')}
     return state
 
 
 import colander
 from deform.widget import SelectWidget
-class Schema(colander.MappingSchema):
+class FavoriteSchema(colander.MappingSchema):
     @colander.deferred
     def deferred_favorite_widget(node, kw):
-        favorites = kw.get('favorites', ['No Favorite'])
-        choices = [(item, item) for item in favorites]
+        jobs = kw.get('jobs', [])
+        last = kw.get('last', False)
+        gentitle = lambda job: "{0} - {1} - {2}".format(
+            job.get('title'), job.get('caption', '???'),
+            time_ago_in_words(job.get('finished')))
+        choices = [('', 'No Favorite')]
+        if last:
+             choices.append( ('last', 'Last Run') )
+        logger.debug('jobs %s', jobs)
+        choices.extend( [(job['identifier'], gentitle(job) ) for job in jobs] )
         return SelectWidget(values = choices)
 
-    favorite = colander.SchemaNode(
+    job_id = colander.SchemaNode(
         colander.String(),
+        title = "Favorite",
+        missing = '',
         widget = deferred_favorite_widget)
 
 class Start(Wizard):
     def __init__(self, request):
         super(Start, self).__init__(request, name='wizard', title='Choose a Favorite')
+        self.collection = request.db.jobs
         self.wizard_state.clear()
-        self.favorite.load()
-
-        if 'job_id' in request.params:
-            state = job_to_state(request)
-            self.favorite.set(name='restart', state=state)
             
     def schema(self):
-        favorites = self.favorite.names()
-        return Schema().bind(favorites=favorites)
+        jobs = []
+        # add restarted job
+        if 'job_id' in self.request.params:
+            job = self.collection.find_one({'identifier': self.request.params['job_id']})
+            if job:
+                jobs.append( job )
+        # add fav jobs
+        search_filter = {}
+        search_filter['tags'] = 'fav'
+        search_filter['is_workflow'] = True
+        search_filter['status'] = 'ProcessSucceeded'
+        search_filter['userid'] = authenticated_userid(self.request)
+        fav_jobs = self.collection.find(search_filter).limit(50).sort([('created', -1)])
+        if fav_jobs.count() > 0:
+            jobs.extend(list(fav_jobs))
+        return FavoriteSchema().bind(jobs=jobs, last='last' in self.favorite.names())
 
     def appstruct(self):
-        result = {'favorite': 'restart'}
-        return result
+        struct = {'job_id': 'last'}
+        if 'job_id' in self.request.params:
+            struct['job_id'] =self.request.params['job_id']
+        return struct
 
     def success(self, appstruct):
-        favorite_state = self.favorite.get(appstruct.get('favorite'))
-        self.wizard_state.load(favorite_state)
+        job_id = appstruct.get('job_id')
+        if job_id:
+            if job_id == 'last':
+                state = self.favorite.get('last')
+            else:
+                state = job_to_state(self.request, appstruct.get('job_id'))
+            self.wizard_state.load(state)
         super(Start, self).success(appstruct)
 
     def next_success(self, appstruct):
         self.success(appstruct)
         return self.next('wizard_wps')
-
-    @view_config(route_name='wizard_clear_favorites')
-    def clear_favorites(self):
-        self.favorite.drop()
-        return HTTPFound(location=self.request.route_path('wizard'))
 
     @view_config(route_name='wizard', renderer='../templates/wizard/start.pt')
     def view(self):

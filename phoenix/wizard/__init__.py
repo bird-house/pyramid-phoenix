@@ -37,9 +37,6 @@ def includeme(config):
         config.add_route('wizard_storage', '/wizard/storage')
         config.add_route('wizard_done', '/wizard/done')
 
-        # actions
-        config.add_route('wizard_clear_favorites', '/wizard/clear_favorites')
-
         # add malleefowl wps
         def add_wps(event):
             request = event.request

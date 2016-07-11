@@ -8,68 +8,51 @@ $(function() {
   // update job table with current values
   var updateJobs = function() {
     $.getJSON(
-      '/monitor/update.json',
+      '/active_jobs.json',
       {},
       function(json) {
-        //var finished = true;
-        var finished = false;
-        var numRows = $("table tr").length - 1;
-        if (numRows < json.length) {
+
+        // count running jobs
+        var numActiveJobs = $(".fa-gear").length;
+        //console.log("active jobs in table = " + numActiveJobs + ", num jobs = " + json.length);
+        if (numActiveJobs != json.length) {
+          // TODO: this can also be done with jquery
           location.reload();
         }
         else {
           $.each(json, function(index, job) {
-            var status_class = ''
-            if (job.status == 'ProcessSucceeded') {
-              status_class = 'glyphicon glyphicon-ok-sign text-success';
+            var iconClass = ''
+            if (job.status == 'ProcessStarted') {
+              iconClass = "fa fa-gear fa-spin text-muted";
+            }
+            else if (job.status == 'ProcessSucceeded') {
+              iconClass = "fa fa-check-circle text-success";
             }
             else if (job.status == 'ProcessFailed') {
-              status_class = 'glyphicon glyphicon-remove-sign text-danger';
+              iconClass = "fa fa-times-circle text-danger";
             }
             else if (job.status == 'ProcessPaused') {
-              status_class = 'glyphicon glyphicon-paused text-muted';
-            }
-            else if (job.status == 'ProcessStarted' || job.status == 'ProcessAccepted') {
-              status_class = 'fa fa-cog fa-spin text-muted';
-              //finished = false;
+              iconClass = "fa fa-pause text-muted";
             }
             else {
-              status_class = 'glyphicon glyphicon-question-sign text-danger';
+              iconClass = "fa fa-fw fa-clock-o pulse text-muted";
             }
     
-            $("#status-"+job.identifier).attr('class', status_class);
+            $("#status-"+job.identifier).attr('class', iconClass);
             $("#status-"+job.identifier).attr('title', job.status);
-            $("#duration-"+job.identifier).text(job.duration);
             $("#progress-"+job.identifier).attr('style', "width: "+job.progress+"%");
-            $("#progress-"+job.identifier).text(job.progress + "%");
+            $("#progress-"+job.identifier).text(job.progress+"%");
+            $("#duration-"+job.identifier).text(job.duration);
           });
-        }
-        
-        if (finished == true) {
-          clearInterval(timerId);
         }
       }
     );
   };
 
-  // refresh job list each 5 secs ...
-  /* disabled timer
+  // refresh job list each 3 secs ...
   timerId = setInterval(function() {
     updateJobs();
-  }, 5000); 
-  */
-
-
-  var selectStatus = function() {
-    default_location = '/monitor/';
-    var location = $('#status-select option:selected').val();
-    if (location){
-      window.location = location;
-    } else {
-      window.location = default_location;
-    }
-  };
-
-  $('#status-select').change( selectStatus );
+  }, 3000); 
+  
 
 });

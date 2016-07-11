@@ -4,17 +4,7 @@
 
     <div class="panel panel-default">
       <div class="panel-heading">
-        <span class="panel-title">${title}
-          <div class="pull-right">
-            <a class="btn btn-success btn-xs"
-               rel="tooltip"
-               data-toggle="tooltip"
-               title="Clear your favorites"
-               href="${request.route_path('wizard_clear_favorites')}">
-              Clear Favorites
-            </a>
-          </div>
-        </span>
+        <span class="panel-title">${title}</span>
       </div>
       <div class="panel-body">
         <table class="table table-striped">

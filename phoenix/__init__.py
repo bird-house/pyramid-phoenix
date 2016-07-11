@@ -3,7 +3,7 @@ import os
 import logging
 logger = logging.getLogger(__name__)
 
-__version__ = (0, 4, 8, 'final', 1)
+__version__ = (0, 5, 0, 'final', 1)
 
 def get_version():
     import phoenix.version

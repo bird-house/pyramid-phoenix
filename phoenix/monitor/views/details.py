@@ -31,7 +31,7 @@ class Details(Monitor):
             result = dict(
                 identifier = uuid.uuid4().get_urn(),
                 title = output.title,
-                abstract = getattr(output, "abstract", ""),
+                abstract = output.abstract,
                 creator = authenticated_userid(self.request),
                 source = output.reference,
                 format = output.mimeType,

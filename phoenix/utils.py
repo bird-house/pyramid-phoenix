@@ -103,6 +103,24 @@ def combine_chunks(total_parts, source_folder, dest):
 
 # misc
 
+def make_tags(tags_str):
+    tags = [tag.strip().lower() for tag in tags_str.split(',') if len(tag.strip()) > 0]
+    # remove duplicates
+    tags = set(tags)
+    # and special tags
+    if 'private' in tags:
+        tags.remove('private')
+    if 'all' in tags:
+        tags.remove('all')
+    tags = list(tags)
+    # ... and sort list
+    tags.sort()
+    return tags
+
+def format_tags(tags):
+    if tags is None:
+        tags = []
+    return ', '.join(tags)
 
 def button(request):
     """If the user is logged in, returns the logout button, otherwise returns the login button"""

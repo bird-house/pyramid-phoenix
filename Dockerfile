@@ -2,7 +2,7 @@
 FROM birdhouse/bird-base:latest
 MAINTAINER https://github.com/bird-house/pyramid-phoenix
 
-LABEL Description="Phoenix WPS Application" Vendor="Birdhouse" Version="0.4.7"
+LABEL Description="Phoenix WPS Application" Vendor="Birdhouse" Version="0.5.0"
 
 # Configure hostname and user for services 
 ENV HOSTNAME localhost
@@ -19,7 +19,7 @@ COPY . /opt/birdhouse
 WORKDIR /opt/birdhouse
 
 # Overwrite buildout.cfg in source folder
-COPY minimal.cfg buildout.cfg
+COPY base.cfg buildout.cfg
 
 # Provide custom.cfg with settings for docker image
 COPY .docker.cfg custom.cfg

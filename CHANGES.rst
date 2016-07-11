@@ -1,6 +1,17 @@
 Changes
 *******
 
+0.5.0 (2016-07-11)
+==================
+
+* using zc.recipe.deployment.
+* using new buildout recipes.
+* using conda environment.yml
+* possible to edit job caption in monitor view.
+* monitor view allows tagging of jobs and filter with tags.
+* using special tag "public" to set job as public accessable.
+* monitor: only show progress for running jobs.
+
 0.4.8 (2016-07-11)
 ==================
 

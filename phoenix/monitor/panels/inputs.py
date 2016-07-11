@@ -35,7 +35,7 @@ class Inputs(object):
         items = []
         for inp in process_inputs(self.request, job_id):
             items.append(dict(title=inp.title,
-                              abstract=getattr(inp, 'abstract', ""),
+                              abstract=inp.abstract,
                               identifier=inp.identifier,
                               mime_type=inp.mimeType,
                               data=inp.data,
@@ -60,7 +60,7 @@ class ProcessInputsGrid(CustomGrid):
     def input_td(self, col_num, i, item):
         return self.render_title_td(
             title=item.get('title'), 
-            abstract=item.get('abstract', ""))
+            abstract=item.get('abstract'))
 
     def value_td(self, col_num, i, item):
         return self.render_td(renderer="value_td.mako",

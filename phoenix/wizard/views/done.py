@@ -8,6 +8,7 @@ from twitcher.registry import proxy_url
 
 from phoenix.events import JobStarted
 from phoenix.wizard.views import Wizard
+from phoenix.wizard.views.source import SOURCE_TYPES
 from phoenix.wps import appstruct_to_inputs
 from phoenix.tasks import execute_workflow
 from phoenix.tasks import execute_process
@@ -16,6 +17,19 @@ import threddsclient
 
 import logging
 logger = logging.getLogger(__name__)
+
+import colander
+class DoneSchema(colander.MappingSchema):
+    @colander.deferred
+    def deferred_caption(node, kw):
+        return kw.get('caption', '???')
+        
+    caption = colander.SchemaNode(
+        colander.String(),
+        description = "Add an optional title for this job.",
+        missing = '???',
+        default = deferred_caption,
+        )
 
 class Done(Wizard):
     def __init__(self, request):
@@ -31,8 +45,9 @@ class Done(Wizard):
         return breadcrumbs
 
     def schema(self):
-        from phoenix.schema import DoneSchema
-        return DoneSchema()
+        source_type = self.wizard_state.get('wizard_source')['source']
+        caption = "source: {0}".format(SOURCE_TYPES.get(source_type, 'unknown'))
+        return DoneSchema().bind(caption=caption)
 
     def workflow_description(self):
         # source_type
@@ -93,12 +108,7 @@ class Done(Wizard):
 
     def success(self, appstruct):
         super(Done, self).success(appstruct)
-        if appstruct.get('is_favorite', False):
-            logger.debug('dump state: %s', self.wizard_state.dump())
-            self.favorite.set(
-                name=appstruct.get('favorite_name'),
-                state=self.wizard_state.dump())
-            self.favorite.save()
+        self.favorite.set(name='last', state=self.wizard_state.dump())
 
         source_type = self.wizard_state.get('wizard_source')['source']
         if source_type == 'wizard_upload':
@@ -106,18 +116,19 @@ class Done(Wizard):
             resource = self.wizard_state.get('wizard_complex_inputs')['identifier']
             for url in self.wizard_state.get('wizard_storage')['url']:
                 inputs.append( (resource, url) )
-            logger.debug('storage inputs=%s', inputs)
             result = execute_process.delay(
                 userid=authenticated_userid(self.request),
                 url=self.wps.url,
                 identifier=self.wizard_state.get('wizard_process')['identifier'],
-                inputs=inputs, outputs=[])
+                inputs=inputs, outputs=[],
+                caption=appstruct.get('caption'))
             self.request.registry.notify(JobStarted(self.request, result.id))
         else:
             result = execute_workflow.delay(
                 userid=authenticated_userid(self.request),
                 url=self.request.wps.url,
-                workflow=self.workflow_description())
+                workflow=self.workflow_description(),
+                caption=appstruct.get('caption'))
             self.request.registry.notify(JobStarted(self.request, result.id))
         
     def next_success(self, appstruct):
@@ -125,13 +136,6 @@ class Done(Wizard):
         self.success(appstruct)
         self.wizard_state.clear()
         return HTTPFound(location=self.request.route_path('monitor'))
-
-    def appstruct(self):
-        appstruct = super(Done, self).appstruct()
-        #params = ', '.join(['%s=%s' % item for item in self.wizard_state.get('wizard_literal_inputs', {}).items()])
-        identifier = self.wizard_state.get('wizard_process')['identifier']
-        appstruct.update( dict(favorite_name=identifier) )
-        return appstruct
 
     @view_config(route_name='wizard_done', renderer='../templates/wizard/default.pt')
     def view(self):

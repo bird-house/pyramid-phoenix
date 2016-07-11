@@ -1,5 +1,4 @@
 from pyramid.view import view_config, view_defaults
-from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPFound
 
 from deform import Form, Button
@@ -7,64 +6,35 @@ from deform import ValidationFailure
 
 from phoenix.views import MyView
 
-import yaml
-
 import logging
 logger = logging.getLogger(__name__)
 
 wizard_favorite = "wizard_favorite"
-no_favorite = "No Favorite"
 
 class WizardFavorite(object):
+    """Stores wizard state in session with a name (favorite).
+    TODO: implement as a dict?
+    """
     def __init__(self, request, session):
         self.request = request
         self.session = session
-        self.favdb = self.request.db.favorites
         if not wizard_favorite in self.session:
-            self.load()
+            self.clear()
 
     def names(self):
         return self.session[wizard_favorite].keys()
             
-    def get(self, name, default=None):
+    def get(self, name):
         return self.session[wizard_favorite].get(name)
 
     def set(self, name, state):
-        if name != no_favorite:
+        if name and state:
             self.session[wizard_favorite][name] = state
             self.session.changed()
         
     def clear(self):
         self.session[wizard_favorite] = {}
-        self.session[wizard_favorite][no_favorite] = {}
         self.session.changed()
-
-    def save(self):
-        try:
-            userid = authenticated_userid(self.request)
-            fav = dict(userid=userid, favorite=yaml.dump(self.session.get(wizard_favorite, {})))
-            self.favdb.update({'userid':userid}, fav)
-        except:
-            logger.exception('saving favorite for %s failed.', self.userid)
-
-    def load(self):
-        try:
-            userid = authenticated_userid(self.request)
-            fav = self.favdb.find_one({'userid': userid})
-            if fav is None:
-                fav = dict(userid=userid)
-                self.favdb.save(fav)
-            self.session[wizard_favorite] = yaml.load(fav.get('favorite', '{}'))
-            self.session[wizard_favorite][no_favorite] = {}
-            self.session.changed()
-        except:
-            self.clear()
-            logger.exception('loading favorite for %s failed.', userid)
-
-    def drop(self):
-        self.favdb.remove({'userid': authenticated_userid(self.request)})
-        self.clear()
-        self.session.flash("Cleared wizard favorites.", queue='info')
 
 class WizardState(object):
     def __init__(self, session, initial_step='wizard', final_step='wizard_done'):

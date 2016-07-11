@@ -4,6 +4,8 @@ Todo list
 Bugs
 ====
 
+* uninstall simplegenric before update:
+pip uninstall simplegeneric
 * conda wget build works only either for centos or debian
 * debian wget does not work for esgf downloads
 * phoenix: enter "!" in text field breaks wps execution

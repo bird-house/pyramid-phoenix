@@ -68,21 +68,6 @@ class ESGFSearchSchema(colander.MappingSchema):
         title = 'ESGF Search',
         widget = ESGFSearchWidget(url="/esg-search"))
 
-class DoneSchema(colander.MappingSchema):
-    @colander.deferred
-    def deferred_favorite_name(node, kw):
-        return kw.get('favorite_name', 'test')
-    
-    is_favorite = colander.SchemaNode(
-        colander.Boolean(),
-        title = "Save as Favorite",
-        default = False,
-        missing= False)
-    favorite_name = colander.SchemaNode(
-        colander.String(),
-        title = "Favorite Name",
-        default = deferred_favorite_name)
-
 class UploadSchema(SwiftLoginSchema):
     
     container = colander.SchemaNode(colander.String())
