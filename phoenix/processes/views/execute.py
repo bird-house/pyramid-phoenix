@@ -89,6 +89,7 @@ class ExecuteProcess(Processes):
             self.session.flash("There are errors on this page.", queue='danger')
             return dict(description=getattr(self.process, 'abstract', ''),
                         url=wps_describe_url(self.wps.url, self.processid),
+                        metadata=self.process.metadata,
                         form=e.render())
         return HTTPFound(location=self.request.route_url('monitor'))
 
