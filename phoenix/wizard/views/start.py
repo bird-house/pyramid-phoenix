@@ -39,7 +39,7 @@ def job_to_state(request, job_id):
                     inputs[key] = [value]
             
             for inp in process.dataInputs:
-                if 'boolean' in inp.dataType and inp.identifier in result:
+                if 'boolean' in inp.dataType and inp.identifier in inputs:
                     inputs[inp.identifier] = [ val.lower() == 'true' for val in inputs[inp.identifier]]
                 if inp.maxOccurs < 2 and inp.identifier in inputs:
                     inputs[inp.identifier] = inputs[inp.identifier][0]
