@@ -38,12 +38,14 @@ def catalog_factory(registry):
     settings = registry.settings
     catalog = None
 
+    service_registry = service_registry_factory(registry)
+
     if asbool(settings.get('phoenix.csw', True)):
         csw = CatalogueServiceWeb(url=settings['csw.url'], skip_caps=True)
-        catalog = CatalogService(csw)
+        catalog = CatalogService(csw, service_registry)
     else:
         db = mongodb(registry)
-        catalog = MongodbCatalog(db.catalog)
+        catalog = MongodbCatalog(db.catalog, service_registry)
     return catalog
 
 WPS_TYPE = "WPS"
@@ -59,6 +61,7 @@ def get_service_name(request, url, name=None):
         service_registry = service_registry_factory(request.registry)
         service = service_registry.register_service(url=url, name=name)
         service_name = service.get('name')
+    logger.debug("get_service_name = %s", service_name)
     return service_name
 
 def _gen_service_title(title, url, service_name=None):
@@ -114,7 +117,7 @@ class Catalog(object):
     def insert_record(self, record):
         raise NotImplementedError
 
-    def harvest(self, url, service_type, service_name=None):
+    def harvest(self, url, service_type, service_name=None, public=False):
         raise NotImplementedError
 
     def get_services(self, service_type=None, maxrecords=100):
@@ -122,8 +125,9 @@ class Catalog(object):
 
     
 class CatalogService(Catalog):
-    def __init__(self, csw):
+    def __init__(self, csw, service_registry):
         self.csw = csw
+        self.service_registry = service_registry
 
     def get_record_by_id(self, identifier):
         self.csw.getrecordbyid(id=[identifier])
@@ -137,11 +141,12 @@ class CatalogService(Catalog):
         templ_dc = Template(filename=join(dirname(__file__), "templates", "catalog", "dublin_core.xml"))
         self.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
 
-    def harvest(self, url, service_type, service_name=None):
+    def harvest(self, url, service_type, service_name=None, public=False):
         if service_type == THREDDS_TYPE:
             self.insert_record(_fetch_thredds_metadata(url, service_name))
         else: # ogc services
             self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
+            self.service_registry.register_service(url=url, name=service_name, public=public)
 
     def get_services(self, service_type=None, maxrecords=100):
         cs = PropertyIsEqualTo('dc:type', 'service')
@@ -165,8 +170,9 @@ def doc2record(document):
 class MongodbCatalog(Catalog):
     """Implementation of a Catalog with MongoDB."""
 
-    def __init__(self, collection):
+    def __init__(self, collection, service_registry):
         self.collection = collection
+        self.service_registry = service_registry
 
     def get_record_by_id(self, identifier):
         return doc2record(self.collection.find_one({'identifier': identifier}))
@@ -178,11 +184,12 @@ class MongodbCatalog(Catalog):
         record['identifier'] = uuid.uuid4().get_urn()
         self.collection.update_one({'source': record['source']}, {'$set': record}, True)
 
-    def harvest(self, url, service_type, service_name=None):
+    def harvest(self, url, service_type, service_name=None, public=False):
         if service_type == THREDDS_TYPE:
             self.insert_record(_fetch_thredds_metadata(url, service_name))
         elif service_type == WPS_TYPE:
             self.insert_record(_fetch_wps_metadata(url, service_name))
+            self.service_registry.register_service(url=url, name=service_name, public=public)
         else:
             raise NotImplementedError
             

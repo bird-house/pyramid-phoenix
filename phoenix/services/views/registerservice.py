@@ -33,6 +33,11 @@ class Schema(colander.MappingSchema):
         colander.String(),
         default = WPS_TYPE,
         widget = deform.widget.RadioChoiceWidget(values=service_types))
+    public = colander.SchemaNode(
+        colander.Bool(),
+        title = "Public access?",
+        description = "Check this option if your service has no access restrictions.",
+        default = False)
 
 class RegisterService(SettingsView):
     def __init__(self, request):
