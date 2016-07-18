@@ -15,8 +15,8 @@ def navbar(context, request):
         return dict(name=name, url=url, active=active, icon=icon)
 
     items = []
+    items.append( nav_item('Processes', request.route_path('processes')) )
     if request.has_permission('edit'):
-        items.append( nav_item('Processes', request.route_path('processes')) )
         if request.wizard_activated:
             items.append( nav_item('Wizard', request.route_path('wizard')) )
         items.append( nav_item('Monitor', request.route_path('monitor')) )
@@ -24,7 +24,7 @@ def navbar(context, request):
     subitems = []
     if request.has_permission('edit'):
         subitems.append( nav_item('Profile', request.route_path('profile', tab='account'), icon="fa fa-user") )
-        subitems.append( nav_item('Dashboard', request.route_path('dashboard', tab='jobs'), icon='fa fa-dashboard') )
+    subitems.append( nav_item('Dashboard', request.route_path('dashboard', tab='jobs'), icon='fa fa-dashboard') )
     if request.has_permission('admin'):
         subitems.append( nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench") )
     

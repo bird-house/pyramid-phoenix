@@ -5,7 +5,7 @@ from phoenix.views import MyView
 import logging
 logger = logging.getLogger(__name__)
 
-@view_defaults(permission='edit', layout='default')
+@view_defaults(permission='view', layout='default')
 class Processes(MyView):
     def __init__(self, request, name, title, description=None):
         super(Processes, self).__init__(request, name, title, description)
