@@ -57,9 +57,15 @@ RESOURCE_TYPES = {WPS_TYPE: 'http://www.opengis.net/wps/1.0.0',
 def get_service_name(request, url, name=None):
     """Get service name from twitcher registry for given service (url)."""
     service_name = service_name_of_proxy_url(url)
-    if service_name is None:
+    logger.debug("get_service_name = %s for url %s", service_name, url)
+    if not service_name:
         service_registry = service_registry_factory(request.registry)
-        service = service_registry.register_service(url=url, name=name)
+        try:
+            service = service_registry.get_service_by_url(url)
+            logger.debug("get_service_name from registry = %s", service)
+        except ValueError:
+            service = service_registry.register_service(url=url, name=name)
+            logger.debug("get_service_name register service")
         service_name = service.get('name')
     logger.debug("get_service_name = %s", service_name)
     return service_name
