@@ -19,8 +19,6 @@ class Overview(SettingsView):
         if self.request.solr_activated:
             buttons.append(dict(url=self.request.route_path('settings_solr', tab='index'), icon="solr.png", title="Solr"))
         buttons.append(dict(url=self.request.route_path('settings_users'), icon="user_catwomen.png", title="Users"))
-        if self.request.flower_activated:
-            buttons.append(dict(url=self.settings.get('flower.url'), icon="celery_128.png", title="Celery", id="external-url"))
         buttons.append(dict(url=self.request.route_path('settings_auth'), icon="lock_edit.png", title="Auth"))
         buttons.append(dict(url=self.request.route_path('settings_ldap'), icon="ldap.png", title="LDAP"))
         buttons.append(dict(url=self.request.route_path('settings_github'), icon="Octocat.jpg", title="GitHub"))

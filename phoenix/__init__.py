@@ -109,12 +109,6 @@ def main(global_config, **settings):
     from phoenix.utils import button
     config.add_request_method(button, 'login_button', reify=True)
 
-    # check if flower is activated
-    def flower_activated(request):
-        settings = request.registry.settings
-        return asbool(settings.get('phoenix.flower', True))
-    config.add_request_method(flower_activated, reify=True)
-
     # max file size for upload in MB
     def max_file_size(request):
         settings = request.registry.settings
