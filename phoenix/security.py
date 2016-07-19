@@ -5,6 +5,7 @@ from pyramid.security import authenticated_userid
 
 from twitcher.tokens import tokengenerator_factory
 from twitcher.tokens import tokenstore_factory
+from twitcher.registry import service_registry_factory
 
 from phoenix.db import mongodb
 
@@ -14,6 +15,10 @@ logger = logging.getLogger(__name__)
 Admin = 'group.admin'
 User = 'group.user'
 Guest = 'group.guest'
+
+def has_execute_permission(request, service_name):
+    service_registry = service_registry_factory(request.registry)
+    return service_registry.is_public(service_name) or request.has_permission('submit')
 
 def generate_access_token(registry, userid):
     db = mongodb(registry)

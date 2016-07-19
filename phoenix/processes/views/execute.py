@@ -10,9 +10,10 @@ from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
 from phoenix.utils import wps_describe_url
 from phoenix.catalog import get_service_name
+from phoenix.security import has_execute_permission
 # TODO: we need to use the twitcher api
 from twitcher.registry import proxy_url
-from twitcher.registry import service_registry_factory
+
 
 from owslib.wps import WebProcessingService
 
@@ -46,10 +47,6 @@ class ExecuteProcess(Processes):
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.process.title))
         return breadcrumbs
 
-    def has_execute_permission(self):
-        service_registry = service_registry_factory(self.request.registry)
-        return service_registry.is_public(self.service_name) or self.request.has_permission('submit')
-
     def appstruct(self):
         # TODO: not a nice way to get inputs ... should be cleaned up in owslib
         result = {}
@@ -76,7 +73,7 @@ class ExecuteProcess(Processes):
         schema = WPSSchema(request=self.request, process=self.process, user=self.get_user())
         submit_button = Button(name='submit', title='Execute',
                                css_class='btn btn-default',
-                               disabled=not self.has_execute_permission())
+                               disabled=not has_execute_permission(self.request, self.service_name))
         return Form(
             schema,
             buttons=(submit_button,),
