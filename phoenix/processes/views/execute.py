@@ -115,6 +115,8 @@ class ExecuteProcess(Processes):
         form = self.generate_form()
         if 'submit' in self.request.POST:
             return self.process_form(form)
+        if not has_execute_permission(self.request, self.service_name):
+            self.session.flash("You are not allowed to execute processes. Please sign-in.", queue='warning')
         return dict(
             description=getattr(self.process, 'abstract', ''),
             url=wps_describe_url(self.wps.url, self.processid),
