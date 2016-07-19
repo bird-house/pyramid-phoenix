@@ -3,7 +3,7 @@ import os
 import logging
 logger = logging.getLogger(__name__)
 
-__version__ = (0, 5, 0, 'final', 1)
+__version__ = (0, 6, 0, 'final', 1)
 
 def get_version():
     import phoenix.version
@@ -15,20 +15,13 @@ def main(global_config, **settings):
     """
     from pyramid.config import Configurator
     from pyramid.events import NewRequest
-    from pyramid.authentication import AuthTktAuthenticationPolicy
-    from pyramid.authorization import ACLAuthorizationPolicy
     from pyramid.settings import asbool
-    from phoenix.security import groupfinder, root_factory
 
+    config = Configurator(settings=settings)
+    
     # security
-    # TODO: move to security
-    authn_policy = AuthTktAuthenticationPolicy(
-        settings.get('authomatic.secret'), callback=groupfinder, hashalg='sha512')
-    authz_policy = ACLAuthorizationPolicy()
-    config = Configurator(root_factory=root_factory, settings=settings)
-    config.set_authentication_policy(authn_policy)
-    config.set_authorization_policy(authz_policy)
-
+    config.include('phoenix.security')
+   
     # beaker session
     config.include('pyramid_beaker')
 

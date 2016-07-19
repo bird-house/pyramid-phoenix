@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from pyramid.authentication import AuthTktAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.exceptions import HTTPForbidden
 from pyramid.security import authenticated_userid
 
@@ -197,3 +199,27 @@ def authomatic_config(request):
     return config
 
 
+class MyAuthenticationPolicy(AuthTktAuthenticationPolicy):
+    def authenticated_userid(self, request):
+        user = request.user
+        if user is not None:
+            return user.get('identifier')
+
+def get_user(request):
+    user_id = request.unauthenticated_userid
+    if user_id is not None:
+        user = request.db.users.find_one({'identifier': user_id})
+        return user
+
+def includeme(config):
+    settings = config.get_settings()
+
+    authn_policy = MyAuthenticationPolicy(
+        settings.get('authomatic.secret'),
+        callback=groupfinder,
+        hashalg='sha512')
+    authz_policy = ACLAuthorizationPolicy()
+    config.set_root_factory(root_factory)
+    config.set_authentication_policy(authn_policy)
+    config.set_authorization_policy(authz_policy)
+    config.add_request_method(get_user, 'user', reify=True)

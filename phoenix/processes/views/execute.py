@@ -100,6 +100,9 @@ class ExecuteProcess(Processes):
                         url=wps_describe_url(self.wps.url, self.processid),
                         metadata=self.process.metadata,
                         form=e.render())
+        logger.debug("user unauth id=%s", self.request.unauthenticated_userid)
+        logger.debug("user=%s", self.request.user)
+        logger.debug("userid=%s", authenticated_userid(self.request))
         if authenticated_userid(self.request):
             return HTTPFound(location=self.request.route_url('monitor'))
         else:
