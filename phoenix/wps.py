@@ -34,6 +34,9 @@ def appstruct_to_inputs(request, appstruct):
                     value = value['upload']
                     #logger.debug('uploaded file %s', value)
                     folder = authenticated_userid(request)
+                    if not folder:
+                        folder = 'guest'
+                    logger.debug('folder %s', folder)
                     relpath = os.path.join(folder, value['filename'])
                     #value = 'file://' + request.storage.path(relpath)
                     #value = request.route_url('download', filename=relpath)

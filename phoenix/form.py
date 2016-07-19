@@ -79,7 +79,10 @@ class FileUploadTempStore(DictMixin):
         return None
 
     def _folder(self):
-        return authenticated_userid(self.request)
+        folder = authenticated_userid(self.request)
+        if not folder:
+            folder = 'guest'
+        return folder
     
     def _filename(self, value):
         return os.path.join(self._folder(), value['filename'])
