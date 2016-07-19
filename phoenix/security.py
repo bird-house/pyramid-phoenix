@@ -20,7 +20,7 @@ def has_execute_permission(request, service_name):
     service_registry = service_registry_factory(request.registry)
     return service_registry.is_public(service_name) or request.has_permission('submit')
 
-def generate_access_token(registry, userid):
+def generate_access_token(registry, userid=None):
     db = mongodb(registry)
 
     tokengenerator = tokengenerator_factory(registry)
@@ -31,8 +31,9 @@ def generate_access_token(registry, userid):
     token = access_token['token']
     expires = datetime.utcfromtimestamp(
         int(access_token['expires_at'])).strftime(format="%Y-%m-%d %H:%M:%S UTC")
-    db.users.update_one({'identifier':userid}, {'$set': {'twitcher_token': token,
-                                                         'twitcher_token_expires': expires}})
+    if userid:
+        db.users.update_one({'identifier':userid},
+                            {'$set': {'twitcher_token': token, 'twitcher_token_expires': expires}})
 
 def auth_protocols(request):
     # TODO: refactor auth settings handling

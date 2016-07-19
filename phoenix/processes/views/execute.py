@@ -31,20 +31,26 @@ class ExecuteProcess(Processes):
             self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
             self.processid = self.execution.process.identifier
             self.service_name = get_service_name(request, url=self.execution.serviceInstance)
-        else:
+        elif 'wps' in request.params:
             self.service_name = request.params.get('wps')
             self.processid = request.params.get('process')
-        # TODO: avoid getcaps
-        self.wps = WebProcessingService(url=proxy_url(request, self.service_name), verify=False)
-        # TODO: need to fix owslib to handle special identifiers
-        self.process = self.wps.describeprocess(self.processid)
+        else:
+            self.service_name = None
+            self.processid = None
+       
+        if self.service_name:
+            # TODO: avoid getcaps
+            self.wps = WebProcessingService(url=proxy_url(request, self.service_name), verify=False)
+            # TODO: need to fix owslib to handle special identifiers
+            self.process = self.wps.describeprocess(self.processid)
         super(ExecuteProcess, self).__init__(request, name='processes_execute', title='')
 
     def breadcrumbs(self):
         breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
-        route_path = self.request.route_path('processes_list', _query=[('wps', self.service_name)])
-        breadcrumbs.append(dict(route_path=route_path, title=self.wps.identification.title))
-        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.process.title))
+        if self.service_name:
+            route_path = self.request.route_path('processes_list', _query=[('wps', self.service_name)])
+            breadcrumbs.append(dict(route_path=route_path, title=self.wps.identification.title))
+            breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.process.title))
         return breadcrumbs
 
     def appstruct(self):
@@ -94,7 +100,8 @@ class ExecuteProcess(Processes):
                         url=wps_describe_url(self.wps.url, self.processid),
                         metadata=self.process.metadata,
                         form=e.render())
-        return HTTPFound(location=self.request.route_url('monitor'))
+        return HTTPFound(location=self.request.route_url('processes_loading'))
+        #return HTTPFound(location=self.request.route_url('monitor'))
 
     def execute(self, appstruct):
         inputs = appstruct_to_inputs(self.request, appstruct)
@@ -108,7 +115,27 @@ class ExecuteProcess(Processes):
             url=self.wps.url,
             identifier=self.process.identifier, 
             inputs=inputs, outputs=outputs)
+        logger.debug("execute result.id = %s", result.id)
+        self.session['task_id'] = result.id
         self.request.registry.notify(JobStarted(self.request, result.id))
+
+    @view_config(renderer='json', route_name='processes_check_queue')
+    def check_queue(self):
+        status = 'running'
+        task_id = self.session.get('task_id')
+        collection = self.request.db.jobs
+        if collection.find({"task_id": task_id}).count() == 1:
+            status = 'ready'
+        return dict(status=status)
+
+    @view_config(route_name='processes_loading', renderer='../templates/processes/loading.pt')
+    def loading(self):
+        task_id = self.session.get('task_id')
+        collection = self.request.db.jobs
+        if collection.find({"task_id": task_id}).count() == 1:
+            job = collection.find_one({"task_id": task_id})
+            return HTTPFound(location=self.request.route_path('monitor_details', tab='log', job_id=job.get('identifier')))
+        return {}
     
     @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt')
     def view(self):

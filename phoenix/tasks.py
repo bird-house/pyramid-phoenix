@@ -45,7 +45,7 @@ def add_job(db, userid, task_id, service, title, abstract, status_location, is_w
     else:
         tags.append('single')
     job = dict(
-        identifier = str(uuid.uuid1()),
+        identifier = uuid.uuid4().get_hex(),
         task_id = task_id,
         userid = userid,
         is_workflow = is_workflow,
@@ -74,9 +74,10 @@ def get_access_token(userid):
 
 def wps_headers(userid):
     headers = {}
-    access_token = get_access_token(userid)
-    if access_token is not None:
-        headers['Access-Token'] = access_token
+    if userid:
+        access_token = get_access_token(userid)
+        if access_token is not None:
+            headers['Access-Token'] = access_token
     return headers
 
 @app.task(bind=True)
@@ -171,6 +172,10 @@ def execute_process(self, userid, url, identifier, inputs, outputs, caption=None
 
     wps = WebProcessingService(url=url, skip_caps=False, verify=False, headers=wps_headers(userid))
     execution = wps.execute(identifier, inputs=inputs, output=outputs, lineage=True)
+
+    if not userid:
+        userid = 'guest'
+    
     job = add_job(db, userid,
                   task_id = self.request.id,
                   is_workflow = False,
