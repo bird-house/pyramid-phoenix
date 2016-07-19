@@ -1,3 +1,9 @@
+"""
+see pyramid security:
+
+* http://docs.pylonsproject.org/projects/pyramid/en/latest/tutorials/wiki2/authentication.html
+"""
+
 from datetime import datetime
 
 from pyramid.authentication import AuthTktAuthenticationPolicy
