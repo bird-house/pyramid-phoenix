@@ -1,5 +1,4 @@
 from pyramid.view import view_config, view_defaults
-from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
 from deform import Form, Button
 from deform import ValidationFailure
@@ -100,13 +99,10 @@ class ExecuteProcess(Processes):
                         url=wps_describe_url(self.wps.url, self.processid),
                         metadata=self.process.metadata,
                         form=e.render())
-        logger.debug("user unauth id=%s", self.request.unauthenticated_userid)
-        logger.debug("user=%s", self.request.user)
-        logger.debug("userid=%s", authenticated_userid(self.request))
-        if authenticated_userid(self.request):
-            return HTTPFound(location=self.request.route_url('monitor'))
-        else:
+        if self.request.user is None:
             return HTTPFound(location=self.request.route_url('processes_loading'))
+        else:
+            return HTTPFound(location=self.request.route_url('monitor'))
         
     def execute(self, appstruct):
         inputs = appstruct_to_inputs(self.request, appstruct)
@@ -116,11 +112,10 @@ class ExecuteProcess(Processes):
 
         from phoenix.tasks import execute_process
         result = execute_process.delay(
-            userid=authenticated_userid(self.request),
+            userid=self.request.unauthenticated_userid,
             url=self.wps.url,
             identifier=self.process.identifier, 
             inputs=inputs, outputs=outputs)
-        logger.debug("execute result.id = %s", result.id)
         self.session['task_id'] = result.id
         self.request.registry.notify(JobStarted(self.request, result.id))
 
