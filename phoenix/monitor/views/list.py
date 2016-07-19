@@ -130,6 +130,9 @@ class JobList(Monitor):
     
     @view_config(route_name='monitor', renderer='../templates/monitor/list.pt')
     def view(self):
+        if not self.request.has_permission('submit'):
+            self.session.flash("You are not allowed to monitor jobs. Please sign-in.", queue='warning')
+        
         caption_form = self.generate_caption_form()
         labels_form = self.generate_labels_form()
         
