@@ -100,9 +100,11 @@ class ExecuteProcess(Processes):
                         url=wps_describe_url(self.wps.url, self.processid),
                         metadata=self.process.metadata,
                         form=e.render())
-        return HTTPFound(location=self.request.route_url('processes_loading'))
-        #return HTTPFound(location=self.request.route_url('monitor'))
-
+        if authenticated_userid(self.request):
+            return HTTPFound(location=self.request.route_url('monitor'))
+        else:
+            return HTTPFound(location=self.request.route_url('processes_loading'))
+        
     def execute(self, appstruct):
         inputs = appstruct_to_inputs(self.request, appstruct)
         outputs = []
