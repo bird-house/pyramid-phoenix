@@ -19,7 +19,7 @@ COPY . /opt/birdhouse
 WORKDIR /opt/birdhouse
 
 # Overwrite buildout.cfg in source folder
-COPY base.cfg buildout.cfg
+COPY profiles/docker.cfg buildout.cfg
 
 # Provide custom.cfg with settings for docker image
 COPY .docker.cfg custom.cfg
