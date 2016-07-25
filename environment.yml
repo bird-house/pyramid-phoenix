@@ -6,8 +6,8 @@ dependencies:
   - python=2.7.12 
   - setuptools=23.0.0
   - curl=7.49.0 
-  - pyopenssl=0.15.1 
-  - cryptography=1.0.2
+  - pyopenssl=0.16.0 
+  - cryptography=1.4
 # tests
   - pytest 
   - pytest-pep8 
@@ -18,7 +18,7 @@ dependencies:
   - sphinx_rtd_theme
 # phoenix
   - nginx=1.10.1
-  - supervisor=3.1.3
+  - supervisor=3.3.0
   - gunicorn=19.1.0
   - gevent=1.1.1
   - lxml=3.6.0
