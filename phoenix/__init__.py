@@ -56,6 +56,7 @@ def main(global_config, **settings):
 
     # routes 
     config.add_route('home', '/')
+    config.add_route('map', 'map')
     config.add_route('download', 'download/{filename:.*}')
     config.add_route('upload', 'upload')
 

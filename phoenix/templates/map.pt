@@ -1,0 +1,10 @@
+<metal:block use-macro="main_template">
+
+  <div metal:fill-slot="content">
+    <div id="header">
+      <h1>Leaflet Map</h1>                
+    </div>
+    <div id="map" class="map"></div>
+  </div>
+
+</metal:block>

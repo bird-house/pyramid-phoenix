@@ -135,3 +135,8 @@ class Home(object):
     @view_config(route_name='home', renderer='phoenix:templates/home.pt')
     def view(self):
         return {}
+
+
+@view_config(route_name='map', renderer='phoenix:templates/map.pt', permission='view', layout='default')
+def map(request):
+    return {}
