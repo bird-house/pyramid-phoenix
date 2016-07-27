@@ -1,7 +1,7 @@
-leaflet urls
-------------
+leaflet
+=======
 
-* http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js
-* http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css
-* http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css
+version: 0.7.7 (27.07.2016)
+
+* http://leafletjs.com/download.html
 
