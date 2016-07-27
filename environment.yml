@@ -6,8 +6,8 @@ dependencies:
   - python=2.7.12 
   - setuptools=23.0.0
   - curl=7.49.0 
-  - pyopenssl=0.15.1 
-  - cryptography=1.0.2
+  - pyopenssl=0.16.0 
+  - cryptography=1.4
 # tests
   - pytest 
   - pytest-pep8 
@@ -18,7 +18,7 @@ dependencies:
   - sphinx_rtd_theme
 # phoenix
   - nginx=1.10.1
-  - supervisor=3.1.3
+  - supervisor=3.3.0
   - gunicorn=19.1.0
   - gevent=1.1.1
   - lxml=3.6.0
@@ -29,6 +29,7 @@ dependencies:
   - pygments=2.1.3 
   - pytz=2016.4
   - owslib=0.11.2
+  - transaction=1.6.0
 # celery
   - celery=3.1.19
   - kombu=3.0.32
@@ -46,3 +47,21 @@ dependencies:
   - pip:
       - genshi==0.7
       - sphinx-autoapi==0.4.0
+      - pyramid==1.7
+      - pyramid-beaker==0.8
+      - pyramid-deform==0.2
+      - pyramid-chameleon==0.3
+      - pyramid-mako==1.0.2
+      - pyramid-layout==1.0
+      - pyramid-celery==2.0.0
+      - pyramid-mailer==0.14.1
+      - pyramid-storage==0.1.2
+      - pyramid-ldap==0.1
+      - pyramid-twitcher==0.2.0
+      - Authomatic==0.1.0.post1
+      - python-openid==2.2.5
+      - ldappool==1.0
+      - deform==2.0a2
+      - WebHelpers2==2.0
+      - WebHelpers2_grid==0.1
+      - repoze.sendmail==4.2

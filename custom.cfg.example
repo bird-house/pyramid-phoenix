@@ -1,6 +1,7 @@
 [buildout]
 extends = buildout.cfg
-#extends = advanced.cfg
+#extends = profiles/wms.cfg
+#extends = profiles/advanced.cfg
 
 [settings]
 hostname = localhost
