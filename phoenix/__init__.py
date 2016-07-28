@@ -45,7 +45,7 @@ def main(global_config, **settings):
 
     # static views (stylesheets etc)
     config.add_static_view('static', 'static', cache_max_age=3600)
-    config.add_static_view('deform_static', 'deform:static', cache_max_age=3600)
+    config.add_static_view('static-deform', 'deform:static', cache_max_age=3600)
 
     # database
     config.include('phoenix.db')
