@@ -139,4 +139,8 @@ class Home(object):
 
 @view_config(route_name='map', renderer='phoenix:templates/map.pt', permission='view', layout='default')
 def map(request):
+    from twitcher.registry import service_registry_factory
+    service_registry = service_registry_factory(request.registry)
+    ncwms_url = request.registry.settings.get('wms.url')
+    service_registry.register_service(url=ncwms_url + '/wms', name='wms', service_type='wms', public=True)
     return {}
