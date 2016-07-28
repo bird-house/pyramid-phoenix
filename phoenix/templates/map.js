@@ -17,13 +17,13 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'    
 }).addTo(map);
 
-var testWMS = "http://localhost:8080/ncWMS2/wms?DATASET=outputs/hummingbird/output-3d059bc0-5033-11e6-9fa2-af0ebe9e921e.nc"
+var testWMS = "http://localhost:8080/ncWMS2/wms?DATASET=${dataset}"
 //var testWMS = "/ows/proxy/wms?DATASET=outputs/hummingbird/output-3d059bc0-5033-11e6-9fa2-af0ebe9e921e.nc"
 var testLayer = L.tileLayer.wms(testWMS, {
-  layers: 'tasmax',
+  layers: '${layers}',
   format: 'image/png',
   transparent: true,
-  styles: 'default-scalar/x-Rainbow',
+  styles: '${styles}',
   attribution: '<a href="http://bird-house.github.io/">Birdhouse</a>'
 });
 var testTimeLayer = L.timeDimension.layer.wms(testLayer);
@@ -33,7 +33,7 @@ var testLegend = L.control({
     position: 'topright'
 });
 testLegend.onAdd = function(map) {
-    var src = testWMS + "&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYERS=tasmax&STYLES=default-scalar/x-Rainbow&PALETTE=default&HEIGHT=300";
+    var src = testWMS + "&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYERS=${layers}&STYLES=${styles}&PALETTE=default&HEIGHT=300";
     var div = L.DomUtil.create('div', 'info legend');
     div.innerHTML +=
         '<img src="' + src + '" alt="legend">';
