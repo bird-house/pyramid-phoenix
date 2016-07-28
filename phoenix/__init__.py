@@ -56,7 +56,6 @@ def main(global_config, **settings):
 
     # routes 
     config.add_route('home', '/')
-    config.add_route('map', 'map')
     config.add_route('download', 'download/{filename:.*}')
     config.add_route('upload', 'upload')
 
@@ -65,6 +64,9 @@ def main(global_config, **settings):
 
     # dashboard
     config.include('phoenix.dashboard')
+
+    # map
+    config.include('phoenix.map')
     
     # processes
     config.include('phoenix.processes')
