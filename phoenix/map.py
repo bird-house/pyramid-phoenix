@@ -21,7 +21,7 @@ class Map(object):
     @view_config(route_name='map', renderer='phoenix:templates/map.pt')
     def view(self):
         text = map_script.render(
-            dataset="outputs/hummingbird/output-3d059bc0-5033-11e6-9fa2-af0ebe9e921e.nc",
+            dataset=self.dataset,
             layers="tasmax",
             styles="default-scalar/x-Rainbow",
             )
