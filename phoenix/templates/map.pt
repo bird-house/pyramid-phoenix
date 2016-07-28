@@ -10,7 +10,7 @@
   </div>
 
   <div metal:fill-slot="content">
-    <div id="mapid" style="width: 800px; height: 600px"></div>
+    <div id="mapid" style="height: 500px;"></div>
     <script src="${request.static_path('phoenix:static/leaflet/leaflet.js')}" type="text/javascript"></script>
     <script src="${request.static_path('phoenix:static/leaflet/iso8601.min.js')}" type="text/javascript"></script>
     <script src="${request.static_path('phoenix:static/leaflet-plugins/timedimension/leaflet.timedimension.min.js')}" type="text/javascript"></script>

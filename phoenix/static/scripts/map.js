@@ -17,8 +17,8 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'    
 }).addTo(mymap);
 
-//var testWMS = "https://localhost:38083/ows/proxy/wms?DATASET=outputs/hummingbird/output-3d059bc0-5033-11e6-9fa2-af0ebe9e921e.nc"
-var testWMS = "/ows/proxy/wms?DATASET=outputs/hummingbird/output-3d059bc0-5033-11e6-9fa2-af0ebe9e921e.nc"
+var testWMS = "http://localhost:8080/ncWMS2/wms?DATASET=outputs/hummingbird/output-3d059bc0-5033-11e6-9fa2-af0ebe9e921e.nc"
+//var testWMS = "https://localhost:8443/ows/proxy/wms?DATASET=outputs/hummingbird/output-3d059bc0-5033-11e6-9fa2-af0ebe9e921e.nc"
 var testLayer = L.tileLayer.wms(testWMS, {
   layers: 'tasmax',
   format: 'image/png',
