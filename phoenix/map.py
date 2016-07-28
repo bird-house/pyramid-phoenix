@@ -13,9 +13,6 @@ class Map(object):
 
     @view_config(route_name='map', renderer='phoenix:templates/map.pt')
     def view(self):
-        service_registry = service_registry_factory(self.request.registry)
-        ncwms_url = self.request.registry.settings.get('wms.url')
-        service_registry.register_service(url=ncwms_url + '/wms', name='wms', service_type='wms', public=True)
         return {}
 
 def includeme(config):
@@ -25,6 +22,11 @@ def includeme(config):
 
     # views
     config.add_route('map', '/map')
+
+    # configure ncwms
+    ncwms_url = settings.get('wms.url')
+    service_registry = service_registry_factory(config.registry)
+    service_registry.register_service(url=ncwms_url + '/wms', name='wms', service_type='wms', public=True)
 
 
 
