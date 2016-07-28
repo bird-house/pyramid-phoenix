@@ -4,7 +4,6 @@
     <link rel="stylesheet" href="${request.static_path('phoenix:static/leaflet/leaflet.css')}" />
     <link rel="stylesheet" href="${request.static_path('phoenix:static/leaflet-plugins/timedimension/leaflet.timedimension.control.min.css')}" />
     <link rel="stylesheet" href="${request.static_path('phoenix:static/leaflet-plugins/coordinates/Leaflet.Coordinates-0.1.5.css')}" />
-    <!-- link rel="stylesheet" href="${request.static_path('phoenix:static/css/map.css')}"/ -->
   </div>
 
   <div metal:fill-slot="javascript">
