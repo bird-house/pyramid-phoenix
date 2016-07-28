@@ -20,6 +20,7 @@ def navbar(context, request):
         if request.wizard_activated:
             items.append( nav_item('Wizard', request.route_path('wizard')) )
     items.append( nav_item('Monitor', request.route_path('monitor')) )
+    items.append( nav_item('Map', request.route_path('map')) )
         
     subitems = []
     if request.has_permission('edit'):
