@@ -41,6 +41,15 @@ testLegend.onAdd = function(map) {
 };
 testLegend.addTo(map);
 
+L.control.coordinates({
+    position: "bottomright",
+    decimals: 3,
+    labelTemplateLat: "Latitude: {y}",
+    labelTemplateLng: "Longitude: {x}",
+    useDMS: true,
+    enableUserInput: false
+}).addTo(map);
+
 
 
 
