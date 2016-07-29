@@ -22,7 +22,7 @@ class Map(object):
     def view(self):
         text = map_script.render(
             dataset=self.dataset,
-            layers="tasmax",
+            layers=self.dataset+"/tasmax",
             styles="default-scalar/x-Rainbow",
             )
         return dict(map_script=text)
@@ -36,9 +36,8 @@ def includeme(config):
     config.add_route('map', '/map')
 
     # configure ncwms
-    ncwms_url = settings.get('wms.url')
     service_registry = service_registry_factory(config.registry)
-    service_registry.register_service(url=ncwms_url + '/wms', name='wms', service_type='wms', public=True)
+    service_registry.register_service(url=settings.get('wms.url'), name='wms', service_type='wms', public=True)
 
 
 
