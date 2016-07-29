@@ -20,30 +20,42 @@ class Map(object):
         self.request = request
         self.session = self.request.session
         self.dataset = self.request.params.get('dataset')
+        self.wms = self.get_wms()
 
-    def get_available_times(self):
+    def get_wms(self):
         if not self.dataset:
-            return
+            return None
         caps_url = self.request.route_url('owsproxy', service_name='wms',
                                           _query=[('dataset', self.dataset),
                                                   ('version', '1.1.1'), ('service', 'WMS'), ('request', 'GetCapabilities')])
         resp = requests.get(caps_url, verify=False)
         # Remove the default namespace definition (xmlns="http://some/namespace")
         xml = re.sub(r'\sxmlns="[^"]+"', '', resp.content, count=1)
-        wms = WebMapService(caps_url, xml=xml)
-        logger.debug("wms title: %s", wms.identification.title)
-        logger.debug("wms layers: %s", list(wms.contents))
-        layer_id = list(wms.contents)[0]
-        layer = wms[layer_id]
-        return [tpos.strip() for tpos in layer.timepositions]
+        return WebMapService(caps_url, xml=xml)
+
+    def get_layers(self):
+        if len(self.wms.contents) == 1:
+            return list(self.wms.contents)[0]
+        for layer_id in list(self.wms.contents):
+            if layer_id.endswith('/lat') or layer_id.endswith('/lon'):
+                continue
+            return layer_id
+
+    def get_available_times(self, layer_id):
+        layer = self.wms[layer_id]
+        if layer.timepositions:
+            return [tpos.strip() for tpos in layer.timepositions]
+        return None
         
     @view_config(route_name='map', renderer='templates/map/map.pt')
     def view(self):
         layers = None
         times = None
         if self.dataset:
-            layers = self.dataset + "/tasmax"
-            times = ','.join( self.get_available_times() )
+            layers = self.get_layers()
+            timepositions = self.get_available_times(layers)
+            if timepositions:
+                times = ','.join(timepositions)
         
         text = map_script.render(
             dataset=self.dataset,
