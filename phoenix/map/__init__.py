@@ -20,9 +20,13 @@ class Map(object):
 
     @view_config(route_name='map', renderer='templates/map/map.pt')
     def view(self):
+        layers = None
+        if self.dataset:
+            layers = self.dataset + "/tasmax"
+        
         text = map_script.render(
             dataset=self.dataset,
-            layers=self.dataset+"/tasmax",
+            layers=layers,
             styles="default-scalar/x-Rainbow",
             )
         return dict(map_script=text)
