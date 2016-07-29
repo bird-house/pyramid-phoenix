@@ -1,7 +1,10 @@
 import os
+import re
 from pyramid.view import view_config, view_defaults
 from twitcher.registry import service_registry_factory
 from mako.template import Template
+import requests
+from owslib.wms import WebMapService
 
 import logging
 logger = logging.getLogger(__name__)
@@ -18,16 +21,35 @@ class Map(object):
         self.session = self.request.session
         self.dataset = self.request.params.get('dataset')
 
+    def get_available_times(self):
+        if not self.dataset:
+            return
+        caps_url = self.request.route_url('owsproxy', service_name='wms',
+                                          _query=[('dataset', self.dataset),
+                                                  ('version', '1.1.1'), ('service', 'WMS'), ('request', 'GetCapabilities')])
+        resp = requests.get(caps_url, verify=False)
+        # Remove the default namespace definition (xmlns="http://some/namespace")
+        xml = re.sub(r'\sxmlns="[^"]+"', '', resp.content, count=1)
+        wms = WebMapService(caps_url, xml=xml)
+        logger.debug("wms title: %s", wms.identification.title)
+        logger.debug("wms layers: %s", list(wms.contents))
+        layer_id = list(wms.contents)[0]
+        layer = wms[layer_id]
+        return [tpos.strip() for tpos in layer.timepositions]
+        
     @view_config(route_name='map', renderer='templates/map/map.pt')
     def view(self):
         layers = None
+        times = None
         if self.dataset:
             layers = self.dataset + "/tasmax"
+            times = ','.join( self.get_available_times() )
         
         text = map_script.render(
             dataset=self.dataset,
             layers=layers,
             styles="default-scalar/x-Rainbow",
+            times=times,
             )
         return dict(map_script=text)
 
