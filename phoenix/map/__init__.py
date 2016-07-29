@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 map_script = Template(
-    filename=os.path.join(os.path.dirname(__file__), "templates", "map.js"),
+    filename=os.path.join(os.path.dirname(__file__), "templates", "map", "map.js"),
     output_encoding="utf-8", input_encoding="utf-8")
 
 
@@ -18,7 +18,7 @@ class Map(object):
         self.session = self.request.session
         self.dataset = self.request.params.get('dataset')
 
-    @view_config(route_name='map', renderer='phoenix:templates/map.pt')
+    @view_config(route_name='map', renderer='templates/map/map.pt')
     def view(self):
         text = map_script.render(
             dataset=self.dataset,
