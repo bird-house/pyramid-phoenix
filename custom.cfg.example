@@ -21,8 +21,6 @@ phoenix-password = sha256:773eb9c05850:3e6a1122fbf0b1115e5208670a16c75ba5aca2a69
 # python -c "import os; print(''.join('%02x' % ord(x) for x in os.urandom(16)))"
 phoenix-secret = d5e8417934247ccb6cdbdb5144e3b130
 esgf-search-url = https://esgf-data.dkrz.de/esg-search
-wps-url = http://localhost:8091/wps
-wms-url = http://localhost:8080/ncWMS2
 # swift access
 swift-auth-url = http://localhost/auth/v1.0
 swift-auth-version = 1
