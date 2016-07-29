@@ -154,7 +154,7 @@ class ProcessOutputsGrid(CustomGrid):
                 # TODO: dirty hack for show on map
                 # TODO: check mimetype netcdf
                 if 'wpsoutputs' in item.get('reference'):
-                    dataset = "outputs/" + item.get('reference').split('wpsoutputs')[1]
+                    dataset = "outputs" + item.get('reference').split('wpsoutputs')[1]
                     buttons.append( ActionButton("mapit", title=u'Show on Map', icon="fa fa-globe",
                                     href=self.request.route_path('map', _query=[('dataset', dataset)])))
         return self.render_buttongroup_td(buttons=buttons)
