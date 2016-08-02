@@ -29,9 +29,7 @@ class Map(object):
                                           _query=[('dataset', self.dataset),
                                                   ('version', '1.1.1'), ('service', 'WMS'), ('request', 'GetCapabilities')])
         resp = requests.get(caps_url, verify=False)
-        # Remove the default namespace definition (xmlns="http://some/namespace")
-        xml = re.sub(r'\sxmlns="[^"]+"', '', resp.content, count=1)
-        return WebMapService(caps_url, xml=xml)
+        return WebMapService(caps_url, xml=resp.content)
 
     def get_layers(self):
         if len(self.wms.contents) == 1:
@@ -40,6 +38,7 @@ class Map(object):
             if layer_id.endswith('/lat') or layer_id.endswith('/lon'):
                 continue
             return layer_id
+        return None
 
     def get_available_times(self, layer_id):
         layer = self.wms[layer_id]
