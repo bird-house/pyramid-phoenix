@@ -44,15 +44,10 @@ def add_user(
 
 
 class PhoenixSchema(colander.MappingSchema):
-    username = colander.SchemaNode(
-        colander.String(),
-        title='Username',
-        description='Guest? Use username "guest" and password "demo".',
-        default = 'guest',
-        widget=deform.widget.SelectWidget(values=(('guest', 'guest'), ('admin', 'admin'))))
     password = colander.SchemaNode(
         colander.String(),
         title = 'Password',
+        description = 'If this is a demo instance your password might be "qwerty"',
         validator = colander.Length(min=4),
         widget = deform.widget.PasswordWidget())
 
@@ -256,14 +251,10 @@ class Account(MyView):
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
     def phoenix_login(self, appstruct):
-        username = appstruct.get('username')
         password = appstruct.get('password')
-        if username=='admin' and passwd_check(self.request, password):
+        if passwd_check(self.request, password):
             return self.login_success(login_id="phoenix@localhost", name="Phoenix", local=True)
-        elif username=='guest' and password=='demo':
-            return self.login_success(login_id="guest@localhost", name="Guest", local=True)
-        else:
-            return self.login_failure()
+        return self.login_failure()
 
     @view_config(route_name='account_auth')
     def authomatic_login(self):
