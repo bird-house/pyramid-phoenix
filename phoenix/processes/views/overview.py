@@ -21,7 +21,8 @@ class Overview(Processes):
         for wps in self.request.catalog.get_services(service_type=WPS_TYPE):
             service_name = get_service_name(self.request, url=wps.source, name=wps.title)
             url=self.request.route_path('processes_list', _query=[('wps', service_name)])
-            items.append(dict(title=wps.title, description=wps.abstract, url=url))
+            public = hasattr(wps, 'public') and wps.public
+            items.append(dict(title=wps.title, description=wps.abstract, public=public, url=url))
         return dict(title="Web Processing Services", items=items)
 
     
