@@ -26,12 +26,9 @@
         </li>
       </ul>
 
-      <!-- nav with icons -->
+      <!-- nav on right side -->
      
       <ul class="nav navbar-nav navbar-right">
-        <li tal:condition="username">
-          <p class="navbar-text navbar-right">${username}</p>
-        </li>
         <div tal:repeat="item subitems" class="nav navbar-nav">
           <li class="${'active' if item['active'] else ''}">
             <a class="navbar-link btn-lg" href="${item.url}" data-toggle="tooltip" title="${item.name}">
@@ -39,9 +36,25 @@
             </a>
           </li>
         </div>
-         <!-- sign-in -->
-        <li class="${'active' if login else ''}">
-          ${request.login_button}
+        <!-- sign-in -->
+        <li tal:condition="not request.user">
+          <div class="col-sm-12">
+            <a href="/account/register" class="btn btn-success navbar-btn">Sign Up</a>
+            <a href="/account/login/${protocol}" class="btn btn-info navbar-btn">Sign In</a>
+          </div>
+        </li>
+        <!-- user -->
+        <li tal:condition="request.user" class="dropdown">
+          <a href="#" class="dropdown-toggle nav-user-dropdown" data-toggle="dropdown" role="button" aria-expanded="false">Carsten Ehbrecht <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <a href="/profile/account"><i class="fa fa-user fa-lg p-r-xs"></i> My Profile</a>
+            </li>
+            <li role="separator" class="divider"></li>
+            <li>
+              <a href="/account/logout"><i class="fa fa-sign-out fa-lg p-r-xs"></i> Log out</a>
+            </li>
+          </ul>
         </li>
       </ul>
     </div>

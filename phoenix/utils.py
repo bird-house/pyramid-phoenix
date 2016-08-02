@@ -6,18 +6,10 @@ from dateutil import parser as datetime_parser
 
 from owslib.util import build_get_url
 
-import deform
-
-from pyramid.url import resource_url
 from pyramid.security import authenticated_userid
-
-from phoenix.security import auth_protocols
 
 import logging
 logger = logging.getLogger(__name__)
-
-SIGNIN_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign in"><span class="fa fa-sign-in"></span></a>'
-SIGNOUT_HTML = '<a class="navbar-link btn-lg" href="%s" data-toggle="tooltip" title="Sign out %s"><span class="fa fa-sign-out"></span></a>'
 
 # buttons
 # see kotti: https://github.com/Kotti/Kotti
@@ -121,20 +113,6 @@ def format_tags(tags):
     if tags is None:
         tags = []
     return ', '.join(tags)
-
-def button(request):
-    """If the user is logged in, returns the logout button, otherwise returns the login button"""
-    import markupsafe
-    
-    if not authenticated_userid(request):
-        protocols = auth_protocols(request)
-        if len(protocols) > 0:
-            protocol = protocols[-1]
-        else:
-            protocol = 'oauth2'
-        return markupsafe.Markup(SIGNIN_HTML) % (request.route_path('account_login', protocol=protocol))
-    else:
-        return markupsafe.Markup(SIGNOUT_HTML) % (request.route_path('account_logout'), authenticated_userid(request))
 
 
 def localize_datetime(dt, tz_name='UTC'):

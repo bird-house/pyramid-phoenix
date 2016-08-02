@@ -101,10 +101,6 @@ def main(global_config, **settings):
     # readthedocs
     config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/en/latest/{part}.html')
 
-    # A quick access to the login button
-    from phoenix.utils import button
-    config.add_request_method(button, 'login_button', reify=True)
-
     # max file size for upload in MB
     def max_file_size(request):
         settings = request.registry.settings

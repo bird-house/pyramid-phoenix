@@ -1,7 +1,7 @@
 from pyramid_layout.panel import panel_config
 from pyramid.security import authenticated_userid
 
-from phoenix.utils import get_user
+from phoenix.security import auth_protocols
 
 import logging
 logger = logging.getLogger(__name__)
@@ -23,23 +23,11 @@ def navbar(context, request):
     items.append( nav_item('Map', request.route_path('map')) )
         
     subitems = []
-    if request.has_permission('edit'):
-        subitems.append( nav_item('Profile', request.route_path('profile', tab='account'), icon="fa fa-user") )
     subitems.append( nav_item('Dashboard', request.route_path('dashboard', tab='jobs'), icon='fa fa-dashboard') )
     if request.has_permission('admin'):
         subitems.append( nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench") )
-    
-    login = 'login' in request.current_route_url()
 
-    username = None
-    try:
-        user = get_user(request)
-        if user:
-            username = user.get('name')
-    except:
-        logger.exception('could not get username')
-
-    return dict(title='Phoenix', items=items, subitems=subitems, username=username, login=login)
+    return dict(title='Phoenix', items=items, subitems=subitems, protocol=auth_protocols(request)[-1])
 
 
 @panel_config(name='breadcrumbs', renderer='phoenix:templates/panels/breadcrumbs.pt')
