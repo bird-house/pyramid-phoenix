@@ -194,7 +194,9 @@ class MongodbCatalog(Catalog):
         if service_type == THREDDS_TYPE:
             self.insert_record(_fetch_thredds_metadata(url, service_name))
         elif service_type == WPS_TYPE:
-            self.insert_record(_fetch_wps_metadata(url, service_name))
+            record = _fetch_wps_metadata(url, service_name)
+            record['public'] = public
+            self.insert_record(record)
             self.service_registry.register_service(url=url, name=service_name, public=public)
         else:
             raise NotImplementedError
