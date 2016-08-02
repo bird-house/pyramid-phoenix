@@ -27,7 +27,9 @@
         <p><strong>Abstract:</strong> ${service.abstract}</p>
         <p><strong>Keywords:</strong> <span class="label label-info" tal:repeat="keyword service.keywords">${keyword}</span></p>
         <p><strong>References:</strong> <a href="${ref.get('url')}" class="label label-warning" tal:repeat="ref service.references">${ref.get('scheme')}</a></p>
+        <p><strong>Rights:</strong> ${service.rights}</p>
         <p><strong>Creator:</strong> ${service.creator}</p>
+        <p tal:condition="hasattr(service, 'public')"><strong>Public Access:</strong> ${service.public}</p>
       </div>
     </div>
 
