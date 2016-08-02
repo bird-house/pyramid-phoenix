@@ -25,7 +25,7 @@
           <li class="list-group-item" tal:repeat="item items">
             <div class="media">
               <span class="pull-left text-muted" aria-hidden="true">
-                <i class="fa fa-globe"></i>
+                <i tal:attributes="class 'fa fa-unlock text-danger' if hasattr(item, 'public') and item.public else 'fa fa-lock text-success'"></i>
               </span>
               <div class="media-body">
                 <h4 class="media-heading">
