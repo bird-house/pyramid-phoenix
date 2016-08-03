@@ -23,7 +23,7 @@ def navbar(context, request):
     items.append( nav_item('Map', request.route_path('map')) )
         
     subitems = []
-    subitems.append( nav_item('Dashboard', request.route_path('dashboard', tab='jobs'), icon='fa fa-dashboard') )
+    subitems.append( nav_item('Dashboard', request.route_path('dashboard', tab='overview'), icon='fa fa-dashboard') )
     if request.has_permission('admin'):
         subitems.append( nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench") )
 

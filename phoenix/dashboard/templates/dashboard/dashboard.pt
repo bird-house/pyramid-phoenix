@@ -1,18 +1,22 @@
 <metal:block use-macro="main_template">
-
+  
   <div metal:fill-slot="content">
     <div class="container">
-    
-      <ul class="nav nav-tabs">
-        <li class="${'active' if active=='jobs' else ''}"><a href="${request.route_path('dashboard', tab='jobs')}">Jobs</a></li>
-        <li class="${'active' if active=='users' else ''}"><a href="${request.route_path('dashboard', tab='users')}">Users</a></li>
-      </ul>
-
-      <!-- row columns -->
-      <div class="row-fluid offset1">
-        ${panel('headings')}
+      <div class="row">
+        <div class="col-sm-3 col-md-2">
+          <!--Sidebar content-->
+          <ul class="nav nav-pills nav-stacked">
+            <li class="${'active' if active=='overview' else ''}"><a href="${request.route_path('dashboard', tab='overview')}">Overview <span class="sr-only">(current)</span></a></li>
+            <li class="${'active' if active=='people' else ''}"><a href="${request.route_path('dashboard', tab='people')}">People</a></li>
+            <li class="${'active' if active=='jobs' else ''}"><a href="${request.route_path('dashboard', tab='jobs')}">Jobs</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-md-10">
+          <!--Body content-->
+          ${panel('headings')}
+        </div>
+        
       </div>
-
     </div>
   </div>
    

@@ -20,6 +20,10 @@ def user_stats(request):
                 num_logins_3h=num_logins_3h,
                 num_logins_7d=num_logins_7d)
 
+@panel_config(name='dashboard_overview', renderer='templates/panels/dashboard_overview.pt')
+def dashboard_overview(context, request):
+    return dict()
+
 @panel_config(name='dashboard_users', renderer='templates/panels/dashboard_users.pt')
 def dashboard_users(context, request):
     return user_stats(request)
