@@ -82,7 +82,7 @@
       </div>
       <div class="panel-body">
         <div id="fine-uploader"></div>
-        <script src="${request.static_path('phoenix:static/scripts/upload.js')}"></script>
+        <script src="${request.static_path('phoenix:static/phoenix/js/upload.js')}"></script>
 
         <table class="table table-striped">
           <tal:form replace="structure form">The form will render here</tal:form>

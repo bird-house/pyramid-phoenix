@@ -25,9 +25,9 @@
     <script src="${request.static_url('deform:static/pickadate/legacy.js')}"
             type="text/javascript"></script>
 
-    <script src="${request.static_url('phoenix:static/scripts/esgfsearch.js')}"
+    <script src="${request.static_url('phoenix:static/phoenix/js/esgfsearch.js')}"
             type="text/javascript"></script>
-    <script src="${request.static_url('phoenix:static/scripts/esgfsearch-ui.js')}"
+    <script src="${request.static_url('phoenix:static/phoenix/js/esgfsearch-ui.js')}"
             type="text/javascript"></script>
   </div>
         

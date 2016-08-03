@@ -26,7 +26,7 @@
           href="${request.static_path('phoenix:static/font-awesome/css/font-awesome.min.css')}" />
 
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
-          href="${request.static_path('phoenix:static/css/phoenix.css')}" />
+          href="${request.static_path('phoenix:static/phoenix/css/phoenix.css')}" />
 
     <!-- tagmanager -->
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
@@ -54,7 +54,7 @@
     </tal:block>
 
     <!-- phoenix -->
-    <script src="${request.static_path('phoenix:static/scripts/phoenix.js')}"></script>
+    <script src="${request.static_path('phoenix:static/phoenix/js/phoenix.js')}"></script>
 
     <!-- tagmanager TODO: add on demand -->
     <script src="${request.static_path('phoenix:static/bootstrap-tagmanager/bootstrap-tagmanager.js')}"></script>
