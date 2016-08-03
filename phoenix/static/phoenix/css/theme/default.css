@@ -4,8 +4,6 @@ body {
   background: white;
   padding-top: 60px;
 }
-
-
 /* Header
 ----------------------- */
 .navbar {
@@ -15,8 +13,11 @@ body {
   background-color: black;
   border-radius: 0;
 }
-
-
+.navbar-brand {
+  height: 40px;
+  margin-right: 15px;
+  width: 120px;
+}
 /* Home
 ----------------------- */
 .jumbotron {
