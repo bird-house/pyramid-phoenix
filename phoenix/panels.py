@@ -27,18 +27,18 @@ def navbar(context, request):
     if request.has_permission('admin'):
         subitems.append( nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench") )
 
-    return dict(title='Phoenix', items=items, subitems=subitems, protocol=auth_protocols(request)[-1])
+    return dict(items=items, subitems=subitems, protocol=auth_protocols(request)[-1])
+
+
+@panel_config(name='messages', renderer='phoenix:templates/panels/messages.pt')
+def messages(context, request):
+    return dict()
 
 
 @panel_config(name='breadcrumbs', renderer='phoenix:templates/panels/breadcrumbs.pt')
 def breadcrumbs(context, request):
     lm = request.layout_manager
     return dict(breadcrumbs=lm.layout.breadcrumbs)
-
-
-@panel_config(name='sidebar', renderer='phoenix:templates/panels/sidebar.pt')
-def sidebar(context, request):
-    return dict()
 
 
 @panel_config(name='footer', renderer='phoenix:templates/panels/footer.pt')

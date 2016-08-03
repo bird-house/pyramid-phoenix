@@ -2,10 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title><tal:title condition="view.title | None">${view.title} &mdash; </tal:title>Phoenix</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Phoenix Pyramid App for Web Processing Services">
     <meta name="author" content="Birdhouse">
+    <title><tal:title condition="view.title | None">${view.title} &mdash; </tal:title>Phoenix</title>
 
     <!-- CSS
          ======================================================================= -->
@@ -20,14 +21,6 @@
     <tal:block repeat="reqt css_links|[]">
       <link rel="stylesheet" href="${request.static_path(reqt)}" type="text/css" />
     </tal:block>
-
-    <!--
-    <style type="text/css">
-      .linenodiv pre {
-      word-break: normal;
-      }
-    </style>
-    -->
 
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
           href="${request.static_path('phoenix:static/font-awesome/css/font-awesome.min.css')}" />
@@ -73,21 +66,15 @@
   <body class="home">
     ${panel('navbar')}
 
-    <div class="container padded">
-      <div class="row">
-        ${panel('sidebar')}
+    <div id="wrap">
+      <div class="container">
+        ${panel('messages')}
         ${panel('breadcrumbs')}
-
-        <!-- Page Title -->
-        <!-- 
-        <div class="page-header" tal:condition="view.description | None">
-          <h1>\${view.title} <small>\${view.description}</small></h1>
+        <div class="row">
+          <metal:content define-slot="content">
+            Site content goes here ...
+          </metal:content>
         </div>
-        -->
-
-        <metal:content define-slot="content">
-          Site content goes here ...
-        </metal:content>
       </div>
     </div>
 
