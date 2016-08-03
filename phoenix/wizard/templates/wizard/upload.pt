@@ -1,12 +1,12 @@
 <metal:block use-macro="main_template">
 
   <div metal:fill-slot="css">
-    <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
-          href="${request.static_path('phoenix:static/jquery.fine-uploader/fine-uploader-new.css')}">
+    <link rel="stylesheet" href="${request.static_path('phoenix:static/jquery.fine-uploader/fine-uploader-new.css')}"/>
   </div>
 
-  <div metal:fill-slot="javascript">
-    <script src="${request.static_path('phoenix:static/jquery.fine-uploader/jquery.fine-uploader.js')}"></script>
+  <div metal:fill-slot="js_preload">
+    <script src="${request.static_path('phoenix:static/jquery.fine-uploader/jquery.fine-uploader.js')}"
+            type="text/javascript"></script>
     <script type="text/template" id="qq-template">
       <div class="qq-uploader-selector qq-uploader" qq-drop-area-text="Drop files here">
         <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
@@ -83,8 +83,7 @@
         </div>
         <div class="panel-body">
           <div id="fine-uploader"></div>
-          <script src="${request.static_path('phoenix:static/phoenix/js/upload.js')}"></script>
-          
+
           <table class="table table-striped">
             <tal:form replace="structure form">The form will render here</tal:form>
           </table>
@@ -92,6 +91,11 @@
       </div>
     
     </div>
+  </div>
+
+  <div metal:fill-slot="javascript">
+    <script src="${request.static_path('phoenix:static/phoenix/js/upload.js')}"
+            type="text/javascript"></script>
   </div>
    
 </metal:block>
