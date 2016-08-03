@@ -1,0 +1,43 @@
+/* Layout
+----------------------- */
+body { 
+    padding-top: 50px; 
+}
+
+/* Home
+----------------------- */
+.jumbotron {
+  background: rgb(2, 139, 175);
+  color: white;
+  padding: 40px 0 60px;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
+  margin-top: -10px;
+  a {
+      color: rgb(158, 179, 67);
+  }
+  p {
+      margin-bottom: 0;
+  }
+}
+
+/* Footer
+----------------------- */
+.footer {
+  text-align: center;
+  background: #999;
+  border-top: 1px solid;
+  padding: 20px;
+}
+
+/* Media
+---------------------- */
+.thumbnail > img {
+    height: 32px;
+}
+
+/* Log Panel
+---------------------- */
+pre.log-output {
+    color:#f1f1f1;
+    background-color:#222;
+}

@@ -6,11 +6,10 @@
   </div -->
 
   <div metal:fill-slot="content">
-    
-
-    ${panel('monitor_details')}
-
     <div class="container">
+
+      ${panel('monitor_details')}
+    
       <ul class="nav nav-tabs">
         <li class="${'active' if active=='inputs' else ''}">
           <a href="${request.route_path('monitor_details', job_id=job_id, tab='inputs')}">Inputs</a>

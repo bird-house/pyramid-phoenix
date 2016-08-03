@@ -17,18 +17,16 @@
     <link rel="stylesheet" href="${request.static_path('deform:static/css/form.css')}"/>
 
     <link rel="stylesheet" href="${request.static_path('phoenix:static/font-awesome/css/font-awesome.min.css')}"/>
-    <!--
-    <link rel="stylesheet" href="${request.static_path('phoenix:static/phoenix/css/phoenix.css')}"/>
-    -->
-
-    <!-- tagmanager -->
-    <link rel="stylesheet" href="${request.static_path('phoenix:static/bootstrap-tagmanager/bootstrap-tagmanager.css')}"/>
+    <link rel="stylesheet" href="${request.static_path('phoenix:static/phoenix/css/theme/default.css')}"/>
 
     <tal:block repeat="reqt css_links|[]">
       <link rel="stylesheet" href="${request.static_path(reqt)}" type="text/css" />
     </tal:block>
 
     <metal:css define-slot="css"/>
+
+    <!-- JavaScript that need to be loaded before the body-->
+    <metal:js define-slot="js_preload"/>   
 
   </head>
 
@@ -67,14 +65,6 @@
       <script type="text/javascript" src="${request.static_path(reqt)}"></script>
     </tal:block>
 
-    <!-- phoenix -->
-    <!--
-    <script src="${request.static_path('phoenix:static/phoenix/js/phoenix.js')}"></script>
-    -->
-
-    <!-- tagmanager TODO: add on demand -->
-    <script src="${request.static_path('phoenix:static/bootstrap-tagmanager/bootstrap-tagmanager.js')}"></script>
-  
     <metal:js define-slot="javascript"/>   
       
   </body>

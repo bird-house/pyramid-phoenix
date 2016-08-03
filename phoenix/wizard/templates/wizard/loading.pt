@@ -5,7 +5,9 @@
   </div>
         
   <div metal:fill-slot="content">
-    <h3><img src="${request.static_path('phoenix:static/phoenix/img/ajax-loader.gif')}"></img> Please wait ... retrieving ESGF certificate.</h3>
+    <div class="container">
+      <h3><img src="${request.static_path('phoenix:static/phoenix/img/ajax-loader.gif')}"></img> Please wait ... retrieving ESGF certificate.</h3>
+    </div>
   </div>
    
 </metal:block>

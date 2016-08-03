@@ -1,58 +1,3 @@
-
-/* Layout
------------------------ */
-#wrap {
-  background: #fff;
-  padding-bottom: 40px;
-  padding-top: 10px;
-  width: 100%;
-}
-
-/* Header
------------------------ */
-.navbar {
-  margin-bottom: 0;
-}
-
-/* Home
------------------------ */
-.jumbotron {
-  /*
-  background: rgb(2, 139, 175);
-  color: white;
-  */
-  /* padding: 40px 0 60px; */
-  padding-top: 50px;
-  padding-bottom: 20px;
-  /*text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
-  margin-top: -10px;
-  a {
-      color: rgb(158, 179, 67);
-  }
-  p {
-      margin-bottom: 0;
-  } */
-}
-
-
-/* Footer
------------------------ */
-.footer {
-  text-align: center;
-  background: #777;
-  border-top: 1px solid;
-  padding: 20px;
-}
-
-/* more ... 
------------------------ */
-
-/* log output */
-pre.log-output {
-    color:#f1f1f1;
-    background-color:#222;
-}
-
 /* hits */
 
 .hits {
@@ -126,7 +71,3 @@ pre.log-output {
         display:block; 
         float: left; 
 } 
-
-.thumbnail > img {
-    height: 32px;
-}

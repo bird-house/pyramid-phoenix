@@ -9,25 +9,27 @@
   </div>
   
   <div metal:fill-slot="content">
+    <div class="container">
 
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <div tal:repeat="group buttongroups">
-          <ul class="row">
-            <div class="col-md-2" tal:repeat="button group['buttons']">
-              <a tal:attributes="href button['url'];id button.get('id')" class="thumbnail">
-                <img
-                   tal:define="icon_url '/static/images/' + button['icon']"
-                   tal:attributes="src icon_url" alt="">
-                <div class="text-center">
-                  <h4>${button['title']}</h4>
-                </div>
-              </a>
-            </div>
-          </ul>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div tal:repeat="group buttongroups">
+            <ul class="row">
+              <div class="col-md-2" tal:repeat="button group['buttons']">
+                <a tal:attributes="href button['url'];id button.get('id')" class="thumbnail">
+                  <img
+                     tal:define="icon_url '/static/phoenix/img/' + button['icon']"
+                     tal:attributes="src icon_url" alt="">
+                  <div class="text-center">
+                    <h4>${button['title']}</h4>
+                  </div>
+                </a>
+              </div>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
   </div>
-   
+  
 </metal:block>
