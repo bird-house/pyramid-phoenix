@@ -16,28 +16,28 @@
        <div class="row">
          <div class="col-md-3 text-center">
            <a class="btn btn-success" href="${request.route_url('processes')}">
-             <span class="fa fa-cogs fa-3x"></span>
+             <span class="fa fa-cogs fa-3x fa-rounded" aria-hidden="true"></span>
            </a>
            <h4><b>Run your processes.</b></h4>
            <h5>Choose a process from a Web Processing Service and start it.</h5>
          </div>
          <div class="col-md-3 text-center">
            <a class="btn btn-success" href="${request.route_url('wizard')}">
-             <span class="fa fa-magic fa-3x"></span>
+             <span class="fa fa-magic fa-3x" aria-hidden="true"></span>
            </a>
            <h4><b>Use the Wizard to feed your jobs with data.</b></h4>
            <h5>Use the wizard to feed your processes with data from ESGF and Thredds Data Servers.</h5>
          </div>
          <div class="col-md-3 text-center">
            <a class="btn btn-success" href="${request.route_url('monitor')}">
-             <span class="fa fa-tasks fa-3x"></span>
+             <span class="fa fa-tasks fa-3x" aria-hidden="true"></span>
            </a>
            <h4><b>Monitor your jobs.</b></h4>
            <h5>Monitor the status of your running jobs/processes.</h5>
          </div>
          <div class="col-md-3 text-center">
            <a class="btn btn-success" href="${request.route_url('map')}">
-             <span class="fa fa-map-marker fa-3x"></span>
+             <span class="fa fa-map-marker fa-3x" aria-hidden="true"></span>
            </a>
            <h4><b>Show your results on a map.</b></h4>
            <h5>Use the map to visualize your processing results and input data.</h5>
