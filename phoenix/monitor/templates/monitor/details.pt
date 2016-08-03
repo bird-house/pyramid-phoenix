@@ -6,24 +6,27 @@
   </div -->
 
   <div metal:fill-slot="content">
+    
 
     ${panel('monitor_details')}
 
-    <ul class="nav nav-tabs">
-      <li class="${'active' if active=='inputs' else ''}">
-        <a href="${request.route_path('monitor_details', job_id=job_id, tab='inputs')}">Inputs</a>
-      </li>
-      <li class="${'active' if active=='outputs' else ''}">
-        <a href="${request.route_path('monitor_details', job_id=job_id, tab='outputs')}">Outputs</a>
-      </li>
-      <li class="${'active' if active=='log' else ''}">
-        <a href="${request.route_path('monitor_details', job_id=job_id, tab='log')}">Log</a>
-      </li>
-    </ul>
+    <div class="container">
+      <ul class="nav nav-tabs">
+        <li class="${'active' if active=='inputs' else ''}">
+          <a href="${request.route_path('monitor_details', job_id=job_id, tab='inputs')}">Inputs</a>
+        </li>
+        <li class="${'active' if active=='outputs' else ''}">
+          <a href="${request.route_path('monitor_details', job_id=job_id, tab='outputs')}">Outputs</a>
+        </li>
+        <li class="${'active' if active=='log' else ''}">
+          <a href="${request.route_path('monitor_details', job_id=job_id, tab='log')}">Log</a>
+        </li>
+      </ul>
 
-    <!-- row columns -->
-    <div class="row-fluid offset1">
-      ${panel('headings')}
+      <!-- row columns -->
+      <div class="row-fluid offset1">
+        ${panel('headings')}
+      </div>
     </div>
 
   </div>

@@ -1,10 +1,8 @@
-<footer class="footer">
+<footer class="text-center">
   <div class="container">
-    <div class="row">
-      <p>Powered by <a href="http://bird-house.github.io/">Birdhouse</a> | 
-        Get the code on <a href="https://github.com/bird-house/pyramid-phoenix/blob/master/README.rst">GitHub</a> | 
-        <em>Version v${version}</em></p>
-    </div>
+    <p>Powered by <a href="http://bird-house.github.io/">Birdhouse</a> | 
+      Get the code on <a href="https://github.com/bird-house/pyramid-phoenix/blob/master/README.rst">GitHub</a> | 
+      <em>Version v${version}</em></p>
   </div>
 </footer>
 
