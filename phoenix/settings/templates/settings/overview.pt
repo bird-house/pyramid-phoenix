@@ -18,7 +18,7 @@
               <div class="col-md-2" tal:repeat="button group['buttons']">
                 <a tal:attributes="href button['url'];id button.get('id')" class="thumbnail">
                   <img
-                     tal:define="icon_url '/static/phoenix/img/' + button['icon']"
+                     tal:define="icon_url '/static/' + button['icon']"
                      tal:attributes="src icon_url" alt="">
                   <div class="text-center">
                     <h4>${button['title']}</h4>

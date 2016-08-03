@@ -4,6 +4,13 @@ body {
     padding-top: 50px; 
 }
 
+/* Header
+----------------------- */
+.navbar {
+  margin-bottom: 0;
+}
+
+
 /* Home
 ----------------------- */
 .jumbotron {
