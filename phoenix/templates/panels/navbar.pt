@@ -7,7 +7,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/"><img src="${request.static_path('phoenix:static/phoenix/img/logo-white.png')}" width="16px"/> Phoenix</a>
+      <a class="navbar-brand" href="/"><img src="${request.static_path('phoenix:static/phoenix/img/logo-white.png')}" width="15px"/> Phoenix</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <!-- nav with text -->
@@ -39,8 +39,8 @@
         <!-- sign-in -->
         <li tal:condition="not request.user">
           <div class="col-sm-12">
-            <a href="/account/register" class="btn btn-success navbar-btn">Sign Up</a>
-            <a href="/account/login/${protocol}" class="btn btn-info navbar-btn">Sign In</a>
+            <a href="/account/login/${protocol}" class="btn btn-default navbar-btn">Sign in</a>
+            <a href="/account/register" class="btn btn-success navbar-btn">Sign up</a>
           </div>
         </li>
         <!-- user -->
