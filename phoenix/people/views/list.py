@@ -1,5 +1,4 @@
 from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPFound
 
 from phoenix.settings.views import SettingsView
 from phoenix.security import Admin, User, Guest
@@ -18,15 +17,6 @@ class People(SettingsView):
         breadcrumbs = super(People, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
-
-    @view_config(route_name='delete_user')
-    def delete_user(self):
-        # TODO: fix handling of userids
-        userid = self.request.matchdict.get('userid')
-        if userid is not None:
-            self.collection.remove(dict(identifier=userid))
-            self.session.flash('User removed', queue="info")
-        return HTTPFound(location=self.request.route_path(self.name))
 
     @view_config(route_name='people', renderer='../templates/people/list.pt')
     def view(self):
