@@ -3,23 +3,23 @@
     <div class="row">
       <div class="col-xs-6 col-sm-3 text-center">
         <span class="fa fa-users fa-5x" aria-hidden="true"></span>
-        <h4>People</h4>
-        <span class="text-muted">7</span>
+        <h4>All People</h4>
+        <span class="badge">${total}</span>
       </div>
       <div class="col-xs-6 col-sm-3 text-center">
-        <span class="fa fa-cogs fa-5x" aria-hidden="true"></span>
-        <h4>Jobs</h4>
-        <span class="text-muted">99</span>
+        <span class="fa fa-hourglass-1 fa-5x" aria-hidden="true"></span>
+        <h4>Logged in today</h4>
+        <span class="badge">${logged_in_today}</span>
       </div>
       <div class="col-xs-6 col-sm-3 text-center">
-        <span class="fa fa-server fa-5x" aria-hidden="true"></span>
-        <h4>Web Processing Services</h4>
-        <span class="text-muted">4</span>
+        <span class="fa fa-hourglass-3 fa-5x" aria-hidden="true"></span>
+        <h4>Logged in this week</h4>
+        <span class="badge">${logged_in_this_week}</span>
       </div>
       <div class="col-xs-6 col-sm-3 text-center">
-        <span class="fa fa-database fa-5x" aria-hidden="true"></span>
-        <h4>Thredds Catalogs</h4>
-        <span class="text-muted">2</span>
+        <span class="fa fa-bell fa-5x" aria-hidden="true"></span>
+        <h4>Not activated</h4>
+        <span class="badge">${not_activated}</span>
       </div>
     </div>
   </div>

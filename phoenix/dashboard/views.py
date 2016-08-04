@@ -5,6 +5,7 @@ from phoenix.views import MyView
 import logging
 logger = logging.getLogger(__name__)
 
+
 @view_defaults(permission='view', layout='default')
 class Dashboard(MyView):
     def __init__(self, request):
@@ -17,8 +18,8 @@ class Dashboard(MyView):
         lm = self.request.layout_manager
         if tab == 'jobs':
             lm.layout.add_heading('dashboard_jobs')
-        elif tab == 'users':
-            lm.layout.add_heading('dashboard_users')
+        elif tab == 'people':
+            lm.layout.add_heading('dashboard_people')
         else:
             lm.layout.add_heading('dashboard_overview')
         return dict(active=tab)
