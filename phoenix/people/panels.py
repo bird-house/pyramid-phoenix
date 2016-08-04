@@ -10,64 +10,68 @@ from phoenix.utils import get_user
 import logging
 logger = logging.getLogger(__name__)
 
+
 class TwitcherSchema(colander.MappingSchema):
     twitcher_token = colander.SchemaNode(
         colander.String(),
-        title = "Twitcher access token",
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        title="Twitcher access token",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
     twitcher_token_expires = colander.SchemaNode(
         colander.String(),
-        title = "Expires",
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        title="Expires",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
+
 
 class ESGFCredentialsSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
         colander.String(),
-        title = "OpenID",
-        description = "OpenID to access ESGF data",
-        validator = colander.url,
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        title="OpenID",
+        description="OpenID to access ESGF data",
+        validator=colander.url,
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
     credentials = colander.SchemaNode(
         colander.String(),
-        title = "Credentials",
-        description = "URL to ESGF Proxy Certificate",
-        validator = colander.url,
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        title="Credentials",
+        description="URL to ESGF Proxy Certificate",
+        validator=colander.url,
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
     cert_expires = colander.SchemaNode(
         colander.String(),
-        title = "Expires",
-        description = "When your Proxy Certificate expires",
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        title="Expires",
+        description="When your Proxy Certificate expires",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
+
 
 class SwiftSchema(colander.MappingSchema):
     swift_username = colander.SchemaNode(
         colander.String(),
-        title = "Swift Username",
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        title="Swift Username",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
     swift_storage_url = colander.SchemaNode(
         colander.String(),
-        title = "Swift Storage URL",
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        title="Swift Storage URL",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
     swift_auth_token = colander.SchemaNode(
         colander.String(),
-        title = "Swift Auth Token",
-        missing = '',
-        widget = deform.widget.TextInputWidget(template='readonly/textinput'),
+        title="Swift Auth Token",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
         )
+
 
 class ProfilePanel(object):
     def __init__(self, context, request):
@@ -77,8 +81,9 @@ class ProfilePanel(object):
     def appstruct(self):
         appstruct = get_user(self.request)
         if appstruct is None:
-            appstruct = {}
+            appstruct = dict()
         return appstruct
+
 
 class AccountPanel(ProfilePanel):
     def generate_form(self):
@@ -99,7 +104,7 @@ class AccountPanel(ProfilePanel):
             return dict(form=e.render())
         except Exception, e:
             logger.exception('update user failed.')
-            self.request.session.flash('Update of your accound failed. %s' % (e), queue='danger')
+            self.request.session.flash('Update of your account failed. %s' % (e), queue='danger')
         else:
             self.request.session.flash("Your account was updated.", queue='success')
 
@@ -109,6 +114,7 @@ class AccountPanel(ProfilePanel):
         if 'update' in self.request.POST:
             self.process_form(form)
         return dict(title="Account settings", form=form.render( self.appstruct() ))
+
 
 class TwitcherPanel(ProfilePanel):
     def generate_form(self):
@@ -120,6 +126,7 @@ class TwitcherPanel(ProfilePanel):
         form = self.generate_form()
         return dict(title="Twitcher access token", form=form.render( self.appstruct() ))
 
+
 class ESGFPanel(ProfilePanel):
     def generate_form(self):
         form = Form(schema=ESGFCredentialsSchema(), formid='deform')
@@ -129,6 +136,7 @@ class ESGFPanel(ProfilePanel):
     def panel(self):
         form = self.generate_form()
         return dict(title="ESGF access token", form=form.render( self.appstruct() ))
+
 
 class SwiftPanel(ProfilePanel):
     def generate_form(self):

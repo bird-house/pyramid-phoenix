@@ -1,5 +1,4 @@
 from pyramid_layout.panel import panel_config
-from pyramid.security import authenticated_userid
 
 from phoenix.security import auth_protocols
 
@@ -14,7 +13,7 @@ def navbar(context, request):
         active = root_path(request.current_route_path()) == root_path(url)
         return dict(name=name, url=url, active=active, icon=icon)
 
-    items = []
+    items = list()
     items.append( nav_item('Processes', request.route_path('processes')) )
     if request.has_permission('edit'):
         if request.wizard_activated:
@@ -22,7 +21,7 @@ def navbar(context, request):
     items.append( nav_item('Monitor', request.route_path('monitor')) )
     items.append( nav_item('Map', request.route_path('map')) )
         
-    subitems = []
+    subitems = list()
     subitems.append( nav_item('Dashboard', request.route_path('dashboard', tab='overview'), icon='fa fa-dashboard') )
     if request.has_permission('admin'):
         subitems.append( nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench") )

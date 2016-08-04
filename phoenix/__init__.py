@@ -77,8 +77,8 @@ def main(global_config, **settings):
     # wms
     config.include('phoenix.wms')
 
-    # user profile
-    config.include('phoenix.profile')
+    # user profiles
+    config.include('phoenix.people')
 
     # settings
     config.include('phoenix.settings')
