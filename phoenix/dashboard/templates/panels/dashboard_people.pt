@@ -1,0 +1,28 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-xs-6 col-sm-3 text-center">
+        <span class="fa fa-users fa-5x" aria-hidden="true"></span>
+        <h4>People</h4>
+        <span class="text-muted">7</span>
+      </div>
+      <div class="col-xs-6 col-sm-3 text-center">
+        <span class="fa fa-cogs fa-5x" aria-hidden="true"></span>
+        <h4>Jobs</h4>
+        <span class="text-muted">99</span>
+      </div>
+      <div class="col-xs-6 col-sm-3 text-center">
+        <span class="fa fa-server fa-5x" aria-hidden="true"></span>
+        <h4>Web Processing Services</h4>
+        <span class="text-muted">4</span>
+      </div>
+      <div class="col-xs-6 col-sm-3 text-center">
+        <span class="fa fa-database fa-5x" aria-hidden="true"></span>
+        <h4>Thredds Catalogs</h4>
+        <span class="text-muted">2</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+

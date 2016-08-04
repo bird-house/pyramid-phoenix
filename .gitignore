@@ -40,6 +40,9 @@ unit_tests/testdata.json
 # Sublime Text Editor
 *.sublime*
 
+# PyCharm
+.idea
+
 # buildout
 bin
 develop-eggs
