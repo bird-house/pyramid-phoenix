@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-@panel_config(name='dashboard_overview', renderer='templates/panels/dashboard_overview.pt')
+@panel_config(name='dashboard_overview', renderer='templates/dashboard/panels/overview.pt')
 def dashboard_overview(context, request):
     return dict(people=request.db.users.count(),
                 jobs=request.db.jobs.count(),
@@ -16,7 +16,7 @@ def dashboard_overview(context, request):
                 tds=len(request.catalog.get_services(service_type=THREDDS_TYPE)))
 
 
-@panel_config(name='dashboard_people', renderer='templates/panels/dashboard_people.pt')
+@panel_config(name='dashboard_people', renderer='templates/dashboard/panels/people.pt')
 def dashboard_people(context, request):
     stats = dict(total=request.db.users.count())
     stats['not_activated'] = request.db.users.find({"group": Guest}).count()
@@ -29,7 +29,7 @@ def dashboard_people(context, request):
     return stats
 
 
-@panel_config(name='dashboard_jobs', renderer='templates/panels/dashboard_jobs.pt')
+@panel_config(name='dashboard_jobs', renderer='templates/dashboard/panels/jobs.pt')
 def dashboard_jobs(context, request):
     return dict(total=request.db.jobs.count(),
                 running=request.db.jobs.find({"status": {'$in': ['ProcessAccepted', 'ProcessPaused', 'ProcessStarted']}}).count(),
