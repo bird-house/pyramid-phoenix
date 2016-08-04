@@ -77,7 +77,7 @@ class ExecuteProcess(Processes):
     def generate_form(self, formid='deform'):
         schema = WPSSchema(request=self.request, process=self.process, user=self.get_user())
         submit_button = Button(name='submit', title='Execute',
-                               css_class='btn btn-default',
+                               css_class='btn btn-default btn-lg btn-block',
                                disabled=not has_execute_permission(self.request, self.service_name))
         return Form(
             schema,
