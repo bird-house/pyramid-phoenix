@@ -58,33 +58,25 @@
               <br/>
             </p>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-5">
             <h4>Birdhouse Ecosystem</h4>
-            <div class="row">
-            <div class="col-md-6">
             <p>
-              <a href="" target="_blank">Phoenix web application</a><br/>
-              <a href="" target="_blank">Birdy command line client</a><br/>
+              <a href="" target="_blank">Phoenix - web application to ease usage of WPS</a><br/>
+              <a href="" target="_blank">Birdy - command line client for WPS</a><br/>
+              <a href="" target="_blank">Flyingpigeon - WPS for climate impact modellers and extreme events</a><br/>
+              <a href="" target="_blank">Hummingbird - WPS with data quality checkers</a><br/>
+              <a href="" target="_blank">Malleefowl - WPS for climate data access</a><br/>
+              <a href="" target="_blank">Emu  - WPS with example processes</a><br/>
+              <a href="" target="_blank">Twitcher - OWS Security Proxy</a><br/>
             </p>
-            </div>
-            <div class="col-md-6">
-            <p>
-              <a href="" target="_blank">Flyingpigeon (Climate Impact)</a><br/>
-              <a href="" target="_blank">Hummingbird (Quality Checkers)</a><br/>
-              <a href="" target="_blank">Malleefowl</a><br/>
-              <a href="" target="_blank">Emu</a><br/>
-              <a href="" target="_blank">Twitcher</a><br/>
-            </p>
-            </div>
           </div>
-          </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <h4>Related Projects</h4>
             <p>
-              <a href="" target="_blank">Climate4Impact (KNMI)</a><br/>
-              <a href="" target="_blank">Cows (BADC)</a><br/>
-              <a href="" target="_blank">FrEva (FUB)</a><br/>
-              <a href="" target="_blank">Apache Climate Workbench</a><br/>
+              <a href="http://dev.climate4impact.eu/impactportal/general/index.jsp" target="_blank">Climate4Impact (KNMI)</a><br/>
+              <a href="http://wps-web1.ceda.ac.uk/ui/home" target="_blank">COWS (CEDA)</a><br/>
+              <a href="https://freva.met.fu-berlin.de/" target="_blank">FrEva (FU-Berlin)</a><br/>
+              <a href="https://climate.apache.org/" target="_blank">Apache Climate Workbench</a><br/>
             </p>
           </div>
         </div>
