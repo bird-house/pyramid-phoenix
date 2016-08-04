@@ -1,6 +1,6 @@
 from pyramid_layout.panel import panel_config
 
-from deform import Form, ValidationFailure
+from deform import Form, ValidationFailure, Button
 
 import logging
 logger = logging.getLogger(__name__)
@@ -41,7 +41,8 @@ class AccountPanel(ProfilePanel):
     @panel_config(name='profile_account', renderer='phoenix:templates/panels/form.pt')
     def panel(self):
         from .schema import AccountSchema
-        form = Form(schema=AccountSchema(), buttons=('update',), formid='deform')
+        btn = Button(name='update', title='Update Profile', css_class="btn btn-success btn-lg btn-block")
+        form = Form(schema=AccountSchema(), buttons=(btn,), formid='deform')
         if 'update' in self.request.POST:
             self.process_form(form)
         return dict(title="Account settings", form=form.render(self.appstruct()))
