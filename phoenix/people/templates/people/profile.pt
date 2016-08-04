@@ -11,6 +11,7 @@
             <li class="${'active' if active=='account' else ''}"><a href="${request.route_path('profile', userid=userid, tab='account')}">My Account</a></li>
             <li class="${'active' if active=='twitcher' else ''}"><a href="${request.route_path('profile', userid=userid, tab='twitcher')}">Twitcher access token</a></li>
             <li class="${'active' if active=='esgf' else ''}"><a href="${request.route_path('profile', userid=userid, tab='esgf')}">ESGF access token</a></li>
+            <li class="${'active' if active=='group' else ''}"><a href="${request.route_path('profile', userid=userid, tab='group')}">Group Permission</a></li>
           </ul>
         </div>
         <div class="col-lg-9 col-sm-9">

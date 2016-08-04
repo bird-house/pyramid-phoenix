@@ -24,6 +24,8 @@ class Profile(MyView):
             lm.layout.add_heading('profile_twitcher')
         elif tab == 'esgf':
             lm.layout.add_heading('profile_esgf')
+        elif tab == 'group':
+            lm.layout.add_heading('profile_group')
         else:
             lm.layout.add_heading('profile_account')
         return dict(profile_name=user.get('name', 'Unknown'), userid=userid, active=tab)

@@ -48,6 +48,36 @@ class AccountPanel(ProfilePanel):
         return dict(title="Account settings", form=form.render(self.appstruct()))
 
 
+class GroupPanel(ProfilePanel):
+    def process_form(self, form):
+        try:
+            controls = self.request.POST.items()
+            appstruct = form.validate(controls)
+            user = self.collection.find_one({'identifier': self.userid})
+            user['group'] = appstruct.get('group')
+            self.collection.update({'identifier': self.userid}, user)
+        except ValidationFailure, e:
+            logger.debug('validation of form failed.')
+            return dict(form=e.render())
+        except Exception:
+            msg = 'Update of group permission failed.'
+            logger.exception(msg)
+            self.request.session.flash(msg, queue='danger')
+        else:
+            self.request.session.flash("Group permission was updated.", queue='success')
+
+    @panel_config(name='profile_group', renderer='phoenix:templates/panels/form.pt')
+    def panel(self):
+        from .schema import GroupSchema
+        btn = Button(name='update_group', title='Update Group Permission', css_class="btn btn-success btn-lg btn-block",
+                     disabled=not self.request.has_permission('admin'))
+        form = Form(schema=GroupSchema(readonly=not self.request.has_permission('admin')), buttons=(btn,),
+                    formid='deform')
+        if 'update_group' in self.request.POST:
+            self.process_form(form)
+        return dict(title="Group permission", form=form.render(self.appstruct()))
+
+
 class TwitcherPanel(ProfilePanel):
     @panel_config(name='profile_twitcher', renderer='templates/people/panels/profile_twitcher.pt')
     def panel(self):

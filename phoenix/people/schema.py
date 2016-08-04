@@ -1,6 +1,11 @@
 import colander
 import deform
 
+from phoenix.security import Admin, User, Guest
+
+import logging
+logger = logging.getLogger(__name__)
+
 
 class AccountSchema(colander.MappingSchema):
     name = colander.SchemaNode(
@@ -8,37 +13,37 @@ class AccountSchema(colander.MappingSchema):
         title="Your Name",
         missing='',
         default='',
-        )
+    )
     email = colander.SchemaNode(
         colander.String(),
         title="EMail",
         validator=colander.Email(),
         missing=colander.drop,
         widget=deform.widget.TextInputWidget(),
-        )
+    )
     organisation = colander.SchemaNode(
         colander.String(),
         title="Organisation",
         missing='',
         default='',
-        )
+    )
     notes = colander.SchemaNode(
         colander.String(),
         title="Notes",
         missing='',
-        default='',
-        )
+        default=''
+    )
 
 
-# class EditUserSchema(UserProfileSchema):
-#     choices = ((Admin, 'Admin'), (User, 'User'), (Guest, 'Guest'))
-#
-#     group = colander.SchemaNode(
-#         colander.String(),
-#         validator=colander.OneOf([x[0] for x in choices]),
-#         widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
-#         title='Group',
-#         description='Select Group')
+class GroupSchema(colander.MappingSchema):
+    choices = ((Admin, 'Admin'), (User, 'User'), (Guest, 'Guest'))
+
+    group = colander.SchemaNode(
+         colander.String(),
+         validator=colander.OneOf([x[0] for x in choices]),
+         widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
+         title='Group',
+         description='Select Group')
 
 
 class TwitcherSchema(colander.MappingSchema):
