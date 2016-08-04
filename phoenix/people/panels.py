@@ -121,7 +121,7 @@ class TwitcherPanel(ProfilePanel):
         form = Form(schema=TwitcherSchema(), formid='deform')
         return form
 
-    @panel_config(name='profile_twitcher', renderer='templates/panels/profile_twitcher.pt')
+    @panel_config(name='profile_twitcher', renderer='templates/people/panels/profile_twitcher.pt')
     def panel(self):
         form = self.generate_form()
         return dict(title="Twitcher access token", form=form.render( self.appstruct() ))
@@ -132,7 +132,7 @@ class ESGFPanel(ProfilePanel):
         form = Form(schema=ESGFCredentialsSchema(), formid='deform')
         return form
 
-    @panel_config(name='profile_esgf', renderer='templates/panels/profile_esgf.pt')
+    @panel_config(name='profile_esgf', renderer='templates/people/panels/profile_esgf.pt')
     def panel(self):
         form = self.generate_form()
         return dict(title="ESGF access token", form=form.render( self.appstruct() ))
