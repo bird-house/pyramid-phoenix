@@ -16,14 +16,24 @@
           <div tal:repeat="group buttongroups">
             <ul class="row">
               <div class="col-md-2" tal:repeat="button group['buttons']">
-                <a tal:attributes="href button['url'];id button.get('id')" class="thumbnail">
-                  <img
-                     tal:define="icon_url '/static/' + button['icon']"
-                     tal:attributes="src icon_url" alt="">
-                  <div class="text-center">
-                    <h4>${button['title']}</h4>
-                  </div>
-                </a>
+                <div tal:condition="'icon' in button">
+                  <a tal:attributes="href button['url'];id button.get('id')" class="thumbnail">
+                    <img
+                      tal:define="icon_url '/static/' + button['icon']"
+                      tal:attributes="src icon_url" alt="">
+                    <div class="text-center">
+                      <h4>${button['title']}</h4>
+                    </div>
+                  </a>
+                </div>
+                <div tal:condition="'icon_class' in button" class="text-center">
+                  <a tal:attributes="href button['url'];id button.get('id')" class="thumbnail">
+                    <span class="${button['icon_class']}"></span>
+                    <div class="text-center">
+                      <h4>${button['title']}</h4>
+                    </div>
+                  </a>
+                </div>
               </div>
             </ul>
           </div>
