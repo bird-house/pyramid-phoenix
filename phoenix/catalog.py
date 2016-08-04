@@ -18,6 +18,7 @@ from phoenix.db import mongodb
 import logging
 logger = logging.getLogger(__name__)
 
+
 def includeme(config):
     settings = config.registry.settings
 
@@ -33,6 +34,7 @@ def includeme(config):
             logger.debug("catalog already initialized")
         event.request.catalog = settings.get('catalog')
     config.add_subscriber(add_catalog, NewRequest)
+
 
 def catalog_factory(registry):
     settings = registry.settings
@@ -70,6 +72,7 @@ def get_service_name(request, url, name=None):
     logger.debug("get_service_name = %s", service_name)
     return service_name
 
+
 def _gen_service_title(title, url, service_name=None):
     """Generates service title form title, url and optional service_name."""
     if service_name and len(service_name.strip()) > 0:
@@ -77,6 +80,7 @@ def _gen_service_title(title, url, service_name=None):
     elif len(title.strip()) == 0:
         title = url
     return title
+
 
 def _fetch_thredds_metadata(url, service_name=None):
     """Fetch capabilities metadata from thredds catalog service and return record dict."""
@@ -96,6 +100,7 @@ def _fetch_thredds_metadata(url, service_name=None):
         references = [])
     return record
 
+
 def _fetch_wps_metadata(url, service_name=None):
     """Fetch capabilities metadata from wps service and return record dict."""
     wps = WebProcessingService(url, verify=False, skip_caps=False)
@@ -112,6 +117,7 @@ def _fetch_wps_metadata(url, service_name=None):
         #subjects = '',
         references = [])
     return record
+
 
 class Catalog(object):
     def get_record_by_id(self, identifier):
@@ -172,7 +178,8 @@ def doc2record(document):
             del document["_id"]
         record = namedtuple('Record', document.keys())(*document.values())
     return record
-    
+
+
 class MongodbCatalog(Catalog):
     """Implementation of a Catalog with MongoDB."""
 

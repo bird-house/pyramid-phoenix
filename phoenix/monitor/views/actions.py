@@ -6,7 +6,9 @@ from phoenix.utils import ActionButton
 from phoenix.utils import format_tags
 
 import logging
+
 logger = logging.getLogger(__name__)
+
 
 @view_defaults(permission='submit')
 class NodeActions(object):
@@ -40,7 +42,7 @@ class NodeActions(object):
         else:
             self.flash("Restarting Process {0}.".format(job_id), queue='info')
             return HTTPFound(location=self.request.route_path('processes_execute', _query=[('job_id', job_id)]))
-    
+
     @view_config(route_name='delete_job')
     def delete_job(self):
         job_id = self.request.matchdict.get('job_id')
@@ -49,7 +51,6 @@ class NodeActions(object):
         self.flash("Job {0} deleted.".format(job_id), queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
-
     @view_config(route_name='delete_jobs')
     def delete_jobs(self):
         """
@@ -57,11 +58,11 @@ class NodeActions(object):
         """
         ids = self._selected_children()
         if ids is not None:
-            self.collection.delete_many({'identifier': {'$in': ids} })
+            self.collection.delete_many({'identifier': {'$in': ids}})
             self.flash(u"Selected jobs were deleted.", queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
-    #@view_config(route_name='delete_all_jobs', permission='admin')
+    # @view_config(route_name='delete_all_jobs', permission='admin')
     def delete_all_jobs(self):
         count = self.collection.count()
         self.collection.drop()
@@ -75,7 +76,7 @@ class NodeActions(object):
         """
         ids = self._selected_children()
         if ids is not None:
-            self.collection.update_many({'identifier':  {'$in': ids}}, {'$addToSet': {'tags': 'public'}})
+            self.collection.update_many({'identifier': {'$in': ids}}, {'$addToSet': {'tags': 'public'}})
             self.flash(u"Selected jobs were made public.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
@@ -86,7 +87,7 @@ class NodeActions(object):
         """
         ids = self._selected_children()
         if ids is not None:
-            self.collection.update_many({'identifier':  {'$in': ids}}, {'$pull': {'tags': 'public'}})
+            self.collection.update_many({'identifier': {'$in': ids}}, {'$pull': {'tags': 'public'}})
             self.flash(u"Selected jobs were made private.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
@@ -97,7 +98,7 @@ class NodeActions(object):
         """
         ids = self._selected_children()
         if ids is not None:
-            self.collection.update_many({'identifier':  {'$in': ids}}, {'$addToSet': {'tags': 'fav'}})
+            self.collection.update_many({'identifier': {'$in': ids}}, {'$addToSet': {'tags': 'fav'}})
             self.flash(u"Set as favorite done.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
@@ -108,7 +109,7 @@ class NodeActions(object):
         """
         ids = self._selected_children()
         if ids is not None:
-            self.collection.update_many({'identifier':  {'$in': ids}}, {'$pull': {'tags': 'fav'}})
+            self.collection.update_many({'identifier': {'$in': ids}}, {'$pull': {'tags': 'fav'}})
             self.flash(u"Unset as favorite done.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
@@ -122,11 +123,11 @@ class NodeActions(object):
 
     @view_config(renderer='json', name='active_jobs.json')
     def active_jobs(self):
-        search_filter =  {}
+        search_filter = dict()
         search_filter['userid'] = authenticated_userid(self.request)
         search_filter['status'] = {'$in': ['ProcessAccepted', 'ProcessPaused', 'ProcessStarted']}
         return list(self.collection.find(search_filter).sort('created', -1))
-    
+
 
 def monitor_buttons(context, request):
     """
@@ -136,8 +137,8 @@ def monitor_buttons(context, request):
     :result: List of ActionButtons.
     :rtype: list
     """
-    buttons = []
-    #if request.has_permission('admin'):
+    buttons = list()
+    # if request.has_permission('admin'):
     #    buttons.append(ActionButton('delete_all_jobs', title=u'Delete all',
     #                                css_class=u'btn btn-danger'))
     buttons.append(ActionButton('delete_jobs', title=u'Delete',
@@ -157,6 +158,7 @@ def monitor_buttons(context, request):
                                 disabled=not request.has_permission('submit')))
     return buttons
 
+
 def includeme(config):
     """ Pyramid includeme hook.
 
@@ -167,7 +169,7 @@ def includeme(config):
     config.add_route('restart_job', 'restart_job/{job_id}')
     config.add_route('delete_job', 'delete_job/{job_id}')
     config.add_route('delete_jobs', 'delete_jobs')
-    #config.add_route('delete_all_jobs', 'delete_all_jobs')
+    # config.add_route('delete_all_jobs', 'delete_all_jobs')
     config.add_route('make_public', 'make_public')
     config.add_route('make_private', 'make_private')
     config.add_route('set_favorite', 'set_favorite')

@@ -6,7 +6,6 @@ import json
 import yaml
 import uuid
 import urllib
-from urlparse import urlparse
 from datetime import datetime
 from birdfeeder import feed_from_thredds, clear
 
@@ -17,26 +16,30 @@ from phoenix.events import JobFinished
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
+
 def task_result(task_id):
     return app.AsyncResult(task_id)
 
+
 def log(job):
     log_msg = '{0:3d}%: {1}'.format(job.get('progress'), job.get('status_message'))
-    if not 'log' in job:
+    if 'log' not in job:
         job['log'] = []
     # skip same log messages
     if len(job['log']) == 0 or job['log'][-1] != log_msg:
         job['log'].append(log_msg)
         logger.info(log_msg)
 
+
 def log_error(job, error):
     log_msg = 'ERROR: {0.text} - code={0.code} - locator={0.locator}'.format(error)
-    if not 'log' in job:
+    if 'log' not in job:
         job['log'] = []
     # skip same log messages
     if len(job['log']) == 0 or job['log'][-1] != log_msg:
         job['log'].append(log_msg)
         logger.error(log_msg)
+
 
 def add_job(db, userid, task_id, service, title, abstract, status_location, is_workflow=False, caption=None):
     tags = ['dev']
@@ -45,22 +48,22 @@ def add_job(db, userid, task_id, service, title, abstract, status_location, is_w
     else:
         tags.append('single')
     job = dict(
-        identifier = uuid.uuid4().get_hex(),
-        task_id = task_id,
-        userid = userid,
-        is_workflow = is_workflow,
-        service = service,
-        title = title,
-        abstract = abstract,
-        status_location = status_location,
-        created = datetime.now(),
-        is_complete = False,
-        tags = tags,
-        caption = caption,
-        status = "ProcessAccepted",
+        identifier=uuid.uuid4().get_hex(),
+        task_id=task_id,
+        userid=userid,
+        is_workflow=is_workflow,
+        service=service,
+        title=title,
+        abstract=abstract,
+        status_location=status_location,
+        created=datetime.now(),
+        tags=tags,
+        caption=caption,
+        status="ProcessAccepted",
         )
     db.jobs.insert(job)
     return job
+
 
 def get_access_token(userid):
     registry = app.conf['PYRAMID_REGISTRY']
@@ -72,6 +75,7 @@ def get_access_token(userid):
     user = db.users.find_one(dict(identifier=userid))
     return user.get('twitcher_token')
 
+
 def wps_headers(userid):
     headers = {}
     if userid:
@@ -79,6 +83,7 @@ def wps_headers(userid):
         if access_token is not None:
             headers['Access-Token'] = access_token
     return headers
+
 
 @app.task(bind=True)
 def esgf_logon(self, userid, url, openid, password):
@@ -104,6 +109,7 @@ def esgf_logon(self, userid, url, openid, password):
         db.users.update({'identifier':userid}, user)
     return execution.status
 
+
 @app.task(bind=True)
 def execute_workflow(self, userid, url, workflow, caption=None):
     registry = app.conf['PYRAMID_REGISTRY']
@@ -125,21 +131,20 @@ def execute_workflow(self, userid, url, workflow, caption=None):
     execution = wps.execute(identifier='workflow', inputs=inputs, output=outputs, lineage=True)
     
     job = add_job(db, userid,
-                  task_id = self.request.id,
-                  is_workflow = True,
-                  service = worker_wps.identification.title,
-                  title = workflow['worker']['identifier'],
-                  abstract = '',
-                  caption = caption,
-                  status_location = execution.statusLocation)
+                  task_id=self.request.id,
+                  is_workflow=True,
+                  service=worker_wps.identification.title,
+                  title=workflow['worker']['identifier'],
+                  abstract='',
+                  caption=caption,
+                  status_location=execution.statusLocation)
 
     while execution.isNotComplete():
         try:
             execution.checkStatus(sleepSecs=3)
             job['status'] = execution.getStatus()
             job['status_message'] = execution.statusMessage
-            job['is_complete'] = execution.isComplete()
-            job['is_succeded'] = execution.isSucceded()
+            job['is_succeeded'] = execution.isSucceded()  # TODO: skip ... just use status
             job['progress'] = execution.percentCompleted
             duration = datetime.now() - job.get('created', datetime.now())
             job['duration'] = str(duration).split('.')[0]
@@ -165,6 +170,7 @@ def execute_workflow(self, userid, url, workflow, caption=None):
     registry.notify(JobFinished(job))
     return execution.getStatus()
 
+
 @app.task(bind=True)
 def execute_process(self, userid, url, identifier, inputs, outputs, caption=None):
     registry = app.conf['PYRAMID_REGISTRY']
@@ -177,21 +183,20 @@ def execute_process(self, userid, url, identifier, inputs, outputs, caption=None
         userid = 'guest'
     
     job = add_job(db, userid,
-                  task_id = self.request.id,
-                  is_workflow = False,
-                  service = wps.identification.title,
-                  title = identifier,
-                  abstract = getattr(execution.process, "abstract", ""),
-                  caption = caption,
-                  status_location = execution.statusLocation)
+                  task_id=self.request.id,
+                  is_workflow=False,
+                  service=wps.identification.title,
+                  title=identifier,
+                  abstract=getattr(execution.process, "abstract", ""),
+                  caption=caption,
+                  status_location=execution.statusLocation)
 
     while execution.isNotComplete():
         try:
             execution.checkStatus(sleepSecs=3)
             job['status'] = execution.getStatus()
             job['status_message'] = execution.statusMessage
-            job['is_complete'] = execution.isComplete()
-            job['is_succeded'] = execution.isSucceded()
+            job['is_succeeded'] = execution.isSucceded()  # TODO: just use status
             job['progress'] = execution.percentCompleted
             duration = datetime.now() - job.get('created', datetime.now())
             job['duration'] = str(duration).split('.')[0]
@@ -213,6 +218,7 @@ def execute_process(self, userid, url, identifier, inputs, outputs, caption=None
     registry.notify(JobFinished(job))
     return execution.getStatus()
 
+
 @app.task(bind=True)
 def index_thredds(self, url, maxrecords=-1, depth=2):
     registry = app.conf['PYRAMID_REGISTRY']
@@ -228,6 +234,7 @@ def index_thredds(self, url, maxrecords=-1, depth=2):
         raise
     finally:
         db.tasks.update({'url': task['url']}, task)
+
 
 @app.task(bind=True)
 def clear_index(self):
