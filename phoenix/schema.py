@@ -11,55 +11,28 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class SwiftLoginSchema(colander.MappingSchema):
-    username = colander.SchemaNode(
-        colander.String(),
-        title = "Username",
-        description = "Your Swift Username: account:user",
-        missing = '',
-        default = '',
-        )
-    password = colander.SchemaNode(
-        colander.String(),
-        title = 'Password',
-        missing = '',
-        default = '',
-        widget = deform.widget.PasswordWidget(size=30))
-
-
-class UserProfileSchema(colander.MappingSchema):
-    name = colander.SchemaNode(
-        colander.String(),
-        title = "Your Name",
-        missing = '',
-        default = '',
-        )
-    email = colander.SchemaNode(
-        colander.String(),
-        title = "EMail",
-        validator = colander.Email(),
-        missing = colander.drop,
-        widget = deform.widget.TextInputWidget(),
-        )
-    organisation = colander.SchemaNode(
-        colander.String(),
-        title = "Organisation",
-        missing = '',
-        default = '',
-        )
-    notes = colander.SchemaNode(
-        colander.String(),
-        title = "Notes",
-        missing = '',
-        default = '',
-        )
-
-
 def esgfsearch_validator(node, value):
     import json
     search = json.loads(value)
     if search.get('hit-count', 0) > 100:
         raise Invalid(node, 'More than 100 datasets selected: %r.' %  search['hit-count'])
+
+
+class SwiftLoginSchema(colander.MappingSchema):
+    username = colander.SchemaNode(
+        colander.String(),
+        title="Username",
+        description="Your Swift Username: account:user",
+        missing='',
+        default='',
+        )
+    password = colander.SchemaNode(
+        colander.String(),
+        title='Password',
+        missing='',
+        default='',
+        widget=deform.widget.PasswordWidget(size=30))
+
 
 class ESGFSearchSchema(colander.MappingSchema):
     selection = colander.SchemaNode(
@@ -68,15 +41,16 @@ class ESGFSearchSchema(colander.MappingSchema):
         title = 'ESGF Search',
         widget = ESGFSearchWidget(url="/esg-search"))
 
+
 class UploadSchema(SwiftLoginSchema):
     
     container = colander.SchemaNode(colander.String())
     prefix = colander.SchemaNode(colander.String())
-    #object_name = colander.SchemaNode(colander.String())
     source = colander.SchemaNode(
         colander.String(),
         description = 'URL to the source',
         validator = colander.url)
+
 
 class PublishSchema(colander.MappingSchema):
     import uuid

@@ -9,7 +9,17 @@ from datetime import datetime
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.exceptions import HTTPForbidden
-from pyramid.security import authenticated_userid
+from pyramid.security import (
+        Allow,
+        Everyone,
+        Authenticated,
+        ALL_PERMISSIONS)
+
+from authomatic import Authomatic, provider_id
+from authomatic.providers import oauth2, openid
+from phoenix.providers import oauth2 as myoauth2
+from phoenix.providers import esgfopenid
+
 
 from twitcher.tokens import tokengenerator_factory
 from twitcher.tokens import tokenstore_factory
@@ -24,9 +34,11 @@ Admin = 'group.admin'
 User = 'group.user'
 Guest = 'group.guest'
 
+
 def has_execute_permission(request, service_name):
     service_registry = service_registry_factory(request.registry)
     return service_registry.is_public(service_name) or request.has_permission('submit')
+
 
 def generate_access_token(registry, userid=None):
     db = mongodb(registry)
@@ -43,6 +55,7 @@ def generate_access_token(registry, userid=None):
         db.users.update_one({'identifier':userid},
                             {'$set': {'twitcher_token': token, 'twitcher_token_expires': expires}})
 
+
 def auth_protocols(request):
     # TODO: refactor auth settings handling
     settings = request.db.settings.find_one()
@@ -52,6 +65,7 @@ def auth_protocols(request):
             if settings['auth'].has_key('protocol'):
                 protocols = settings['auth']['protocol']
     return protocols
+
 
 def passwd_check(request, passphrase):
     """
@@ -98,12 +112,6 @@ def groupfinder(userid, request):
     return HTTPForbidden()
 
 
-from pyramid.security import (
-        Allow, 
-        Everyone, 
-        Authenticated, 
-        ALL_PERMISSIONS)
-
 # Authentication and Authorization
 
 class Root():
@@ -117,15 +125,12 @@ class Root():
     def __init__(self, request):
         self.request = request
 
+
 def root_factory(request):
     return Root(request)
 
 # Authomatic
 
-from authomatic.providers import oauth2, openid
-from phoenix.providers import oauth2 as myoauth2
-from phoenix.providers import esgfopenid
-from authomatic import Authomatic, provider_id
 
 def authomatic(request):
     return Authomatic(
@@ -211,11 +216,13 @@ class MyAuthenticationPolicy(AuthTktAuthenticationPolicy):
         if user is not None:
             return user.get('identifier')
 
+
 def get_user(request):
     user_id = request.unauthenticated_userid
     if user_id is not None:
         user = request.db.users.find_one({'identifier': user_id})
         return user
+
 
 def includeme(config):
     settings = config.get_settings()

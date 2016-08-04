@@ -1,14 +1,50 @@
 from pyramid_layout.panel import panel_config
-from pyramid.security import authenticated_userid
 
 from deform import Form, ValidationFailure
 import colander
 import deform
 
-from phoenix.utils import get_user
-
 import logging
 logger = logging.getLogger(__name__)
+
+
+class AccountSchema(colander.MappingSchema):
+    name = colander.SchemaNode(
+        colander.String(),
+        title="Your Name",
+        missing='',
+        default='',
+        )
+    email = colander.SchemaNode(
+        colander.String(),
+        title="EMail",
+        validator=colander.Email(),
+        missing=colander.drop,
+        widget=deform.widget.TextInputWidget(),
+        )
+    organisation = colander.SchemaNode(
+        colander.String(),
+        title="Organisation",
+        missing='',
+        default='',
+        )
+    notes = colander.SchemaNode(
+        colander.String(),
+        title="Notes",
+        missing='',
+        default='',
+        )
+
+
+# class EditUserSchema(UserProfileSchema):
+#     choices = ((Admin, 'Admin'), (User, 'User'), (Guest, 'Guest'))
+#
+#     group = colander.SchemaNode(
+#         colander.String(),
+#         validator=colander.OneOf([x[0] for x in choices]),
+#         widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
+#         title='Group',
+#         description='Select Group')
 
 
 class TwitcherSchema(colander.MappingSchema):
@@ -52,53 +88,29 @@ class ESGFCredentialsSchema(colander.MappingSchema):
         )
 
 
-class SwiftSchema(colander.MappingSchema):
-    swift_username = colander.SchemaNode(
-        colander.String(),
-        title="Swift Username",
-        missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-    swift_storage_url = colander.SchemaNode(
-        colander.String(),
-        title="Swift Storage URL",
-        missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-    swift_auth_token = colander.SchemaNode(
-        colander.String(),
-        title="Swift Auth Token",
-        missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-
-
 class ProfilePanel(object):
     def __init__(self, context, request):
         self.context = context
         self.request = request
+        self.userid = request.matchdict.get('userid')
+        self.collection = self.request.db.users
 
     def appstruct(self):
-        appstruct = get_user(self.request)
+        appstruct = self.collection.find_one({'identifier': self.userid})
         if appstruct is None:
             appstruct = dict()
         return appstruct
 
 
 class AccountPanel(ProfilePanel):
-    def generate_form(self):
-        from phoenix.schema import UserProfileSchema
-        form = Form(schema=UserProfileSchema(), buttons=('update',), formid='deform')
-        return form
-    
     def process_form(self, form):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
-            user = get_user(self.request)
+            user = self.collection.find_one({'identifier': self.userid})
             for key in ['name', 'email', 'organisation', 'notes']:
                 user[key] = appstruct.get(key)
-            self.request.db.users.update({'identifier':authenticated_userid(self.request)}, user)
+            self.collection.update({'identifier': self.userid}, user)
         except ValidationFailure, e:
             logger.exception('validation of form failed.')
             return dict(form=e.render())
@@ -110,40 +122,22 @@ class AccountPanel(ProfilePanel):
 
     @panel_config(name='profile_account', renderer='phoenix:templates/panels/form.pt')
     def panel(self):
-        form = self.generate_form()
+        form = Form(schema=AccountSchema(), buttons=('update',), formid='deform')
         if 'update' in self.request.POST:
             self.process_form(form)
-        return dict(title="Account settings", form=form.render( self.appstruct() ))
+        return dict(title="Account settings", form=form.render(self.appstruct()))
 
 
 class TwitcherPanel(ProfilePanel):
-    def generate_form(self):
-        form = Form(schema=TwitcherSchema(), formid='deform')
-        return form
-
     @panel_config(name='profile_twitcher', renderer='templates/people/panels/profile_twitcher.pt')
     def panel(self):
-        form = self.generate_form()
-        return dict(title="Twitcher access token", form=form.render( self.appstruct() ))
+        form = Form(schema=TwitcherSchema(), formid='deform')
+        return dict(title="Twitcher access token", form=form.render(self.appstruct()))
 
 
 class ESGFPanel(ProfilePanel):
-    def generate_form(self):
-        form = Form(schema=ESGFCredentialsSchema(), formid='deform')
-        return form
-
     @panel_config(name='profile_esgf', renderer='templates/people/panels/profile_esgf.pt')
     def panel(self):
-        form = self.generate_form()
-        return dict(title="ESGF access token", form=form.render( self.appstruct() ))
+        form = Form(schema=ESGFCredentialsSchema(), formid='deform')
+        return dict(title="ESGF access token", form=form.render(self.appstruct()))
 
-
-class SwiftPanel(ProfilePanel):
-    def generate_form(self):
-        form = Form(schema=SwiftSchema(), formid='deform')
-        return form
-
-    @panel_config(name='profile_swift', renderer='phoenix:templates/panels/form.pt')
-    def panel(self):
-        form = self.generate_form()
-        return dict(title="Swift access token", form=form.render( self.appstruct() ))
