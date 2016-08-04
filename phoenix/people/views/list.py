@@ -1,6 +1,6 @@
-from pyramid.view import view_config
+from pyramid.view import view_config, view_defaults
 
-from phoenix.settings.views import SettingsView
+from phoenix.views import MyView
 from phoenix.security import Admin, User, Guest
 from phoenix.grid import CustomGrid
 
@@ -8,15 +8,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class People(SettingsView):
+@view_defaults(permission='admin', layout='default')
+class People(MyView):
     def __init__(self, request):
-        super(People, self).__init__(request, name='people', title='People')
+        super(People, self).__init__(request, name='people', title='')
         self.collection = self.request.db.users
-
-    def breadcrumbs(self):
-        breadcrumbs = super(People, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
-        return breadcrumbs
 
     @view_config(route_name='people', renderer='../templates/people/list.pt')
     def view(self):

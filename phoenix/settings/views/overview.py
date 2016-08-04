@@ -19,7 +19,6 @@ class Overview(SettingsView):
         buttons.append(dict(url=self.request.route_path('services'), icon_class="fa fa-server fa-2x", title="Services"))
         if self.request.solr_activated:
             buttons.append(dict(url=self.request.route_path('settings_solr', tab='index'), icon_class="fa fa-search fa-2x", title="Solr"))
-        buttons.append(dict(url=self.request.route_path('people'), icon_class="fa fa-group fa-2x", title="People"))
         buttons.append(dict(url=self.request.route_path('settings_auth'), icon_class="fa fa-lock fa-2x", title="Auth"))
         buttons.append(dict(url=self.request.route_path('settings_ldap'), icon_class="fa fa-sitemap fa-2x", title="LDAP"))
         buttons.append(dict(url=self.request.route_path('settings_github'), icon_class="fa fa-github fa-2x", title="GitHub"))
