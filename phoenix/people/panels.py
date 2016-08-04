@@ -1,91 +1,9 @@
 from pyramid_layout.panel import panel_config
 
 from deform import Form, ValidationFailure
-import colander
-import deform
 
 import logging
 logger = logging.getLogger(__name__)
-
-
-class AccountSchema(colander.MappingSchema):
-    name = colander.SchemaNode(
-        colander.String(),
-        title="Your Name",
-        missing='',
-        default='',
-        )
-    email = colander.SchemaNode(
-        colander.String(),
-        title="EMail",
-        validator=colander.Email(),
-        missing=colander.drop,
-        widget=deform.widget.TextInputWidget(),
-        )
-    organisation = colander.SchemaNode(
-        colander.String(),
-        title="Organisation",
-        missing='',
-        default='',
-        )
-    notes = colander.SchemaNode(
-        colander.String(),
-        title="Notes",
-        missing='',
-        default='',
-        )
-
-
-# class EditUserSchema(UserProfileSchema):
-#     choices = ((Admin, 'Admin'), (User, 'User'), (Guest, 'Guest'))
-#
-#     group = colander.SchemaNode(
-#         colander.String(),
-#         validator=colander.OneOf([x[0] for x in choices]),
-#         widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
-#         title='Group',
-#         description='Select Group')
-
-
-class TwitcherSchema(colander.MappingSchema):
-    twitcher_token = colander.SchemaNode(
-        colander.String(),
-        title="Twitcher access token",
-        missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-    twitcher_token_expires = colander.SchemaNode(
-        colander.String(),
-        title="Expires",
-        missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-
-
-class ESGFCredentialsSchema(colander.MappingSchema):
-    openid = colander.SchemaNode(
-        colander.String(),
-        title="OpenID",
-        description="OpenID to access ESGF data",
-        validator=colander.url,
-        missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-    credentials = colander.SchemaNode(
-        colander.String(),
-        title="Credentials",
-        description="URL to ESGF Proxy Certificate",
-        validator=colander.url,
-        missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-    cert_expires = colander.SchemaNode(
-        colander.String(),
-        title="Expires",
-        description="When your Proxy Certificate expires",
-        missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
 
 
 class ProfilePanel(object):
@@ -122,6 +40,7 @@ class AccountPanel(ProfilePanel):
 
     @panel_config(name='profile_account', renderer='phoenix:templates/panels/form.pt')
     def panel(self):
+        from .schema import AccountSchema
         form = Form(schema=AccountSchema(), buttons=('update',), formid='deform')
         if 'update' in self.request.POST:
             self.process_form(form)
@@ -131,6 +50,7 @@ class AccountPanel(ProfilePanel):
 class TwitcherPanel(ProfilePanel):
     @panel_config(name='profile_twitcher', renderer='templates/people/panels/profile_twitcher.pt')
     def panel(self):
+        from .schema import TwitcherSchema
         form = Form(schema=TwitcherSchema(), formid='deform')
         return dict(title="Twitcher access token", form=form.render(self.appstruct()))
 
@@ -138,6 +58,7 @@ class TwitcherPanel(ProfilePanel):
 class ESGFPanel(ProfilePanel):
     @panel_config(name='profile_esgf', renderer='templates/people/panels/profile_esgf.pt')
     def panel(self):
+        from .schema import ESGFCredentialsSchema
         form = Form(schema=ESGFCredentialsSchema(), formid='deform')
         return dict(title="ESGF access token", form=form.render(self.appstruct()))
 
