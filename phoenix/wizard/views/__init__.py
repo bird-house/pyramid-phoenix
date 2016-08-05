@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 wizard_favorite = "wizard_favorite"
 
+
 class WizardFavorite(object):
     """Stores wizard state in session with a name (favorite).
     TODO: implement as a dict?
@@ -35,6 +36,7 @@ class WizardFavorite(object):
     def clear(self):
         self.session[wizard_favorite] = {}
         self.session.changed()
+
 
 class WizardState(object):
     def __init__(self, session, initial_step='wizard', final_step='wizard_done'):
@@ -88,7 +90,8 @@ class WizardState(object):
         self.session['wizard'] = dict(state={}, chain=[self.initial_step])
         self.session.changed()
 
-@view_defaults(permission='edit', layout='default')
+
+@view_defaults(permission='view', layout='default')
 class Wizard(MyView):
     def __init__(self, request, name, title, description=None):
         super(Wizard, self).__init__(request, name, title, description)
@@ -100,7 +103,7 @@ class Wizard(MyView):
         next_disabled = not self.next_ok()
 
         prev_button = Button(name='previous', title='Previous',
-                             disabled=prev_disabled)   #type=submit|reset|button,value=name,css_type="btn-..."
+                             disabled=prev_disabled)   # type=submit|reset|button,value=name,css_type="btn-..."
         next_button = Button(name='next', title='Next',
                              disabled=next_disabled)
         done_button = Button(name='next', title='Done',
@@ -154,11 +157,11 @@ class Wizard(MyView):
 
     def previous_success(self, appstruct):
         # TODO: maybe store current state?
-        #self.success(appstruct)
+        # self.success(appstruct)
         return self.previous()
 
     def previous_failure(self, validation_failure):
-        # dont stop previous in case of validation failure
+        # don't stop previous in case of validation failure
         return self.previous()
     
     def next_success(self, appstruct):
@@ -172,8 +175,8 @@ class Wizard(MyView):
             schema=self.schema(),
             buttons=self.buttons(),
             formid=formid,
-            #use_ajax=self.use_ajax(),
-            #ajax_options=self.ajax_options(),
+            # use_ajax=self.use_ajax(),
+            # ajax_options=self.ajax_options(),
             )
 
     def process_form(self, form, action):
