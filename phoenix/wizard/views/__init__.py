@@ -19,7 +19,7 @@ class WizardFavorite(object):
     def __init__(self, request, session):
         self.request = request
         self.session = session
-        if not wizard_favorite in self.session:
+        if wizard_favorite not in self.session:
             self.clear()
 
     def names(self):
@@ -43,7 +43,7 @@ class WizardState(object):
         self.session = session
         self.initial_step = initial_step
         self.final_step = final_step
-        if not 'wizard' in self.session:
+        if 'wizard' not in self.session:
             self.clear()
 
     def load(self, state):
@@ -232,7 +232,10 @@ class Wizard(MyView):
             return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
-    
+
+        if not self.request.has_permission('submit'):
+            self.session.flash("You are not allowed to execute jobs. Please sign-in.", queue='warning')
+
         result = dict(title=self.title, form=form.render(self.appstruct()))
         custom = self.custom_view()    
         return dict(result, **custom)

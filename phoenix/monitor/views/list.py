@@ -18,6 +18,7 @@ from phoenix.utils import make_tags
 import logging
 logger = logging.getLogger(__name__)
 
+
 class CaptionSchema(colander.MappingSchema):
     """This is the form schema to add and edit form for job captions.
     """
@@ -28,6 +29,7 @@ class CaptionSchema(colander.MappingSchema):
     caption = colander.SchemaNode(
         colander.String(),
         missing="???")
+
 
 class LabelsSchema(colander.MappingSchema):
     """This is the form schema to add and edit form for job tags/labels.
@@ -40,6 +42,7 @@ class LabelsSchema(colander.MappingSchema):
         colander.String(),
         title="Input labels as a comma-separated list",
         missing="dev")
+
 
 class JobList(Monitor):
     def __init__(self, request):
@@ -86,7 +89,6 @@ class JobList(Monitor):
         """
         update_button = Button(name='update_caption', title='Update', css_class='btn btn-success')
         return Form(schema=CaptionSchema(), buttons=(update_button,), formid=formid)
-       
 
     def process_caption_form(self, form):
         try:
@@ -174,6 +176,7 @@ class JobList(Monitor):
                     buttons=buttons,
                     caption_form=caption_form.render(),
                     labels_form=labels_form.render())
+
 
 class JobsGrid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
