@@ -6,11 +6,13 @@ from phoenix.grid import CustomGrid
 import logging
 logger = logging.getLogger(__name__)
 
+
 def collect_inputs(status_location):
     from owslib.wps import WPSExecution
     execution = WPSExecution()
     execution.checkStatus(url=status_location, sleepSecs=0)
     return execution.dataInputs
+
 
 def process_inputs(request, job_id):
     job = request.db.jobs.find_one({'identifier': job_id})
@@ -21,6 +23,7 @@ def process_inputs(request, job_id):
         else:
             inputs = collect_inputs(job['status_location'])
     return inputs
+
 
 class Inputs(object):
     def __init__(self, context, request):
@@ -45,7 +48,7 @@ class Inputs(object):
         grid = ProcessInputsGrid(
                 self.request,
                 items,
-                ['input', 'value'],
+                ['input', 'value', ''],
             )
         return dict(grid=grid)
 
@@ -55,6 +58,7 @@ class ProcessInputsGrid(CustomGrid):
         super(ProcessInputsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['input'] = self.input_td
         self.column_formats['value'] = self.value_td
+        self.column_formats[''] = self.buttongroup_td
         self.exclude_ordering = self.columns
 
     def input_td(self, col_num, i, item):
@@ -67,6 +71,19 @@ class ProcessInputsGrid(CustomGrid):
                 data=item.get('data', []),
                 format=item.get('mime_type'),
                 source=item.get('reference'))
+
+    def buttongroup_td(self, col_num, i, item):
+        from phoenix.utils import ActionButton
+        buttons = []
+        if item.get('reference') is not None:
+            buttons.append( ActionButton('view', title=u'Download', icon="fa fa-download",
+                                         href=item.get('reference', "#"), new_window=True))
+            if self.request.wms_activated and 'netcdf' in item.get('mime_type'):
+                if 'cache' in item.get('reference'):
+                    dataset = "cache" + item.get('reference').split('cache')[1]
+                    buttons.append( ActionButton("mapit", title=u'Show on Map', icon="fa fa-map-marker",
+                                    href=self.request.route_path('map', _query=[('dataset', dataset)])))
+        return self.render_buttongroup_td(buttons=buttons)
     
 
 
