@@ -17,7 +17,7 @@ def collect_inputs(status_location):
 def process_inputs(request, job_id):
     job = request.db.jobs.find_one({'identifier': job_id})
     inputs = {}
-    if job is not None and job.get('is_succeded', False):
+    if job and job.get('status') == 'ProcessSucceeded':
         if job.get('is_workflow', False):
             inputs = collect_inputs(job['worker_status_location'])
         else:
