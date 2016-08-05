@@ -31,10 +31,17 @@ body {
     color: orange
 }
 
+/* Info Box
+----------------------- */
+.infobox {
+    .background: white
+}
+
 /* Birdhouse Box
 ----------------------- */
 .birdhouse {
-    background: gray
+    background: slategray;
+    color: black;
 }
 .birdhouse a {
     color: orange
