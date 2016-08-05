@@ -154,6 +154,8 @@ class ProcessOutputsGrid(CustomGrid):
                     dataset = "outputs" + item.get('reference').split('wpsoutputs')[1]
                     buttons.append( ActionButton("mapit", title=u'Show on Map', icon="fa fa-map-marker",
                                     href=self.request.route_path('map', _query=[('dataset', dataset)])))
+            buttons.append(ActionButton('add_to_cart', title=u'Add to Cart', icon="fa fa-cart-plus",
+                                        href=item.get('reference', "#"), new_window=True))
         return self.render_buttongroup_td(buttons=buttons)
         
 
