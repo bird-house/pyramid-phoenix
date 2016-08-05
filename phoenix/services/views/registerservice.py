@@ -13,6 +13,7 @@ import colander
 import logging
 logger = logging.getLogger(__name__)
 
+
 class Schema(colander.MappingSchema):
     service_types = [
         (WPS_TYPE, "Web Processing Service"),
@@ -20,24 +21,25 @@ class Schema(colander.MappingSchema):
     
     url = colander.SchemaNode(
         colander.String(),
-        title = 'Service URL',
-        description = 'Add URL of service (WPS, Thredds, ...). Example: http://localhost:8091/wps, http://localhost/thredds/catalog.xml',
-        default = 'http://localhost:8091/wps',
-        validator = colander.url,
-        widget = deform.widget.TextInputWidget())
+        title='Service URL',
+        description='Add URL of service (WPS, Thredds, ...). Example: http://localhost:8091/wps, http://localhost/thredds/catalog.xml',
+        default='http://localhost:8091/wps',
+        validator=colander.url,
+        widget=deform.widget.TextInputWidget())
     service_name = colander.SchemaNode(
         colander.String(),
-        missing = '',
-        description = "An optional service name.")
+        missing='',
+        description="An optional service name.")
     service_type = colander.SchemaNode(
         colander.String(),
-        default = WPS_TYPE,
-        widget = deform.widget.RadioChoiceWidget(values=service_types))
+        default=WPS_TYPE,
+        widget=deform.widget.RadioChoiceWidget(values=service_types))
     public = colander.SchemaNode(
         colander.Bool(),
-        title = "Public access?",
-        description = "Check this option if your service has no access restrictions.",
-        default = False)
+        title="Public access?",
+        description="Check this option if your service has no access restrictions.",
+        default=False)
+
 
 class RegisterService(SettingsView):
     def __init__(self, request):

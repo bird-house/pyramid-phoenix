@@ -1,3 +1,4 @@
+from pyramid.httpexceptions import HTTPFound
 from pyramid_layout.panel import panel_config
 
 from deform import Form, ValidationFailure, Button
@@ -6,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class ProfilePanel(object):
+class BasePanel(object):
     def __init__(self, context, request):
         self.context = context
         self.request = request
@@ -20,7 +21,7 @@ class ProfilePanel(object):
         return appstruct
 
 
-class AccountPanel(ProfilePanel):
+class ProfilePanel(BasePanel):
     def process_form(self, form):
         try:
             controls = self.request.POST.items()
@@ -32,9 +33,9 @@ class AccountPanel(ProfilePanel):
         except ValidationFailure, e:
             logger.exception('validation of form failed.')
             return dict(form=e.render())
-        except Exception, e:
+        except Exception:
             logger.exception('update user failed.')
-            self.request.session.flash('Update of your account failed. %s' % (e), queue='danger')
+            self.request.session.flash('Update of your account failed.', queue='danger')
         else:
             self.request.session.flash("Your account was updated.", queue='success')
 
@@ -48,7 +49,7 @@ class AccountPanel(ProfilePanel):
         return dict(title="Account settings", form=form.render(self.appstruct()))
 
 
-class GroupPanel(ProfilePanel):
+class GroupPanel(BasePanel):
     def process_form(self, form):
         try:
             controls = self.request.POST.items()
@@ -78,7 +79,7 @@ class GroupPanel(ProfilePanel):
         return dict(title="Group permission", form=form.render(self.appstruct()))
 
 
-class TwitcherPanel(ProfilePanel):
+class TwitcherPanel(BasePanel):
     @panel_config(name='profile_twitcher', renderer='templates/people/panels/profile_twitcher.pt')
     def panel(self):
         from .schema import TwitcherSchema
@@ -86,7 +87,7 @@ class TwitcherPanel(ProfilePanel):
         return dict(title="Twitcher access token", form=form.render(self.appstruct()))
 
 
-class ESGFPanel(ProfilePanel):
+class ESGFPanel(BasePanel):
     @panel_config(name='profile_esgf', renderer='templates/people/panels/profile_esgf.pt')
     def panel(self):
         from .schema import ESGFCredentialsSchema
