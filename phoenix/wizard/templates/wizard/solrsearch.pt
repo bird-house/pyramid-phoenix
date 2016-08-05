@@ -1,6 +1,6 @@
 <metal:block use-macro="main_template">
 
-  <div metal:fill-slot="javascript">   
+  <div metal:fill-slot="javascript">
     <script type="text/javascript" charset="utf-8">
       function selectSource() {
       default_location = "${request.route_path('wizard_solr', _query=[('q', query), ('page', page)])}";
@@ -16,6 +16,7 @@
         
   <div metal:fill-slot="content">
 
+    <div class="container">
     <div class="panel panel-default">
       <div class="panel-heading">
         <h3 class="panel-title">${title}</h3>
@@ -132,6 +133,7 @@
 
     <tal:form replace="structure form">The form will render here</tal:form>
      
+  </div>
   </div>
    
 </metal:block>
