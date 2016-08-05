@@ -89,7 +89,7 @@
               <a href="https://github.com/bird-house/bird-feeder" target="_blank">Bird Feeder - Publish Thredds catalogs metadata to Solr search index</a><br/>
             </p>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <h4>Related Projects</h4>
             <p>
               <a href="http://geopython.github.io/" target="_blank">GeoPython</a><br/>
