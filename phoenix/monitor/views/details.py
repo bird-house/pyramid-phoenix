@@ -1,5 +1,4 @@
-from pyramid.view import view_config, view_defaults
-from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
+from pyramid.view import view_config
 from pyramid.security import authenticated_userid
 
 from phoenix.monitor.views import Monitor
@@ -7,6 +6,7 @@ from phoenix.monitor.panels.outputs import process_outputs
 
 import logging
 logger = logging.getLogger(__name__)
+
 
 class Details(Monitor):
     def __init__(self, request):
@@ -29,13 +29,13 @@ class Details(Monitor):
             output = process_outputs(self.request, job_id).get(outputid)
 
             result = dict(
-                identifier = uuid.uuid4().get_urn(),
-                title = output.title,
-                abstract = output.abstract,
-                creator = authenticated_userid(self.request),
-                source = output.reference,
-                format = output.mimeType,
-                keywords = 'one,two,three')
+                identifier=uuid.uuid4().get_urn(),
+                title=output.title,
+                abstract=output.abstract,
+                creator=authenticated_userid(self.request),
+                source=output.reference,
+                format=output.mimeType,
+                keywords='one,two,three')
         return result
 
     @view_config(renderer='json', name='upload.output')
@@ -49,11 +49,11 @@ class Details(Monitor):
             user = self.get_user()
 
             result = dict(
-                username = user.get('swift_username'),
-                container = 'WPS Outputs',
-                prefix = job_id,
-                source = output.reference,
-                format = output.mimeType)
+                username=user.get('swift_username'),
+                container='WPS Outputs',
+                prefix=job_id,
+                source=output.reference,
+                format=output.mimeType)
         return result
 
     @view_config(route_name='monitor_details', renderer='../templates/monitor/details.pt')
@@ -74,7 +74,3 @@ class Details(Monitor):
             lm.layout.add_heading('monitor_log')
 
         return dict(active=tab, job_id=job_id)
-
-        
-
-

@@ -5,6 +5,7 @@ from phoenix.utils import time_ago_in_words
 import logging
 logger = logging.getLogger(__name__)
 
+
 def job_details(request, job_id):
     job = request.db.jobs.find_one({'identifier': job_id})
     details = {}
@@ -22,10 +23,12 @@ def job_details(request, job_id):
         details['tags'] = job.get('tags')
     return details
 
+
 @panel_config(name='monitor_details', renderer='../templates/panels/monitor_details.pt')
 def details(context, request):
     job_id = request.session.get('job_id')
     return dict(job=job_details(request, job_id=job_id))
+
 
 @panel_config(name='monitor_log', renderer='../templates/panels/monitor_log.pt')
 def log(context, request):
