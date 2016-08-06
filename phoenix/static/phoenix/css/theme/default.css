@@ -40,8 +40,8 @@ body {
 /* Birdhouse Box
 ----------------------- */
 .birdhouse {
-    background: slategray;
-    color: black;
+    background: teal;
+    color: white;
 }
 .birdhouse a {
     color: orange
