@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class AccountSchema(colander.MappingSchema):
+class ProfileSchema(colander.MappingSchema):
     name = colander.SchemaNode(
         colander.String(),
         title="Your Name",

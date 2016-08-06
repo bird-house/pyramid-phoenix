@@ -6,7 +6,7 @@ from deform import Form, ValidationFailure, Button
 
 from phoenix.views import MyView
 from phoenix.utils import ActionButton
-from ..schema import AccountSchema, TwitcherSchema, ESGFCredentialsSchema, GroupSchema
+from ..schema import ProfileSchema, TwitcherSchema, ESGFCredentialsSchema, GroupSchema
 
 import logging
 logger = logging.getLogger(__name__)
@@ -43,7 +43,7 @@ class Profile(MyView):
         elif self.tab == 'group':
             schema = GroupSchema()
         else:
-            schema = AccountSchema()
+            schema = ProfileSchema()
         return schema
 
     def generate_form(self):
