@@ -26,24 +26,26 @@
                 </div>
                 <div class="col-md-9">
                     <!--Body content-->
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <span class="panel-title">
-                                ${title}
-                                <div tal:condition="button" class="pull-right">
-                                     <a class="${button.css_class}"
-                                        rel="tooltip"
-                                        data-toggle="tooltip"
-                                        title="${button.title}"
-                                        href="${button.href}">
-                                        ${button.title}
-                                     </a>
-                                </div>
-                            </span>
+                    <div class="row">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <span class="panel-title">
+                                    ${title}
+                                    <div tal:condition="button" class="pull-right">
+                                         <a class="${button.css_class}"
+                                            rel="tooltip"
+                                            data-toggle="tooltip"
+                                            title="${button.title}"
+                                            href="${button.href}">
+                                            ${button.title}
+                                        </a>
+                                    </div>
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="panel-body">
-                        <tal:form replace="structure form">The form will render here</tal:form>
+                        <div class="panel-body">
+                            <tal:form replace="structure form">The form will render here</tal:form>
+                        </div>
                     </div>
                 </div>
 
