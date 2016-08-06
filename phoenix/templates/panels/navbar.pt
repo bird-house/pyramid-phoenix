@@ -49,7 +49,7 @@
             <span class="fa fa-power-off text-info"></span> ${request.user.get('name', 'Unknown')} <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li>
-              <a href="${request.route_path('profile', userid=request.unauthenticated_userid, tab='account')}"><i class="fa fa-user fa-lg p-r-xs"></i> My Profile</a>
+              <a href="${request.route_path('profile', userid=request.unauthenticated_userid, tab='profile')}"><i class="fa fa-user fa-lg p-r-xs"></i> My Profile</a>
             </li>
             <li role="separator" class="divider"></li>
             <li>
