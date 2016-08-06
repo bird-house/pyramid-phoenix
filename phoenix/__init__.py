@@ -1,21 +1,19 @@
-import os
-
 import logging
 logger = logging.getLogger(__name__)
 
 __version__ = (0, 6, 0, 'final', 1)
 
+
 def get_version():
     import phoenix.version
     return phoenix.version.get_version(__version__)
+
 
 def main(global_config, **settings):
     """
     This function returns a Pyramid WSGI application.
     """
     from pyramid.config import Configurator
-    from pyramid.events import NewRequest
-    from pyramid.settings import asbool
 
     config = Configurator(settings=settings)
     
@@ -73,9 +71,6 @@ def main(global_config, **settings):
 
     # job monitor
     config.include('phoenix.monitor')
-
-    # wms
-    config.include('phoenix.wms')
 
     # user profiles
     config.include('phoenix.people')

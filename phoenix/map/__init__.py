@@ -1,6 +1,6 @@
 import os
-import re
 from pyramid.view import view_config, view_defaults
+from pyramid.settings import asbool
 from twitcher.registry import service_registry_factory
 from mako.template import Template
 import requests
@@ -64,18 +64,24 @@ class Map(object):
             )
         return dict(map_script=text)
 
+
 def includeme(config):
     settings = config.registry.settings
 
-    logger.info('Adding map ...')
+    logger.debug('Adding map ...')
+
+    # init wms if available
+    if asbool(settings.get('phoenix.wms', True)):
+        logger.debug('Adding WMS ...')
+        # configure ncwms
+        service_registry = service_registry_factory(config.registry)
+        service_registry.register_service(url=settings.get('wms.url'), name='wms', service_type='wms', public=True)
+
+    def wms_activated(request):
+        settings = request.registry.settings
+        return asbool(settings.get('phoenix.wms', True))
+    config.add_request_method(wms_activated, reify=True)
 
     # views
     config.add_route('map', '/map')
 
-    # configure ncwms
-    service_registry = service_registry_factory(config.registry)
-    service_registry.register_service(url=settings.get('wms.url'), name='wms', service_type='wms', public=True)
-
-
-
-    
