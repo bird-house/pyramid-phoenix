@@ -6,6 +6,7 @@ from deform import Form, ValidationFailure, Button
 
 from phoenix.views import MyView
 from phoenix.utils import ActionButton
+from ..schema import AccountSchema, TwitcherSchema, ESGFCredentialsSchema, GroupSchema
 
 import logging
 logger = logging.getLogger(__name__)
@@ -34,25 +35,30 @@ class Profile(MyView):
     def appstruct(self):
         return self.collection.find_one({'identifier': self.userid})
 
-    def generate_form(self):
+    def schema(self):
         if self.tab == 'twitcher':
-            from ..schema import TwitcherSchema
-            form = Form(schema=TwitcherSchema(), formid='deform')
+            schema = TwitcherSchema()
         elif self.tab == 'esgf':
-            from ..schema import ESGFCredentialsSchema
-            form = Form(schema=ESGFCredentialsSchema(), formid='deform')
+            schema = ESGFCredentialsSchema()
         elif self.tab == 'group':
-            from ..schema import GroupSchema
+            schema = GroupSchema()
+        else:
+            schema = AccountSchema()
+        return schema
+
+    def generate_form(self):
+        if self.tab == 'group':
             btn = Button(name='update_group', title='Update Group Permission',
                          css_class="btn btn-success btn-lg btn-block",
                          disabled=not self.request.has_permission('admin'))
-            form = Form(schema=GroupSchema(), buttons=(btn,),
+            form = Form(schema=self.schema(), buttons=(btn,),
                         readonly=not self.request.has_permission('admin'),
                         formid='deform')
-        else:
-            from ..schema import AccountSchema
+        elif self.tab == 'profile':
             btn = Button(name='update', title='Update Profile', css_class="btn btn-success btn-lg btn-block")
-            form = Form(schema=AccountSchema(), buttons=(btn,), formid='deform')
+            form = Form(schema=self.schema(), buttons=(btn,), formid='deform')
+        else:
+            form = Form(schema=self.schema(), formid='deform')
         return form
 
     def generate_button(self):
