@@ -46,7 +46,8 @@ class Profile(MyView):
             btn = Button(name='update_group', title='Update Group Permission',
                          css_class="btn btn-success btn-lg btn-block",
                          disabled=not self.request.has_permission('admin'))
-            form = Form(schema=GroupSchema(readonly=not self.request.has_permission('admin')), buttons=(btn,),
+            form = Form(schema=GroupSchema(), buttons=(btn,),
+                        readonly=not self.request.has_permission('admin'),
                         formid='deform')
         else:
             from ..schema import AccountSchema
