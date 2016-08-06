@@ -32,13 +32,12 @@ class Map(object):
         return WebMapService(caps_url, xml=resp.content)
 
     def get_layers(self):
-        if len(self.wms.contents) == 1:
-            return list(self.wms.contents)[0]
+        layers = list()
         for layer_id in list(self.wms.contents):
             if layer_id.endswith('/lat') or layer_id.endswith('/lon'):
                 continue
-            return layer_id
-        return None
+            layers.append(layer_id)
+        return layers
 
     def get_available_times(self, layer_id):
         layer = self.wms[layer_id]
@@ -51,7 +50,7 @@ class Map(object):
         layers = None
         times = None
         if self.dataset:
-            layers = self.get_layers()
+            layers = self.get_layers()[0]
             timepositions = self.get_available_times(layers)
             if timepositions:
                 times = ','.join(timepositions)

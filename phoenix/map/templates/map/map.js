@@ -17,18 +17,18 @@ var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 osmLayer.addTo(map);
 
 % if dataset:
-var testWMS = "/ows/proxy/wms?DATASET=${dataset}"
-var ncLayer = L.tileLayer.wms(testWMS, {
+var dsWMS = "/ows/proxy/wms?DATASET=${dataset}"
+var dsLayer = L.tileLayer.wms(dsWMS, {
   layers: '${layers}',
   format: 'image/png',
   transparent: true,
   styles: '${styles}',
   attribution: '<a href="http://bird-house.github.io/">Birdhouse</a>'
 });
-var ncTimeLayer = L.timeDimension.layer.wms(ncLayer, {
+var dsTimeLayer = L.timeDimension.layer.wms(dsLayer, {
   updateTimeDimension: false,
 });
-ncTimeLayer.addTo(map);
+dsTimeLayer.addTo(map);
 % endif
 
 var baseMaps = {
@@ -36,23 +36,23 @@ var baseMaps = {
 };
 
 var overlayMaps = {
-  "${layers}": ncTimeLayer
+  "${layers}": dsTimeLayer
 };
 
 L.control.layers(baseMaps, overlayMaps).addTo(map);
 
 % if dataset:
-var ncLegend = L.control({
+var dsLegend = L.control({
     position: 'topright'
 });
-ncLegend.onAdd = function(map) {
-    var src = testWMS + "&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYERS=${layers}&STYLES=${styles}&PALETTE=default&HEIGHT=300";
+dsLegend.onAdd = function(map) {
+    var src = dsWMS + "&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYERS=${layers}&STYLES=${styles}&PALETTE=default&HEIGHT=300";
     var div = L.DomUtil.create('div', 'info legend');
     div.innerHTML +=
         '<img src="' + src + '" alt="legend">';
     return div;
 };
-ncLegend.addTo(map);
+dsLegend.addTo(map);
 % endif
 
 L.control.coordinates({
