@@ -15,45 +15,48 @@
     <section class="infobox">
       <div class="container">
         <div class="row">
+          <div class="col-md-12 text-center">
+            <h2><b>Explore the functionality of Phoenix</b></h2>
+            <!-- h3>Making it easy to explore Web Processing Services.</h3 -->
+            <h3></h3>
+          </div>
+        </div>
+        <div class="row">
           <div class="col-md-3 text-center">
-            <span class="fa fa-cogs fa-5x" aria-hidden="true"></span>
+            <a class="btn btn-success" href="${request.route_url('processes')}" role="button">
+              <span class="fa fa-cogs fa-3x" aria-hidden="true"></span>
+            </a>
             <h4>
               <b>Run your processes.</b>
             </h4>
             <h5>Choose a process from a Web Processing Service and start it.</h5>
-            <p>
-              <a class="btn btn-default" href="${request.route_url('processes')}" role="button">Explore processes &raquo;</a>
-            </p>
           </div>
           <div class="col-md-3 text-center">
-            <span class="fa fa-magic fa-5x" aria-hidden="true"></span>
+            <a class="btn btn-success" href="${request.route_url('wizard')}" role="button">
+              <span class="fa fa-magic fa-3x" aria-hidden="true"></span>
+            </a>
             <h4>
               <b>Use the Wizard to feed your processes with data.</b>
             </h4>
-            <h5>Feed your processes with data from ESGF and Thredds Data Servers.</h5>
-            <p>
-              <a class="btn btn-default" href="${request.route_url('wizard')}" role="button">Explore wizard &raquo;</a>
-            </p>
+            <h5>Feed your processes with data from Earth System Grid Federation and Thredds Data Servers.</h5>
           </div>
           <div class="col-md-3 text-center">
-            <span class="fa fa-tasks fa-5x" aria-hidden="true"></span>
+            <a class="btn btn-success" href="${request.route_url('monitor')}" role="button">
+              <span class="fa fa-tasks fa-3x" aria-hidden="true"></span>
+            </a>
             <h4>
               <b>Monitor your jobs.</b>
             </h4>
             <h5>Monitor the status of your running jobs/processes.</h5>
-            <p>
-              <a class="btn btn-default" href="${request.route_url('monitor')}" role="button">Explore monitor &raquo;</a>
-            </p>
           </div>
           <div class="col-md-3 text-center">
-            <span class="fa fa-map-marker fa-5x" aria-hidden="true"></span>
+            <a class="btn btn-success" href="${request.route_url('map')}" role="button">
+              <span class="fa fa-map-marker fa-3x" aria-hidden="true"></span>
+            </a>
             <h4>
               <b>Show your results on a map.</b>
             </h4>
             <h5>Use the map to visualize your processing results and input data.</h5>
-            <p>
-              <a class="btn btn-default" href="${request.route_url('map')}" role="button">Explore map &raquo;</a>
-            </p>
           </div>
         </div>
       </div>
