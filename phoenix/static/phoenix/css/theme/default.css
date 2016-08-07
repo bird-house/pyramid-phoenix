@@ -18,6 +18,11 @@ body {
   margin-right: 15px;
   width: 120px;
 }*/
+/* Breadcrumbs
+----------------------- */
+.breadcrumbs {
+    background: whitesmoke;
+}
 /* Home
 ----------------------- */
 .jumbotron {
