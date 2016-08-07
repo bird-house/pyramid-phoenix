@@ -207,9 +207,9 @@ class JobsGrid(CustomGrid):
     def buttongroup_td(self, col_num, i, item):
         from phoenix.utils import ActionButton
         buttons = []
-        buttons.append( ActionButton('results', title=u'Job Details', css_class=u'btn btn-success btn-xs', icon="fa fa-info-circle",
+        buttons.append( ActionButton('results', title=u'Details', css_class=u'btn btn-default btn-info',
                                      href=self.request.route_path('monitor_details', tab='log', job_id=item.get('identifier'))))
-        buttons.append( ActionButton('restart_job', title=u'Edit Job', css_class=u'btn btn-primary btn-xs', icon="fa fa-pencil",
+        buttons.append( ActionButton('restart_job', title=u'Edit', css_class=u'btn btn-default btn-success',
                                      href="/restart_job/%s" % item.get('identifier'), disabled=item['status']!='ProcessSucceeded'))
         return self.render_buttongroup_td(buttons=buttons)
 
