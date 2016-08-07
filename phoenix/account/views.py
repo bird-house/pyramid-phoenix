@@ -129,8 +129,9 @@ class Account(MyView):
             schema = OAuthSchema()
         else:
             schema = LdapSchema()
-        login_button = Button(name='submit', title='Log in')
-        form = Form(schema=schema, buttons=(login_button,), formid='deform')
+        btn = Button(name='submit', title='Log in',
+                     css_class="btn btn-success btn-lg btn-block")
+        form = Form(schema=schema, buttons=(btn,), formid='deform')
         return form
 
     def process_form(self, form, protocol):

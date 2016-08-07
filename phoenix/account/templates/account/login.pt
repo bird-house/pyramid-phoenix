@@ -5,6 +5,8 @@
  
   <div metal:fill-slot="content">
     <div class="container">
+      <div class="row">
+            <div class="col-md-6 col-md-offset-3 text-center">
       <ul class="nav nav-pills">
         <li tal:condition="'phoenix' in auth_protocols" role="presentation" class="${'active' if active=='phoenix' else ''}">
           <a href="${request.route_path('account_login', protocol='phoenix')}">Phoenix</a>
@@ -25,9 +27,13 @@
 
       <div class="panel panel-default">
         <div class="panel-body">
+
           <tal:form replace="structure form">The form will render here</tal:form>
+
         </div>
       </div>
+                </div>
+          </div>
 
     </div>
   </div>
