@@ -1,5 +1,4 @@
 from pyramid_layout.panel import panel_config
-from pyramid.httpexceptions import HTTPFound
 
 from phoenix.grid import CustomGrid
 
