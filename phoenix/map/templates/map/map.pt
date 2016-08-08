@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="${request.static_path('phoenix:static/leaflet/leaflet.css')}" />
     <link rel="stylesheet" href="${request.static_path('phoenix:static/leaflet-plugins/timedimension/leaflet.timedimension.control.min.css')}" />
     <link rel="stylesheet" href="${request.static_path('phoenix:static/leaflet-plugins/coordinates/Leaflet.Coordinates-0.1.5.css')}" />
+    <link rel="stylesheet" href="${request.static_path('phoenix:static/leaflet-plugins/fullscreen/Control.FullScreen.min.css')}" />
   </div>
 
   <div metal:fill-slot="javascript">
@@ -11,10 +12,16 @@
 
   <div metal:fill-slot="content">
     <div id="map" style="height: 500px;"></div>
-    <script src="${request.static_path('phoenix:static/leaflet/leaflet.js')}" type="text/javascript"></script>
-    <script src="${request.static_path('phoenix:static/leaflet/iso8601.min.js')}" type="text/javascript"></script>
-    <script src="${request.static_path('phoenix:static/leaflet-plugins/timedimension/leaflet.timedimension.min.js')}" type="text/javascript"></script>
-    <script src="${request.static_path('phoenix:static/leaflet-plugins/coordinates/Leaflet.Coordinates-0.1.5.min.js')}" type="text/javascript"></script>
+    <script src="${request.static_path('phoenix:static/leaflet/leaflet.js')}"
+            type="text/javascript"></script>
+    <script src="${request.static_path('phoenix:static/leaflet/iso8601.min.js')}"
+            type="text/javascript"></script>
+    <script src="${request.static_path('phoenix:static/leaflet-plugins/timedimension/leaflet.timedimension.min.js')}"
+            type="text/javascript"></script>
+    <script src="${request.static_path('phoenix:static/leaflet-plugins/coordinates/Leaflet.Coordinates-0.1.5.min.js')}"
+            type="text/javascript"></script>
+    <script src="${request.static_path('phoenix:static/leaflet-plugins/fullscreen/Control.FullScreen.min.js')}"
+            type="text/javascript"></script>
     <script tal:content="structure map_script"></script>
   </div>
 
