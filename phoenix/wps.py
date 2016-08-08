@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 def appstruct_to_inputs(request, appstruct):
     """
-    Transfroms appstruct to wps inputs.
+    Transforms appstruct to wps inputs.
     """
     logger.debug("appstruct=%s", appstruct)
     inputs = []
@@ -32,16 +32,16 @@ def appstruct_to_inputs(request, appstruct):
                 # prefer upload if available
                 if value.get('upload', colander.null) is not colander.null:
                     value = value['upload']
-                    #logger.debug('uploaded file %s', value)
+                    # logger.debug('uploaded file %s', value)
                     folder = authenticated_userid(request)
                     if not folder:
                         folder = 'guest'
                     logger.debug('folder %s', folder)
                     relpath = os.path.join(folder, value['filename'])
-                    #value = 'file://' + request.storage.path(relpath)
-                    #value = request.route_url('download', filename=relpath)
+                    # value = 'file://' + request.storage.path(relpath)
+                    # value = request.route_url('download', filename=relpath)
                     value = request.storage.url(relpath)
-                    #logger.debug('uploaded file as reference = %s', value)
+                    # logger.debug('uploaded file as reference = %s', value)
                 # otherwise use url
                 else:
                     value = value['url']
@@ -51,6 +51,7 @@ def appstruct_to_inputs(request, appstruct):
 
 # wps input schema
 # ----------------
+
 
 class WPSSchema(colander.MappingSchema):
     """
@@ -117,17 +118,17 @@ class WPSSchema(colander.MappingSchema):
 
             if data_input.dataType == None:
                 node = self.boundingbox(data_input) 
-            #elif 'www.w3.org' in data_input.dataType:
+            # elif 'www.w3.org' in data_input.dataType:
             #    node = self.literal_data(data_input)
             elif 'ComplexData' in data_input.dataType:
                 if not self.hide_complex:
                     node = self.complex_data(data_input)
             elif 'BoundingBoxData' in data_input.dataType:
                 node = self.bbox_data(data_input)
-            #elif 'LiteralData' in data_input.dataType:# TODO: workaround for geoserver wps
+            # elif 'LiteralData' in data_input.dataType:# TODO: workaround for geoserver wps
             #    node = self.literal_data(data_input)
             else:
-                #logger.warning('unknown data type %s', data_input.dataType)
+                # logger.warning('unknown data type %s', data_input.dataType)
                 node = self.literal_data(data_input)
             if node is None:
                 continue
@@ -170,7 +171,7 @@ class WPSSchema(colander.MappingSchema):
         return node
 
     def colander_literal_type(self, data_input):
-        #logger.debug('data input type = %s', data_input.dataType)
+        # logger.debug('data input type = %s', data_input.dataType)
         if 'boolean' in data_input.dataType:
             return colander.Boolean()
         elif 'integer' in data_input.dataType:
@@ -206,7 +207,7 @@ class WPSSchema(colander.MappingSchema):
 
     def colander_literal_widget(self, node, data_input):
         if len(data_input.allowedValues) > 0 and not 'AnyValue' in data_input.allowedValues:
-            #logger.debug('allowed values %s', data_input.allowedValues)
+            # logger.debug('allowed values %s', data_input.allowedValues)
             choices = []
             for value in data_input.allowedValues:
                 choices.append([value, value])
@@ -223,10 +224,10 @@ class WPSSchema(colander.MappingSchema):
     def bbox_data(self, data_input):
         node = colander.SchemaNode(
             colander.String(),
-            name = data_input.identifier,
-            title = data_input.title,
-            validator = BBoxValidator(),
-            widget = BBoxWidget()
+            name=data_input.identifier,
+            title=data_input.title,
+            validator=BBoxValidator(),
+            widget=BBoxWidget()
             )
 
         # sometimes abstract is not set
@@ -257,7 +258,7 @@ class WPSSchema(colander.MappingSchema):
             node = colander.SchemaNode(
                 colander.Sequence(), 
                 node,
-                name = data_input.identifier,
+                name=data_input.identifier,
                 validator=colander.Length(max=data_input.maxOccurs))
 
         # title
@@ -288,18 +289,18 @@ class WPSSchema(colander.MappingSchema):
     def _url_node(self, data_input):
         node = colander.SchemaNode(
             colander.String(),
-            name = "url",
-            title = "URL (alternative to upload)",
-            description = "... or enter a URL pointing to your resource.",
-            widget = deform.widget.TextInputWidget(),
-            missing = colander.null,
-            validator = colander.url)
+            name="url",
+            title="URL (alternative to upload)",
+            description="... or enter a URL pointing to your resource.",
+            widget=deform.widget.TextInputWidget(),
+            missing=colander.null,
+            validator=colander.url)
         
         # check mime-type
         mime_types = []
         if len(data_input.supportedValues) > 0: 
             mime_types = [str(value.mimeType) for value in data_input.supportedValues]
-        #logger.debug("mime-types: %s", mime_types)
+        # logger.debug("mime-types: %s", mime_types)
         # set current proxy certificate
         if 'application/x-pkcs7-mime' in mime_types and self.user is not None:
             # TODO: check if certificate is still valid
@@ -360,5 +361,4 @@ class WPSSchema(colander.MappingSchema):
         cloned.__dict__.update(self.__dict__)
         cloned.children = [node.clone() for node in self.children]
         return cloned
-        
-    
+
