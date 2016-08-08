@@ -2,11 +2,14 @@ var map = L.map('map', {
   zoom: 8,
   fullscreenControl: true,
 % if dataset:
-  timeDimension: true,
-  timeDimensionOptions:{
-        times: "${times}",
-  },
   timeDimensionControl: true,
+  timeDimensionControlOptions: {
+     position: 'bottomleft',
+     playerOptions: {
+        transitionTime: 1000,
+     }
+  },
+  timeDimension: true,
 % endif    
   center: [20.0, 0.0],
 });
@@ -25,7 +28,7 @@ var dsLayer = L.tileLayer.wms(dsWMS, {
   styles: '${styles}',
   attribution: '<a href="http://bird-house.github.io/">Birdhouse</a>'
 });
-var dsTimeLayer = L.timeDimension.layer.wms(dsLayer, {
+var dsTimeLayer = L.timeDimension.layer.wms.timeseries(dsLayer, {
   updateTimeDimension: false,
 });
 dsTimeLayer.addTo(map);
