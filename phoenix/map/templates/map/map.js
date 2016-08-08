@@ -4,6 +4,10 @@ var map = L.map('map', {
 % if dataset:
   timeDimension: true,
   timeDimensionOptions:{
+        position: 'bottomleft',
+        playerOptions: {
+            transitionTime: 1000,
+        },
         times: "${times}",
   },
   timeDimensionControl: true,
@@ -11,10 +15,23 @@ var map = L.map('map', {
   center: [20.0, 0.0],
 });
 
+L.control.coordinates({
+    position: "bottomright",
+    decimals: 3,
+    labelTemplateLat: "Latitude: {y}",
+    labelTemplateLng: "Longitude: {x}",
+    useDMS: true,
+    enableUserInput: false
+}).addTo(map);
+
 var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'    
 });
 osmLayer.addTo(map);
+
+var baseMaps = {
+  "OpenStreetMap": osmLayer,
+};
 
 % if dataset:
 var dsWMS = "/ows/proxy/wms"
@@ -30,24 +47,12 @@ var dsTimeLayer = L.timeDimension.layer.wms(dsLayer, {
   updateTimeDimension: false,
 });
 dsTimeLayer.addTo(map);
-% endif
 
-var baseMaps = {
-  "OpenStreetMap": osmLayer,
-};
-
-var overlayMaps = {
-  "${layers}": dsTimeLayer
-};
-
-L.control.layers(baseMaps, overlayMaps).addTo(map);
-
-% if dataset:
 var dsLegend = L.control({
-    position: 'topright'
+    position: 'bottomright'
 });
 dsLegend.onAdd = function(map) {
-    var src = dsWMS + "&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYERS=${layers}&STYLES=${styles}&PALETTE=default&HEIGHT=300";
+    var src = dsWMS + "?DATASET=${dataset}&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYERS=${layers}&STYLES=${styles}&PALETTE=default&HEIGHT=300";
     var div = L.DomUtil.create('div', 'info legend');
     div.innerHTML +=
         '<img src="' + src + '" alt="legend">';
@@ -56,14 +61,14 @@ dsLegend.onAdd = function(map) {
 dsLegend.addTo(map);
 % endif
 
-L.control.coordinates({
-    position: "bottomright",
-    decimals: 3,
-    labelTemplateLat: "Latitude: {y}",
-    labelTemplateLng: "Longitude: {x}",
-    useDMS: true,
-    enableUserInput: false
-}).addTo(map);
+var overlayMaps = {
+  "${layers}": dsTimeLayer
+};
+
+L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+
+
 
 
 
