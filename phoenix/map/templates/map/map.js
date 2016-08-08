@@ -52,7 +52,7 @@ var dsLegend = L.control({
     position: 'bottomright'
 });
 dsLegend.onAdd = function(map) {
-    var src = dsWMS + "?DATASET=${dataset}&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYERS=${layers}&STYLES=${styles}&PALETTE=default&HEIGHT=300";
+    var src = dsWMS + "?DATASET=${dataset}&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&LAYERS=${layers}&STYLES=${styles}&PALETTE=default&HEIGHT=300";
     var div = L.DomUtil.create('div', 'info legend');
     div.innerHTML +=
         '<img src="' + src + '" alt="legend">';
