@@ -211,7 +211,7 @@ class WPSSchema(colander.MappingSchema):
             choices = []
             for value in data_input.allowedValues:
                 choices.append([value, value])
-            node.widget = deform.widget.SelectWidget(values=choices)
+            node.widget = deform.widget.Select2Widget(values=choices)
         elif type(node.typ) == colander.DateTime:
             node.widget = deform.widget.DateInputWidget()
         elif type(node.typ) == colander.Boolean:
