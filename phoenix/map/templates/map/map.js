@@ -59,11 +59,13 @@ dsLegend.onAdd = function(map) {
     return div;
 };
 dsLegend.addTo(map);
-% endif
 
 var overlayMaps = {
   "${layers}": dsTimeLayer
 };
+% else:
+var overlayMaps = {}
+% endif
 
 L.control.layers(baseMaps, overlayMaps).addTo(map);
 
