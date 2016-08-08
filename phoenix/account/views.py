@@ -85,7 +85,7 @@ class ESGFOpenIDSchema(colander.MappingSchema):
 class LdapSchema(colander.MappingSchema):
     username = colander.SchemaNode(
         colander.String(),
-        title = "Username",
+        title="Username",
         )
     password = colander.SchemaNode(
         colander.String(),
@@ -153,8 +153,8 @@ class Account(MyView):
                 return HTTPFound(location=self.request.route_path('account_auth', provider_name=appstruct.get('provider')))
             elif protocol == 'esgf':
                 return HTTPFound(location=self.request.route_path('account_auth',
-                            provider_name=appstruct.get('provider'),
-                            _query=dict(username=appstruct.get('username'))))
+                                 provider_name=appstruct.get('provider'),
+                                 _query=dict(username=appstruct.get('username'))))
             elif protocol == 'openid':
                 openid = appstruct.get('openid')
                 return HTTPFound(location=self.request.route_path('account_auth', provider_name='openid', _query=dict(id=openid)))
@@ -239,10 +239,12 @@ class Account(MyView):
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
         # TODO: Add ldap to title?
+        protocal_names = dict(phoenix='Phoenix', esgf='ESGF', ldap='LDAP',
+                              oauth2='Oauth 2.0', openid='Open ID')
         return dict(active=protocol,
-                    title="Login",
+                    protocol_name=protocal_names[protocol],
                     auth_protocols=allowed_protocols,
-                    form=form.render( self.appstruct(protocol) ))
+                    form=form.render(self.appstruct(protocol)))
 
     @view_config(route_name='account_logout', permission='edit')
     def logout(self):

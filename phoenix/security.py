@@ -60,9 +60,9 @@ def auth_protocols(request):
     # TODO: refactor auth settings handling
     settings = request.db.settings.find_one()
     protocols = ['phoenix', 'esgf', 'openid', 'ldap', 'oauth2']
-    if settings is not None:
-        if settings.has_key('auth'):
-            if settings['auth'].has_key('protocol'):
+    if settings:
+        if 'auth' in settings:
+            if 'protocol' in settings['auth']:
                 protocols = settings['auth']['protocol']
     return protocols
 
