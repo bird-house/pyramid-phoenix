@@ -10,7 +10,7 @@
 
       ${panel('monitor_details')}
     
-      <ul class="nav nav-tabs">
+      <ul class="nav nav-pills">
          <li class="${'active' if active=='log' else ''}">
           <a href="${request.route_path('monitor_details', job_id=job_id, tab='log')}">Log</a>
         </li>
