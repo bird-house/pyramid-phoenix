@@ -34,14 +34,14 @@ unit_tests/testdata.json
 .pydevproject
 .settings
 
+# PyCharm
+*.idea
+
 # Kate
 *.kate-swp
 
 # Sublime Text Editor
 *.sublime*
-
-# PyCharm
-.idea
 
 # buildout
 bin
