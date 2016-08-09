@@ -8,7 +8,6 @@ var map = L.map('map', {
         playerOptions: {
             transitionTime: 1000,
         },
-        times: "${times}",
   },
   timeDimensionControl: true,
 % endif    
@@ -41,10 +40,12 @@ var dsLayer = L.tileLayer.wms(dsWMS, {
   transparent: true,
   styles: '${styles}',
   attribution: '<a href="http://bird-house.github.io/">Birdhouse</a>',
-  DATASET: '${dataset}',
 });
 var dsTimeLayer = L.timeDimension.layer.wms(dsLayer, {
-  updateTimeDimension: false,
+  updateTimeDimension: true,
+  getCapabilitiesParams: {
+    DATASET: '${dataset}',
+  },
 });
 dsTimeLayer.addTo(map);
 

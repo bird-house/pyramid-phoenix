@@ -39,27 +39,16 @@ class Map(object):
             layers.append(layer_id)
         return layers
 
-    def get_available_times(self, layer_id):
-        layer = self.wms[layer_id]
-        if layer.timepositions:
-            return [tpos.strip() for tpos in layer.timepositions]
-        return None
-        
     @view_config(route_name='map', renderer='templates/map/map.pt')
     def view(self):
         layers = None
-        times = None
         if self.dataset:
             layers = self.get_layers()[0]
-            timepositions = self.get_available_times(layers)
-            if timepositions:
-                times = ','.join(timepositions)
         
         text = map_script.render(
             dataset=self.dataset,
             layers=layers,
             styles="default-scalar/x-Rainbow",
-            times=times,
             )
         return dict(map_script=text)
 
@@ -77,7 +66,7 @@ def includeme(config):
         service_registry.register_service(url=settings.get('wms.url'), name='wms', service_type='wms', public=True)
 
     def wms_activated(request):
-        settings = request.registry.settings
+        # settings = request.registry.settings
         return asbool(settings.get('phoenix.wms', True))
     config.add_request_method(wms_activated, reify=True)
 
