@@ -32,42 +32,66 @@ var baseMaps = {
   "OpenStreetMap": osmLayer,
 };
 
-% if dataset:
+% if wms:
 var proxy = 'owsproxy';
-var dsWMS = '${url}';
-var dsLayer = L.tileLayer.wms(dsWMS, {
-  layers: '${layers}',
+var dsWMS = '${wms.url}';
+<%
+   wms_layers = [layer_id for layer_id in wms.contents if layer_id.split('/')[-1] not in ['lat', 'lon']]
+%>
+% for layer_id in wms_layers:
+var layer${loop.index} = L.tileLayer.wms(dsWMS, {
+  layers: '${layer_id}',
   format: 'image/png',
   transparent: true,
-  styles: '${styles}',
+  styles: 'default',
   attribution: '<a href="http://bird-house.github.io/">Birdhouse</a>',
 });
-var dsTimeLayer = L.timeDimension.layer.wms(dsLayer, {
+var timeLayer${loop.index} = L.timeDimension.layer.wms(layer${loop.index}, {
   proxy: proxy,
   updateTimeDimension: true,
   getCapabilitiesParams: {
     DATASET: '${dataset}',
   },
 });
-dsTimeLayer.addTo(map);
+timeLayer${loop.index}.addTo(map);
 
-var dsLegend = L.control({
+var legend${loop.index} = L.control({
     position: 'bottomright'
 });
-dsLegend.onAdd = function(map) {
-    var src = dsWMS + "?DATASET=${dataset}&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&LAYERS=${layers}&STYLES=${styles}&PALETTE=default&HEIGHT=300";
+legend${loop.index}.onAdd = function(map) {
+    var src = dsWMS + "&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&LAYERS=${layer_id}&STYLES=default&PALETTE=default&HEIGHT=300";
     var div = L.DomUtil.create('div', 'info legend');
     div.innerHTML +=
         '<img src="' + src + '" alt="legend">';
     return div;
 };
-dsLegend.addTo(map);
+legend${loop.index}.onAdd(map);
+
+% endfor
+map.on('overlayadd', function(eventLayer) {
+% for layer_id in wms_layers:
+    map.removeControl(legend${loop.index});
+    if (eventLayer.name == '${wms.contents[layer_id].title}') {
+        legend${loop.index}.addTo(this);
+    }
+% endfor
+});
+
+map.on('overlayremove', function(eventLayer) {
+% for layer_id in wms_layers:
+    if (eventLayer.name == '${wms.contents[layer_id].title}') {
+        map.removeControl(legend${loop.index});
+    }
+% endfor
+});
 
 var overlayMaps = {
-  "${layers}": dsTimeLayer
+% for layer_id in wms_layers:
+    "${wms.contents[layer_id].title}": timeLayer${loop.index},
+% endfor
 };
 % else:
-var overlayMaps = {}
+var overlayMaps = {};
 % endif
 
 L.control.layers(baseMaps, overlayMaps).addTo(map);
