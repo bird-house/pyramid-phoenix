@@ -24,7 +24,7 @@ L.control.coordinates({
 }).addTo(map);
 
 var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'    
+  attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
 });
 osmLayer.addTo(map);
 
@@ -33,7 +33,8 @@ var baseMaps = {
 };
 
 % if dataset:
-var dsWMS = "/ows/proxy/wms"
+var proxy = 'owsproxy';
+var dsWMS = '${url}';
 var dsLayer = L.tileLayer.wms(dsWMS, {
   layers: '${layers}',
   format: 'image/png',
@@ -42,6 +43,7 @@ var dsLayer = L.tileLayer.wms(dsWMS, {
   attribution: '<a href="http://bird-house.github.io/">Birdhouse</a>',
 });
 var dsTimeLayer = L.timeDimension.layer.wms(dsLayer, {
+  proxy: proxy,
   updateTimeDimension: true,
   getCapabilitiesParams: {
     DATASET: '${dataset}',

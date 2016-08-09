@@ -46,6 +46,7 @@ class Map(object):
             layers = self.get_layers()[0]
         
         text = map_script.render(
+            url=self.request.registry.settings.get('wms.url'),
             dataset=self.dataset,
             layers=layers,
             styles="default-scalar/x-Rainbow",
