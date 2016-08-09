@@ -7,6 +7,9 @@ var map = L.map('map', {
         position: 'bottomleft',
         playerOptions: {
             transitionTime: 1000,
+            startOver: true,
+            minBufferReady: 2,
+            buffer: 5,
         },
   },
   timeDimensionControl: true,
@@ -59,7 +62,7 @@ var legend${loop.index} = L.control({
     position: 'bottomright'
 });
 legend${loop.index}.onAdd = function(map) {
-    var src = dsWMS + "&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&LAYERS=${layer_id}&STYLES=default&PALETTE=default&HEIGHT=300";
+    var src = dsWMS + "&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&LAYERS=${layer_id}&STYLES=default&PALETTE=default&COLORBARONLY=true";
     var div = L.DomUtil.create('div', 'info legend');
     div.innerHTML +=
         '<img src="' + src + '" alt="legend">';

@@ -23,9 +23,12 @@ class Map(object):
         dataset = self.request.params.get('dataset')
         if dataset:
             wms = WebMapService(self.request.wms_url + '?DATASET=' + dataset)
+            map_name = dataset.split('/')[-1]
         else:
             wms = None
-        return dict(map_script=map_script.render(wms=wms, dataset=dataset))
+            map_name = None
+        return dict(map_script=map_script.render(wms=wms, dataset=dataset),
+                    map_name=map_name)
 
 
 def includeme(config):
