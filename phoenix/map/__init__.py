@@ -21,9 +21,13 @@ class Map(object):
     @view_config(route_name='map', renderer='templates/map/map.pt')
     def view(self):
         dataset = self.request.params.get('dataset')
+        wms_url = self.request.params.get('wms_url')
         if dataset:
             wms = WebMapService(self.request.wms_url + '?DATASET=' + dataset)
             map_name = dataset.split('/')[-1]
+        elif wms_url:
+            wms = WebMapService(wms_url)
+            map_name = wms_url.split('/')[-1]
         else:
             wms = None
             map_name = None

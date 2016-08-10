@@ -1,7 +1,7 @@
 var map = L.map('map', {
   zoom: 2,
   fullscreenControl: true,
-% if dataset:
+% if wms:
   timeDimension: true,
   timeDimensionOptions:{
         position: 'bottomleft',
@@ -52,9 +52,11 @@ var layer${loop.index} = L.tileLayer.wms(dsWMS, {
 var timeLayer${loop.index} = L.timeDimension.layer.wms(layer${loop.index}, {
   proxy: proxy,
   updateTimeDimension: true,
+% if dataset:
   getCapabilitiesParams: {
     DATASET: '${dataset}',
   },
+% endif
 });
 timeLayer${loop.index}.addTo(map);
 
