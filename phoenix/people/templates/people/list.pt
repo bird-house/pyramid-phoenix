@@ -2,7 +2,7 @@
 
   <div metal:fill-slot="content">
     <div class="container">
-      <h2 class="page-header">Explore People</h2>
+      <h2 class="page-header">People</h2>
       <table class="table table-striped" tal:condition="grid | None">
         <tal:rows replace="structure grid" />
       </table>
