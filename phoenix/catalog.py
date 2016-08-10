@@ -1,6 +1,5 @@
 from mako.template import Template
 import uuid
-from urlparse import urlparse
 from os.path import join, dirname
 from collections import namedtuple
 
@@ -38,7 +37,6 @@ def includeme(config):
 
 def catalog_factory(registry):
     settings = registry.settings
-    catalog = None
 
     service_registry = service_registry_factory(registry)
 
@@ -75,11 +73,13 @@ def get_service_name(request, url, name=None):
 
 def _gen_service_title(title, url, service_name=None):
     """Generates service title form title, url and optional service_name."""
-    if service_name and len(service_name.strip()) > 0:
-        title = service_name.strip()
-    elif len(title.strip()) == 0:
-        title = url
-    return title
+    if title:
+        service_title = title.strip()
+    elif service_name:
+        service_title = service_name.strip()
+    if not title:
+        service_title = url
+    return service_title
 
 
 def _fetch_thredds_metadata(url, service_name=None):
@@ -88,16 +88,16 @@ def _fetch_thredds_metadata(url, service_name=None):
     tds = threddsclient.read_url(url)
     title = _gen_service_title(tds.name, url, service_name)
     record = dict(
-        type = 'service',
-        title = title,
-        abstract = "",
-        source = url,
-        format = THREDDS_TYPE,
-        creator = '',
-        keywords = ['thredds'],
-        rights = '',
-        #subjects = '',
-        references = [])
+        type='service',
+        title=title,
+        abstract="",
+        source=url,
+        format=THREDDS_TYPE,
+        creator='',
+        keywords=['thredds'],
+        rights='',
+        # subjects = '',
+        references=[])
     return record
 
 
@@ -106,16 +106,16 @@ def _fetch_wps_metadata(url, service_name=None):
     wps = WebProcessingService(url, verify=False, skip_caps=False)
     title = _gen_service_title(wps.identification.title, wps.url, service_name)
     record = dict(
-        type = 'service',
-        title = title,
-        abstract = getattr(wps.identification, 'abstract', ''),
-        source = wps.url,
-        format = WPS_TYPE,
-        creator = wps.provider.name,
-        keywords = getattr(wps.identification, 'keywords', []),
-        rights = getattr(wps.identification, 'accessconstraints', ''),
-        #subjects = '',
-        references = [])
+        type='service',
+        title=title,
+        abstract=getattr(wps.identification, 'abstract', ''),
+        source=wps.url,
+        format=WPS_TYPE,
+        creator=wps.provider.name,
+        keywords=getattr(wps.identification, 'keywords', []),
+        rights=getattr(wps.identification, 'accessconstraints', ''),
+        # subjects = '',
+        references=[])
     return record
 
 
@@ -133,6 +133,9 @@ class Catalog(object):
         raise NotImplementedError
 
     def get_services(self, service_type=None, maxrecords=100):
+        raise NotImplementedError
+
+    def clear_services(self):
         raise NotImplementedError
 
     
@@ -156,9 +159,9 @@ class CatalogService(Catalog):
     def harvest(self, url, service_type, service_name=None, public=False):
         if service_type == THREDDS_TYPE:
             self.insert_record(_fetch_thredds_metadata(url, service_name))
-        else: # ogc services
-            self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
+        else:  # ogc services
             self.service_registry.register_service(url=url, name=service_name, public=public)
+            self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
 
     def get_services(self, service_type=None, maxrecords=100):
         cs = PropertyIsEqualTo('dc:type', 'service')
@@ -173,7 +176,7 @@ def doc2record(document):
     """Converts ``document`` from mongodb to a ``Record`` object."""
     record = None
     if isinstance(document, dict): 
-        if document.has_key('_id'):
+        if '_id' in document:
             # _id field not allowed in record
             del document["_id"]
         record = namedtuple('Record', document.keys())(*document.values())
@@ -191,6 +194,9 @@ class MongodbCatalog(Catalog):
         return doc2record(self.collection.find_one({'identifier': identifier}))
 
     def delete_record(self, identifier):
+        record = self.get_record_by_id(identifier)
+        if hasattr(record, 'service_name'):
+            self.service_registry.unregister_service(record.service_name)
         self.collection.delete_one({'identifier': identifier})
 
     def insert_record(self, record):
@@ -202,9 +208,13 @@ class MongodbCatalog(Catalog):
             self.insert_record(_fetch_thredds_metadata(url, service_name))
         elif service_type == WPS_TYPE:
             record = _fetch_wps_metadata(url, service_name)
+            service = self.service_registry.register_service(
+                url=url,
+                name=service_name or record['title'],
+                public=public)
             record['public'] = public
+            record['service_name'] = service['name']
             self.insert_record(record)
-            self.service_registry.register_service(url=url, name=service_name, public=public)
         else:
             raise NotImplementedError
             
@@ -213,6 +223,10 @@ class MongodbCatalog(Catalog):
         if service_type:
             search_filter['format'] = service_type
         return [doc2record(doc) for doc in self.collection.find(search_filter)]
+
+    def clear_services(self):
+        self.service_registry.clear_services()
+        self.collection.drop()
 
 
 

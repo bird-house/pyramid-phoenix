@@ -1,8 +1,6 @@
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
 
-from twitcher.registry import service_registry_factory
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -20,15 +18,21 @@ class ServiceActions(object):
     def remove_service(self):
         try:
             service_id = self.request.matchdict.get('service_id')
-            service = self.request.catalog.get_record_by_id(service_id)
             self.request.catalog.delete_record(service_id)
-            # TODO: use events to unregister service
-            registry = service_registry_factory(self.request.registry)
-            # TODO: fix service name
-            registry.unregister_service(name=service.title.lower())
-            self.session.flash('Removed Service %s.' % service.title, queue="info")
-        except Exception,e:
+            self.session.flash('Removed Service.', queue="info")
+        except Exception, e:
             msg = "Could not remove service %s" % e
+            logger.exception(msg)
+            self.session.flash(msg, queue="danger")
+        return HTTPFound(location=self.request.route_path('services'))
+
+    @view_config(route_name='clear_services')
+    def clear_services(self):
+        try:
+            self.request.catalog.clear_services()
+            self.session.flash('All Service removed.', queue="info")
+        except Exception, e:
+            msg = "Could not remove services: %s" % e
             logger.exception(msg)
             self.session.flash(msg, queue="danger")
         return HTTPFound(location=self.request.route_path('services'))
@@ -41,4 +45,6 @@ def includeme(config):
     :type config: :class:`pyramid.config.Configurator`
     """
 
+    config.add_route('clear_services', '/clear_services')
     config.add_route('remove_service', '/services/{service_id}/remove')
+

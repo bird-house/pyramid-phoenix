@@ -1,7 +1,7 @@
 <metal:block use-macro="main_template">
 
   <div metal:fill-slot="content">
-    <div class="container">
+    <div class="container" tal:condition="service">
       <div class="panel panel-default">
         <div class="panel-heading">
           <span class="panel-title">
@@ -30,6 +30,7 @@
           <p><strong>Rights:</strong> ${service.rights}</p>
           <p><strong>Creator:</strong> ${service.creator}</p>
           <p tal:condition="hasattr(service, 'public')"><strong>Public Access:</strong> ${service.public}</p>
+          <p tal:condition="hasattr(service, 'service_name')"><strong>Service Name:</strong> ${service.service_name}</p>
         </div>
       </div>
 
