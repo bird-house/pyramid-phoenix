@@ -9,11 +9,12 @@ from owslib.wps import WebProcessingService
 import logging
 logger = logging.getLogger(__name__)
 
+
 def includeme(config):
     settings = config.registry.settings
 
     if asbool(settings.get('phoenix.wizard', True)):
-        logger.info('Add wizard')
+        # logger.debug('Add wizard')
 
         # views
         config.add_route('wizard', '/wizard')
@@ -40,16 +41,19 @@ def includeme(config):
         # add malleefowl wps
         def add_wps(event):
             request = event.request
-            settings = event.request.registry.settings
+            # settings = event.request.registry.settings
             if settings.get('wps') is None:
                 try:
                     service_name = 'malleefowl'
                     registry = service_registry_factory(request.registry)
                     logger.debug("register: name=%s, url=%s", service_name, settings['wps.url'])
-                    registry.register_service(name=service_name, url=settings['wps.url'])
-                    # TODO: we need to register wps when proxy service is up
-                    settings['wps'] = WebProcessingService(url=proxy_url(request, service_name), skip_caps=True, verify=False)
-                    logger.debug("init wps")
+                    try:
+                        registry.get_service_by_url(settings['wps.url'])
+                    except ValueError:
+                        # TODO: we need to register wps when proxy service is up
+                        registry.register_service(name=service_name, url=settings['wps.url'])
+                    else:
+                        settings['wps'] = WebProcessingService(url=proxy_url(request, service_name), skip_caps=True, verify=False)
                 except:
                     logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
             else:
@@ -59,6 +63,6 @@ def includeme(config):
         
     # check if wizard is activated
     def wizard_activated(request):
-        settings = request.registry.settings
+        # settings = request.registry.settings
         return asbool(settings.get('phoenix.wizard', True))
     config.add_request_method(wizard_activated, reify=True)

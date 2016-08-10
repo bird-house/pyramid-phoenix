@@ -3,11 +3,11 @@ import colander
 import deform
 
 from phoenix.catalog import WPS_TYPE
-from phoenix.catalog import get_service_name
 from phoenix.wizard.views import Wizard
 
 import logging
 logger = logging.getLogger(__name__)
+
 
 class ChooseWPSSchema(colander.MappingSchema):
     @colander.deferred
@@ -29,10 +29,11 @@ class ChooseWPSSchema(colander.MappingSchema):
     
     identifier = colander.SchemaNode(
         colander.String(),
-        title = "Web Processing Service",
-        validator = deferred_validator,
-        widget = deferred_widget
+        title="Web Processing Service",
+        validator=deferred_validator,
+        widget=deferred_widget
         )
+
 
 class ChooseWPS(Wizard):
     def __init__(self, request):
@@ -48,7 +49,7 @@ class ChooseWPS(Wizard):
         for service in self.request.catalog.get_services(service_type=WPS_TYPE):
             wps_list.append({'title': service.title,
                              'abstract': service.abstract,
-                             'service_name': get_service_name(self.request, service.source, service.title)})
+                             'service_name': service.service_name})
         return ChooseWPSSchema().bind(wps_list=wps_list)
 
     def next_success(self, appstruct):

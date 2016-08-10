@@ -7,7 +7,8 @@ from owslib.csw import CatalogueServiceWeb
 from owslib.fes import PropertyIsEqualTo, And
 from owslib.wps import WebProcessingService
 
-from twitcher.registry import service_registry_factory, service_name_of_proxy_url
+from twitcher.registry import service_registry_factory
+from twitcher.registry import service_name_of_proxy_url
 
 from pyramid.settings import asbool
 from pyramid.events import NewRequest
@@ -19,7 +20,6 @@ logger = logging.getLogger(__name__)
 
 
 def includeme(config):
-    settings = config.registry.settings
 
     # catalog service
     def add_catalog(event):
@@ -54,39 +54,18 @@ RESOURCE_TYPES = {WPS_TYPE: 'http://www.opengis.net/wps/1.0.0',
                   THREDDS_TYPE: 'http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0'}
 
 
-def get_service_name(request, url, name=None):
+def get_service_name(url):
     """Get service name from twitcher registry for given service (url)."""
     service_name = service_name_of_proxy_url(url)
     logger.debug("get_service_name = %s for url %s", service_name, url)
-    if not service_name:
-        service_registry = service_registry_factory(request.registry)
-        try:
-            service = service_registry.get_service_by_url(url)
-            logger.debug("get_service_name from registry = %s", service)
-        except ValueError:
-            service = service_registry.register_service(url=url, name=name)
-            logger.debug("get_service_name register service")
-        service_name = service.get('name')
-    logger.debug("get_service_name = %s", service_name)
     return service_name
-
-
-def _gen_service_title(title, url, service_name=None):
-    """Generates service title form title, url and optional service_name."""
-    if title:
-        service_title = title.strip()
-    elif service_name:
-        service_title = service_name.strip()
-    if not title:
-        service_title = url
-    return service_title
 
 
 def _fetch_thredds_metadata(url, service_name=None):
     """Fetch capabilities metadata from thredds catalog service and return record dict."""
     import threddsclient
     tds = threddsclient.read_url(url)
-    title = _gen_service_title(tds.name, url, service_name)
+    title = tds.name or service_name or "Unknown"
     record = dict(
         type='service',
         title=title,
@@ -101,13 +80,12 @@ def _fetch_thredds_metadata(url, service_name=None):
     return record
 
 
-def _fetch_wps_metadata(url, service_name=None):
+def _fetch_wps_metadata(url):
     """Fetch capabilities metadata from wps service and return record dict."""
     wps = WebProcessingService(url, verify=False, skip_caps=False)
-    title = _gen_service_title(wps.identification.title, wps.url, service_name)
     record = dict(
         type='service',
-        title=title,
+        title=wps.identification.title or "Unknown",
         abstract=getattr(wps.identification, 'abstract', ''),
         source=wps.url,
         format=WPS_TYPE,
@@ -131,6 +109,10 @@ class Catalog(object):
 
     def harvest(self, url, service_type, service_name=None, public=False):
         raise NotImplementedError
+
+    def get_service_by_url(self, url):
+        # TODO: separate interface from abstract class
+        return self.service_registry.get_service_by_url(url)
 
     def get_services(self, service_type=None, maxrecords=100):
         raise NotImplementedError
@@ -207,17 +189,16 @@ class MongodbCatalog(Catalog):
         if service_type == THREDDS_TYPE:
             self.insert_record(_fetch_thredds_metadata(url, service_name))
         elif service_type == WPS_TYPE:
-            record = _fetch_wps_metadata(url, service_name)
-            service = self.service_registry.register_service(
-                url=url,
-                name=service_name or record['title'],
-                public=public)
+            # register service first
+            service = self.service_registry.register_service(url=url, name=service_name, public=public)
+            # fetch metadata
+            record = _fetch_wps_metadata(service['url'])
             record['public'] = public
             record['service_name'] = service['name']
             self.insert_record(record)
         else:
             raise NotImplementedError
-            
+
     def get_services(self, service_type=None, maxrecords=100):
         search_filter = {'type': 'service'}
         if service_type:

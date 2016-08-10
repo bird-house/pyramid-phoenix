@@ -8,12 +8,12 @@ from phoenix.views import MyView
 from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
 from phoenix.utils import wps_describe_url
-from phoenix.catalog import get_service_name
 from phoenix.security import has_execute_permission
 # TODO: we need to use the twitcher api
 from twitcher.registry import proxy_url
 
 from owslib.wps import WebProcessingService
+from owslib.wps import WPSExecution
 
 import logging
 logger = logging.getLogger(__name__)
@@ -22,20 +22,22 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='view', layout='default')
 class ExecuteProcess(MyView):
     def __init__(self, request):
+        self.request = request
         self.execution = None
         if 'job_id' in request.params:
             job = request.db.jobs.find_one({'identifier': request.params['job_id']})
-            from owslib.wps import WPSExecution
             self.execution = WPSExecution()
             self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
             self.processid = self.execution.process.identifier
-            self.service_name = get_service_name(request, url=self.execution.serviceInstance)
+            service = self.request.catalog.get_service_by_url(url=self.execution.serviceInstance)
+            self.service_name = service['name']
         elif 'wps' in request.params:
             self.service_name = request.params.get('wps')
             self.processid = request.params.get('process')
         else:
             self.service_name = None
             self.processid = None
+            self.process = None
        
         if self.service_name:
             # TODO: avoid getcaps
