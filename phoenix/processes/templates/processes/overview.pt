@@ -1,43 +1,42 @@
 <metal:block use-macro="main_template">
 
-  <div metal:fill-slot="content">
-    <div class="container">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h2 class="panel-title">${title}</h2>
-        </div>
-        <div class="panel-body">
-          
-          <ul class="list-group">
-            <li class="list-group-item" tal:repeat="item items">
-              <div class="media">
-                <span class="pull-left text-muted" aria-hidden="true">
-                  <i tal:attributes="class 'fa fa-unlock text-danger' if item.public else 'fa fa-lock text-success'"></i>
-                </span>
-                <div class="media-body">
-                  <h4 class="media-heading">
-                    <a href="${item.url}">${item.title}</a>
-                  </h4>
-                  <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
-                    <span>
-                      <i class="fa fa-cogs"></i> 7
-                    </span>
-                    <span>
-                      <i class="fa fa-star"></i> 11
-                    </span>
-                  </div>
-                  <div>
-                    <span>${item.description}</span>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
+    <div metal:fill-slot="content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Processes
+                    <small>Available Web Processing Services</small>
+                </h1>
+            </div>
+
+            <ul class="list-group">
+                <li class="list-group-item" tal:repeat="item items">
+                    <div class="media">
+                        <span class="pull-left text-muted" aria-hidden="true">
+                            <i tal:attributes="class 'fa fa-unlock text-danger' if item.public else 'fa fa-lock text-success'"></i>
+                        </span>
+                        <div class="media-body">
+                            <h4 class="media-heading">
+                                <a href="${item.url}">${item.title}</a>
+                            </h4>
+                            <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
+                                <span>
+                                    <i class="fa fa-cogs"></i>
+                                    7
+                                </span>
+                                <span>
+                                    <i class="fa fa-star"></i>
+                                    11
+                                </span>
+                            </div>
+                            <div>
+                                <span>${item.description}</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
 
         </div>
-      </div>
-
     </div>
-  </div>
-   
+
 </metal:block>

@@ -1,10 +1,10 @@
 from pyramid.view import view_config, view_defaults
-from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPFound
 from deform import Form, Button
 from deform import ValidationFailure
 
 from phoenix.events import JobStarted
-from phoenix.processes.views import Processes
+from phoenix.views import MyView
 from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
 from phoenix.utils import wps_describe_url
@@ -13,14 +13,14 @@ from phoenix.security import has_execute_permission
 # TODO: we need to use the twitcher api
 from twitcher.registry import proxy_url
 
-
 from owslib.wps import WebProcessingService
 
 import logging
 logger = logging.getLogger(__name__)
 
+
 @view_defaults(permission='view', layout='default')
-class ExecuteProcess(Processes):
+class ExecuteProcess(MyView):
     def __init__(self, request):
         self.execution = None
         if 'job_id' in request.params:
@@ -46,6 +46,7 @@ class ExecuteProcess(Processes):
 
     def breadcrumbs(self):
         breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path('processes'), title='Processes'))
         if self.service_name:
             route_path = self.request.route_path('processes_list', _query=[('wps', self.service_name)])
             breadcrumbs.append(dict(route_path=route_path, title=self.wps.identification.title))
@@ -149,4 +150,3 @@ class ExecuteProcess(Processes):
             url=wps_describe_url(self.wps.url, self.processid),
             metadata=self.process.metadata,
             form=form.render(self.appstruct()))
-    
