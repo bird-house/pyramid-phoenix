@@ -1,11 +1,11 @@
-from pyramid.view import view_config
+from pyramid.view import view_config, view_defaults
 
 from pyramid.httpexceptions import HTTPFound
 from deform import Form, Button
 from deform import ValidationFailure
 
 from phoenix.catalog import THREDDS_TYPE, WPS_TYPE
-from phoenix.settings.views import SettingsView
+from phoenix.views import MyView
 
 import deform
 import colander
@@ -41,13 +41,15 @@ class Schema(colander.MappingSchema):
         default=False)
 
 
-class RegisterService(SettingsView):
+@view_defaults(permission='admin', layout='default')
+class RegisterService(MyView):
     def __init__(self, request):
         super(RegisterService, self).__init__(
             request, name='register_service', title='Register New Service')
        
     def breadcrumbs(self):
         breadcrumbs = super(RegisterService, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path('settings'), title="Settings"))
         breadcrumbs.append(dict(route_path=self.request.route_path('services'), title="Services"))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs

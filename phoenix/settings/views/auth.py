@@ -1,14 +1,16 @@
-from pyramid.view import view_config
+from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
 from deform import Form
 from deform import ValidationFailure
 
-from phoenix.settings.views import SettingsView
+from phoenix.views import MyView
 
 import logging
 logger = logging.getLogger(__name__)
 
-class Auth(SettingsView):
+
+@view_defaults(permission='admin', layout='default')
+class Auth(MyView):
     def __init__(self, request):
         super(Auth, self).__init__(request, name='settings_auth', title='Auth')
         self.settings = self.db.settings.find_one()
@@ -17,6 +19,7 @@ class Auth(SettingsView):
 
     def breadcrumbs(self):
         breadcrumbs = super(Auth, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path('settings'), title="Settings"))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
@@ -30,7 +33,7 @@ class Auth(SettingsView):
             appstruct = form.validate(controls)
         except ValidationFailure, e:
             logger.exception('validation of user form failed')
-            return dict(title=self.title, form = e.render())
+            return dict(title=self.title, form=e.render())
         except Exception, e:
             logger.exception('edit auth failed.')
             self.session.flash('Edit auth failed. %s' % (e), queue="danger")
