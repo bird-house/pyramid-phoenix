@@ -7,11 +7,11 @@ from deform.widget import HiddenWidget
 from pymongo import ASCENDING, DESCENDING
 
 from pyramid.view import view_config, view_defaults
-from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 
 from phoenix.grid import CustomGrid
-from phoenix.monitor.views import Monitor
+from phoenix.views import MyView
 from phoenix.monitor.views.actions import monitor_buttons
 from phoenix.utils import make_tags
 
@@ -44,14 +44,11 @@ class LabelsSchema(colander.MappingSchema):
         missing="dev")
 
 
-class JobList(Monitor):
+@view_defaults(permission='view', layout='default')
+class JobList(MyView):
     def __init__(self, request):
         super(JobList, self).__init__(request, name='monitor', title='Job List')
         self.collection = self.request.db.jobs
-
-    def breadcrumbs(self):
-        breadcrumbs = super(JobList, self).breadcrumbs()
-        return breadcrumbs
 
     def filter_jobs(self, page=0, limit=10, tag=None, access=None, status=None, sort='created'):
         search_filter =  {}

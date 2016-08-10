@@ -7,6 +7,7 @@
 
   <div metal:fill-slot="content">
     <div class="container">
+      <h1 class="page-header">Monitor</h1>
       <div class="panel panel-default">
         <div class="panel-body">
           <form id="from-contents" method="post"

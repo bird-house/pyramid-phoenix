@@ -58,7 +58,7 @@
   </head>
 
   <body>
-    <!-- footer -->
+    <!-- navbar -->
     ${panel('navbar')}
     <!-- alert messages -->
     ${panel('messages')}

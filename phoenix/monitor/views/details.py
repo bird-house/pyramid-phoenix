@@ -1,20 +1,22 @@
-from pyramid.view import view_config
+from pyramid.view import view_config, view_defaults
 from pyramid.security import authenticated_userid
 
-from phoenix.monitor.views import Monitor
+from phoenix.views import MyView
 from phoenix.monitor.panels.outputs import process_outputs
 
 import logging
 logger = logging.getLogger(__name__)
 
 
-class Details(Monitor):
+@view_defaults(permission='view', layout='default')
+class Details(MyView):
     def __init__(self, request):
         super(Details, self).__init__(
             request, name='monitor_details', title='Details')
 
     def breadcrumbs(self):
         breadcrumbs = super(Details, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path('monitor'), title='Monitor'))
         breadcrumbs.append(dict(route_path='', title=self.title))
         return breadcrumbs
         
