@@ -16,7 +16,6 @@ class Overview(MyView):
         buttongroups = list()
         buttons = list()
 
-        buttons.append(dict(url=self.request.route_path('supervisor'), icon_class="fa fa-eye fa-2x", title="Supervisor"))
         buttons.append(dict(url=self.request.route_path('services'), icon_class="fa fa-server fa-2x", title="Services"))
         if self.request.solr_activated:
             buttons.append(dict(url=self.request.route_path('settings_solr', tab='index'), icon_class="fa fa-search fa-2x", title="Solr"))
