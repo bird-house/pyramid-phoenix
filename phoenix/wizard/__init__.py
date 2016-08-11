@@ -38,7 +38,7 @@ def includeme(config):
         config.add_route('wizard_storage', '/wizard/storage')
         config.add_route('wizard_done', '/wizard/done')
 
-        # config.include('phoenix.wizard.views.solrsearch')
+        config.include('phoenix.wizard.views.solrsearch')
 
         # add malleefowl wps
         def add_wps(event):
