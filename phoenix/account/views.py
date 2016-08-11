@@ -6,8 +6,6 @@ from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from pyramid.response import Response
 from pyramid.security import remember, forget
 
-import colander
-import deform
 from deform import Form, Button, ValidationFailure
 from authomatic.adapters import WebObAdapter
 
@@ -15,6 +13,7 @@ from phoenix.views import MyView
 from phoenix.security import Admin, Guest, authomatic, passwd_check
 from phoenix.security import auth_protocols
 from phoenix.security import generate_access_token
+from .schema import PhoenixSchema, LdapSchema, ESGFOpenIDSchema,  OpenIDSchema, OAuthSchema
 
 import logging
 logger = logging.getLogger(__name__)
@@ -34,63 +33,6 @@ def add_user(request, login_id, email='', openid='', name='unknown', organisatio
         last_login=datetime.now())
     request.db.users.save(user)
     return request.db.users.find_one({'identifier':user['identifier']})
-
-
-class PhoenixSchema(colander.MappingSchema):
-    password = colander.SchemaNode(
-        colander.String(),
-        title='Password',
-        description='If this is a demo instance your password might be "qwerty"',
-        validator=colander.Length(min=4),
-        widget=deform.widget.PasswordWidget())
-
-
-class OAuthSchema(colander.MappingSchema):
-    choices = [('github', 'GitHub'), ('ceda', 'Ceda')]
-    
-    provider = colander.SchemaNode(
-        colander.String(),
-        validator=colander.OneOf([x[0] for x in choices]),
-        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
-        title='OAuth 2.0 Provider',
-        description='Select your OAuth Provider.')
-
-
-class OpenIDSchema(colander.MappingSchema):
-    openid = colander.SchemaNode(
-        colander.String(),
-        validator=colander.url,
-        title="OpenID",
-        description="Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname or https://openid.stackexchange.com/",
-        default='https://openid.stackexchange.com/')
-
-
-class ESGFOpenIDSchema(colander.MappingSchema):
-    choices = [ ('badc', 'BADC'), ('dkrz', 'DKRZ'), ('ipsl', 'IPSL'), ('smhi', 'SMHI'), ('pcmdi', 'PCMDI')]
-
-    provider = colander.SchemaNode(
-        colander.String(),
-        validator=colander.OneOf([x[0] for x in choices]),
-        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
-        title='ESGF Provider',
-        description='Select the Provider of your ESGF OpenID.')
-    username = colander.SchemaNode(
-        colander.String(),
-        validator=colander.Length(min=2),
-        title="Username",
-        description="Your ESGF OpenID Username."
-        )
-
-
-class LdapSchema(colander.MappingSchema):
-    username = colander.SchemaNode(
-        colander.String(),
-        title="Username",
-        )
-    password = colander.SchemaNode(
-        colander.String(),
-        title='Password',
-        widget=deform.widget.PasswordWidget())
 
 
 @forbidden_view_config(renderer='templates/account/forbidden.pt', layout="default")
