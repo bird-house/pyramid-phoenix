@@ -14,14 +14,15 @@ def navbar(context, request):
         return dict(name=name, url=url, active=active, icon=icon)
 
     items = list()
-    items.append( nav_item('Processes', request.route_path('processes')))
+    items.append(nav_item('Processes', request.route_path('processes')))
     if request.wizard_activated:
-        items.append( nav_item('Wizard', request.route_path('wizard')))
-    items.append( nav_item('Monitor', request.route_path('monitor')))
-    items.append( nav_item('Map', request.route_path('map')))
+        items.append(nav_item('Wizard', request.route_path('wizard')))
+    items.append(nav_item('Monitor', request.route_path('monitor')))
+    items.append(nav_item('Map', request.route_path('map')))
         
     subitems = list()
-    subitems.append( nav_item('Dashboard', request.route_path('dashboard', tab='overview'), icon='fa fa-dashboard'))
+    subitems.append(nav_item('Dashboard', request.route_path('dashboard', tab='overview'), icon='fa fa-dashboard'))
+    subitems.append(nav_item('Browse', request.route_path('map'), icon='fa fa-search'))
     if request.has_permission('admin'):
         subitems.append(nav_item('People', request.route_path('people'), icon="fa fa-users"))
         subitems.append(nav_item('Supervisor', request.route_path('supervisor'), icon="fa fa-eye"))
