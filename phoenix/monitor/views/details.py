@@ -1,8 +1,6 @@
 from pyramid.view import view_config, view_defaults
-from pyramid.security import authenticated_userid
 
 from phoenix.views import MyView
-from phoenix.monitor.panels.outputs import process_outputs
 
 import logging
 logger = logging.getLogger(__name__)
@@ -19,44 +17,6 @@ class Details(MyView):
         breadcrumbs.append(dict(route_path=self.request.route_path('monitor'), title='Monitor'))
         breadcrumbs.append(dict(route_path='', title=self.title))
         return breadcrumbs
-        
-    @view_config(renderer='json', name='publish.output')
-    def publish(self):
-        import uuid
-        outputid = self.request.params.get('outputid')
-        # TODO: why use session for jobid?
-        job_id = self.session.get('job_id')
-        result = dict()
-        if outputid is not None:
-            output = process_outputs(self.request, job_id).get(outputid)
-
-            result = dict(
-                identifier=uuid.uuid4().get_urn(),
-                title=output.title,
-                abstract=output.abstract,
-                creator=authenticated_userid(self.request),
-                source=output.reference,
-                format=output.mimeType,
-                keywords='one,two,three')
-        return result
-
-    @view_config(renderer='json', name='upload.output')
-    def upload(self):
-        outputid = self.request.params.get('outputid')
-        # TODO: why use session for jobid?
-        job_id = self.session.get('job_id')
-        result = dict()
-        if outputid is not None:
-            output = process_outputs(self.request, job_id).get(outputid)
-            user = self.get_user()
-
-            result = dict(
-                username=user.get('swift_username'),
-                container='WPS Outputs',
-                prefix=job_id,
-                source=output.reference,
-                format=output.mimeType)
-        return result
 
     @view_config(route_name='monitor_details', renderer='../templates/monitor/details.pt')
     def view(self):
