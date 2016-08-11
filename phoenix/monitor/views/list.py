@@ -51,7 +51,7 @@ class JobList(MyView):
         self.collection = self.request.db.jobs
 
     def filter_jobs(self, page=0, limit=10, tag=None, access=None, status=None, sort='created'):
-        search_filter =  {}
+        search_filter = {}
         if access == 'public':
             search_filter['tags'] = 'public'
         elif access == 'private':
@@ -190,24 +190,29 @@ class JobsGrid(CustomGrid):
         self.exclude_ordering = self.columns
         
     def status_td(self, col_num, i, item):
-        return self.render_td(renderer="status_td.mako", job_id=item.get('identifier'), status=item.get('status'), progress=item.get('progress', 0))
+        return self.render_td(renderer="status_td.mako", job_id=item.get('identifier'), status=item.get('status'),
+                              progress=item.get('progress', 0))
 
     def duration_td(self, col_num, i, item):
-        return self.render_td(renderer="duration_td.mako", job_id=item.get('identifier'), duration=item.get('duration', '???'))
+        return self.render_td(renderer="duration_td.mako", job_id=item.get('identifier'),
+                              duration=item.get('duration', '???'))
   
     def caption_td(self, col_num, i, item):
-        return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'), caption=item.get('caption', '???'))
+        return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'),
+                              caption=item.get('caption', '???'))
 
     def labels_td(self, col_num, i, item):
         return self.render_td(renderer="labels_td.mako", job_id=item.get('identifier'), labels=item.get('tags'))
     
     def buttongroup_td(self, col_num, i, item):
         from phoenix.utils import ActionButton
-        buttons = []
-        buttons.append( ActionButton('results', title=u'Details', css_class=u'btn btn-default',
-                                     href=self.request.route_path('monitor_details', tab='log', job_id=item.get('identifier'))))
-        buttons.append( ActionButton('restart_job', title=u'Edit', css_class=u'btn btn-default',
-                                     href="/restart_job/%s" % item.get('identifier'), disabled=item['status']!='ProcessSucceeded'))
+        buttons = list()
+        buttons.append(ActionButton('results', title=u'Details', css_class=u'btn btn-default',
+                                    href=self.request.route_path('monitor_details', tab='log',
+                                                                 job_id=item.get('identifier'))))
+        buttons.append(ActionButton('restart_job', title=u'Edit', css_class=u'btn btn-default',
+                                    href="/restart_job/%s" % item.get('identifier'),
+                                    disabled=item['status'] != 'ProcessSucceeded'))
         return self.render_buttongroup_td(buttons=buttons)
 
 
