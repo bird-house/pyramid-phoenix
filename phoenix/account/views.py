@@ -205,14 +205,15 @@ class Account(MyView):
         if openid:
             user['openid'] = openid
         user['name'] = name
-        self.userdb.update({'login_id':login_id}, user)
-        self.session.flash("Welcome {0}.".format(name), queue='success')
+        self.userdb.update({'login_id': login_id}, user)
+        self.session.flash("Welcome {0}.".format(name), queue='info')
         if user.get('group') == Guest:
-            self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any process.", queue='info')
+            self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any processes.",
+                               queue='info')
         else:
             generate_access_token(self.request.registry, user['identifier'])
         headers = remember(self.request, user['identifier'])
-        return HTTPFound(location = self.request.route_path('home'), headers = headers)
+        return HTTPFound(location=self.request.route_path('home'), headers=headers)
 
     def login_failure(self, message=None):
         msg = 'Sorry, login failed.'
