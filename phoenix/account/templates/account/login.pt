@@ -6,7 +6,7 @@
   <div metal:fill-slot="content">
     <div class="container">
       <div class="row">
-        <h1 class="page-header">Sign in</h1>
+        <h1 class="page-header">Sign in <small>Use one of the Providers to sign-in to Phoenix</small></h1>
         <div class="col-md-3">
           <ul class="nav nav-pills nav-stacked">
             <li tal:condition="'phoenix' in auth_protocols" role="presentation" class="${'active' if active=='phoenix' else ''}">
@@ -29,7 +29,7 @@
         <div class="col-md-6">
           <div class="panel panel-success">
             <div class="panel-body">
-              <h2>Sign in with ${protocol_name}</h2>
+              <h2>Sign in to ${protocol_name}</h2>
               <br/>
 
               <tal:form replace="structure form">The form will render here</tal:form>
