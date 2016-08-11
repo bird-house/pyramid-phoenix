@@ -60,7 +60,8 @@ class SolrSearch(MyView):
             sources = []
             tags = []
             hits = 0
-        end = min(hits, ((page + 1) * rows))
+        finally:
+            end = min(hits, ((page + 1) * rows))
         return dict(results=results, sources=sources, tags=tags, hits=hits, start=start+1, end=end)
 
     @view_config(route_name='solrsearch', renderer='../templates/solrsearch/solrsearch.pt')
