@@ -1,0 +1,46 @@
+<div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+
+      <ul class="list-group">
+        <li class="list-group-item" tal:repeat="item items">
+          <div class="media">
+            <span class="pull-left text-muted" aria-hidden="true">
+              <i class="fa fa-globe"></i>
+            </span>
+            <div class="media-body">
+              <h4 class="media-heading">${item.title} <small>${item.identifier}</small></h4>
+              <div class="pull-right text-muted text-right" style="font-size: .75em;" tal:condition="'category' in item">
+                <span>
+                  ${item.category}
+                </span>
+              </div>
+              ${item.get('abstract', 'No summary')}
+              <div tal:condition="item.mime_type and item.reference">
+                <a href="${item.reference}" class="label label-info">
+                  ${item.mime_type}
+                </a>
+              </div>
+              <div tal:condition="item.data">
+                <span class="label label-default" tal:repeat="data item.data">
+                  ${data}
+                </span>
+              </div>
+              <p tal:condition="item.reference">
+                <a href="${item.reference}" target="_"><i class="fa fa-download"></i> Download</a> |
+                <a tal:condition="item.dataset" data-toggle="tooltip" title="Show on Map" data-value="value"
+                    href="${request.route_path('map', _query=[('dataset', item.dataset)])}">
+                  <i class="fa fa-map-marker"></i> Show on Map</a> |
+                <a href="${item.reference}" target="_"><i class="fa fa-cart-plus"></i> Add to Cart</a>
+              </p>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+</div>
+
