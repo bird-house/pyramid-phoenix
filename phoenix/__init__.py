@@ -84,11 +84,14 @@ def main(global_config, **settings):
     # catalog
     config.include('phoenix.catalog')
 
-    # services
+    # service settings
     config.include('phoenix.services')
 
-    # solr
+    # solr settings
     config.include('phoenix.solr')
+
+    # solrsearch interface
+    config.include('phoenix.solrsearch')
     
     # wizard
     config.include('phoenix.wizard')

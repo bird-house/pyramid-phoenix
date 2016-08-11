@@ -22,7 +22,7 @@ def navbar(context, request):
         
     subitems = list()
     subitems.append(nav_item('Dashboard', request.route_path('dashboard', tab='overview'), icon='fa fa-dashboard'))
-    subitems.append(nav_item('Browse', request.route_path('map'), icon='fa fa-search'))
+    subitems.append(nav_item('Browse', request.route_path('solrsearch'), icon='fa fa-search'))
     if request.has_permission('admin'):
         subitems.append(nav_item('People', request.route_path('people'), icon="fa fa-users"))
         subitems.append(nav_item('Supervisor', request.route_path('supervisor'), icon="fa fa-eye"))

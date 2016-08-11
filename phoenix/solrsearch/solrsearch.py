@@ -1,61 +1,26 @@
-from pyramid.view import view_config
+import os
+from pyramid.view import view_config, view_defaults
 
-import colander
-import deform
+from mako.template import Template
 
-from phoenix.wizard.views import Wizard
+from phoenix.views import MyView
 import pysolr
 
 import logging
 logger = logging.getLogger(__name__)
 
+solrsearch_script = Template(
+    filename=os.path.join(os.path.dirname(__file__), "templates", "solrsearch", "solrsearch.js"),
+    output_encoding="utf-8", input_encoding="utf-8")
 
-def includeme(config):
-    config.add_route('wizard_solr', '/wizard/solr')
 
-
-class Schema(colander.MappingSchema):
-    query = colander.SchemaNode(
-        colander.String(),
-        missing='',
-        default='',
-        widget=deform.widget.HiddenWidget())
-    category = colander.SchemaNode(
-        colander.String(),
-        missing='',
-        default='',
-        widget=deform.widget.HiddenWidget())
-    source = colander.SchemaNode(
-        colander.String(),
-        missing='',
-        default='',
-        widget=deform.widget.HiddenWidget())
-
-    
-class SolrSearch(Wizard):
+@view_defaults(permission='view', layout='default')
+class SolrSearch(MyView):
     def __init__(self, request):
-        super(SolrSearch, self).__init__(request, name='wizard_solr', title="Solr Search")
+        super(SolrSearch, self).__init__(request, name='solrsearch', title='Solrsearch')
 
-    def breadcrumbs(self):
-        breadcrumbs = super(SolrSearch, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
-        return breadcrumbs
-
-    def schema(self):
-        return Schema()
-
-    def appstruct(self):
-        appstruct = super(SolrSearch, self).appstruct()
-        appstruct['query'] = self.request.params.get('q', colander.null)
-        appstruct['category'] = self.request.params.get('category', colander.null)
-        appstruct['source'] = self.request.params.get('source', colander.null)
-        return appstruct
-
-    def next_success(self, appstruct):
-        self.success(appstruct)
-        return self.next('wizard_done')
-
-    def custom_view(self):
+    @view_config(route_name='solrsearch', renderer='templates/solrsearch/solrsearch.pt')
+    def view(self):
         query = self.request.params.get('q', '')
         page = int(self.request.params.get('page', '0'))
         category = self.request.params.get('category')
@@ -99,8 +64,8 @@ class SolrSearch(Wizard):
             tags = []
             hits = 0
         end = min(hits, ((page + 1) * rows))
-        return dict(results=results, query=query, category=category, sources=sources, tags=tags, selected_source=source, hits=hits, start=start+1, end=end, page=page)
+        return dict(results=results, query=query, category=category, sources=sources, tags=tags, selected_source=source,
+                    hits=hits, start=start+1, end=end, page=page,
+                    solrsearch_script=solrsearch_script.render(request=self.request, query=query, page=page))
 
-    @view_config(route_name='wizard_solr', renderer='../templates/wizard/solrsearch.pt')
-    def view(self):
-        return super(SolrSearch, self).view()
+
