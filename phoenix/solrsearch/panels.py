@@ -6,6 +6,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+@panel_config(name='solrsearch_script', renderer='templates/solrsearch/panels/script.pt')
+def solrsearch_script(context, request):
+    query = request.params.get('q', '')
+    page = int(request.params.get('page', '0'))
+    return dict(query=query, page=page)
+
+
 @panel_config(name='solrsearch', renderer='templates/solrsearch/panels/search.pt')
 def solrsearch(context, request):
     query = request.params.get('q', '')

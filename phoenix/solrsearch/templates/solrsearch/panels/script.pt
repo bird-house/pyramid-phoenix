@@ -1,3 +1,4 @@
+<script type="text/javascript">
 function selectSource() {
     default_location = "${request.route_path('solrsearch', _query=[('q', query), ('page', page)])}";
     var location = $('#source-select option:selected').val();
@@ -7,3 +8,4 @@ function selectSource() {
         window.location = default_location;
     }
 };
+</script>

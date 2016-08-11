@@ -36,15 +36,6 @@ class SolrSearch(Wizard):
         self.success(appstruct)
         return self.next('wizard_done')
 
-    def custom_view(self):
-        query = self.request.params.get('q', '')
-        page = int(self.request.params.get('page', '0'))
-
-        lm = self.request.layout_manager
-        lm.layout.add_heading('solrsearch')
-
-        return dict()
-
     @view_config(route_name='wizard_solr', renderer='../templates/wizard/solrsearch.pt')
     def view(self):
         return super(SolrSearch, self).view()

@@ -1,7 +1,7 @@
 <metal:block use-macro="main_template">
 
   <div metal:fill-slot="javascript">
-    <script type="text/javascript" tal:content="structure solrsearch_script"></script>
+    ${panel('solrsearch_script')}
   </div>
         
   <div metal:fill-slot="content">
@@ -11,7 +11,7 @@
           <h3 class="panel-title">Solr Search</h3>
         </div>
         <div class="panel-body">
-          ${panel('headings')}
+          ${panel('solrsearch')}
         </div>
       </div>
     </div>

@@ -1,5 +1,9 @@
 <metal:block use-macro="main_template">
-        
+
+  <div metal:fill-slot="javascript">
+    ${panel('solrsearch_script')}
+  </div>
+
   <div metal:fill-slot="content">
     <div class="container">
 
@@ -8,7 +12,7 @@
           <h2 class="panel-title">${title}</h2>
         </div>
         <div class="panel-body">
-          ${panel('headings')}
+          ${panel('solrsearch')}
           <tal:form replace="structure form">The form will render here</tal:form>
         </div>
       </div>
