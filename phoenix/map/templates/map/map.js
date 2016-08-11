@@ -46,7 +46,7 @@ var layer${loop.index} = L.tileLayer.wms(dsWMS, {
   layers: '${layer_id}',
   format: 'image/png',
   transparent: true,
-  styles: 'default',
+  //styles: 'default',
   attribution: '<a href="http://bird-house.github.io/">Birdhouse</a>',
 });
 var timeLayer${loop.index} = L.timeDimension.layer.wms(layer${loop.index}, {
