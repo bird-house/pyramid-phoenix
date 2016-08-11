@@ -61,11 +61,11 @@ def get_service_name(url):
     return service_name
 
 
-def _fetch_thredds_metadata(url, service_name=None):
+def _fetch_thredds_metadata(url):
     """Fetch capabilities metadata from thredds catalog service and return record dict."""
     import threddsclient
     tds = threddsclient.read_url(url)
-    title = tds.name or service_name or "Unknown"
+    title = tds.name or "Unknown"
     record = dict(
         type='service',
         title=title,
@@ -187,7 +187,7 @@ class MongodbCatalog(Catalog):
 
     def harvest(self, url, service_type, service_name=None, public=False):
         if service_type == THREDDS_TYPE:
-            self.insert_record(_fetch_thredds_metadata(url, service_name))
+            self.insert_record(_fetch_thredds_metadata(url))
         elif service_type == WPS_TYPE:
             # register service first
             service = self.service_registry.register_service(url=url, name=service_name, public=public)
