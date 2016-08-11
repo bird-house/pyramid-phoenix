@@ -105,7 +105,9 @@
                     <i class="fa fa-cube"></i> OpenDAP</a> |
                   <a tal:condition="'wms_url' in result" data-toggle="tooltip" title="Show on Map" data-value="value"
                      href="${request.route_path('map', _query=[('wms_url', result.wms_url)])}">
-                    <i class="fa fa-map-marker"></i> Show on Map</a>
+                    <i class="fa fa-map-marker"></i> Show on Map</a> |
+                  <a tal:condition="'url' in result" href="${result.url}">
+                    <i class="fa fa-cart-plus"></i> Add to Cart</a>
                 </p>
               </div>
             </div>
