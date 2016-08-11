@@ -1,30 +1,35 @@
 from pyramid.view import view_config
 
+import colander
+import deform
+
 from phoenix.wizard.views import Wizard
 import pysolr
-
 
 import logging
 logger = logging.getLogger(__name__)
 
-import colander
-import deform
+
+def includeme(config):
+    config.add_route('wizard_solr', '/wizard/solr')
+
+
 class Schema(colander.MappingSchema):
     query = colander.SchemaNode(
         colander.String(),
-        missing = '',
-        default = '',
-        widget = deform.widget.HiddenWidget())
+        missing='',
+        default='',
+        widget=deform.widget.HiddenWidget())
     category = colander.SchemaNode(
         colander.String(),
-        missing = '',
-        default = '',
-        widget = deform.widget.HiddenWidget())
+        missing='',
+        default='',
+        widget=deform.widget.HiddenWidget())
     source = colander.SchemaNode(
         colander.String(),
-        missing = '',
-        default = '',
-        widget = deform.widget.HiddenWidget())
+        missing='',
+        default='',
+        widget=deform.widget.HiddenWidget())
 
     
 class SolrSearch(Wizard):
@@ -64,8 +69,8 @@ class SolrSearch(Wizard):
         try:
             url = self.request.registry.settings.get('solr.url')
             solr = pysolr.Solr(url, timeout=10)
-            options = {'start':start, 'rows':rows,
-                       'facet':'true', 'facet.field':['category', 'source', 'tags'],
+            options = {'start': start, 'rows': rows,
+                       'facet': 'true', 'facet.field': ['category', 'source', 'tags'],
                        'facet.limit': 300, 'facet.mincount': 1}
             if tag or category or source:
                 options['fq'] = []

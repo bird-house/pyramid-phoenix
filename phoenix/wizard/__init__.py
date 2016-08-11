@@ -23,7 +23,7 @@ def includeme(config):
         config.add_route('wizard_literal_inputs', '/wizard/literal_inputs')
         config.add_route('wizard_complex_inputs', '/wizard/complex_inputs')
         config.add_route('wizard_source', '/wizard/source')
-        config.add_route('wizard_solr', '/wizard/solr')
+        # config.add_route('wizard_solr', '/wizard/solr')
         config.add_route('wizard_csw', '/wizard/csw')
         config.add_route('wizard_csw_select', '/wizard/csw/{recordid}/select.json')
         config.add_route('wizard_esgf_search', '/wizard/esgf_search')
@@ -37,6 +37,8 @@ def includeme(config):
         config.add_route('wizard_upload', '/wizard/upload')
         config.add_route('wizard_storage', '/wizard/storage')
         config.add_route('wizard_done', '/wizard/done')
+
+        config.include('phoenix.wizard.views.solrsearch')
 
         # add malleefowl wps
         def add_wps(event):
@@ -53,7 +55,8 @@ def includeme(config):
                         # TODO: we need to register wps when proxy service is up
                         registry.register_service(name=service_name, url=settings['wps.url'])
                     else:
-                        settings['wps'] = WebProcessingService(url=proxy_url(request, service_name), skip_caps=True, verify=False)
+                        settings['wps'] = WebProcessingService(url=proxy_url(request, service_name), skip_caps=True,
+                                                               verify=False)
                 except:
                     logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
             else:
