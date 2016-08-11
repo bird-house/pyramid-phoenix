@@ -22,9 +22,9 @@ class SolrSearch(MyView):
     def solr_search(self, query, page, category, source, tag):
         rows = 10
         start = page * rows
-        solr_query = query
-        if len(solr_query.strip()) == 0:
-            solr_query = '*:*'
+
+        if not query or not query.strip():
+            query = '*:*'
         try:
             url = self.request.registry.settings.get('solr.url')
             solr = pysolr.Solr(url, timeout=10)
@@ -42,7 +42,7 @@ class SolrSearch(MyView):
                     options['fq'].append('source:{0}'.format(source))
                 if tag:
                     options['fq'].append('tags:{0}'.format(tag))
-            results = solr.search(solr_query, **options)
+            results = solr.search(query, **options)
             sources = results.facets['facet_fields']['source'][::2]
             tag_values = results.facets['facet_fields']['tags'][::2]
             tag_counts = results.facets['facet_fields']['tags'][1::2]
