@@ -7,7 +7,6 @@ from deform.widget import SelectWidget
 
 from owslib.wps import WPSExecution, WebProcessingService
 
-from phoenix.catalog import get_service_name
 from phoenix.utils import time_ago_in_words
 from phoenix.wizard.views import Wizard
 
@@ -30,7 +29,7 @@ def job_to_state(request, job_id):
             wps = WebProcessingService(url=workflow['worker']['url'], verify=False, skip_caps=False)
             process = wps.describeprocess(workflow['worker']['identifier'])
 
-            state['wizard_wps'] = {'identifier': get_service_name(wps.url)}
+            state['wizard_wps'] = {'identifier': request.catalog.get_service_name_by_url(wps.url)}
             state['wizard_process'] = {'identifier': workflow['worker']['identifier']}
             inputs = {}
             for inp in workflow['worker']['inputs']:
@@ -94,7 +93,7 @@ class Start(Wizard):
         if 'job_id' in self.request.params:
             job = self.collection.find_one({'identifier': self.request.params['job_id']})
             if job:
-                jobs.append( job )
+                jobs.append(job)
         # add fav jobs
         search_filter = {}
         search_filter['tags'] = 'fav'

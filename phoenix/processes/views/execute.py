@@ -29,8 +29,7 @@ class ExecuteProcess(MyView):
             self.execution = WPSExecution()
             self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
             self.processid = self.execution.process.identifier
-            service = self.request.catalog.get_service_by_url(url=self.execution.serviceInstance)
-            self.service_name = service['name']
+            self.service_name = self.request.catalog.get_service_name_by_url(url=self.execution.serviceInstance)
         elif 'wps' in request.params:
             self.service_name = request.params.get('wps')
             self.processid = request.params.get('process')

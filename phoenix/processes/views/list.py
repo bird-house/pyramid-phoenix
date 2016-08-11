@@ -30,7 +30,8 @@ class ProcessList(MyView):
             item = dict(
                 title="{0.title} {0.processVersion}".format(process),
                 description=getattr(process, 'abstract', ''),
-                url=self.request.route_path('processes_execute', _query=[('wps', self.service_name), ('process', process.identifier)]))
+                url=self.request.route_path('processes_execute',
+                                            _query=[('wps', self.service_name), ('process', process.identifier)]))
             items.append(item)
         return dict(
             url=wps_caps_url(self.wps.url),

@@ -30,7 +30,7 @@
           <p><strong>Rights:</strong> ${service.rights}</p>
           <p><strong>Creator:</strong> ${service.creator}</p>
           <p tal:condition="hasattr(service, 'public')"><strong>Public Access:</strong> ${service.public}</p>
-          <p tal:condition="hasattr(service, 'service_name')"><strong>Service Name:</strong> ${service.service_name}</p>
+          <p><strong>Service Name:</strong> ${service_name}</p>
         </div>
       </div>
 

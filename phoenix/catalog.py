@@ -8,7 +8,6 @@ from owslib.fes import PropertyIsEqualTo, And
 from owslib.wps import WebProcessingService
 
 from twitcher.registry import service_registry_factory
-from twitcher.registry import service_name_of_proxy_url
 
 from pyramid.settings import asbool
 from pyramid.events import NewRequest
@@ -50,19 +49,14 @@ def catalog_factory(registry):
 
 WPS_TYPE = "WPS"
 THREDDS_TYPE = "THREDDS"
-RESOURCE_TYPES = {WPS_TYPE: 'http://www.opengis.net/wps/1.0.0',
-                  THREDDS_TYPE: 'http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0'}
-
-
-def get_service_name(url):
-    """Get service name from twitcher registry for given service (url)."""
-    service_name = service_name_of_proxy_url(url)
-    logger.debug("get_service_name = %s for url %s", service_name, url)
-    return service_name
+RESOURCE_TYPES = {
+    WPS_TYPE: 'http://www.opengis.net/wps/1.0.0',
+    THREDDS_TYPE: 'http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0'}
 
 
 def _fetch_thredds_metadata(url):
     """Fetch capabilities metadata from thredds catalog service and return record dict."""
+    # TODO: maybe use thredds siphon
     import threddsclient
     tds = threddsclient.read_url(url)
     title = tds.name or "Unknown"
@@ -113,6 +107,14 @@ class Catalog(object):
     def get_service_by_url(self, url):
         # TODO: separate interface from abstract class
         return self.service_registry.get_service_by_url(url)
+
+    def get_service_name(self, record):
+        """Get service name from twitcher registry for given service (url)."""
+        return self.get_service_name_by_url(record.source)
+
+    def get_service_name_by_url(self, url):
+        """Get service name from twitcher registry for given service (url)."""
+        return self.service_registry.get_service_name(url)
 
     def get_services(self, service_type=None, maxrecords=100):
         raise NotImplementedError
@@ -194,7 +196,6 @@ class MongodbCatalog(Catalog):
             # fetch metadata
             record = _fetch_wps_metadata(service['url'])
             record['public'] = public
-            record['service_name'] = service['name']
             self.insert_record(record)
         else:
             raise NotImplementedError

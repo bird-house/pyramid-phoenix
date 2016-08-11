@@ -25,7 +25,7 @@ class ChooseWPSSchema(colander.MappingSchema):
         for wps in wps_list:
             title = "{0} - {1}".format(wps['title'], wps['abstract'])
             choices.append((wps['service_name'], title))
-        return deform.widget.RadioChoiceWidget(values = choices)
+        return deform.widget.RadioChoiceWidget(values=choices)
     
     identifier = colander.SchemaNode(
         colander.String(),
@@ -47,9 +47,10 @@ class ChooseWPS(Wizard):
     def schema(self):
         wps_list = []
         for service in self.request.catalog.get_services(service_type=WPS_TYPE):
+            service_name = self.request.catalog.get_service_name(service)
             wps_list.append({'title': service.title,
                              'abstract': service.abstract,
-                             'service_name': service.service_name})
+                             'service_name': service_name})
         return ChooseWPSSchema().bind(wps_list=wps_list)
 
     def next_success(self, appstruct):

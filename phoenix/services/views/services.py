@@ -22,7 +22,8 @@ class Services(MyView):
     def details_view(self):
         service_id = self.request.matchdict.get('service_id')
         service = self.request.catalog.get_record_by_id(service_id)
-        return dict(service=service)
+        service_name = self.request.catalog.get_service_name(service)
+        return dict(service=service, service_name=service_name)
 
     @view_config(route_name="services", renderer='../templates/services/service_list.pt')
     def list_view(self):
