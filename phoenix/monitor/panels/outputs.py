@@ -33,7 +33,7 @@ class Outputs(object):
         self.request = request
         self.session = self.request.session
 
-    @panel_config(name='monitor_outputs', renderer='../templates/panels/monitor_outputs.pt')
+    @panel_config(name='monitor_outputs', renderer='../templates/monitor/panels/outputs.pt')
     def panel(self):
         job_id = self.session.get('job_id')
 

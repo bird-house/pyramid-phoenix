@@ -30,7 +30,7 @@ class Inputs(object):
         self.request = request
         self.session = self.request.session
     
-    @panel_config(name='monitor_inputs', renderer='../templates/panels/monitor_default.pt')
+    @panel_config(name='monitor_inputs', renderer='../templates/monitor/panels/default.pt')
     def panel(self):
         job_id = self.session.get('job_id')
         
