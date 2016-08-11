@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 solrsearch_script = Template(
-    filename=os.path.join(os.path.dirname(__file__), "templates", "solrsearch", "solrsearch.js"),
+    filename=os.path.join(os.path.dirname(__file__), "..", "templates", "solrsearch", "solrsearch.js"),
     output_encoding="utf-8", input_encoding="utf-8")
 
 
@@ -19,13 +19,7 @@ class SolrSearch(MyView):
     def __init__(self, request):
         super(SolrSearch, self).__init__(request, name='solrsearch', title='Solrsearch')
 
-    @view_config(route_name='solrsearch', renderer='templates/solrsearch/solrsearch.pt')
-    def view(self):
-        query = self.request.params.get('q', '')
-        page = int(self.request.params.get('page', '0'))
-        category = self.request.params.get('category')
-        source = self.request.params.get('source')
-        tag = self.request.params.get('tag')
+    def solr_search(self, query, page, category, source, tag):
         rows = 10
         start = page * rows
         solr_query = query
@@ -34,9 +28,12 @@ class SolrSearch(MyView):
         try:
             url = self.request.registry.settings.get('solr.url')
             solr = pysolr.Solr(url, timeout=10)
-            options = {'start': start, 'rows': rows,
-                       'facet': 'true', 'facet.field': ['category', 'source', 'tags'],
-                       'facet.limit': 300, 'facet.mincount': 1}
+            options = {'start': start,
+                       'rows': rows,
+                       'facet': 'true',
+                       'facet.field': ['category', 'source', 'tags'],
+                       'facet.limit': 300,
+                       'facet.mincount': 1}
             if tag or category or source:
                 options['fq'] = []
                 if category:
@@ -64,8 +61,19 @@ class SolrSearch(MyView):
             tags = []
             hits = 0
         end = min(hits, ((page + 1) * rows))
-        return dict(results=results, query=query, category=category, sources=sources, tags=tags, selected_source=source,
-                    hits=hits, start=start+1, end=end, page=page,
-                    solrsearch_script=solrsearch_script.render(request=self.request, query=query, page=page))
+        return dict(results=results, sources=sources, tags=tags, hits=hits, start=start+1, end=end)
+
+    @view_config(route_name='solrsearch', renderer='../templates/solrsearch/solrsearch.pt')
+    def view(self):
+        query = self.request.params.get('q', '')
+        page = int(self.request.params.get('page', '0'))
+        category = self.request.params.get('category')
+        source = self.request.params.get('source')
+        tag = self.request.params.get('tag')
+
+        result = dict(query=query, page=page, category=category, selected_source=source)
+        result.update(self.solr_search(query=query, page=page, category=category, source=source, tag=tag))
+        result['solrsearch_script'] = solrsearch_script.render(request=self.request, query=query, page=page)
+        return result
 
 
