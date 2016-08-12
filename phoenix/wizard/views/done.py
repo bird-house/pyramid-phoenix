@@ -13,7 +13,7 @@ from phoenix.events import JobStarted
 from phoenix.wizard.views import Wizard
 from phoenix.wizard.views.source import SOURCE_TYPES
 from phoenix.wps import appstruct_to_inputs
-from phoenix.tasks import execute_workflow
+from phoenix.tasks.workflow import execute_workflow
 from phoenix.tasks.execute import execute_process
 
 import logging
