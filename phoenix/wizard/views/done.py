@@ -27,9 +27,9 @@ class DoneSchema(colander.MappingSchema):
         
     caption = colander.SchemaNode(
         colander.String(),
-        description = "Add an optional title for this job.",
-        missing = '???',
-        default = deferred_caption,
+        description="Add an optional title for this job.",
+        missing='???',
+        default=deferred_caption,
         )
 
 
@@ -117,7 +117,7 @@ class Done(Wizard):
             inputs = appstruct_to_inputs(self.request, self.wizard_state.get('wizard_literal_inputs', {}))
             resource = self.wizard_state.get('wizard_complex_inputs')['identifier']
             for url in self.wizard_state.get('wizard_storage')['url']:
-                inputs.append( (resource, url) )
+                inputs.append((resource, url))
             result = execute_process.delay(
                 userid=authenticated_userid(self.request),
                 url=self.wps.url,
