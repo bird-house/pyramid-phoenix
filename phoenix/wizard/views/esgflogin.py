@@ -4,7 +4,7 @@ from pyramid.security import authenticated_userid
 import colander
 import deform
 
-from phoenix.tasks import task_result
+from phoenix.tasks.utils import task_result
 from phoenix.tasks.esgf import esgf_logon
 from phoenix.wizard.views import Wizard
 

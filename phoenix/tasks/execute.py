@@ -6,7 +6,7 @@ from owslib.wps import WebProcessingService
 
 from phoenix.db import mongodb
 from phoenix.events import JobFinished
-from phoenix.tasks import wps_headers, log, log_error, add_job
+from phoenix.tasks.utils import wps_headers, log, log_error, add_job
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)

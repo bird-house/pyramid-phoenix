@@ -3,7 +3,7 @@ from pyramid_celery import celery_app as app
 from owslib.wps import WebProcessingService, monitorExecution
 
 from phoenix.db import mongodb
-from phoenix.tasks import wps_headers
+from phoenix.tasks.utils import wps_headers
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
