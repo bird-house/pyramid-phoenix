@@ -2,6 +2,9 @@ import json
 
 from pyramid.view import view_config
 from pyramid.security import authenticated_userid
+from pyramid.httpexceptions import HTTPFound
+
+import colander
 
 from owslib.wps import WebProcessingService
 from twitcher.registry import proxy_url
@@ -11,14 +14,12 @@ from phoenix.wizard.views import Wizard
 from phoenix.wizard.views.source import SOURCE_TYPES
 from phoenix.wps import appstruct_to_inputs
 from phoenix.tasks import execute_workflow
-from phoenix.tasks import execute_process
-
-import threddsclient
+from phoenix.tasks.execute import execute_process
 
 import logging
 logger = logging.getLogger(__name__)
 
-import colander
+
 class DoneSchema(colander.MappingSchema):
     @colander.deferred
     def deferred_caption(node, kw):
@@ -30,6 +31,7 @@ class DoneSchema(colander.MappingSchema):
         missing = '???',
         default = deferred_caption,
         )
+
 
 class Done(Wizard):
     def __init__(self, request):
@@ -96,12 +98,12 @@ class Done(Wizard):
 
         # worker
         inputs = appstruct_to_inputs(self.request, self.wizard_state.get('wizard_literal_inputs', {}))
-        worker_inputs = ['%s=%s' % (key, value) for key,value in inputs]
+        # worker_inputs = ['%s=%s' % (key, value) for key, value in inputs]
         worker = dict(
-            url = self.wps.url,
-            identifier = self.wizard_state.get('wizard_process')['identifier'],
-            inputs = [(key, value) for key,value in inputs],
-            resource = self.wizard_state.get('wizard_complex_inputs')['identifier'],
+            url=self.wps.url,
+            identifier=self.wizard_state.get('wizard_process')['identifier'],
+            inputs=[(key, value) for key,value in inputs],
+            resource=self.wizard_state.get('wizard_complex_inputs')['identifier'],
             )
         workflow['worker'] = worker
         return workflow
@@ -132,7 +134,6 @@ class Done(Wizard):
             self.request.registry.notify(JobStarted(self.request, result.id))
         
     def next_success(self, appstruct):
-        from pyramid.httpexceptions import HTTPFound
         self.success(appstruct)
         self.wizard_state.clear()
         return HTTPFound(location=self.request.route_path('monitor'))

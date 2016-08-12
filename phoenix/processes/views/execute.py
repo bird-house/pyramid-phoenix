@@ -112,7 +112,7 @@ class ExecuteProcess(MyView):
         for output in self.process.processOutputs:
             outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
 
-        from phoenix.tasks import execute_process
+        from phoenix.tasks.execute import execute_process
         result = execute_process.delay(
             userid=self.request.unauthenticated_userid,
             url=self.wps.url,
