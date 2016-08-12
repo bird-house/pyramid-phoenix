@@ -1,8 +1,9 @@
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
 
+from phoenix.tasks.solr import clear_index
+from phoenix.tasks.solr import index_thredds
 from phoenix.settings import load_settings
-
 from phoenix.views import MyView
 
 import logging
@@ -25,14 +26,12 @@ class SolrSettings(MyView):
         service_id = self.request.matchdict.get('service_id')
         service = self.request.catalog.get_record_by_id(service_id)
         settings = load_settings(self.request)
-        from phoenix.tasks import index_thredds
         index_thredds.delay(url=service.source, maxrecords=settings.get('solr_maxrecords'), depth=settings.get('solr_depth'))
         self.session.flash('Start Indexing of Service %s. Reload page to see status ...' % service.title, queue="danger")
         return HTTPFound(location=self.request.route_path(self.name, tab="index"))
 
     @view_config(route_name="clear_index")
     def clear_index(self):
-        from phoenix.tasks import clear_index
         clear_index.delay()
         self.session.flash('Cleaning Index ... Reload page to see status ...', queue="danger")
         return HTTPFound(location=self.request.route_path(self.name, tab="index"))
