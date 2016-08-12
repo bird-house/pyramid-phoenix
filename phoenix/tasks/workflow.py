@@ -26,7 +26,7 @@ def execute_workflow(self, userid, url, workflow, caption=None):
                   task_id=self.request.id,
                   is_workflow=True,
                   service=url,
-                  title=workflow['worker']['identifier'],
+                  process_id=workflow['worker']['identifier'],
                   caption=caption)
 
     try:
@@ -46,7 +46,8 @@ def execute_workflow(self, userid, url, workflow, caption=None):
         worker_wps = WebProcessingService(url=workflow['worker']['url'], skip_caps=False, verify=False)
         execution = wps.execute(identifier='workflow', inputs=inputs, output=outputs, lineage=True)
         job['service'] = worker_wps.identification.title
-        job['abstract'] = getattr(execution.process, "abstract")
+        # job['title'] = getattr(execution.process, "title")
+        # job['abstract'] = getattr(execution.process, "abstract")
         job['status_location'] = execution.statusLocation
 
         logger.debug("job init done %s ...", self.request.id)

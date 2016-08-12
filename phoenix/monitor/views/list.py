@@ -182,6 +182,7 @@ class JobsGrid(CustomGrid):
         self.column_formats['status'] = self.status_td
         self.column_formats['user'] = self.user_td('userid')
         self.column_formats['process'] = self.label_td('title')
+        self.column_formats['service'] = self.label_td('service')
         self.column_formats['caption'] = self.caption_td
         self.column_formats['duration'] = self.duration_td
         self.column_formats['finished'] = self.time_ago_td('finished')

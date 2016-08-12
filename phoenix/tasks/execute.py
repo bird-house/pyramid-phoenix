@@ -21,7 +21,7 @@ def execute_process(self, url, identifier, inputs, outputs, userid=None, caption
         userid=userid,
         task_id=self.request.id,
         service=url,
-        title=identifier,
+        process_id=identifier,
         is_workflow=False,
         caption=caption)
 
@@ -29,7 +29,7 @@ def execute_process(self, url, identifier, inputs, outputs, userid=None, caption
         wps = WebProcessingService(url=url, skip_caps=False, verify=False, headers=wps_headers(userid))
         execution = wps.execute(identifier, inputs=inputs, output=outputs, lineage=True)
         job['service'] = wps.identification.title
-        job['title'] = identifier
+        # job['title'] = getattr(execution.process, "title")
         job['abstract'] = getattr(execution.process, "abstract")
         job['status_location'] = execution.statusLocation
 

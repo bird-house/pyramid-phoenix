@@ -41,8 +41,9 @@ def log_error(job, error):
         logger.error(log_msg)
 
 
-def add_job(db, task_id, service, title=None, abstract=None, status_location=None, is_workflow=False,
-            caption=None, userid=None):
+def add_job(db, task_id, process_id, title=None, abstract=None,
+            service_name=None, service=None, status_location=None,
+            is_workflow=False, caption=None, userid=None):
     tags = ['dev']
     if is_workflow:
         tags.append('workflow')
@@ -53,8 +54,10 @@ def add_job(db, task_id, service, title=None, abstract=None, status_location=Non
         task_id=task_id,             # TODO: why not using as identifier?
         userid=userid or 'guest',
         is_workflow=is_workflow,
-        service=service,             # wps service name (url, title, service_name)
-        title=title or "No Title",   # process name (identifier or title)
+        service_name=service_name,              # wps service name (service identifier)
+        service=service or service_name,  # wps service title (url, service_name or service title)
+        process_id=process_id,                  # process identifier
+        title=title or process_id,              # process title (identifier or title)
         abstract=abstract or "No Summary",
         status_location=status_location,
         created=datetime.now(),

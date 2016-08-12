@@ -43,7 +43,7 @@ class CustomGrid(Grid):
 
     def label_td(self, attribute, default=None):
         def _column_format(column_number, i, record):
-            label = get_value(record, attribute, default)
+            label = get_value(record, attribute, default or "Missing")
             return HTML.td(label)
         return _column_format
 
