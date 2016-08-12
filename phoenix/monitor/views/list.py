@@ -75,7 +75,7 @@ class JobList(MyView):
         elif sort == 'process':
             sort = 'title'
             
-        sort_order = DESCENDING if sort=='finished' or sort=='created' else ASCENDING
+        sort_order = DESCENDING if sort == 'finished' or sort == 'created' else ASCENDING
         sort_criteria = [(sort, sort_order)]
         items = list(self.collection.find(search_filter).skip(page*limit).limit(limit).sort(sort_criteria))
         return items, count
