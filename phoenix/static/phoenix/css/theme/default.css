@@ -1,7 +1,7 @@
 /* Basics
 ----------------------- */
 body {
-  background: white;
+  /* background: white; */
   padding-top: 50px;
 }
 /* Header
@@ -20,9 +20,9 @@ body {
 }*/
 /* Breadcrumbs
 ----------------------- */
-.breadcrumbs {
+/* .breadcrumbs {
     background: white;
-}
+} */
 /* Home
 ----------------------- */
 .jumbotron {
