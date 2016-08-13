@@ -6,14 +6,12 @@
         
   <div metal:fill-slot="content">
     <div class="container">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Birdhouse Solr Search</h3>
-        </div>
-        <div class="panel-body">
-          ${panel('solrsearch')}
-        </div>
+      <div class="page-header">
+        <h1>Birdhouse Solr search</h1>
       </div>
+
+      ${panel('solrsearch')}
+
     </div>
   </div>
    
