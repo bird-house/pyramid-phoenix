@@ -11,6 +11,7 @@ from twitcher.registry import proxy_url
 import logging
 logger = logging.getLogger(__name__)
 
+
 class LiteralInputs(Wizard):
     def __init__(self, request):
         super(LiteralInputs, self).__init__(request, name='wizard_literal_inputs', title="Literal Inputs")
