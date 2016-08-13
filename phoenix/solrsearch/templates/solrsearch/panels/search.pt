@@ -84,11 +84,13 @@
                 </a>
               </div>
               <div class="media-body">
-                <h4 class="media-heading">${result.title}</h4>
-                <div class="pull-right text-muted text-right" style="font-size: .75em;" tal:condition="'category' in result">
-                  <span>
-                    ${result.category}
-                  </span>
+                <div class="media-heading">
+                  <a tal:condition="'url' in result" href="${result.url}"
+                     class="btn btn-default btn-xs disabled pull-right"
+                     role="button">
+                    <icon class="fa fa-cart-plus"></icon>
+                  </a>
+                  <h4>${result.title}</h4>
                 </div>
                 <p><small>${result.get('abstract', 'No summary')}</small></p>
                 <p tal:condition="'keywords' in result">
@@ -108,8 +110,6 @@
                   <a tal:condition="'wms_url' in result" data-toggle="tooltip" title="Show on Map" data-value="value"
                      href="${request.route_path('map', _query=[('wms_url', result.wms_url)])}">
                     <i class="fa fa-map-marker"></i> Show on Map</a>
-                  <a tal:condition="'url' in result" href="${result.url}">
-                    <i class="fa fa-cart-plus"></i> Add to Cart</a>
                 </p>
               </div>
             </div>
