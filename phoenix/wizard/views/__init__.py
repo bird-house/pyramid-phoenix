@@ -103,23 +103,23 @@ class Wizard(MyView):
         next_disabled = not self.next_ok()
 
         prev_button = Button(name='previous', title='Previous',
-                             css_class="btn btn-default",
+                             css_class="btn-warning",
                              disabled=prev_disabled)   # type=submit|reset|button,value=name,css_type="btn-..."
         cancel_button = Button(name='cancel', title='Cancel',
-                               css_class='btn btn-default',
+                               css_class='btn-danger',
                                disabled=False)
         next_button = Button(name='next', title='Next',
-                             css_class="btn btn-default",
+                             css_class="btn-success",
                              disabled=next_disabled)
         done_button = Button(name='next', title='Done',
-                             css_class="btn btn-success",
+                             css_class="btn-success",
                              disabled=next_disabled or not self.request.has_permission('submit'))
 
         buttons = []
         # TODO: fix focus button
         if not self.wizard_state.is_first():
             buttons.append(prev_button)
-        buttons.append(cancel_button)
+            buttons.append(cancel_button)
         if self.wizard_state.is_last():
             buttons.append(done_button)
         else:
