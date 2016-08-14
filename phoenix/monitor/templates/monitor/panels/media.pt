@@ -13,7 +13,7 @@
              role="button">
             <icon class="fa fa-cart-plus"></icon>
           </a>
-          <h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a ${item.category}</small></h4>
+          <h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4>
           <p>${item.get('abstract') or 'No summary'}</p>
 	  <p>
 	    <div tal:condition="item.reference">
