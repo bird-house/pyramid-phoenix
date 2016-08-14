@@ -15,9 +15,6 @@
                             <i tal:attributes="class 'fa fa-unlock text-danger' if item.public else 'fa fa-lock text-success'"></i>
                         </span>
                         <div class="media-body">
-                            <h4 class="media-heading">
-                                <a href="${item.url}">${item.title}</a>
-                            </h4>
                             <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
                                 <span>
                                     <i class="fa fa-cogs"></i>
@@ -28,6 +25,9 @@
                                     11
                                 </span>
                             </div>
+                            <h4 class="media-heading">
+                                <a href="${item.url}">${item.title}</a>
+                            </h4>
                             <div>
                                 <span>${item.description}</span>
                             </div>

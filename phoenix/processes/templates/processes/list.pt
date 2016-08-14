@@ -30,6 +30,11 @@
                   <i class="fa fa-cog"></i>
                 </span>
                 <div class="media-body">
+                  <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
+                    <span>
+                      <i class="fa fa-star"></i> 3
+                    </span>
+                  </div>
                   <h4 class="media-heading">
                     <a href="${item.url}">${item.title}</a>
                   </h4>
