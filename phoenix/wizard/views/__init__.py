@@ -168,7 +168,8 @@ class Wizard(MyView):
         raise NotImplementedError
 
     def next_failure(self, validation_failure):
-        return dict(title=self.title, form=validation_failure.render())
+        custom = self.custom_view() # TODO: need a better way for this
+        return dict(title=self.title, form=validation_failure.render(), **custom)
 
     def generate_form(self, formid='deform'):
         return Form(
