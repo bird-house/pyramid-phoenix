@@ -1,4 +1,4 @@
-from pyramid.view import view_config, view_defaults
+from pyramid.view import view_defaults
 from pyramid.httpexceptions import HTTPFound
 
 from deform import Form, Button
@@ -103,23 +103,27 @@ class Wizard(MyView):
         next_disabled = not self.next_ok()
 
         prev_button = Button(name='previous', title='Previous',
+                             css_class="btn btn-default",
                              disabled=prev_disabled)   # type=submit|reset|button,value=name,css_type="btn-..."
+        cancel_button = Button(name='cancel', title='Cancel',
+                               css_class='btn btn-default',
+                               disabled=False)
         next_button = Button(name='next', title='Next',
+                             css_class="btn btn-default",
                              disabled=next_disabled)
         done_button = Button(name='next', title='Done',
+                             css_class="btn btn-success",
                              disabled=next_disabled or not self.request.has_permission('submit'))
-        cancel_button = Button(name='cancel', title='Cancel',
-                               css_class='btn btn-danger',
-                               disabled=False)
+
         buttons = []
         # TODO: fix focus button
         if not self.wizard_state.is_first():
             buttons.append(prev_button)
+        buttons.append(cancel_button)
         if self.wizard_state.is_last():
             buttons.append(done_button)
         else:
             buttons.append(next_button)
-        buttons.append(cancel_button)
         return buttons
 
     def prev_ok(self):
@@ -176,8 +180,8 @@ class Wizard(MyView):
             schema=self.schema(),
             buttons=self.buttons(),
             formid=formid,
-            # use_ajax=self.use_ajax(),
-            # ajax_options=self.ajax_options(),
+            use_ajax=self.use_ajax(),
+            ajax_options=self.ajax_options(),
             )
 
     def process_form(self, form, action):
