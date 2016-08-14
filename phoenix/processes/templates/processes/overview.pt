@@ -12,7 +12,7 @@
                 <li class="list-group-item" tal:repeat="item items">
                     <div class="media">
                         <span class="pull-left text-muted" aria-hidden="true">
-                            <i tal:attributes="class 'fa fa-unlock text-danger' if item.public else 'fa fa-lock text-success'"></i>
+                            <i class='fa fa-cogs'></i>
                         </span>
                         <div class="media-body">
                             <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
@@ -26,7 +26,10 @@
                                 </span>
                             </div>
                             <h4 class="media-heading">
-                                <a href="${item.url}">${item.title}</a>
+                              <a href="${item.url}">${item.title}</a>
+			      <span class="text-muted" aria-hidden="true">
+				<i tal:attributes="class 'fa fa-unlock text-danger' if item.public else 'fa fa-lock text-success'"></i>
+                              </span>
                             </h4>
                             <div>
                                 <span>${item.description}</span>
