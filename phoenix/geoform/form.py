@@ -24,6 +24,7 @@ class MemoryTempStore(dict):
     def preview_url(self, name):
         return None
 
+
 class FileUploadTempStore(DictMixin):
     """
     A temporary storage for file uploads.
@@ -87,6 +88,7 @@ class FileUploadTempStore(DictMixin):
     def _filename(self, value):
         return os.path.join(self._folder(), value['filename'])
 
+
 class BBoxValidator(object):
     def __call__(self, node, value):
         try:
@@ -106,7 +108,8 @@ class BBoxValidator(object):
                 raise colander.Invalid(node, "MinX greater than MaxX")
             if miny > maxy:
                 raise colander.Invalid(node, "MinY greater than MaxY")
-    
+
+
 class FileUploadValidator(colander.All):
     """
     Runs all validators for file upload checks.
@@ -128,7 +131,8 @@ class FileFormatAllowedValidator(object):
         if not self.storage.filename_allowed(value['filename']):
             msg = 'File format is not allowed: {filename}'.format(filename=value['filename'])
             raise colander.Invalid(node, msg)
-    
+
+
 class FileSizeLimitValidator(object):
     """
     File size limit validator.

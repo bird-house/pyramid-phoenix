@@ -7,10 +7,10 @@ import types
 
 from pyramid.security import authenticated_userid
 
-from phoenix.widget import BBoxWidget
-from phoenix.form import BBoxValidator
-from phoenix.form import FileUploadTempStore
-from phoenix.form import FileUploadValidator
+from phoenix.geoform.widget import BBoxWidget
+from phoenix.geoform.form import BBoxValidator
+from phoenix.geoform.form import FileUploadTempStore
+from phoenix.geoform.form import FileUploadValidator
 
 import logging
 logger = logging.getLogger(__name__)

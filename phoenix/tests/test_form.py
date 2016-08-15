@@ -1,6 +1,7 @@
 import unittest
 
-from phoenix.form import BBoxValidator
+from phoenix.geoform.form import BBoxValidator
+
 
 def invalid_exc(func, *arg, **kw):
     from colander import Invalid
@@ -10,7 +11,8 @@ def invalid_exc(func, *arg, **kw):
         return e
     else:
         raise AssertionError('Invalid not raised') # pragma: no cover
-        
+
+
 class TestBBoxValidator(unittest.TestCase):
     def test_default(self):
         validator = BBoxValidator()

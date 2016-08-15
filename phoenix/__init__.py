@@ -27,8 +27,8 @@ def main(global_config, **settings):
     config.include('pyramid_chameleon')
     
     # deform
-    #config.include('pyramid_deform')
-    #config.include('js.deform')
+    # config.include('pyramid_deform')
+    # config.include('js.deform')
 
     # mailer
     config.include('pyramid_mailer')
