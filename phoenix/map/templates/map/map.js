@@ -60,36 +60,7 @@ var timeLayer${loop.index} = L.timeDimension.layer.wms(layer${loop.index}, {
 });
 timeLayer${loop.index}.addTo(map);
 
-var legend${loop.index} = L.control({
-    position: 'bottomright'
-});
-legend${loop.index}.onAdd = function(map) {
-    var src = dsWMS + "&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&LAYERS=${layer_id}&STYLES=default&PALETTE=default&COLORBARONLY=true";
-    var div = L.DomUtil.create('div', 'info legend');
-    div.innerHTML +=
-        '<img src="' + src + '" alt="legend">';
-    return div;
-};
-legend${loop.index}.onAdd(map);
-
 % endfor
-map.on('overlayadd', function(eventLayer) {
-% for layer_id in wms_layers:
-    map.removeControl(legend${loop.index});
-    if (eventLayer.name == '${wms.contents[layer_id].title}') {
-        legend${loop.index}.addTo(this);
-    }
-% endfor
-});
-
-map.on('overlayremove', function(eventLayer) {
-% for layer_id in wms_layers:
-    if (eventLayer.name == '${wms.contents[layer_id].title}') {
-        map.removeControl(legend${loop.index});
-    }
-% endfor
-});
-
 var overlayMaps = {
 % for layer_id in wms_layers:
     "${wms.contents[layer_id].title}": timeLayer${loop.index},
