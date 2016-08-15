@@ -85,7 +85,9 @@
           <div class="col-md-2 col-md-offset-1">
             <h4>Birdhouse</h4>
             <p>
-              <a href="http://birdhouse.readthedocs.io/en/latest/index.html" _target="_blank">Documentation</a>
+              <a href="http://bird-house.github.io/" target="_blank">Project Home</a>
+              <br/>
+              <a href="http://birdhouse.readthedocs.io/en/latest/index.html" target="_blank">Documentation</a>
               <br/>
               <a href="http://birdhouse.readthedocs.io/en/latest/contributing.html" target="_blank">Contributing</a>
               <br/>
@@ -112,6 +114,7 @@
             <h4>Related Projects</h4>
             <p>
               <a href="http://geopython.github.io/" target="_blank">GeoPython</a><br/>
+              <a href="http://geonode.org/" target="_blank">GeoNode</a><br/>
               <a href="http://dev.climate4impact.eu/impactportal/general/index.jsp" target="_blank">Climate4Impact (KNMI)</a><br/>
               <a href="http://wps-web1.ceda.ac.uk/ui/home" target="_blank">COWS (CEDA)</a><br/>
               <a href="https://freva.met.fu-berlin.de/" target="_blank">FrEva (FU-Berlin)</a><br/>
