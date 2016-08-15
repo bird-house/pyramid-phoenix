@@ -167,8 +167,8 @@ class JobList(MyView):
         _, count_finished = self.filter_jobs(page=page, limit=0, tag=tag, access=access, status='Finished', sort=sort)
 
         grid = JobsGrid(self.request, items,
-                        ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration',
-                         'finished', 'labels', ''],)
+                        ['_checkbox', 'status', 'user', 'process', 'service', 'caption',
+                         'finished', 'duration', 'labels', ''])
         
         return dict(grid=grid,
                     access=access, status=status,
