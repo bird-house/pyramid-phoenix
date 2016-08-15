@@ -35,13 +35,18 @@
 	  </p>
           <p tal:condition="item.reference">
             <a href="${item.reference}" target="_" data-toggle="tooltip"
-	       title="Download file" data-value="value">
-	      <i class="fa fa-download"></i> Download
-	    </a> 
+	       		title="Download file" data-value="value" class="btn btn-link">
+	      		<i class="fa fa-download"></i> Download
+	    	</a>
+			<a href="${item.reference}" target="_" data-toggle="tooltip"
+	       		title="Share" data-value="value" class="btn btn-link disabled">
+	      		<i class="fa fa-share"></i> Share
+	    	</a>
             <a tal:condition="item.dataset" data-toggle="tooltip" title="Show on Map" data-value="value"
-               href="${request.route_path('map', _query=[('dataset', item.dataset)])}">
-              <i class="fa fa-map-marker"></i> Show on Map
-	    </a>
+               href="${request.route_path('map', _query=[('dataset', item.dataset)])}"
+			   class="btn btn-link">
+              	<i class="fa fa-map-marker"></i> Show on Map
+	    	</a>
           </p>
         </div>
       </div>
