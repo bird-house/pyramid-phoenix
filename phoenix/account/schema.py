@@ -6,8 +6,8 @@ class PhoenixSchema(colander.MappingSchema):
     password = colander.SchemaNode(
         colander.String(),
         title='Password',
-        description='If this is a demo instance your password might be "qwerty"',
-        validator=colander.Length(min=4),
+        description='If you have not configured your password yet then it is likely to be "qwerty"',
+        validator=colander.Length(min=6),
         widget=deform.widget.PasswordWidget())
 
 
