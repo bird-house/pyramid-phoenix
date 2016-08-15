@@ -1,119 +1,122 @@
 <div class="container">
-    <div class="row">
-        <form>
-          <div class="form-group">
-            <div class="input-group">
-              <input type="text" class="form-control input-lg" name="q" value="${query}" placeholder="Search datasets...">
-              <span class="input-group-btn">
-                <button class="btn btn-default btn-lg input-lg btn-primary">
-                  <span><i class="fa fa-search"></i></span>
-                </button>
-              </span>
-            </div>
-          </div>
-        </form>
-
-        <div class="form-group">
-          <div class="btn-toolbar">
-            <div class="btn-group">
-              <a tal:attributes="class 'btn btn-default' if category else 'btn btn-default active'"
-                 href="${request.route_path(query_path, _query=[('q', query), ('page', page)])}">
-                All</a>
-              <a tal:attributes="class 'btn btn-default active' if category=='thredds' else 'btn btn-default'"
-                 href="${request.route_path(query_path, _query=[('q', query), ('category', 'thredds')])}">
-                Thredds</a>
-              <a tal:attributes="class 'btn btn-default active' if category=='files' else 'btn btn-default'"
-                 href="${request.route_path(query_path, _query=[('q', query), ('category', 'files')])}">
-                Files</a>
-            </div>
-
-            <div class="col-md-2">
-              <select id="source-select" class="form-control" onchange="selectSource()">
-                <option value="${request.route_path(query_path, _query=[('q', query), ('page', page)])}">All Sources</option>
-                <optgroup>
-                  <option value="${request.route_path(query_path, _query=[('q', query), ('source', source)])}"
-                          tal:attributes="selected True if source==selected_source else False"
-                          tal:repeat="source sources">${source}</option>
-                </optgroup>
-              </select>
-            </div>
-
-          </div>
+  <div class="row">
+    <form>
+      <div class="form-group">
+        <div class="input-group">
+          <input type="text" class="form-control input-lg" name="q" value="${query}" placeholder="Search datasets...">
+          <span class="input-group-btn">
+            <button class="btn btn-default btn-lg input-lg btn-primary">
+              <span><i class="fa fa-search"></i></span>
+            </button>
+          </span>
         </div>
+      </div>
+    </form>
+  </div>
 
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title">Tag Cloud</h4>
-          </div>
-          <div class="panel-body">
-            <a href="${request.route_path(query_path, _query=[('q', tag)])}"
-               class="label label-success"
-               tal:repeat="tag tags">
-
-              ${tag}</a>
-          </div>
+  <div class="row">
+    <div class="form-group">
+      <div class="btn-toolbar">
+        <div class="btn-group">
+          <a tal:attributes="class 'btn btn-default' if category else 'btn btn-default active'"
+             href="${request.route_path(query_path, _query=[('q', query), ('page', page)])}">
+            All</a>
+          <a tal:attributes="class 'btn btn-default active' if category=='thredds' else 'btn btn-default'"
+             href="${request.route_path(query_path, _query=[('q', query), ('category', 'thredds')])}">
+            Thredds</a>
+          <a tal:attributes="class 'btn btn-default active' if category=='files' else 'btn btn-default'"
+             href="${request.route_path(query_path, _query=[('q', query), ('category', 'files')])}">
+            Files</a>
         </div>
-
-        <hr>
-
-        <div class="clearfix">
-
-          <ul class="pagination pagination-sm pull-left">
-            <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
-              <a href="${request.route_path(query_path, _query=[('q', query), ('page', page-1)])}">
-                <strong><i class="fa fa-angle-left"></i></strong>
-              </a>
-            </li>
-
-            <li class="next" tal:attributes="class 'next' if end < hits else 'next disabled'">
-              <a href="${request.route_path(query_path, _query=[('q', query), ('page', page+1)])}">
-                <strong><i class="fa fa-angle-right"></i></strong>
-              </a>
-            </li>
-          </ul>
-
-          <h3 class="pull-right"> Showing ${start}-${end} of ${hits} </h3>
+        
+        <div class="col-md-2">
+          <select id="source-select" class="form-control" onchange="selectSource()">
+            <option value="${request.route_path(query_path, _query=[('q', query), ('page', page)])}">All Sources</option>
+            <optgroup>
+              <option value="${request.route_path(query_path, _query=[('q', query), ('source', source)])}"
+                      tal:attributes="selected True if source==selected_source else False"
+                    tal:repeat="source sources">${source}</option>
+            </optgroup>
+          </select>
         </div>
-
-        <ul class="list-group">
-          <li class="list-group-item" tal:repeat="result results">
-            <div class="media">
-              <div class="media-left media-middle">
-                <a href="#">
-                  <img class="media-object" src="${request.static_path('phoenix:static/phoenix/img/missing_thumb.png')}" alt="No Preview"/>
-                </a>
-              </div>
-              <div class="media-body">
-                <div class="media-heading">
-                  <a tal:condition="'url' in result" href="${result.url}"
-                     class="btn btn-default btn-xs disabled pull-right"
-                     role="button">
-                    <icon class="fa fa-cart-plus"></icon>
-                  </a>
-                  <h4>${result.title}</h4>
-                </div>
-                <p><small>${result.get('abstract', 'No summary')}</small></p>
-                <p tal:condition="'keywords' in result">
-                  <a href="${request.route_path(query_path, _query=[('q', 'keywords:'+keyword)])}"
-                     class="label label-warning"
-                     tal:repeat="keyword result.keywords">
-
-                    ${keyword}</a>
-                </p>
-                <p>
-                  <a tal:condition="'url' in result" href="${result.url}">
-                    <i class="fa fa-download"></i> Download</a>
-                  <a tal:condition="'catalog_url' in result" href="${result.catalog_url}" target="_">
-                    <i class="fa fa-book"></i> Catalog</a>
-                  <a tal:condition="'opendap_url' in result" href="${result.opendap_url+'.html'}" target="_">
-                    <i class="fa fa-cube"></i> OpenDAP</a>
-                  <a tal:condition="'wms_url' in result" data-toggle="tooltip" title="Show on Map" data-value="value"
-                     href="${request.route_path('map', _query=[('wms_url', result.wms_url)])}">
-                    <i class="fa fa-map-marker"></i> Show on Map</a>
-                </p>
-              </div>
-            </div>
-          </li>
-        </ul>
+        
+      </div>
     </div>
+  </div>
+
+  <div class="row">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">Tags</h4>
+      </div>
+      <div class="panel-body">
+        <a href="${request.route_path(query_path, _query=[('q', tag)])}"
+           class="btn btn-info btn-xs"
+           tal:repeat="tag tags">
+          <span>${tag}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <ul class="pagination pagination-sm pull-left">
+      <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
+        <a href="${request.route_path(query_path, _query=[('q', query), ('page', page-1)])}">
+          <strong><i class="fa fa-angle-left"></i></strong>
+          </a>
+      </li>
+
+      <li class="next" tal:attributes="class 'next' if end < hits else 'next disabled'">
+        <a href="${request.route_path(query_path, _query=[('q', query), ('page', page+1)])}">
+          <strong><i class="fa fa-angle-right"></i></strong>
+        </a>
+      </li>
+    </ul>
+
+    <h3 class="pull-right"> Showing ${start}-${end} of ${hits} </h3>
+  </div>
+
+  <div class="row">
+    <ul class="list-group">
+      <li class="list-group-item" tal:repeat="result results">
+        <div class="media">
+          <div class="media-left media-middle">
+            <a href="#">
+              <img class="media-object" src="${request.static_path('phoenix:static/phoenix/img/missing_thumb.png')}" alt="No Preview"/>
+            </a>
+          </div>
+          <div class="media-body">
+            <div class="media-heading">
+              <a tal:condition="'url' in result" href="${result.url}"
+                 class="btn btn-default btn-xs disabled pull-right"
+                 role="button">
+                <icon class="fa fa-cart-plus"></icon>
+              </a>
+              <h4>${result.title}</h4>
+            </div>
+            <p><small>${result.get('abstract', 'No summary')}</small></p>
+            <p tal:condition="'keywords' in result">
+              <a href="${request.route_path(query_path, _query=[('q', 'keywords:'+keyword)])}"
+                 class="btn btn-warning btn-xs"
+                 tal:repeat="keyword result.keywords">
+                ${keyword}
+              </a>
+            </p>
+            <p>
+              <a tal:condition="'url' in result" href="${result.url}">
+                <i class="fa fa-download"></i> Download</a>
+              <a tal:condition="'catalog_url' in result" href="${result.catalog_url}" target="_">
+                <i class="fa fa-book"></i> Catalog</a>
+              <a tal:condition="'opendap_url' in result" href="${result.opendap_url+'.html'}" target="_">
+                <i class="fa fa-cube"></i> OpenDAP</a>
+              <a tal:condition="'wms_url' in result" data-toggle="tooltip" title="Show on Map" data-value="value"
+                 href="${request.route_path('map', _query=[('wms_url', result.wms_url)])}">
+                <i class="fa fa-map-marker"></i> Show on Map</a>
+            </p>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
 </div>

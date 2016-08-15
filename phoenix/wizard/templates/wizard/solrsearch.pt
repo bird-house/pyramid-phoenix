@@ -7,7 +7,9 @@
   <div metal:fill-slot="content">
     <div class="container">
 
-      ${panel('solrsearch')}
+      <div class="row">
+        ${panel('solrsearch')}
+      </div>
 
       <tal:form replace="structure form">The form will render here</tal:form>
 

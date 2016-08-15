@@ -10,7 +10,9 @@
         <h1>Birdhouse Solr search</h1>
       </div>
 
-      ${panel('solrsearch')}
+      <div class="row">
+        ${panel('solrsearch')}
+      </div>
 
     </div>
   </div>
