@@ -12,13 +12,20 @@
     
       <ul class="nav nav-tabs">
          <li class="${'active' if active=='log' else ''}" role="presentation">
-          <a href="${request.route_path('monitor_details', job_id=job_id, tab='log')}">Log</a>
+          <a href="${request.route_path('monitor_details', job_id=job_id, tab='log')}">
+            <icon class="fa fa-list"></icon> Log
+          </a>
         </li>
         <li class="${'active' if active=='inputs' else ''}" role="presentation">
-          <a href="${request.route_path('monitor_details', job_id=job_id, tab='inputs')}">Inputs</a>
+          <a href="${request.route_path('monitor_details', job_id=job_id, tab='inputs')}">
+            <icon class="fa fa-arrow-circle-o-down"></icon>
+            Inputs
+          </a>
         </li>
         <li class="${'active' if active=='outputs' else ''}" role="presentation">
-          <a href="${request.route_path('monitor_details', job_id=job_id, tab='outputs')}">Outputs</a>
+          <a href="${request.route_path('monitor_details', job_id=job_id, tab='outputs')}">
+            <icon class="fa fa-arrow-circle-o-up"></icon> Outputs
+          </a>
         </li>
       </ul>
 
