@@ -53,8 +53,7 @@ def headings(context, request):
     lm = request.layout_manager
     layout = lm.layout
     if layout.headings:
-        return '\n'.join([lm.render_panel(name, *args, **kw)
-             for name, args, kw in layout.headings])
+        return '\n'.join([lm.render_panel(name, *args, **kw) for name, args, kw in layout.headings])
     return ''
 
 
