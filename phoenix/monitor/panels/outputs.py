@@ -33,7 +33,7 @@ class Outputs(object):
 
     @panel_config(name='monitor_outputs', renderer='../templates/monitor/panels/media.pt')
     def panel(self):
-        job_id = self.session.get('job_id')
+        job_id = self.request.matchdict.get('job_id')
 
         items = []
         for output in process_outputs(self.request, job_id).values():

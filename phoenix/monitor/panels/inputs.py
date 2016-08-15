@@ -30,7 +30,7 @@ class Inputs(object):
     
     @panel_config(name='monitor_inputs', renderer='../templates/monitor/panels/media.pt')
     def panel(self):
-        job_id = self.session.get('job_id')
+        job_id = self.request.matchdict.get('job_id')
         
         items = []
         for inp in process_inputs(self.request, job_id):

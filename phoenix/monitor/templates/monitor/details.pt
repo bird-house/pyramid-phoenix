@@ -10,22 +10,24 @@
 
       ${panel('monitor_details')}
     
-      <ul class="nav nav-pills">
-         <li class="${'active' if active=='log' else ''}">
+      <ul class="nav nav-tabs">
+         <li class="${'active' if active=='log' else ''}" role="presentation">
           <a href="${request.route_path('monitor_details', job_id=job_id, tab='log')}">Log</a>
         </li>
-        <li class="${'active' if active=='inputs' else ''}">
+        <li class="${'active' if active=='inputs' else ''}" role="presentation">
           <a href="${request.route_path('monitor_details', job_id=job_id, tab='inputs')}">Inputs</a>
         </li>
-        <li class="${'active' if active=='outputs' else ''}">
+        <li class="${'active' if active=='outputs' else ''}" role="presentation">
           <a href="${request.route_path('monitor_details', job_id=job_id, tab='outputs')}">Outputs</a>
         </li>
       </ul>
 
+      ${panel('monitor_'+active)}
+
       <!-- row columns -->
-      <div class="row-fluid offset1">
+      <!-- div class="row-fluid offset1">
         ${panel('headings')}
-      </div>
+      </div -->
     </div>
 
   </div>

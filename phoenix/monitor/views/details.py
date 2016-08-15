@@ -21,18 +21,5 @@ class Details(MyView):
     @view_config(route_name='monitor_details', renderer='../templates/monitor/details.pt')
     def view(self):
         tab = self.request.matchdict.get('tab')
-        # TODO: this is a bit fishy ...
         job_id = self.request.matchdict.get('job_id')
-        if job_id is not None:
-            self.session['job_id'] = job_id
-            self.session.changed()
-
-        lm = self.request.layout_manager
-        if tab == 'outputs':
-            lm.layout.add_heading('monitor_outputs')
-        elif tab == 'inputs':
-            lm.layout.add_heading('monitor_inputs')
-        else:
-            lm.layout.add_heading('monitor_log')
-
         return dict(active=tab, job_id=job_id)

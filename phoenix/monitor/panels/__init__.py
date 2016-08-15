@@ -26,12 +26,12 @@ def job_details(request, job_id):
 
 @panel_config(name='monitor_details', renderer='../templates/monitor/panels/details.pt')
 def details(context, request):
-    job_id = request.session.get('job_id')
+    job_id = request.matchdict.get('job_id')
     return dict(job=job_details(request, job_id=job_id))
 
 
 @panel_config(name='monitor_log', renderer='../templates/monitor/panels/log.pt')
 def log(context, request):
-    job_id = request.session.get('job_id')
+    job_id = request.matchdict.get('job_id')
     job = request.db.jobs.find_one({'identifier': job_id})
     return dict(log=job.get('log', []))
