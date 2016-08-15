@@ -38,6 +38,10 @@ class Inputs(object):
             if self.request.wms_activated and inp.mimeType and 'netcdf' in inp.mimeType:
                 if inp.reference and 'cache' in inp.reference:
                     dataset = "cache" + inp.reference.split('cache')[1]
+                elif inp.reference and 'wpsoutputs' in inp.reference:
+                    dataset = "outputs" + inp.reference.split('wpsoutputs')[1]
+                elif inp.reference and 'download' in inp.reference:
+                    dataset = "uploads" + inp.reference.split('download')[1]
             if inp.mimeType:
                 category = 'ComplexType'
             else:
