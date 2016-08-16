@@ -1,10 +1,18 @@
 class CartItem(object):
     def __init__(self, url, title=None, abstract=None, mime_type=None, dataset=None):
         self.url = url
-        self.title = title or 'No title'
-        self.abstract = abstract or "No summary"
+        self._title = title
+        self._abstract = abstract
         self.mime_type = mime_type
         self.dataset = dataset
+
+    @property
+    def title(self):
+        return self._title or self.filename
+
+    @property
+    def abstract(self):
+        return self._abstract or "No Summary"
 
     @property
     def filename(self):
@@ -14,7 +22,7 @@ class CartItem(object):
         return self.url
 
     def to_json(self):
-        return dict(url=self.url, title=self.title, abstract=self.abstract,
+        return dict(url=self.url, title=self._title, abstract=self._abstract,
                     mime_type=self.mime_type, dataset=self.dataset)
 
 
@@ -81,7 +89,7 @@ class Cart(object):
         Removes all items of cart and updates session.
         """
         self.items = {}
-        self.session['cart'] = {}
+        self.session['cart'] = []
         self.session.changed()
 
     def save(self):
@@ -95,10 +103,11 @@ class Cart(object):
         """
         Load cart items from session.
         """
-        items_as_json = self.session.get('cart', {})
+        items_as_json = self.session.get('cart')
         self.items = {}
-        for item in items_as_json:
-            self.items[item['url']] = CartItem(**item)
+        if items_as_json:
+            for item in items_as_json:
+                self.items[item['url']] = CartItem(**item)
 
     def to_json(self):
         """
