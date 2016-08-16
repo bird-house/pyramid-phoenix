@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 def includeme(config):
     # settings = config.registry.settings
 
-    logger.info('Adding monitor ...')
+    # logger.debug('Adding monitor ...')
 
     # views
     config.add_route('monitor', '/monitor')

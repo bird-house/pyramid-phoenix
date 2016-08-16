@@ -1,20 +1,3 @@
-from pyramid.view import view_config
-
-
-def includeme(config):
-
-    def cart(request):
-        return Cart(request)
-    config.add_request_method(cart, reify=True)
-
-
-@view_config(renderer='json', name='add_to_cart.json')
-def add_to_cart(request):
-    url = request.params.get('url')
-    request.cart.add_item(url)
-    return request.cart.to_json()
-
-
 class CartItem(object):
     def __init__(self, url):
         self.url = url

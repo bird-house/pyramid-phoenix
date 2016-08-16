@@ -9,11 +9,12 @@
         </div>
         <div class="media-body">
 	  <a tal:condition="item.reference"
-             class="btn btn-default btn-xs disabled pull-right"
-             role="button">
-            <icon class="fa fa-cart-plus"></icon>
-          </a>
-          <h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4>
+		 href="/add_to_cart.json?url=${item.reference}"
+		 class="btn btn-default btn-xs pull-right"
+		 role="button">
+		  <icon class="fa fa-cart-plus"></icon>
+	  </a>
+			<h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4>
           <p>${item.get('abstract') or 'No summary'}</p>
 	  <p>
 	    <div tal:condition="item.reference">
