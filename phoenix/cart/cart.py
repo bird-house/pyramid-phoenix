@@ -1,6 +1,14 @@
 class CartItem(object):
     def __init__(self, url):
         self.url = url
+        self.title = "No Title"
+        self.abstract = "No summary"
+        self.mime_type = "application/x-netcdf"
+        self.dataset = ""
+
+    @property
+    def filename(self):
+        return self.url.split('/')[-1]
 
     def download_url(self):
         return self.url
@@ -15,7 +23,7 @@ class Cart(object):
         self.request = request
         self.session = request.session
         # load items
-        self.items = self.session.get('cart', {})
+        self.items = self.from_json(self.session.get('cart', {}))
 
     def __iter__(self):
         """
@@ -47,8 +55,14 @@ class Cart(object):
         self.session.changed()
 
     def save(self):
-        self.session['cart'] = self.items
+        self.session['cart'] = self.to_json()
         self.session.changed()
 
     def to_json(self):
         return [self.items[key].to_json() for key in self.items]
+
+    def from_json(self, cart_as_json):
+        items = {}
+        for item in cart_as_json:
+            items[item['url']] = CartItem(item['url'])
+        return items
