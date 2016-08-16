@@ -12,7 +12,7 @@
              href="/add_to_cart.json?url=${item.reference}&title=${item.title}&abstract=${item.get('abstract')}"
              class="btn btn-default btn-xs pull-right"
              role="button">
-            <icon class="fa fa-cart-plus"></icon>
+            <icon class="fa fa-lg fa-cart-plus"></icon>
           </a>
           <h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4>
           <p>${item.get('abstract') or 'No summary'}</p>

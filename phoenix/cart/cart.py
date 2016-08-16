@@ -34,6 +34,12 @@ class Cart(object):
         for key in self.items:
             yield self.items[key]
 
+    def __contains__(self, url):
+        """
+        Returns: True if cart item with given url is in cart, otherwise False.
+        """
+        return url in self.items
+
     def add_item(self, url, title=None, abstract=None):
         """
         Add cart item.

@@ -18,6 +18,8 @@ def test_cart():
     for item in cart:
         assert item.download_url() == url
 
+    assert url in cart
+
     cart.remove_item(url)
     assert cart.has_items() is False
 
