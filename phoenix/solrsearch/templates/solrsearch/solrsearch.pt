@@ -2,6 +2,9 @@
 
   <div metal:fill-slot="javascript">
     ${panel('solrsearch_script')}
+    
+    <script src="${request.static_url('phoenix:static/phoenix/js/cart.js')}"
+            type="text/javascript"></script>
   </div>
         
   <div metal:fill-slot="content">
