@@ -8,11 +8,19 @@
           </a>
         </div>
         <div class="media-body">
-          <a tal:condition="item.reference"
+          <a tal:condition="item.reference and item.reference not in request.cart"
              href="/add_to_cart.json?url=${item.reference}&title=${item.title}&abstract=${item.get('abstract')}"
              class="btn btn-default btn-xs pull-right"
+             data-toggle="tooltip" title="Add to Cart" data-value="value"
              role="button">
             <icon class="fa fa-lg fa-cart-plus"></icon>
+          </a>
+          <a tal:condition="item.reference and item.reference in request.cart"
+             href="/remove_from_cart.json?url=${item.reference}"
+             class="btn btn-default btn-xs pull-right"
+             data-toggle="tooltip" title="Remove from Cart" data-value="value"
+             role="button">
+            <icon class="fa fa-lg fa-times"></icon>
           </a>
           <h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4>
           <p>${item.get('abstract') or 'No summary'}</p>

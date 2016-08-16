@@ -88,11 +88,19 @@
           </div>
           <div class="media-body">
             <div class="media-heading">
-              <a tal:condition="'url' in result"
+              <a tal:condition="'url' in result and result.url not in request.cart"
                  href="/add_to_cart.json?url=${result.url}&title=${result.title}&abstract=${result.get('abstract')}"
                  class="btn btn-default btn-xs pull-right"
+                 data-toggle="tooltip" title="Add to Cart" data-value="value"
                  role="button">
                 <icon class="fa fa-lg fa-cart-plus"></icon>
+              </a>
+              <a tal:condition="'url' in result and result.url in request.cart"
+                 href="/remove_from_cart.json?url=${result.url}"
+                 class="btn btn-default btn-xs pull-right"
+                 data-toggle="tooltip" title="Remove from Cart" data-value="value"
+                 role="button">
+                <icon class="fa fa-lg fa-times"></icon>
               </a>
               <h4>${result.title}</h4>
             </div>

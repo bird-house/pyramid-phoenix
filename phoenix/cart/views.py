@@ -21,6 +21,12 @@ class CartActions(object):
         self.request.cart.add_item(url, title=title, abstract=abstract)
         return self.request.cart.to_json()
 
+    @view_config(renderer='json', name='remove_from_cart.json')
+    def remove_from_cart(self):
+        url = self.request.params.get('url')
+        self.request.cart.remove_item(url)
+        return self.request.cart.to_json()
+
     @view_config(route_name='clear_cart')
     def clear_cart(self):
         self.request.cart.clear()
