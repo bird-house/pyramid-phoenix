@@ -18,17 +18,13 @@ class CartActions(object):
         url = self.request.params.get('url')
         title = self.request.params.get('title')
         abstract = self.request.params.get('abstract')
-        item = self.request.cart.add_item(url, title=title, abstract=abstract)
-        if item:
-            self.session.flash("Added %s to Cart" % item.filename, queue='info')
+        self.request.cart.add_item(url, title=title, abstract=abstract)
         return self.request.cart.to_json()
 
     @view_config(renderer='json', name='remove_from_cart.json')
     def remove_from_cart(self):
         url = self.request.params.get('url')
-        item = self.request.cart.remove_item(url)
-        if item:
-            self.session.flash("Removed %s from Cart" % item.filename, queue='info')
+        self.request.cart.remove_item(url)
         return self.request.cart.to_json()
 
     @view_config(route_name='clear_cart')
