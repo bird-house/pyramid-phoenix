@@ -1,10 +1,10 @@
 class CartItem(object):
-    def __init__(self, url):
+    def __init__(self, url, title=None, abstract=None, mime_type=None, dataset=None):
         self.url = url
-        self.title = "No Title"
-        self.abstract = "No summary"
-        self.mime_type = "application/x-netcdf"
-        self.dataset = ""
+        self.title = title or 'No title'
+        self.abstract = abstract or "No summary"
+        self.mime_type = mime_type
+        self.dataset = dataset
 
     @property
     def filename(self):
@@ -14,7 +14,8 @@ class CartItem(object):
         return self.url
 
     def to_json(self):
-        return {'url': self.download_url()}
+        return dict(url=self.url, title=self.title, abstract=self.abstract,
+                    mime_type=self.mime_type, dataset=self.dataset)
 
 
 class Cart(object):
@@ -22,8 +23,9 @@ class Cart(object):
     def __init__(self, request):
         self.request = request
         self.session = request.session
-        # load items
-        self.items = self.from_json(self.session.get('cart', {}))
+        # TODO: loading stored items needs to be improved
+        self.items = None
+        self.load()
 
     def __iter__(self):
         """
@@ -33,36 +35,64 @@ class Cart(object):
             yield self.items[key]
 
     def add_item(self, url):
+        """
+        Add cart item.
+        """
         if url:
             item = CartItem(url)
             self.items[url] = item
             self.save()
 
     def remove_item(self, url):
+        """
+        Remove cart item with given url.
+        """
         if url and url in self.items:
             del self.items[url]
             self.save()
 
-    def num_items(self):
+    def count(self):
+        """
+        Returns: number of cart items.
+        """
         return len(self.items)
 
     def has_items(self):
-        return self.num_items() > 0
+        """
+        Returns: True if cart items available, otherwise False.
+        """
+        return self.count() > 0
 
     def clear(self):
+        """
+        Removes all items of cart and updates session.
+        """
         self.items = {}
         self.session['cart'] = {}
         self.session.changed()
 
     def save(self):
+        """
+        Store cart items in session.
+        """
         self.session['cart'] = self.to_json()
         self.session.changed()
 
+    def load(self):
+        """
+        Load cart items from session.
+        """
+        items_as_json = self.session.get('cart', {})
+        self.items = {}
+        for item in items_as_json:
+            self.items[item['url']] = CartItem(**item)
+
     def to_json(self):
+        """
+        Returns: json representation of all cart items.
+        """
         return [self.items[key].to_json() for key in self.items]
 
-    def from_json(self, cart_as_json):
-        items = {}
-        for item in cart_as_json:
-            items[item['url']] = CartItem(item['url'])
-        return items
+
+
+

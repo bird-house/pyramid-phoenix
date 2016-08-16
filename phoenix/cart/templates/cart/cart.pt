@@ -7,7 +7,7 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <span class="panel-title">
-              <span class="badge">${request.cart.num_items()}</span> item(s)
+              <span class="badge">${request.cart.count()}</span> item(s)
               <div class="pull-right">
                 <a class="btn btn-danger btn-xs"
                    rel="tooltip"
@@ -43,7 +43,7 @@
                         </span>
                       </div>
                     </p>
-                    <p>
+                    <p tal:condition="item.mime_type">
                       <a href="${item.download_url()}" target="_" class="label label-warning"
                          data-toggle="tooltip" title="${item.filename}" data-value="value">
                         ${item.mime_type}
@@ -54,7 +54,7 @@
                          title="Download file" data-value="value" class="btn btn-link">
                         <i class="fa fa-download"></i> Download
                       </a>
-                      <a data-toggle="tooltip" title="Show on Map" data-value="value"
+                      <a tal:condition="item.dataset" data-toggle="tooltip" title="Show on Map" data-value="value"
                          href="${request.route_path('map', _query=[('dataset', item.dataset)])}"
                          class="btn btn-link">
                         <i class="fa fa-map-marker"></i> Show on Map

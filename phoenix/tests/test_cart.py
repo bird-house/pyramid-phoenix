@@ -13,7 +13,7 @@ def test_cart():
     url = "http://localhost/download/test.nc"
     cart.add_item(url=url)
     assert cart.has_items()
-    assert cart.num_items() == 1
+    assert cart.count() == 1
 
     for item in cart:
         assert item.download_url() == url
@@ -27,9 +27,9 @@ def test_clear_cart():
     cart = Cart(request)
     url = "http://localhost/download/test.nc"
     cart.add_item(url=url)
-    assert cart.num_items() == 1
+    assert cart.count() == 1
     cart.clear()
-    assert cart.num_items() == 0
+    assert cart.count() == 0
 
 
 class CartTests(unittest.TestCase):
