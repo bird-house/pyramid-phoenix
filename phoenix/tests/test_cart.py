@@ -22,6 +22,16 @@ def test_cart():
     assert cart.has_items() is False
 
 
+def test_clear_cart():
+    request = testing.DummyRequest()
+    cart = Cart(request)
+    url = "http://localhost/download/test.nc"
+    cart.add_item(url=url)
+    assert cart.num_items() == 1
+    cart.clear()
+    assert cart.num_items() == 0
+
+
 class CartTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
