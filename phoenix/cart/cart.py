@@ -34,12 +34,12 @@ class Cart(object):
         for key in self.items:
             yield self.items[key]
 
-    def add_item(self, url):
+    def add_item(self, url, title=None, abstract=None):
         """
         Add cart item.
         """
         if url:
-            item = CartItem(url)
+            item = CartItem(url, title=title, abstract=abstract)
             self.items[url] = item
             self.save()
 

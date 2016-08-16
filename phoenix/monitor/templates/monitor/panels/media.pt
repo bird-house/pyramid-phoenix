@@ -8,46 +8,46 @@
           </a>
         </div>
         <div class="media-body">
-	  <a tal:condition="item.reference"
-		 href="/add_to_cart.json?url=${item.reference}"
-		 class="btn btn-default btn-xs pull-right"
-		 role="button">
-		  <icon class="fa fa-cart-plus"></icon>
-	  </a>
-			<h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4>
+          <a tal:condition="item.reference"
+             href="/add_to_cart.json?url=${item.reference}&title=${item.title}&abstract=${item.get('abstract')}"
+             class="btn btn-default btn-xs pull-right"
+             role="button">
+            <icon class="fa fa-cart-plus"></icon>
+          </a>
+          <h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4>
           <p>${item.get('abstract') or 'No summary'}</p>
-	  <p>
-	    <div tal:condition="item.reference">
-	      <span class="bg-info">
-		<small>${item.reference.split('/')[-1]}</small>
-	      </span>
-	    </div>
-	    <div tal:condition="item.data">
-	      <span tal:repeat="data item.data" class="bg-info">
-		${data}
-	      </span>
-	    </div>
-	  </p>
-	  <p tal:condition="item.mime_type and item.reference">
-	    <a href="${item.reference}" target="_" class="label label-warning"
-	       data-toggle="tooltip" title="${item.reference}" data-value="value">
-	      ${item.mime_type}
-	    </a>
-	  </p>
+          <p>
+            <div tal:condition="item.reference">
+              <span class="bg-info">
+                <small>${item.reference.split('/')[-1]}</small>
+              </span>
+            </div>
+            <div tal:condition="item.data">
+              <span tal:repeat="data item.data" class="bg-info">
+                ${data}
+              </span>
+            </div>
+          </p>
+          <p tal:condition="item.mime_type and item.reference">
+            <a href="${item.reference}" target="_" class="label label-warning"
+               data-toggle="tooltip" title="${item.reference}" data-value="value">
+              ${item.mime_type}
+            </a>
+          </p>
           <p tal:condition="item.reference">
             <a href="${item.reference}" target="_" data-toggle="tooltip"
-	       		title="Download file" data-value="value" class="btn btn-link">
-	      		<i class="fa fa-download"></i> Download
-	    	</a>
-			<a href="${item.reference}" target="_" data-toggle="tooltip"
-	       		title="Share" data-value="value" class="btn btn-link disabled">
-	      		<i class="fa fa-share"></i> Share
-	    	</a>
+               title="Download file" data-value="value" class="btn btn-link">
+              <i class="fa fa-download"></i> Download
+            </a>
+            <a href="${item.reference}" target="_" data-toggle="tooltip"
+               title="Share" data-value="value" class="btn btn-link disabled">
+              <i class="fa fa-share"></i> Share
+            </a>
             <a tal:condition="item.dataset" data-toggle="tooltip" title="Show on Map" data-value="value"
                href="${request.route_path('map', _query=[('dataset', item.dataset)])}"
-			   class="btn btn-link">
-              	<i class="fa fa-map-marker"></i> Show on Map
-	    	</a>
+               class="btn btn-link">
+              <i class="fa fa-map-marker"></i> Show on Map
+            </a>
           </p>
         </div>
       </div>

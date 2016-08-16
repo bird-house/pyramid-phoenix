@@ -16,7 +16,9 @@ class CartActions(object):
     @view_config(renderer='json', name='add_to_cart.json')
     def add_to_cart(self):
         url = self.request.params.get('url')
-        self.request.cart.add_item(url)
+        title = self.request.params.get('title')
+        abstract = self.request.params.get('abstract')
+        self.request.cart.add_item(url, title=title, abstract=abstract)
         return self.request.cart.to_json()
 
     @view_config(route_name='clear_cart')

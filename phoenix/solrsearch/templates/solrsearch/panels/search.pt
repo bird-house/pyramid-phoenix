@@ -88,10 +88,11 @@
           </div>
           <div class="media-body">
             <div class="media-heading">
-              <a tal:condition="'url' in result" href="${result.url}"
-                 class="btn btn-default btn-xs disabled pull-right"
+              <a tal:condition="'url' in result"
+                 href="/add_to_cart.json?url=${result.url}&title=${result.title}&abstract=${result.get('abstract')}"
+                 class="btn btn-default btn-xs pull-right"
                  role="button">
-                <icon class="fa fa-cart-plus"></icon>
+                <icon class="fa fa-lg fa-cart-plus"></icon>
               </a>
               <h4>${result.title}</h4>
             </div>
