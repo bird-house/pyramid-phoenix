@@ -96,6 +96,9 @@ def main(global_config, **settings):
     # wizard
     config.include('phoenix.wizard')
 
+    # cart
+    config.include('phoenix.cart')
+
     # readthedocs
     config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/en/latest/{part}.html')
 
