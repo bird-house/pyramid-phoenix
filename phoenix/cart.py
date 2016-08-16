@@ -1,8 +1,18 @@
+from pyramid.view import view_config
+
+
 def includeme(config):
 
     def cart(request):
-        return Cart()
+        return Cart(request)
     config.add_request_method(cart, reify=True)
+
+
+@view_config(renderer='json', name='add_to_cart.json')
+def add_to_cart(request):
+    url = request.params.get('url')
+    request.cart.add_item(url)
+    return request.cart.to_json()
 
 
 class CartItem(object):
@@ -11,6 +21,9 @@ class CartItem(object):
 
     def download_url(self):
         return self.url
+
+    def to_json(self):
+        return {'url': self.download_url()}
 
 
 class Cart(object):
@@ -29,14 +42,15 @@ class Cart(object):
             yield self.items[key]
 
     def add_item(self, url):
-        item = CartItem(url)
-        self.items[url] = item
-        self.save()
+        if url:
+            item = CartItem(url)
+            self.items[url] = item
+            self.save()
 
     def remove_item(self, url):
-        if url in self.items:
+        if url and url in self.items:
             del self.items[url]
-        self.save()
+            self.save()
 
     def num_items(self):
         return len(self.items)
@@ -44,6 +58,14 @@ class Cart(object):
     def has_items(self):
         return self.num_items() > 0
 
+    def clear(self):
+        self.items = {}
+        self.session['cart'] = {}
+        self.session.changed()
+
     def save(self):
         self.session['cart'] = self.items
         self.session.changed()
+
+    def to_json(self):
+        return [self.items[key].to_json() for key in self.items]
