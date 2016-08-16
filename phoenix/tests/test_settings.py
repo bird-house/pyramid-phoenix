@@ -3,6 +3,7 @@ import unittest
 
 from pyramid import testing
 
+
 class UserSettingsTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
@@ -19,14 +20,15 @@ class UserSettingsTests(unittest.TestCase):
         response = inst.user_view()
         self.assertEqual('Home View', response['name'])
 
+
 class UserSettingsFunctionalTests(unittest.TestCase):
     def setUp(self):
         pass
-        #from phoenix import main
-        #app = main({})
-        #from webtest import TestApp
+        # from phoenix import main
+        # app = main({})
+        # from webtest import TestApp
 
-        #self.testapp = TestApp(app)
+        # self.testapp = TestApp(app)
 
     @pytest.mark.skip(reason="no way of currently testing this")
     def test_user_view(self):
