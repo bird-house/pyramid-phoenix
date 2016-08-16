@@ -48,14 +48,21 @@ class Cart(object):
             item = CartItem(url, title=title, abstract=abstract)
             self.items[url] = item
             self.save()
+        else:
+            item = None
+        return item
 
     def remove_item(self, url):
         """
         Remove cart item with given url.
         """
         if url and url in self.items:
+            item = self.items[url]
             del self.items[url]
             self.save()
+        else:
+            item = None
+        return item
 
     def count(self):
         """
