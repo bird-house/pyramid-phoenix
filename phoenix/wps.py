@@ -20,13 +20,13 @@ def appstruct_to_inputs(request, appstruct):
     """
     Transforms appstruct to wps inputs.
     """
-    logger.debug("appstruct=%s", appstruct)
+    # logger.debug("appstruct=%s", appstruct)
     inputs = []
-    for key,values in appstruct.items():
+    for key, values in appstruct.items():
         if not isinstance(values, types.ListType):
             values = [values]
         for value in values:
-            logger.debug("key=%s, value=%s, type=%s", key, value, type(value))
+            # logger.debug("key=%s, value=%s, type=%s", key, value, type(value))
             # check if we have a mapping type for complex input
             if isinstance(value, dict):
                 # prefer upload if available
@@ -46,7 +46,7 @@ def appstruct_to_inputs(request, appstruct):
                 else:
                     value = value['url']
             inputs.append( (str(key).strip(), str(value).strip()) )
-    logger.debug("inputs form appstruct=%s", inputs)
+    # logger.debug("inputs form appstruct=%s", inputs)
     return inputs
 
 # wps input schema
@@ -116,7 +116,7 @@ class WPSSchema(colander.MappingSchema):
         for data_input in process.dataInputs:
             node = None
 
-            if data_input.dataType == None:
+            if data_input.dataType is None:
                 node = self.boundingbox(data_input) 
             # elif 'www.w3.org' in data_input.dataType:
             #    node = self.literal_data(data_input)
@@ -138,8 +138,8 @@ class WPSSchema(colander.MappingSchema):
     def literal_data(self, data_input):
         node = colander.SchemaNode(
             self.colander_literal_type(data_input),
-            name = data_input.identifier,
-            title = data_input.title,
+            name=data_input.identifier,
+            title=data_input.title,
             )
 
         # sometimes abstract is not set
@@ -206,7 +206,7 @@ class WPSSchema(colander.MappingSchema):
             return colander.String()
 
     def colander_literal_widget(self, node, data_input):
-        if len(data_input.allowedValues) > 0 and not 'AnyValue' in data_input.allowedValues:
+        if len(data_input.allowedValues) > 0 and 'AnyValue' not in data_input.allowedValues:
             # logger.debug('allowed values %s', data_input.allowedValues)
             choices = []
             for value in data_input.allowedValues:
@@ -231,7 +231,7 @@ class WPSSchema(colander.MappingSchema):
             )
 
         # sometimes abstract is not set
-        node.description = getattr(data_input, 'abstract', '')
+        node.description = getattr(data_input, 'abstract') or 'No summary'
         # optional value?
         if data_input.minOccurs == 0:
             node.missing = colander.drop
@@ -262,11 +262,10 @@ class WPSSchema(colander.MappingSchema):
                 validator=colander.Length(max=data_input.maxOccurs))
 
         # title
-        node.title = data_input.title
+        node.title = data_input.title or data_input.identifier
         
         # sometimes abstract is not set
-        if hasattr(data_input, 'abstract'):
-            node.description = data_input.abstract
+        node.description = getattr(data_input, 'abstract') or 'No summary'
 
         # optional value?
         if data_input.minOccurs == 0:
@@ -281,7 +280,7 @@ class WPSSchema(colander.MappingSchema):
             name="upload",
             title="Upload",
             description="Either upload a file ...",
-            missing = colander.null,
+            missing=colander.null,
             widget=deform.widget.FileUploadWidget(tmpstore),
             validator=FileUploadValidator(storage=self.request.storage, max_size=self.request.max_file_size))
         return node
