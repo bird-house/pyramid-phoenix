@@ -9,15 +9,17 @@
         </div>
         <div class="media-body">
           <btn tal:condition="item.reference and item.reference not in request.cart"
-             class="btn btn-default btn-xs pull-right add-to-cart"
-             data-toggle="tooltip" title="Add to Cart" data-value="${item.reference}"
-             role="button">
+               id="btn-cart-${repeat.item.number}"
+               class="btn btn-default btn-xs pull-right add-to-cart"
+               data-toggle="tooltip" title="Add to Cart" data-value="${item.reference}"
+               role="button">
             <icon class="fa fa-lg fa-cart-plus"></icon>
           </btn>
           <btn tal:condition="item.reference and item.reference in request.cart"
-             class="btn btn-default btn-xs pull-right remove-from-cart"
-             data-toggle="tooltip" title="Remove from Cart" data-value="value"
-             role="button">
+               id="btn-cart-${repeat.item.number}"
+               class="btn btn-default btn-xs pull-right remove-from-cart"
+               data-toggle="tooltip" title="Remove from Cart" data-value="${item.reference}"
+               role="button">
             <icon class="fa fa-lg fa-times"></icon>
           </btn>
           <h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4>

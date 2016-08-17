@@ -89,15 +89,17 @@
           <div class="media-body">
             <div class="media-heading">
               <btn tal:condition="'url' in result and result.url not in request.cart"
-                 class="btn btn-default btn-xs pull-right add-to-cart"
-                 data-toggle="tooltip" title="Add to Cart" data-value="${result.url}"
-                 role="button">
+                   id="result-${repeat.result.number}"
+                   class="btn btn-default btn-xs pull-right add-to-cart"
+                   data-toggle="tooltip" title="Add to Cart" data-value="${result.url}"
+                   role="button">
                 <icon class="fa fa-lg fa-cart-plus"></icon>
               </btn>
               <btn tal:condition="'url' in result and result.url in request.cart"
-                 class="btn btn-default btn-xs pull-right remove-from-cart"
-                 data-toggle="tooltip" title="Remove from Cart" data-value="${result.url}"
-                 role="button">
+                   id="result-${repeat.result.number}"
+                   class="btn btn-default btn-xs pull-right remove-from-cart"
+                   data-toggle="tooltip" title="Remove from Cart" data-value="${result.url}"
+                   role="button">
                 <icon class="fa fa-lg fa-times"></icon>
               </btn>
               <h4>${result.title}</h4>
