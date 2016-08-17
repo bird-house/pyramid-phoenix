@@ -13,6 +13,14 @@ class CartActions(object):
         self.request = request
         self.session = self.request.session
 
+    @view_config(renderer='json', name='list_cart.json')
+    def list_cart(self):
+        limit = self.request.params.get('limit', 100)
+        items = list()
+        for item in self.request.cart:
+            items.append(dict(title=item.filename, url=item.download_url()))
+        return items
+
     @view_config(renderer='json', name='add_to_cart.json')
     def add_to_cart(self):
         url = self.request.params.get('url')
