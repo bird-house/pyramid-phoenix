@@ -4,42 +4,24 @@ from colander import (
     Invalid,
     Mapping,
     SchemaNode,
-    String,
     null,
+    )
+
+from deform.compat import (
+    text_,
     )
 
 from deform.widget import (
     Widget,
     )
 
-from deform.compat import (
-    string_types,
-    )
+# TODO: replace by real deform
+from .deformng import StrippedString
 
 import logging
 import json
 
 log = logging.getLogger(__name__)
-
-
-# TODO: classes taken from next deform version
-# --------------------------
-
-class _PossiblyEmptyString(String):
-    def deserialize(self, node, cstruct):
-        if cstruct == '':
-            return _BLANK               # String.deserialize returns null
-        return super(_PossiblyEmptyString, self).deserialize(node, cstruct)
-
-
-class _StrippedString(_PossiblyEmptyString):
-    def deserialize(self, node, cstruct):
-        appstruct = super(_StrippedString, self).deserialize(node, cstruct)
-        if isinstance(appstruct, string_types):
-            appstruct = appstruct.strip()
-        return appstruct
-
-# --------------------------
 
 
 class BBoxWidget(Widget):
@@ -59,10 +41,10 @@ class BBoxWidget(Widget):
 
     _pstruct_schema = SchemaNode(
         Mapping(),
-        SchemaNode(_StrippedString(), name='minx'),
-        SchemaNode(_StrippedString(), name='miny'),
-        SchemaNode(_StrippedString(), name='maxx'),
-        SchemaNode(_StrippedString(), name='maxy'))
+        SchemaNode(StrippedString(), name='minx'),
+        SchemaNode(StrippedString(), name='miny'),
+        SchemaNode(StrippedString(), name='maxx'),
+        SchemaNode(StrippedString(), name='maxy'))
 
     def serialize(self, field, cstruct, **kw):
         if cstruct is null:
@@ -104,7 +86,7 @@ class BBoxWidget(Widget):
             result = ','.join([minx, miny, maxx, maxy])
 
             if not minx or not miny or not maxx or not maxy:
-                raise Invalid(field.schema, _('Incomplete bbox'), result)
+                raise Invalid(field.schema, 'Incomplete bbox', result)
 
             return result
 
@@ -117,7 +99,7 @@ class TagsWidget(Widget):
     mask = None
     mask_placeholder = "_"
     style = None
-    requirements = ( ('jquery.maskedinput', None), )
+    requirements = (('jquery.maskedinput', None), )
 
     def serialize(self, field, cstruct, **kw):
         if cstruct in (null, None):
