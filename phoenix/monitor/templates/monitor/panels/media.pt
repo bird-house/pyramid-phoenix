@@ -10,14 +10,14 @@
         <div class="media-body">
           <btn tal:condition="item.reference and item.reference not in request.cart"
                id="btn-cart-${repeat.item.number}"
-               class="btn btn-default btn-xs pull-right add-to-cart"
+               class="btn btn-default btn-xs pull-right btn-cart-add"
                data-toggle="tooltip" title="Add to Cart" data-value="${item.reference}"
                role="button">
             <icon class="fa fa-lg fa-cart-plus"></icon>
           </btn>
           <btn tal:condition="item.reference and item.reference in request.cart"
                id="btn-cart-${repeat.item.number}"
-               class="btn btn-default btn-xs pull-right remove-from-cart"
+               class="btn btn-default btn-xs pull-right btn-cart-remove"
                data-toggle="tooltip" title="Remove from Cart" data-value="${item.reference}"
                role="button">
             <icon class="fa fa-lg fa-times"></icon>
