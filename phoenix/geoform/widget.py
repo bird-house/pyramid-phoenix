@@ -32,17 +32,12 @@ class ResourceWidget(Widget):
     It is based on the TextInputWidget
     """
     template = 'resource'
-    # readonly_template = 'readonly/textinput'
     strip = True
-    # mask = None
-    # mask_placeholder = "_"
-    requirements = (('jquery.maskedinput', None), )
+    requirements = (('geoform', None), )
 
     def serialize(self, field, cstruct, **kw):
         if cstruct in (null, None):
             cstruct = ''
-        # readonly = kw.get('readonly', self.readonly)
-        # template = readonly and self.readonly_template or self.template
         template = self.template
         values = self.get_template_values(field, cstruct, kw)
         return field.renderer(template, **values)
