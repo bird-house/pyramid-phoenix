@@ -7,7 +7,7 @@ import types
 
 from pyramid.security import authenticated_userid
 
-from phoenix.geoform.widget import BBoxWidget
+from phoenix.geoform.widget import BBoxWidget, ResourceWidget
 from phoenix.geoform.form import BBoxValidator
 from phoenix.geoform.form import FileUploadTempStore
 from phoenix.geoform.form import FileUploadValidator
@@ -254,7 +254,7 @@ class WPSSchema(colander.MappingSchema):
             name=data_input.identifier,
             title="URL",
             description="Enter a URL pointing to your resource.",
-            widget=deform.widget.TextInputWidget(),
+            widget=ResourceWidget(),
             # missing=colander.null,
             validator=colander.url)
         # node.add(self._upload_node(data_input))
