@@ -249,9 +249,16 @@ class WPSSchema(colander.MappingSchema):
         return node
 
     def complex_data(self, data_input):
-        node = colander.SchemaNode(colander.Mapping(), name=data_input.identifier)
-        node.add(self._upload_node(data_input))
-        node.add(self._url_node(data_input))
+        node = colander.SchemaNode(
+            colander.String(),
+            name=data_input.identifier,
+            title="URL",
+            description="Enter a URL pointing to your resource.",
+            widget=deform.widget.TextInputWidget(),
+            # missing=colander.null,
+            validator=colander.url)
+        # node.add(self._upload_node(data_input))
+        # node.add(self._url_node(data_input))
 
         # sequence of nodes ...
         if data_input.maxOccurs > 1:
@@ -262,10 +269,10 @@ class WPSSchema(colander.MappingSchema):
                 validator=colander.Length(max=data_input.maxOccurs))
 
         # title
-        node.title = data_input.title or data_input.identifier
+        # node.title = data_input.title or data_input.identifier
         
         # sometimes abstract is not set
-        node.description = getattr(data_input, 'abstract') or 'No summary'
+        # node.description = getattr(data_input, 'abstract') or 'No summary'
 
         # optional value?
         if data_input.minOccurs == 0:
