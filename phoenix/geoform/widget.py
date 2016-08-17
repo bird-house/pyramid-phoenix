@@ -43,6 +43,8 @@ class ResourceWidget(Widget):
         return field.renderer(template, **values)
 
     def deserialize(self, field, pstruct):
+        log.debug(pstruct)
+
         if pstruct is null:
             return null
         elif not isinstance(pstruct, string_types):

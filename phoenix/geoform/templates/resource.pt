@@ -1,11 +1,10 @@
 <div tal:define="name name|field.name;
                   css_class css_class|field.widget.css_class;
                   oid oid|field.oid;
-                  style style|field.widget.style;
-"
+                  style style|field.widget.style;"
       tal:omit-tag="">
 
-  ${field.start_mapping()}
+ 
 
   <div class="row">
     <div class="col-xs-10">
@@ -47,25 +46,34 @@
     </div>
   </div>
   
-  ${field.end_mapping()}
+
 
 
   <script type="text/javascript">
+    var cartItems = '';
+    $.getJSON("/list_cart.json", function(json) {
+       $.each(json, function(i, item) {
+          cartItems += '<option value=' + item.url + '>' + item.title + '</option>';
+       });
+    });
     deform.addCallback(
           '${field.oid}',
           function (oid) {
               console.log(oid);
               $("#"+oid+"-cart").click(function(event) {
                    console.log('cart button clicked');
+                   $select = $("#"+oid+"-cart-select");    
+                   $select.empty();
+                   $select.append(cartItems);
                    form = $("#"+oid+"-cart-form");
                    form.modal("show");
              });
              $("#"+oid+"-cart-close").click(function(event) {
                  console.log('dialog closed');
                  // event.preventDefault();
-                 var result = $("#"+oid+"-cart-select").find(":selected").text();
-                 console.log(result);
-                 $("#"+oid).val(result);
+                 var url = $("#"+oid+"-cart-select").find(":selected").val();
+                 console.log(url);
+                 $("#"+oid).val(url);
             });
           }
     );
