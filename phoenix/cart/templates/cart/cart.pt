@@ -12,9 +12,9 @@
                 <a class="btn btn-danger btn-xs"
                    rel="tooltip"
                    data-toggle="tooltip"
-                   title="Clear Cart"
+                   title="Remove all items from Cart"
                    href="${request.route_path('clear_cart')}">
-                  <i class="fa fa-lg fa-trash"> <span>Clear Cart</span></i>
+                  <i class="fa fa-lg fa-times"> <span>Clear all items</span></i>
                 </a>
               </div>
             </span>
