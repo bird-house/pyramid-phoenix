@@ -11,17 +11,20 @@
         <input type="text" name="url" value="${cstruct}"
                class="span2 form-control ${css_class or ''}"
                tal:attributes="style style"
+               data-toggle="tooltip" title="Enter a URL pointing to your resource. You can also choose an item from Cart or upload a file using the buttons on the right."
                id="${oid}"/>
       </div>
     </div>
     <div class="col-xs-2">
       <div class="btn-group" role="group" aria-label="...">
         <button id="${oid}-cart" 
-                type="button" class="btn btn-default">
+                type="button" class="btn btn-default" 
+                data-toggle="tooltip" title="Select item from Cart">
           <icon class="fa fa-shopping-cart"><icon>
         </button>
         <button id="${oid}-upload" 
-                type="button" class="btn btn-default">
+                type="button" class="btn btn-default"
+                data-toggle="tooltip" title="Upload a file">
           <icon class="fa fa-upload"><icon>
         </button>
       </div>
@@ -47,29 +50,32 @@
   </div>
   
   <script type="text/javascript">
-    var cartItems = '';
-    $.getJSON("/list_cart.json", function(json) {
-       $.each(json, function(i, item) {
-          cartItems += '<option value=' + item.url + '>' + item.title + '</option>';
-       });
-    });
+   
     deform.addCallback(
           '${field.oid}',
           function (oid) {
               console.log(oid);
               $("#"+oid+"-cart").click(function(event) {
-                   console.log('cart button clicked');
-                   $select = $("#"+oid+"-cart-select");    
-                   $select.empty();
-                   $select.append(cartItems);
-                   form = $("#"+oid+"-cart-form");
-                   form.modal("show");
+                   //console.log('cart button clicked');
+                   // set cart items
+                   var cartItems = '';
+                   $.getJSON("/list_cart.json", function(json) {
+                     $.each(json, function(i, item) {
+                       cartItems += '<option value=' + item.url + '>' + item.title + '</option>';
+                     });
+                     $select = $("#"+oid+"-cart-select");    
+                     $select.empty();
+                     $select.append(cartItems);
+                     // open dialog
+                     form = $("#"+oid+"-cart-form");
+                     form.modal("show");
+                   });
              });
              $("#"+oid+"-cart-save").click(function(event) {
-                 console.log('dialog closed');
-                 // event.preventDefault();
+                 //console.log('dialog closed');
+                 // fill text field with selected url
                  var url = $("#"+oid+"-cart-select").find(":selected").val();
-                 console.log(url);
+                 //console.log(url);
                  $("#"+oid).val(url);
             });
           }
