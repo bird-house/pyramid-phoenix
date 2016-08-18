@@ -36,6 +36,8 @@ class ResourceWidget(Widget):
     strip = True
     mask = None
     mask_placeholder = "_"
+    cart = False
+    upload = False
     requirements = (('jquery.maskedinput', None),)
 
     def serialize(self, field, cstruct, **kw):

@@ -3,6 +3,8 @@
                  oid oid|field.oid;
                  mask mask|field.widget.mask;
                  mask_placeholder mask_placeholder|field.widget.mask_placeholder;
+                 cart cart|field.widget.cart;
+                 upload upload|field.widget.upload;
                  style style|field.widget.style;
                  "
      tal:omit-tag="">
@@ -21,14 +23,14 @@
     </div>
     <div class="col-xs-2">
       <div class="btn-group" role="group" aria-label="...">
-        <button id="${oid}-cart" 
-                type="button" class="btn btn-default" 
-                data-toggle="tooltip" title="Select item from Cart">
+        <button id="${oid}-cart" type="button" 
+                data-toggle="tooltip" title="Select item from Cart"
+                tal:attributes="class 'btn btn-default' if cart else 'btn btn-default disabled'">
           <icon class="fa fa-shopping-cart"><icon>
         </button>
-        <button id="${oid}-upload" 
-                type="button" class="btn btn-default"
-                data-toggle="tooltip" title="Upload a file">
+        <button id="${oid}-upload" type="button"
+                data-toggle="tooltip" title="Upload a file"
+                tal:attributes="class 'btn btn-default' if upload else 'btn btn-default disabled'">
           <icon class="fa fa-upload"><icon>
         </button>
       </div>
@@ -46,8 +48,12 @@
           <select id="${oid}-cart-select" class="form-control"></select>
         </div>
         <div class="modal-footer">
-          <button id="${oid}-cart-save" type="button" class="btn btn-success" data-dismiss="modal">Select</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button id="${oid}-cart-save" type="button" class="btn btn-success" data-dismiss="modal">
+            Select
+          </button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            Cancel
+          </button>
         </div>
       </div>
     </div>
