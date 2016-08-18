@@ -3,8 +3,10 @@ import colander
 
 from phoenix.wizard.views import Wizard
 
+
 class Schema(colander.Schema):
         pass
+
 
 class Upload(Wizard):
     def __init__(self, request):
