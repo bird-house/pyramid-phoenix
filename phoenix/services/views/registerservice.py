@@ -22,14 +22,23 @@ class Schema(colander.MappingSchema):
     url = colander.SchemaNode(
         colander.String(),
         title='Service URL',
-        description='Add URL of service (WPS, Thredds, ...). Example: http://localhost:8091/wps, http://localhost/thredds/catalog.xml',
-        default='http://localhost:8091/wps',
+        description="Add URL of service (WPS, Thredds, ...). \
+                    Example: http://localhost:8094/wps, http://localhost/thredds/catalog.xml",
+        default='http://localhost:8094/wps',
         validator=colander.url,
         widget=deform.widget.TextInputWidget())
+    service_title = colander.SchemaNode(
+        colander.String(),
+        missing='',
+        description="An optional service title. \
+                    The title is used as a display name for the service. \
+                    If a title is not provided it will be taken for the service metadata.")
     service_name = colander.SchemaNode(
         colander.String(),
         missing='',
-        description="An optional service name.")
+        description='An optional service name. \
+                    The service name is used for service identification and must be unique. \
+                    If a service name is not provided it will be generated, like "running_chicken".')
     service_type = colander.SchemaNode(
         colander.String(),
         default=WPS_TYPE,

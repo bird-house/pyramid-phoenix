@@ -54,12 +54,12 @@ RESOURCE_TYPES = {
     THREDDS_TYPE: 'http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0'}
 
 
-def _fetch_thredds_metadata(url):
+def _fetch_thredds_metadata(url, title=None):
     """Fetch capabilities metadata from thredds catalog service and return record dict."""
     # TODO: maybe use thredds siphon
     import threddsclient
     tds = threddsclient.read_url(url)
-    title = tds.name or "Unknown"
+    title = title or tds.name or "Unknown"
     record = dict(
         type='service',
         title=title,
@@ -74,12 +74,12 @@ def _fetch_thredds_metadata(url):
     return record
 
 
-def _fetch_wps_metadata(url):
+def _fetch_wps_metadata(url, title=None):
     """Fetch capabilities metadata from wps service and return record dict."""
     wps = WebProcessingService(url, verify=False, skip_caps=False)
     record = dict(
         type='service',
-        title=wps.identification.title or "Unknown",
+        title=title or wps.identification.title or "Unknown",
         abstract=getattr(wps.identification, 'abstract', ''),
         source=wps.url,
         format=WPS_TYPE,
@@ -101,7 +101,7 @@ class Catalog(object):
     def insert_record(self, record):
         raise NotImplementedError
 
-    def harvest(self, url, service_type, service_name=None, public=False):
+    def harvest(self, url, service_type, service_name=None, service_title=None, public=False):
         raise NotImplementedError
 
     def get_service_by_url(self, url):
@@ -140,9 +140,9 @@ class CatalogService(Catalog):
         templ_dc = Template(filename=join(dirname(__file__), "templates", "catalog", "dublin_core.xml"))
         self.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
 
-    def harvest(self, url, service_type, service_name=None, public=False):
+    def harvest(self, url, service_type, service_name=None, service_title=None, public=False):
         if service_type == THREDDS_TYPE:
-            self.insert_record(_fetch_thredds_metadata(url, service_name))
+            self.insert_record(_fetch_thredds_metadata(url, service_title))
         else:  # ogc services
             self.service_registry.register_service(url=url, name=service_name, public=public)
             self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
@@ -187,14 +187,15 @@ class MongodbCatalog(Catalog):
         record['identifier'] = uuid.uuid4().get_urn()
         self.collection.update_one({'source': record['source']}, {'$set': record}, True)
 
-    def harvest(self, url, service_type, service_name=None, public=False):
+    def harvest(self, url, service_type, service_name=None, service_title=None, public=False):
         if service_type == THREDDS_TYPE:
-            self.insert_record(_fetch_thredds_metadata(url))
+            self.insert_record(_fetch_thredds_metadata(url, title=service_title))
         elif service_type == WPS_TYPE:
             # register service first
-            service = self.service_registry.register_service(url=url, name=service_name, public=public, overwrite=False)
+            service = self.service_registry.register_service(
+                url=url, name=service_name, public=public, overwrite=False)
             # fetch metadata
-            record = _fetch_wps_metadata(service['url'])
+            record = _fetch_wps_metadata(service['url'], title=service_title)
             record['public'] = public
             self.insert_record(record)
         else:
