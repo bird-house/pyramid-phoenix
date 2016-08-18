@@ -1,5 +1,6 @@
 from pyramid.view import view_config, view_defaults
 
+from phoenix.catalog import WPS_TYPE
 from phoenix.views import MyView
 
 import logging
@@ -22,7 +23,10 @@ class Services(MyView):
     def details_view(self):
         service_id = self.request.matchdict.get('service_id')
         service = self.request.catalog.get_record_by_id(service_id)
-        service_name = self.request.catalog.get_service_name(service)
+        if service.format == WPS_TYPE:
+            service_name = self.request.catalog.get_service_name(service)
+        else:
+            service_name = "unknown"
         return dict(service=service, service_name=service_name)
 
     @view_config(route_name="services", renderer='../templates/services/service_list.pt')

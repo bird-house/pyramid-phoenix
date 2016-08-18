@@ -179,8 +179,8 @@ class MongodbCatalog(Catalog):
 
     def delete_record(self, identifier):
         record = self.get_record_by_id(identifier)
-        if hasattr(record, 'service_name'):
-            self.service_registry.unregister_service(record.service_name)
+        if record.format == WPS_TYPE:
+            self.service_registry.unregister_service(self.get_service_name(record))
         self.collection.delete_one({'identifier': identifier})
 
     def insert_record(self, record):
@@ -192,7 +192,7 @@ class MongodbCatalog(Catalog):
             self.insert_record(_fetch_thredds_metadata(url))
         elif service_type == WPS_TYPE:
             # register service first
-            service = self.service_registry.register_service(url=url, name=service_name, public=public)
+            service = self.service_registry.register_service(url=url, name=service_name, public=public, overwrite=False)
             # fetch metadata
             record = _fetch_wps_metadata(service['url'])
             record['public'] = public
