@@ -4,8 +4,6 @@
                   style style|field.widget.style;"
       tal:omit-tag="">
 
- 
-
   <div class="row">
     <div class="col-xs-10">
       <div class="input-group">
@@ -30,25 +28,24 @@
     </div>
   </div>
 
-  <div id="${oid}-cart-form" class="modal fade">
-    <div class="modal-dialog">
+  <div id="${oid}-cart-form" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <button id="${oid}-cart-close" type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          <h4 class="modal-title" id="caption-form-label">Select item from Cart</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Select item from Cart</h4>
         </div>
         <div class="modal-body">
-          <select id="${oid}-cart-select" class="form-control">
-            <option value="1">One</option>
-          </select>
+          <select id="${oid}-cart-select" class="form-control"/>
+        </div>
+        <div class="modal-footer">
+          <button id="${oid}-cart-save" type="button" class="btn btn-success" data-dismiss="modal">Save</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         </div>
       </div>
     </div>
   </div>
   
-
-
-
   <script type="text/javascript">
     var cartItems = '';
     $.getJSON("/list_cart.json", function(json) {
@@ -68,7 +65,7 @@
                    form = $("#"+oid+"-cart-form");
                    form.modal("show");
              });
-             $("#"+oid+"-cart-close").click(function(event) {
+             $("#"+oid+"-cart-save").click(function(event) {
                  console.log('dialog closed');
                  // event.preventDefault();
                  var url = $("#"+oid+"-cart-select").find(":selected").val();
