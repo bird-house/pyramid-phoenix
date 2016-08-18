@@ -10,14 +10,16 @@ from phoenix.wizard.views import Wizard
 
 SOURCE_TYPES = {
     'wizard_esgf_search': "Earth System Grid (ESGF)",
-    #'wizard_swift_login': "Swift Cloud",
+    # 'wizard_swift_login': "Swift Cloud",
     'wizard_threddsservice': "Thredds Catalog Service",
-    'wizard_upload': "Local Storage",
+    # 'wizard_upload': "Local Storage",
     'wizard_solr': "Birdhouse Solr Search"
     }
 
+
 class SourceSchemaNode(colander.SchemaNode):
     schema_type = colander.String
+    widget = None
 
     def after_bind(self, node, kw):
         values = SOURCE_TYPES.items()
@@ -25,8 +27,10 @@ class SourceSchemaNode(colander.SchemaNode):
             values.remove(('wizard_solr', SOURCE_TYPES['wizard_solr']))
         self.widget = RadioChoiceWidget(values=values)
 
+
 class Schema(colander.MappingSchema):
     source = SourceSchemaNode()
+
 
 class ChooseSource(Wizard):
     def __init__(self, request):
@@ -39,7 +43,7 @@ class ChooseSource(Wizard):
             if data_input.identifier == self.wizard_state.get('wizard_complex_inputs')['identifier']:
                 self.title = "Choose Data Source for %s" % data_input.title
                 break
-        #self.description = self.wizard_state.get('wizard_complex_inputs')['identifier']
+        # self.description = self.wizard_state.get('wizard_complex_inputs')['identifier']
 
     def breadcrumbs(self):
         breadcrumbs = super(ChooseSource, self).breadcrumbs()
@@ -56,4 +60,3 @@ class ChooseSource(Wizard):
     @view_config(route_name='wizard_source', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(ChooseSource, self).view()
-    
