@@ -27,24 +27,26 @@ log = logging.getLogger(__name__)
 
 class ResourceWidget(Widget):
     """
-    Renders an WPS ComplexType input widget.
+    Renders an WPS ComplexType input widget with a cart and upload button.
 
-    It is based on the TextInputWidget
+    It is based on deform.widget.TextInputWidget.
     """
     template = 'resource'
+    readonly_template = 'readonly/textinput'
     strip = True
-    requirements = (('geoform', None), )
+    mask = None
+    mask_placeholder = "_"
+    requirements = (('jquery.maskedinput', None),)
 
     def serialize(self, field, cstruct, **kw):
         if cstruct in (null, None):
             cstruct = ''
-        template = self.template
+        readonly = kw.get('readonly', self.readonly)
+        template = readonly and self.readonly_template or self.template
         values = self.get_template_values(field, cstruct, kw)
         return field.renderer(template, **values)
 
     def deserialize(self, field, pstruct):
-        log.debug(pstruct)
-
         if pstruct is null:
             return null
         elif not isinstance(pstruct, string_types):

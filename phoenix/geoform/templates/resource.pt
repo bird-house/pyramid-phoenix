@@ -1,16 +1,19 @@
 <div tal:define="name name|field.name;
-                  css_class css_class|field.widget.css_class;
-                  oid oid|field.oid;
-                  style style|field.widget.style;"
-      tal:omit-tag="">
+                 css_class css_class|field.widget.css_class;
+                 oid oid|field.oid;
+                 mask mask|field.widget.mask;
+                 mask_placeholder mask_placeholder|field.widget.mask_placeholder;
+                 style style|field.widget.style;
+                 "
+     tal:omit-tag="">
 
   <div class="row">
     <div class="col-xs-10">
       <div class="input-group">
         <span class="input-group-addon">URL</span>
-        <input type="text" name="url" value="${cstruct}"
-               class="span2 form-control ${css_class or ''}"
-               tal:attributes="style style"
+        <input type="text" name="${name}" value="${cstruct}"
+               tal:attributes="class string: form-control ${css_class or ''};
+                               style style"
                data-toggle="tooltip" title="Enter a URL pointing to your resource. You can also choose an item from Cart or upload a file using the buttons on the right."
                id="${oid}"/>
       </div>
@@ -39,7 +42,7 @@
           <h4 class="modal-title">Select item from Cart</h4>
         </div>
         <div class="modal-body">
-          <select id="${oid}-cart-select" class="form-control"/>
+          <select id="${oid}-cart-select" class="form-control"></select>
         </div>
         <div class="modal-footer">
           <button id="${oid}-cart-save" type="button" class="btn btn-success" data-dismiss="modal">Save</button>
@@ -54,9 +57,7 @@
     deform.addCallback(
           '${field.oid}',
           function (oid) {
-              console.log(oid);
               $("#"+oid+"-cart").click(function(event) {
-                   //console.log('cart button clicked');
                    // set cart items
                    var cartItems = '';
                    $.getJSON("/list_cart.json", function(json) {
@@ -72,7 +73,6 @@
                    });
              });
              $("#"+oid+"-cart-save").click(function(event) {
-                 //console.log('dialog closed');
                  // fill text field with selected url
                  var url = $("#"+oid+"-cart-select").find(":selected").val();
                  //console.log(url);
