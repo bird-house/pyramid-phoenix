@@ -249,15 +249,18 @@ class WPSSchema(colander.MappingSchema):
         return node
 
     def complex_data(self, data_input):
+        folder = authenticated_userid(self.request)
+        storage_url = os.path.join(self.request.storage.base_url, folder)
+
         resource_node = colander.SchemaNode(
             colander.String(),
             name=data_input.identifier,
             title="Resource",
             description="Enter a URL pointing to your resource.",
-            widget=ResourceWidget(cart=True, upload=False),
+            widget=ResourceWidget(cart=True, upload=True, storage_url=storage_url),
             # widget=deform.widget.TextInputWidget(),
             # missing=colander.null,
-            validator=colander.url,
+            # validator=colander.url,
         )
         # node.add(self._upload_node(data_input))
         # node.add(self._url_node(data_input))

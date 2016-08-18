@@ -92,9 +92,11 @@ class ExecuteProcess(MyView):
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
+            # TODO: uploader puts qqfile in controls
+            controls = [control for control in controls if 'qqfile' not in control[0]]
             logger.debug("before validate %s", controls)
             appstruct = form.validate(controls)
-            logger.debug("before execute %s", appstruct)
+            # logger.debug("before execute %s", appstruct)
             self.execute(appstruct)
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')

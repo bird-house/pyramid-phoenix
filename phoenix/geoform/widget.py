@@ -38,6 +38,7 @@ class ResourceWidget(Widget):
     mask_placeholder = "_"
     cart = False
     upload = False
+    storage_url = None
     requirements = (('jquery.maskedinput', None),)
 
     def serialize(self, field, cstruct, **kw):
@@ -57,6 +58,7 @@ class ResourceWidget(Widget):
             pstruct = pstruct.strip()
         if not pstruct:
             return null
+        log.debug("pstruct: %s", pstruct)
         return pstruct
 
 
