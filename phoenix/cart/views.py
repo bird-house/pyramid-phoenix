@@ -18,6 +18,8 @@ class CartActions(object):
         limit = self.request.params.get('limit', 100)
         items = list()
         for item in self.request.cart:
+            if len(items) >= limit:
+                break
             items.append(dict(title=item.filename, url=item.download_url()))
         return items
 
