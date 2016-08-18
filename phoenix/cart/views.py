@@ -3,6 +3,9 @@ from pyramid.httpexceptions import HTTPFound
 
 from phoenix.views import MyView
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 @view_defaults(permission='submit')
 class CartActions(object):
@@ -15,10 +18,10 @@ class CartActions(object):
 
     @view_config(renderer='json', name='list_cart.json')
     def list_cart(self):
-        limit = self.request.params.get('limit', 100)
+        limit = int(self.request.params.get('limit', '100'))
         items = list()
         for item in self.request.cart:
-            if len(items) >= limit:
+            if limit and len(items) >= limit:
                 break
             items.append(dict(title=item.filename, url=item.download_url()))
         return items
