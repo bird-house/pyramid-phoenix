@@ -9,8 +9,6 @@ from pyramid.security import authenticated_userid
 
 from phoenix.geoform.widget import BBoxWidget, ResourceWidget
 from phoenix.geoform.form import BBoxValidator
-from phoenix.geoform.form import FileUploadTempStore
-from phoenix.geoform.form import FileUploadValidator
 
 import logging
 logger = logging.getLogger(__name__)
@@ -249,21 +247,24 @@ class WPSSchema(colander.MappingSchema):
         return node
 
     def complex_data(self, data_input):
-        folder = authenticated_userid(self.request)
-        storage_url = os.path.join(self.request.storage.base_url, folder)
+        if self.request.has_permission('submit'):
+            folder = authenticated_userid(self.request)
+            storage_url = os.path.join(self.request.storage.base_url, folder)
+            widget = ResourceWidget(cart=True, upload=True, storage_url=storage_url)
+        else:
+            widget = deform.widget.TextInputWidget()
 
         resource_node = colander.SchemaNode(
             colander.String(),
             name=data_input.identifier,
             title="Resource",
             description="Enter a URL pointing to your resource.",
-            widget=ResourceWidget(cart=True, upload=True, storage_url=storage_url),
+            widget=widget,
             # widget=deform.widget.TextInputWidget(),
             # missing=colander.null,
-            # validator=colander.url,
+            default=self._url_node_default(data_input),
+            validator=colander.url,
         )
-        # node.add(self._upload_node(data_input))
-        # node.add(self._url_node(data_input))
 
         # sequence of nodes ...
         if data_input.maxOccurs > 1:
@@ -287,28 +288,7 @@ class WPSSchema(colander.MappingSchema):
             
         return node
 
-    def _upload_node(self, data_input):
-        tmpstore = FileUploadTempStore(self.request)
-        node = colander.SchemaNode(
-            deform.schema.FileData(),
-            name="upload",
-            title="Upload",
-            description="Either upload a file ...",
-            missing=colander.null,
-            widget=deform.widget.FileUploadWidget(tmpstore),
-            validator=FileUploadValidator(storage=self.request.storage, max_size=self.request.max_file_size))
-        return node
-    
-    def _url_node(self, data_input):
-        node = colander.SchemaNode(
-            colander.String(),
-            name="url",
-            title="URL (alternative to upload)",
-            description="... or enter a URL pointing to your resource.",
-            widget=deform.widget.TextInputWidget(),
-            missing=colander.null,
-            validator=colander.url)
-        
+    def _url_node_default(self, data_input):
         # check mime-type
         mime_types = []
         if len(data_input.supportedValues) > 0: 
@@ -317,9 +297,10 @@ class WPSSchema(colander.MappingSchema):
         # set current proxy certificate
         if 'application/x-pkcs7-mime' in mime_types and self.user is not None:
             # TODO: check if certificate is still valid
-            node.default = self.user.get('credentials')
-
-        return node
+            default = self.user.get('credentials')
+        else:
+            default = colander.null
+        return default
 
     def boundingbox(self, data_input):
         node = colander.SchemaNode(
