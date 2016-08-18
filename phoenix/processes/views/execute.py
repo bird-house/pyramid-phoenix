@@ -59,19 +59,21 @@ class ExecuteProcess(MyView):
         result = {}
         if self.execution:
             for inp in self.execution.dataInputs:
-                values = None
-                if len(inp.data) > 0:
-                    values = inp.data
-                elif inp.reference is not None:
-                    values = [{'url': inp.reference}]
-                if values is not None:
-                    if inp.identifier in result:
-                        result[inp.identifier].extend(values)
-                    else:
-                        result[inp.identifier] = values
+                if inp.data or inp.reference:
+                    if inp.identifier not in result:
+                        # init result for param with empty list
+                        result[inp.identifier] = []
+                    if inp.data:
+                        # add literal input, inp.data is a list
+                        result[inp.identifier].extend(inp.data)
+                    elif inp.reference:
+                        # add reference to complex input
+                        result[inp.inp.identifier].append(inp.reference)
         for inp in self.process.dataInputs:
+            # convert boolean
             if 'boolean' in inp.dataType and inp.identifier in result:
-                result[inp.identifier] = [ val.lower() == 'true' for val in result[inp.identifier]]
+                result[inp.identifier] = [val.lower() == 'true' for val in result[inp.identifier]]
+            # TODO: very dirty ... if single value then take the first
             if inp.maxOccurs < 2 and inp.identifier in result:
                 result[inp.identifier] = result[inp.identifier][0]
         return result

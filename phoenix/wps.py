@@ -255,6 +255,7 @@ class WPSSchema(colander.MappingSchema):
             title="Resource",
             description="Enter a URL pointing to your resource.",
             widget=ResourceWidget(),
+            # widget=deform.widget.TextInputWidget(),
             # missing=colander.null,
             validator=colander.url)
         # node.add(self._upload_node(data_input))

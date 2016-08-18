@@ -14,6 +14,7 @@
         <input type="text" name="${name}" value="${cstruct}"
                tal:attributes="class string: form-control ${css_class or ''};
                                style style"
+               placeholder="Enter a URL pointing to your resource"
                data-toggle="tooltip" title="Enter a URL pointing to your resource. You can also choose an item from Cart or upload a file using the buttons on the right."
                id="${oid}"/>
       </div>
@@ -45,7 +46,7 @@
           <select id="${oid}-cart-select" class="form-control"></select>
         </div>
         <div class="modal-footer">
-          <button id="${oid}-cart-save" type="button" class="btn btn-success" data-dismiss="modal">Save</button>
+          <button id="${oid}-cart-save" type="button" class="btn btn-success" data-dismiss="modal">Select</button>
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         </div>
       </div>
@@ -77,6 +78,7 @@
                  var url = $("#"+oid+"-cart-select").find(":selected").val();
                  //console.log(url);
                  $("#"+oid).val(url);
+                 $("#"+oid).prop('title',  $("#"+oid+"-cart-select").find(":selected").text());
             });
           }
     );
