@@ -6,8 +6,6 @@ from phoenix.wizard.views import Wizard
 from phoenix.wps import WPSSchema
 from phoenix.utils import wps_describe_url
 
-from twitcher.registry import proxy_url
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -15,8 +13,9 @@ logger = logging.getLogger(__name__)
 class LiteralInputs(Wizard):
     def __init__(self, request):
         super(LiteralInputs, self).__init__(request, name='wizard_literal_inputs', title="Literal Inputs")
-        self.wps = WebProcessingService(url=proxy_url(request, self.wizard_state.get('wizard_wps')['identifier']),
-                                    verify=False, skip_caps=True)
+        self.wps = WebProcessingService(
+            url=request.route_url('owsproxy', service_name=self.wizard_state.get('wizard_wps')['identifier']),
+            verify=False, skip_caps=True)
         self.process = self.wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
         self.title = "Literal inputs of {0}".format(self.process.title)
 

@@ -9,8 +9,6 @@ from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
 from phoenix.utils import wps_describe_url
 from phoenix.security import has_execute_permission
-# TODO: we need to use the twitcher api
-from twitcher.registry import proxy_url
 
 from owslib.wps import WebProcessingService
 from owslib.wps import WPSExecution
@@ -40,7 +38,9 @@ class ExecuteProcess(MyView):
        
         if self.service_name:
             # TODO: avoid getcaps
-            self.wps = WebProcessingService(url=proxy_url(request, self.service_name), verify=False)
+            self.wps = WebProcessingService(
+                url=request.route_url('owsproxy', service_name=self.service_name),
+                verify=False)
             # TODO: need to fix owslib to handle special identifiers
             self.process = self.wps.describeprocess(self.processid)
         super(ExecuteProcess, self).__init__(request, name='processes_execute', title='')
@@ -68,7 +68,7 @@ class ExecuteProcess(MyView):
                         result[inp.identifier].extend(inp.data)
                     elif inp.reference:
                         # add reference to complex input
-                        result[inp.inp.identifier].append(inp.reference)
+                        result[inp.identifier].append(inp.reference)
         for inp in self.process.dataInputs:
             # convert boolean
             if 'boolean' in inp.dataType and inp.identifier in result:

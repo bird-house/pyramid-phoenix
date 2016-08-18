@@ -4,7 +4,6 @@ from owslib.wps import WebProcessingService
 
 from phoenix.views import MyView
 from phoenix.utils import wps_caps_url
-from twitcher.registry import proxy_url
 
 import logging
 logger = logging.getLogger(__name__)
@@ -14,7 +13,9 @@ logger = logging.getLogger(__name__)
 class ProcessList(MyView):
     def __init__(self, request):
         self.service_name = request.params.get('wps')
-        self.wps = WebProcessingService(url=proxy_url(request, self.service_name), verify=False)
+        self.wps = WebProcessingService(
+            url=request.route_url('owsproxy', service_name=self.service_name),
+            verify=False)
         super(ProcessList, self).__init__(request, name='processes_list', title='')
         
     def breadcrumbs(self):

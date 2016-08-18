@@ -2,19 +2,20 @@ from pyramid.view import view_config
 import colander
 import deform
 
-from twitcher.registry import proxy_url
 from owslib.wps import WebProcessingService
 
 from phoenix.utils import wps_caps_url
 from phoenix.wizard.views import Wizard
 
+
 def count_literal_inputs(wps, identifier):
     process = wps.describeprocess(identifier)
     literal_inputs = []
-    for input in process.dataInputs:
-        if input.dataType != 'ComplexData':
-            literal_inputs.append(input)
+    for inp in process.dataInputs:
+        if inp.dataType != 'ComplexData':
+            literal_inputs.append(inp)
     return len(literal_inputs)
+
 
 class Schema(colander.MappingSchema):
     @colander.deferred
@@ -35,14 +36,15 @@ class Schema(colander.MappingSchema):
             desc = process.title
             if hasattr(process, 'abstract'):
                 desc = "{0.title} - {0.abstract}".format(process)
-            choices.append( (process.identifier, desc) )
-        return deform.widget.RadioChoiceWidget(values = choices)
+            choices.append((process.identifier, desc))
+        return deform.widget.RadioChoiceWidget(values=choices)
 
     identifier = colander.SchemaNode(
         colander.String(),
-        title = "Process",
-        validator = deferred_validator,
-        widget = deferred_widget)
+        title="Process",
+        validator=deferred_validator,
+        widget=deferred_widget)
+
 
 class ChooseWPSProcess(Wizard):
     def __init__(self, request):
@@ -50,7 +52,9 @@ class ChooseWPSProcess(Wizard):
             request,
             name='wizard_process',
             title='Choose WPS Process')
-        self.wps = WebProcessingService(proxy_url(request, self.wizard_state.get('wizard_wps')['identifier']), verify=False)
+        self.wps = WebProcessingService(
+            url=request.route_url('owsproxy', service_name=self.wizard_state.get('wizard_wps')['identifier']),
+            verify=False)
         self.title = "Choose WPS Process of {0}".format(self.wps.identification.title)
 
     def breadcrumbs(self):

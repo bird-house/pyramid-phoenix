@@ -4,7 +4,6 @@ from deform.widget import RadioChoiceWidget
 from pyramid.view import view_config
 
 from owslib.wps import WebProcessingService
-from twitcher.registry import proxy_url
 
 from phoenix.wizard.views import Wizard
 
@@ -36,8 +35,9 @@ class ChooseSource(Wizard):
     def __init__(self, request):
         super(ChooseSource, self).__init__(
             request, name='wizard_source', title="Choose Data Source")
-        wps = WebProcessingService(proxy_url(request, self.wizard_state.get('wizard_wps')['identifier']),
-                                        verify=False, skip_caps=True)
+        wps = WebProcessingService(
+            url=request.route_url('owsproxy', service_name=self.wizard_state.get('wizard_wps')['identifier']),
+            verify=False, skip_caps=True)
         process = wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
         for data_input in process.dataInputs:
             if data_input.identifier == self.wizard_state.get('wizard_complex_inputs')['identifier']:

@@ -7,7 +7,6 @@ from pyramid.httpexceptions import HTTPFound
 import colander
 
 from owslib.wps import WebProcessingService
-from twitcher.registry import proxy_url
 
 from phoenix.events import JobStarted
 from phoenix.wizard.views import Wizard
@@ -38,8 +37,9 @@ class Done(Wizard):
         super(Done, self).__init__(
             request, name='wizard_done', title="Done")
         self.description = "Describe your Job and start Workflow."
-        self.wps = WebProcessingService(proxy_url(request, self.wizard_state.get('wizard_wps')['identifier']),
-                                        verify=False, skip_caps=True)
+        self.wps = WebProcessingService(
+            url=request.route_url('owsproxy', service_name=self.wizard_state.get('wizard_wps')['identifier']),
+            verify=False, skip_caps=True)
 
     def breadcrumbs(self):
         breadcrumbs = super(Done, self).breadcrumbs()

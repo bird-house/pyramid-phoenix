@@ -2,7 +2,6 @@ from pyramid.settings import asbool
 from pyramid.events import NewRequest
 
 from twitcher.registry import service_registry_factory
-from twitcher.registry import proxy_url
 
 from owslib.wps import WebProcessingService
 
@@ -55,8 +54,9 @@ def includeme(config):
                         # TODO: we need to register wps when proxy service is up
                         registry.register_service(name=service_name, url=settings['wps.url'])
                     else:
-                        settings['wps'] = WebProcessingService(url=proxy_url(request, service_name), skip_caps=True,
-                                                               verify=False)
+                        settings['wps'] = WebProcessingService(
+                            url=request.route_url('owsproxy', service_name=service_name),
+                            skip_caps=True, verify=False)
                 except:
                     logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
             else:

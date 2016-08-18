@@ -3,7 +3,6 @@ import colander
 import deform
 
 from owslib.wps import WebProcessingService
-from twitcher.registry import proxy_url
 
 from phoenix.utils import wps_describe_url
 from phoenix.wizard.views import Wizard
@@ -22,21 +21,24 @@ def deferred_widget(node, kw):
             mime_types = ', '.join([value.mimeType for value in data_input.supportedValues])
             description = "{0} - {1} ({2})".format(title, abstract, mime_types)
             choices.append( (data_input.identifier, description) )
-    return deform.widget.RadioChoiceWidget(values = choices)
+    return deform.widget.RadioChoiceWidget(values=choices)
+
 
 class Schema(colander.MappingSchema):
     identifier = colander.SchemaNode(
         colander.String(),
-        title = "Input Parameter",
-        widget = deferred_widget)
+        title="Input Parameter",
+        widget=deferred_widget)
+
 
 class ComplexInputs(Wizard):
     def __init__(self, request):
         super(ComplexInputs, self).__init__(
             request, name='wizard_complex_inputs',
             title="Choose Input Parameter")       
-        self.wps = WebProcessingService(proxy_url(request, self.wizard_state.get('wizard_wps')['identifier']),
-                                    verify=False, skip_caps=True)
+        self.wps = WebProcessingService(
+            url=request.route_url('owsproxy', service_name=self.wizard_state.get('wizard_wps')['identifier']),
+            verify=False, skip_caps=True)
         self.process = self.wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
         self.title = "Choose Input Parameter of {0}".format(self.process.title)
 
@@ -49,9 +51,9 @@ class ComplexInputs(Wizard):
         return Schema().bind(process=self.process)
 
     def success(self, appstruct):
-        for input in self.process.dataInputs:
-            if input.identifier == appstruct.get('identifier'):
-                appstruct['mime_types'] = [value.mimeType for value in input.supportedValues]
+        for inp in self.process.dataInputs:
+            if inp.identifier == appstruct.get('identifier'):
+                appstruct['mime_types'] = [value.mimeType for value in inp.supportedValues]
         super(ComplexInputs, self).success(appstruct)
 
     def next_success(self, appstruct):
