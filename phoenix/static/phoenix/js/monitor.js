@@ -1,5 +1,9 @@
 $(function() {
 
+  // toggle all checkbox
+  $('[data-toggle="checkbox"]').change(function () {
+    $('input[type=checkbox]').prop('checked', this.checked);
+  });
 
   // Open job caption form when caption is clicked
   // ----------------------------------------------
