@@ -41,7 +41,7 @@ var proxy = 'owsproxy';
 % endif
 var dsWMS = '${wms.url}';
 <%
-   wms_layers = [layer_id for layer_id in wms.contents if layer_id.split('/')[-1] not in ['lat', 'lon']]
+   wms_layers = [layer_id for layer_id in wms.contents if wms.contents[layer_id].queryable and layer_id.split('/')[-1] not in ['lat', 'lon']]
 %>
 % for layer_id in wms_layers:
 var layer${loop.index} = L.tileLayer.wms(dsWMS, {
