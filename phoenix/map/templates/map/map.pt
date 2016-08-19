@@ -21,10 +21,10 @@
                 type="text/javascript"></script>
         <script src="${request.static_path('phoenix:static/leaflet/iso8601.min.js')}"
                 type="text/javascript"></script>
-        <!-- script src="${request.static_path('phoenix:static/leaflet-plugins/timedimension/leaflet.timedimension.min.js')}"
-                    type="text/javascript"></script -->
-        <script src="${request.static_path('phoenix:static/leaflet-plugins/timedimension/leaflet.timedimension.src.patched.js')}"
-                type="text/javascript"></script>
+        <script src="${request.static_path('phoenix:static/leaflet-plugins/timedimension/leaflet.timedimension.min.js')}"
+                    type="text/javascript"></script>
+        <!-- script src="${request.static_path('phoenix:static/leaflet-plugins/timedimension/leaflet.timedimension.src.patched.js')}"
+                type="text/javascript"></script -->
         <!-- script src="${request.static_path('phoenix:static/leaflet-plugins/timedimension/extras/leaflet.timedimension.layer.wms.timeseries.js')}"
                 type="text/javascript"></script -->
         <script src="${request.static_path('phoenix:static/leaflet-plugins/coordinates/Leaflet.Coordinates-0.1.5.min.js')}"
