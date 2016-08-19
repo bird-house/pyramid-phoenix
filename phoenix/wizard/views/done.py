@@ -20,15 +20,11 @@ logger = logging.getLogger(__name__)
 
 
 class DoneSchema(colander.MappingSchema):
-    @colander.deferred
-    def deferred_caption(node, kw):
-        return kw.get('caption', '???')
-        
     caption = colander.SchemaNode(
         colander.String(),
         description="Add an optional title for this job.",
         missing='???',
-        default=deferred_caption,
+        default='???',
         )
 
 
@@ -60,8 +56,8 @@ class Done(Wizard):
         user = self.get_user()
         if 'swift' in source_type:
             source = dict(
-                storage_url = user.get('swift_storage_url'),
-                auth_token = user.get('swift_auth_token'),
+                storage_url=user.get('swift_storage_url'),
+                auth_token=user.get('swift_auth_token'),
             )
             source['container'] = self.wizard_state.get('wizard_swiftbrowser').get('container')
             prefix = self.wizard_state.get('wizard_swiftbrowser').get('prefix')
