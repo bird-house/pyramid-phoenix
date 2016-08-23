@@ -1,80 +1,25 @@
 from pyramid.view import view_config, view_defaults
-from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
-from pyramid.security import authenticated_userid
 
-from phoenix.monitor.views import Monitor
-from phoenix.monitor.panels.outputs import process_outputs
+from phoenix.views import MyView
 
 import logging
 logger = logging.getLogger(__name__)
 
-class Details(Monitor):
+
+@view_defaults(permission='view', layout='default')
+class Details(MyView):
     def __init__(self, request):
         super(Details, self).__init__(
             request, name='monitor_details', title='Details')
 
     def breadcrumbs(self):
         breadcrumbs = super(Details, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path('monitor'), title='Monitor'))
         breadcrumbs.append(dict(route_path='', title=self.title))
         return breadcrumbs
-        
-    @view_config(renderer='json', name='publish.output')
-    def publish(self):
-        import uuid
-        outputid = self.request.params.get('outputid')
-        # TODO: why use session for jobid?
-        job_id = self.session.get('job_id')
-        result = dict()
-        if outputid is not None:
-            output = process_outputs(self.request, job_id).get(outputid)
-
-            result = dict(
-                identifier = uuid.uuid4().get_urn(),
-                title = output.title,
-                abstract = output.abstract,
-                creator = authenticated_userid(self.request),
-                source = output.reference,
-                format = output.mimeType,
-                keywords = 'one,two,three')
-        return result
-
-    @view_config(renderer='json', name='upload.output')
-    def upload(self):
-        outputid = self.request.params.get('outputid')
-        # TODO: why use session for jobid?
-        job_id = self.session.get('job_id')
-        result = dict()
-        if outputid is not None:
-            output = process_outputs(self.request, job_id).get(outputid)
-            user = self.get_user()
-
-            result = dict(
-                username = user.get('swift_username'),
-                container = 'WPS Outputs',
-                prefix = job_id,
-                source = output.reference,
-                format = output.mimeType)
-        return result
 
     @view_config(route_name='monitor_details', renderer='../templates/monitor/details.pt')
     def view(self):
         tab = self.request.matchdict.get('tab')
-        # TODO: this is a bit fishy ...
         job_id = self.request.matchdict.get('job_id')
-        if job_id is not None:
-            self.session['job_id'] = job_id
-            self.session.changed()
-
-        lm = self.request.layout_manager
-        if tab == 'outputs':
-            lm.layout.add_heading('monitor_outputs')
-        elif tab == 'inputs':
-            lm.layout.add_heading('monitor_inputs')
-        else:
-            lm.layout.add_heading('monitor_log')
-
         return dict(active=tab, job_id=job_id)
-
-        
-
-

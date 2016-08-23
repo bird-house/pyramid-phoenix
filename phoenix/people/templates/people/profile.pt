@@ -1,0 +1,56 @@
+<metal:block use-macro="main_template">
+
+    <div metal:fill-slot="content">
+
+        <div class="container">
+            <div class="row">
+                <h2 class="page-header">${user_name}</h2>
+                <div class="col-md-3">
+                    <!--Sidebar content-->
+                    <ul class="nav nav-pills nav-stacked">
+                        <li class="${'active' if active=='profile' else ''}">
+                            <a href="${request.route_path('profile', userid=userid, tab='profile')}">Profile</a>
+                        </li>
+                        <li class="${'active' if active=='twitcher' else ''}">
+                            <a href="${request.route_path('profile', userid=userid, tab='twitcher')}">Personal access
+                                token
+                            </a>
+                        </li>
+                        <li class="${'active' if active=='esgf' else ''}">
+                            <a href="${request.route_path('profile', userid=userid, tab='esgf')}">ESGF access token</a>
+                        </li>
+                        <li class="${'active' if active=='group' else ''}">
+                            <a href="${request.route_path('profile', userid=userid, tab='group')}">Group Permission</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-9">
+                    <!--Body content-->
+                    <div class="row">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <span class="panel-title">
+                                    ${title}
+                                    <div tal:condition="button" class="pull-right">
+                                         <a class="${button.css_class}"
+                                            rel="tooltip"
+                                            data-toggle="tooltip"
+                                            title="${button.title}"
+                                            href="${button.href}">
+                                            ${button.title}
+                                        </a>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <tal:form replace="structure form">The form will render here</tal:form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</metal:block>

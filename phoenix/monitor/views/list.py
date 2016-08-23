@@ -7,16 +7,18 @@ from deform.widget import HiddenWidget
 from pymongo import ASCENDING, DESCENDING
 
 from pyramid.view import view_config, view_defaults
-from pyramid.httpexceptions import HTTPException, HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 
 from phoenix.grid import CustomGrid
-from phoenix.monitor.views import Monitor
+from phoenix.views import MyView
 from phoenix.monitor.views.actions import monitor_buttons
 from phoenix.utils import make_tags
+from phoenix.security import auth_protocols
 
 import logging
 logger = logging.getLogger(__name__)
+
 
 class CaptionSchema(colander.MappingSchema):
     """This is the form schema to add and edit form for job captions.
@@ -28,6 +30,7 @@ class CaptionSchema(colander.MappingSchema):
     caption = colander.SchemaNode(
         colander.String(),
         missing="???")
+
 
 class LabelsSchema(colander.MappingSchema):
     """This is the form schema to add and edit form for job tags/labels.
@@ -41,17 +44,15 @@ class LabelsSchema(colander.MappingSchema):
         title="Input labels as a comma-separated list",
         missing="dev")
 
-class JobList(Monitor):
+
+@view_defaults(permission='view', layout='default')
+class JobList(MyView):
     def __init__(self, request):
         super(JobList, self).__init__(request, name='monitor', title='Job List')
         self.collection = self.request.db.jobs
 
-    def breadcrumbs(self):
-        breadcrumbs = super(JobList, self).breadcrumbs()
-        return breadcrumbs
-
     def filter_jobs(self, page=0, limit=10, tag=None, access=None, status=None, sort='created'):
-        search_filter =  {}
+        search_filter = {}
         if access == 'public':
             search_filter['tags'] = 'public'
         elif access == 'private':
@@ -75,7 +76,7 @@ class JobList(Monitor):
         elif sort == 'process':
             sort = 'title'
             
-        sort_order = DESCENDING if sort=='finished' or sort=='created' else ASCENDING
+        sort_order = DESCENDING if sort == 'finished' or sort == 'created' else ASCENDING
         sort_criteria = [(sort, sort_order)]
         items = list(self.collection.find(search_filter).skip(page*limit).limit(limit).sort(sort_criteria))
         return items, count
@@ -86,7 +87,6 @@ class JobList(Monitor):
         """
         update_button = Button(name='update_caption', title='Update', css_class='btn btn-success')
         return Form(schema=CaptionSchema(), buttons=(update_button,), formid=formid)
-       
 
     def process_caption_form(self, form):
         try:
@@ -130,6 +130,12 @@ class JobList(Monitor):
     
     @view_config(route_name='monitor', renderer='../templates/monitor/list.pt')
     def view(self):
+        if not self.request.has_permission('submit'):
+            msg = """<strong>Warning:</strong> You are not allowed to monitor jobs.
+            Please <a href="%s" class="alert-link">sign in</a>.
+            """ % self.request.route_path('account_login', protocol=auth_protocols(self.request)[-1])
+            self.session.flash(msg, queue='warning')
+        
         caption_form = self.generate_caption_form()
         labels_form = self.generate_labels_form()
         
@@ -139,7 +145,7 @@ class JobList(Monitor):
             return self.process_labels_form(labels_form)
         
         page = int(self.request.params.get('page', '0'))
-        limit = int(self.request.params.get('limit', '50'))
+        limit = int(self.request.params.get('limit', '10'))
         tag = self.request.params.get('tag')
         access = self.request.params.get('access')
         status = self.request.params.get('status')
@@ -161,8 +167,8 @@ class JobList(Monitor):
         _, count_finished = self.filter_jobs(page=page, limit=0, tag=tag, access=access, status='Finished', sort=sort)
 
         grid = JobsGrid(self.request, items,
-                    ['_checkbox', 'status', 'user', 'process', 'service', 'caption', 'duration', 'finished', 'labels', ''],
-                    )
+                        ['_checkbox', 'status', 'user', 'process', 'service', 'caption',
+                         'finished', 'duration', 'labels', ''])
         
         return dict(grid=grid,
                     access=access, status=status,
@@ -172,12 +178,14 @@ class JobList(Monitor):
                     caption_form=caption_form.render(),
                     labels_form=labels_form.render())
 
+
 class JobsGrid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
         super(JobsGrid, self).__init__(request, *args, **kwargs)
         self.column_formats['status'] = self.status_td
         self.column_formats['user'] = self.user_td('userid')
         self.column_formats['process'] = self.label_td('title')
+        self.column_formats['service'] = self.label_td('service')
         self.column_formats['caption'] = self.caption_td
         self.column_formats['duration'] = self.duration_td
         self.column_formats['finished'] = self.time_ago_td('finished')
@@ -186,24 +194,29 @@ class JobsGrid(CustomGrid):
         self.exclude_ordering = self.columns
         
     def status_td(self, col_num, i, item):
-        return self.render_td(renderer="status_td.mako", job_id=item.get('identifier'), status=item.get('status'), progress=item.get('progress', 0))
+        return self.render_td(renderer="status_td.mako", job_id=item.get('identifier'), status=item.get('status'),
+                              progress=item.get('progress', 0))
 
     def duration_td(self, col_num, i, item):
-        return self.render_td(renderer="duration_td.mako", job_id=item.get('identifier'), duration=item.get('duration', '???'))
+        return self.render_td(renderer="duration_td.mako", job_id=item.get('identifier'),
+                              duration=item.get('duration', '???'))
   
     def caption_td(self, col_num, i, item):
-        return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'), caption=item.get('caption', '???'))
+        return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'),
+                              caption=item.get('caption', '???'))
 
     def labels_td(self, col_num, i, item):
         return self.render_td(renderer="labels_td.mako", job_id=item.get('identifier'), labels=item.get('tags'))
     
     def buttongroup_td(self, col_num, i, item):
         from phoenix.utils import ActionButton
-        buttons = []
-        buttons.append( ActionButton('results', title=u'Job Details', css_class=u'btn btn-success btn-xs', icon="fa fa-info-circle",
-                                     href=self.request.route_path('monitor_details', tab='log', job_id=item.get('identifier'))))
-        buttons.append( ActionButton('restart_job', title=u'Edit Job', css_class=u'btn btn-primary btn-xs', icon="fa fa-pencil",
-                                     href="/restart_job/%s" % item.get('identifier'), disabled=item['status']!='ProcessSucceeded'))
+        buttons = list()
+        buttons.append(ActionButton('results', title=u'Details', css_class=u'btn btn-default',
+                                    href=self.request.route_path('monitor_details', tab='log',
+                                                                 job_id=item.get('identifier'))))
+        buttons.append(ActionButton('restart_job', title=u'Restart', css_class=u'btn btn-default',
+                                    href="/restart_job/%s" % item.get('identifier'),
+                                    disabled=item['status'] != 'ProcessSucceeded'))
         return self.render_buttongroup_td(buttons=buttons)
 
 

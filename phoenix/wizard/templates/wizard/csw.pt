@@ -2,7 +2,7 @@
 
   <div metal:fill-slot="css">
     <link rel="stylesheet" type="text/css" media="screen" charset="utf-8"
-          href="${request.static_url('phoenix:static/css/csw.css')}" />
+          href="${request.static_url('phoenix:static/phoenix/css/csw.css')}" />
   </div>
 
   <div metal:fill-slot="javascript">
@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="${request.static_url('phoenix:static/leaflet/leaflet.css')}" />
     <!--[if lte IE 8]><link rel="stylesheet" href="${request.static_url('phoenix:static/leafletleaflet.ie.css')}" /><![endif]-->
     <script type="text/javascript" src="${request.static_url('phoenix:static/leaflet/leaflet.js')}"></script>
-    <script src="${request.static_url('phoenix:static/scripts/csw.js')}"></script>
+    <script src="${request.static_url('phoenix:static/phoenix/js/csw.js')}"></script>
     <script type="text/javascript">
       $(document).ready(function (e) {
          initMap();

@@ -19,15 +19,17 @@ def deferred_checkbox_widget(node, kw):
     for entry in listing:
         filename = os.path.join(folder, entry)
         if request.storage.exists(filename):
-            choices.append( (request.storage.url(filename), entry) )
+            choices.append((request.storage.url(filename), entry))
     return deform.widget.CheckboxChoiceWidget(values=choices)
-    
+
+
 class Schema(colander.Schema):
     url = colander.SchemaNode(
         colander.Set(),
         title="Filename",
         widget=deferred_checkbox_widget,
         )
+
 
 class Storage(Wizard):
     def __init__(self, request):

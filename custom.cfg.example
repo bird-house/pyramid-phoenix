@@ -1,13 +1,13 @@
 [buildout]
 extends = buildout.cfg
-#extends = profiles/wms.cfg
+#extends = profiles/development.cfg
 #extends = profiles/advanced.cfg
 
 [settings]
-hostname = localhost
-http-port = 8081
-https-port = 8443
-log-level = WARN
+#hostname = localhost
+#http-port = 8081
+#https-port = 8443
+#log-level = WARN
 
 ## deployment options
 #prefix =  /opt/birdhouse
@@ -17,16 +17,15 @@ log-level = WARN
 # run 'make passwd' to generate a new password hash
 # login=admin, password=qwerty
 phoenix-password = sha256:773eb9c05850:3e6a1122fbf0b1115e5208670a16c75ba5aca2a69df74603b0fdb2a2c3d2eed7
-# generate secret
+## generate secret
 # python -c "import os; print(''.join('%02x' % ord(x) for x in os.urandom(16)))"
 phoenix-secret = d5e8417934247ccb6cdbdb5144e3b130
+## set esgf search url from your provider
 esgf-search-url = https://esgf-data.dkrz.de/esg-search
-wps-url = http://localhost:8091/wps
-wms-url = http://localhost:8080/ncWMS2
-# swift access
-swift-auth-url = http://localhost/auth/v1.0
-swift-auth-version = 1
-# register at github: https://github.com/settings/applications/new 
-github-consumer-key = '#######'
-github-consumer-secret = '######'
+## swift access
+#swift-auth-url = http://localhost/auth/v1.0
+#swift-auth-version = 1
+## register at github: https://github.com/settings/applications/new 
+#github-consumer-key = '#######'
+#github-consumer-secret = '######'
 

@@ -1,7 +1,6 @@
 from pyramid_layout.panel import panel_config
-from pyramid.security import authenticated_userid
 
-from phoenix.utils import get_user
+from phoenix.security import auth_protocols
 
 import logging
 logger = logging.getLogger(__name__)
@@ -14,42 +13,35 @@ def navbar(context, request):
         active = root_path(request.current_route_path()) == root_path(url)
         return dict(name=name, url=url, active=active, icon=icon)
 
-    items = []
-    if request.has_permission('edit'):
-        items.append( nav_item('Processes', request.route_path('processes')) )
-        if request.wizard_activated:
-            items.append( nav_item('Wizard', request.route_path('wizard')) )
-        items.append( nav_item('Monitor', request.route_path('monitor')) )
+    items = list()
+    items.append(nav_item('Processes', request.route_path('processes')))
+    if request.wizard_activated:
+        items.append(nav_item('Wizard', request.route_path('wizard')))
+    items.append(nav_item('Monitor', request.route_path('monitor')))
+    items.append(nav_item('Map', request.route_path('map')))
         
-    subitems = []
-    if request.has_permission('edit'):
-        subitems.append( nav_item('Profile', request.route_path('profile', tab='account'), icon="fa fa-user") )
-        subitems.append( nav_item('Dashboard', request.route_path('dashboard', tab='jobs'), icon='fa fa-dashboard') )
+    subitems = list()
+    subitems.append(nav_item('Dashboard', request.route_path('dashboard', tab='overview'), icon='fa fa-dashboard'))
+    subitems.append(nav_item('Browse', request.route_path('solrsearch'), icon='fa fa-search'))
+    if request.has_permission('submit'):
+        subitems.append(nav_item('Cart', request.route_path('cart'), icon='fa fa-shopping-cart'))
     if request.has_permission('admin'):
-        subitems.append( nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench") )
-    
-    login = 'login' in request.current_route_url()
+        subitems.append(nav_item('People', request.route_path('people'), icon="fa fa-users"))
+        subitems.append(nav_item('Supervisor', request.route_path('supervisor'), icon="fa fa-eye"))
+        subitems.append( nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench"))
 
-    username = None
-    try:
-        user = get_user(request)
-        if user:
-            username = user.get('name')
-    except:
-        logger.exception('could not get username')
+    return dict(items=items, subitems=subitems, protocol=auth_protocols(request)[-1])
 
-    return dict(title='Phoenix', items=items, subitems=subitems, username=username, login=login)
+
+@panel_config(name='messages', renderer='phoenix:templates/panels/messages.pt')
+def messages(context, request):
+    return dict()
 
 
 @panel_config(name='breadcrumbs', renderer='phoenix:templates/panels/breadcrumbs.pt')
 def breadcrumbs(context, request):
     lm = request.layout_manager
     return dict(breadcrumbs=lm.layout.breadcrumbs)
-
-
-@panel_config(name='sidebar', renderer='phoenix:templates/panels/sidebar.pt')
-def sidebar(context, request):
-    return dict()
 
 
 @panel_config(name='footer', renderer='phoenix:templates/panels/footer.pt')
@@ -63,8 +55,7 @@ def headings(context, request):
     lm = request.layout_manager
     layout = lm.layout
     if layout.headings:
-        return '\n'.join([lm.render_panel(name, *args, **kw)
-             for name, args, kw in layout.headings])
+        return '\n'.join([lm.render_panel(name, *args, **kw) for name, args, kw in layout.headings])
     return ''
 
 

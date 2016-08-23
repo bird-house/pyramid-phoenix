@@ -1,10 +1,29 @@
+"""
+see pyramid security:
+
+* http://docs.pylonsproject.org/projects/pyramid/en/latest/tutorials/wiki2/authentication.html
+"""
+
 from datetime import datetime
 
+from pyramid.authentication import AuthTktAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.exceptions import HTTPForbidden
-from pyramid.security import authenticated_userid
+from pyramid.security import (
+        Allow,
+        Everyone,
+        Authenticated,
+        ALL_PERMISSIONS)
+
+from authomatic import Authomatic, provider_id
+from authomatic.providers import oauth2, openid
+from phoenix.providers import oauth2 as myoauth2
+from phoenix.providers import esgfopenid
+
 
 from twitcher.tokens import tokengenerator_factory
 from twitcher.tokens import tokenstore_factory
+from twitcher.registry import service_registry_factory
 
 from phoenix.db import mongodb
 
@@ -15,7 +34,13 @@ Admin = 'group.admin'
 User = 'group.user'
 Guest = 'group.guest'
 
-def generate_access_token(registry, userid):
+
+def has_execute_permission(request, service_name):
+    service_registry = service_registry_factory(request.registry)
+    return service_registry.is_public(service_name) or request.has_permission('submit')
+
+
+def generate_access_token(registry, userid=None):
     db = mongodb(registry)
 
     tokengenerator = tokengenerator_factory(registry)
@@ -26,18 +51,21 @@ def generate_access_token(registry, userid):
     token = access_token['token']
     expires = datetime.utcfromtimestamp(
         int(access_token['expires_at'])).strftime(format="%Y-%m-%d %H:%M:%S UTC")
-    db.users.update_one({'identifier':userid}, {'$set': {'twitcher_token': token,
-                                                         'twitcher_token_expires': expires}})
+    if userid:
+        db.users.update_one({'identifier':userid},
+                            {'$set': {'twitcher_token': token, 'twitcher_token_expires': expires}})
+
 
 def auth_protocols(request):
     # TODO: refactor auth settings handling
     settings = request.db.settings.find_one()
     protocols = ['phoenix', 'esgf', 'openid', 'ldap', 'oauth2']
-    if settings is not None:
-        if settings.has_key('auth'):
-            if settings['auth'].has_key('protocol'):
+    if settings:
+        if 'auth' in settings:
+            if 'protocol' in settings['auth']:
                 protocols = settings['auth']['protocol']
     return protocols
+
 
 def passwd_check(request, passphrase):
     """
@@ -84,12 +112,6 @@ def groupfinder(userid, request):
     return HTTPForbidden()
 
 
-from pyramid.security import (
-        Allow, 
-        Everyone, 
-        Authenticated, 
-        ALL_PERMISSIONS)
-
 # Authentication and Authorization
 
 class Root():
@@ -103,15 +125,12 @@ class Root():
     def __init__(self, request):
         self.request = request
 
+
 def root_factory(request):
     return Root(request)
 
 # Authomatic
 
-from authomatic.providers import oauth2, openid
-from phoenix.providers import oauth2 as myoauth2
-from phoenix.providers import esgfopenid
-from authomatic import Authomatic, provider_id
 
 def authomatic(request):
     return Authomatic(
@@ -191,3 +210,29 @@ def authomatic_config(request):
     return config
 
 
+class MyAuthenticationPolicy(AuthTktAuthenticationPolicy):
+    def authenticated_userid(self, request):
+        user = request.user
+        if user is not None:
+            return user.get('identifier')
+
+
+def get_user(request):
+    user_id = request.unauthenticated_userid
+    if user_id is not None:
+        user = request.db.users.find_one({'identifier': user_id})
+        return user
+
+
+def includeme(config):
+    settings = config.get_settings()
+
+    authn_policy = MyAuthenticationPolicy(
+        settings.get('authomatic.secret'),
+        callback=groupfinder,
+        hashalg='sha512')
+    authz_policy = ACLAuthorizationPolicy()
+    config.set_root_factory(root_factory)
+    config.set_authentication_policy(authn_policy)
+    config.set_authorization_policy(authz_policy)
+    config.add_request_method(get_user, 'user', reify=True)

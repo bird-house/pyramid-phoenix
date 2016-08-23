@@ -1,4 +1,4 @@
-from pyramid.view import view_config, view_defaults
+from pyramid.view import view_defaults
 from pyramid.httpexceptions import HTTPFound
 
 from deform import Form, Button
@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 wizard_favorite = "wizard_favorite"
 
+
 class WizardFavorite(object):
     """Stores wizard state in session with a name (favorite).
     TODO: implement as a dict?
@@ -18,7 +19,7 @@ class WizardFavorite(object):
     def __init__(self, request, session):
         self.request = request
         self.session = session
-        if not wizard_favorite in self.session:
+        if wizard_favorite not in self.session:
             self.clear()
 
     def names(self):
@@ -36,12 +37,13 @@ class WizardFavorite(object):
         self.session[wizard_favorite] = {}
         self.session.changed()
 
+
 class WizardState(object):
     def __init__(self, session, initial_step='wizard', final_step='wizard_done'):
         self.session = session
         self.initial_step = initial_step
         self.final_step = final_step
-        if not 'wizard' in self.session:
+        if 'wizard' not in self.session:
             self.clear()
 
     def load(self, state):
@@ -88,7 +90,8 @@ class WizardState(object):
         self.session['wizard'] = dict(state={}, chain=[self.initial_step])
         self.session.changed()
 
-@view_defaults(permission='edit', layout='default')
+
+@view_defaults(permission='view', layout='default')
 class Wizard(MyView):
     def __init__(self, request, name, title, description=None):
         super(Wizard, self).__init__(request, name, title, description)
@@ -100,23 +103,27 @@ class Wizard(MyView):
         next_disabled = not self.next_ok()
 
         prev_button = Button(name='previous', title='Previous',
-                             disabled=prev_disabled)   #type=submit|reset|button,value=name,css_type="btn-..."
+                             css_class="btn-warning",
+                             disabled=prev_disabled)   # type=submit|reset|button,value=name,css_type="btn-..."
+        cancel_button = Button(name='cancel', title='Cancel',
+                               css_class='btn-danger',
+                               disabled=False)
         next_button = Button(name='next', title='Next',
+                             css_class="btn-success",
                              disabled=next_disabled)
         done_button = Button(name='next', title='Done',
+                             css_class="btn-success",
                              disabled=next_disabled or not self.request.has_permission('submit'))
-        cancel_button = Button(name='cancel', title='Cancel',
-                               css_class='btn btn-danger',
-                               disabled=False)
+
         buttons = []
         # TODO: fix focus button
         if not self.wizard_state.is_first():
             buttons.append(prev_button)
+            buttons.append(cancel_button)
         if self.wizard_state.is_last():
             buttons.append(done_button)
         else:
             buttons.append(next_button)
-        buttons.append(cancel_button)
         return buttons
 
     def prev_ok(self):
@@ -154,26 +161,27 @@ class Wizard(MyView):
 
     def previous_success(self, appstruct):
         # TODO: maybe store current state?
-        #self.success(appstruct)
+        # self.success(appstruct)
         return self.previous()
 
     def previous_failure(self, validation_failure):
-        # dont stop previous in case of validation failure
+        # don't stop previous in case of validation failure
         return self.previous()
     
     def next_success(self, appstruct):
         raise NotImplementedError
 
     def next_failure(self, validation_failure):
-        return dict(title=self.title, form=validation_failure.render())
+        custom = self.custom_view() # TODO: need a better way for this
+        return dict(title=self.title, form=validation_failure.render(), **custom)
 
     def generate_form(self, formid='deform'):
         return Form(
             schema=self.schema(),
             buttons=self.buttons(),
             formid=formid,
-            #use_ajax=self.use_ajax(),
-            #ajax_options=self.ajax_options(),
+            use_ajax=self.use_ajax(),
+            ajax_options=self.ajax_options(),
             )
 
     def process_form(self, form, action):
@@ -229,7 +237,10 @@ class Wizard(MyView):
             return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
-    
+
+        if not self.request.has_permission('submit'):
+            self.session.flash("You are not allowed to execute jobs. Please sign-in.", queue='warning')
+
         result = dict(title=self.title, form=form.render(self.appstruct()))
         custom = self.custom_view()    
         return dict(result, **custom)

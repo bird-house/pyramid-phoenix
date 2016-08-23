@@ -1,0 +1,73 @@
+<metal:block use-macro="main_template">
+
+  <div metal:fill-slot="content">
+    <div class="container">
+      <h1 class="page-header">Cart</h1>
+      <div class="row">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <span class="panel-title">
+              <span class="badge">${request.cart.count()}</span> item(s)
+              <div class="pull-right">
+                <a class="btn btn-danger btn-xs"
+                   rel="tooltip"
+                   data-toggle="tooltip"
+                   title="Remove all items from Cart"
+                   href="${request.route_path('clear_cart')}">
+                  <i class="fa fa-lg fa-times"> <span>Clear all items</span></i>
+                </a>
+              </div>
+            </span>
+          </div>
+          <div class="panel-body">
+            <ul class="list-group">
+              <li class="list-group-item" tal:repeat="item request.cart">
+                <div class="media">
+                  <div class="media-left media-top">
+                    <a href="#">
+                      <img class="media-object" src="${request.static_path('phoenix:static/phoenix/img/missing_thumb.png')}" alt="No Preview"/>
+                    </a>
+                  </div>
+                  <div class="media-body">
+                    <a href="${request.route_path('remove_cart_item', _query={'url': item.url})}"
+                       class="btn btn-default btn-xs pull-right"
+                       role="button">
+                      <icon class="fa fa-lg fa-times"></icon>
+                    </a>
+                    <h4 class="media-heading">${item.title}</h4>
+                    <p>${item.abstract}</p>
+                    <p tal:condition="item._title">
+                      <div>
+                        <span class="bg-info">
+                          <small>${item._title}</small>
+                        </span>
+                      </div>
+                    </p>
+                    <p tal:condition="item.mime_type">
+                      <a href="${item.download_url()}" target="_" class="label label-warning"
+                         data-toggle="tooltip" title="${item.filename}" data-value="value">
+                        ${item.mime_type}
+                      </a>
+                    </p>
+                    <p>
+                      <a href="${item.download_url()}" target="_" data-toggle="tooltip"
+                         title="Download file" data-value="value" class="btn btn-link">
+                        <i class="fa fa-download"></i> Download
+                      </a>
+                      <a tal:condition="item.dataset" data-toggle="tooltip" title="Show on Map" data-value="value"
+                         href="${request.route_path('map', _query=[('dataset', item.dataset)])}"
+                         class="btn btn-link">
+                        <i class="fa fa-map-marker"></i> Show on Map
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</metal:block>

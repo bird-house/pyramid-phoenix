@@ -1,34 +1,25 @@
-import os
-
 import logging
 logger = logging.getLogger(__name__)
 
-__version__ = (0, 5, 0, 'final', 1)
+__version__ = (0, 6, 0, 'final', 1)
+
 
 def get_version():
     import phoenix.version
     return phoenix.version.get_version(__version__)
+
 
 def main(global_config, **settings):
     """
     This function returns a Pyramid WSGI application.
     """
     from pyramid.config import Configurator
-    from pyramid.events import NewRequest
-    from pyramid.authentication import AuthTktAuthenticationPolicy
-    from pyramid.authorization import ACLAuthorizationPolicy
-    from pyramid.settings import asbool
-    from phoenix.security import groupfinder, root_factory
 
+    config = Configurator(settings=settings)
+    
     # security
-    # TODO: move to security
-    authn_policy = AuthTktAuthenticationPolicy(
-        settings.get('authomatic.secret'), callback=groupfinder, hashalg='sha512')
-    authz_policy = ACLAuthorizationPolicy()
-    config = Configurator(root_factory=root_factory, settings=settings)
-    config.set_authentication_policy(authn_policy)
-    config.set_authorization_policy(authz_policy)
-
+    config.include('phoenix.security')
+   
     # beaker session
     config.include('pyramid_beaker')
 
@@ -36,8 +27,8 @@ def main(global_config, **settings):
     config.include('pyramid_chameleon')
     
     # deform
-    #config.include('pyramid_deform')
-    #config.include('js.deform')
+    # config.include('pyramid_deform')
+    # config.include('js.deform')
 
     # mailer
     config.include('pyramid_mailer')
@@ -52,7 +43,7 @@ def main(global_config, **settings):
 
     # static views (stylesheets etc)
     config.add_static_view('static', 'static', cache_max_age=3600)
-    config.add_static_view('deform_static', 'deform:static', cache_max_age=3600)
+    config.add_static_view('static-deform', 'deform:static', cache_max_age=3600)
 
     # database
     config.include('phoenix.db')
@@ -71,6 +62,9 @@ def main(global_config, **settings):
 
     # dashboard
     config.include('phoenix.dashboard')
+
+    # map
+    config.include('phoenix.map')
     
     # processes
     config.include('phoenix.processes')
@@ -78,11 +72,8 @@ def main(global_config, **settings):
     # job monitor
     config.include('phoenix.monitor')
 
-    # wms
-    config.include('phoenix.wms')
-
-    # user profile
-    config.include('phoenix.profile')
+    # user profiles
+    config.include('phoenix.people')
 
     # settings
     config.include('phoenix.settings')
@@ -93,21 +84,23 @@ def main(global_config, **settings):
     # catalog
     config.include('phoenix.catalog')
 
-    # services
+    # service settings
     config.include('phoenix.services')
 
-    # solr
+    # solr settings
     config.include('phoenix.solr')
+
+    # solrsearch interface
+    config.include('phoenix.solrsearch')
     
     # wizard
     config.include('phoenix.wizard')
 
+    # cart
+    config.include('phoenix.cart')
+
     # readthedocs
     config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/en/latest/{part}.html')
-
-    # A quick access to the login button
-    from phoenix.utils import button
-    config.add_request_method(button, 'login_button', reify=True)
 
     # max file size for upload in MB
     def max_file_size(request):

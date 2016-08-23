@@ -4,10 +4,8 @@ import uuid
 from pyramid.view import view_config, view_defaults, forbidden_view_config
 from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from pyramid.response import Response
-from pyramid.renderers import render, render_to_response
-from pyramid.security import remember, forget, authenticated_userid
-import colander
-import deform
+from pyramid.security import remember, forget
+
 from deform import Form, Button, ValidationFailure
 from authomatic.adapters import WebObAdapter
 
@@ -15,107 +13,45 @@ from phoenix.views import MyView
 from phoenix.security import Admin, Guest, authomatic, passwd_check
 from phoenix.security import auth_protocols
 from phoenix.security import generate_access_token
+from .schema import PhoenixSchema, LdapSchema, ESGFOpenIDSchema,  OpenIDSchema, OAuthSchema
 
 import logging
 logger = logging.getLogger(__name__)
 
-def add_user(
-    request,
-    login_id,
-    email='',
-    openid='',
-    name='unknown',
-    organisation='',
-    notes='',
-    group=Guest):
-    user=dict(
-        identifier =  str(uuid.uuid1()),
-        login_id = login_id,
-        email = email,
-        openid = openid,
-        name = name,
-        organisation = organisation,
-        notes = notes,
-        group = group,
-        creation_time = datetime.now(),
-        last_login = datetime.now())
+
+def add_user(request, login_id, email='', openid='', name='unknown', organisation='', notes='', group=Guest):
+    user = dict(
+        identifier=str(uuid.uuid1()),
+        login_id=login_id,
+        email=email,
+        openid=openid,
+        name=name,
+        organisation=organisation,
+        notes=notes,
+        group=group,
+        creation_time=datetime.now(),
+        last_login=datetime.now())
     request.db.users.save(user)
     return request.db.users.find_one({'identifier':user['identifier']})
 
-
-class PhoenixSchema(colander.MappingSchema):
-    username = colander.SchemaNode(
-        colander.String(),
-        title='Username',
-        description='Guest? Use username "guest" and password "demo".',
-        default = 'guest',
-        widget=deform.widget.SelectWidget(values=(('guest', 'guest'), ('admin', 'admin'))))
-    password = colander.SchemaNode(
-        colander.String(),
-        title = 'Password',
-        validator = colander.Length(min=4),
-        widget = deform.widget.PasswordWidget())
-
-class OAuthSchema(colander.MappingSchema):
-    choices = [('github', 'GitHub'), ('ceda', 'Ceda')]
-    
-    provider = colander.SchemaNode(
-        colander.String(),
-        validator=colander.OneOf([x[0] for x in choices]),
-        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
-        title='OAuth 2.0 Provider',
-        description='Select your OAuth Provider.')
-
-class OpenIDSchema(colander.MappingSchema):
-    openid = colander.SchemaNode(
-        colander.String(),
-        validator = colander.url,
-        title = "OpenID",
-        description = "Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname or https://openid.stackexchange.com/",
-        default = 'https://openid.stackexchange.com/')
-    
-class ESGFOpenIDSchema(colander.MappingSchema):
-    choices = [ ('badc', 'BADC'), ('dkrz', 'DKRZ'), ('ipsl', 'IPSL'), ('smhi', 'SMHI'), ('pcmdi', 'PCMDI')]
-
-    provider = colander.SchemaNode(
-        colander.String(),
-        validator=colander.OneOf([x[0] for x in choices]),
-        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
-        title='ESGF Provider',
-        description='Select the Provider of your ESGF OpenID.')
-    username = colander.SchemaNode(
-        colander.String(),
-        validator = colander.Length(min=2),
-        title = "Username",
-        description = "Your ESGF OpenID Username."
-        )
-
-class LdapSchema(colander.MappingSchema):
-    username = colander.SchemaNode(
-        colander.String(),
-        title = "Username",
-        )
-    password = colander.SchemaNode(
-        colander.String(),
-        title = 'Password',
-        widget = deform.widget.PasswordWidget())
 
 @forbidden_view_config(renderer='templates/account/forbidden.pt', layout="default")
 def forbidden(request):
     request.response.status = 403
     return dict()
 
+
 @view_config(route_name='account_register', renderer='templates/account/register.pt',
              permission='view', layout="default")
 def register(request):
     return dict()
 
+
 @view_defaults(permission='view', layout='default')
 class Account(MyView):
     def __init__(self, request):
         super(Account, self).__init__(request, name="account", title='Account')
-        
-        
+
     def appstruct(self, protocol):
         if protocol == 'oauth2':
             return dict(provider='github')
@@ -125,7 +61,6 @@ class Account(MyView):
             return dict()
 
     def generate_form(self, protocol):
-        schema = None
         if protocol == 'phoenix':
             schema = PhoenixSchema()
         elif protocol == 'esgf':
@@ -136,8 +71,9 @@ class Account(MyView):
             schema = OAuthSchema()
         else:
             schema = LdapSchema()
-        login_button = Button(name='submit', title='Log in')
-        form = Form(schema=schema, buttons=(login_button,), formid='deform')
+        btn = Button(name='submit', title='Log in',
+                     css_class="btn btn-success btn-lg btn-block")
+        form = Form(schema=schema, buttons=(btn,), formid='deform')
         return form
 
     def process_form(self, form, protocol):
@@ -159,8 +95,8 @@ class Account(MyView):
                 return HTTPFound(location=self.request.route_path('account_auth', provider_name=appstruct.get('provider')))
             elif protocol == 'esgf':
                 return HTTPFound(location=self.request.route_path('account_auth',
-                            provider_name=appstruct.get('provider'),
-                            _query=dict(username=appstruct.get('username'))))
+                                 provider_name=appstruct.get('provider'),
+                                 _query=dict(username=appstruct.get('username'))))
             elif protocol == 'openid':
                 openid = appstruct.get('openid')
                 return HTTPFound(location=self.request.route_path('account_auth', provider_name='openid', _query=dict(id=openid)))
@@ -211,14 +147,15 @@ class Account(MyView):
         if openid:
             user['openid'] = openid
         user['name'] = name
-        self.userdb.update({'login_id':login_id}, user)
-        self.session.flash("Welcome {0}.".format(name), queue='success')
+        self.userdb.update({'login_id': login_id}, user)
+        self.session.flash("Welcome {0}.".format(name), queue='info')
         if user.get('group') == Guest:
-            self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any process.", queue='info')
+            self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any processes.",
+                               queue='info')
         else:
             generate_access_token(self.request.registry, user['identifier'])
         headers = remember(self.request, user['identifier'])
-        return HTTPFound(location = self.request.route_path('home'), headers = headers)
+        return HTTPFound(location=self.request.route_path('home'), headers=headers)
 
     def login_failure(self, message=None):
         msg = 'Sorry, login failed.'
@@ -245,10 +182,12 @@ class Account(MyView):
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
         # TODO: Add ldap to title?
+        protocal_names = dict(phoenix='Phoenix', esgf='ESGF', ldap='LDAP',
+                              oauth2='Oauth 2.0', openid='Open ID')
         return dict(active=protocol,
-                    title="Login",
+                    protocol_name=protocal_names[protocol],
                     auth_protocols=allowed_protocols,
-                    form=form.render( self.appstruct(protocol) ))
+                    form=form.render(self.appstruct(protocol)))
 
     @view_config(route_name='account_logout', permission='edit')
     def logout(self):
@@ -256,14 +195,10 @@ class Account(MyView):
         return HTTPFound(location = self.request.route_path('home'), headers = headers)
 
     def phoenix_login(self, appstruct):
-        username = appstruct.get('username')
         password = appstruct.get('password')
-        if username=='admin' and passwd_check(self.request, password):
+        if passwd_check(self.request, password):
             return self.login_success(login_id="phoenix@localhost", name="Phoenix", local=True)
-        elif username=='guest' and password=='demo':
-            return self.login_success(login_id="guest@localhost", name="Guest", local=True)
-        else:
-            return self.login_failure()
+        return self.login_failure()
 
     @view_config(route_name='account_auth')
     def authomatic_login(self):
@@ -308,7 +243,7 @@ class Account(MyView):
 
         if ldap_settings is None:
             # Warn if LDAP is about to be used but not set up.
-            self.session.flash('LDAP does not seem to be set up correctly!', queue = 'danger')
+            self.session.flash('LDAP does not seem to be set up correctly!', queue='danger')
         elif getattr(self.request, 'ldap_connector', None) is None:
             logger.debug('Set up LDAP connector...')
 
@@ -323,12 +258,12 @@ class Account(MyView):
             from pyramid.config import Configurator
             config = Configurator(registry = self.request.registry)
             config.ldap_setup(ldap_settings['server'],
-                    bind = ldap_settings['bind'],
-                    passwd = ldap_settings['passwd'])
+                    bind=ldap_settings['bind'],
+                    passwd=ldap_settings['passwd'])
             config.ldap_set_login_query(
-                    base_dn = ldap_settings['base_dn'],
-                    filter_tmpl = ldap_settings['filter_tmpl'],
-                    scope = ldap_scope)
+                    base_dn=ldap_settings['base_dn'],
+                    filter_tmpl=ldap_settings['filter_tmpl'],
+                    scope=ldap_scope)
             config.commit()
 
     def ldap_login(self):
@@ -350,8 +285,7 @@ class Account(MyView):
                     if ldap_settings['email'] != '' else '')
 
             # Authentication successful
-            return self.login_success(login_id = auth[0], # userdn
-                    name = name, email = email)
+            return self.login_success(login_id=auth[0], name=name, email=email)  # login_id=user_dn
         else:
             # Authentification failed
             return self.login_failure()

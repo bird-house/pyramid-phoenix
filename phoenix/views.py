@@ -135,3 +135,6 @@ class Home(object):
     @view_config(route_name='home', renderer='phoenix:templates/home.pt')
     def view(self):
         return {}
+
+
+

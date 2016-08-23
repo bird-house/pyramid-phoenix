@@ -1,17 +1,18 @@
-from pyramid.view import view_config
+from pyramid.view import view_config, view_defaults
 
 from pyramid.httpexceptions import HTTPFound
 from deform import Form, Button
 from deform import ValidationFailure
 
 from phoenix.catalog import THREDDS_TYPE, WPS_TYPE
-from phoenix.settings.views import SettingsView
+from phoenix.views import MyView
 
 import deform
 import colander
 
 import logging
 logger = logging.getLogger(__name__)
+
 
 class Schema(colander.MappingSchema):
     service_types = [
@@ -20,27 +21,44 @@ class Schema(colander.MappingSchema):
     
     url = colander.SchemaNode(
         colander.String(),
-        title = 'Service URL',
-        description = 'Add URL of service (WPS, Thredds, ...). Example: http://localhost:8091/wps, http://localhost/thredds/catalog.xml',
-        default = 'http://localhost:8091/wps',
-        validator = colander.url,
-        widget = deform.widget.TextInputWidget())
+        title='Service URL',
+        description="Add URL of service (WPS, Thredds, ...). \
+                    Example: http://localhost:8094/wps, http://localhost/thredds/catalog.xml",
+        default='http://localhost:8094/wps',
+        validator=colander.url,
+        widget=deform.widget.TextInputWidget())
+    service_title = colander.SchemaNode(
+        colander.String(),
+        missing='',
+        description="An optional service title. \
+                    The title is used as a display name for the service. \
+                    If a title is not provided it will be taken for the service metadata.")
     service_name = colander.SchemaNode(
         colander.String(),
-        missing = '',
-        description = "An optional service name.")
+        missing='',
+        description='An optional service name. \
+                    The service name is used for service identification and must be unique. \
+                    If a service name is not provided it will be generated, like "running_chicken".')
     service_type = colander.SchemaNode(
         colander.String(),
-        default = WPS_TYPE,
-        widget = deform.widget.RadioChoiceWidget(values=service_types))
+        default=WPS_TYPE,
+        widget=deform.widget.RadioChoiceWidget(values=service_types))
+    public = colander.SchemaNode(
+        colander.Bool(),
+        title="Public access?",
+        description="Check this option if your service has no access restrictions.",
+        default=False)
 
-class RegisterService(SettingsView):
+
+@view_defaults(permission='admin', layout='default')
+class RegisterService(MyView):
     def __init__(self, request):
         super(RegisterService, self).__init__(
             request, name='register_service', title='Register New Service')
        
     def breadcrumbs(self):
         breadcrumbs = super(RegisterService, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path('settings'), title="Settings"))
         breadcrumbs.append(dict(route_path=self.request.route_path('services'), title="Services"))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs

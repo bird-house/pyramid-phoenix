@@ -1,23 +1,22 @@
-from pyramid.view import view_config
+from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
 
-from phoenix.settings.views import SettingsView
+from phoenix.views import MyView
+from phoenix.grid import CustomGrid
 
 import logging
 logger = logging.getLogger(__name__)
 
-class Supervisor(SettingsView):
+
+@view_defaults(permission='admin', layout='default')
+class Supervisor(MyView):
     def __init__(self, request):
         super(Supervisor, self).__init__(request, name='supervisor', title='Supervisor')
+        self.settings = self.request.registry.settings
         import xmlrpclib
         # TODO: dont use hardcoded url
         self.server = xmlrpclib.Server(self.settings.get('supervisor.url'))
 
-    def breadcrumbs(self):
-        breadcrumbs = super(Supervisor, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
-        return breadcrumbs
-   
     @view_config(route_name="supervisor_process")
     def supervisor_process(self):
         action = self.request.matchdict.get('action')
@@ -44,7 +43,6 @@ class Supervisor(SettingsView):
         grid = Grid(self.request, self.server.supervisor.getAllProcessInfo(), ['state', 'description', 'name', ''])
         return dict(grid=grid)
 
-from phoenix.grid import CustomGrid
 
 class Grid(CustomGrid):
     def __init__(self, request, *args, **kwargs):

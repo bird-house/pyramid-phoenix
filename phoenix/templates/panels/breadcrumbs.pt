@@ -1,9 +1,23 @@
-<div>
-  <ol class="breadcrumb" tal:condition="len(breadcrumbs) > 1">
-    <tal:repeat tal:repeat="item breadcrumbs">
-      <li tal:define="first repeat.item.start; last repeat.item.end"
-          class="${last and 'active' or None}">
-	<a tal:omit-tag="last" href="${item.route_path}"><i tal:condition="first" class="glyphicon glyphicon-home"></i><span tal:condition="not first">${item.title}</span></a></li>
-    </tal:repeat>
-  </ol>
-</div>
+<section class="breadcrumbs" tal:condition="len(breadcrumbs) > 1">
+  <div class="container">
+    <div class="row">
+      <div class="page-header">
+        <h4>
+          <ol class="breadcrumb">
+            <tal:repeat tal:repeat="item breadcrumbs">
+              <li tal:define="first repeat.item.start; last repeat.item.end"
+                  class="${last and 'active' or None}">
+
+                <a tal:omit-tag="last" href="${item.route_path}">
+                  <i tal:condition="first" class="fa fa-home"></i>
+                  <span tal:condition="not first">${item.title}</span>
+                </a>
+
+              </li>
+            </tal:repeat>
+          </ol>
+        </h4>
+      </div>
+    </div>
+  </div>
+</section>

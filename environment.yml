@@ -57,7 +57,7 @@ dependencies:
       - pyramid-mailer==0.14.1
       - pyramid-storage==0.1.2
       - pyramid-ldap==0.1
-      - pyramid-twitcher==0.2.0
+#      - pyramid-twitcher==0.2.0
       - Authomatic==0.1.0.post1
       - python-openid==2.2.5
       - ldappool==1.0

@@ -1,0 +1,201 @@
+<div tal:define="name name|field.name;
+                 css_class css_class|field.widget.css_class;
+                 oid oid|field.oid;
+                 mask mask|field.widget.mask;
+                 mask_placeholder mask_placeholder|field.widget.mask_placeholder;
+                 cart cart|field.widget.cart;
+                 upload upload|field.widget.upload;
+                 storage_url storage_url|field.widget.storage_url;
+                 style style|field.widget.style;
+                 "
+     tal:omit-tag="">
+
+  <div class="row">
+    <div class="col-xs-10">
+      <div class="input-group">
+        <span class="input-group-addon">URL</span>
+        <input type="text" name="${name}" value="${cstruct}"
+               tal:attributes="class string: form-control ${css_class or ''};
+                               style style"
+               placeholder="Enter a URL pointing to your resource"
+               data-toggle="tooltip" title="Enter a URL pointing to your resource. You can also choose an item from Cart or upload a file using the buttons on the right."
+               id="${oid}"/>
+      </div>
+    </div>
+    <div class="col-xs-2">
+      <div class="btn-group" role="group" aria-label="...">
+        <button id="${oid}-cart" type="button" 
+                data-toggle="tooltip" title="Select item from Cart"
+                tal:attributes="class 'btn btn-default' if cart else 'btn btn-default disabled'">
+          <icon class="fa fa-shopping-cart"><icon>
+        </button>
+        <button id="${oid}-upload" type="button"
+                data-toggle="tooltip" title="Upload a file"
+                tal:attributes="class 'btn btn-default' if upload else 'btn btn-default disabled'">
+          <icon class="fa fa-upload"><icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="${oid}-cart-form" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Select item from Cart</h4>
+        </div>
+        <div class="modal-body">
+          <select id="${oid}-cart-select" class="form-control"></select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            Cancel
+          </button>
+          <button id="${oid}-cart-save" type="button" class="btn btn-success" data-dismiss="modal">
+            Select
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="${oid}-upload-form" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Upload a file</h4>
+        </div>
+        <div class="modal-body">
+          <div id="${oid}-fine-uploader"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script type="text/javascript">
+   
+    deform.addCallback(
+          '${field.oid}',
+          function (oid) {
+              // cart button
+              $("#"+oid+"-cart").click(function(event) {
+                   // set cart items
+                   var cartItems = '';
+                   $.getJSON("/list_cart.json", function(json) {
+                     $.each(json, function(i, item) {
+                       cartItems += '<option value=' + item.url + '>' + item.title + '</option>';
+                     });
+                     $select = $("#"+oid+"-cart-select");    
+                     $select.empty();
+                     $select.append(cartItems);
+                     // open dialog
+                     form = $("#"+oid+"-cart-form");
+                     form.modal("show");
+                   });
+             });
+             $("#"+oid+"-cart-save").click(function(event) {
+                 // fill text field with selected url
+                 var url = $("#"+oid+"-cart-select").find(":selected").val();
+                 //console.log(url);
+                 $("#"+oid).val(url);
+                 $("#"+oid).prop('title',  $("#"+oid+"-cart-select").find(":selected").text());
+            });
+            // upload button
+            $("#"+oid+"-upload").click(function(event) {
+                  // set cart items
+                  // open dialog
+                  form = $("#"+oid+"-upload-form");
+                  form.modal("show");
+             });
+             // uploader
+$("#"+oid+"-fine-uploader").fineUploader({
+  debug: true,
+  template: 'qq-template',
+  request: {
+    endpoint: '/upload'
+  },
+  thumbnails: {
+    placeholders: {
+      //waitingPath: '/static/jquery.fine-uploader/placeholders/waiting-generic.png',
+      //notAvailablePath: '/static/jquery.fine-uploader/placeholders/not_available-generic.png',
+    }
+  },
+  autoUpload: true,
+  chunking: {
+    enabled: true,
+    concurrent: {
+      enabled: false
+    },
+    //success: {
+    //  endpoint: "/upload"
+    //}
+  },
+  deleteFile: {
+    enabled: false,
+    endpoint: '/upload'
+  },
+  resume: {
+    enabled: false
+  },
+  retry: {
+    enableAuto: true,
+    showButton: true
+  },
+  validation: {
+    allowedExtensions: ['nc', 'csv'],
+    itemLimit: 1,
+    sizeLimit: 2126512128, // 2 GB = 2 * 1014 * 1024 * 1024 bytes
+  },
+  callbacks: {
+    onValidate: function(id, name) {
+      console.log("onValidate");
+    },
+    onSubmit: function(id, name) {
+      console.log("onSubmit");
+    },
+    onUpload: function(id, name) {
+      console.log("onUpload");
+    },
+    onProgress: function(id, name) {
+      console.log("onProgress");
+    },
+    onCancel: function(id, name) {
+      console.log("onCancel");
+    },
+    onError: function(id, name) {
+      console.log("onError");
+    },
+    onComplete: function(id, name, response) {
+      console.log("onComplete");
+      //var previewLink = qq(this.getItemByFileId(id)).getByClass('preview-link')[0];
+      
+      if (response.success) {
+        //previewLink.setAttribute("href", response.tempLink)
+        console.log(id);
+        console.log(name);
+        $("#"+oid).val("${storage_url}"+'/'+name);
+        $("#"+oid).prop('title', name);
+      }
+    }
+  },
+});
+
+$('#trigger-upload').click(function() {
+  $("#"+oid+"-fine-uploader").fineUploader('uploadStoredFiles');
+});
+
+
+          }
+    );
+   
+  </script>
+ 
+   
+</div>

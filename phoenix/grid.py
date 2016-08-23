@@ -5,11 +5,11 @@ from webhelpers2.html.tags import checkbox
 from webhelpers2_grid import Grid
 
 import string # TODO replace by mako template
-#from mako.template import Template
 from mako.lookup import TemplateLookup
 
 import logging
 logger = logging.getLogger(__name__)
+
 
 def get_value(record, attribute, default=None):
     value = default
@@ -18,6 +18,7 @@ def get_value(record, attribute, default=None):
     elif hasattr(record, attribute):
         value = getattr(record, attribute)
     return value
+
 
 class CustomGrid(Grid):
     def __init__(self, request, *args, **kwargs):
@@ -31,7 +32,7 @@ class CustomGrid(Grid):
         if "_checkbox" not in self.column_formats: 
             self.column_formats["_checkbox"] = self.checkbox_column_format 
         self.lookup = TemplateLookup([os.path.join(os.path.dirname(__file__), 'templates', 'grid')])
-        #self.user_tz = u'UTC'
+        # self.user_tz = u'UTC'
 
     def checkbox_column_format(self, column_number, i, record):
         return HTML.td(checkbox(name="children", value=record.get('identifier'), title="Select item"))
@@ -42,7 +43,7 @@ class CustomGrid(Grid):
 
     def label_td(self, attribute, default=None):
         def _column_format(column_number, i, record):
-            label = get_value(record, attribute, default)
+            label = get_value(record, attribute, default or "Missing")
             return HTML.td(label)
         return _column_format
 
@@ -190,7 +191,6 @@ class CustomGrid(Grid):
         class_name = "c%s ordering %s %s" % (
             column_number, self.order_dir, column_name)
         return HTML.tag("th", header_label, class_=class_name)
-        
 
     def __html__(self):
         """Override of the ObjectGrid to use a <thead> so that bootstrap
@@ -204,7 +204,6 @@ class CustomGrid(Grid):
         records.append(HTML.tag('thead', r))
         # now lets render the actual item grid
         for i, record in enumerate(self.itemlist):
-            #logger.debug('item %s %s', i, record)
             columns = self.make_columns(i, record)
             if hasattr(self, 'custom_record_format'):
                 r = self.custom_record_format(i + 1, record, columns)

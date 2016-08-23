@@ -6,6 +6,7 @@ from phoenix.utils import user_cert_valid
 import logging
 logger = logging.getLogger(__name__)
 
+
 class ESGFSearch(Wizard):
     def __init__(self, request):
         super(ESGFSearch, self).__init__(request, name='wizard_esgf_search', title="ESGF Search")

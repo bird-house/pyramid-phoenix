@@ -1,14 +1,16 @@
-from pyramid.view import view_config
+from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
 from deform import Form
 from deform import ValidationFailure
 
-from phoenix.settings.views import SettingsView
+from phoenix.views import MyView
 
 import logging
 logger = logging.getLogger(__name__)
 
-class GitHub(SettingsView):
+
+@view_defaults(permission='admin', layout='default')
+class GitHub(MyView):
     def __init__(self, request):
         super(GitHub, self).__init__(request, name='settings_github', title='GitHub')
         self.settings = self.db.settings.find_one()
@@ -17,6 +19,7 @@ class GitHub(SettingsView):
 
     def breadcrumbs(self):
         breadcrumbs = super(GitHub, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path('settings'), title="Settings"))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 

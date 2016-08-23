@@ -4,25 +4,28 @@ from pyramid.security import authenticated_userid
 import colander
 import deform
 
-from phoenix.tasks import esgf_logon, task_result
+from phoenix.tasks.utils import task_result
+from phoenix.tasks.esgf import esgf_logon
 from phoenix.wizard.views import Wizard
 
 import logging
 logger = logging.getLogger(__name__)
 
+
 class ESGFLoginSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
         colander.String(),
-        title = "OpenID",
-        description = "Type your OpenID from your ESGF provider. For example: https://esgf-data.dkrz.de/esgf-idp/openid/username",
-        validator = colander.url
+        title="OpenID",
+        description="Type your OpenID from your ESGF provider. For example: https://esgf-data.dkrz.de/esgf-idp/openid/username",
+        validator=colander.url
         )
     password = colander.SchemaNode(
         colander.String(),
-        title = 'Password',
-        description = 'Type your password for your ESGF OpenID',
-        validator = colander.Length(min=6),
-        widget = deform.widget.PasswordWidget())
+        title='Password',
+        description='Type your password for your ESGF OpenID',
+        validator=colander.Length(min=6),
+        widget=deform.widget.PasswordWidget())
+
 
 class ESGFLogin(Wizard):
     def __init__(self, request):
@@ -45,7 +48,7 @@ class ESGFLogin(Wizard):
         return appstruct
 
     def success(self, appstruct):
-        #appstruct['openid'] = self.get_user().get('openid')
+        # appstruct['openid'] = self.get_user().get('openid')
         super(ESGFLogin, self).success(appstruct)
 
         self.wizard_state.set('password', appstruct.get('password'))
@@ -53,6 +56,7 @@ class ESGFLogin(Wizard):
                             appstruct.get('openid'),
                             appstruct.get('password'))
         self.session['task_id'] = result.id
+
     def next_success(self, appstruct):
         self.success(appstruct)
         return HTTPFound(location=self.request.route_path('wizard_loading'))
