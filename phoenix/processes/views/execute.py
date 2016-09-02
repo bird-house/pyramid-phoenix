@@ -35,7 +35,7 @@ class ExecuteProcess(MyView):
             self.service_name = None
             self.processid = None
             self.process = None
-       
+
         if self.service_name:
             # TODO: avoid getcaps
             self.wps = WebProcessingService(
@@ -88,7 +88,7 @@ class ExecuteProcess(MyView):
             buttons=(submit_button,),
             formid=formid,
             )
-    
+
     def process_form(self, form):
         controls = self.request.POST.items()
         try:
@@ -96,7 +96,7 @@ class ExecuteProcess(MyView):
             controls = [control for control in controls if 'qqfile' not in control[0]]
             logger.debug("before validate %s", controls)
             appstruct = form.validate(controls)
-            # logger.debug("before execute %s", appstruct)
+            logger.debug("before execute %s", appstruct)
             self.execute(appstruct)
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
@@ -109,7 +109,7 @@ class ExecuteProcess(MyView):
             return HTTPFound(location=self.request.route_url('processes_loading'))
         else:
             return HTTPFound(location=self.request.route_url('monitor'))
-        
+
     def execute(self, appstruct):
         inputs = appstruct_to_inputs(self.request, appstruct)
         outputs = []
@@ -120,7 +120,7 @@ class ExecuteProcess(MyView):
         result = execute_process.delay(
             userid=self.request.unauthenticated_userid,
             url=self.wps.url,
-            identifier=self.process.identifier, 
+            identifier=self.process.identifier,
             inputs=inputs, outputs=outputs)
         self.session['task_id'] = result.id
         self.request.registry.notify(JobStarted(self.request, result.id))
@@ -142,7 +142,7 @@ class ExecuteProcess(MyView):
             job = collection.find_one({"task_id": task_id})
             return HTTPFound(location=self.request.route_path('monitor_details', tab='log', job_id=job.get('identifier')))
         return {}
-    
+
     @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt')
     def view(self):
         form = self.generate_form()
