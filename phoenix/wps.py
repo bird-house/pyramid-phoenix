@@ -104,7 +104,7 @@ class WPSSchema(colander.MappingSchema):
         self.user = user
         self.kwargs = kwargs or {}
         self.add_nodes(process)
-        
+
     def add_nodes(self, process):
         if process is None:
             return
@@ -115,7 +115,7 @@ class WPSSchema(colander.MappingSchema):
             node = None
 
             if data_input.dataType is None:
-                node = self.boundingbox(data_input) 
+                node = self.boundingbox(data_input)
             # elif 'www.w3.org' in data_input.dataType:
             #    node = self.literal_data(data_input)
             elif 'ComplexData' in data_input.dataType:
@@ -159,7 +159,7 @@ class WPSSchema(colander.MappingSchema):
         # sequence of nodes ...
         if data_input.maxOccurs > 1:
             node = colander.SchemaNode(
-                colander.Sequence(), 
+                colander.Sequence(),
                 node,
                 name=data_input.identifier,
                 title=data_input.title,
@@ -185,9 +185,11 @@ class WPSSchema(colander.MappingSchema):
         elif 'dateTime' in data_input.dataType:
             return colander.DateTime()
         elif 'date' in data_input.dataType:
-            return colander.Date()
+            #return colander.Date()
+            return colander.DateTime()
         elif 'time' in data_input.dataType:
-            return colander.Time()
+            #return colander.Time()
+            return colander.DateTime()
         elif 'duration' in data_input.dataType:
             # TODO: check correct type
             # http://www.w3.org/TR/xmlschema-2/#duration
@@ -237,7 +239,7 @@ class WPSSchema(colander.MappingSchema):
         # sequence of nodes ...
         if data_input.maxOccurs > 1:
             node = colander.SchemaNode(
-                colander.Sequence(), 
+                colander.Sequence(),
                 node,
                 name=data_input.identifier,
                 title=data_input.title,
@@ -269,7 +271,7 @@ class WPSSchema(colander.MappingSchema):
         # sequence of nodes ...
         if data_input.maxOccurs > 1:
             node = colander.SchemaNode(
-                colander.Sequence(), 
+                colander.Sequence(),
                 resource_node,
                 name=data_input.identifier,
                 validator=colander.Length(max=data_input.maxOccurs))
@@ -278,20 +280,20 @@ class WPSSchema(colander.MappingSchema):
 
         # title
         node.title = data_input.title or data_input.identifier
-        
+
         # sometimes abstract is not set
         node.description = getattr(data_input, 'abstract') or 'No summary'
 
         # optional value?
         if data_input.minOccurs == 0:
             node.missing = colander.drop
-            
+
         return node
 
     def _url_node_default(self, data_input):
         # check mime-type
         mime_types = []
-        if len(data_input.supportedValues) > 0: 
+        if len(data_input.supportedValues) > 0:
             mime_types = [str(value.mimeType) for value in data_input.supportedValues]
         # logger.debug("mime-types: %s", mime_types)
         # set current proxy certificate
@@ -321,20 +323,20 @@ class WPSSchema(colander.MappingSchema):
         pattern = '-?\d+,-?\d+,-?\d+,-?\d+'
         regex = re.compile(pattern)
         node.validator = colander.Regex(
-            regex=regex, 
+            regex=regex,
             msg='String does not match pattern: minx,miny,maxx,maxy')
 
         # finally add node to root schema
         # sequence of nodes ...
         if data_input.maxOccurs > 1:
             node = colander.SchemaNode(
-                colander.Sequence(), 
+                colander.Sequence(),
                 node,
                 name=data_input.identifier,
                 title=data_input.title,
                 validator=colander.Length(max=data_input.maxOccurs)
                 )
-        
+
         return node
 
     def bind(self, **kw):
@@ -355,4 +357,3 @@ class WPSSchema(colander.MappingSchema):
         cloned.__dict__.update(self.__dict__)
         cloned.children = [node.clone() for node in self.children]
         return cloned
-
