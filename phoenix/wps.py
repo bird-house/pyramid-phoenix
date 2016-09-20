@@ -185,11 +185,9 @@ class WPSSchema(colander.MappingSchema):
         elif 'dateTime' in data_input.dataType:
             return colander.DateTime()
         elif 'date' in data_input.dataType:
-            #return colander.Date()
-            return colander.DateTime()
+            return colander.Date()
         elif 'time' in data_input.dataType:
-            #return colander.Time()
-            return colander.DateTime()
+            return colander.Time()
         elif 'duration' in data_input.dataType:
             # TODO: check correct type
             # http://www.w3.org/TR/xmlschema-2/#duration
