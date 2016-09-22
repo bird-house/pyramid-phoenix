@@ -146,8 +146,10 @@ class WPSSchema(colander.MappingSchema):
         if data_input.minOccurs == 0:
             node.missing = colander.drop
         # TODO: fix init of default
-        if hasattr(data_input, 'defaultValue') and data_input.defaultValue is not None:
-            if type(node.typ) == colander.DateTime:
+        if hasattr(data_input, 'defaultValue') \
+           and data_input.defaultValue is not None:
+            if type(node.typ) in (colander.DateTime, colander.Date,
+                                  colander.Time):
                 node.default = dateutil.parser.parse(data_input.defaultValue)
             elif type(node.typ) == colander.Boolean:
                 # TODO: boolean default does not work ...
