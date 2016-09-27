@@ -35,16 +35,21 @@ def execute_workflow(self, userid, url, workflow, caption=None):
         # logger.debug('workflow=%s', workflow)
         headers = wps_headers(userid)
         # TODO: handle access token in workflow
-        workflow['worker']['url'] = build_get_url(workflow['worker']['url'],
-                    {'access_token': headers.get('Access-Token', '')})
+        workflow['worker']['url'] = build_get_url(
+            workflow['worker']['url'],
+            {'access_token': headers.get('Access-Token', '')})
         # logger.debug('workflow_mod=%s', workflow)
-        inputs = [('workflow', ComplexDataInput(json.dumps(workflow), mimeType="text/yaml", encoding="UTF-8"))]
+        inputs = [('workflow', ComplexDataInput(
+            json.dumps(workflow), mimeType="text/yaml", encoding="UTF-8"))]
         # logger.debug('inputs=%s', inputs)
         outputs = [('output', True), ('logfile', True)]
 
-        wps = WebProcessingService(url=url, skip_caps=True, verify=False, headers=headers)
-        worker_wps = WebProcessingService(url=workflow['worker']['url'], skip_caps=False, verify=False)
-        execution = wps.execute(identifier='workflow', inputs=inputs, output=outputs, lineage=True)
+        wps = WebProcessingService(url=url, skip_caps=True, verify=False,
+                                   headers=headers)
+        worker_wps = WebProcessingService(url=workflow['worker']['url'],
+                                          skip_caps=False, verify=False)
+        execution = wps.execute(identifier='workflow',
+                                inputs=inputs, output=outputs, lineage=True)
         job['service'] = worker_wps.identification.title
         # job['title'] = getattr(execution.process, "title")
         # job['abstract'] = getattr(execution.process, "abstract")
@@ -96,4 +101,3 @@ def execute_workflow(self, userid, url, workflow, caption=None):
 
     registry.notify(JobFinished(job))
     return job['status']
-
