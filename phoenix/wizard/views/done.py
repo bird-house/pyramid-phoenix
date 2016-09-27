@@ -85,20 +85,22 @@ class Done(Wizard):
             source['query'] = solr_query
             source['filter_query'] = []
             if state.get('category'):
-                source['filter_query'].append( "category:{0}".format(state.get('category')) )
+                source['filter_query'].append( "category:{0}".format(state.get('category')))
             if state.get('source'):
-                source['filter_query'].append( "source:{0}".format(state.get('source')) )
+                source['filter_query'].append( "source:{0}".format(state.get('source')))
             workflow['source']['solr'] = source
         else:
             raise Exception('Unknown source type')
 
         # worker
-        inputs = appstruct_to_inputs(self.request, self.wizard_state.get('wizard_literal_inputs', {}))
+        literal_inputs = appstruct_to_inputs(
+            self.request,
+            self.wizard_state.get('wizard_literal_inputs', {}))
         # worker_inputs = ['%s=%s' % (key, value) for key, value in inputs]
         worker = dict(
             url=self.wps.url,
             identifier=self.wizard_state.get('wizard_process')['identifier'],
-            inputs=[(key, value) for key,value in inputs],
+            inputs=[(key, value) for key, value in literal_inputs],
             resource=self.wizard_state.get('wizard_complex_inputs')['identifier'],
             )
         workflow['worker'] = worker
@@ -128,7 +130,7 @@ class Done(Wizard):
                 workflow=self.workflow_description(),
                 caption=appstruct.get('caption'))
             self.request.registry.notify(JobStarted(self.request, result.id))
-        
+
     def next_success(self, appstruct):
         self.success(appstruct)
         self.wizard_state.clear()
