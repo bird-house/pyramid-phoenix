@@ -12,6 +12,7 @@ from phoenix.security import has_execute_permission
 
 from owslib.wps import WebProcessingService
 from owslib.wps import WPSExecution
+from owslib.wps import ComplexDataInput
 
 import logging
 logger = logging.getLogger(__name__)
@@ -23,11 +24,13 @@ class ExecuteProcess(MyView):
         self.request = request
         self.execution = None
         if 'job_id' in request.params:
-            job = request.db.jobs.find_one({'identifier': request.params['job_id']})
+            job = request.db.jobs.find_one(
+                {'identifier': request.params['job_id']})
             self.execution = WPSExecution()
             self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
             self.processid = self.execution.process.identifier
-            self.service_name = self.request.catalog.get_service_name_by_url(url=self.execution.serviceInstance)
+            self.service_name = self.request.catalog.get_service_name_by_url(
+                url=self.execution.serviceInstance)
         elif 'wps' in request.params:
             self.service_name = request.params.get('wps')
             self.processid = request.params.get('process')
@@ -39,19 +42,28 @@ class ExecuteProcess(MyView):
         if self.service_name:
             # TODO: avoid getcaps
             self.wps = WebProcessingService(
-                url=request.route_url('owsproxy', service_name=self.service_name),
+                url=request.route_url('owsproxy',
+                                      service_name=self.service_name),
                 verify=False)
             # TODO: need to fix owslib to handle special identifiers
             self.process = self.wps.describeprocess(self.processid)
-        super(ExecuteProcess, self).__init__(request, name='processes_execute', title='')
+        super(ExecuteProcess, self).__init__(request, name='processes_execute',
+                                             title='')
 
     def breadcrumbs(self):
         breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path('processes'), title='Processes'))
+        breadcrumbs.append(dict(
+            route_path=self.request.route_path('processes'),
+            title='Processes'))
         if self.service_name:
-            route_path = self.request.route_path('processes_list', _query=[('wps', self.service_name)])
-            breadcrumbs.append(dict(route_path=route_path, title=self.wps.identification.title))
-            breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.process.title))
+            route_path = self.request.route_path(
+                'processes_list', _query=[('wps', self.service_name)])
+            breadcrumbs.append(dict(
+                route_path=route_path,
+                title=self.wps.identification.title))
+            breadcrumbs.append(dict(
+                route_path=self.request.route_path(self.name),
+                title=self.process.title))
         return breadcrumbs
 
     def appstruct(self):
@@ -79,10 +91,13 @@ class ExecuteProcess(MyView):
         return result
 
     def generate_form(self, formid='deform'):
-        schema = WPSSchema(request=self.request, process=self.process, user=self.get_user())
+        schema = WPSSchema(request=self.request,
+                           process=self.process,
+                           user=self.get_user())
         submit_button = Button(name='submit', title='Execute',
                                css_class='btn btn-success btn-lg btn-block',
-                               disabled=not has_execute_permission(self.request, self.service_name))
+                               disabled=not has_execute_permission(
+                                    self.request, self.service_name))
         return Form(
             schema,
             buttons=(submit_button,),
@@ -112,9 +127,23 @@ class ExecuteProcess(MyView):
 
     def execute(self, appstruct):
         inputs = appstruct_to_inputs(self.request, appstruct)
+        # need to use ComplexDataInput
+        complex_inpts = []
+        for inpt in self.process.dataInputs:
+            if 'ComplexData' in inpt.dataType:
+                complex_inpts.append(inpt.identifier)
+        new_inputs = []
+        for inpt in inputs:
+            if inpt[0] in complex_inpts:
+                new_inputs.append((inpt[0], ComplexDataInput(inpt[1])))
+            else:
+                new_inputs.append(inpt)
+        inputs = new_inputs
+        # prepare outputs
         outputs = []
         for output in self.process.processOutputs:
-            outputs.append( (output.identifier, output.dataType == 'ComplexData' ) )
+            outputs.append(
+                (output.identifier, output.dataType == 'ComplexData'))
 
         from phoenix.tasks.execute import execute_process
         result = execute_process.delay(
