@@ -15,7 +15,7 @@ CPU_ARCH := $(shell uname -m 2>/dev/null || uname -p 2>/dev/null || echo "unknow
 # Python
 SETUPTOOLS_VERSION := 23.0.0
 BUILDOUT_VERSION := 2.5.2
-CONDA_VERSION := 4.1.9
+CONDA_VERSION := 4.2.9
 
 # Anaconda 
 ANACONDA_HOME ?= $(HOME)/anaconda
@@ -152,7 +152,7 @@ anaconda:
 .PHONY: conda_config
 conda_config: anaconda
 	@echo "Update ~/.condarc"
-	@"$(ANACONDA_HOME)/bin/conda" install -y conda=$(CONDA_VERSION)
+	@-"$(ANACONDA_HOME)/bin/conda" install -y conda=$(CONDA_VERSION)
 	@"$(ANACONDA_HOME)/bin/conda" config --add envs_dirs $(CONDA_ENVS_DIR)
 	@"$(ANACONDA_HOME)/bin/conda" config --set ssl_verify true
 	@"$(ANACONDA_HOME)/bin/conda" config --set update_dependencies true
