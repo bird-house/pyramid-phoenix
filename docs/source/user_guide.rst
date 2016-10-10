@@ -189,7 +189,13 @@ Open the ``Settings/Services`` page. Here you can see which services are registe
 
 .. image:: _images/settings_services.png
 
-To add a new WPS service press the ``Register a new Service`` button and enter the WPS URL in the field ``Service URL``, for example Malleefowl WPS:
+To add a new WPS service, press the ``Register a new Service`` button and enter the WPS URL in the field ``Service URL``:
+
+- hummingbird: http://localhost:8092/wps
+- flyingpigeon: http://localhost:8093/wps
+- emu: http://localhost:8094/wps
+
+For example, to register Malleefowl WPS:
 
 http://localhost:8091/wps
 
