@@ -16,16 +16,16 @@ def main(global_config, **settings):
     from pyramid.config import Configurator
 
     config = Configurator(settings=settings)
-    
+
     # security
     config.include('phoenix.security')
-   
+
     # beaker session
     config.include('pyramid_beaker')
 
     # chameleon templates
     config.include('pyramid_chameleon')
-    
+
     # deform
     # config.include('pyramid_deform')
     # config.include('js.deform')
@@ -52,7 +52,7 @@ def main(global_config, **settings):
     config.include('twitcher.owsproxy')
     config.include('twitcher.tweens')
 
-    # routes 
+    # routes
     config.add_route('home', '/')
     config.add_route('download', 'download/{filename:.*}')
     config.add_route('upload', 'upload')
@@ -65,7 +65,7 @@ def main(global_config, **settings):
 
     # map
     config.include('phoenix.map')
-    
+
     # processes
     config.include('phoenix.processes')
 
@@ -92,7 +92,7 @@ def main(global_config, **settings):
 
     # solrsearch interface
     config.include('phoenix.solrsearch')
-    
+
     # wizard
     config.include('phoenix.wizard')
 
@@ -113,21 +113,22 @@ def main(global_config, **settings):
     from pyramid.renderers import JSON
     import datetime
     json_renderer = JSON()
+
     def datetime_adapter(obj, request):
         return obj.isoformat()
     json_renderer.add_adapter(datetime.datetime, datetime_adapter)
     import bson
+
     def objectid_adapter(obj, request):
         return str(obj)
     json_renderer.add_adapter(bson.objectid.ObjectId, objectid_adapter)
-    ## def wpsexception_adapter(obj, request):
-    ##     logger.debug("mongo adapter wpsexception called")
-    ##     return '%s %s: %s' % (obj.code, obj.locator, obj.text)
-    ## from owslib import wps
-    ## json_renderer.add_adapter(wps.WPSException, wpsexception_adapter)
+    # def wpsexception_adapter(obj, request):
+    #     logger.debug("mongo adapter wpsexception called")
+    #     return '%s %s: %s' % (obj.code, obj.locator, obj.text)
+    # from owslib import wps
+    # json_renderer.add_adapter(wps.WPSException, wpsexception_adapter)
     config.add_renderer('json', json_renderer)
- 
+
     config.scan('phoenix')
 
     return config.make_wsgi_app()
-
