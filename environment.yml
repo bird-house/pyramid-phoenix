@@ -36,7 +36,7 @@ dependencies:
   - kombu=3.0.32
 # mongodb
   - pymongo=3
-  - mongodb=2.4.6
+  - mongodb=2.6.12
 # twitcher
   - pywps=3.2.6
 # phoenix extensions 
