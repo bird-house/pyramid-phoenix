@@ -29,8 +29,8 @@ RUN bash bootstrap.sh -i && bash requirements.sh
 ENV ANACONDA_HOME /opt/conda
 ENV CONDA_ENVS_DIR /opt/conda/envs
 
-# Run install
-RUN make clean install
+# Run install and fix permissions
+RUN make clean install && chmod 755 /opt/birdhouse/etc && chmod 755 /opt/birdhouse/var/run
 
 # Volume for data, cache, logfiles, ...
 VOLUME /opt/birdhouse/var/lib
