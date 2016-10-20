@@ -9,5 +9,4 @@ phoenix:
   links:
     - mongodb
 mongodb:
-  image: birdhouse/mongodb
-  command: make update-config update-user start
+  image: mongo:2.6.12
