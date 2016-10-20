@@ -8,9 +8,9 @@ phoenix:
     HOSTNAME: localhost
   links:
     - mongodb
-  volumes:
-    - /tmp/data:/opt/birdhouse/var/lib
-    - /tmp/log:/opt/birdhouse/var/log
-  volume_driver: local
+#  volumes:
+#    - /tmp/data:/opt/birdhouse/var/lib
+#    - /tmp/log:/opt/birdhouse/var/log
+#  volume_driver: local
 mongodb:
   image: mongo:2.6.12
