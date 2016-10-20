@@ -1,6 +1,13 @@
 Changes
 *******
 
+0.6.1
+==================
+
+* updated mongodb 2.6.12 with yaml config.
+* updated Dockerfile.
+* configured pep8 checks.
+
 0.6.0 (2016-10-20)
 ==================
 
