@@ -5,7 +5,7 @@ phoenix:
     - "8081:8081"
     - "8443:8443"
   environment:
-    - HOSTNAME
+    HOSTNAME: localhost
   links:
     - mongodb
 mongodb:
