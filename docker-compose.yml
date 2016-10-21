@@ -1,16 +1,21 @@
 phoenix:
   image: birdhouse/pyramid-phoenix
-  ports:
-    - "9001:9001"
-    - "8081:8081"
-    - "8443:8443"
   environment:
-    HOSTNAME: localhost
-  links:
-    - mongodb
+    HOSTNAME: $HOSTNAME
+    HTTP_PORT: $HTTP_PORT
+    HTTPS_PORT: $HTTPS_PORT
+    OUTPUT_PORT: $OUTPUT_PORT
+  ports:
+    - "$SUPERVISOR_PORT:9001"
+    - "$HTTP_PORT:$HTTP_PORT"
+    - "$HTTPS_PORT:$HTTPS_PORT"
+    - "$OUTPUT_PORT:$OUTPUT_PORT"
 #  volumes:
 #    - /tmp/data:/opt/birdhouse/var/lib
 #    - /tmp/log:/opt/birdhouse/var/log
 #  volume_driver: local
+  links:
+    - mongodb
 mongodb:
   image: mongo:2.6.12
+
