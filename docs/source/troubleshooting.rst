@@ -15,7 +15,7 @@ Phoenix needs a running mongodb and pycsw service. Sometimes Phoenix is started 
 
 .. code-block:: sh
 
-    $ source activate birdhouse     # activate conda birdhouse environment
+    $ source activate pyramid-phoenix     # activate conda environment used by phoenix
     $ supervisorctl restart mongodb
     $ supervisorctl restart pycsw
     $ supervisorctl restart phoenix
@@ -36,9 +36,9 @@ Check the log files to see the error messages:
 
 .. code-block:: sh
 
-   $ tail -f  ~/.conda/env/birdhouse//var/log/supervisor/phoenix.log
-   $ tail -f  ~/.conda/env/birdhouse//var/log/supervisor/celery.log
-   
+   $ tail -f  ~/birdhouse/var/log/supervisor/phoenix.log
+   $ tail -f  ~/birdhouse/var/log/supervisor/celery.log
+
 
 Nginx does not start
 --------------------
@@ -47,9 +47,7 @@ From a former installation there might be nginx files with false permissions. Re
 
 .. code-block:: sh
 
-   $ ~/.conda/env/birdhouse/etc/init.d/supervisord stop
-   $ sudo rm -rf ~/.conda/env/birdhouse/var/run
-   $ sudo rm -rf ~/.conda/env/birdhouse/var/log
-   $ ~/.conda/env/birdhouse/etc/init.d/supervisord start
-   
-
+   $ ~/birdhouse/etc/init.d/supervisord stop
+   $ sudo rm -rf ~/birdhouse/var/run
+   $ sudo rm -rf ~/birdhouse/var/log
+   $ ~/birdhouse/etc/init.d/supervisord start
