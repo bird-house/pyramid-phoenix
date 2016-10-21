@@ -5,9 +5,9 @@ MAINTAINER https://github.com/bird-house/pyramid-phoenix
 LABEL Description="phoenix application" Vendor="Birdhouse" Version="0.6.1"
 
 # Configure hostname and ports for services
-ENV HTTP_PORT 8081
+ENV HTTP_PORT 8080
 ENV HTTPS_PORT 8443
-ENV OUTPUT_PORT 38094
+ENV OUTPUT_PORT 8000
 ENV HOSTNAME localhost
 
 # Set current home
