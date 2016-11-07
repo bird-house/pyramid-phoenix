@@ -22,7 +22,8 @@ def wait_secs(run_step=-1):
 
 
 def log(job):
-    log_msg = '{0} {1:3d}%: {2}'.format(job.get('duration', 0), job.get('progress', 0), job.get('status_message', 'no message'))
+    log_msg = '{0} {1:3d}%: {2}'.format(job.get('duration', 0), job.get('progress', 0),
+                                        job.get('status_message', 'no message'))
     if 'log' not in job:
         job['log'] = []
     # skip same log messages
@@ -87,4 +88,3 @@ def wps_headers(userid):
         if access_token is not None:
             headers['Access-Token'] = access_token
     return headers
-
