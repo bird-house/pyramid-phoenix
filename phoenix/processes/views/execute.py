@@ -150,7 +150,9 @@ class ExecuteProcess(MyView):
             userid=self.request.unauthenticated_userid,
             url=self.wps.url,
             identifier=self.process.identifier,
-            inputs=inputs, outputs=outputs)
+            inputs=inputs,
+            outputs=outputs,
+            async=appstruct['_async_check'])
         self.session['task_id'] = result.id
         self.request.registry.notify(JobStarted(self.request, result.id))
 
