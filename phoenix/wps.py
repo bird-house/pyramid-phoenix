@@ -43,7 +43,7 @@ def appstruct_to_inputs(request, appstruct):
                 # otherwise use url
                 else:
                     value = value['url']
-            inputs.append( (str(key).strip(), str(value).strip()) )
+            inputs.append((str(key).strip(), str(value).strip()))
     # logger.debug("inputs form appstruct=%s", inputs)
     return inputs
 
@@ -166,7 +166,7 @@ class WPSSchema(colander.MappingSchema):
                 name=data_input.identifier,
                 title=data_input.title,
                 validator=colander.Length(max=data_input.maxOccurs)
-                )
+            )
 
         return node
 
@@ -228,7 +228,7 @@ class WPSSchema(colander.MappingSchema):
             title=data_input.title,
             validator=BBoxValidator(),
             widget=BBoxWidget()
-            )
+        )
 
         # sometimes abstract is not set
         node.description = getattr(data_input, 'abstract') or 'No summary'
@@ -244,7 +244,7 @@ class WPSSchema(colander.MappingSchema):
                 name=data_input.identifier,
                 title=data_input.title,
                 validator=colander.Length(max=data_input.maxOccurs)
-                )
+            )
 
         return node
 
@@ -311,7 +311,7 @@ class WPSSchema(colander.MappingSchema):
             title=data_input.title,
             default="0,-90,180,90",
             widget=deform.widget.TextInputWidget()
-            )
+        )
         # sometimes abstract is not set
         node.description = getattr(data_input, 'abstract', '')
 
@@ -335,7 +335,7 @@ class WPSSchema(colander.MappingSchema):
                 name=data_input.identifier,
                 title=data_input.title,
                 validator=colander.Length(max=data_input.maxOccurs)
-                )
+            )
 
         return node
 
