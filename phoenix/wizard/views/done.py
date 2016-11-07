@@ -25,7 +25,7 @@ class DoneSchema(colander.MappingSchema):
         description="Add an optional title for this job.",
         missing='???',
         default='???',
-        )
+    )
 
 
 class Done(Wizard):
@@ -85,9 +85,9 @@ class Done(Wizard):
             source['query'] = solr_query
             source['filter_query'] = []
             if state.get('category'):
-                source['filter_query'].append( "category:{0}".format(state.get('category')))
+                source['filter_query'].append("category:{0}".format(state.get('category')))
             if state.get('source'):
-                source['filter_query'].append( "source:{0}".format(state.get('source')))
+                source['filter_query'].append("source:{0}".format(state.get('source')))
             workflow['source']['solr'] = source
         else:
             raise Exception('Unknown source type')
@@ -102,7 +102,7 @@ class Done(Wizard):
             identifier=self.wizard_state.get('wizard_process')['identifier'],
             inputs=[(key, value) for key, value in literal_inputs],
             resource=self.wizard_state.get('wizard_complex_inputs')['identifier'],
-            )
+        )
         workflow['worker'] = worker
         return workflow
 
