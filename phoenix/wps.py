@@ -138,7 +138,7 @@ class WPSSchema(colander.MappingSchema):
             self.colander_literal_type(data_input),
             name=data_input.identifier,
             title=data_input.title,
-            )
+        )
 
         # sometimes abstract is not set
         node.description = getattr(data_input, 'abstract', '')
