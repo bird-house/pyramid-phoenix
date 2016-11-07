@@ -65,6 +65,8 @@ def add_job(db, task_id, process_id, title=None, abstract=None,
         tags=tags,
         caption=caption,
         status="ProcessAccepted",
+        response=None,
+        request=None,
     )
     db.jobs.insert(job)
     return job
