@@ -1,4 +1,5 @@
 from datetime import datetime
+from lxml import etree
 
 from pyramid_celery import celery_app as app
 
@@ -32,6 +33,8 @@ def execute_process(self, url, identifier, inputs, outputs, async=True, userid=N
         # job['title'] = getattr(execution.process, "title")
         job['abstract'] = getattr(execution.process, "abstract")
         job['status_location'] = execution.statusLocation
+        job['request'] = execution.request
+        job['response'] = etree.tostring(execution.response)
 
         logger.debug("job init done %s ...", self.request.id)
 
