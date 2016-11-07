@@ -102,7 +102,7 @@ class ExecuteProcess(MyView):
             schema,
             buttons=(submit_button,),
             formid=formid,
-            )
+        )
 
     def process_form(self, form):
         controls = self.request.POST.items()
@@ -169,7 +169,8 @@ class ExecuteProcess(MyView):
         collection = self.request.db.jobs
         if collection.find({"task_id": task_id}).count() == 1:
             job = collection.find_one({"task_id": task_id})
-            return HTTPFound(location=self.request.route_path('monitor_details', tab='log', job_id=job.get('identifier')))
+            return HTTPFound(location=self.request.route_path(
+                'monitor_details', tab='log', job_id=job.get('identifier')))
         return {}
 
     @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt')
