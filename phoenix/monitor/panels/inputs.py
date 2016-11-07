@@ -27,11 +27,11 @@ class Inputs(object):
         self.context = context
         self.request = request
         self.session = self.request.session
-    
+
     @panel_config(name='monitor_inputs', renderer='../templates/monitor/panels/media.pt')
     def panel(self):
         job_id = self.request.matchdict.get('job_id')
-        
+
         items = []
         for inp in process_inputs(self.request, job_id):
             dataset = None
@@ -65,8 +65,3 @@ class Inputs(object):
 
         items = sorted(items, key=lambda item: item['identifier'], reverse=1)
         return dict(items=items)
-
-
-
-
-
