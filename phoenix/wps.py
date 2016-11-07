@@ -65,7 +65,7 @@ class WPSSchema(colander.MappingSchema):
 
     appstruct = {}
 
-    def __init__(self, request, hide_complex=False, process=None, unknown='ignore', user=None, **kw):
+    def __init__(self, request, hide_complex=False, process=None, use_async=False, unknown='ignore', user=None, **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
@@ -105,7 +105,8 @@ class WPSSchema(colander.MappingSchema):
         self.unknown = unknown
         self.user = user
         self.kwargs = kwargs or {}
-        self.add_async_check()
+        if use_async:
+            self.add_async_check()
         self.add_nodes(process)
 
     def add_async_check(self):

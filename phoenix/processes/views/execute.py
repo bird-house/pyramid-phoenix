@@ -93,6 +93,7 @@ class ExecuteProcess(MyView):
     def generate_form(self, formid='deform'):
         schema = WPSSchema(request=self.request,
                            process=self.process,
+                           use_async=True,
                            user=self.get_user())
         submit_button = Button(name='submit', title='Execute',
                                css_class='btn btn-success btn-lg btn-block',
