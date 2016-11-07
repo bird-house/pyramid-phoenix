@@ -75,10 +75,10 @@ class JobList(MyView):
             sort = 'userid'
         elif sort == 'process':
             sort = 'title'
-            
+
         sort_order = DESCENDING if sort == 'finished' or sort == 'created' else ASCENDING
         sort_criteria = [(sort, sort_order)]
-        items = list(self.collection.find(search_filter).skip(page*limit).limit(limit).sort(sort_criteria))
+        items = list(self.collection.find(search_filter).skip(page * limit).limit(limit).sort(sort_criteria))
         return items, count
 
     def generate_caption_form(self, formid="deform_caption"):
@@ -93,7 +93,8 @@ class JobList(MyView):
             controls = self.request.POST.items()
             logger.debug("controls %s", controls)
             appstruct = form.validate(controls)
-            self.collection.update_one({'identifier': appstruct['identifier']}, {'$set': {'caption': appstruct['caption']}})
+            self.collection.update_one({'identifier': appstruct['identifier']},
+                                       {'$set': {'caption': appstruct['caption']}})
         except ValidationFailure, e:
             logger.exception("Validation of caption failed.")
             self.session.flash("Validation of caption failed.", queue='danger')
@@ -127,7 +128,7 @@ class JobList(MyView):
         else:
             self.session.flash("Labels updated.", queue='success')
         return HTTPFound(location=self.request.route_path('monitor'))
-    
+
     @view_config(route_name='monitor', renderer='../templates/monitor/list.pt')
     def view(self):
         if not self.request.has_permission('submit'):
@@ -135,15 +136,15 @@ class JobList(MyView):
             Please <a href="%s" class="alert-link">sign in</a>.
             """ % self.request.route_path('account_login', protocol=auth_protocols(self.request)[-1])
             self.session.flash(msg, queue='warning')
-        
+
         caption_form = self.generate_caption_form()
         labels_form = self.generate_labels_form()
-        
+
         if 'update_caption' in self.request.POST:
             return self.process_caption_form(caption_form)
         elif 'update_labels' in self.request.POST:
             return self.process_labels_form(labels_form)
-        
+
         page = int(self.request.params.get('page', '0'))
         limit = int(self.request.params.get('limit', '10'))
         tag = self.request.params.get('tag')
@@ -160,7 +161,7 @@ class JobList(MyView):
                 location = button.url(self.context, self.request)
                 logger.debug("button url = %s", location)
                 return HTTPFound(location, request=self.request)
-        
+
         items, count = self.filter_jobs(page=page, limit=limit, tag=tag, access=access, status=status, sort=sort)
         # TODO: use mongodb aggregation to get counts by status
         _, count_running = self.filter_jobs(page=page, limit=0, tag=tag, access=access, status='Running', sort=sort)
@@ -169,7 +170,7 @@ class JobList(MyView):
         grid = JobsGrid(self.request, items,
                         ['_checkbox', 'status', 'user', 'process', 'service', 'caption',
                          'finished', 'duration', 'labels', ''])
-        
+
         return dict(grid=grid,
                     access=access, status=status,
                     page=page, limit=limit, tag=tag, sort=sort,
@@ -192,7 +193,7 @@ class JobsGrid(CustomGrid):
         self.column_formats['labels'] = self.labels_td
         self.column_formats[''] = self.buttongroup_td
         self.exclude_ordering = self.columns
-        
+
     def status_td(self, col_num, i, item):
         return self.render_td(renderer="status_td.mako", job_id=item.get('identifier'), status=item.get('status'),
                               progress=item.get('progress', 0))
@@ -200,14 +201,14 @@ class JobsGrid(CustomGrid):
     def duration_td(self, col_num, i, item):
         return self.render_td(renderer="duration_td.mako", job_id=item.get('identifier'),
                               duration=item.get('duration', '???'))
-  
+
     def caption_td(self, col_num, i, item):
         return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'),
                               caption=item.get('caption', '???'))
 
     def labels_td(self, col_num, i, item):
         return self.render_td(renderer="labels_td.mako", job_id=item.get('identifier'), labels=item.get('tags'))
-    
+
     def buttongroup_td(self, col_num, i, item):
         from phoenix.utils import ActionButton
         buttons = list()
@@ -218,9 +219,3 @@ class JobsGrid(CustomGrid):
                                     href="/restart_job/%s" % item.get('identifier'),
                                     disabled=item['status'] != 'ProcessSucceeded'))
         return self.render_buttongroup_td(buttons=buttons)
-
-
-
-        
-
-
