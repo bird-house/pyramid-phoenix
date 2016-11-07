@@ -4,10 +4,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def collect_outputs(status_location):
+def collect_outputs(status_location=None, response=None):
     from owslib.wps import WPSExecution
     execution = WPSExecution()
-    execution.checkStatus(url=status_location, sleepSecs=0)
+    if status_location:
+        execution.checkStatus(url=status_location, sleepSecs=0)
+    else:
+        execution.checkStatus(response=response.encode('utf8'), sleepSecs=0)
     outputs = {}
     for output in execution.processOutputs:
         outputs[output.identifier] = output
@@ -21,7 +24,7 @@ def process_outputs(request, job_id):
         if job.get('is_workflow', False):
             outputs = collect_outputs(job['worker_status_location'])
         else:
-            outputs = collect_outputs(job['status_location'])
+            outputs = collect_outputs(job['status_location'], job['response'])
     return outputs
 
 
@@ -56,8 +59,3 @@ class Outputs(object):
                               category=category))
         items = sorted(items, key=lambda item: item['identifier'], reverse=1)
         return dict(items=items)
-
-        
-
-
-

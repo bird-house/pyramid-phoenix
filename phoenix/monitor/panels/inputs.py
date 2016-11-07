@@ -1,13 +1,17 @@
 from pyramid_layout.panel import panel_config
 
+from owslib.wps import WPSExecution
+
 import logging
 logger = logging.getLogger(__name__)
 
 
-def collect_inputs(status_location):
-    from owslib.wps import WPSExecution
+def collect_inputs(status_location=None, response=None):
     execution = WPSExecution()
-    execution.checkStatus(url=status_location, sleepSecs=0)
+    if status_location:
+        execution.checkStatus(url=status_location, sleepSecs=0)
+    else:
+        execution.checkStatus(response=response.encode('utf8'), sleepSecs=0)
     return execution.dataInputs
 
 
@@ -18,7 +22,7 @@ def process_inputs(request, job_id):
         if job.get('is_workflow', False):
             inputs = collect_inputs(job['worker_status_location'])
         else:
-            inputs = collect_inputs(job['status_location'])
+            inputs = collect_inputs(job['status_location'], job['response'])
     return inputs
 
 
