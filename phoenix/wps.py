@@ -21,6 +21,8 @@ def appstruct_to_inputs(request, appstruct):
     # logger.debug("appstruct=%s", appstruct)
     inputs = []
     for key, values in appstruct.items():
+        if key in ['_async_check']:
+            continue
         if not isinstance(values, types.ListType):
             values = [values]
         for value in values:
@@ -103,7 +105,18 @@ class WPSSchema(colander.MappingSchema):
         self.unknown = unknown
         self.user = user
         self.kwargs = kwargs or {}
+        self.add_async_check()
         self.add_nodes(process)
+
+    def add_async_check(self):
+        node = colander.SchemaNode(
+            colander.Boolean(),
+            name='_async_check',
+            description='Check this to run process async.',
+            widget=deform.widget.CheckboxWidget(),
+            title='Run async'
+        )
+        self.add(node)
 
     def add_nodes(self, process):
         if process is None:
