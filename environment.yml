@@ -4,13 +4,14 @@ channels:
   - birdhouse
 dependencies:
   - python=2.7.12 
-  - setuptools=23.0.0
+  - setuptools=27.2.0
   - curl=7.49.0 
   - pyopenssl=16.0.0
   - cryptography=1.5.2
 # tests
   - pytest 
-  - pytest-pep8 
+#  - pytest-pep8 
+  - flake8
 # ipython
   - ipython
 # sphinx
@@ -35,7 +36,7 @@ dependencies:
   - kombu=3.0.32
 # mongodb
   - pymongo=3
-  - mongodb=2.4.6
+  - mongodb=2.6.12
 # twitcher
   - pywps=3.2.6
 # phoenix extensions 

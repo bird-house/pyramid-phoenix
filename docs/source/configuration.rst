@@ -22,7 +22,7 @@ You can configure Phoenix by editing ``custom.cfg`` in the Phoenix source folder
    phoenix-password = sha256:#######################
    esgf-search-url = http://example.org/esg-search
    wps-url = http://localhost:8091/wps
-   # register at github: https://github.com/settings/applications/new 
+   # register at github: https://github.com/settings/applications/new
    github-consumer-key = ########################
    github-consumer-secret = ############################
 
@@ -47,7 +47,7 @@ To activate the GitHub login for external users you need to configure a GitHub a
 .. code-block:: ini
 
    [settings]
-   # register at github: 
+   # register at github:
    github-consumer-key = ########################
    github-consumer-secret = ############################
 
@@ -67,9 +67,9 @@ If you want to use a differnet ESGF index service then change the ``esgf-search-
    [settings]
    esgf-search-url = http://example.org/esg-search
 
-After any change to your ``custom.cfg`` you **need** to run ``make install`` again and restart the ``supervisor`` service:
+After any change to your ``custom.cfg`` you **need** to run ``make update`` again and restart the ``supervisor`` service:
 
 .. code-block:: sh
 
-  $ make install
+  $ make update   # or install
   $ make restart

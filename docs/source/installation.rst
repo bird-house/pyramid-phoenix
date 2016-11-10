@@ -13,7 +13,7 @@ To install Malleefowl follow the instructions given in the :ref:`Malleefowl docu
 
    $ git clone https://github.com/bird-house/malleefowl.git
    $ cd malleefowl
-   $ make
+   $ make clean install
 
 Now start with downloading Phoenix with sources from github:
 
@@ -31,18 +31,18 @@ Before installation you *need* to create a password for the local ``phoenix`` us
    $ make passwd
    Generate Phoenix password ...
    Enter a password with at least 8 characters.
-   Enter password: 
+   Enter password:
    Verify password:
 
    Run 'make install restart' to activate this password.
 
-Optionally take a look at ``custom.cfg`` and make additional changes. When you're finished, run ``make`` to install Phoenix:
+Optionally take a look at ``custom.cfg`` and make additional changes. When you're finished, run ``make clean install`` to install Phoenix:
 
 .. code-block:: sh
 
-   $ make
-     
-You always have to rerun ``make install`` after making changes in custom.cfg.
+   $ make clean install
+
+You always have to rerun ``make update`` after making changes in custom.cfg.
 
 After successful installation you need to start the services. All installed files (config etc ...) are below the conda environment ``birdhouse`` which is by default in your home directory ``~/.conda/envs/birdhouse``. Now, start the services:
 
@@ -51,14 +51,14 @@ After successful installation you need to start the services. All installed file
    $ make start    # starts supervisor services
    $ make status   # shows status of supervisor services
 
-Phoenix web application is available on `http://localhost:8081`. 
+Phoenix web application is available on `http://localhost:8081`.
 
 Check the log file for errors:
 
 .. code-block:: sh
 
-   $ tail -f  ~/.conda/envs/birdhouse/var/log/supervisor/phoenix.log
-   $ tail -f  ~/.conda/envs/birdhouse/var/log/supervisor/celery.log
+   $ tail -f  ~/birdhouse/var/log/supervisor/phoenix.log
+   $ tail -f  ~/birdhouse/var/log/supervisor/celery.log
 
 Run Docker
 ----------
@@ -67,4 +67,4 @@ Set the ``HOSTNAME`` environment variable (not ``localhost``) and run ``docker-c
 
 .. code-block:: sh
 
-   HOSTNAME='myhost.earth' bash -c 'docker-compose up'
+   HOSTNAME=phoenix HTTP_PORT=8081 HTTPS_PORT=8443 SUPERVISOR_PORT=9001 docker-compose up

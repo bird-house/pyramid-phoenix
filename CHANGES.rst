@@ -1,6 +1,22 @@
 Changes
 *******
 
+0.6.1
+==================
+
+* updated mongodb 2.6.12 with yaml config.
+* updated Dockerfile.
+* configured pep8 checks.
+
+0.6.0 (2016-10-20)
+==================
+
+* added map.
+* added cart as clipboard for results.
+* added ResourceWidget with upload capabilitities.
+* cleanup of code structure and navigation.
+* pep8.
+
 0.5.0 (2016-07-11)
 ==================
 
