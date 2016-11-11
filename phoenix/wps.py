@@ -113,9 +113,10 @@ class WPSSchema(colander.MappingSchema):
         node = colander.SchemaNode(
             colander.Boolean(),
             name='_async_check',
+            title='Run async',
             description='Check this to run process async.',
+            default=True,
             widget=deform.widget.CheckboxWidget(),
-            title='Run async'
         )
         self.add(node)
 
