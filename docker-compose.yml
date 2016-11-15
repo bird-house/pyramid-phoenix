@@ -1,21 +1,103 @@
-phoenix:
-  image: birdhouse/pyramid-phoenix
-  environment:
-    HOSTNAME: $HOSTNAME
-    HTTP_PORT: $HTTP_PORT
-    HTTPS_PORT: $HTTPS_PORT
-    OUTPUT_PORT: $OUTPUT_PORT
-  ports:
-    - "$SUPERVISOR_PORT:9001"
-    - "$HTTP_PORT:$HTTP_PORT"
-    - "$HTTPS_PORT:$HTTPS_PORT"
-    - "$OUTPUT_PORT:$OUTPUT_PORT"
-#  volumes:
-#    - /tmp/data:/opt/birdhouse/var/lib
-#    - /tmp/log:/opt/birdhouse/var/log
-#  volume_driver: local
-  links:
-    - mongodb
-mongodb:
-  image: mongo:2.6.12
-
+version: '2'
+services:
+  pavics_pf:
+    image: docker-registry.crim.ca/pavics/geoweb:0.0.4
+    ports:
+      - "3000:3000"
+    environment:
+      - PAVICS_FRONTEND_IP=${HOSTNAME}
+  phoenix:
+    build:
+      context: .
+    image: birdhouse/pyramid-phoenix:pavics
+    ports:
+      - "9001:9001"
+      - "8081:8081"
+      - "8443:8443"
+    environment:
+      - HOSTNAME
+    volumes_from:
+      - mongodb
+    links:
+      - mongodb
+      - redis
+      - pycsw
+    volumes:
+      - /config/phoenix/custom.cfg:/opt/birdhouse/custom.cfg
+  mongodb:
+    image: birdhouse/mongodb
+    command: make update-config update-user start
+    volumes:
+      - data:/data
+    volume_driver: local
+  redis:
+    image: birdhouse/redis
+    command: make update-config update-user start
+    volumes_from:
+      - mongodb
+  pycsw:
+    image: birdhouse/pycsw
+    command: make update-config update-user start
+    environment:
+      - HOSTNAME=pycsw
+    extra_hosts:
+      - "pycsw:127.0.0.1"
+    volumes_from:
+      - mongodb
+    ports:
+      - "8082:8082"
+  malleefowl:
+    build:
+      context: ../malleefowl
+    image: birdhouse/malleefowl:pavics
+    command: make update-config start
+    #38091 is the one for wps
+    ports:
+      - "48091:9001"
+      - "38091:8080"
+      - "28091:8443"
+      - "18091:8000"
+    environment:
+      - HOSTNAME
+    volumes_from:
+      - mongodb
+  ncwms2:
+    image: birdhouse/ncwms2
+    ports:
+      - "48080:9001"
+      - "8080:8080"
+    volumes:
+      - /data:/pavics-data
+      - /config/ncwms2/custom.cfg:/opt/birdhouse/custom.cfg
+    volumes_from:
+      - mongodb
+  solr:
+    image: birdhouse/solr
+    ports:
+      - "48983:9001"
+      - "8983:8983"
+    volumes_from:
+      - mongodb
+  thredds:
+    image: birdhouse/thredds
+    ports:
+      - "48083:9001"
+      - "8083:8080"
+    volumes:
+      - data:/data
+      - /data:/pavics-data
+      - /config/thredds/custom.cfg:/opt/birdhouse/custom.cfg
+    volume_driver: local
+  hummingbird:
+    image: birdhouse/hummingbird
+    ports:
+      - "48092:9001"
+      - "38092:38092"
+      - "8092:8092"
+    environment:
+      OUTPUT_PORT: 38092
+    volumes:
+      - data:/data
+    volume_driver: local
+volumes:
+  data: {}
