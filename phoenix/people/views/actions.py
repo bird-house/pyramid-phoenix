@@ -3,7 +3,7 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 
-from phoenix.security import generate_access_token
+from phoenix.security import generate_access_token, generate_c4i_access_token
 
 import logging
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class Actions(object):
 
     @view_config(route_name='generate_c4i_token', permission='submit')
     def generate_c4i_token(self):
-        # generate_access_token(self.request.registry, self.userid)
+        generate_c4i_access_token(self.request.registry, self.userid)
         return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='c4i'))
 
     @view_config(route_name='delete_user', permission='admin')

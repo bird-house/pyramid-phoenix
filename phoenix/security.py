@@ -56,6 +56,16 @@ def generate_access_token(registry, userid=None):
                             {'$set': {'twitcher_token': token, 'twitcher_token_expires': expires}})
 
 
+def generate_c4i_access_token(registry, userid=None):
+    db = mongodb(registry)
+    token = 'abc123'
+    expires = datetime.utcnow()
+    
+    if userid:
+        db.users.update_one({'identifier': userid},
+                            {'$set': {'c4i_token': token, 'c4i_token_expires': expires}})
+
+
 def auth_protocols(request):
     # TODO: refactor auth settings handling
     settings = request.db.settings.find_one()

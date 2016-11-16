@@ -83,6 +83,17 @@ def get_access_token(userid):
     return user.get('twitcher_token')
 
 
+def get_c4i_access_token(userid):
+    registry = app.conf['PYRAMID_REGISTRY']
+    db = mongodb(registry)
+
+    # update access token
+    # generate_access_token(registry, userid)
+
+    user = db.users.find_one(dict(identifier=userid))
+    return user.get('c4i_token')
+
+
 def wps_headers(userid):
     headers = {}
     if userid:
