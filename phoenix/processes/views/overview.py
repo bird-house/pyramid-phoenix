@@ -12,7 +12,7 @@ class Overview(MyView):
     def __init__(self, request):
         super(Overview, self).__init__(request, name='processes', title='')
 
-    @view_config(route_name='processes', renderer='../templates/processes/overview.pt')
+    @view_config(route_name='processes', renderer='../templates/processes/overview.pt', accept='text/html')
     def view(self):
         items = []
         for service in self.request.catalog.get_services(service_type=WPS_TYPE):
