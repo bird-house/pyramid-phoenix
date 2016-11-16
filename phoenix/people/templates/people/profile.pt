@@ -16,6 +16,11 @@
                                 token
                             </a>
                         </li>
+                        <li class="${'active' if active=='c4i' else ''}">
+                            <a href="${request.route_path('profile', userid=userid, tab='c4i')}">C4I access
+                                token
+                            </a>
+                        </li>
                         <li class="${'active' if active=='esgf' else ''}">
                             <a href="${request.route_path('profile', userid=userid, tab='esgf')}">ESGF access token</a>
                         </li>

@@ -6,7 +6,7 @@ from deform import Form, ValidationFailure, Button
 
 from phoenix.views import MyView
 from phoenix.utils import ActionButton
-from ..schema import ProfileSchema, TwitcherSchema, ESGFCredentialsSchema, GroupSchema
+from ..schema import ProfileSchema, TwitcherSchema, ESGFCredentialsSchema, C4ISchema, GroupSchema
 
 import logging
 logger = logging.getLogger(__name__)
@@ -24,6 +24,8 @@ class Profile(MyView):
     def panel_title(self):
         if self.tab == 'twitcher':
             title = "Personal access token"
+        elif self.tab == 'c4i':
+            title = "C4I access token"
         elif self.tab == 'esgf':
             title = "ESGF access token"
         elif self.tab == 'group':
@@ -38,6 +40,8 @@ class Profile(MyView):
     def schema(self):
         if self.tab == 'twitcher':
             schema = TwitcherSchema()
+        elif self.tab == 'c4i':
+            schema = C4ISchema()
         elif self.tab == 'esgf':
             schema = ESGFCredentialsSchema()
         elif self.tab == 'group':
@@ -68,7 +72,12 @@ class Profile(MyView):
                                css_class="btn btn-success btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('generate_twitcher_token'))
-        if self.tab == 'esgf':
+        elif self.tab == 'c4i':
+            btn = ActionButton(name='generate_c4i_token', title='Generate Token',
+                               css_class="btn btn-success btn-xs",
+                               disabled=not self.request.has_permission('submit'),
+                               href=self.request.route_path('generate_c4i_token'))
+        elif self.tab == 'esgf':
             btn = ActionButton(name='forget_esgf_certs', title='Forget ESGF credential',
                                css_class="btn btn-danger btn-xs",
                                disabled=not self.request.has_permission('submit'),

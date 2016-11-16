@@ -61,6 +61,21 @@ class TwitcherSchema(colander.MappingSchema):
         )
 
 
+class C4ISchema(colander.MappingSchema):
+    c4i_token = colander.SchemaNode(
+        colander.String(),
+        title="C4I access token",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
+    c4i_token_expires = colander.SchemaNode(
+        colander.String(),
+        title="Expires",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        )
+
+
 class ESGFCredentialsSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
         colander.String(),
