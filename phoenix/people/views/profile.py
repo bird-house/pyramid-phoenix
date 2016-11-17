@@ -12,7 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-@view_defaults(permission='edit', layout='default') 
+@view_defaults(permission='edit', layout='default')
 class Profile(MyView):
     def __init__(self, request):
         super(Profile, self).__init__(request, name='profile', title='')
@@ -52,7 +52,7 @@ class Profile(MyView):
 
     def generate_form(self):
         if self.tab == 'group':
-            btn = Button(name='update_group', title='Update Group Permission',
+            btn = Button(name='update', title='Update Group Permission',
                          css_class="btn btn-success btn-lg btn-block",
                          disabled=not self.request.has_permission('admin'))
             form = Form(schema=self.schema(), buttons=(btn,),
@@ -60,6 +60,9 @@ class Profile(MyView):
                         formid='deform')
         elif self.tab == 'profile':
             btn = Button(name='update', title='Update Profile', css_class="btn btn-success btn-lg btn-block")
+            form = Form(schema=self.schema(), buttons=(btn,), formid='deform')
+        elif self.tab == 'c4i':
+            btn = Button(name='update', title='Update C4I Token', css_class="btn btn-success btn-lg btn-block")
             form = Form(schema=self.schema(), buttons=(btn,), formid='deform')
         else:
             form = Form(schema=self.schema(), formid='deform')
@@ -73,10 +76,10 @@ class Profile(MyView):
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('generate_twitcher_token'))
         elif self.tab == 'c4i':
-            btn = ActionButton(name='generate_c4i_token', title='Generate Token',
+            btn = ActionButton(name='generate_c4i_token', title='Generate C4I Token',
                                css_class="btn btn-success btn-xs",
                                disabled=not self.request.has_permission('submit'),
-                               href=self.request.route_path('generate_c4i_token'))
+                               href="https://dev.climate4impact.eu/impactportal/account/tokenapi.jsp")
         elif self.tab == 'esgf':
             btn = ActionButton(name='forget_esgf_certs', title='Forget ESGF credential',
                                css_class="btn btn-danger btn-xs",
@@ -88,7 +91,7 @@ class Profile(MyView):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
-            for key in ['name', 'email', 'organisation', 'notes', 'group']:
+            for key in ['name', 'email', 'organisation', 'notes', 'group', 'c4i_token']:
                 if key in appstruct:
                     self.user[key] = appstruct.get(key)
             self.collection.update({'identifier': self.userid}, self.user)
@@ -104,8 +107,6 @@ class Profile(MyView):
         form = self.generate_form()
 
         if 'update' in self.request.POST:
-            return self.process_form(form)
-        elif 'update_group' in self.request.POST:
             return self.process_form(form)
 
         return dict(user_name=self.user.get('name', 'Unknown'),
