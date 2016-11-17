@@ -101,7 +101,7 @@ class Catalog(object):
     def insert_record(self, record):
         raise NotImplementedError
 
-    def harvest(self, url, service_type, service_name=None, service_title=None, public=False):
+    def harvest(self, url, service_type, service_name=None, service_title=None, public=False, c4i=False):
         raise NotImplementedError
 
     def get_service_by_url(self, url):
@@ -122,7 +122,7 @@ class Catalog(object):
     def clear_services(self):
         raise NotImplementedError
 
-    
+
 class CatalogService(Catalog):
     def __init__(self, csw, service_registry):
         self.csw = csw
@@ -133,14 +133,14 @@ class CatalogService(Catalog):
         return self.csw.records[identifier]
 
     def delete_record(self, identifier):
-        self.csw.transaction(ttype='delete', typename='csw:Record', identifier=identifier )
+        self.csw.transaction(ttype='delete', typename='csw:Record', identifier=identifier)
 
     def insert_record(self, record):
         record['identifier'] = uuid.uuid4().get_urn()
         templ_dc = Template(filename=join(dirname(__file__), "templates", "catalog", "dublin_core.xml"))
         self.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
 
-    def harvest(self, url, service_type, service_name=None, service_title=None, public=False):
+    def harvest(self, url, service_type, service_name=None, service_title=None, public=False, c4i=False):
         if service_type == THREDDS_TYPE:
             self.insert_record(_fetch_thredds_metadata(url, service_title))
         else:  # ogc services
@@ -159,7 +159,7 @@ class CatalogService(Catalog):
 def doc2record(document):
     """Converts ``document`` from mongodb to a ``Record`` object."""
     record = None
-    if isinstance(document, dict): 
+    if isinstance(document, dict):
         if '_id' in document:
             # _id field not allowed in record
             del document["_id"]
@@ -187,13 +187,13 @@ class MongodbCatalog(Catalog):
         record['identifier'] = uuid.uuid4().get_urn()
         self.collection.update_one({'source': record['source']}, {'$set': record}, True)
 
-    def harvest(self, url, service_type, service_name=None, service_title=None, public=False):
+    def harvest(self, url, service_type, service_name=None, service_title=None, public=False, c4i=False):
         if service_type == THREDDS_TYPE:
             self.insert_record(_fetch_thredds_metadata(url, title=service_title))
         elif service_type == WPS_TYPE:
             # register service first
             service = self.service_registry.register_service(
-                url=url, name=service_name, public=public, overwrite=False)
+                url=url, name=service_name, public=public, overwrite=False, c4i=c4i)
             # fetch metadata
             record = _fetch_wps_metadata(service['url'], title=service_title)
             record['public'] = public
@@ -210,12 +210,3 @@ class MongodbCatalog(Catalog):
     def clear_services(self):
         self.service_registry.clear_services()
         self.collection.drop()
-
-
-
-
-
-
-       
-
-

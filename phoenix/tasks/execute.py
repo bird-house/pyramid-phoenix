@@ -8,7 +8,6 @@ from owslib.wps import WebProcessingService
 from phoenix.db import mongodb
 from phoenix.events import JobFinished
 from phoenix.tasks.utils import wps_headers, log, log_error, add_job, wait_secs
-from phoenix.tasks.utils import get_c4i_access_token
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -26,10 +25,6 @@ def execute_process(self, url, identifier, inputs, outputs, async=True, userid=N
         process_id=identifier,
         is_workflow=False,
         caption=caption)
-
-    # TODO: dirty hack to add c4i token to url
-    if 'knmi' in url:
-        url = url + '/' + get_c4i_access_token(userid)
 
     try:
         wps = WebProcessingService(url=url, skip_caps=False, verify=False, headers=wps_headers(userid))

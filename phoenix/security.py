@@ -47,12 +47,11 @@ def generate_access_token(registry, userid=None):
     access_token = tokengenerator.create_access_token(valid_in_hours=8, user_environ={})
     tokenstore = tokenstore_factory(registry)
     tokenstore.save_token(access_token)
-        
     token = access_token['token']
     expires = datetime.utcfromtimestamp(
         int(access_token['expires_at'])).strftime(format="%Y-%m-%d %H:%M:%S UTC")
     if userid:
-        db.users.update_one({'identifier':userid},
+        db.users.update_one({'identifier': userid},
                             {'$set': {'twitcher_token': token, 'twitcher_token_expires': expires}})
 
 
@@ -81,14 +80,14 @@ def passwd_check(request, passphrase):
     """
     code taken from IPython.lib.security
     TODO: maybe import ipython
-    
+
     >>> passwd_check('sha1:0e112c3ddfce:a68df677475c2b47b6e86d0467eec97ac5f4b85a',
     ...              'anotherpassword')
     False
     """
     import hashlib
     hashed_passphrase = request.registry.settings.get('phoenix.password', u'')
-    
+
     try:
         algorithm, salt, pw_digest = hashed_passphrase.split(':', 2)
     except (ValueError, TypeError):
@@ -185,7 +184,7 @@ def authomatic_config(request):
             'hostname': 'esg-dn1.nsc.liu.se',
         },
     }
-    
+
     OAUTH2 = {
         'github': {
             'class_': oauth2.GitHub,
@@ -205,7 +204,7 @@ def authomatic_config(request):
             'consumer_secret': request.registry.settings.get('ceda.consumer.secret'),
             'id': provider_id(),
             'scope': myoauth2.Ceda.user_info_scope,
-            #'state': 'ceda', 
+            #'state': 'ceda',
             'redirect_uri': request.registry.settings.get('ceda.consumer.redirect.uri'),
         },
     }
