@@ -145,7 +145,12 @@ class CatalogService(Catalog):
             self.insert_record(_fetch_thredds_metadata(url, service_title))
         else:  # ogc services
             self.service_registry.register_service(url=url, name=service_name, public=public)
-            self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
+            try:
+                self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
+            except:
+                logger.exception("could not harvest metadata")
+                self.service_registry.unregister_service(name=service_name)
+                raise Exception("could not harvest metadata")
 
     def get_services(self, service_type=None, maxrecords=100):
         cs = PropertyIsEqualTo('dc:type', 'service')
@@ -194,10 +199,15 @@ class MongodbCatalog(Catalog):
             # register service first
             service = self.service_registry.register_service(
                 url=url, name=service_name, public=public, overwrite=False, c4i=c4i)
-            # fetch metadata
-            record = _fetch_wps_metadata(service['url'], title=service_title)
-            record['public'] = public
-            self.insert_record(record)
+            try:
+                # fetch metadata
+                record = _fetch_wps_metadata(service['url'], title=service_title)
+                record['public'] = public
+                self.insert_record(record)
+            except:
+                logger.exception("could not harvest metadata")
+                self.service_registry.unregister_service(name=service_name)
+                raise Exception("could not harvest metadata")
         else:
             raise NotImplementedError
 
