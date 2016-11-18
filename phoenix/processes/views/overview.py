@@ -16,6 +16,7 @@ class Overview(MyView):
     def view(self):
         items = []
         for service in self.request.catalog.get_services(service_type=WPS_TYPE):
+            # TODO: get name from service object
             service_name = self.request.catalog.get_service_name(service)
             url = self.request.route_path('processes_list', _query=[('wps', service_name)])
             items.append(dict(title=service.title, description=service.abstract, public=service.public, url=url))

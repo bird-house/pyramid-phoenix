@@ -4,7 +4,7 @@ from webhelpers2.html.builder import HTML
 from webhelpers2.html.tags import checkbox
 from webhelpers2_grid import Grid
 
-import string # TODO replace by mako template
+import string  # TODO replace by mako template
 from mako.lookup import TemplateLookup
 
 import logging
@@ -29,8 +29,8 @@ class CustomGrid(Grid):
         self.exclude_ordering = ['', 'preview', 'action', '_numbered', '_checkbox']
         if "_checkbox" in self.columns:
             self.labels["_checkbox"] = ""
-        if "_checkbox" not in self.column_formats: 
-            self.column_formats["_checkbox"] = self.checkbox_column_format 
+        if "_checkbox" not in self.column_formats:
+            self.column_formats["_checkbox"] = self.checkbox_column_format
         self.lookup = TemplateLookup([os.path.join(os.path.dirname(__file__), 'templates', 'grid')])
         # self.user_tz = u'UTC'
 
@@ -59,14 +59,14 @@ class CustomGrid(Grid):
             import datetime
 
             timestamp = get_value(record, attribute)
-            
-            if timestamp is None:            
+
+            if timestamp is None:
                 return HTML.td('')
             if type(timestamp) is not datetime.datetime:
                 from dateutil import parser as datetime_parser
                 timestamp = datetime_parser.parse(str(timestamp))
             span_class = 'due-date badge'
-        
+
             span = HTML.tag(
                 "span",
                 c=HTML.literal(timestamp.strftime('%Y-%m-%d %H:%M:%S')),
@@ -108,14 +108,14 @@ class CustomGrid(Grid):
                     label = user.get('name')
             return HTML.td(label)
         return _column_format
-    
+
     def render_title_td(self, title, abstract=None, keywords=[], data=[], format=None, source="#"):
         return self.render_td(renderer="title_td.mako", title=title, abstract=abstract,
                               keywords=keywords, data=data, format=format, source=source)
 
     def render_flag_td(self, flag=False, tooltip=''):
         return self.render_td(renderer="flag_td.mako", flag=flag, tooltip=tooltip)
-    
+
     def render_format_td(self, format, source):
         span_class = 'label'
         if format is None:
@@ -160,7 +160,7 @@ class CustomGrid(Grid):
         return super(CustomGrid, self).generate_header_link(column_number,
                                                             column,
                                                             label_text)
-    
+
     def default_header_column_format(self, column_number, column_name, header_label):
         """Override of the ObjectGrid to use <th> for header columns
         """
@@ -211,9 +211,3 @@ class CustomGrid(Grid):
                 r = self.default_record_format(i + 1, record, columns)
             records.append(r)
         return HTML(*records)
-
-
-
-
-
-

@@ -55,7 +55,7 @@ def add_job(db, task_id, process_id, title=None, abstract=None,
         task_id=task_id,             # TODO: why not using as identifier?
         userid=userid or 'guest',
         is_workflow=is_workflow,
-        service_name=service_name,              # wps service name (service identifier)
+        service_name=service_name,        # wps service name (service identifier)
         service=service or service_name,  # wps service title (url, service_name or service title)
         process_id=process_id,                  # process identifier
         title=title or process_id,              # process title (identifier or title)

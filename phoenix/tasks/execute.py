@@ -21,7 +21,7 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
         db,
         userid=userid,
         task_id=self.request.id,
-        service=service_name,
+        service_name=service_name,
         process_id=identifier,
         is_workflow=False,
         caption=caption)

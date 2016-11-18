@@ -25,7 +25,7 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
                   userid=userid,
                   task_id=self.request.id,
                   is_workflow=True,
-                  service=service_name,
+                  service_name=service_name,
                   process_id=workflow['worker']['identifier'],
                   caption=caption)
 

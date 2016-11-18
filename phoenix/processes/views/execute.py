@@ -23,21 +23,19 @@ class ExecuteProcess(MyView):
     def __init__(self, request):
         self.request = request
         self.execution = None
+        self.service_name = None
+        self.processid = None
+        self.process = None
         if 'job_id' in request.params:
             job = request.db.jobs.find_one(
                 {'identifier': request.params['job_id']})
+            self.service_name = job.get('service_name')
             self.execution = WPSExecution()
             self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
             self.processid = self.execution.process.identifier
-            self.service_name = self.request.catalog.get_service_name_by_url(
-                url=self.execution.serviceInstance)
         elif 'wps' in request.params:
             self.service_name = request.params.get('wps')
             self.processid = request.params.get('process')
-        else:
-            self.service_name = None
-            self.processid = None
-            self.process = None
 
         if self.service_name:
             # TODO: avoid getcaps
