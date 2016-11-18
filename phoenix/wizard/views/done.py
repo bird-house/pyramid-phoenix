@@ -33,8 +33,9 @@ class Done(Wizard):
         super(Done, self).__init__(
             request, name='wizard_done', title="Done")
         self.description = "Describe your Job and start Workflow."
+        self.service_name = self.wizard_state.get('wizard_wps')['identifier']
         self.wps = WebProcessingService(
-            url=request.route_url('owsproxy', service_name=self.wizard_state.get('wizard_wps')['identifier']),
+            url=request.route_url('owsproxy', service_name=self.service_name),
             verify=False, skip_caps=True)
 
     def breadcrumbs(self):
@@ -119,6 +120,7 @@ class Done(Wizard):
             result = execute_process.delay(
                 userid=authenticated_userid(self.request),
                 url=self.wps.url,
+                service_name=self.service_name,
                 identifier=self.wizard_state.get('wizard_process')['identifier'],
                 inputs=inputs, outputs=[],
                 caption=appstruct.get('caption'))
@@ -127,6 +129,7 @@ class Done(Wizard):
             result = execute_workflow.delay(
                 userid=authenticated_userid(self.request),
                 url=self.request.wps.url,
+                service_name=self.service_name,
                 workflow=self.workflow_description(),
                 caption=appstruct.get('caption'))
             self.request.registry.notify(JobStarted(self.request, result.id))

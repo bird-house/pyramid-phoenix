@@ -14,14 +14,14 @@ logger = get_task_logger(__name__)
 
 
 @app.task(bind=True)
-def execute_process(self, url, identifier, inputs, outputs, async=True, userid=None, caption=None):
+def execute_process(self, url, service_name, identifier, inputs, outputs, async=True, userid=None, caption=None):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
     job = add_job(
         db,
         userid=userid,
         task_id=self.request.id,
-        service=url,
+        service=service_name,
         process_id=identifier,
         is_workflow=False,
         caption=caption)
@@ -29,7 +29,7 @@ def execute_process(self, url, identifier, inputs, outputs, async=True, userid=N
     try:
         wps = WebProcessingService(url=url, skip_caps=False, verify=False, headers=wps_headers(userid))
         execution = wps.execute(identifier, inputs=inputs, output=outputs, async=async, lineage=True)
-        job['service'] = wps.identification.title
+        # job['service'] = wps.identification.title
         # job['title'] = getattr(execution.process, "title")
         job['abstract'] = getattr(execution.process, "abstract")
         job['status_location'] = execution.statusLocation

@@ -18,14 +18,14 @@ logger = get_task_logger(__name__)
 
 
 @app.task(bind=True)
-def execute_workflow(self, userid, url, workflow, caption=None):
+def execute_workflow(self, userid, url, service_name, workflow, caption=None):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
     job = add_job(db,
                   userid=userid,
                   task_id=self.request.id,
                   is_workflow=True,
-                  service=url,
+                  service=service_name,
                   process_id=workflow['worker']['identifier'],
                   caption=caption)
 
@@ -50,7 +50,7 @@ def execute_workflow(self, userid, url, workflow, caption=None):
                                           skip_caps=False, verify=False)
         execution = wps.execute(identifier='workflow',
                                 inputs=inputs, output=outputs, lineage=True)
-        job['service'] = worker_wps.identification.title
+        # job['service'] = worker_wps.identification.title
         # job['title'] = getattr(execution.process, "title")
         # job['abstract'] = getattr(execution.process, "abstract")
         job['status_location'] = execution.statusLocation

@@ -150,6 +150,7 @@ class ExecuteProcess(MyView):
         result = execute_process.delay(
             userid=self.request.unauthenticated_userid,
             url=self.wps.url,
+            service_name=self.service_name,
             identifier=self.process.identifier,
             inputs=inputs,
             outputs=outputs,
