@@ -1,9 +1,13 @@
 Changes
 *******
 
-0.6.1
+0.6.1 (2016-11-21)
 ==================
 
+* show wps registration name in monitor.
+* updated twitcher.
+* added c4i token to profile.
+* added sync flag to run processes.
 * updated mongodb 2.6.12 with yaml config.
 * updated Dockerfile.
 * configured pep8 checks.
