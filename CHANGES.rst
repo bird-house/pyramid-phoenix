@@ -1,6 +1,11 @@
 Changes
 *******
 
+0.6.2
+==================
+
+* fixed job xml response lookup in monitor.
+
 0.6.1 (2016-11-21)
 ==================
 
