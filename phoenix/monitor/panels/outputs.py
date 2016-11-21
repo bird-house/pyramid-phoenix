@@ -9,7 +9,7 @@ def collect_outputs(status_location=None, response=None):
     execution = WPSExecution()
     if status_location:
         execution.checkStatus(url=status_location, sleepSecs=0)
-    else:
+    elif response:
         execution.checkStatus(response=response.encode('utf8'), sleepSecs=0)
     outputs = {}
     for output in execution.processOutputs:
@@ -22,9 +22,9 @@ def process_outputs(request, job_id):
     outputs = {}
     if job and job.get('status') == 'ProcessSucceeded':
         if job.get('is_workflow', False):
-            outputs = collect_outputs(job['worker_status_location'])
+            outputs = collect_outputs(status_location=job.get('worker_status_location'))
         else:
-            outputs = collect_outputs(job['status_location'], job['response'])
+            outputs = collect_outputs(status_location=job.get('status_location'), response=job.get('response'))
     return outputs
 
 
