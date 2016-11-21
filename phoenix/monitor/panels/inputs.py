@@ -10,7 +10,7 @@ def collect_inputs(status_location=None, response=None):
     execution = WPSExecution()
     if status_location:
         execution.checkStatus(url=status_location, sleepSecs=0)
-    else:
+    elif response:
         execution.checkStatus(response=response.encode('utf8'), sleepSecs=0)
     return execution.dataInputs
 
@@ -20,9 +20,9 @@ def process_inputs(request, job_id):
     inputs = {}
     if job and job.get('status') == 'ProcessSucceeded':
         if job.get('is_workflow', False):
-            inputs = collect_inputs(job['worker_status_location'])
+            inputs = collect_inputs(status_location=job.get('worker_status_location'))
         else:
-            inputs = collect_inputs(job['status_location'], job['response'])
+            inputs = collect_inputs(status_location=job.get('status_location'), response=job.get('response'))
     return inputs
 
 
