@@ -58,10 +58,24 @@
               </div>
             </div>
           </dd>
-          <dt>Status Location</dt>
-          <dd>
-            <a class="label label-warning" href="${job.get('status_location')}" target="_blank">XML</a>
-          </dd>
+          <div tal:condition="'status_location' in job">
+            <dt>Status Location</dt>
+            <dd>
+              <a class="label label-warning" href="${job.get('status_location')}" target="_blank">XML
+              </a>
+            </dd>
+          </div>
+          <div tal:condition="'response' in job">
+            <dt>Execute Response</dt>
+            <dd>
+              <button type="button"
+                  class="btn btn-small btn-warning"
+                  data-toggle="popover"
+                  title="Execute Response"
+                  data-content="${job.get('response')}">XML
+              </button>
+            </dd>
+          </div>
           <dt>Labels</dt>
           <dd>
             <a tal:repeat="label job.get('tags', [])" href="/monitor?tag=${label}" class="label label-info">${label}</a>

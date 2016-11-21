@@ -4,6 +4,7 @@ Changes
 0.6.2
 ==================
 
+* added popover to display execute response.
 * fixed job xml response lookup in monitor.
 
 0.6.1 (2016-11-21)

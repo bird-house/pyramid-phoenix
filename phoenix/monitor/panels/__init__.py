@@ -18,7 +18,10 @@ def job_details(request, job_id):
         details['progress'] = job.get('progress')
         details['duration'] = job.get('duration')
         details['status_message'] = job.get('status_message')
-        details['status_location'] = job.get('status_location')
+        if job.get('status_location'):
+            details['status_location'] = job['status_location']
+        elif job.get('response'):
+            details['response'] = job['response']
         details['caption'] = job.get('caption', '???')
         details['tags'] = job.get('tags')
     return details
