@@ -10,10 +10,10 @@ from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.exceptions import HTTPForbidden
 from pyramid.security import (
-        Allow,
-        Everyone,
-        Authenticated,
-        ALL_PERMISSIONS)
+    Allow,
+    Everyone,
+    Authenticated,
+    ALL_PERMISSIONS)
 
 from authomatic import Authomatic, provider_id
 from authomatic.providers import oauth2, openid
@@ -100,7 +100,7 @@ def passwd_check(request, passphrase):
 
 
 def groupfinder(userid, request):
-    user = request.db.users.find_one({'identifier':userid})
+    user = request.db.users.find_one({'identifier': userid})
     if user:
         if user.get('group') == Admin:
             return [Admin]
@@ -115,11 +115,11 @@ def groupfinder(userid, request):
 
 class Root():
     __acl__ = [
-                (Allow, Everyone, 'view'),
-                (Allow, Authenticated, 'edit'),
-                (Allow, User, 'submit'),
-                (Allow, Admin, ALL_PERMISSIONS)
-               ]
+        (Allow, Everyone, 'view'),
+        (Allow, Authenticated, 'edit'),
+        (Allow, User, 'submit'),
+        (Allow, Admin, ALL_PERMISSIONS)
+    ]
 
     def __init__(self, request):
         self.request = request
@@ -198,7 +198,6 @@ def authomatic_config(request):
             'redirect_uri': request.registry.settings.get('ceda.consumer.redirect.uri'),
         },
     }
-
 
     # Concatenate the configs.
     config = {}
