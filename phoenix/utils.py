@@ -49,16 +49,15 @@ class ActionButton(object):
 # upload helpers
 
 def save_upload(request, filename, fs=None):
-    folder = authenticated_userid(request)
-    path = os.path.join(folder, os.path.basename(filename))
-    if request.storage.exists(path):
-        request.storage.delete(path)
-    stored_filename = None
+    logger.debug("save_upload: filename=%s, fs=%s", filename, fs)
+    if request.storage.exists(os.path.basename(filename)):
+        request.storage.delete(os.path.basename(filename))
     if fs is None:
-        stored_filename = request.storage.save_filename(filename, folder=folder)
+        stored_filename = request.storage.save_filename(filename)
+        logger.debug('saved chunked file to upload storage %s', stored_filename)
     else:
-        stored_filename = request.storage.save_file(fs.file, filename=os.path.basename(path), folder=folder)
-    logger.debug('saved file to upload storage %s', stored_filename)
+        stored_filename = request.storage.save_file(fs.file, filename=filename)
+        logger.debug('saved file to upload storage %s', stored_filename)
 
 
 def save_chunk(fs, path):
