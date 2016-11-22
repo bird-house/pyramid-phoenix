@@ -96,15 +96,12 @@
   <div metal:fill-slot="content">
     <div class="container">
       <div class="panel panel-default">
-        <div class="panel-heading">
-          <h2 class="panel-title">Description</h2>
-        </div>
         <div class="panel-body">
           <div>
-            ${description}
+            <h3>${description}</h3>
           </div>
           <div>
-            <a class="label label-warning" href="${url}" target="_blank">XML</a>
+            <a class="label label-warning" href="${url}" target="_blank">Process XML</a>
             <a tal:repeat="item metadata" tal:content="item.title" class="label label-info" href="${item.url}" target="_blank"/>
           </div>
         </div>
