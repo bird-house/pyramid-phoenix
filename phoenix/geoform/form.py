@@ -20,7 +20,7 @@ class MemoryTempStore(dict):
     """
     def __init__(self, request):
         self.request = request
-    
+
     def preview_url(self, name):
         return None
 
@@ -63,7 +63,7 @@ class FileUploadTempStore(DictMixin):
             logger.warn("File format is not allowed in storage: %s", value['filename'])
         logger.debug("setitem %s %s", name, value)
         self.session[name] = value
-        
+
     def __getitem__(self, name):
         value = self.session[name].copy()
         if self.request.storage.exists(value['filename']):
@@ -84,7 +84,7 @@ class FileUploadTempStore(DictMixin):
         if not folder:
             folder = 'guest'
         return folder
-    
+
     def _filename(self, value):
         return os.path.join(self._folder(), value['filename'])
 
@@ -92,7 +92,7 @@ class FileUploadTempStore(DictMixin):
 class BBoxValidator(object):
     def __call__(self, node, value):
         try:
-            minx, miny, maxx, maxy = [ float(val) for val in value.split(',', 3)]
+            minx, miny, maxx, maxy = [float(val) for val in value.split(',', 3)]
         except:
             raise colander.Invalid(node, "Could not parse BBox.")
         else:
@@ -116,17 +116,17 @@ class FileUploadValidator(colander.All):
     """
     def __init__(self, storage, max_size):
         self.validators = [FileFormatAllowedValidator(storage), FileSizeLimitValidator(storage, max_size)]
-    
+
 
 class FileFormatAllowedValidator(object):
     """
     File format extension is allowed.
-    
+
     https://pythonhosted.org/pyramid_storage/
     """
     def __init__(self, storage):
         self.storage = storage
-    
+
     def __call__(self, node, value):
         if not self.storage.filename_allowed(value['filename']):
             msg = 'File format is not allowed: {filename}'.format(filename=value['filename'])
@@ -151,8 +151,3 @@ class FileSizeLimitValidator(object):
         if size > int(self.max_size) * 1024 * 1024:
             msg = 'Maximum file size: {size}MB'.format(size=self.max_size)
             raise colander.Invalid(node, msg)
-    
-   
-
-    
-
