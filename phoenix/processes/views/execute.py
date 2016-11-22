@@ -91,7 +91,7 @@ class ExecuteProcess(MyView):
     def generate_form(self, formid='deform'):
         schema = WPSSchema(request=self.request,
                            process=self.process,
-                           use_async=True,
+                           use_async=self.request.has_permission('submit'),
                            user=self.get_user())
         submit_button = Button(name='submit', title='Execute',
                                css_class='btn btn-success btn-lg btn-block',
@@ -152,7 +152,7 @@ class ExecuteProcess(MyView):
             identifier=self.process.identifier,
             inputs=inputs,
             outputs=outputs,
-            async=appstruct['_async_check'])
+            async=appstruct.get('_async_check', True))
         self.session['task_id'] = result.id
         self.request.registry.notify(JobStarted(self.request, result.id))
 
