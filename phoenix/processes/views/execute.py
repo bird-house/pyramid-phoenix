@@ -103,7 +103,7 @@ class ExecuteProcess(MyView):
                         url=wps_describe_url(self.wps.url, self.processid),
                         metadata=self.process.metadata,
                         form=e.render())
-        if self.request.user is None:
+        if not self.request.user:
             return HTTPFound(location=self.request.route_url('processes_loading'))
         else:
             return HTTPFound(location=self.request.route_url('monitor'))
