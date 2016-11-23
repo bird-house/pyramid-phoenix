@@ -2,43 +2,43 @@
 
   <div metal:fill-slot="content">
     <div class="container">
+        <div class="page-header">
+            <h2>${title}
+                <small>Please choose one of the processes to submit a job.</small>
+            </h2>
+        </div>
 
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <div>
-            <h3>${description}</h3>
-          </div>
+        <div class="well">
+          <h4>${description}</h4>
           <div>
             <a class="label label-warning" href="${url}" target="_blank">Capabilities (XML)</a>
-            <a tal:condition="provider_site" tal:condition="provider_name" class="label label-info" href="${provider_site}" target="_blank">Provider: ${provider_name}</a>
+            <a tal:condition="provider_site" tal:condition="provider_name" class="label label-info" href="${provider_site}" target="_blank">${provider_name}</a>
           </div>
         </div>
-      </div>
 
-      <div>
-        <ul class="list-group">
-          <li class="list-group-item" tal:repeat="item items">
-            <div class="media">
-              <span class="pull-left text-muted" aria-hidden="true">
-                <i class="fa fa-cog"></i>
-              </span>
-              <div class="media-body">
-                <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
-                  <span>
-                    <i class="fa fa-star"></i> 3
-                  </span>
+        <div>
+          <ul class="list-group">
+            <li class="list-group-item" tal:repeat="item items">
+              <div class="media">
+                <span class="pull-left text-muted" aria-hidden="true">
+                  <i class="fa fa-cog"></i>
+                </span>
+                <div class="media-body">
+                  <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
+                    <span>
+                      <i class="fa fa-star"></i> 3
+                    </span>
+                  </div>
+                  <h4 class="media-heading">
+                    <a href="${item.url}">${item.title}</a>
+                  </h4>
+                  ${item.description}
                 </div>
-                <h4 class="media-heading">
-                  <a href="${item.url}">${item.title}</a>
-                </h4>
-                ${item.description}
               </div>
-            </div>
-          </li>
-        </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
-
-    </div>
-  </div>
 
 </metal:block>

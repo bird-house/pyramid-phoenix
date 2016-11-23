@@ -48,22 +48,6 @@ class ExecuteProcess(MyView):
         super(ExecuteProcess, self).__init__(request, name='processes_execute',
                                              title='')
 
-    def breadcrumbs(self):
-        breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
-        breadcrumbs.append(dict(
-            route_path=self.request.route_path('processes'),
-            title='Processes'))
-        if self.service_name:
-            route_path = self.request.route_path(
-                'processes_list', _query=[('wps', self.service_name)])
-            breadcrumbs.append(dict(
-                route_path=route_path,
-                title=self.wps.identification.title))
-            breadcrumbs.append(dict(
-                route_path=self.request.route_path(self.name),
-                title=self.process.title))
-        return breadcrumbs
-
     def appstruct(self):
         # TODO: not a nice way to get inputs ... should be cleaned up in owslib
         result = {}
@@ -183,6 +167,7 @@ class ExecuteProcess(MyView):
         if not has_execute_permission(self.request, self.service_name):
             self.session.flash("You are not allowed to execute processes. Please sign-in.", queue='warning')
         return dict(
+            title=self.process.title,
             description=getattr(self.process, 'abstract', ''),
             url=wps_describe_url(self.wps.url, self.processid),
             metadata=self.process.metadata,
