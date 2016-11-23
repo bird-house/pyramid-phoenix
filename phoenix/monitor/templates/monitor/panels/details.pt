@@ -19,12 +19,9 @@
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">
-      <a href="${request.route_path('monitor')}">
-        <i class="fa fa-fw fa-chevron-left" ></i>
-      </a>
       ${job.get('title')}
       <i class="${icon_class}" data-toggle="tooltip" title="${job.get('status')}"> </i>
-      <div class="pull-right">
+      <div tal:condition="request.has_permission('submit')" class="pull-right">
         <a class="btn btn-danger btn-xs"
            rel="tooltip"
            data-toggle="tooltip"
@@ -61,7 +58,7 @@
           <div tal:condition="'status_location' in job">
             <dt>Status Location</dt>
             <dd>
-              <a class="label label-warning" href="${job.get('status_location')}" target="_blank">XML
+              <a class="label label-warning" href="${job.get('status_location')}" target="_blank">View as XML
               </a>
             </dd>
           </div>
