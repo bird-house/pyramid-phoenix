@@ -38,3 +38,10 @@ def log(context, request):
     job_id = request.matchdict.get('job_id')
     job = request.db.jobs.find_one({'identifier': job_id})
     return dict(log=job.get('log', []))
+
+
+@panel_config(name='monitor_xml', renderer='../templates/monitor/panels/xml.pt')
+def log(context, request):
+    job_id = request.matchdict.get('job_id')
+    job = request.db.jobs.find_one({'identifier': job_id})
+    return dict(xml=job.get('response'))
