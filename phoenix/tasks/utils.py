@@ -44,12 +44,17 @@ def log_error(job, error):
 
 def add_job(db, task_id, process_id, title=None, abstract=None,
             service_name=None, service=None, status_location=None,
-            is_workflow=False, caption=None, userid=None):
+            is_workflow=False, caption=None, userid=None,
+            async=True):
     tags = ['dev']
     if is_workflow:
         tags.append('workflow')
     else:
         tags.append('single')
+    if async:
+        tags.append('async')
+    else:
+        tags.append('sync')
     job = dict(
         identifier=uuid.uuid4().get_hex(),
         task_id=task_id,             # TODO: why not using as identifier?
