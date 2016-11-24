@@ -1,4 +1,5 @@
 from datetime import datetime
+from lxml import etree
 import yaml
 import json
 import urllib
@@ -54,6 +55,7 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
         # job['title'] = getattr(execution.process, "title")
         # job['abstract'] = getattr(execution.process, "abstract")
         job['status_location'] = execution.statusLocation
+        job['response'] = etree.tostring(execution.response)
 
         logger.debug("job init done %s ...", self.request.id)
         run_step = 0
@@ -63,6 +65,11 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
                 raise Exception("Could not read status document after 5 retries. Giving up.")
             try:
                 execution.checkStatus(sleepSecs=wait_secs(run_step))
+                # TODO: fix owslib response object
+                if isinstance(execution.response, etree._Element):
+                    etree.tostring(execution.response)
+                else:
+                    job['response'] = execution.response.encode('UTF-8')
                 job['status'] = execution.getStatus()
                 job['status_message'] = execution.statusMessage
                 job['progress'] = execution.percentCompleted

@@ -46,6 +46,11 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
                 raise Exception("Could not read status document after 5 retries. Giving up.")
             try:
                 execution.checkStatus(sleepSecs=wait_secs(run_step))
+                # TODO: fix owslib response object
+                if isinstance(execution.response, etree._Element):
+                    etree.tostring(execution.response)
+                else:
+                    job['response'] = execution.response.encode('UTF-8')
                 job['status'] = execution.getStatus()
                 job['status_message'] = execution.statusMessage
                 job['progress'] = execution.percentCompleted
