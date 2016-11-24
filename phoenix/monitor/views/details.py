@@ -16,4 +16,6 @@ class Details(MyView):
     def view(self):
         tab = self.request.matchdict.get('tab')
         job_id = self.request.matchdict.get('job_id')
-        return dict(active=tab, job_id=job_id)
+        collection = self.request.db.jobs
+        job = collection.find_one({'identifier': job_id})
+        return dict(active=tab, job_id=job_id, status=job['status'])
