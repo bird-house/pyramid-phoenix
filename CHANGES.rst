@@ -4,6 +4,7 @@ Changes
 0.6.2
 ==================
 
+* added sync/async tags.
 * simplified execution and monitor views.
 * auto-update monitor details view.
 * store job xml response.
