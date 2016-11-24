@@ -4,8 +4,10 @@ Changes
 0.6.2
 ==================
 
-* added popover to display execute response.
-* fixed job xml response lookup in monitor.
+* simplified execution and monitor views.
+* auto-update monitor details view.
+* store job xml response.
+* added monitor details panel for job xml response.
 
 0.6.1 (2016-11-21)
 ==================
