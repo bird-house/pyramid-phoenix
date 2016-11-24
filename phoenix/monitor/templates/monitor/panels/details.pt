@@ -33,7 +33,9 @@
     </h3>
   </div>
   <div class="panel-body">
-    ${job.get('abstract')}
+    <span>
+      ${job.get('abstract')}
+    </span>
     <div>
       <div class="col-xs-6 col-md-3">
         <dl>
@@ -60,17 +62,6 @@
             <dd>
               <a class="label label-warning" href="${job.get('status_location')}" target="_blank">View as XML
               </a>
-            </dd>
-          </div>
-          <div tal:condition="'response' in job">
-            <dt>Execute Response</dt>
-            <dd>
-              <button type="button"
-                  class="btn btn-small btn-warning"
-                  data-toggle="popover"
-                  title="Execute Response"
-                  data-content="${job.get('response')}">View as XML
-              </button>
             </dd>
           </div>
           <dt>Labels</dt>
