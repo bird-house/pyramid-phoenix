@@ -1,3 +1,7 @@
+<div tal:condition="'status_location' in job">
+  <a class="label label-warning" href="${job.get('status_location')}" target="_blank">Status Location</a>
+</div>
+
 <pre class="pre-scrollable xml-output">
 ${xml}
 </pre>

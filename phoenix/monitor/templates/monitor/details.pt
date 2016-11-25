@@ -48,7 +48,7 @@
         </li>
         <li class="${'active' if active=='xml' else ''}" role="presentation">
           <a href="${request.route_path('monitor_details', job_id=job_id, tab='xml')}">
-            <i class="fa fa-code"></i> Response (XML)
+            <i class="fa fa-code"></i> View as XML
           </a>
         </li>
       </ul>

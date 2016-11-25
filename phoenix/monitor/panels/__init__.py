@@ -44,4 +44,4 @@ def log(context, request):
 def xml(context, request):
     job_id = request.matchdict.get('job_id')
     job = request.db.jobs.find_one({'identifier': job_id})
-    return dict(xml=job.get('response'))
+    return dict(xml=job.get('response'), job=job)

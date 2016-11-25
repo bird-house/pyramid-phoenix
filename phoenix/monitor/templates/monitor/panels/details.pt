@@ -57,13 +57,6 @@
               </div>
             </div>
           </dd>
-          <div tal:condition="'status_location' in job">
-            <dt>Status Location</dt>
-            <dd>
-              <a class="label label-warning" href="${job.get('status_location')}" target="_blank">View as XML
-              </a>
-            </dd>
-          </div>
           <dt>Labels</dt>
           <dd>
             <a tal:repeat="label job.get('tags', [])" href="/monitor?tag=${label}" class="label label-info">${label}</a>
