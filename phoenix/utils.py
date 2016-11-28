@@ -161,7 +161,14 @@ def build_url(url, query):
 
 def wps_caps_url(url):
     # TODO: move code to owslib?
-    params = {'service': 'WPS', 'request': 'GetCapabilities', 'version': '1.0.0'}
+    # TODO: patch for cows wps
+    from collections import OrderedDict
+    params = OrderedDict()
+    params['Service'] = 'WPS'
+    params['Request'] = 'GetCapabilities'
+    params['version'] = '1.0.0'
+    # Service=WPS&Request=GetCapabilities&Version=1.0.0
+    #params = {'service': 'WPS', 'request': 'GetCapabilities', 'version': '1.0.0'}
     return build_get_url(url, params, overwrite=True)
 
 
