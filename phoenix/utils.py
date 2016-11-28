@@ -166,7 +166,7 @@ def wps_caps_url(url):
     params = OrderedDict()
     params['Service'] = 'WPS'
     params['Request'] = 'GetCapabilities'
-    params['version'] = '1.0.0'
+    params['Version'] = '1.0.0'
     # Service=WPS&Request=GetCapabilities&Version=1.0.0
     #params = {'service': 'WPS', 'request': 'GetCapabilities', 'version': '1.0.0'}
     return build_get_url(url, params, overwrite=True)
@@ -174,7 +174,14 @@ def wps_caps_url(url):
 
 def wps_describe_url(url, identifier):
     # TODO: move code to owslib?
-    params = {'service': 'WPS', 'request': 'DescribeProcess', 'version': '1.0.0', 'identifier': identifier}
+    # TODO: patch for cows wps
+    from collections import OrderedDict
+    params = OrderedDict()
+    params['Service'] = 'WPS'
+    params['Request'] = 'DescribeProcess'
+    params['Version'] = '1.0.0'
+    params['Identifier'] = identifier
+    # params = {'service': 'WPS', 'request': 'DescribeProcess', 'version': '1.0.0', 'identifier': identifier}
     return build_get_url(url, params, overwrite=True)
 
 
