@@ -32,8 +32,8 @@ dependencies:
   - owslib=0.13.0
   - transaction=1.6.0
 # celery
-  - celery=3.1.19
-  - kombu=3.0.32
+  - celery=3.1.23
+  - kombu=3.0.35
 # mongodb
   - pymongo=3
   - mongodb=2.6.12
