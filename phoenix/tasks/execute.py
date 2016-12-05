@@ -60,9 +60,11 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
                 if execution.isComplete():
                     job['finished'] = datetime.now()
                     if execution.isSucceded():
+                        logger.debug("job succeded")
                         job['progress'] = 100
                         log(job)
                     else:
+                        logger.debug("job failed.")
                         job['status_message'] = '\n'.join(error.text for error in execution.errors)
                         for error in execution.errors:
                             log_error(job, error)
