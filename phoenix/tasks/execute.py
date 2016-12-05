@@ -41,7 +41,7 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
 
         num_retries = 0
         run_step = 0
-        while execution.isNotComplete() or not run_step:
+        while execution.isNotComplete() or run_step == 0:
             if num_retries >= 5:
                 raise Exception("Could not read status document after 5 retries. Giving up.")
             try:
