@@ -1,7 +1,7 @@
 Changes
 *******
 
-0.6.2
+0.6.2 (2016-12-06)
 ==================
 
 * added sync/async tags.
@@ -9,6 +9,8 @@ Changes
 * auto-update monitor details view.
 * store job xml response.
 * added monitor details panel for job xml response.
+* added workaround for cows wps with ordered parameters for getcaps request.
+* cleaned up dependencies.
 
 0.6.1 (2016-11-21)
 ==================
