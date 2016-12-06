@@ -37,7 +37,7 @@
       ${job.get('abstract')}
     </span>
     <div>
-      <div class="col-xs-6 col-md-3">
+      <div class="col-md-3">
         <dl>
           <dt>Status</dt>
           <dd class="${status_class}">${job.get('status')}</dd>
@@ -47,7 +47,7 @@
           <dd>${job.get('finished', '???')}</dd>
         </dl>
       </div>
-      <div class="col-xs-6 col-md-3">
+      <div class="col-md-3">
         <dl>
           <dt>Progress</dt>
           <dd>
@@ -63,7 +63,7 @@
           </dd>
         </dl>
       </div>
-      <div class="col-xs-6 col-md-3">
+      <div class="col-md-6">
         <dl>
           <dt>Status Message</dt>
           <dd>${job.get('status_message')}</dd>
