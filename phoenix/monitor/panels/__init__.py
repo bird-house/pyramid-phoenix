@@ -17,7 +17,9 @@ def job_details(request, job_id):
         details['finished'] = time_ago_in_words(job.get('finished'))
         details['progress'] = job.get('progress')
         details['duration'] = job.get('duration')
-        details['status_message'] = job.get('status_message')
+        details['status_message'] = job.get('status_message', '')
+        if len(details['status_message']) > 250:
+            details['status_message'] = details['status_message'][:250] + " [..]"  # not more the 250 chars
         if job.get('status_location'):
             details['status_location'] = job['status_location']
         elif job.get('response'):
