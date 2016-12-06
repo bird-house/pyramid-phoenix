@@ -10,6 +10,8 @@ Changes
 * store job xml response.
 * added monitor details panel for job xml response.
 * added workaround for cows wps with ordered parameters for getcaps request.
+* cleaned up status-log of running jobs.
+* show only 250 chars of status-message in monitor/details view.
 * cleaned up dependencies.
 
 0.6.1 (2016-11-21)
