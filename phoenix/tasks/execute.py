@@ -48,7 +48,7 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
                 execution.checkStatus(sleepSecs=wait_secs(run_step))
                 # TODO: fix owslib response object
                 if isinstance(execution.response, etree._Element):
-                    etree.tostring(execution.response)
+                    job['response'] = etree.tostring(execution.response)
                 else:
                     job['response'] = execution.response.encode('UTF-8')
                 job['status'] = execution.getStatus()
@@ -62,14 +62,11 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
                     if execution.isSucceded():
                         logger.debug("job succeded")
                         job['progress'] = 100
-                        save_log(job)
                     else:
                         logger.debug("job failed.")
                         job['status_message'] = '\n'.join(error.text for error in execution.errors)
                         for error in execution.errors:
                             save_log(job, error)
-                else:
-                    save_log(job)
             except:
                 num_retries += 1
                 logger.exception("Could not read status xml document for job %s. Trying again ...", self.request.id)
@@ -77,11 +74,13 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
                 logger.debug("update job %s ...", self.request.id)
                 num_retries = 0
                 run_step += 1
+            finally:
+                save_log(job)
                 db.jobs.update({'identifier': job['identifier']}, job)
     except Exception as exc:
         logger.exception("Failed to run Job")
         job['status'] = "ProcessFailed"
-        job['status_message'] = "Failed to run Job. %s" % exc.message
+        job['status_message'] = "Error: {0}".format(exc.message)
     finally:
         save_log(job)
         db.jobs.update({'identifier': job['identifier']}, job)
