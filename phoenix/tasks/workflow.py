@@ -1,4 +1,5 @@
 from datetime import datetime
+from lxml import etree
 import yaml
 import json
 import urllib
@@ -10,7 +11,7 @@ from owslib.util import build_get_url
 
 from phoenix.db import mongodb
 from phoenix.events import JobFinished
-from phoenix.tasks.utils import wps_headers, log, log_error, add_job
+from phoenix.tasks.utils import wps_headers, save_log, add_job
 from phoenix.tasks.utils import wait_secs
 
 from celery.utils.log import get_task_logger
@@ -54,6 +55,7 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
         # job['title'] = getattr(execution.process, "title")
         # job['abstract'] = getattr(execution.process, "abstract")
         job['status_location'] = execution.statusLocation
+        job['response'] = etree.tostring(execution.response)
 
         logger.debug("job init done %s ...", self.request.id)
         run_step = 0
@@ -63,6 +65,11 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
                 raise Exception("Could not read status document after 5 retries. Giving up.")
             try:
                 execution.checkStatus(sleepSecs=wait_secs(run_step))
+                # TODO: fix owslib response object
+                if isinstance(execution.response, etree._Element):
+                    etree.tostring(execution.response)
+                else:
+                    job['response'] = execution.response.encode('UTF-8')
                 job['status'] = execution.getStatus()
                 job['status_message'] = execution.statusMessage
                 job['progress'] = execution.percentCompleted
@@ -76,13 +83,13 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
                                 result = yaml.load(urllib.urlopen(output.reference))
                                 job['worker_status_location'] = result['worker']['status_location']
                         job['progress'] = 100
-                        log(job)
+                        save_log(job)
                     else:
                         job['status_message'] = '\n'.join(error.text for error in execution.errors)
                         for error in execution.errors:
-                            log_error(job, error)
+                            save_log(job, error)
                 else:
-                    log(job)
+                    save_log(job)
             except:
                 num_retries += 1
                 logger.exception("Could not read status xml document for job %s. Trying again ...", self.request.id)
@@ -96,7 +103,7 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
         job['status'] = "ProcessFailed"
         job['status_message'] = "Failed to run Job. %s" % exc.message
     finally:
-        log(job)
+        save_log(job)
         db.jobs.update({'identifier': job['identifier']}, job)
 
     registry.notify(JobFinished(job))

@@ -4,6 +4,7 @@ import deform
 import dateutil
 import re
 import types
+import uuid
 
 from pyramid.security import authenticated_userid
 
@@ -27,24 +28,6 @@ def appstruct_to_inputs(request, appstruct):
             values = [values]
         for value in values:
             # logger.debug("key=%s, value=%s, type=%s", key, value, type(value))
-            # check if we have a mapping type for complex input
-            if isinstance(value, dict):
-                # prefer upload if available
-                if value.get('upload', colander.null) is not colander.null:
-                    value = value['upload']
-                    # logger.debug('uploaded file %s', value)
-                    folder = authenticated_userid(request)
-                    if not folder:
-                        folder = 'guest'
-                    logger.debug('folder %s', folder)
-                    relpath = os.path.join(folder, value['filename'])
-                    # value = 'file://' + request.storage.path(relpath)
-                    # value = request.route_url('download', filename=relpath)
-                    value = request.storage.url(relpath)
-                    # logger.debug('uploaded file as reference = %s', value)
-                # otherwise use url
-                else:
-                    value = value['url']
             inputs.append((str(key).strip(), str(value).strip()))
     # logger.debug("inputs form appstruct=%s", inputs)
     return inputs
@@ -264,12 +247,10 @@ class WPSSchema(colander.MappingSchema):
         return node
 
     def complex_data(self, data_input):
-        if self.request.has_permission('submit'):
-            folder = authenticated_userid(self.request)
-            storage_url = os.path.join(self.request.storage.base_url, folder)
-            widget = ResourceWidget(cart=True, upload=True, storage_url=storage_url)
-        else:
-            widget = deform.widget.TextInputWidget()
+        widget = ResourceWidget(
+            cart=self.request.has_permission('submit'),
+            upload=True,
+            storage_url=self.request.storage.base_url)
 
         resource_node = colander.SchemaNode(
             colander.String(),

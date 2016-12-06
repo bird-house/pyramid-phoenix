@@ -5,9 +5,11 @@
   </div>
 
   <div metal:fill-slot="content">
-    <div class="container">
-      <h3><img src="${request.static_path('phoenix:static/phoenix/img/ajax-loader.gif')}"></img> Added Job to Queue. Please wait ...</h3>
-    </div>
+    <!--div class="container">
+      <div class="alert alert-warning" role="alert">
+        <h4><img src="${request.static_path('phoenix:static/phoenix/img/ajax-loader.gif')}"></img> Job Created. Please wait ...</h4>
+      </div>
+    </div -->
   </div>
-   
+
 </metal:block>

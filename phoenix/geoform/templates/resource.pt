@@ -24,7 +24,7 @@
     </div>
     <div class="col-xs-2">
       <div class="btn-group" role="group" aria-label="...">
-        <button id="${oid}-cart" type="button" 
+        <button id="${oid}-cart" type="button"
                 data-toggle="tooltip" title="Select item from Cart"
                 tal:attributes="class 'btn btn-default' if cart else 'btn btn-default disabled'">
           <icon class="fa fa-shopping-cart"><icon>
@@ -78,9 +78,9 @@
       </div>
     </div>
   </div>
-  
+
   <script type="text/javascript">
-   
+
     deform.addCallback(
           '${field.oid}',
           function (oid) {
@@ -92,7 +92,7 @@
                      $.each(json, function(i, item) {
                        cartItems += '<option value=' + item.url + '>' + item.title + '</option>';
                      });
-                     $select = $("#"+oid+"-cart-select");    
+                     $select = $("#"+oid+"-cart-select");
                      $select.empty();
                      $select.append(cartItems);
                      // open dialog
@@ -149,9 +149,9 @@ $("#"+oid+"-fine-uploader").fineUploader({
     showButton: true
   },
   validation: {
-    allowedExtensions: ['nc', 'csv'],
+    allowedExtensions: ['nc'],
     itemLimit: 1,
-    sizeLimit: 2126512128, // 2 GB = 2 * 1014 * 1024 * 1024 bytes
+    sizeLimit: 268435456, // 256 MB = 256 * 1024 * 1024 bytes
   },
   callbacks: {
     onValidate: function(id, name) {
@@ -175,12 +175,11 @@ $("#"+oid+"-fine-uploader").fineUploader({
     onComplete: function(id, name, response) {
       console.log("onComplete");
       //var previewLink = qq(this.getItemByFileId(id)).getByClass('preview-link')[0];
-      
+
       if (response.success) {
         //previewLink.setAttribute("href", response.tempLink)
-        console.log(id);
         console.log(name);
-        $("#"+oid).val("${storage_url}"+'/'+name);
+        $("#"+oid).val("${storage_url}"+name);
         $("#"+oid).prop('title', name);
       }
     }
@@ -194,8 +193,8 @@ $('#trigger-upload').click(function() {
 
           }
     );
-   
+
   </script>
- 
-   
+
+
 </div>

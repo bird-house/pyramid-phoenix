@@ -19,12 +19,9 @@
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">
-      <a href="${request.route_path('monitor')}">
-        <i class="fa fa-fw fa-chevron-left" ></i>
-      </a>
       ${job.get('title')}
       <i class="${icon_class}" data-toggle="tooltip" title="${job.get('status')}"> </i>
-      <div class="pull-right">
+      <div tal:condition="request.has_permission('submit')" class="pull-right">
         <a class="btn btn-danger btn-xs"
            rel="tooltip"
            data-toggle="tooltip"
@@ -36,9 +33,11 @@
     </h3>
   </div>
   <div class="panel-body">
-    ${job.get('abstract')}
+    <span>
+      ${job.get('abstract')}
+    </span>
     <div>
-      <div class="col-xs-6 col-md-3">
+      <div class="col-md-3">
         <dl>
           <dt>Status</dt>
           <dd class="${status_class}">${job.get('status')}</dd>
@@ -48,7 +47,7 @@
           <dd>${job.get('finished', '???')}</dd>
         </dl>
       </div>
-      <div class="col-xs-6 col-md-3">
+      <div class="col-md-3">
         <dl>
           <dt>Progress</dt>
           <dd>
@@ -58,17 +57,13 @@
               </div>
             </div>
           </dd>
-          <dt>Status Location</dt>
-          <dd>
-            <a class="label label-warning" href="${job.get('status_location')}" target="_blank">XML</a>
-          </dd>
           <dt>Labels</dt>
           <dd>
             <a tal:repeat="label job.get('tags', [])" href="/monitor?tag=${label}" class="label label-info">${label}</a>
           </dd>
         </dl>
       </div>
-      <div class="col-xs-6 col-md-3">
+      <div class="col-md-6">
         <dl>
           <dt>Status Message</dt>
           <dd>${job.get('status_message')}</dd>

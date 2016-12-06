@@ -11,7 +11,7 @@ from colander import (
 
 from deform.compat import (
     text_,
-    )
+)
 
 _BLANK = text_('')
 

@@ -5,16 +5,16 @@ from colander import (
     Mapping,
     SchemaNode,
     null,
-    )
+)
 
 from deform.compat import (
     string_types,
     text_,
-    )
+)
 
 from deform.widget import (
     Widget,
-    )
+)
 
 # TODO: replace by real deform
 from .deformng import StrippedString
@@ -65,7 +65,7 @@ class ResourceWidget(Widget):
 class BBoxWidget(Widget):
     """
     Renders a BoundingBox Widget.
-    
+
     **Attributes/Arguments**
     template
         The template name used to render the input widget.  Default:
@@ -97,7 +97,7 @@ class BBoxWidget(Widget):
         kw.setdefault('miny', miny)
         kw.setdefault('maxx', maxx)
         kw.setdefault('maxy', maxy)
-        
+
         # readonly = kw.get('readonly', self.readonly)
         # TODO: add readonly template
         readonly = False
@@ -144,7 +144,7 @@ class TagsWidget(Widget):
             cstruct = ''
         values = self.get_template_values(field, cstruct, kw)
         return field.renderer(self.template, **values)
-        
+
     def deserialize(self, field, pstruct):
         log.debug('result pstruct=%s', pstruct)
         if pstruct is null:
@@ -188,7 +188,7 @@ class ESGFSearchWidget(Widget):
         kw['url'] = kw.get('url', self.url)
         kw.setdefault('facets', search.get('facets', ''))
         kw.setdefault('query', search.get('query', '*:*'))
-        kw.setdefault('distrib', self._bool( search.get('distrib', False)))
+        kw.setdefault('distrib', self._bool(search.get('distrib', False)))
         replica = search.get('replica', False)
         if replica is None:
             kw.setdefault('replica', self.true_val)
@@ -214,7 +214,7 @@ class ESGFSearchWidget(Widget):
         timestamp = datetime_parser.parse(end)
         end = timestamp.isoformat().split('T')[0]
         kw.setdefault('end', end)
-        
+
         # kw.setdefault('bbox', search.get('bbox', '-180,-90,180,90'))
         kw.setdefault('bbox', '-180,-90,180,90')
         values = self.get_template_values(field, cstruct, kw)
@@ -229,19 +229,19 @@ class ESGFSearchWidget(Widget):
         result = dict(
             facets=pstruct['facets'].strip(),
             query=pstruct['query'].strip(),
-            distrib=pstruct.has_key('distrib'))
+            distrib='distrib' in pstruct)
         if 'replica' in pstruct:
             result['replica'] = None
         else:
             result['replica'] = False
-        if pstruct.has_key('latest'):
+        if 'latest' in pstruct:
             result['latest'] = True
         else:
             result['latest'] = None
         # TODO: quick hack for date format used in esgsearch
         result['start'] = pstruct['start'].strip() + "T12:00:00Z"
         result['end'] = pstruct['end'].strip() + "T12:00:00Z"
-        result['temporal'] = pstruct.has_key('temporal')
+        result['temporal'] = 'temporal' in pstruct
         # result['spatial'] = pstruct.has_key('spatial')
         result['spatial'] = False
         # result['bbox'] = pstruct['bbox'].strip()
@@ -266,4 +266,3 @@ class ESGFSearchWidget(Widget):
             for num, subfield in enumerate(field.children):
                 if e.pos == num:
                     subfield.widget.handle_error(subfield, e)
-

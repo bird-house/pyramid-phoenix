@@ -10,6 +10,7 @@ def collect_outputs(status_location=None, response=None):
     if status_location:
         execution.checkStatus(url=status_location, sleepSecs=0)
     elif response:
+        logger.debug("response document = %s", response)
         execution.checkStatus(response=response.encode('utf8'), sleepSecs=0)
     outputs = {}
     for output in execution.processOutputs:

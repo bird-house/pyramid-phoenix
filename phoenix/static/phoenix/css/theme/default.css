@@ -78,3 +78,10 @@ pre.log-output {
     color:#f1f1f1;
     background-color:#222;
 }
+
+/* XML Panel
+---------------------- */
+pre.xml-output {
+    color:#f1f1f1;
+    background-color:#222;
+}
