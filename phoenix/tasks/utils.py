@@ -21,25 +21,23 @@ def wait_secs(run_step=-1):
     return secs_list[run_step]
 
 
-def log(job):
-    log_msg = '{0} {1:3d}%: {2}'.format(job.get('duration', 0), job.get('progress', 0),
-                                        job.get('status_message', 'no message'))
+def save_log(job, error=None):
+    if error:
+        log_msg = 'ERROR: {0.text} - code={0.code} - locator={0.locator}'.format(error)
+    else:
+        log_msg = '{0} {1:3d}%: {2}'.format(
+            job.get('duration', 0),
+            job.get('progress', 0),
+            job.get('status_message', 'no message'))
     if 'log' not in job:
         job['log'] = []
     # skip same log messages
     if len(job['log']) == 0 or job['log'][-1] != log_msg:
         job['log'].append(log_msg)
-        logger.info(log_msg)
-
-
-def log_error(job, error):
-    log_msg = 'ERROR: {0.text} - code={0.code} - locator={0.locator}'.format(error)
-    if 'log' not in job:
-        job['log'] = []
-    # skip same log messages
-    if len(job['log']) == 0 or job['log'][-1] != log_msg:
-        job['log'].append(log_msg)
-        logger.error(log_msg)
+        if error:
+            logger.error(log_msg)
+        else:
+            logger.info(log_msg)
 
 
 def add_job(db, task_id, process_id, title=None, abstract=None,

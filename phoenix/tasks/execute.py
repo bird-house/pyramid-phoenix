@@ -7,7 +7,7 @@ from owslib.wps import WebProcessingService
 
 from phoenix.db import mongodb
 from phoenix.events import JobFinished
-from phoenix.tasks.utils import wps_headers, log, log_error, add_job, wait_secs
+from phoenix.tasks.utils import wps_headers, save_log, add_job, wait_secs
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -62,14 +62,14 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
                     if execution.isSucceded():
                         logger.debug("job succeded")
                         job['progress'] = 100
-                        log(job)
+                        save_log(job)
                     else:
                         logger.debug("job failed.")
                         job['status_message'] = '\n'.join(error.text for error in execution.errors)
                         for error in execution.errors:
-                            log_error(job, error)
+                            save_log(job, error)
                 else:
-                    log(job)
+                    save_log(job)
             except:
                 num_retries += 1
                 logger.exception("Could not read status xml document for job %s. Trying again ...", self.request.id)
@@ -83,7 +83,7 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
         job['status'] = "ProcessFailed"
         job['status_message'] = "Failed to run Job. %s" % exc.message
     finally:
-        log(job)
+        save_log(job)
         db.jobs.update({'identifier': job['identifier']}, job)
 
     registry.notify(JobFinished(job))
