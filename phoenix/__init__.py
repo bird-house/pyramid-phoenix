@@ -1,7 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-__version__ = (0, 6, 2, 'final', 1)
+__version__ = (0, 6, 3, 'final', 1)
 
 
 def get_version():
