@@ -7,6 +7,7 @@ from phoenix.events import JobStarted
 from phoenix.views import MyView
 from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
+from phoenix.wps import check_status
 from phoenix.utils import wps_describe_url
 from phoenix.security import has_execute_permission
 
@@ -30,8 +31,10 @@ class ExecuteProcess(MyView):
             job = request.db.jobs.find_one(
                 {'identifier': request.params['job_id']})
             self.service_name = job.get('service_name')
-            self.execution = WPSExecution()
-            self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
+            self.execution = check_status(
+                url=job.get('status_location'),
+                response=job.get('response'),
+                verify=False, sleep_secs=0)
             self.processid = self.execution.process.identifier
         elif 'wps' in request.params:
             self.service_name = request.params.get('wps')
