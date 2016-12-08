@@ -6,6 +6,7 @@ import re
 import types
 import uuid
 import requests
+from lxml import etree
 
 from owslib.wps import WPSExecution
 
@@ -35,6 +36,9 @@ def check_status(url=None, response=None, sleep_secs=2, verify=False):
         execution.checkStatus(response=resp.content.encode('utf8'), sleepSecs=sleep_secs)
     if execution.response is None:
         raise Exception("check_status failed!")
+    # TODO: workaround for owslib type change of reponse
+    if not isinstance(execution.response, etree._Element):
+        execution.response = etree.fromstring(execution.response)
     return execution
 
 
