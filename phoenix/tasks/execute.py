@@ -45,7 +45,10 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
             if num_retries >= 5:
                 raise Exception("Could not read status document after 5 retries. Giving up.")
             try:
+                execution.response = None
                 execution.checkStatus(sleepSecs=wait_secs(run_step))
+                if execution.response is None:
+                    raise Exception("check_status failed!")
                 # TODO: fix owslib response object
                 if isinstance(execution.response, etree._Element):
                     job['response'] = etree.tostring(execution.response)
