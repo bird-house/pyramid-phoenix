@@ -29,11 +29,13 @@ def check_status(url=None, response=None, sleep_secs=2, verify=False):
     execution = WPSExecution()
     if response:
         logger.debug("using response document ...")
-        execution.checkStatus(response=response.encode('utf8'), sleepSecs=sleep_secs)
+        xml = response.encode('utf8')
     elif url:
         logger.debug('using status_location url ...')
-        resp = requests.get(url, verify=verify)
-        execution.checkStatus(response=resp.content.encode('utf8'), sleepSecs=sleep_secs)
+        xml = requests.get(url, verify=verify).content.encode('utf8')
+    else:
+        raise Exception("you need to provide a status-location url or response object.")
+    execution.checkStatus(response=xml, sleepSecs=sleep_secs)
     if execution.response is None:
         raise Exception("check_status failed!")
     # TODO: workaround for owslib type change of reponse
