@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 def collect_outputs(status_location=None, response=None):
     from owslib.wps import WPSExecution
-    execution = WPSExecution()
+    execution = WPSExecution(verify=False)
     if status_location:
         execution.checkStatus(url=status_location, sleepSecs=0)
     elif response:
