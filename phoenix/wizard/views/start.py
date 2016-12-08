@@ -5,8 +5,9 @@ from pyramid.security import authenticated_userid
 import colander
 from deform.widget import SelectWidget
 
-from owslib.wps import WPSExecution, WebProcessingService
+from owslib.wps import WebProcessingService
 
+from phoenix.wps import check_status
 from phoenix.utils import time_ago_in_words
 from phoenix.wizard.views import Wizard
 
@@ -18,8 +19,10 @@ def job_to_state(request, job_id):
     # TODO: quite dirty ... needs clean up
     state = {}
     job = request.db.jobs.find_one({'identifier': job_id})
-    execution = WPSExecution()
-    execution.checkStatus(url=job['status_location'], sleepSecs=0)
+    execution = check_status(
+        url=job.get('status_location'),
+        response=job.get('response'),
+        verify=False, sleep_secs=0)
     if len(execution.dataInputs) == 1:
         if len(execution.dataInputs[0].data) == 1:
             workflow = yaml.load(execution.dataInputs[0].data[0])
