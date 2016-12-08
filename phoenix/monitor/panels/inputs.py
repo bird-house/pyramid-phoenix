@@ -1,17 +1,13 @@
 from pyramid_layout.panel import panel_config
 
-from owslib.wps import WPSExecution
+from phoenix.wps import check_status
 
 import logging
 logger = logging.getLogger(__name__)
 
 
 def collect_inputs(status_location=None, response=None):
-    execution = WPSExecution(verify=False)
-    if status_location:
-        execution.checkStatus(url=status_location, sleepSecs=0)
-    elif response:
-        execution.checkStatus(response=response.encode('utf8'), sleepSecs=0)
+    execution = check_status(url=status_location, response=response, sleep_secs=0)
     return execution.dataInputs
 
 
