@@ -38,10 +38,10 @@ def job_to_state(request, job_id):
                     inputs[key].extend(value)
                 else:
                     inputs[key] = [value]
-            
+
             for inp in process.dataInputs:
                 if 'boolean' in inp.dataType and inp.identifier in inputs:
-                    inputs[inp.identifier] = [ val.lower() == 'true' for val in inputs[inp.identifier]]
+                    inputs[inp.identifier] = [val.lower() == 'true' for val in inputs[inp.identifier]]
                 if inp.maxOccurs < 2 and inp.identifier in inputs:
                     inputs[inp.identifier] = inputs[inp.identifier][0]
             state['wizard_literal_inputs'] = inputs
@@ -69,10 +69,10 @@ class FavoriteSchema(colander.MappingSchema):
             time_ago_in_words(job.get('finished')))
         choices = [('', 'No Favorite')]
         if last:
-             choices.append( ('last', 'Last Run') )
+            choices.append(('last', 'Last Run'))
         logger.debug('jobs %s', jobs)
-        choices.extend( [(job['identifier'], gentitle(job) ) for job in jobs] )
-        return SelectWidget(values = choices)
+        choices.extend([(job['identifier'], gentitle(job)) for job in jobs])
+        return SelectWidget(values=choices)
 
     job_id = colander.SchemaNode(
         colander.String(),
@@ -86,7 +86,7 @@ class Start(Wizard):
         super(Start, self).__init__(request, name='wizard', title='Choose a Favorite')
         self.collection = request.db.jobs
         self.wizard_state.clear()
-            
+
     def schema(self):
         jobs = []
         # add restarted job
@@ -108,7 +108,7 @@ class Start(Wizard):
     def appstruct(self):
         struct = {'job_id': 'last'}
         if 'job_id' in self.request.params:
-            struct['job_id'] =self.request.params['job_id']
+            struct['job_id'] = self.request.params['job_id']
         return struct
 
     def success(self, appstruct):
