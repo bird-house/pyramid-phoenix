@@ -47,7 +47,8 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
             if num_retries >= 5:
                 raise Exception("Could not read status document after 5 retries. Giving up.")
             try:
-                execution = check_status(url=execution.statusLocation, verify=False, sleep_secs=wait_secs)
+                execution = check_status(url=execution.statusLocation, verify=False,
+                                         sleep_secs=wait_secs(run_step))
                 job['response'] = etree.tostring(execution.response)
                 job['status'] = execution.getStatus()
                 job['status_message'] = execution.statusMessage
