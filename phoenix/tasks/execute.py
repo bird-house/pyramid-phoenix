@@ -1,5 +1,6 @@
 from datetime import datetime
 from lxml import etree
+from time import sleep
 
 from pyramid_celery import celery_app as app
 
@@ -73,6 +74,7 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
             except:
                 num_retries += 1
                 logger.exception("Could not read status xml document for job %s. Trying again ...", self.request.id)
+                sleep(1)
             else:
                 logger.debug("update job %s ...", self.request.id)
                 num_retries = 0

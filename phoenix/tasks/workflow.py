@@ -3,6 +3,7 @@ from lxml import etree
 import yaml
 import json
 import urllib
+from time import sleep
 
 from pyramid_celery import celery_app as app
 
@@ -64,7 +65,10 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
             if num_retries >= 5:
                 raise Exception("Could not read status document after 5 retries. Giving up.")
             try:
+                execution.response = None
                 execution.checkStatus(sleepSecs=wait_secs(run_step))
+                if execution.response is None:
+                    raise Exception("check_status failed!")
                 # TODO: fix owslib response object
                 if isinstance(execution.response, etree._Element):
                     etree.tostring(execution.response)
@@ -93,6 +97,7 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
             except:
                 num_retries += 1
                 logger.exception("Could not read status xml document for job %s. Trying again ...", self.request.id)
+                sleep(1)
             else:
                 logger.debug("update job %s ...", self.request.id)
                 num_retries = 0
