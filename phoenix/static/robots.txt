@@ -1,0 +1,11 @@
+# Baiduspider
+#User-agent: Baiduspider
+#Disallow: /
+
+# Google
+#User-agent: Googlebot
+#Disallow: /
+
+# Others
+User-agent: *
+Disallow: /
