@@ -102,9 +102,8 @@ class ExecuteProcess(MyView):
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
             self.session.flash("There are errors on this page.", queue='danger')
-            return dict(description=getattr(self.process, 'abstract', ''),
+            return dict(process=self.process,
                         url=wps_describe_url(self.wps.url, self.processid),
-                        metadata=self.process.metadata,
                         form=e.render())
         if not self.request.user:
             return HTTPFound(location=self.request.route_url('processes_loading'))
@@ -170,8 +169,6 @@ class ExecuteProcess(MyView):
         if not has_execute_permission(self.request, self.service_name):
             self.session.flash("You are not allowed to execute processes. Please sign-in.", queue='warning')
         return dict(
-            title=self.process.title,
-            description=getattr(self.process, 'abstract', ''),
+            process=self.process,
             url=wps_describe_url(self.wps.url, self.processid),
-            metadata=self.process.metadata,
             form=form.render(self.appstruct()))
