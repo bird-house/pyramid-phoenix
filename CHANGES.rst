@@ -7,6 +7,8 @@ Changes
 * updated ncwms=2.2.5.
 * fixed #133: page rendering failed when showing validation message.
 * added /robots.txt and /favicon.ico.
+* removed disabled swiftbrowser from wizard.
+* removed disabled csw catalog search from wizard.
 
 0.6.2 (2016-12-06)
 ==================
