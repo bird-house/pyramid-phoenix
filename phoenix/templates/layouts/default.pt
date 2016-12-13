@@ -40,7 +40,7 @@
          ======================================================================= -->
     <metal:css define-slot="css"/>
 
-    <!-- JavaScript 
+    <!-- JavaScript
          ======================================================================= -->
 
 
@@ -61,6 +61,12 @@
             type="text/javascript"></script>
     <script src="${request.static_path('deform:static/select2/select2.js')}"
             type="text/javascript"></script>
+    <script src="${request.static_path('deform:static/pickadate/picker.js')}"
+                    type="text/javascript"></script>
+    <script src="${request.static_path('deform:static/pickadate/picker.date.js')}"
+            type="text/javascript"></script>
+    <script src="${request.static_path('deform:static/pickadate/picker.time.js')}"
+            type="text/javascript"></script>
     <!-- script src="${request.static_path('deform:static/scripts/file_upload.js')}"
             type="text/javascript"></script -->
     <!-- script src="${request.static_path('deform:static/scripts/typeahead.min.js')}"
@@ -68,7 +74,7 @@
 
     <!-- JavaScript: js_preload slot used by template
          ======================================================================= -->
-    <metal:js define-slot="js_preload"/>   
+    <metal:js define-slot="js_preload"/>
 
   </head>
 
@@ -87,7 +93,7 @@
     <!-- footer -->
     ${panel('footer')}
 
-    <!-- JavaScript 
+    <!-- JavaScript
          ======================================================================= -->
     <!-- Placed at the end of the document so the pages load faster -->
 
@@ -97,7 +103,7 @@
 
     <!-- JavaScript: javascript slot used by template
          ======================================================================= -->
-    <metal:js define-slot="javascript"/>   
-      
+    <metal:js define-slot="javascript"/>
+
   </body>
 </html>
