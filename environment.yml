@@ -41,7 +41,7 @@ dependencies:
   - pywps=3.2.6
   - webob=1.6.1
 # phoenix extensions 
-  - python-swiftclient=2.4.0
+  #- python-swiftclient=2.4.0
   - threddsclient=0.3.4       
   - python-ldap=2.4.13
   - funcsigs=1.0.2
