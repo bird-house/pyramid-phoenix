@@ -14,6 +14,14 @@ SOURCE_TYPES = {
 }
 
 
+def includeme(config):
+    config.add_route('wizard_source', '/wizard/source')
+    config.add_view('phoenix.wizard.views.source.ChooseSource',
+                    route_name='wizard_source',
+                    attr='view',
+                    renderer='../templates/wizard/default.pt')
+
+
 class SourceSchemaNode(colander.SchemaNode):
     schema_type = colander.String
     widget = None
@@ -55,6 +63,5 @@ class ChooseSource(Wizard):
         self.success(appstruct)
         return self.next(appstruct.get('source'))
 
-    @view_config(route_name='wizard_source', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(ChooseSource, self).view()

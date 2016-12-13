@@ -19,7 +19,7 @@ def includeme(config):
         config.add_route('wizard_process', '/wizard/process')
         config.add_route('wizard_literal_inputs', '/wizard/literal_inputs')
         config.include('phoenix.wizard.views.complexinputs')
-        config.add_route('wizard_source', '/wizard/source')
+        config.include('phoenix.wizard.views.source')
         config.add_route('wizard_done', '/wizard/done')
 
         config.include('phoenix.wizard.views.esgfsearch')
