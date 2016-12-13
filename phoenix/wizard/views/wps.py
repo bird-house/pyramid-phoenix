@@ -17,7 +17,7 @@ class ChooseWPSSchema(colander.MappingSchema):
         for wps in wps_list:
             choices.append(wps['service_name'])
         return colander.OneOf(choices)
-    
+
     @colander.deferred
     def deferred_widget(node, kw):
         wps_list = kw.get('wps_list', [])
@@ -26,13 +26,13 @@ class ChooseWPSSchema(colander.MappingSchema):
             title = "{0} - {1}".format(wps['title'], wps['abstract'])
             choices.append((wps['service_name'], title))
         return deform.widget.RadioChoiceWidget(values=choices)
-    
+
     identifier = colander.SchemaNode(
         colander.String(),
         title="Web Processing Service",
         validator=deferred_validator,
         widget=deferred_widget
-        )
+    )
 
 
 class ChooseWPS(Wizard):
@@ -60,4 +60,3 @@ class ChooseWPS(Wizard):
     @view_config(route_name='wizard_wps', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(ChooseWPS, self).view()
-    
