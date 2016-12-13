@@ -100,28 +100,13 @@ class Done(Wizard):
         super(Done, self).success(appstruct)
         self.favorite.set(name='last', state=self.wizard_state.dump())
 
-        source_type = self.wizard_state.get('wizard_source')['source']
-        if source_type == 'wizard_upload':
-            inputs = appstruct_to_inputs(self.request, self.wizard_state.get('wizard_literal_inputs', {}))
-            resource = self.wizard_state.get('wizard_complex_inputs')['identifier']
-            for url in self.wizard_state.get('wizard_storage')['url']:
-                inputs.append((resource, url))
-            result = execute_process.delay(
-                userid=authenticated_userid(self.request),
-                url=self.wps.url,
-                service_name=self.service_name,
-                identifier=self.wizard_state.get('wizard_process')['identifier'],
-                inputs=inputs, outputs=[],
-                caption=appstruct.get('caption'))
-            self.request.registry.notify(JobStarted(self.request, result.id))
-        else:
-            result = execute_workflow.delay(
-                userid=authenticated_userid(self.request),
-                url=self.request.wps.url,
-                service_name=self.service_name,
-                workflow=self.workflow_description(),
-                caption=appstruct.get('caption'))
-            self.request.registry.notify(JobStarted(self.request, result.id))
+        result = execute_workflow.delay(
+            userid=authenticated_userid(self.request),
+            url=self.request.wps.url,
+            service_name=self.service_name,
+            workflow=self.workflow_description(),
+            caption=appstruct.get('caption'))
+        self.request.registry.notify(JobStarted(self.request, result.id))
 
     def next_success(self, appstruct):
         self.success(appstruct)

@@ -28,8 +28,6 @@ def includeme(config):
         config.add_route('wizard_check_logon', '/wizard/check_logon.json')
         config.add_route('wizard_threddsservice', '/wizard/threddsservice')
         config.add_route('wizard_threddsbrowser', '/wizard/threddsbrowser')
-        config.add_route('wizard_upload', '/wizard/upload')
-        config.add_route('wizard_storage', '/wizard/storage')
         config.add_route('wizard_done', '/wizard/done')
 
         config.include('phoenix.wizard.views.solrsearch')

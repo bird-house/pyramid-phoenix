@@ -10,7 +10,6 @@ from phoenix.wizard.views import Wizard
 SOURCE_TYPES = {
     'wizard_esgf_search': "Earth System Grid (ESGF)",
     'wizard_threddsservice': "Thredds Catalog Service",
-    # 'wizard_upload': "Local Storage",
     'wizard_solr': "Birdhouse Solr Search"
 }
 
