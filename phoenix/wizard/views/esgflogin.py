@@ -62,7 +62,6 @@ class ESGFLogin(Wizard):
         self.success(appstruct)
         return HTTPFound(location=self.request.route_path('wizard_loading'))
 
-    @view_config(renderer='json', route_name='wizard_check_logon')
     def check_logon(self):
         status = 'running'
         result = task_result(self.session.get('task_id'))
@@ -70,7 +69,6 @@ class ESGFLogin(Wizard):
             status = 'ready'
         return dict(status=status)
 
-    @view_config(route_name='wizard_loading', renderer='../templates/wizard/loading.pt')
     def loading(self):
         result = task_result(self.session.get('task_id'))
         if result.ready():
@@ -82,6 +80,5 @@ class ESGFLogin(Wizard):
                 return HTTPFound(location=self.request.route_path(self.name))
         return {}
 
-    @view_config(route_name='wizard_esgf_login', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(ESGFLogin, self).view()

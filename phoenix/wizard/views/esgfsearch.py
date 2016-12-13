@@ -9,9 +9,25 @@ logger = logging.getLogger(__name__)
 
 def includeme(config):
     config.add_route('wizard_esgf_search', '/wizard/esgf_search')
+    config.add_view('phoenix.wizard.views.esgfsearch.ESGFSearch',
+                    route_name='wizard_esgf_search',
+                    attr='view',
+                    renderer='../templates/wizard/esgfsearch.pt')
     config.add_route('wizard_esgf_login', '/wizard/esgf_login')
+    config.add_view('phoenix.wizard.views.esgflogin.ESGFLogin',
+                    route_name='wizard_esgf_login',
+                    attr='view',
+                    renderer='../templates/wizard/default.pt')
     config.add_route('wizard_loading', '/wizard/loading')
+    config.add_view('phoenix.wizard.views.esgflogin.ESGFLogin',
+                    route_name='wizard_loading',
+                    attr='loading',
+                    renderer='../templates/wizard/loading.pt')
     config.add_route('wizard_check_logon', '/wizard/check_logon.json')
+    config.add_view('phoenix.wizard.views.esgflogin.ESGFLogin',
+                    route_name='wizard_check_logon',
+                    attr='check_logon',
+                    renderer='json')
 
 
 class ESGFSearch(Wizard):
@@ -35,6 +51,5 @@ class ESGFSearch(Wizard):
             return self.next('wizard_done')
         return self.next('wizard_esgf_login')
 
-    @view_config(route_name='wizard_esgf_search', renderer='../templates/wizard/esgfsearch.pt')
     def view(self):
         return super(ESGFSearch, self).view()
