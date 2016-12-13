@@ -13,8 +13,6 @@ def includeme(config):
     settings = config.registry.settings
 
     if asbool(settings.get('phoenix.wizard', True)):
-        # logger.debug('Add wizard')
-
         # views
         config.add_route('wizard', '/wizard')
         config.add_route('wizard_wps', '/wizard/wps')
@@ -51,6 +49,5 @@ def includeme(config):
 
     # check if wizard is activated
     def wizard_activated(request):
-        # settings = request.registry.settings
         return asbool(settings.get('phoenix.wizard', True))
     config.add_request_method(wizard_activated, reify=True)
