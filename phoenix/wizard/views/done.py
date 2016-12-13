@@ -55,18 +55,7 @@ class Done(Wizard):
 
         # source
         user = self.get_user()
-        if 'swift' in source_type:
-            source = dict(
-                storage_url=user.get('swift_storage_url'),
-                auth_token=user.get('swift_auth_token'),
-            )
-            source['container'] = self.wizard_state.get('wizard_swiftbrowser').get('container')
-            prefix = self.wizard_state.get('wizard_swiftbrowser').get('prefix')
-            logger.debug('swift prefix = %s', prefix)
-            if prefix is not None and len(prefix.strip()) > 0:
-                source['prefix'] = prefix
-            workflow['source']['swift'] = source
-        elif 'thredds' in source_type:
+        if 'thredds' in source_type:
             source = dict()
             source['catalog_url'] = self.wizard_state.get('wizard_threddsbrowser').get('url')
             workflow['source']['thredds'] = source
