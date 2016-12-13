@@ -11,6 +11,7 @@ Changes
 * removed disabled swiftbrowser from wizard.
 * removed disabled csw catalog search from wizard.
 * removed disabled upload from wizard.
+* added `profiles/minimal.cfg` with disabled wizard.
 
 0.6.2 (2016-12-06)
 ==================
