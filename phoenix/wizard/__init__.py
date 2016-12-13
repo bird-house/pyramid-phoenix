@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 def includeme(config):
     settings = config.registry.settings
 
-    if asbool(settings.get('phoenix.wizard', True)):
+    if asbool(settings.get('phoenix.wizard', 'false')):
         config.include('phoenix.wizard.views.start')
         config.include('phoenix.wizard.views.wps')
         config.include('phoenix.wizard.views.wpsprocess')
