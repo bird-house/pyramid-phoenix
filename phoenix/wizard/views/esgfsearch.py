@@ -7,6 +7,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def includeme(config):
+    config.add_route('wizard_esgf_search', '/wizard/esgf_search')
+    config.add_route('wizard_esgf_login', '/wizard/esgf_login')
+
+
 class ESGFSearch(Wizard):
     def __init__(self, request):
         super(ESGFSearch, self).__init__(request, name='wizard_esgf_search', title="ESGF Search")
@@ -24,7 +29,7 @@ class ESGFSearch(Wizard):
         self.success(appstruct)
 
         # TODO: need to check pre conditions in wizard
-        if not self.request.has_permission('submit') or user_cert_valid(self.request) :
+        if not self.request.has_permission('submit') or user_cert_valid(self.request):
             return self.next('wizard_done')
         return self.next('wizard_esgf_login')
 

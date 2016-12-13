@@ -22,12 +22,11 @@ def includeme(config):
         config.add_route('wizard_literal_inputs', '/wizard/literal_inputs')
         config.add_route('wizard_complex_inputs', '/wizard/complex_inputs')
         config.add_route('wizard_source', '/wizard/source')
-        config.add_route('wizard_esgf_search', '/wizard/esgf_search')
-        config.add_route('wizard_esgf_login', '/wizard/esgf_login')
         config.add_route('wizard_loading', '/wizard/loading')
         config.add_route('wizard_check_logon', '/wizard/check_logon.json')
         config.add_route('wizard_done', '/wizard/done')
 
+        config.include('phoenix.wizard.views.esgfsearch')
         config.include('phoenix.wizard.views.threddsservice')
         config.include('phoenix.wizard.views.solrsearch')
 
