@@ -7,6 +7,15 @@ from owslib.wps import WebProcessingService
 from phoenix.utils import wps_describe_url
 from phoenix.wizard.views import Wizard
 
+
+def includeme(config):
+    config.add_route('wizard_complex_inputs', '/wizard/complex_inputs')
+    config.add_view('phoenix.wizard.views.complexinputs.ComplexInputs',
+                    route_name='wizard_complex_inputs',
+                    attr='view',
+                    renderer='../templates/wizard/inputs.pt')
+
+
 @colander.deferred
 def deferred_widget(node, kw):
     process = kw.get('process', [])
@@ -20,7 +29,7 @@ def deferred_widget(node, kw):
                 abstract = 'No summary'
             mime_types = ', '.join([value.mimeType for value in data_input.supportedValues])
             description = "{0} - {1} ({2})".format(title, abstract, mime_types)
-            choices.append( (data_input.identifier, description) )
+            choices.append((data_input.identifier, description))
     return deform.widget.RadioChoiceWidget(values=choices)
 
 
@@ -35,7 +44,7 @@ class ComplexInputs(Wizard):
     def __init__(self, request):
         super(ComplexInputs, self).__init__(
             request, name='wizard_complex_inputs',
-            title="Choose Input Parameter")       
+            title="Choose Input Parameter")
         self.wps = WebProcessingService(
             url=request.route_url('owsproxy', service_name=self.wizard_state.get('wizard_wps')['identifier']),
             verify=False, skip_caps=True)
@@ -60,7 +69,6 @@ class ComplexInputs(Wizard):
         self.success(appstruct)
         return self.next('wizard_source')
 
-    @view_config(route_name='wizard_complex_inputs', renderer='../templates/wizard/inputs.pt')
     def view(self):
         return super(ComplexInputs, self).view()
 
