@@ -15,7 +15,7 @@ def includeme(config):
     if asbool(settings.get('phoenix.wizard', True)):
         # views
         config.add_route('wizard', '/wizard')
-        config.add_route('wizard_wps', '/wizard/wps')
+        config.include('phoenix.wizard.views.wps')
         config.include('phoenix.wizard.views.wpsprocess')
         config.include('phoenix.wizard.views.literalinputs')
         config.include('phoenix.wizard.views.complexinputs')
