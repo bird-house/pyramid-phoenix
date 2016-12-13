@@ -9,6 +9,7 @@ Changes
 * added /robots.txt and /favicon.ico.
 * removed disabled swiftbrowser from wizard.
 * removed disabled csw catalog search from wizard.
+* removed disabled upload from wizard.
 
 0.6.2 (2016-12-06)
 ==================
