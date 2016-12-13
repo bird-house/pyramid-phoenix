@@ -24,7 +24,7 @@ class WizardFavorite(object):
 
     def names(self):
         return self.session[wizard_favorite].keys()
-            
+
     def get(self, name):
         return self.session[wizard_favorite].get(name)
 
@@ -32,7 +32,7 @@ class WizardFavorite(object):
         if name and state:
             self.session[wizard_favorite][name] = state
             self.session.changed()
-        
+
     def clear(self):
         self.session[wizard_favorite] = {}
         self.session.changed()
@@ -54,7 +54,7 @@ class WizardState(object):
 
     def dump(self):
         return self.session['wizard']['state']
-            
+
     def current_step(self):
         step = self.initial_step
         if len(self.session['wizard']['chain']) > 0:
@@ -131,7 +131,7 @@ class Wizard(MyView):
 
     def next_ok(self):
         return True
-    
+
     def use_ajax(self):
         return False
 
@@ -155,7 +155,7 @@ class Wizard(MyView):
 
     def appstruct(self):
         return self.wizard_state.get(self.name, {})
-    
+
     def schema(self):
         raise NotImplementedError
 
@@ -167,12 +167,12 @@ class Wizard(MyView):
     def previous_failure(self, validation_failure):
         # don't stop previous in case of validation failure
         return self.previous()
-    
+
     def next_success(self, appstruct):
         raise NotImplementedError
 
     def next_failure(self, validation_failure):
-        custom = self.custom_view() # TODO: need a better way for this
+        custom = self.custom_view()  # TODO: need a better way for this
         return dict(title=self.title, form=validation_failure.render(), **custom)
 
     def generate_form(self, formid='deform'):
@@ -182,7 +182,7 @@ class Wizard(MyView):
             formid=formid,
             use_ajax=self.use_ajax(),
             ajax_options=self.ajax_options(),
-            )
+        )
 
     def process_form(self, form, action):
         success_method = getattr(self, '%s_success' % action)
@@ -197,7 +197,7 @@ class Wizard(MyView):
             logger.exception('Validation of wizard view failed.')
             result = failure_method(e)
         return result
-        
+
     def previous(self):
         self.wizard_state.previous()
         return HTTPFound(location=self.request.route_path(self.wizard_state.current_step()))
@@ -221,11 +221,6 @@ class Wizard(MyView):
     def resources(self):
         resources = []
         resource = self.wizard_state.get('wizard_source')['source']
-        # TODO: refactore this ... there is a common way
-        if resource == 'wizard_csw':
-            selection = self.wizard_state.get(resource).get('selection', [])
-            logger.debug("catalog selection: %s", selection)
-            # TODO: catalog resource
         return resources
 
     def view(self):
@@ -242,5 +237,5 @@ class Wizard(MyView):
             self.session.flash("You are not allowed to execute jobs. Please sign-in.", queue='warning')
 
         result = dict(title=self.title, form=form.render(self.appstruct()))
-        custom = self.custom_view()    
+        custom = self.custom_view()
         return dict(result, **custom)

@@ -23,8 +23,6 @@ def includeme(config):
         config.add_route('wizard_complex_inputs', '/wizard/complex_inputs')
         config.add_route('wizard_source', '/wizard/source')
         # config.add_route('wizard_solr', '/wizard/solr')
-        config.add_route('wizard_csw', '/wizard/csw')
-        config.add_route('wizard_csw_select', '/wizard/csw/{recordid}/select.json')
         config.add_route('wizard_esgf_search', '/wizard/esgf_search')
         config.add_route('wizard_esgf_login', '/wizard/esgf_login')
         config.add_route('wizard_loading', '/wizard/loading')
