@@ -20,11 +20,10 @@ def includeme(config):
         config.include('phoenix.wizard.views.literalinputs')
         config.include('phoenix.wizard.views.complexinputs')
         config.include('phoenix.wizard.views.source')
-        config.add_route('wizard_done', '/wizard/done')
-
         config.include('phoenix.wizard.views.esgfsearch')
         config.include('phoenix.wizard.views.threddsservice')
         config.include('phoenix.wizard.views.solrsearch')
+        config.include('phoenix.wizard.views.done')
 
         # add malleefowl wps
         def add_wps(event):

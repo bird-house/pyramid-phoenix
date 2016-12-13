@@ -19,6 +19,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def includeme(config):
+    config.add_route('wizard_done', '/wizard/done')
+    config.add_view('phoenix.wizard.views.done.Done',
+                    route_name='wizard_done',
+                    attr='view',
+                    renderer='../templates/wizard/default.pt')
+
+
 class DoneSchema(colander.MappingSchema):
     caption = colander.SchemaNode(
         colander.String(),
@@ -113,6 +121,5 @@ class Done(Wizard):
         self.wizard_state.clear()
         return HTTPFound(location=self.request.route_path('monitor'))
 
-    @view_config(route_name='wizard_done', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(Done, self).view()
