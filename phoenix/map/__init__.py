@@ -65,20 +65,19 @@ class Map(object):
 def includeme(config):
     settings = config.registry.settings
 
-    def wms_activated(request):
-        return asbool(settings.get('phoenix.wms', 'false'))
-    config.add_request_method(wms_activated, reify=True)
+    def map_activated(request):
+        return asbool(settings.get('phoenix.map', 'false'))
+    config.add_request_method(map_activated, reify=True)
 
     def wms_url(request):
         return settings.get('wms.url')
     config.add_request_method(wms_url, reify=True)
 
-    if asbool(settings.get('phoenix.wms', 'false')):
+    if asbool(settings.get('phoenix.map', 'false')):
         # add wms service
         def add_wms(event):
             request = event.request
-            # settings = event.request.registry.settings
-            if request.wms_activated and not 'wms' in settings:
+            if request.map_activated and not 'wms' in settings:
                 logger.debug('register wms service')
                 try:
                     service_name = 'wms'
