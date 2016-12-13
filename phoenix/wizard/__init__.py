@@ -26,10 +26,9 @@ def includeme(config):
         config.add_route('wizard_esgf_login', '/wizard/esgf_login')
         config.add_route('wizard_loading', '/wizard/loading')
         config.add_route('wizard_check_logon', '/wizard/check_logon.json')
-        config.add_route('wizard_threddsservice', '/wizard/threddsservice')
-        config.add_route('wizard_threddsbrowser', '/wizard/threddsbrowser')
         config.add_route('wizard_done', '/wizard/done')
 
+        config.include('phoenix.wizard.views.threddsservice')
         config.include('phoenix.wizard.views.solrsearch')
 
         # add malleefowl wps
