@@ -15,6 +15,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def includeme(config):
+    config.add_route('wizard', '/wizard')
+    config.add_view('phoenix.wizard.views.start.Start',
+                    route_name='wizard',
+                    attr='view',
+                    renderer='../templates/wizard/start.pt')
+
+
 def job_to_state(request, job_id):
     # TODO: quite dirty ... needs clean up
     state = {}
@@ -128,6 +136,5 @@ class Start(Wizard):
         self.success(appstruct)
         return self.next('wizard_wps')
 
-    @view_config(route_name='wizard', renderer='../templates/wizard/start.pt')
     def view(self):
         return super(Start, self).view()
