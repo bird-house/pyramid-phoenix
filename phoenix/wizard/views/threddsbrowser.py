@@ -1,8 +1,6 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
-from swiftclient import client, ClientException
-
 from phoenix.wizard.views import Wizard
 import threddsclient
 
@@ -12,13 +10,15 @@ logger = logging.getLogger(__name__)
 import colander
 import deform
 
+
 class Schema(colander.MappingSchema):
     url = colander.SchemaNode(
         colander.String(),
-        missing = '',
-        default = '',
-        widget = deform.widget.HiddenWidget()
-        )
+        missing='',
+        default='',
+        widget=deform.widget.HiddenWidget()
+    )
+
 
 class ThreddsBrowser(Wizard):
     def __init__(self, request):
@@ -65,10 +65,10 @@ class ThreddsBrowser(Wizard):
         logger.debug("wizard state: %s", self.wizard_state.get('wizard_threddsservice'))
         catalog = threddsclient.read_url(url)
         items = []
-        items.extend( catalog.flat_references() )
-        items.extend( catalog.flat_datasets() )
+        items.extend(catalog.flat_references())
+        items.extend(catalog.flat_datasets())
         fields = ['name', 'size', 'modified']
-    
+
         grid = Grid(self.request, items, fields, )
         return dict(title=catalog.url, grid=grid, back_url=back_url)
 
@@ -77,6 +77,7 @@ class ThreddsBrowser(Wizard):
         return super(ThreddsBrowser, self).view()
 
 from phoenix.grid import CustomGrid
+
 
 class Grid(CustomGrid):
     def __init__(self, request, *args, **kwargs):
@@ -91,10 +92,8 @@ class Grid(CustomGrid):
         if item.content_type == 'application/directory':
             url = item.url
         query = []
-        query.append( ('url', url) )
-        query.append( ('prev', item.catalog.url) )
+        query.append(('url', url))
+        query.append(('prev', item.catalog.url))
         url = self.request.route_path('wizard_threddsbrowser', _query=query)
-        return self.render_td(renderer="folder_element_td.mako", url=url, name=item.name, content_type=item.content_type)
-
-
-    
+        return self.render_td(
+            renderer="folder_element_td.mako", url=url, name=item.name, content_type=item.content_type)
