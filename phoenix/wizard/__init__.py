@@ -45,5 +45,5 @@ def includeme(config):
 
     # check if wizard is activated
     def wizard_activated(request):
-        return asbool(settings.get('phoenix.wizard', True))
+        return asbool(settings.get('phoenix.wizard', 'false'))
     config.add_request_method(wizard_activated, reify=True)
