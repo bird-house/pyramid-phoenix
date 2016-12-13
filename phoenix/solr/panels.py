@@ -11,21 +11,23 @@ logger = logging.getLogger(__name__)
 
 import colander
 import deform
+
+
 class Schema(colander.MappingSchema):
     maxrecords = colander.SchemaNode(
         colander.Int(),
-        missing = -1,
-        default = -1,
-        validator = colander.Range(-1),
-        description = "Maximum number of documents to index. Default: -1 (no limit)")
+        missing=-1,
+        default=-1,
+        validator=colander.Range(-1),
+        description="Maximum number of documents to index. Default: -1 (no limit)")
     depth = colander.SchemaNode(
         colander.Int(),
-        missing = 2,
-        default = 2,
-        validator = colander.Range(1,100),
-        description = "Maximum depth level for crawling Thredds catalogs. Default: 2")
+        missing=2,
+        default=2,
+        validator=colander.Range(1, 100),
+        description="Maximum depth level for crawling Thredds catalogs. Default: 2")
 
-    
+
 class SolrPanel(object):
     def __init__(self, context, request):
         self.context = context
@@ -33,11 +35,11 @@ class SolrPanel(object):
 
 
 class SolrIndexPanel(SolrPanel):
-        
+
     @panel_config(name='solr_index', renderer='templates/panels/solr_index.pt')
     def panel(self):
         tasksdb = self.request.db.tasks
-        
+
         items = []
         for rec in self.request.catalog.get_services(service_type=THREDDS_TYPE):
             item = dict(title=rec.title, status='new', service_id=rec.identifier)
@@ -57,7 +59,6 @@ class SolrParamsPanel(SolrPanel):
         appstruct['depth'] = settings.get('solr_depth', '2')
         return appstruct
 
-             
     @panel_config(name='solr_params', renderer='phoenix:templates/panels/form.pt')
     def panel(self):
         form = Form(schema=Schema(), buttons=('update',))
@@ -78,4 +79,3 @@ class SolrParamsPanel(SolrPanel):
             else:
                 self.request.session.flash("Solr parameters updated.", queue='success')
         return dict(title="Parameters", form=form.render(self.appstruct()))
-
