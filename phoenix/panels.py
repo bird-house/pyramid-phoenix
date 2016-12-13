@@ -18,8 +18,9 @@ def navbar(context, request):
     if request.wizard_activated:
         items.append(nav_item('Wizard', request.route_path('wizard')))
     items.append(nav_item('Monitor', request.route_path('monitor')))
-    items.append(nav_item('Map', request.route_path('map')))
-        
+    if request.wms_activated:
+        items.append(nav_item('Map', request.route_path('map')))
+
     subitems = list()
     subitems.append(nav_item('Dashboard', request.route_path('dashboard', tab='overview'), icon='fa fa-dashboard'))
     subitems.append(nav_item('Browse', request.route_path('solrsearch'), icon='fa fa-search'))
@@ -28,7 +29,7 @@ def navbar(context, request):
     if request.has_permission('admin'):
         subitems.append(nav_item('People', request.route_path('people'), icon="fa fa-users"))
         subitems.append(nav_item('Supervisor', request.route_path('supervisor'), icon="fa fa-eye"))
-        subitems.append( nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench"))
+        subitems.append(nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench"))
 
     return dict(items=items, subitems=subitems, protocol=auth_protocols(request)[-1])
 
@@ -57,6 +58,3 @@ def headings(context, request):
     if layout.headings:
         return '\n'.join([lm.render_panel(name, *args, **kw) for name, args, kw in layout.headings])
     return ''
-
-
-
