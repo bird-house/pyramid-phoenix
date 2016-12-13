@@ -38,7 +38,7 @@ class Outputs(object):
         items = []
         for output in process_outputs(self.request, job_id).values():
             dataset = None
-            if self.request.wms_activated and output.mimeType and 'netcdf' in output.mimeType:
+            if self.request.map_activated and output.mimeType and 'netcdf' in output.mimeType:
                 if output.reference and 'wpsoutputs' in output.reference:
                     dataset = "outputs" + output.reference.split('wpsoutputs')[1]
             if output.mimeType:

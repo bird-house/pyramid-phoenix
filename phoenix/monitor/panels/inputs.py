@@ -36,7 +36,7 @@ class Inputs(object):
         for inp in process_inputs(self.request, job_id):
             dataset = None
             # TODO: use config for nwms dynamic services
-            if self.request.wms_activated and inp.mimeType and 'netcdf' in inp.mimeType and inp.reference:
+            if self.request.map_activated and inp.mimeType and 'netcdf' in inp.mimeType and inp.reference:
                 if 'cache' in inp.reference:
                     dataset = "cache" + inp.reference.split('cache')[1]
                 elif 'wpsoutputs' in inp.reference:
