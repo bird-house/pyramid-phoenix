@@ -10,6 +10,8 @@ logger = logging.getLogger(__name__)
 def includeme(config):
     config.add_route('wizard_esgf_search', '/wizard/esgf_search')
     config.add_route('wizard_esgf_login', '/wizard/esgf_login')
+    config.add_route('wizard_loading', '/wizard/loading')
+    config.add_route('wizard_check_logon', '/wizard/check_logon.json')
 
 
 class ESGFSearch(Wizard):
