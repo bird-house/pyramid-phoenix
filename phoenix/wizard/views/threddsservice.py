@@ -8,7 +8,15 @@ from phoenix.wizard.views import Wizard
 
 def includeme(config):
     config.add_route('wizard_threddsservice', '/wizard/threddsservice')
+    config.add_view('phoenix.wizard.views.threddsservice.ThreddsService',
+                    route_name='wizard_threddsservice',
+                    attr='view',
+                    renderer='../templates/wizard/default.pt')
     config.add_route('wizard_threddsbrowser', '/wizard/threddsbrowser')
+    config.add_view('phoenix.wizard.views.threddsbrowser.ThreddsBrowser',
+                    route_name='wizard_threddsbrowser',
+                    attr='view',
+                    renderer='../templates/wizard/threddsbrowser.pt')
 
 
 @colander.deferred
@@ -50,6 +58,5 @@ class ThreddsService(Wizard):
         self.success(appstruct)
         return self.next('wizard_threddsbrowser')
 
-    @view_config(route_name='wizard_threddsservice', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(ThreddsService, self).view()

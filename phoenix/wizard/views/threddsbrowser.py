@@ -72,7 +72,6 @@ class ThreddsBrowser(Wizard):
         grid = Grid(self.request, items, fields, )
         return dict(title=catalog.url, grid=grid, back_url=back_url)
 
-    @view_config(route_name='wizard_threddsbrowser', renderer='../templates/wizard/threddsbrowser.pt')
     def view(self):
         return super(ThreddsBrowser, self).view()
 
