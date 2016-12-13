@@ -71,7 +71,8 @@
               <b>Show your results on a map.</b>
             </h4>
             <h5>Use the map to visualize your processing results and input data.</h5>
-            <a class="btn btn-success" href="${request.route_url('map')}" role="button">
+            <a tal:condition="request.wms_activated"
+               class="btn btn-success" href="${request.route_url('map')}" role="button">
               <span aria-hidden="true">Show the Map &raquo;</span>
             </a>
           </div>
