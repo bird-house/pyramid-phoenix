@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pyramid.view import view_config, view_defaults
 from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPFound
@@ -44,7 +46,15 @@ class Profile(MyView):
         return title
 
     def appstruct(self):
-        return self.collection.find_one({'identifier': self.userid})
+        appstruct = self.collection.find_one({'identifier': self.userid})
+        if 'oauth_token' in self.session:
+            # content = "<pre>{}</pre>".format(pformat(session['oauth_token'], indent=4))
+            token = self.session['oauth_token']
+            appstruct['esgf_slcs_token'] = token.get('access_token')
+            expires = datetime.utcfromtimestamp(
+                int(token.get('expires_at'))).strftime(format="%Y-%m-%d %H:%M:%S UTC")
+            appstruct['esgf_slcs_token_expires'] = expires
+        return appstruct
 
     def schema(self):
         if self.tab == 'twitcher':
@@ -87,17 +97,17 @@ class Profile(MyView):
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('generate_twitcher_token'))
         elif self.tab == 'c4i':
-            btn = ActionButton(name='generate_c4i_token', title='Generate C4I Token',
+            btn = ActionButton(name='generate_c4i_token', title='Generate Token',
                                css_class="btn btn-success btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href="https://dev.climate4impact.eu/impactportal/account/tokenapi.jsp")
         elif self.tab == 'esgf_slcs':
-            btn = ActionButton(name='generate_esgf_slcs_token', title='Generate ESGF SLCS Token',
+            btn = ActionButton(name='generate_esgf_slcs_token', title='Generate Token',
                                css_class="btn btn-success btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('generate_esgf_slcs_token'))
         elif self.tab == 'esgf':
-            btn = ActionButton(name='forget_esgf_certs', title='Forget ESGF credential',
+            btn = ActionButton(name='forget_esgf_certs', title='Forget ESGF Credential',
                                css_class="btn btn-danger btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('forget_esgf_certs'))
