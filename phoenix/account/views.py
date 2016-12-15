@@ -236,7 +236,7 @@ class Account(MyView):
                     if result.user.credentials:
                         pass
                     return self.login_success(login_id=login_id, name=result.user.name)
-                elif result.provider.name == 'ceda':
+                elif result.provider.name == 'esgf_slcs':
                     return self.login_success(login_id='cedatest', name='cedatest')
         return response
 

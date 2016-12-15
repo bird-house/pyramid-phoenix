@@ -188,14 +188,15 @@ def authomatic_config(request):
                 'Get your watched repos': ('GET', 'https://api.github.com/user/subscriptions'),
             },
         },
-        'ceda': {
-            'class_': myoauth2.Ceda,
-            'consumer_key': request.registry.settings.get('ceda.consumer.key'),
-            'consumer_secret': request.registry.settings.get('ceda.consumer.secret'),
+        'esgf_slcs': {
+            'class_': myoauth2.ESGF,
+            'esgf_slcs_url': request.registry.settings.get('esgf.slcs.url'),
+            'consumer_key': request.registry.settings.get('esgf.slcs.cliend.id'),
+            'consumer_secret': request.registry.settings.get('esgf.slcs.client.secret'),
             'id': provider_id(),
-            'scope': myoauth2.Ceda.user_info_scope,
-            #'state': 'ceda',
-            'redirect_uri': request.registry.settings.get('ceda.consumer.redirect.uri'),
+            'scope': myoauth2.ESGF.user_info_scope,
+            'state': 'esgf_slcs',
+            'redirect_uri': request.registry.settings.get('esgf.slcs.redirect.uri'),
         },
     }
 
