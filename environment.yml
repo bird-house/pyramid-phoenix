@@ -8,6 +8,7 @@ dependencies:
   - curl=7.49.0 
   - pyopenssl=16.2.0
   - cryptography=1.6
+  - requests-oauthlib
 # tests
   - pytest 
 #  - pytest-pep8 
