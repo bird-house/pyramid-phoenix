@@ -190,12 +190,12 @@ def authomatic_config(request):
         },
         'esgf_slcs': {
             'class_': myoauth2.ESGF,
-            'esgf_slcs_url': request.registry.settings.get('esgf.slcs.url'),
-            'consumer_key': request.registry.settings.get('esgf.slcs.cliend.id'),
+            #'esgf_slcs_url': request.registry.settings.get('esgf.slcs.url'),
+            'consumer_key': request.registry.settings.get('esgf.slcs.client.id'),
             'consumer_secret': request.registry.settings.get('esgf.slcs.client.secret'),
             'id': provider_id(),
             'scope': myoauth2.ESGF.user_info_scope,
-            'state': 'esgf_slcs',
+            #'state': 'esgf_slcs',
             'redirect_uri': request.registry.settings.get('esgf.slcs.redirect.uri'),
         },
     }

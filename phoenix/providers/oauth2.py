@@ -22,18 +22,6 @@ class ESGF(OAuth2):
     certificate_url = "{}/oauth/certificate/".format(esgf_slcs_url)
     user_info_url = ''
     user_info_scope = [certificate_url]
-    scope = user_info_scope
-
-    def __init__(self, *args, **kwargs):
-        super(OAuth2, self).__init__(*args, **kwargs)
-
-        self.esgf_slcs_url = self._kwarg(kwargs, 'esgf_slcs_url')
-        self.user_authorization_url = "{}/oauth/authorize".format(self.esgf_slcs_url)
-        self.access_token_url = "{}/oauth/access_token".format(self.esgf_slcs_url)
-        self.refresh_token_url = self.access_token_url
-        self.certificate_url = "{}/oauth/certificate/".format(self.esgf_slcs_url)
-        self.user_info_url = ''
-        self.user_info_scope = [self.certificate_url]
 
     @staticmethod
     def _x_user_parser(user, data):
