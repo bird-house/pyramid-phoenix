@@ -6,7 +6,14 @@ from deform import Form, ValidationFailure, Button
 
 from phoenix.views import MyView
 from phoenix.utils import ActionButton
-from ..schema import ProfileSchema, TwitcherSchema, ESGFCredentialsSchema, C4ISchema, GroupSchema
+from ..schema import (
+    ProfileSchema,
+    TwitcherSchema,
+    ESGFSLCSSchema,
+    ESGFCredentialsSchema,
+    C4ISchema,
+    GroupSchema
+)
 
 import logging
 logger = logging.getLogger(__name__)
@@ -26,6 +33,8 @@ class Profile(MyView):
             title = "Personal access token"
         elif self.tab == 'c4i':
             title = "C4I access token"
+        elif self.tab == 'esgf_slcs':
+            title = "ESGF SLCS access token"
         elif self.tab == 'esgf':
             title = "ESGF access token"
         elif self.tab == 'group':
@@ -42,6 +51,8 @@ class Profile(MyView):
             schema = TwitcherSchema()
         elif self.tab == 'c4i':
             schema = C4ISchema()
+        elif self.tab == 'esgf_slcs':
+            schema = ESGFSLCSSchema()
         elif self.tab == 'esgf':
             schema = ESGFCredentialsSchema()
         elif self.tab == 'group':
@@ -80,6 +91,11 @@ class Profile(MyView):
                                css_class="btn btn-success btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href="https://dev.climate4impact.eu/impactportal/account/tokenapi.jsp")
+        elif self.tab == 'esgf_slcs':
+            btn = ActionButton(name='generate_esgf_slcs_token', title='Generate ESGF SLCS Token',
+                               css_class="btn btn-success btn-xs",
+                               disabled=not self.request.has_permission('submit'),
+                               href=self.request.route_path('generate_esgf_slcs_token'))
         elif self.tab == 'esgf':
             btn = ActionButton(name='forget_esgf_certs', title='Forget ESGF credential',
                                css_class="btn btn-danger btn-xs",

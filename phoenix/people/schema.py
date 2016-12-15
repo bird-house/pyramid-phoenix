@@ -70,6 +70,21 @@ class C4ISchema(colander.MappingSchema):
     )
 
 
+class ESGFSLCSSchema(colander.MappingSchema):
+    esgf_slcs_token = colander.SchemaNode(
+        colander.String(),
+        title="ESGF SLCS access token",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+    )
+    esgf_slcs_token_expires = colander.SchemaNode(
+        colander.String(),
+        title="Expires",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+    )
+
+
 class ESGFCredentialsSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
         colander.String(),

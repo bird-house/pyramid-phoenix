@@ -30,6 +30,11 @@ class Actions(object):
         generate_access_token(self.request.registry, self.userid)
         return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='twitcher'))
 
+    @view_config(route_name='generate_esgf_slcs_token', permission='submit')
+    def generate_esgf_slcs_token(self):
+        #generate_access_token(self.request.registry, self.userid)
+        return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_slcs'))
+
     @view_config(route_name='delete_user', permission='admin')
     def delete_user(self):
         if self.userid:
@@ -45,4 +50,5 @@ def includeme(config):
     """
     config.add_route('forget_esgf_certs', 'people/forget_esgf_certs')
     config.add_route('generate_twitcher_token', 'people/gentoken')
+    config.add_route('generate_esgf_slcs_token', 'people/generate_esgf_token')
     config.add_route('delete_user', 'people/delete/{userid}')
