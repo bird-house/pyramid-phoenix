@@ -3,13 +3,14 @@
 -------------------
 
 Providers which implement the |oauth2|_ protocol.
-    
+
     Ceda
 """
 
 from authomatic.providers.oauth2 import OAuth2
 
 __all__ = ['Ceda']
+
 
 class Ceda(OAuth2):
     """
@@ -20,7 +21,7 @@ class Ceda(OAuth2):
     user_info_url = ''
 
     user_info_scope = ['https://slcs.ceda.ac.uk/oauth/certificate/']
-    
+
     @staticmethod
     def _x_user_parser(user, data):
         user.id = user.username = data.get('user')
