@@ -36,7 +36,7 @@ dependencies:
   - kombu=3.0.35
 # mongodb
   - pymongo=3.3.0
-  - mongodb=2.6.12
+  - mongodb=2.6.*|3.3.9
 # twitcher
   - pywps=3.2.6
   - webob=1.6.1
