@@ -47,12 +47,10 @@ class Profile(MyView):
 
     def appstruct(self):
         appstruct = self.collection.find_one({'identifier': self.userid})
-        if 'esgf_oauth_token' in self.session:
-            token = self.session['esgf_oauth_token']
-            appstruct['esgf_slcs_token'] = token.get('access_token')
-            expires = datetime.utcfromtimestamp(
-                int(token.get('expires_at'))).strftime(format="%Y-%m-%d %H:%M:%S UTC")
-            appstruct['esgf_slcs_token_expires'] = expires
+        token = self.user.get('esgf_token')
+        if token:
+            appstruct['esgf_token'] = token.get('access_token')
+            appstruct['esgf_token_expires'] = self.user.get('esgf_token_expires')
         return appstruct
 
     def schema(self):

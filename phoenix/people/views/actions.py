@@ -1,9 +1,9 @@
-from pyramid.view import view_config
+from datetime import datetime
+from requests_oauthlib import OAuth2Session
 
+from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
-
-from requests_oauthlib import OAuth2Session
 
 from phoenix.security import generate_access_token
 from phoenix.providers.oauth2 import ESGF
@@ -86,8 +86,13 @@ class Actions(object):
             # server with a self-signed cert.
             verify=False
         )
-        # Store the token in the session
-        self.session['esgf_oauth_token'] = token
+        # Store the token in the database
+        if self.userid:
+            expires = datetime.utcfromtimestamp(
+                int(token.get('expires_at'))).strftime(format="%Y-%m-%d %H:%M:%S UTC")
+            self.collection.update_one(
+                {'identifier': self.userid},
+                {'$set': {'esgf_token': token, 'esgf_token_expires': expires}})
         # Redirect to the token view
         return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_slcs'))
 

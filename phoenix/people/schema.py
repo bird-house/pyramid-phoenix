@@ -71,13 +71,13 @@ class C4ISchema(colander.MappingSchema):
 
 
 class ESGFSLCSSchema(colander.MappingSchema):
-    esgf_slcs_token = colander.SchemaNode(
+    esgf_token = colander.SchemaNode(
         colander.String(),
         title="Access Token",
         missing='',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
     )
-    esgf_slcs_token_expires = colander.SchemaNode(
+    esgf_token_expires = colander.SchemaNode(
         colander.String(),
         title="Expires at",
         missing='',
