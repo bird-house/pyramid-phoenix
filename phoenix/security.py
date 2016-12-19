@@ -4,8 +4,6 @@ see pyramid security:
 * http://docs.pylonsproject.org/projects/pyramid/en/latest/tutorials/wiki2/authentication.html
 """
 
-from datetime import datetime
-
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.exceptions import HTTPForbidden
@@ -21,12 +19,6 @@ from phoenix.providers import oauth2 as myoauth2
 from phoenix.providers import esgfopenid
 
 
-from twitcher.tokens import tokengenerator_factory
-from twitcher.tokens import tokenstore_factory
-from twitcher.registry import service_registry_factory
-
-from phoenix.db import mongodb
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -38,29 +30,6 @@ Guest = 'group.guest'
 def has_execute_permission(request, service_name):
     service_registry = service_registry_factory(request.registry)
     return service_registry.is_public(service_name) or request.has_permission('submit')
-
-
-def generate_access_token(registry, userid=None):
-    settings = registry.settings
-    db = mongodb(registry)
-
-    environ = {}
-    user = db.users.find_one({'identifier': userid})
-    esgf_token = user.get('esgf_token')
-    if esgf_token:
-        environ['esgf_access_token'] = esgf_token.get('access_token')
-        environ['esgf_slcs_service_url'] = settings.get('esgf.slcs.url')
-
-    tokengenerator = tokengenerator_factory(registry)
-    access_token = tokengenerator.create_access_token(valid_in_hours=8, user_environ=environ)
-    tokenstore = tokenstore_factory(registry)
-    tokenstore.save_token(access_token)
-    token = access_token['token']
-    expires = datetime.utcfromtimestamp(
-        int(access_token['expires_at'])).strftime(format="%Y-%m-%d %H:%M:%S UTC")
-    if userid:
-        db.users.update_one({'identifier': userid},
-                            {'$set': {'twitcher_token': token, 'twitcher_token_expires': expires}})
 
 
 def auth_protocols(request):

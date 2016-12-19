@@ -5,7 +5,7 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 
-from phoenix.security import generate_access_token
+from phoenix.twitcherclient import generate_access_token
 from phoenix.providers.oauth2 import ESGF
 
 import logging
@@ -39,7 +39,7 @@ class Actions(object):
 
     @view_config(route_name='generate_twitcher_token', permission='submit')
     def generate_twitcher_token(self):
-        generate_access_token(self.request.registry, self.userid)
+        generate_access_token(self.request.registry, userid=self.userid)
         return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='twitcher'))
 
     @view_config(route_name='generate_esgf_slcs_token', permission='submit')

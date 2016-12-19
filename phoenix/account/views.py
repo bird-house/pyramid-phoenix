@@ -12,7 +12,7 @@ from authomatic.adapters import WebObAdapter
 from phoenix.views import MyView
 from phoenix.security import Admin, Guest, authomatic, passwd_check
 from phoenix.security import auth_protocols
-from phoenix.security import generate_access_token
+from phoenix.twitcherclient import generate_access_token
 from .schema import PhoenixSchema, LdapSchema, ESGFOpenIDSchema, OpenIDSchema, OAuthSchema
 
 import logging
@@ -156,7 +156,7 @@ class Account(MyView):
             self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any processes.",
                                queue='info')
         else:
-            generate_access_token(self.request.registry, user['identifier'])
+            generate_access_token(self.request.registry, userid=user['identifier'])
         headers = remember(self.request, user['identifier'])
         return HTTPFound(location=self.request.route_path('home'), headers=headers)
 

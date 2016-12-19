@@ -49,6 +49,7 @@ def main(global_config, **settings):
     config.include('phoenix.db')
 
     # twitcher
+    config.include('twitcher.rpcinterface')
     config.include('twitcher.owsproxy')
     config.include('twitcher.tweens')
 
