@@ -26,7 +26,7 @@ class Actions(object):
         self.token_url = "{}/oauth/access_token".format(esgf_slcs_url)
         certificate_url = "{}/oauth/certificate/".format(esgf_slcs_url)
         self.scope = [certificate_url]
-        self.redirect_uri = self.request.route_url('oauth_callback')
+        self.redirect_uri = self.request.route_url('esgf_oauth_callback')
 
     @view_config(route_name='forget_esgf_certs', permission='submit')
     def forget_esgf_certs(self):
@@ -57,8 +57,8 @@ class Actions(object):
         self.session['oauth_state'] = state
         return HTTPFound(location=auth_url)
 
-    @view_config(route_name='oauth_callback', permission='submit')
-    def oauth_callback(self):
+    @view_config(route_name='esgf_oauth_callback', permission='submit')
+    def esgf_oauth_callback(self):
         """
         Convert an authorisation grant into an access token.
         """
@@ -107,5 +107,5 @@ def includeme(config):
     config.add_route('forget_esgf_certs', 'people/forget_esgf_certs')
     config.add_route('generate_twitcher_token', 'people/gentoken')
     config.add_route('generate_esgf_slcs_token', 'people/generate_esgf_token')
-    config.add_route('oauth_callback', 'oauth_callback')
+    config.add_route('esgf_oauth_callback', 'oauth/callback/esgf')
     config.add_route('delete_user', 'people/delete/{userid}')
