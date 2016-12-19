@@ -87,8 +87,7 @@ class Actions(object):
             verify=False
         )
         # Store the token in the session
-        self.session['oauth_token'] = token
-        logger.debug('token: %s ', type(token))
+        self.session['esgf_oauth_token'] = token
         # Redirect to the token view
         return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_slcs'))
 
