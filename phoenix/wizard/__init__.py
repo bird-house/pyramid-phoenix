@@ -1,7 +1,7 @@
 from pyramid.settings import asbool
 from pyramid.events import NewRequest
 
-from twitcher.registry import service_registry_factory
+from phoenix.twitcherclient import TwitcherClient
 
 from owslib.wps import WebProcessingService
 
@@ -32,7 +32,7 @@ def includeme(config):
                 logger.debug('register malleefowl wps service')
                 try:
                     service_name = 'malleefowl'
-                    registry = service_registry_factory(request.registry)
+                    registry = TwitcherClient(request.registry)
                     logger.debug("register: name=%s, url=%s", service_name, settings['wps.url'])
                     registry.register_service(name=service_name, url=settings['wps.url'], overwrite=True)
                     settings['wps'] = WebProcessingService(

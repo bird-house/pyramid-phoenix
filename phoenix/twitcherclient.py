@@ -60,8 +60,9 @@ class TwitcherClient(object):
                 {'identifier': userid},
                 {'$set': {'twitcher_token': token['access_token'], 'twitcher_token_expires': expires}})
 
-    def register_service(self, url, name=None, service_type=None, public=False):
-        self.server.register(url, name, service_type, public)
+    def register_service(self, url, name=None, service_type=None, public=False, c4i=False, overwrite=True):
+        service_type = service_type or 'wps'
+        self.server.register(url, name, service_type, public, c4i, overwrite)
 
     def unregister_service(self, name):
         self.server.register(name)
