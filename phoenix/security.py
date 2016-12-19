@@ -18,6 +18,7 @@ from authomatic.providers import oauth2, openid
 from phoenix.providers import oauth2 as myoauth2
 from phoenix.providers import esgfopenid
 
+from phoenix.twitcherclient import is_public
 
 import logging
 logger = logging.getLogger(__name__)
@@ -28,8 +29,7 @@ Guest = 'group.guest'
 
 
 def has_execute_permission(request, service_name):
-    service_registry = service_registry_factory(request.registry)
-    return service_registry.is_public(service_name) or request.has_permission('submit')
+    return is_public(request.registry, service_name) or request.has_permission('submit')
 
 
 def auth_protocols(request):

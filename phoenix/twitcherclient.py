@@ -28,7 +28,12 @@ def _create_server(url, verify=True, username=None, password=None):
 
 def generate_access_token(registry, userid=None, valid_in_hours=1):
     client = TwitcherClient(registry)
-    return client.gentoken(userid=userid, valid_in_hours=valid_in_hours)
+    return client.get_token(userid=userid, valid_in_hours=valid_in_hours)
+
+
+def is_public(registry, name):
+    client = TwitcherClient(registry)
+    return client.is_public(name)
 
 
 class TwitcherClient(object):
@@ -39,7 +44,7 @@ class TwitcherClient(object):
         self.collection = db.users
         self.server = _create_server("https://localhost:8443", verify=False)
 
-    def gentoken(self, userid=None, valid_in_hours=1):
+    def get_token(self, userid=None, valid_in_hours=1):
         environ = {}
         user = self.collection.find_one({'identifier': userid})
         esgf_token = user.get('esgf_token')
@@ -54,3 +59,24 @@ class TwitcherClient(object):
             self.collection.update_one(
                 {'identifier': userid},
                 {'$set': {'twitcher_token': token['access_token'], 'twitcher_token_expires': expires}})
+
+    def register_service(self, url, name=None, service_type=None, public=False):
+        self.server.register(url, name, service_type, public)
+
+    def unregister_service(self, name):
+        self.server.register(name)
+
+    def clear_services(self):
+        self.server.purge()
+
+    def is_public(self, name):
+        return self.server.is_public(name)
+
+    def get_service_name(self, url):
+        return self.server.get_service_name(url)
+
+    def get_service_by_url(self, url):
+        return self.server.get_service_by_url(url)
+
+    def get_service_by_name(self, name):
+        return self.server.get_service_by_name(name)

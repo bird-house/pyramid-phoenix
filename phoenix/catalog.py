@@ -7,12 +7,12 @@ from owslib.csw import CatalogueServiceWeb
 from owslib.fes import PropertyIsEqualTo, And
 from owslib.wps import WebProcessingService
 
-from twitcher.registry import service_registry_factory
 
 from pyramid.settings import asbool
 from pyramid.events import NewRequest
 
 from phoenix.db import mongodb
+from phoenix.twitcherclient import TwitcherClient
 
 import logging
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ def includeme(config):
 def catalog_factory(registry):
     settings = registry.settings
 
-    service_registry = service_registry_factory(registry)
+    service_registry = TwitcherClient(registry)
 
     if asbool(settings.get('phoenix.csw', True)):
         csw = CatalogueServiceWeb(url=settings['csw.url'], skip_caps=True)
