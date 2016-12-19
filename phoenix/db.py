@@ -1,6 +1,6 @@
 # MongoDB
 # http://docs.pylonsproject.org/projects/pyramid-cookbook/en/latest/database/mongodb.html
-# maybe use event to register mongodb   
+# maybe use event to register mongodb
 
 import pymongo
 
