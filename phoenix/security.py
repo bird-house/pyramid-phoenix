@@ -41,10 +41,18 @@ def has_execute_permission(request, service_name):
 
 
 def generate_access_token(registry, userid=None):
+    settings = registry.settings
     db = mongodb(registry)
 
+    environ = {}
+    user = db.users.find_one({'identifier': userid})
+    esgf_token = user.get('esgf_token')
+    if esgf_token:
+        environ['esgf_access_token'] = esgf_token.get('access_token')
+        environ['esgf_slcs_service_url'] = settings.get('esgf.slcs.url')
+
     tokengenerator = tokengenerator_factory(registry)
-    access_token = tokengenerator.create_access_token(valid_in_hours=8, user_environ={})
+    access_token = tokengenerator.create_access_token(valid_in_hours=8, user_environ=environ)
     tokenstore = tokenstore_factory(registry)
     tokenstore.save_token(access_token)
     token = access_token['token']
