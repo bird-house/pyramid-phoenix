@@ -50,7 +50,6 @@ class Profile(MyView):
         token = self.user.get('esgf_token')
         if token:
             appstruct['esgf_token'] = token.get('access_token')
-            appstruct['esgf_token_expires'] = self.user.get('esgf_token_expires')
         return appstruct
 
     def schema(self):
