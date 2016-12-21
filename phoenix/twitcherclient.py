@@ -6,6 +6,14 @@ from datetime import datetime
 from phoenix.db import mongodb
 
 
+def includeme(config):
+    settings = config.registry.settings
+
+    config.include('twitcher.rpcinterface')
+    config.include('twitcher.owsproxy')
+    config.include('twitcher.tweens')
+
+
 def _create_https_context(verify=True):
     context = ssl._create_default_https_context()
     if verify is False:
