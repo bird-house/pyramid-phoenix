@@ -74,10 +74,13 @@ def includeme(config):
     config.add_request_method(wms_url, reify=True)
 
     if asbool(settings.get('phoenix.map', 'false')):
+        config.include('phoenix.twitcherclient')
+
         # add wms service
-        def add_wms(event):
-            request = event.request
-            if request.map_activated and not 'wms' in settings:
+        def get_wms(request):
+            settings = request.registry.settings
+            session = request.session
+            if request.map_activated and 'wms' not in session:
                 logger.debug('register wms service')
                 try:
                     service_name = 'wms'
@@ -86,11 +89,11 @@ def includeme(config):
                     registry.register_service(name=service_name, url=settings['wms.url'],
                                               public=True, service_type='wms',
                                               overwrite=True)
-                    settings['wms'] = WebMapService(url=settings['wms.url'])
+                    session['wms'] = WebMapService(url=settings['wms.url'])
                 except:
                     logger.exception('Could not connect wms %s', settings['wms.url'])
-            event.request.wms = settings.get('wms')
-        config.add_subscriber(add_wms, NewRequest)
+            return session.get('wms')
+        config.add_request_method(get_wms, 'wms', reify=True)
 
         # map view
         config.add_route('map', '/map')
