@@ -10,7 +10,7 @@ pyramid_ldap
 pyramid_celery
 pyramid_storage
 pyramid_celery
-pyramid_twitcher
+pyramid_twitcher>=0.3.0
 deform
 #js.deform
 #js.bootstrap
