@@ -16,7 +16,7 @@ def includeme(config):
 
 def twitcher_service_factory(registry):
     settings = registry.settings
-    service = TwitcherService("https://localhost:8443", verify=False)
+    service = TwitcherService(url=settings.get('twitcher.url'), verify=False)
     return service
 
 
