@@ -8,7 +8,6 @@ dependencies:
   - curl=7.49.0 
   - pyopenssl=16.2.0
   - cryptography=1.6
-  - requests-oauthlib
 # tests
   - pytest 
 #  - pytest-pep8 
@@ -27,6 +26,7 @@ dependencies:
   - mako=1.0.5 
   - dateutil=2.4.1 
   - requests=2.10.0 
+  - requests-oauthlib
   - pyyaml=3.11
   - pygments=2.1.3 
   - pytz=2016.4
@@ -39,7 +39,6 @@ dependencies:
   - pymongo=3.3.0
   - mongodb=2.6.*|3.3.9
 # twitcher
-  - pywps=4.0.0
   - webob=1.6.1
 # phoenix extensions 
   #- python-swiftclient=2.4.0
@@ -63,7 +62,7 @@ dependencies:
       - pyramid-mailer==0.14.1
       - pyramid-storage==0.1.2
       - pyramid-ldap==0.1
-      - pyramid-twitcher==0.2.3
+  #    - pyramid-twitcher==0.2.3
       - pyramid-rpc==0.7.2
       - colander==1.3.1
       - Authomatic==0.1.0.post1
