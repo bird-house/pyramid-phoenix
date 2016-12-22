@@ -6,7 +6,6 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 
 from phoenix.twitcherclient import generate_access_token
-from phoenix.providers.oauth2 import ESGF
 
 import logging
 logger = logging.getLogger(__name__)

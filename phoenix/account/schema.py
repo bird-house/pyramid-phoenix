@@ -12,7 +12,7 @@ class PhoenixSchema(colander.MappingSchema):
 
 
 class OAuthSchema(colander.MappingSchema):
-    choices = [('github', 'GitHub'), ('esgf_slcs', 'ESGF')]
+    choices = [('github', 'GitHub'), ]
 
     provider = colander.SchemaNode(
         colander.String(),

@@ -15,7 +15,6 @@ from pyramid.security import (
 
 from authomatic import Authomatic, provider_id
 from authomatic.providers import oauth2, openid
-from phoenix.providers import oauth2 as myoauth2
 from phoenix.providers import esgfopenid
 
 from phoenix.twitcherclient import is_public
@@ -164,16 +163,6 @@ def authomatic_config(request):
                 'Get your events': ('GET', 'https://api.github.com/users/{user.username}/events'),
                 'Get your watched repos': ('GET', 'https://api.github.com/user/subscriptions'),
             },
-        },
-        'esgf_slcs': {
-            'class_': myoauth2.ESGF,
-            #'esgf_slcs_url': request.registry.settings.get('esgf.slcs.url'),
-            'consumer_key': request.registry.settings.get('esgf.slcs.client.id'),
-            'consumer_secret': request.registry.settings.get('esgf.slcs.client.secret'),
-            'id': provider_id(),
-            'scope': myoauth2.ESGF.user_info_scope,
-            #'state': 'esgf_slcs',
-            'redirect_uri': request.registry.settings.get('esgf.slcs.redirect.uri'),
         },
     }
 
