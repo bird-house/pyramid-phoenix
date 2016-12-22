@@ -7,7 +7,7 @@ from pyramid.events import NewRequest
 from mako.template import Template
 from owslib.wms import WebMapService
 
-from phoenix.twitcherclient import TwitcherClient
+from phoenix.twitcherclient import twitcher_service_factory
 
 import logging
 logger = logging.getLogger(__name__)
@@ -84,7 +84,7 @@ def includeme(config):
                 logger.debug('register wms service')
                 try:
                     service_name = 'wms'
-                    registry = TwitcherClient(request.registry)
+                    registry = twitcher_service_factory(request.registry)
                     logger.debug("register: name=%s, url=%s", service_name, settings['wms.url'])
                     registry.register_service(name=service_name, url=settings['wms.url'],
                                               public=True, service_type='wms',

@@ -12,7 +12,7 @@ from pyramid.settings import asbool
 from pyramid.events import NewRequest
 
 from phoenix.db import mongodb
-from phoenix.twitcherclient import TwitcherClient
+from phoenix.twitcherclient import twitcher_service_factory
 
 import logging
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ def includeme(config):
 def catalog_factory(registry):
     settings = registry.settings
 
-    service_registry = TwitcherClient(registry)
+    service_registry = twitcher_service_factory(registry)
 
     if asbool(settings.get('phoenix.csw', True)):
         csw = CatalogueServiceWeb(url=settings['csw.url'], skip_caps=True)
