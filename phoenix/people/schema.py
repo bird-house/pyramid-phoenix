@@ -53,7 +53,7 @@ class TwitcherSchema(colander.MappingSchema):
         missing='',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
     )
-    twitcher_token_expires = colander.SchemaNode(
+    twitcher_token_expires_at = colander.SchemaNode(
         colander.String(),
         title="Expires at",
         missing='',

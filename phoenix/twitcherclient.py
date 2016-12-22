@@ -1,5 +1,4 @@
 from urlparse import urlparse
-from datetime import datetime
 
 from twitcher.client import TwitcherService
 
@@ -35,13 +34,10 @@ def generate_access_token(registry, userid=None, valid_in_hours=1):
 
     # call to service
     token = service.gentoken(valid_in_hours, environ)
-
-    expires = datetime.utcfromtimestamp(
-        int(token['expires_at'])).strftime(format="%Y-%m-%d %H:%M:%S UTC")
-    if userid:
+    if userid and token:
         collection.update_one(
             {'identifier': userid},
-            {'$set': {'twitcher_token': token['access_token'], 'twitcher_token_expires': expires}})
+            {'$set': {'twitcher_token': token, }})
     return token
 
 

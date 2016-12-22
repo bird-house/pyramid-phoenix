@@ -53,6 +53,12 @@ class Profile(MyView):
             expires_at = datetime.utcfromtimestamp(
                 int(token.get('expires_at'))).strftime(format="%Y-%m-%d %H:%M:%S UTC")
             appstruct['esgf_token_expires_at'] = expires_at
+        token = self.user.get('twitcher_token')
+        if token:
+            appstruct['twitcher_token'] = token.get('access_token')
+            expires_at = datetime.utcfromtimestamp(
+                int(token.get('expires_at'))).strftime(format="%Y-%m-%d %H:%M:%S UTC")
+            appstruct['twitcher_token_expires_at'] = expires_at
         return appstruct
 
     def schema(self):
