@@ -1,6 +1,13 @@
 Changes
 *******
 
+0.7.0 (2017-01-xx)
+==================
+
+* simplified version setting.
+* updated to twitcher 0.3.0.
+
+
 0.6.3 (2016-12-23)
 ==================
 
