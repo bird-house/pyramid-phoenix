@@ -1,17 +1,13 @@
 from pyramid_layout.panel import panel_config
 
-from owslib.wps import WPSExecution
+from phoenix.wps import check_status
 
 import logging
 logger = logging.getLogger(__name__)
 
 
 def collect_inputs(status_location=None, response=None):
-    execution = WPSExecution()
-    if status_location:
-        execution.checkStatus(url=status_location, sleepSecs=0)
-    elif response:
-        execution.checkStatus(response=response.encode('utf8'), sleepSecs=0)
+    execution = check_status(url=status_location, response=response, sleep_secs=0)
     return execution.dataInputs
 
 
@@ -40,7 +36,7 @@ class Inputs(object):
         for inp in process_inputs(self.request, job_id):
             dataset = None
             # TODO: use config for nwms dynamic services
-            if self.request.wms_activated and inp.mimeType and 'netcdf' in inp.mimeType and inp.reference:
+            if self.request.map_activated and inp.mimeType and 'netcdf' in inp.mimeType and inp.reference:
                 if 'cache' in inp.reference:
                     dataset = "cache" + inp.reference.split('cache')[1]
                 elif 'wpsoutputs' in inp.reference:

@@ -26,5 +26,5 @@ owslib
 lxml
 python-dateutil
 pytz
-python-swiftclient
+#python-swiftclient
 bird-feeder

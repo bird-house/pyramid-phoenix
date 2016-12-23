@@ -23,7 +23,6 @@ class Map(object):
         self.request = request
         self.session = self.request.session
 
-    @view_config(route_name='map', renderer='templates/map/map.pt')
     def view(self):
         dataset = self.request.params.get('dataset')
         wms_url = self.request.params.get('wms_url')
@@ -66,34 +65,36 @@ class Map(object):
 def includeme(config):
     settings = config.registry.settings
 
-    # logger.debug('Adding map ...')
-
-    def wms_activated(request):
-        return asbool(settings.get('phoenix.wms', 'false'))
-    config.add_request_method(wms_activated, reify=True)
+    def map_activated(request):
+        return asbool(settings.get('phoenix.map', 'false'))
+    config.add_request_method(map_activated, reify=True)
 
     def wms_url(request):
         return settings.get('wms.url')
     config.add_request_method(wms_url, reify=True)
 
-    # add wms
-    def add_wms(event):
-        request = event.request
-        # settings = event.request.registry.settings
-        if request.wms_activated and not 'wms' in settings:
-            logger.debug('register wms service')
-            try:
-                service_name = 'wms'
-                registry = service_registry_factory(request.registry)
-                logger.debug("register: name=%s, url=%s", service_name, settings['wms.url'])
-                registry.register_service(name=service_name, url=settings['wms.url'],
-                                          public=True, service_type='wms',
-                                          overwrite=True)
-                settings['wms'] = WebMapService(url=settings['wms.url'])
-            except:
-                logger.exception('Could not connect wms %s', settings['wms.url'])
-        event.request.wms = settings.get('wms')
-    config.add_subscriber(add_wms, NewRequest)
+    if asbool(settings.get('phoenix.map', 'false')):
+        # add wms service
+        def add_wms(event):
+            request = event.request
+            if request.map_activated and not 'wms' in settings:
+                logger.debug('register wms service')
+                try:
+                    service_name = 'wms'
+                    registry = service_registry_factory(request.registry)
+                    logger.debug("register: name=%s, url=%s", service_name, settings['wms.url'])
+                    registry.register_service(name=service_name, url=settings['wms.url'],
+                                              public=True, service_type='wms',
+                                              overwrite=True)
+                    settings['wms'] = WebMapService(url=settings['wms.url'])
+                except:
+                    logger.exception('Could not connect wms %s', settings['wms.url'])
+            event.request.wms = settings.get('wms')
+        config.add_subscriber(add_wms, NewRequest)
 
-    # views
-    config.add_route('map', '/map')
+        # map view
+        config.add_route('map', '/map')
+        config.add_view('phoenix.map.Map',
+                        route_name='map',
+                        attr='view',
+                        renderer='templates/map/map.pt')

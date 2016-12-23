@@ -19,6 +19,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def includeme(config):
+    config.add_route('wizard_done', '/wizard/done')
+    config.add_view('phoenix.wizard.views.done.Done',
+                    route_name='wizard_done',
+                    attr='view',
+                    renderer='../templates/wizard/default.pt')
+
+
 class DoneSchema(colander.MappingSchema):
     caption = colander.SchemaNode(
         colander.String(),
@@ -55,18 +63,7 @@ class Done(Wizard):
 
         # source
         user = self.get_user()
-        if 'swift' in source_type:
-            source = dict(
-                storage_url=user.get('swift_storage_url'),
-                auth_token=user.get('swift_auth_token'),
-            )
-            source['container'] = self.wizard_state.get('wizard_swiftbrowser').get('container')
-            prefix = self.wizard_state.get('wizard_swiftbrowser').get('prefix')
-            logger.debug('swift prefix = %s', prefix)
-            if prefix is not None and len(prefix.strip()) > 0:
-                source['prefix'] = prefix
-            workflow['source']['swift'] = source
-        elif 'thredds' in source_type:
+        if 'thredds' in source_type:
             source = dict()
             source['catalog_url'] = self.wizard_state.get('wizard_threddsbrowser').get('url')
             workflow['source']['thredds'] = source
@@ -111,34 +108,18 @@ class Done(Wizard):
         super(Done, self).success(appstruct)
         self.favorite.set(name='last', state=self.wizard_state.dump())
 
-        source_type = self.wizard_state.get('wizard_source')['source']
-        if source_type == 'wizard_upload':
-            inputs = appstruct_to_inputs(self.request, self.wizard_state.get('wizard_literal_inputs', {}))
-            resource = self.wizard_state.get('wizard_complex_inputs')['identifier']
-            for url in self.wizard_state.get('wizard_storage')['url']:
-                inputs.append((resource, url))
-            result = execute_process.delay(
-                userid=authenticated_userid(self.request),
-                url=self.wps.url,
-                service_name=self.service_name,
-                identifier=self.wizard_state.get('wizard_process')['identifier'],
-                inputs=inputs, outputs=[],
-                caption=appstruct.get('caption'))
-            self.request.registry.notify(JobStarted(self.request, result.id))
-        else:
-            result = execute_workflow.delay(
-                userid=authenticated_userid(self.request),
-                url=self.request.wps.url,
-                service_name=self.service_name,
-                workflow=self.workflow_description(),
-                caption=appstruct.get('caption'))
-            self.request.registry.notify(JobStarted(self.request, result.id))
+        result = execute_workflow.delay(
+            userid=authenticated_userid(self.request),
+            url=self.request.wps.url,
+            service_name=self.service_name,
+            workflow=self.workflow_description(),
+            caption=appstruct.get('caption'))
+        self.request.registry.notify(JobStarted(self.request, result.id))
 
     def next_success(self, appstruct):
         self.success(appstruct)
         self.wizard_state.clear()
         return HTTPFound(location=self.request.route_path('monitor'))
 
-    @view_config(route_name='wizard_done', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(Done, self).view()

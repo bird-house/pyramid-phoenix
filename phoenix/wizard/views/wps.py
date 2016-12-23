@@ -9,6 +9,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def includeme(config):
+    config.add_route('wizard_wps', '/wizard/wps')
+    config.add_view('phoenix.wizard.views.wps.ChooseWPS',
+                    route_name='wizard_wps',
+                    attr='view',
+                    renderer='../templates/wizard/default.pt')
+
+
 class ChooseWPSSchema(colander.MappingSchema):
     @colander.deferred
     def deferred_validator(node, kw):
@@ -17,7 +25,7 @@ class ChooseWPSSchema(colander.MappingSchema):
         for wps in wps_list:
             choices.append(wps['service_name'])
         return colander.OneOf(choices)
-    
+
     @colander.deferred
     def deferred_widget(node, kw):
         wps_list = kw.get('wps_list', [])
@@ -26,13 +34,13 @@ class ChooseWPSSchema(colander.MappingSchema):
             title = "{0} - {1}".format(wps['title'], wps['abstract'])
             choices.append((wps['service_name'], title))
         return deform.widget.RadioChoiceWidget(values=choices)
-    
+
     identifier = colander.SchemaNode(
         colander.String(),
         title="Web Processing Service",
         validator=deferred_validator,
         widget=deferred_widget
-        )
+    )
 
 
 class ChooseWPS(Wizard):
@@ -57,7 +65,5 @@ class ChooseWPS(Wizard):
         self.success(appstruct)
         return self.next('wizard_process')
 
-    @view_config(route_name='wizard_wps', renderer='../templates/wizard/default.pt')
     def view(self):
         return super(ChooseWPS, self).view()
-    

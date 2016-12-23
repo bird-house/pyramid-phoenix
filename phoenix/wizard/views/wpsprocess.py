@@ -8,6 +8,14 @@ from phoenix.utils import wps_caps_url
 from phoenix.wizard.views import Wizard
 
 
+def includeme(config):
+    config.add_route('wizard_process', '/wizard/process')
+    config.add_view('phoenix.wizard.views.wpsprocess.ChooseWPSProcess',
+                    route_name='wizard_process',
+                    attr='view',
+                    renderer='../templates/wizard/wpsprocess.pt')
+
+
 def count_literal_inputs(wps, identifier):
     process = wps.describeprocess(identifier)
     literal_inputs = []
@@ -26,7 +34,7 @@ class Schema(colander.MappingSchema):
         for process in wps.processes:
             choices.append(process.identifier)
         return colander.OneOf(choices)
-    
+
     @colander.deferred
     def deferred_widget(node, kw):
         wps = kw.get('wps')
@@ -74,8 +82,7 @@ class ChooseWPSProcess(Wizard):
             return self.next('wizard_literal_inputs')
         self.wizard_state.set('wizard_literal_inputs', {})
         return self.next('wizard_complex_inputs')
-        
-    @view_config(route_name='wizard_process', renderer='../templates/wizard/wpsprocess.pt')
+
     def view(self):
         return super(ChooseWPSProcess, self).view()
 
@@ -86,5 +93,4 @@ class ChooseWPSProcess(Wizard):
             summary=self.wps.identification.abstract,
             provider_name=self.wps.provider.name,
             provider_url=self.wps.provider.url
-            )
-
+        )

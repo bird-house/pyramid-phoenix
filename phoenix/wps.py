@@ -5,6 +5,10 @@ import dateutil
 import re
 import types
 import uuid
+import requests
+from lxml import etree
+
+from owslib.wps import WPSExecution
 
 from pyramid.security import authenticated_userid
 
@@ -13,6 +17,31 @@ from phoenix.geoform.form import BBoxValidator
 
 import logging
 logger = logging.getLogger(__name__)
+
+
+def check_status(url=None, response=None, sleep_secs=2, verify=False):
+    """
+    Run owslib.wps check_status with additional exception handling.
+
+    :param verify: Flag to enable SSL verification. Default: False
+    :return: OWSLib.wps.WPSExecution object.
+    """
+    execution = WPSExecution()
+    if response:
+        logger.debug("using response document ...")
+        xml = response.encode('utf8')
+    elif url:
+        logger.debug('using status_location url ...')
+        xml = requests.get(url, verify=verify).content.encode('utf8')
+    else:
+        raise Exception("you need to provide a status-location url or response object.")
+    execution.checkStatus(response=xml, sleepSecs=sleep_secs)
+    if execution.response is None:
+        raise Exception("check_status failed!")
+    # TODO: workaround for owslib type change of reponse
+    if not isinstance(execution.response, etree._Element):
+        execution.response = etree.fromstring(execution.response)
+    return execution
 
 
 def appstruct_to_inputs(request, appstruct):

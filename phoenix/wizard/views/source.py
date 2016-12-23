@@ -9,11 +9,17 @@ from phoenix.wizard.views import Wizard
 
 SOURCE_TYPES = {
     'wizard_esgf_search': "Earth System Grid (ESGF)",
-    # 'wizard_swift_login': "Swift Cloud",
     'wizard_threddsservice': "Thredds Catalog Service",
-    # 'wizard_upload': "Local Storage",
     'wizard_solr': "Birdhouse Solr Search"
-    }
+}
+
+
+def includeme(config):
+    config.add_route('wizard_source', '/wizard/source')
+    config.add_view('phoenix.wizard.views.source.ChooseSource',
+                    route_name='wizard_source',
+                    attr='view',
+                    renderer='../templates/wizard/default.pt')
 
 
 class SourceSchemaNode(colander.SchemaNode):
@@ -49,14 +55,13 @@ class ChooseSource(Wizard):
         breadcrumbs = super(ChooseSource, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
-        
+
     def schema(self):
         return Schema().bind(request=self.request)
 
     def next_success(self, appstruct):
         self.success(appstruct)
-        return self.next( appstruct.get('source') )
-        
-    @view_config(route_name='wizard_source', renderer='../templates/wizard/default.pt')
+        return self.next(appstruct.get('source'))
+
     def view(self):
         return super(ChooseSource, self).view()

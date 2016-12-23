@@ -17,6 +17,18 @@ from phoenix.utils import save_upload, save_chunk, combine_chunks
 import logging
 logger = logging.getLogger(__name__)
 
+_here = os.path.dirname(__file__)
+
+# favicon static/favicon.ico
+_favicon = open(os.path.join(
+                _here, 'static', 'favicon.ico')).read()
+_favicon_response = Response(content_type='image/x-icon', body=_favicon)
+
+# robots static/robots.txt
+_robots = open(os.path.join(
+               _here, 'static', 'robots.txt')).read()
+_robots_response = Response(content_type='text/plain', body=_robots)
+
 
 class MyView(object):
     def __init__(self, request, name, title, description=None):
@@ -130,6 +142,16 @@ def upload(request):
             logger.exception(msg)
             result = {"success": False, 'error': msg}
     return result
+
+
+@view_config(name='favicon.ico')
+def favicon_view(request):
+    return _favicon_response
+
+
+@view_config(name='robots.txt')
+def robotstxt_view(request):
+    return _robots_response
 
 
 @view_defaults(permission='view', layout='default')

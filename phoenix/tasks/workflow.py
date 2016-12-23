@@ -3,6 +3,7 @@ from lxml import etree
 import yaml
 import json
 import urllib
+from time import sleep
 
 from pyramid_celery import celery_app as app
 
@@ -13,6 +14,7 @@ from phoenix.db import mongodb
 from phoenix.events import JobFinished
 from phoenix.tasks.utils import wps_headers, save_log, add_job
 from phoenix.tasks.utils import wait_secs
+from phoenix.wps import check_status
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -64,12 +66,9 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
             if num_retries >= 5:
                 raise Exception("Could not read status document after 5 retries. Giving up.")
             try:
-                execution.checkStatus(sleepSecs=wait_secs(run_step))
-                # TODO: fix owslib response object
-                if isinstance(execution.response, etree._Element):
-                    etree.tostring(execution.response)
-                else:
-                    job['response'] = execution.response.encode('UTF-8')
+                execution = check_status(url=execution.statusLocation, verify=False,
+                                         sleep_secs=wait_secs(run_step))
+                job['response'] = etree.tostring(execution.response)
                 job['status'] = execution.getStatus()
                 job['status_message'] = execution.statusMessage
                 job['progress'] = execution.percentCompleted
@@ -93,6 +92,7 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
             except:
                 num_retries += 1
                 logger.exception("Could not read status xml document for job %s. Trying again ...", self.request.id)
+                sleep(1)
             else:
                 logger.debug("update job %s ...", self.request.id)
                 num_retries = 0

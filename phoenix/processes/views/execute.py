@@ -7,6 +7,7 @@ from phoenix.events import JobStarted
 from phoenix.views import MyView
 from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
+from phoenix.wps import check_status
 from phoenix.utils import wps_describe_url
 from phoenix.security import has_execute_permission
 
@@ -30,8 +31,10 @@ class ExecuteProcess(MyView):
             job = request.db.jobs.find_one(
                 {'identifier': request.params['job_id']})
             self.service_name = job.get('service_name')
-            self.execution = WPSExecution()
-            self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
+            self.execution = check_status(
+                url=job.get('status_location'),
+                response=job.get('response'),
+                verify=False, sleep_secs=0)
             self.processid = self.execution.process.identifier
         elif 'wps' in request.params:
             self.service_name = request.params.get('wps')
@@ -99,9 +102,8 @@ class ExecuteProcess(MyView):
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
             self.session.flash("There are errors on this page.", queue='danger')
-            return dict(description=getattr(self.process, 'abstract', ''),
+            return dict(process=self.process,
                         url=wps_describe_url(self.wps.url, self.processid),
-                        metadata=self.process.metadata,
                         form=e.render())
         if not self.request.user:
             return HTTPFound(location=self.request.route_url('processes_loading'))
@@ -167,8 +169,6 @@ class ExecuteProcess(MyView):
         if not has_execute_permission(self.request, self.service_name):
             self.session.flash("You are not allowed to execute processes. Please sign-in.", queue='warning')
         return dict(
-            title=self.process.title,
-            description=getattr(self.process, 'abstract', ''),
+            process=self.process,
             url=wps_describe_url(self.wps.url, self.processid),
-            metadata=self.process.metadata,
             form=form.render(self.appstruct()))

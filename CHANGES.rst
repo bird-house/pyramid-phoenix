@@ -1,6 +1,21 @@
 Changes
 *******
 
+0.6.3 (2016-12-23)
+==================
+
+* updated ncwms=2.2.5.
+* fixed #133: page rendering failed when showing validation message.
+* fixed #127: wizard views are loaded dynamically.
+* map views are loaded dynamically.
+* added /robots.txt and /favicon.ico.
+* removed disabled swiftbrowser from wizard.
+* removed disabled csw catalog search from wizard.
+* removed disabled upload from wizard.
+* added `profiles/minimal.cfg` with disabled wizard and map.
+* updated twitcher 0.2.4.
+* fixed default esgf-search-url.
+
 0.6.2 (2016-12-06)
 ==================
 

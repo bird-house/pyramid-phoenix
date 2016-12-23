@@ -1,17 +1,13 @@
 from pyramid_layout.panel import panel_config
 
+from phoenix.wps import check_status
+
 import logging
 logger = logging.getLogger(__name__)
 
 
 def collect_outputs(status_location=None, response=None):
-    from owslib.wps import WPSExecution
-    execution = WPSExecution()
-    if status_location:
-        execution.checkStatus(url=status_location, sleepSecs=0)
-    elif response:
-        logger.debug("response document = %s", response)
-        execution.checkStatus(response=response.encode('utf8'), sleepSecs=0)
+    execution = check_status(url=status_location, response=response, sleep_secs=0)
     outputs = {}
     for output in execution.processOutputs:
         outputs[output.identifier] = output
@@ -42,7 +38,7 @@ class Outputs(object):
         items = []
         for output in process_outputs(self.request, job_id).values():
             dataset = None
-            if self.request.wms_activated and output.mimeType and 'netcdf' in output.mimeType:
+            if self.request.map_activated and output.mimeType and 'netcdf' in output.mimeType:
                 if output.reference and 'wpsoutputs' in output.reference:
                     dataset = "outputs" + output.reference.split('wpsoutputs')[1]
             if output.mimeType:
