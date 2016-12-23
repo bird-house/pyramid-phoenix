@@ -14,6 +14,7 @@ Changes
 * removed disabled upload from wizard.
 * added `profiles/minimal.cfg` with disabled wizard and map.
 * updated twitcher 0.2.4.
+* fixed default esgf-search-url.
 
 0.6.2 (2016-12-06)
 ==================
