@@ -11,6 +11,7 @@ logger = get_task_logger(__name__)
 
 @app.task(bind=True)
 def esgf_logon(self, userid, url, openid, password):
+    logger.debug("esgf_logon, url=%s", url)
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
 
