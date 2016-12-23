@@ -1,12 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-__version__ = (0, 6, 3, 'final', 1)
-
-
-def get_version():
-    import phoenix.version
-    return phoenix.version.get_version(__version__)
+__version__ = '0.7.0'
 
 
 def main(global_config, **settings):

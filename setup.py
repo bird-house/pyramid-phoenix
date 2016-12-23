@@ -1,6 +1,8 @@
 import os
 from setuptools import setup, find_packages
 
+version = __import__('phoenix').__version__
+
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
@@ -8,7 +10,7 @@ CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 reqs = [line.strip() for line in open('requirements/deploy.txt')]
 
 setup(name='Phoenix',
-      version=__import__('phoenix').get_version(),
+      version=version,
       description='Phoenix',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
