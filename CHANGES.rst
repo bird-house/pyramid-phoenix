@@ -1,7 +1,7 @@
 Changes
 *******
 
-0.6.3 (2016-12-xx)
+0.6.3 (2016-12-23)
 ==================
 
 * updated ncwms=2.2.5.
@@ -13,6 +13,7 @@ Changes
 * removed disabled csw catalog search from wizard.
 * removed disabled upload from wizard.
 * added `profiles/minimal.cfg` with disabled wizard and map.
+* updated twitcher 0.2.4.
 
 0.6.2 (2016-12-06)
 ==================
