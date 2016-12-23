@@ -80,10 +80,8 @@ def get_access_token(userid):
     db = mongodb(registry)
 
     # refresh access token
-    generate_access_token(registry, userid=userid)
-
-    user = db.users.find_one(dict(identifier=userid))
-    return user.get('twitcher_token')
+    token = generate_access_token(registry, userid=userid)
+    return token.get('access_token')
 
 
 def get_c4i_access_token(userid):
