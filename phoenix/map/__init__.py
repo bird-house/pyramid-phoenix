@@ -22,6 +22,8 @@ class Map(object):
     def __init__(self, request):
         self.request = request
         self.session = self.request.session
+        # TODO: fix wms registration
+        self.request.wms
 
     def view(self):
         dataset = self.request.params.get('dataset')
@@ -89,7 +91,8 @@ def includeme(config):
                     registry.register_service(name=service_name, url=settings['wms.url'],
                                               public=True, service_type='wms',
                                               overwrite=True)
-                    session['wms'] = WebMapService(url=settings['wms.url'])
+                    #session['wms'] = WebMapService(url=settings['wms.url'])
+                    session['wms'] = settings['wms.url']
                 except:
                     logger.exception('Could not connect wms %s', settings['wms.url'])
             return session.get('wms')
