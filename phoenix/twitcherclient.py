@@ -33,7 +33,7 @@ def generate_access_token(registry, userid=None, valid_in_hours=1):
         environ['esgf_slcs_service_url'] = settings.get('esgf.slcs.url')
 
     # call to service
-    token = service.gentoken(valid_in_hours, environ)
+    token = service.generate_token(valid_in_hours, environ)
     if userid and token:
         collection.update_one(
             {'identifier': userid},
