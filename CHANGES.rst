@@ -4,9 +4,13 @@ Changes
 0.7.0 (2017-01-xx)
 ==================
 
-* simplified version setting.
 * updated to twitcher 0.3.0.
 
+0.6.4 (2017-01-04)
+==================
+
+* fixed install on ubuntu 16.04: updated conda env.
+* simplified version setting.
 
 0.6.3 (2016-12-23)
 ==================
