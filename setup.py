@@ -8,7 +8,7 @@ CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 reqs = [line.strip() for line in open('requirements/deploy.txt')]
 
 setup(name='Phoenix',
-      version=__import__('phoenix').get_version(),
+      version=__import__('phoenix').__version__,
       description='Phoenix',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
