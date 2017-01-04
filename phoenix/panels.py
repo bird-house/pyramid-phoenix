@@ -48,8 +48,8 @@ def breadcrumbs(context, request):
 
 @panel_config(name='footer', renderer='phoenix:templates/panels/footer.pt')
 def footer(context, request):
-    from phoenix import get_version
-    return dict(version=get_version())
+    from phoenix import __version__
+    return dict(version=__version__)
 
 
 @panel_config(name='headings')
