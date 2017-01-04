@@ -5,6 +5,7 @@ Changes
 ==================
 
 * fixed install on ubuntu 16.04: updated conda env.
+* simplified version string.
 
 0.6.3 (2016-12-23)
 ==================
