@@ -42,5 +42,6 @@ def generate_access_token(registry, userid=None, valid_in_hours=1):
 
 
 def is_public(registry, name):
-    service = twitcher_service_factory(registry)
-    return service.is_public(name)
+    srv = twitcher_service_factory(registry)
+    service = srv.get_service_by_name(name)
+    return service.get('public', False)
