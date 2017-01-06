@@ -88,9 +88,12 @@ def includeme(config):
                     service_name = 'wms'
                     registry = twitcher_service_factory(request.registry)
                     logger.debug("register: name=%s, url=%s", service_name, settings['wms.url'])
-                    registry.register_service(name=service_name, url=settings['wms.url'],
-                                              public=True, service_type='wms',
-                                              overwrite=True)
+                    registry.register_service(
+                        url=settings['wms.url'],
+                        data={'name': service_name,
+                              'public': True,
+                              'type': 'wms'},
+                        overwrite=True)
                     #session['wms'] = WebMapService(url=settings['wms.url'])
                     session['wms'] = settings['wms.url']
                 except:

@@ -36,7 +36,7 @@ def includeme(config):
                     service_name = 'malleefowl'
                     registry = twitcher_service_factory(request.registry)
                     logger.debug("register: name=%s, url=%s", service_name, settings['wps.url'])
-                    registry.register_service(name=service_name, url=settings['wps.url'], overwrite=True)
+                    registry.register_service(url=settings['wps.url'], data={'name': service_name}, overwrite=True)
                     session['wps'] = WebProcessingService(
                         url=request.route_url('owsproxy', service_name=service_name),
                         skip_caps=True, verify=False)

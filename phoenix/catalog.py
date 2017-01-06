@@ -137,7 +137,7 @@ class CatalogService(Catalog):
         if service_type == THREDDS_TYPE:
             self.insert_record(_fetch_thredds_metadata(url, service_title))
         else:  # ogc services
-            self.service_registry.register_service(url=url, name=service_name, public=public)
+            self.service_registry.register_service(url=url, data={'name': service_name, 'public': public})
             try:
                 self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
             except:
@@ -191,7 +191,11 @@ class MongodbCatalog(Catalog):
         elif service_type == WPS_TYPE:
             # register service first
             service = self.service_registry.register_service(
-                url=url, name=service_name, public=public, overwrite=False, c4i=c4i)
+                url=url,
+                data={'name': service_name,
+                      'public': public,
+                      'c4i': c4i},
+                overwrite=False)
             try:
                 # fetch metadata
                 record = _fetch_wps_metadata(service['url'], title=service_title)
