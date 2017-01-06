@@ -11,6 +11,8 @@ from phoenix.wps import check_status
 from phoenix.utils import time_ago_in_words
 from phoenix.wizard.views import Wizard
 
+from twitcher.utils import parse_service_name
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -40,7 +42,7 @@ def job_to_state(request, job_id):
             wps = WebProcessingService(url=workflow['worker']['url'], verify=False, skip_caps=False)
             process = wps.describeprocess(workflow['worker']['identifier'])
 
-            state['wizard_wps'] = {'identifier': request.catalog.get_service_name_by_url(wps.url)}
+            state['wizard_wps'] = {'identifier': parse_service_name(wps.url)}
             state['wizard_process'] = {'identifier': workflow['worker']['identifier']}
             inputs = {}
             for inp in workflow['worker']['inputs']:

@@ -104,20 +104,10 @@ class Catalog(object):
     def harvest(self, url, service_type, service_name=None, service_title=None, public=False, c4i=False):
         raise NotImplementedError
 
-    def get_service_by_url(self, url):
-        # TODO: separate interface from abstract class
-        return self.service_registry.get_service_by_url(url)
-
     def get_service_name(self, record):
         """Get service name from twitcher registry for given service (url)."""
-        return self.get_service_name_by_url(record.source)
-
-    def get_service_name_by_url(self, url):
-        """Get service name from twitcher registry for given service (url)."""
-        logger.debug("get service name for url=%s", url)
-        name = self.service_registry.get_service_name(url)
-        logger.debug("name=%s url=%s", name, url)
-        return name
+        service = self.service_registry.get_service_by_url(record.source)
+        return service['name']
 
     def get_services(self, service_type=None, maxrecords=100):
         raise NotImplementedError
