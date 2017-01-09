@@ -25,15 +25,15 @@ def generate_access_token(registry, userid=None, valid_in_hours=1):
     db = mongodb(registry)
     collection = db.users
 
-    environ = {}
+    data = {}
     user = collection.find_one({'identifier': userid})
     esgf_token = user.get('esgf_token')
     if esgf_token:
-        environ['esgf_access_token'] = esgf_token.get('access_token')
-        environ['esgf_slcs_service_url'] = settings.get('esgf.slcs.url')
+        data['esgf_access_token'] = esgf_token.get('access_token')
+        data['esgf_slcs_service_url'] = settings.get('esgf.slcs.url')
 
     # call to service
-    token = service.generate_token(valid_in_hours, environ)
+    token = service.generate_token(valid_in_hours, data)
     if userid and token:
         collection.update_one(
             {'identifier': userid},
