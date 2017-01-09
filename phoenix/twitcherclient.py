@@ -31,6 +31,9 @@ def generate_access_token(registry, userid=None, valid_in_hours=1):
     if esgf_token:
         data['esgf_access_token'] = esgf_token.get('access_token')
         data['esgf_slcs_service_url'] = settings.get('esgf.slcs.url')
+    esgf_cert = user.get('credentials')
+    if esgf_cert:
+        data['esgf_credentials'] = esgf_cert
 
     # call to service
     token = service.generate_token(valid_in_hours, data)
