@@ -108,5 +108,5 @@ def includeme(config):
     config.add_route('forget_esgf_certs', 'people/forget_esgf_certs')
     config.add_route('generate_twitcher_token', 'people/gentoken')
     config.add_route('generate_esgf_slcs_token', 'people/generate_esgf_token')
-    config.add_route('esgf_oauth_callback', 'oauth/callback/esgf')
+    config.add_route('esgf_oauth_callback', 'account/oauth/esgf/callback')
     config.add_route('delete_user', 'people/delete/{userid}')
