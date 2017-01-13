@@ -43,7 +43,8 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
             {'access_token': headers.get('Access-Token', '')})
         # logger.debug('workflow_mod=%s', workflow)
         inputs = [('workflow', ComplexDataInput(
-            json.dumps(workflow), mimeType="text/yaml", encoding="UTF-8"))]
+            # TODO: pywps-4 expects base64 encoding when not set to ''
+            json.dumps(workflow), mimeType="text/yaml", encoding=""))]
         # logger.debug('inputs=%s', inputs)
         outputs = [('output', True), ('logfile', True)]
 
