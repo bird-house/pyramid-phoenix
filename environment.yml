@@ -32,7 +32,7 @@ dependencies:
   - pyyaml=3.12
   - pygments=2.1
   - pytz=2016.4
-  - owslib=0.13.0
+  - owslib=0.14.0
   - transaction=1.6
 # celery
   - celery=3.1.23
