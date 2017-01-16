@@ -14,12 +14,13 @@ class Actions(object):
     def __init__(self, request):
         self.request = request
         self.session = request.session
+        settings = request.registry.settings
         self.collection = self.request.db.users
         self.userid = self.request.matchdict.get('userid', authenticated_userid(self.request))
         # esgf slcs stuff
-        esgf_slcs_url = self.request.esgf_oauth.get('url')
-        self.client_id = self.request.esgf_oauth.get('consumer_key')
-        self.client_secret = self.request.esgf_oauth.get('consumer_secret')
+        esgf_slcs_url = settings.get('esgf.slcs.url')
+        self.client_id = settings.get('esgf.slcs.client.id')
+        self.client_secret = settings.get('esgf.slcs.client.secret')
         self.authorize_url = "{}/oauth/authorize".format(esgf_slcs_url)
         self.token_url = "{}/oauth/access_token".format(esgf_slcs_url)
         certificate_url = "{}/oauth/certificate/".format(esgf_slcs_url)

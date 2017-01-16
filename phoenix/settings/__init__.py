@@ -1,3 +1,5 @@
+from pyramid.events import NewRequest
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -28,16 +30,21 @@ def includeme(config):
     config.add_route('settings_esgf', '/settings/esgf')
     config.add_route('settings_solr', '/settings/solr/{tab}')
 
-    def github_oauth(request):
-        db = request.registry.settings['db']
-        entry = db.settings.find_one()
-        entry = entry or {}
-        return entry.get('github', {})
-    config.add_request_method(github_oauth, reify=True)
+    def add_github(event):
+        settings = event.request.registry.settings
+        if not settings.get('github.consumer.key'):
+            _settings = event.request.db.settings.find_one()
+            _settings = _settings or {}
+            settings['github.consumer.key'] = _settings.get('github_consumer_key')
+            settings['github.consumer.secret'] = _settings.get('github_consumer_secret')
+    config.add_subscriber(add_github, NewRequest)
 
-    def esgf_oauth(request):
-        db = request.registry.settings['db']
-        entry = db.settings.find_one()
-        entry = entry or {}
-        return entry.get('esgf_slcs', {})
-    config.add_request_method(esgf_oauth, reify=True)
+    def add_esgf(event):
+        settings = event.request.registry.settings
+        if not settings.get('esgf.slcs.client.id'):
+            _settings = event.request.db.settings.find_one()
+            _settings = _settings or {}
+            settings['esgf.slcs.url'] = _settings.get('esgf_slcs_url')
+            settings['esgf.slcs.client.id'] = _settings.get('esgf_slcs_client_id')
+            settings['esgf.slcs.client.secret'] = _settings.get('esgf_slcs_client_secret')
+    config.add_subscriber(add_github, NewRequest)

@@ -15,6 +15,7 @@ class ESGFSettings(MyView):
     def __init__(self, request):
         super(ESGFSettings, self).__init__(request, name='settings_esgf', title='ESGF')
         self.collection = self.db.settings
+        self.settings = self.request.registry.settings
 
     def breadcrumbs(self):
         breadcrumbs = super(ESGFSettings, self).breadcrumbs()
@@ -38,10 +39,9 @@ class ESGFSettings(MyView):
             self.session.flash(msg, queue="danger")
         else:
             settings = self.collection.find_one()
-            settings['esgf_slcs'] = {}
-            settings['esgf_slcs']['url'] = appstruct.get('url')
-            settings['esgf_slcs']['consumer_key'] = appstruct.get('consumer_key')
-            settings['esgf_slcs']['consumer_secret'] = appstruct.get('consumer_secret')
+            settings['esgf_slcs_url'] = appstruct.get('esgf_slcs_url')
+            settings['esgf_slcs_client_id'] = appstruct.get('esgf_slcs_client_id')
+            settings['esgf_slcs_client_secret'] = appstruct.get('esgf_slcs_client_secret')
             self.collection.save(settings)
 
             # TODO: use events, config, settings, ... to update auth
@@ -49,9 +49,16 @@ class ESGFSettings(MyView):
         return HTTPFound(location=self.request.route_path('settings_esgf'))
 
     def appstruct(self):
-        settings = self.collection.find_one()
-        settings = settings or {}
-        return settings.get('esgf_slcs', {})
+        if self.settings.get('esgf.slcs.client.id'):
+            return {
+                'esgf_slcs_url', self.settings.get('esgf.slcs.url'),
+                'esgf_slcs_client_id', self.settings.get('esgf.slcs.client.id'),
+                'esgf_slcs_client_secret', self.settings.get('esgf.slcs.client.secret'),
+            }
+        else:
+            _settings = self.collection.find_one()
+            _settings = _settings or {}
+            return _settings
 
     @view_config(route_name='settings_esgf', renderer='../templates/settings/default.pt')
     def view(self):
