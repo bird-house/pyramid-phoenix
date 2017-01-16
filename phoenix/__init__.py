@@ -51,6 +51,9 @@ def main(global_config, **settings):
     config.add_route('download', 'download/{filename:.*}')
     config.add_route('upload', 'upload')
 
+    # settings
+    config.include('phoenix.settings')
+
     # account
     config.include('phoenix.account')
 
@@ -68,9 +71,6 @@ def main(global_config, **settings):
 
     # user profiles
     config.include('phoenix.people')
-
-    # settings
-    config.include('phoenix.settings')
 
     # supervisor
     config.include('phoenix.supervisor')

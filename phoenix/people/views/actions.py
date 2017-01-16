@@ -17,9 +17,9 @@ class Actions(object):
         self.collection = self.request.db.users
         self.userid = self.request.matchdict.get('userid', authenticated_userid(self.request))
         # esgf slcs stuff
-        esgf_slcs_url = self.request.registry.settings.get('esgf.slcs.url')
-        self.client_id = self.request.registry.settings.get('esgf.slcs.client.id')
-        self.client_secret = self.request.registry.settings.get('esgf.slcs.client.secret')
+        esgf_slcs_url = self.request.esgf_oauth.get('url')
+        self.client_id = self.request.esgf_oauth.get('consumer_key')
+        self.client_secret = self.request.esgf_oauth.get('consumer_secret')
         self.authorize_url = "{}/oauth/authorize".format(esgf_slcs_url)
         self.token_url = "{}/oauth/access_token".format(esgf_slcs_url)
         certificate_url = "{}/oauth/certificate/".format(esgf_slcs_url)

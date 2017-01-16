@@ -154,8 +154,8 @@ def authomatic_config(request):
     OAUTH2 = {
         'github': {
             'class_': oauth2.GitHub,
-            'consumer_key': request.github_oauth[0],
-            'consumer_secret': request.github_oauth[1],
+            'consumer_key': request.github_oauth.get('consumer_key'),
+            'consumer_secret': request.github_oauth.get('consumer_secret'),
             'access_headers': {'User-Agent': 'Phoenix'},
             'id': provider_id(),
             'scope': oauth2.GitHub.user_info_scope,

@@ -5,18 +5,15 @@ logger = logging.getLogger(__name__)
 def load_settings(request):
     defaults = dict(solr_maxrecords=-1, solr_depth=2)
 
-    settings = request.db.settings.find_one()
+    collection = request.db.settings
+    settings = collection.find_one()
     if not settings:
-        settings = save_settings(request, defaults)
+        collection.save(defaults)
+        settings = collection.find_one()
     for key in defaults.keys():
         if not key in settings:
             settings[key] = defaults[key]
     return settings
-
-
-def save_settings(request, settings):
-    request.db.settings.save(settings)
-    return request.db.settings.find_one()
 
 
 def includeme(config):
@@ -31,17 +28,16 @@ def includeme(config):
     config.add_route('settings_esgf', '/settings/esgf')
     config.add_route('settings_solr', '/settings/solr/{tab}')
 
-    # check if solr is activated
     def github_oauth(request):
-        settings = request.registry.settings
-        consumer_key = settings.get('github.consumer.key', '')
-        consumer_secret = settings.get('github.consumer.secret', '')
-        if len(consumer_key.strip()) < 20:
-            # check database
-            db = settings['db']
-            entry = db.settings.find_one()
-            if entry and 'github' in entry:
-                consumer_key = entry['github']['consumer_key']
-                consumer_secret = entry['github']['consumer_secret']
-        return consumer_key, consumer_secret
+        db = request.registry.settings['db']
+        entry = db.settings.find_one()
+        entry = entry or {}
+        return entry.get('github', {})
     config.add_request_method(github_oauth, reify=True)
+
+    def esgf_oauth(request):
+        db = request.registry.settings['db']
+        entry = db.settings.find_one()
+        entry = entry or {}
+        return entry.get('esgf_slcs', {})
+    config.add_request_method(esgf_oauth, reify=True)

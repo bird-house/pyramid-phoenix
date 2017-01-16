@@ -4,7 +4,7 @@ from deform import Form, ValidationFailure
 from owslib.fes import PropertyIsEqualTo
 
 from phoenix.catalog import THREDDS_TYPE
-from phoenix.settings import load_settings, save_settings
+from phoenix.settings import load_settings
 
 import logging
 logger = logging.getLogger(__name__)
@@ -69,7 +69,8 @@ class SolrParamsPanel(SolrPanel):
                 settings = load_settings(self.request)
                 settings['solr_maxrecords'] = appstruct['maxrecords']
                 settings['solr_depth'] = appstruct['depth']
-                save_settings(self.request, settings)
+                collection = self.request.db.settings
+                collection.save(settings)
             except ValidationFailure, e:
                 logger.exception('validation of form failed.')
                 return dict(title="Parameters", form=e.render())
