@@ -4,54 +4,56 @@ from deform import Form
 from deform import ValidationFailure
 
 from phoenix.views import MyView
+from phoenix.settings.schema import ESGFSLCSSchema
 
 import logging
 logger = logging.getLogger(__name__)
 
 
 @view_defaults(permission='admin', layout='default')
-class GitHub(MyView):
+class ESGFSettings(MyView):
     def __init__(self, request):
-        super(GitHub, self).__init__(request, name='settings_github', title='GitHub')
-        self.settings = self.db.settings.find_one()
-        if self.settings is None:
-            self.settings = {}
+        super(ESGFSettings, self).__init__(request, name='settings_esgf', title='ESGF')
+        self.collection = self.db.settings
 
     def breadcrumbs(self):
-        breadcrumbs = super(GitHub, self).breadcrumbs()
+        breadcrumbs = super(ESGFSettings, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path('settings'), title="Settings"))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
     def generate_form(self):
-        from phoenix.settings.schema import GitHubSchema
-        return Form(schema=GitHubSchema(), buttons=('submit',), formid='deform')
+        return Form(schema=ESGFSLCSSchema(), buttons=('submit',), formid='deform')
 
     def process_form(self, form):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
         except ValidationFailure, e:
-            logger.exception('validation of GitHub form failed')
+            logger.exception('validation of ESGF form failed')
             return dict(title=self.title, form=e.render())
         except Exception, e:
-            msg = 'saving of GitHub settings failed'
+            msg = 'saving of ESGF settings failed'
             logger.exception(msg)
             self.session.flash(msg, queue="danger")
         else:
-            self.settings['github'] = {}
-            self.settings['github']['consumer_key'] = appstruct.get('consumer_key')
-            self.settings['github']['consumer_secret'] = appstruct.get('consumer_secret')
-            self.db.settings.save(self.settings)
+            settings = self.collection.find_one()
+            settings['esgf_slcs'] = {}
+            settings['esgf_slcs']['url'] = appstruct.get('url')
+            settings['esgf_slcs']['consumer_key'] = appstruct.get('consumer_key')
+            settings['esgf_slcs']['consumer_secret'] = appstruct.get('consumer_secret')
+            self.collection.save(settings)
 
             # TODO: use events, config, settings, ... to update auth
-            self.session.flash('Successfully updated GitHub settings!', queue='success')
-        return HTTPFound(location=self.request.route_path('settings_github'))
+            self.session.flash('Successfully updated ESGF settings!', queue='success')
+        return HTTPFound(location=self.request.route_path('settings_esgf'))
 
     def appstruct(self):
-        return self.settings.get('github', {})
+        settings = self.collection.find_one()
+        settings = settings or {}
+        return settings.get('esgf_slcs', {})
 
-    @view_config(route_name='settings_github', renderer='../templates/settings/default.pt')
+    @view_config(route_name='settings_esgf', renderer='../templates/settings/default.pt')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
