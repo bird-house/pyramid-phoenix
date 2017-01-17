@@ -49,16 +49,9 @@ class ESGFSettings(MyView):
         return HTTPFound(location=self.request.route_path('settings_esgf'))
 
     def appstruct(self):
-        if self.settings.get('esgf.slcs.client.id'):
-            return {
-                'esgf_slcs_url', self.settings.get('esgf.slcs.url'),
-                'esgf_slcs_client_id', self.settings.get('esgf.slcs.client.id'),
-                'esgf_slcs_client_secret', self.settings.get('esgf.slcs.client.secret'),
-            }
-        else:
-            _settings = self.collection.find_one()
-            _settings = _settings or {}
-            return _settings
+        settings = self.collection.find_one()
+        settings = settings or {}
+        return settings
 
     @view_config(route_name='settings_esgf', renderer='../templates/settings/default.pt')
     def view(self):

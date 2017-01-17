@@ -21,7 +21,7 @@ def load_settings(request):
 def includeme(config):
     settings = config.registry.settings
 
-    logger.info('Add Settings')
+    logger.debug('Enable settings ...')
 
     config.add_route('settings', '/settings')
     config.add_route('settings_auth', '/settings/auth')
@@ -31,6 +31,7 @@ def includeme(config):
     config.add_route('settings_solr', '/settings/solr/{tab}')
 
     def add_github(event):
+        logger.debug("add_github called")
         settings = event.request.registry.settings
         if not settings.get('github.consumer.key'):
             _settings = event.request.db.settings.find_one()
@@ -40,11 +41,20 @@ def includeme(config):
     config.add_subscriber(add_github, NewRequest)
 
     def add_esgf(event):
+        logger.debug("add_esgf called")
         settings = event.request.registry.settings
-        if not settings.get('esgf.slcs.client.id'):
-            _settings = event.request.db.settings.find_one()
-            _settings = _settings or {}
-            settings['esgf.slcs.url'] = _settings.get('esgf_slcs_url')
-            settings['esgf.slcs.client.id'] = _settings.get('esgf_slcs_client_id')
-            settings['esgf.slcs.client.secret'] = _settings.get('esgf_slcs_client_secret')
-    config.add_subscriber(add_github, NewRequest)
+        stored_settings = event.request.db.settings.find_one()
+        stored_settings = stored_settings or {}
+        if settings.get('esgf.slcs.client.id'):
+            logger.debug("store settings")
+            stored_settings['esgf_slcs_url'] = settings.get('esgf.slcs.url')
+            stored_settings['esgf_slcs_client_id'] = settings.get('esgf.slcs.client.id')
+            stored_settings['esgf_slcs_client_secret'] = settings.get('esgf.slcs.client.secret')
+            logger.debug("store settings: %s", stored_settings)
+            event.request.db.settings.save(stored_settings)
+        else:
+            logger.debug("load settings")
+            settings['esgf.slcs.url'] = stored_settings.get('esgf_slcs_url')
+            settings['esgf.slcs.client.id'] = stored_settings.get('esgf_slcs_client_id')
+            settings['esgf.slcs.client.secret'] = stored_settings.get('esgf_slcs_client_secret')
+    config.add_subscriber(add_esgf, NewRequest)

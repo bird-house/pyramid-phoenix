@@ -98,19 +98,19 @@ class GitHubSchema(colander.MappingSchema):
 class ESGFSLCSSchema(colander.MappingSchema):
     url = colander.SchemaNode(
         colander.String(),
-        name='esgf.slcs.url',
+        name='esgf_slcs_url',
         title='URL of ESGF SLCS Service',
         validator=colander.url,
     )
     consumer_key = colander.SchemaNode(
         colander.String(),
-        name='esgf.slcs.client.id',
+        name='esgf_slcs_client_id',
         title='ESGF SLCS Client ID',
         validator=colander.Length(min=20),
     )
     consumer_secret = colander.SchemaNode(
         colander.String(),
-        name='esgf.slcs.client.secret',
+        name='esgf_slcs_client_secret',
         title='ESGF SLCS Client Secret',
         validator=colander.Length(min=20),
     )
