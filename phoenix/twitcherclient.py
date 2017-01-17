@@ -23,15 +23,13 @@ def generate_access_token(registry, userid=None, valid_in_hours=1):
     service = twitcher_service_factory(registry)
     db = mongodb(registry)
     collection = db.users
-    # TODO: fix config of esgf_slcs
-    settings = db.settings.find_one()
 
     data = {}
     user = collection.find_one({'identifier': userid})
     esgf_token = user.get('esgf_token')
     if esgf_token:
-        data['esgf_access_token'] = esgf_token.get('access_token')
-        data['esgf_slcs_service_url'] = settings.get('esgf_slcs', {}).get('url')
+        data['esgf_access_token'] = esgf_token.get('access_token', '')
+        data['esgf_slcs_service_url'] = registry.settings.get('esgf_slcs_url', '')
     esgf_cert = user.get('credentials')
     if esgf_cert:
         data['esgf_credentials'] = esgf_cert
