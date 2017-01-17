@@ -4,7 +4,6 @@ from deform import Form, ValidationFailure
 from owslib.fes import PropertyIsEqualTo
 
 from phoenix.catalog import THREDDS_TYPE
-from phoenix.settings import load_settings
 
 import logging
 logger = logging.getLogger(__name__)
@@ -16,12 +15,14 @@ import deform
 class Schema(colander.MappingSchema):
     maxrecords = colander.SchemaNode(
         colander.Int(),
+        name='solr_maxrecords',
         missing=-1,
         default=-1,
         validator=colander.Range(-1),
         description="Maximum number of documents to index. Default: -1 (no limit)")
     depth = colander.SchemaNode(
         colander.Int(),
+        name='solr_depth',
         missing=2,
         default=2,
         validator=colander.Range(1, 100),
@@ -53,11 +54,7 @@ class SolrIndexPanel(SolrPanel):
 class SolrParamsPanel(SolrPanel):
 
     def appstruct(self):
-        appstruct = {}
-        settings = load_settings(self.request)
-        appstruct['maxrecords'] = settings.get('solr_maxrecords', '-1')
-        appstruct['depth'] = settings.get('solr_depth', '2')
-        return appstruct
+        return self.request.db.settings.find_one() or {}
 
     @panel_config(name='solr_params', renderer='phoenix:templates/panels/form.pt')
     def panel(self):
@@ -66,11 +63,9 @@ class SolrParamsPanel(SolrPanel):
             try:
                 controls = self.request.POST.items()
                 appstruct = form.validate(controls)
-                settings = load_settings(self.request)
-                settings['solr_maxrecords'] = appstruct['maxrecords']
-                settings['solr_depth'] = appstruct['depth']
-                collection = self.request.db.settings
-                collection.save(settings)
+                settings = self.request.db.settings.find_one() or {}
+                settings.update(appstruct)
+                self.request.db.settings.save(settings)
             except ValidationFailure, e:
                 logger.exception('validation of form failed.')
                 return dict(title="Parameters", form=e.render())

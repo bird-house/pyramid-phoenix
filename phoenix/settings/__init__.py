@@ -4,20 +4,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def load_settings(request):
-    defaults = dict(solr_maxrecords=-1, solr_depth=2)
-
-    collection = request.db.settings
-    settings = collection.find_one()
-    if not settings:
-        collection.save(defaults)
-        settings = collection.find_one()
-    for key in defaults.keys():
-        if not key in settings:
-            settings[key] = defaults[key]
-    return settings
-
-
 def includeme(config):
     settings = config.registry.settings
 
@@ -57,3 +43,11 @@ def includeme(config):
             settings['esgf.slcs.client.id'] = stored_settings.get('esgf_slcs_client_id')
             settings['esgf.slcs.client.secret'] = stored_settings.get('esgf_slcs_client_secret')
     config.add_subscriber(add_esgf, NewRequest)
+
+    def add_solr(event):
+        settings = event.request.registry.settings
+        stored_settings = event.request.db.settings.find_one()
+        stored_settings = stored_settings or {}
+        settings['solr.maxrecords'] = stored_settings.get('solr_maxrecords', -1)
+        settings['solr.depth'] = stored_settings.get('solr_depth', 2)
+    config.add_subscriber(add_solr, NewRequest)
