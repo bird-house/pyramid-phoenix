@@ -20,13 +20,13 @@ def includeme(config):
         settings = event.request.registry.settings
         stored_settings = event.request.db.settings.find_one()
         stored_settings = stored_settings or {}
-        if settings.get('github.consumer.key'):
-            stored_settings['github_consumer_key'] = settings.get('github.consumer.key')
-            stored_settings['github_consumer_secret'] = settings.get('github.consumer.secret')
+        if settings.get('github.client.id'):
+            stored_settings['github_client_id'] = settings.get('github.client.id')
+            stored_settings['github_client_secret'] = settings.get('github.client.secret')
             event.request.db.settings.save(stored_settings)
         else:
-            settings['github.consumer.key'] = stored_settings.get('github_consumer_key')
-            settings['github.consumer.secret'] = stored_settings.get('github_consumer_secret')
+            settings['github.client.id'] = stored_settings.get('github_client_id')
+            settings['github.client.secret'] = stored_settings.get('github_client_secret')
     config.add_subscriber(add_github, NewRequest)
 
     def add_esgf(event):
