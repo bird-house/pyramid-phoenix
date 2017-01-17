@@ -2,7 +2,7 @@
 FROM birdhouse/bird-base:latest
 MAINTAINER https://github.com/bird-house/pyramid-phoenix
 
-LABEL Description="phoenix application" Vendor="Birdhouse" Version="0.6.3"
+LABEL Description="phoenix application" Vendor="Birdhouse" Version="0.7.0"
 
 # Configure hostname and ports for services
 ENV HTTP_PORT 8080
