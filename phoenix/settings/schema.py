@@ -84,14 +84,16 @@ class LdapSchema(colander.MappingSchema):
 class GitHubSchema(colander.MappingSchema):
     consumer_key = colander.SchemaNode(
         colander.String(),
+        name='github_consumer_key',
         title='GitHub Consumer Key',
         description="Register at GitHub: https://github.com/settings/applications/new",
-        validator=colander.Length(min=1),
+        validator=colander.Length(min=20),
     )
     consumer_secret = colander.SchemaNode(
         colander.String(),
+        name='github_consumer_secret',
         title='GitHub Consumer Secret',
-        validator=colander.Length(min=1),
+        validator=colander.Length(min=20),
     )
 
 

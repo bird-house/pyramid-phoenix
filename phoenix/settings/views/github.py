@@ -13,9 +13,7 @@ logger = logging.getLogger(__name__)
 class GitHub(MyView):
     def __init__(self, request):
         super(GitHub, self).__init__(request, name='settings_github', title='GitHub')
-        self.settings = self.db.settings.find_one()
-        if self.settings is None:
-            self.settings = {}
+        self.collection = self.db.settings
 
     def breadcrumbs(self):
         breadcrumbs = super(GitHub, self).breadcrumbs()
@@ -39,17 +37,18 @@ class GitHub(MyView):
             logger.exception(msg)
             self.session.flash(msg, queue="danger")
         else:
-            self.settings['github'] = {}
-            self.settings['github']['consumer_key'] = appstruct.get('consumer_key')
-            self.settings['github']['consumer_secret'] = appstruct.get('consumer_secret')
-            self.db.settings.save(self.settings)
+            settings = self.collection.find_one() or {}
+            settings.update(appstruct)
+            self.collection.save(settings)
 
             # TODO: use events, config, settings, ... to update auth
             self.session.flash('Successfully updated GitHub settings!', queue='success')
         return HTTPFound(location=self.request.route_path('settings_github'))
 
     def appstruct(self):
-        return self.settings.get('github', {})
+        settings = self.collection.find_one()
+        settings = settings or {}
+        return settings
 
     @view_config(route_name='settings_github', renderer='../templates/settings/default.pt')
     def view(self):

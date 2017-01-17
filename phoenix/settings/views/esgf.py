@@ -38,10 +38,8 @@ class ESGFSettings(MyView):
             logger.exception(msg)
             self.session.flash(msg, queue="danger")
         else:
-            settings = self.collection.find_one()
-            settings['esgf_slcs_url'] = appstruct.get('esgf_slcs_url')
-            settings['esgf_slcs_client_id'] = appstruct.get('esgf_slcs_client_id')
-            settings['esgf_slcs_client_secret'] = appstruct.get('esgf_slcs_client_secret')
+            settings = self.collection.find_one() or {}
+            settings.update(appstruct)
             self.collection.save(settings)
 
             # TODO: use events, config, settings, ... to update auth
