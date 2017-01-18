@@ -10,7 +10,7 @@ def main(global_config, **settings):
     """
     from pyramid.config import Configurator
 
-    config = Configurator(settings=settings)
+    config = Configurator(settings=settings, autocommit=False)
 
     # security
     config.include('phoenix.security')
@@ -128,5 +128,8 @@ def main(global_config, **settings):
     config.add_renderer('json', json_renderer)
 
     config.scan('phoenix')
+
+    # enable autocommit
+    config.autocommit = True
 
     return config.make_wsgi_app()
