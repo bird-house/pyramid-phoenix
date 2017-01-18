@@ -5,6 +5,7 @@ from deform import ValidationFailure
 
 from phoenix.views import MyView
 from phoenix.settings.schema import ESGFSLCSSchema
+from phoenix.events import SettingsChanged
 
 import logging
 logger = logging.getLogger(__name__)
@@ -41,8 +42,7 @@ class ESGFSettings(MyView):
             settings = self.collection.find_one() or {}
             settings.update(appstruct)
             self.collection.save(settings)
-            # TODO: use events, config, settings, ... to update auth
-            self.request.registry.settings.update(appstruct)
+            self.request.registry.notify(SettingsChanged(self.request, appstruct))
             self.session.flash('Successfully updated ESGF settings!', queue='success')
         return HTTPFound(location=self.request.route_path('settings_esgf'))
 

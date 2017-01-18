@@ -4,6 +4,7 @@ from deform import Form, ValidationFailure
 from owslib.fes import PropertyIsEqualTo
 
 from phoenix.catalog import THREDDS_TYPE
+from phoenix.events import SettingsChanged
 
 import logging
 logger = logging.getLogger(__name__)
@@ -65,9 +66,8 @@ class SolrParamsPanel(SolrPanel):
                 appstruct = form.validate(controls)
                 settings = self.request.db.settings.find_one() or {}
                 settings.update(appstruct)
-                # TODO: use events
-                self.request.registry.settings.update(appstruct)
                 self.request.db.settings.save(settings)
+                self.request.registry.notify(SettingsChanged(self.request, appstruct))
             except ValidationFailure, e:
                 logger.exception('validation of form failed.')
                 return dict(title="Parameters", form=e.render())
