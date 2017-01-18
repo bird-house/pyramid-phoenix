@@ -40,8 +40,8 @@ class GitHub(MyView):
             settings = self.collection.find_one() or {}
             settings.update(appstruct)
             self.collection.save(settings)
-
             # TODO: use events, config, settings, ... to update auth
+            self.request.registry.settings.update(appstruct)
             self.session.flash('Successfully updated GitHub settings!', queue='success')
         return HTTPFound(location=self.request.route_path('settings_github'))
 

@@ -82,37 +82,32 @@ class LdapSchema(colander.MappingSchema):
 
 
 class GitHubSchema(colander.MappingSchema):
-    client_id = colander.SchemaNode(
+    github_client_id = colander.SchemaNode(
         colander.String(),
-        name='github_client_id',
         title='GitHub Client ID',
         description="Register at GitHub: https://github.com/settings/applications/new",
         validator=colander.Length(min=20),
     )
-    client_secret = colander.SchemaNode(
+    github_client_secret = colander.SchemaNode(
         colander.String(),
-        name='github_client_secret',
         title='GitHub Client Secret',
         validator=colander.Length(min=20),
     )
 
 
 class ESGFSLCSSchema(colander.MappingSchema):
-    url = colander.SchemaNode(
+    esgf_slcs_url = colander.SchemaNode(
         colander.String(),
-        name='esgf_slcs_url',
         title='URL of ESGF SLCS Service',
         validator=colander.url,
     )
-    client_id = colander.SchemaNode(
+    esgf_slcs_client_id = colander.SchemaNode(
         colander.String(),
-        name='esgf_slcs_client_id',
         title='ESGF SLCS Client ID',
         validator=colander.Length(min=20),
     )
-    client_secret = colander.SchemaNode(
+    esgf_slcs_client_secret = colander.SchemaNode(
         colander.String(),
-        name='esgf_slcs_client_secret',
         title='ESGF SLCS Client Secret',
         validator=colander.Length(min=20),
     )

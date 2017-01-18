@@ -65,6 +65,8 @@ class SolrParamsPanel(SolrPanel):
                 appstruct = form.validate(controls)
                 settings = self.request.db.settings.find_one() or {}
                 settings.update(appstruct)
+                # TODO: use events
+                self.request.registry.settings.update(appstruct)
                 self.request.db.settings.save(settings)
             except ValidationFailure, e:
                 logger.exception('validation of form failed.')
