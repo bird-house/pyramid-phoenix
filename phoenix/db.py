@@ -4,30 +4,19 @@
 
 import pymongo
 
-from pyramid.events import NewRequest
-
-import logging
-logger = logging.getLogger(__name__)
-
 
 def mongodb(registry):
     settings = registry.settings
-    client = pymongo.MongoClient(settings['mongodb.host'], int(settings['mongodb.port']))
-    db = client[settings['mongodb.db_name']]
-    # db.services.create_index("name", unique=True)
+    db = registry.db[settings['mongodb.db_name']]
     return db
 
 
 def includeme(config):
-    def _add_db(event):
-        settings = event.request.registry.settings
-        if settings.get('db') is None:
-            try:
-                settings['db'] = mongodb(event.request.registry)
-                logger.debug("init db")
-            except:
-                logger.exception('Could not connect mongodb.')
-            else:
-                logger.debug("db already initialized")
-        event.request.db = settings.get('db')
-    config.add_subscriber(_add_db, NewRequest)
+    settings = config.get_settings()
+    config.registry.db = pymongo.MongoClient(
+        settings['mongodb.host'],
+        int(settings['mongodb.port']))
+
+    def add_db(event):
+        return mongodb(event.registry)
+    config.add_request_method(add_db, 'db', reify=True)

@@ -41,7 +41,11 @@ def main(global_config, **settings):
     config.add_static_view('static-deform', 'deform:static', cache_max_age=3600)
 
     # database
-    config.include('phoenix.db')
+    # TODO: overwrite request.db from twitcher
+    # See: http://docs.pylonsproject.org/projects/pyramid/en/latest/api/config.html
+    # config.include('phoenix.db')
+    from phoenix.db import includeme as include_db
+    include_db(config)
 
     # twitcher
     config.include('phoenix.twitcherclient')
