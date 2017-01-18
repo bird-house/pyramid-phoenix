@@ -39,7 +39,6 @@ class MyView(object):
         self.title = title
         self.description = description
         # TODO: refactor db access
-        self.db = self.request.db
         self.userdb = self.request.db.users
 
         # set breadcrumbs

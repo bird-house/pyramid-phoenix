@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class GitHub(MyView):
     def __init__(self, request):
         super(GitHub, self).__init__(request, name='settings_github', title='GitHub')
-        self.collection = self.db.settings
+        self.collection = self.request.db.settings
 
     def breadcrumbs(self):
         breadcrumbs = super(GitHub, self).breadcrumbs()

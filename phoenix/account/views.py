@@ -240,7 +240,7 @@ class Account(MyView):
 
     def ldap_prepare(self):
         """Lazy LDAP connector construction"""
-        ldap_settings = self.db.ldap.find_one()
+        ldap_settings = self.request.db.ldap.find_one()
 
         if ldap_settings is None:
             # Warn if LDAP is about to be used but not set up.
@@ -279,7 +279,7 @@ class Account(MyView):
 
         if auth is not None:
             # Get user name and email
-            ldap_settings = self.db.ldap.find_one()
+            ldap_settings = self.request.db.ldap.find_one()
             name = (auth[1].get(ldap_settings['name'])[0] if ldap_settings['name'] != '' else 'Unknown')
             email = (auth[1].get(ldap_settings['email'])[0] if ldap_settings['email'] != '' else '')
 

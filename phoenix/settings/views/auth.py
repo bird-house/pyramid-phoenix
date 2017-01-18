@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class Auth(MyView):
     def __init__(self, request):
         super(Auth, self).__init__(request, name='settings_auth', title='Auth')
-        self.settings = self.db.settings.find_one()
+        self.settings = self.request.db.settings.find_one()
         if self.settings is None:
             self.settings = {}
 
@@ -40,7 +40,7 @@ class Auth(MyView):
         else:
             self.settings['auth'] = {}
             self.settings['auth']['protocol'] = list(appstruct.get('protocol'))
-            self.db.settings.save(self.settings)
+            self.request.db.settings.save(self.settings)
 
             # TODO: use events, config, settings, ... to update auth
             self.session.flash('Successfully updated Auth settings!', queue='success')
@@ -55,5 +55,3 @@ class Auth(MyView):
         if 'submit' in self.request.POST:
             return self.process_form(form)
         return dict(title=self.title, form=form.render(self.appstruct()))
-
-
