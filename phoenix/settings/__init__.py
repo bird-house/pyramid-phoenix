@@ -1,5 +1,7 @@
 from pyramid.events import NewRequest
 
+from phoenix.events import SettingsChanged
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -65,3 +67,8 @@ def includeme(config):
             settings['solr.depth'] = stored_settings.get('solr_depth', 2)
             settings['_solr'] = True
     config.add_subscriber(add_solr, NewRequest)
+
+    def update_settings(event):
+        settings = event.request.registry.settings
+        settings.update(event.converted_settings())
+    config.add_subscriber(update_settings, SettingsChanged)
