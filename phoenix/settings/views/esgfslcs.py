@@ -16,7 +16,6 @@ class ESGFSLCSSettings(MyView):
     def __init__(self, request):
         super(ESGFSLCSSettings, self).__init__(request, name='settings_esgf', title='ESGF')
         self.collection = self.request.db.settings
-        self.settings = self.request.registry.settings
 
     def breadcrumbs(self):
         breadcrumbs = super(ESGFSLCSSettings, self).breadcrumbs()
