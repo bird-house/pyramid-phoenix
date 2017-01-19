@@ -86,12 +86,19 @@ class Actions(object):
             verify=False
         )
         # Store the token in the database
+        self.save_token(token)
+
+        # Redirect to the token view
+        return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_slcs'))
+
+    def save_token(self, token):
+        """
+        Store the token in the database.
+        """
         if self.userid:
             self.collection.update_one(
                 {'identifier': self.userid},
                 {'$set': {'esgf_token': token, }})
-        # Redirect to the token view
-        return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_slcs'))
 
     @view_config(route_name='delete_user', permission='admin')
     def delete_user(self):
