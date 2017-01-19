@@ -1,6 +1,5 @@
 import deform
 import colander
-from colander import Invalid
 
 from phoenix.security import Admin, User, Guest
 from phoenix.security import AUTH_PROTOCOLS
@@ -14,7 +13,7 @@ class AuthProtocolSchema(colander.MappingSchema):
 
     auth_protocol = colander.SchemaNode(
         colander.Set(),
-        default=['phoenix', ],
+        default=['phoenix'],
         title='Authentication Protocol',
         description='Choose at least one Authentication Protocol which is used in Phoenix.',
         validator=colander.Length(min=1),

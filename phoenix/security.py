@@ -45,7 +45,7 @@ def allowed_auth_protocols(request):
     settings = request.db.settings.find_one() or {}
     protocols = ['phoenix']
     if 'auth_protocol' in settings:
-        protocols = settings['auth_protocol']
+        protocols.extend(settings['auth_protocol'])
     return protocols
 
 

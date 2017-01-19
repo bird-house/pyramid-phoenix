@@ -37,7 +37,10 @@ class Auth(MyView):
             self.session.flash('Edit auth failed. {}'.format(e), queue="danger")
         else:
             settings = self.collection.find_one() or {}
-            settings.update({'auth_protocol': list(appstruct['auth_protocol'])})
+            protocols = list(appstruct['auth_protocol'])
+            if 'phoenix' not in protocols:
+                protocols.append('phoenix')
+            settings.update({'auth_protocol': protocols})
             self.collection.save(settings)
             #self.request.registry.notify(SettingsChanged(self.request, appstruct))
             self.session.flash('Successfully updated Auth settings!', queue='success')
