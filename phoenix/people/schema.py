@@ -70,7 +70,7 @@ class C4ISchema(colander.MappingSchema):
     )
 
 
-class ESGFSLCSSchema(colander.MappingSchema):
+class ESGFSLCSTokenSchema(colander.MappingSchema):
     esgf_token = colander.SchemaNode(
         colander.String(),
         title="Access Token",

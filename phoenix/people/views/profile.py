@@ -11,7 +11,7 @@ from phoenix.utils import ActionButton
 from ..schema import (
     ProfileSchema,
     TwitcherSchema,
-    ESGFSLCSSchema,
+    ESGFSLCSTokenSchema,
     ESGFCredentialsSchema,
     C4ISchema,
     GroupSchema
@@ -67,7 +67,7 @@ class Profile(MyView):
         elif self.tab == 'c4i':
             schema = C4ISchema()
         elif self.tab == 'esgf_slcs':
-            schema = ESGFSLCSSchema()
+            schema = ESGFSLCSTokenSchema()
         elif self.tab == 'esgf':
             schema = ESGFCredentialsSchema()
         elif self.tab == 'group':
