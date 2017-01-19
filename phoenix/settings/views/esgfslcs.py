@@ -46,9 +46,7 @@ class ESGFSLCSSettings(MyView):
         return HTTPFound(location=self.request.route_path('settings_esgf'))
 
     def appstruct(self):
-        settings = self.collection.find_one()
-        settings = settings or {}
-        return settings
+        return self.collection.find_one() or {}
 
     @view_config(route_name='settings_esgf', renderer='../templates/settings/default.pt')
     def view(self):
