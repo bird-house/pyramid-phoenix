@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class AuthSchema(colander.MappingSchema):
+class AuthProtocolSchema(colander.MappingSchema):
     choices = [
         ('phoenix', 'Local Auth'),
         ('esgf', 'ESGF OpenID'),
@@ -16,11 +16,11 @@ class AuthSchema(colander.MappingSchema):
         ('oauth2', 'OAuth 2.0'),
         ('ldap', 'LDAP')]
 
-    protocol = colander.SchemaNode(
+    auth_protocol = colander.SchemaNode(
         colander.Set(),
-        default=['phoenix', 'oauth2'],
-        title='Auth Protocol',
-        description='Choose at least one Authentication Protocol which is used in Phoenix',
+        default=['phoenix', ],
+        title='Authentication Protocol',
+        description='Choose at least one Authentication Protocol which is used in Phoenix.',
         validator=colander.Length(min=1),
         widget=deform.widget.CheckboxChoiceWidget(values=choices, inline=True))
 

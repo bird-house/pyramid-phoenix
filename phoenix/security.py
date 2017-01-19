@@ -33,12 +33,10 @@ def has_execute_permission(request, service_name):
 
 def auth_protocols(request):
     # TODO: refactor auth settings handling
-    settings = request.db.settings.find_one()
-    protocols = ['phoenix', 'esgf', 'openid', 'ldap', 'oauth2']
-    if settings:
-        if 'auth' in settings:
-            if 'protocol' in settings['auth']:
-                protocols = settings['auth']['protocol']
+    settings = request.db.settings.find_one() or {}
+    protocols = ['phoenix', 'oauth2']
+    if 'auth_protocol' in settings:
+        protocols = settings['auth_protocol']
     return protocols
 
 

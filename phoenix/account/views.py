@@ -13,7 +13,7 @@ from phoenix.views import MyView
 from phoenix.security import Admin, Guest, authomatic, passwd_check
 from phoenix.security import auth_protocols
 from phoenix.twitcherclient import generate_access_token
-from .schema import PhoenixSchema, LdapSchema, ESGFOpenIDSchema, OpenIDSchema, OAuthSchema
+from phoenix.account.schema import PhoenixSchema, LdapSchema, ESGFOpenIDSchema, OpenIDSchema, OAuthSchema
 
 import logging
 logger = logging.getLogger(__name__)
@@ -185,10 +185,10 @@ class Account(MyView):
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
         # TODO: Add ldap to title?
-        protocal_names = dict(phoenix='Phoenix', esgf='ESGF', ldap='LDAP',
+        protocol_names = dict(phoenix='Phoenix', esgf='ESGF', ldap='LDAP',
                               oauth2='Oauth 2.0', openid='Open ID')
         return dict(active=protocol,
-                    protocol_name=protocal_names[protocol],
+                    protocol_name=protocol_names[protocol],
                     auth_protocols=allowed_protocols,
                     form=form.render(self.appstruct(protocol)))
 
