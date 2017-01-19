@@ -49,6 +49,13 @@ def allowed_auth_protocols(request):
     return protocols
 
 
+def default_auth_protocol(request):
+    allowed_protocols = allowed_auth_protocols(request)
+    for protocol in AUTH_PROTOCOLS.iterkeys():
+        if protocol in allowed_protocols:
+            return protocol
+
+
 def passwd_check(request, passphrase):
     """
     code taken from IPython.lib.security

@@ -85,6 +85,7 @@ class Account(MyView):
             logger.exception('validation of form failed.')
             return dict(
                 active=protocol,
+                protocol_name=AUTH_PROTOCOLS[protocol],
                 auth_protocols=allowed_auth_protocols(self.request),
                 form=e.render())
         else:
@@ -187,7 +188,7 @@ class Account(MyView):
             return self.process_form(form, protocol)
         # TODO: Add ldap to title?
         return dict(active=protocol,
-                    protocol_name=AUTH_PROTOCOLS.get(protocol, 'Unknown'),
+                    protocol_name=AUTH_PROTOCOLS[protocol],
                     auth_protocols=allowed_protocols,
                     form=form.render(self.appstruct(protocol)))
 
