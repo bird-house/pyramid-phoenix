@@ -14,7 +14,7 @@ from phoenix.grid import CustomGrid
 from phoenix.views import MyView
 from phoenix.monitor.views.actions import monitor_buttons
 from phoenix.utils import make_tags
-from phoenix.security import auth_protocols
+from phoenix.security import allowed_auth_protocols
 
 import logging
 logger = logging.getLogger(__name__)
@@ -134,7 +134,7 @@ class JobList(MyView):
         if not self.request.has_permission('submit'):
             msg = """<strong>Warning:</strong> You are not allowed to monitor jobs.
             Please <a href="%s" class="alert-link">sign in</a>.
-            """ % self.request.route_path('account_login', protocol=auth_protocols(self.request)[-1])
+            """ % self.request.route_path('account_login', protocol=allowed_auth_protocols(self.request)[-1])
             self.session.flash(msg, queue='warning')
 
         caption_form = self.generate_caption_form()

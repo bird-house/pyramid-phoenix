@@ -4,6 +4,8 @@ see pyramid security:
 * http://docs.pylonsproject.org/projects/pyramid/en/latest/tutorials/wiki2/authentication.html
 """
 
+from collections import OrderedDict
+
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.exceptions import HTTPForbidden
@@ -26,15 +28,22 @@ Admin = 'group.admin'
 User = 'group.user'
 Guest = 'group.guest'
 
+AUTH_PROTOCOLS = OrderedDict([
+    ('phoenix', 'Phoenix'),
+    ('esgf', 'ESGF OpenID'),
+    ('openid', 'OpenID'),
+    ('oauth2', 'OAuth 2.0'),
+    ('ldap', 'LDAP')])
+
 
 def has_execute_permission(request, service_name):
     return is_public(request.registry, service_name) or request.has_permission('submit')
 
 
-def auth_protocols(request):
+def allowed_auth_protocols(request):
     # TODO: refactor auth settings handling
     settings = request.db.settings.find_one() or {}
-    protocols = ['phoenix', 'oauth2']
+    protocols = ['phoenix']
     if 'auth_protocol' in settings:
         protocols = settings['auth_protocol']
     return protocols

@@ -3,18 +3,14 @@ import colander
 from colander import Invalid
 
 from phoenix.security import Admin, User, Guest
+from phoenix.security import AUTH_PROTOCOLS
 
 import logging
 logger = logging.getLogger(__name__)
 
 
 class AuthProtocolSchema(colander.MappingSchema):
-    choices = [
-        ('phoenix', 'Local Auth'),
-        ('esgf', 'ESGF OpenID'),
-        ('openid', 'OpenID'),
-        ('oauth2', 'OAuth 2.0'),
-        ('ldap', 'LDAP')]
+    choices = AUTH_PROTOCOLS.items()
 
     auth_protocol = colander.SchemaNode(
         colander.Set(),

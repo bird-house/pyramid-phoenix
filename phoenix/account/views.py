@@ -11,7 +11,8 @@ from authomatic.adapters import WebObAdapter
 
 from phoenix.views import MyView
 from phoenix.security import Admin, Guest, authomatic, passwd_check
-from phoenix.security import auth_protocols
+from phoenix.security import allowed_auth_protocols
+from phoenix.security import AUTH_PROTOCOLS
 from phoenix.twitcherclient import generate_access_token
 from phoenix.account.schema import PhoenixSchema, LdapSchema, ESGFOpenIDSchema, OpenIDSchema, OAuthSchema
 
@@ -84,7 +85,7 @@ class Account(MyView):
             logger.exception('validation of form failed.')
             return dict(
                 active=protocol,
-                auth_protocols=auth_protocols(self.request),
+                auth_protocols=allowed_auth_protocols(self.request),
                 form=e.render())
         else:
             if protocol == 'phoenix':
@@ -171,7 +172,7 @@ class Account(MyView):
     @view_config(route_name='account_login', renderer='templates/account/login.pt')
     def login(self):
         protocol = self.request.matchdict.get('protocol', 'phoenix')
-        allowed_protocols = auth_protocols(self.request)
+        allowed_protocols = allowed_auth_protocols(self.request)
 
         # Make sure disabled protocols are not accessed directly
         if protocol not in allowed_protocols:
@@ -185,10 +186,8 @@ class Account(MyView):
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
         # TODO: Add ldap to title?
-        protocol_names = dict(phoenix='Phoenix', esgf='ESGF', ldap='LDAP',
-                              oauth2='Oauth 2.0', openid='Open ID')
         return dict(active=protocol,
-                    protocol_name=protocol_names[protocol],
+                    protocol_name=AUTH_PROTOCOLS.get(protocol, 'Unknown'),
                     auth_protocols=allowed_protocols,
                     form=form.render(self.appstruct(protocol)))
 

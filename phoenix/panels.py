@@ -1,6 +1,6 @@
 from pyramid_layout.panel import panel_config
 
-from phoenix.security import auth_protocols
+from phoenix.security import allowed_auth_protocols
 
 import logging
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ def navbar(context, request):
         subitems.append(nav_item('Supervisor', request.route_path('supervisor'), icon="fa fa-eye"))
         subitems.append(nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench"))
 
-    return dict(items=items, subitems=subitems, protocol=auth_protocols(request)[-1])
+    return dict(items=items, subitems=subitems, protocol=allowed_auth_protocols(request)[-1])
 
 
 @panel_config(name='messages', renderer='phoenix:templates/panels/messages.pt')
