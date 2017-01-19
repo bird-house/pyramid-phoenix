@@ -12,14 +12,14 @@ logger = logging.getLogger(__name__)
 
 
 @view_defaults(permission='admin', layout='default')
-class ESGFSettings(MyView):
+class ESGFSLCSSettings(MyView):
     def __init__(self, request):
-        super(ESGFSettings, self).__init__(request, name='settings_esgf', title='ESGF')
+        super(ESGFSLCSSettings, self).__init__(request, name='settings_esgf', title='ESGF')
         self.collection = self.request.db.settings
         self.settings = self.request.registry.settings
 
     def breadcrumbs(self):
-        breadcrumbs = super(ESGFSettings, self).breadcrumbs()
+        breadcrumbs = super(ESGFSLCSSettings, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path('settings'), title="Settings"))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs

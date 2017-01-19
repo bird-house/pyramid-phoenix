@@ -27,7 +27,7 @@ class Overview(MyView):
         buttons.append(dict(url=self.request.route_path('settings_github'),
                             icon_class="fa fa-github fa-2x", title="GitHub"))
         buttons.append(dict(url=self.request.route_path('settings_esgf'),
-                            icon_class="fa fa-globe fa-2x", title="ESGF"))
+                            icon_class="fa fa-key fa-2x", title="ESGF SLCS"))
         buttongroups.append(dict(title='Settings', buttons=buttons))
 
         return dict(buttongroups=buttongroups)
