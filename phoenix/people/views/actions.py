@@ -5,6 +5,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 
 from phoenix.twitcherclient import generate_access_token
+from phoenix.esgfslcs import ESGFSLCSClient
 
 import logging
 logger = logging.getLogger(__name__)
@@ -46,6 +47,11 @@ class Actions(object):
         """
         Redirect the user to the ESGF SLCS Server for authorisation.
         """
+        client = ESGFSLCSClient(self.request)
+        if client.get_token():
+            client.refresh_token()
+            return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_slcs'))
+
         # Reset any existing state in the session
         if 'oauth_state' in self.session:
             del self.session['oauth_state']
