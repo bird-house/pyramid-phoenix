@@ -6,6 +6,8 @@ Changes
 
 * updated to twitcher 0.3.0.
 * mongodb-dbname is configurable.
+* added settings page for esgf-slcs service.
+* update esgf token with refresh-token.
 
 0.6.4 (2017-01-04)
 ==================
