@@ -5,6 +5,7 @@ Changes
 ==================
 
 * updated to twitcher 0.3.0.
+* mongodb-dbname is configurable.
 
 0.6.4 (2017-01-04)
 ==================
