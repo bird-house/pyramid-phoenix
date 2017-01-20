@@ -51,7 +51,8 @@ def allowed_auth_protocols(request):
 
 def default_auth_protocol(request):
     allowed_protocols = allowed_auth_protocols(request)
-    for protocol in AUTH_PROTOCOLS.iterkeys():
+    # use reverse order to get defaul protocol
+    for protocol in AUTH_PROTOCOLS.keys()[::-1]:
         if protocol in allowed_protocols:
             return protocol
 
