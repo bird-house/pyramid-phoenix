@@ -1,5 +1,7 @@
 from urlparse import urlparse
 
+from pyramid.settings import asbool
+
 from twitcher.client import TwitcherService
 
 from phoenix.db import mongodb
@@ -8,9 +10,13 @@ from phoenix.db import mongodb
 def includeme(config):
     settings = config.registry.settings
 
-    config.include('twitcher.rpcinterface')
-    config.include('twitcher.owsproxy')
-    config.include('twitcher.tweens')
+    if asbool(settings.get('phoenix.twitcher', 'true')):
+        config.include('twitcher.rpcinterface')
+        config.include('twitcher.owsproxy')
+        config.include('twitcher.tweens')
+    else:
+        # use external twitcher
+        config.add_route('owsproxy', settings.get('twitcher.url') + '/ows/proxy/{service_name}')
 
 
 def twitcher_service_factory(registry):
