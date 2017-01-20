@@ -33,6 +33,10 @@ def includeme(config):
                 logger.debug('update github settings from database')
                 settings['github.client.id'] = stored_settings.get('github_client_id')
                 settings['github.client.secret'] = stored_settings.get('github_client_secret')
+                # TODO: backward compatibility ... please remove!
+                if 'github_client_id' not in stored_settings and 'github' in stored_settings:
+                    settings['github.client.id'] = stored_settings['github'].get('consumer_key')
+                    settings['github.client.secret'] = stored_settings['github'].get('consumer_secret')
             settings['_github'] = True
     config.add_subscriber(add_github, NewRequest)
 
