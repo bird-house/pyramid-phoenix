@@ -43,7 +43,7 @@ def has_execute_permission(request, service_name):
 def allowed_auth_protocols(request):
     # TODO: refactor auth settings handling
     settings = request.db.settings.find_one() or {}
-    protocols = ['phoenix']
+    protocols = ['phoenix', 'esgf', 'oauth2']
     if 'auth_protocol' in settings:
         protocols.extend(settings['auth_protocol'])
     return protocols
