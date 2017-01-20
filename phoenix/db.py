@@ -4,18 +4,22 @@
 
 import pymongo
 
+import logging
+LOGGER = logging.getLogger(__name__)
+
 
 def mongodb(registry):
     settings = registry.settings
-    db = registry.db[settings['mongodb.db_name']]
+    db = registry.dbclient[settings['mongodb.db_name']]
     return db
 
 
 def includeme(config):
     settings = config.get_settings()
-    config.registry.db = pymongo.MongoClient(
+    config.registry.dbclient = pymongo.MongoClient(
         settings['mongodb.host'],
         int(settings['mongodb.port']))
+    LOGGER.debug("MongoDB enabled.")
 
     def add_db(event):
         return mongodb(event.registry)
