@@ -33,7 +33,7 @@ def main(global_config, **settings):
     config.configure_celery(global_config['__file__'])
 
     # ldap
-    config.include('pyramid_ldap')
+    config.include('phoenix.ldap')
     # FK: Ldap setup functions will be called on demand.
 
     # static views (stylesheets etc)
