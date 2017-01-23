@@ -21,7 +21,6 @@ map_script = Template(
 class Map(object):
     def __init__(self, request):
         self.request = request
-        self.session = self.request.session
         # TODO: fix wms registration
         self.request.wms
 
@@ -81,8 +80,7 @@ def includeme(config):
         # add wms service
         def get_wms(request):
             settings = request.registry.settings
-            session = request.session
-            if request.map_activated and 'wms' not in session:
+            if request.map_activated and 'wms' not in settings:
                 logger.debug('register wms service')
                 try:
                     service_name = 'wms'
@@ -95,10 +93,10 @@ def includeme(config):
                               'type': 'wms'},
                         overwrite=True)
                     #session['wms'] = WebMapService(url=settings['wms.url'])
-                    session['wms'] = settings['wms.url']
+                    settings['wms'] = settings['wms.url']
                 except:
                     logger.exception('Could not connect wms %s', settings['wms.url'])
-            return session.get('wms')
+            return settings.get('wms')
         config.add_request_method(get_wms, 'wms', reify=True)
 
         # map view
