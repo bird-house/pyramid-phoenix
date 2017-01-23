@@ -8,6 +8,7 @@ Changes
 * mongodb-dbname is configurable.
 * added settings page for esgf-slcs service.
 * update esgf token with refresh-token.
+* fixed encoding of wps xml response: issue #136
 
 0.6.4 (2017-01-04)
 ==================
