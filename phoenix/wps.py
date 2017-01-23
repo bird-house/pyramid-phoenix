@@ -29,12 +29,14 @@ def check_status(url=None, response=None, sleep_secs=2, verify=False):
     execution = WPSExecution()
     if response:
         logger.debug("using response document ...")
-        xml = response.encode('utf8')
+        xml = response
     elif url:
         logger.debug('using status_location url ...')
-        xml = requests.get(url, verify=verify).content.encode('utf8')
+        xml = requests.get(url, verify=verify).content
     else:
         raise Exception("you need to provide a status-location url or response object.")
+    if type(xml) is unicode:
+        xml = xml.encode('utf8', errors='ignore')
     execution.checkStatus(response=xml, sleepSecs=sleep_secs)
     if execution.response is None:
         raise Exception("check_status failed!")
