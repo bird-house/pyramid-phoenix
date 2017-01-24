@@ -39,27 +39,30 @@ class Outputs(object):
         items = []
         for output in process_outputs(self.request, job_id).values():
             dataset = None
-            reference = output.reference
+            proxy_reference = output.reference
             logger.debug("output reference: %s", output.reference)
             if output.reference and 'wpsoutputs' in output.reference:
                 if self.request.map_activated and output.mimeType and 'netcdf' in output.mimeType:
                     dataset = "outputs" + output.reference.split('wpsoutputs')[1]
                 if wps_output_url and output.reference.startswith(wps_output_url):
-                    reference = self.request.route_url('wpsoutputs', outputpath=output.reference.split('wpsoutputs')[1])
-                    logger.debug("modified reference: %s", reference)
+                    proxy_reference = self.request.route_url(
+                        'wpsoutputs',
+                        outputpath=output.reference.split('wpsoutputs')[1])
+                    logger.debug("modified reference: %s", proxy_reference)
             if output.mimeType:
                 category = 'ComplexType'
             else:
                 category = 'LiteralType'
 
-            logger.debug("reference: %s", reference)
+            logger.debug("proxy_reference: %s", proxy_reference)
 
             items.append(dict(title=output.title,
                               abstract=output.abstract,
                               identifier=output.identifier,
                               mime_type=output.mimeType,
                               data=output.data,
-                              reference=reference,
+                              reference=output.reference,
+                              proxy_reference=proxy_reference,
                               dataset=dataset,
                               category=category))
         items = sorted(items, key=lambda item: item['identifier'], reverse=1)
