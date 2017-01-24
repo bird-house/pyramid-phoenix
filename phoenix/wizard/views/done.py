@@ -92,8 +92,11 @@ class Done(Wizard):
             self.request,
             self.wizard_state.get('wizard_literal_inputs', {}))
         # worker_inputs = ['%s=%s' % (key, value) for key, value in inputs]
+        # Use real wps url ... not proxy url.
+        service = self.request.catalog.get_service_by_name(self.service_name)
         wps = WebProcessingService(
-            url=self.request.route_url('owsproxy', service_name=self.service_name),
+            #url=self.request.route_url('owsproxy', service_name=self.service_name),
+            url=service['url'],
             verify=False, skip_caps=True)
         logger.debug("wizard worker wps url: %s", wps.url)
         worker = dict(

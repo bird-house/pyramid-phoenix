@@ -16,7 +16,8 @@ def includeme(config):
         config.include('twitcher.tweens')
     else:
         # use external twitcher
-        config.add_route('owsproxy', settings.get('twitcher.url') + '/ows/proxy/{service_name}')
+        # config.add_route('owsproxy_twitcher', settings.get('twitcher.url') + '/ows/proxy/{service_name}')
+        config.add_route('owsproxy', '/ows/proxy/{service_name}')
 
 
 def twitcher_service_factory(registry):
