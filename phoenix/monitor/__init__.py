@@ -3,9 +3,12 @@ logger = logging.getLogger(__name__)
 
 
 def includeme(config):
-    # settings = config.registry.settings
+    settings = config.registry.settings
 
     # logger.debug('Adding monitor ...')
+
+    # internal wps outputs
+    config.add_route('wpsoutputs', '/wpsoutputs*outputpath')
 
     # views
     config.add_route('monitor', '/monitor')

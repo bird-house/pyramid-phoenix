@@ -34,24 +34,32 @@ class Outputs(object):
     @panel_config(name='monitor_outputs', renderer='../templates/monitor/panels/media.pt')
     def panel(self):
         job_id = self.request.matchdict.get('job_id')
+        wps_output_url = self.request.registry.settings.get('wps.output.url')
 
         items = []
         for output in process_outputs(self.request, job_id).values():
             dataset = None
-            if self.request.map_activated and output.mimeType and 'netcdf' in output.mimeType:
-                if output.reference and 'wpsoutputs' in output.reference:
+            reference = output.reference
+            logger.debug("output reference: %s", output.reference)
+            if output.reference and 'wpsoutputs' in output.reference:
+                if self.request.map_activated and output.mimeType and 'netcdf' in output.mimeType:
                     dataset = "outputs" + output.reference.split('wpsoutputs')[1]
+                if wps_output_url and output.reference.startswith(wps_output_url):
+                    reference = self.request.route_url('wpsoutputs', outputpath=output.reference.split('wpsoutputs')[1])
+                    logger.debug("modified reference: %s", reference)
             if output.mimeType:
                 category = 'ComplexType'
             else:
                 category = 'LiteralType'
+
+            logger.debug("reference: %s", reference)
 
             items.append(dict(title=output.title,
                               abstract=output.abstract,
                               identifier=output.identifier,
                               mime_type=output.mimeType,
                               data=output.data,
-                              reference=output.reference,
+                              reference=reference,
                               dataset=dataset,
                               category=category))
         items = sorted(items, key=lambda item: item['identifier'], reverse=1)
