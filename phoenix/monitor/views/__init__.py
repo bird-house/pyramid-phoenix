@@ -1,3 +1,5 @@
+import requests
+
 from pyramid.view import view_config
 from pyramid.events import subscriber
 from pyramid.response import Response
@@ -18,9 +20,9 @@ def wpsoutputs(request):
     # forward request to target (without Host Header)
     # h = dict(request.headers)
     # h.pop("Host", h)
-    resp = requests.request(method=request.method.upper(), url=url, data=request.body,
-                            headers=request.headers, verify=False)
-    return Response(resp.content, status=resp.status_code, headers=resp.headers)
+    resp = requests.get(url, verify=False)
+    resp.raise_for_status()
+    return Response(resp.content, status=resp.status_code)
 
 
 @subscriber(JobStarted)
