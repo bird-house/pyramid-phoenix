@@ -47,7 +47,7 @@ class Outputs(object):
                 if wps_output_url and output.reference.startswith(wps_output_url):
                     proxy_reference = self.request.route_url(
                         'wpsoutputs',
-                        outputpath=output.reference.split('wpsoutputs')[1])
+                        filename=output.reference.split('wpsoutputs')[1])
                     logger.debug("modified reference: %s", proxy_reference)
             if output.mimeType:
                 category = 'ComplexType'
