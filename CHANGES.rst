@@ -4,11 +4,16 @@ Changes
 0.7.0 (2017-01-xx)
 ==================
 
-* updated to twitcher 0.3.0.
+* updated to twitcher 0.3.1.
 * mongodb-dbname is configurable.
 * added settings page for esgf-slcs service.
 * update esgf token with refresh-token.
-* fixed encoding of wps xml response: issue #136
+* added download action for inputs/outputs in monitor.
+* added twitcher-delegate option.
+
+Bug-Fixes:
+
+* fixed #136: encoding of wps xml response.
 
 0.6.4 (2017-01-04)
 ==================
