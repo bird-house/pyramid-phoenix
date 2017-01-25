@@ -42,9 +42,6 @@ class Done(Wizard):
             request, name='wizard_done', title="Done")
         self.description = "Describe your Job and start Workflow."
         self.service_name = self.wizard_state.get('wizard_wps')['identifier']
-        self.wps = WebProcessingService(
-            url=request.route_url('owsproxy', service_name=self.service_name),
-            verify=False, skip_caps=True)
 
     def breadcrumbs(self):
         breadcrumbs = super(Done, self).breadcrumbs()
@@ -95,8 +92,15 @@ class Done(Wizard):
             self.request,
             self.wizard_state.get('wizard_literal_inputs', {}))
         # worker_inputs = ['%s=%s' % (key, value) for key, value in inputs]
+        # Use real wps url ... not proxy url.
+        service = self.request.catalog.get_service_by_name(self.service_name)
+        wps = WebProcessingService(
+            #url=self.request.route_url('owsproxy', service_name=self.service_name),
+            url=service['url'],
+            verify=False, skip_caps=True)
+        logger.debug("wizard worker wps url: %s", wps.url)
         worker = dict(
-            url=self.wps.url,
+            url=wps.url,
             identifier=self.wizard_state.get('wizard_process')['identifier'],
             inputs=[(key, value) for key, value in literal_inputs],
             resource=self.wizard_state.get('wizard_complex_inputs')['identifier'],

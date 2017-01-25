@@ -13,7 +13,7 @@ var map = L.map('map', {
         },
   },
   timeDimensionControl: true,
-% endif    
+% endif
   center: [20.0, 0.0],
 });
 
@@ -36,9 +36,7 @@ var baseMaps = {
 };
 
 % if wms:
-% if use_proxy:
 var proxy = 'owsproxy';
-% endif
 var dsWMS = '${wms.url}';
 <%
    wms_layers = [layer_id for layer_id in wms.contents if wms.contents[layer_id].queryable and layer_id.split('/')[-1] not in ['lat', 'lon']]
@@ -52,9 +50,7 @@ var layer${loop.index} = L.tileLayer.wms(dsWMS, {
   attribution: '<a href="http://bird-house.github.io/">Birdhouse</a>',
 });
 var timeLayer${loop.index} = L.timeDimension.layer.wms(layer${loop.index}, {
-% if use_proxy:
   proxy: proxy,
-% endif
   updateTimeDimension: true,
 % if dataset:
   getCapabilitiesParams: {
@@ -75,13 +71,3 @@ var overlayMaps = {};
 % endif
 
 L.control.layers(baseMaps, overlayMaps).addTo(map);
-
-
-
-
-
-
-
-
-
-

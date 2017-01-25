@@ -12,7 +12,7 @@ class Services(MyView):
     def __init__(self, request):
         super(Services, self).__init__(
             request, name='services', title='Services')
-        
+
     def breadcrumbs(self):
         breadcrumbs = super(Services, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path('settings'), title="Settings"))
@@ -32,5 +32,3 @@ class Services(MyView):
     @view_config(route_name="services", renderer='../templates/services/service_list.pt')
     def list_view(self):
         return dict(items=self.request.catalog.get_services())
-
-

@@ -35,6 +35,7 @@ class Inputs(object):
         items = []
         for inp in process_inputs(self.request, job_id):
             dataset = None
+            proxy_reference = inp.reference
             # TODO: use config for nwms dynamic services
             if self.request.map_activated and inp.mimeType and 'netcdf' in inp.mimeType and inp.reference:
                 if 'cache' in inp.reference:
@@ -60,6 +61,7 @@ class Inputs(object):
                               mime_type=inp.mimeType,
                               data=inp.data,
                               reference=inp.reference,
+                              proxy_reference=proxy_reference,
                               dataset=dataset,
                               category=category))
 

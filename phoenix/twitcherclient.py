@@ -6,17 +6,19 @@ from twitcher.client import TwitcherService
 
 from phoenix.db import mongodb
 
+import logging
+LOGGER = logging.getLogger(__name__)
+
 
 def includeme(config):
     settings = config.registry.settings
 
-    if asbool(settings.get('phoenix.twitcher', 'true')):
+    if asbool(settings.get('twitcher.ows_proxy_delegate', False)):
+        config.include('twitcher.owsproxy')
+    else:
         config.include('twitcher.rpcinterface')
         config.include('twitcher.owsproxy')
         config.include('twitcher.tweens')
-    else:
-        # use external twitcher
-        config.add_route('owsproxy', settings.get('twitcher.url') + '/ows/proxy/{service_name}')
 
 
 def twitcher_service_factory(registry):
