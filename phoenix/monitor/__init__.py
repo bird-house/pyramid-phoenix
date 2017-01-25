@@ -8,7 +8,7 @@ def includeme(config):
     # logger.debug('Adding monitor ...')
 
     # internal wps outputs
-    config.add_route('wpsoutputs', '/wpsoutputs*filename')
+    config.add_route('wpsoutputs', '/wpsoutputs{filename:.*}')
 
     # views
     config.add_route('monitor', '/monitor')
