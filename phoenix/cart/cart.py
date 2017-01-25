@@ -114,7 +114,3 @@ class Cart(object):
         Returns: json representation of all cart items.
         """
         return [self.items[key].to_json() for key in self.items]
-
-
-
-
