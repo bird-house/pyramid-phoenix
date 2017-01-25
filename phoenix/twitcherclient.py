@@ -6,6 +6,9 @@ from twitcher.client import TwitcherService
 
 from phoenix.db import mongodb
 
+import logging
+LOGGER = logging.getLogger(__name__)
+
 
 def includeme(config):
     settings = config.registry.settings
@@ -18,6 +21,9 @@ def includeme(config):
         # use external twitcher
         # config.add_route('owsproxy_twitcher', settings.get('twitcher.url') + '/ows/proxy/{service_name}')
         config.add_route('owsproxy', '/ows/proxy/{service_name}')
+        config.add_route('owsproxy_url', '/owsproxy')
+        from twitcher.owsproxy import owsproxy_url
+        config.add_view(owsproxy_url, route_name='owsproxy_url')
 
 
 def twitcher_service_factory(registry):
