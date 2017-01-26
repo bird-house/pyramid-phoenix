@@ -20,9 +20,10 @@ def wpsoutputs(request):
     # forward request to target (without Host Header)
     # h = dict(request.headers)
     # h.pop("Host", h)
-    resp = requests.get(url, verify=False)
-    resp.raise_for_status()
-    return Response(resp.content, status=resp.status_code)
+    response = requests.get(url, verify=False)
+    response.raise_for_status()
+
+    return Response(body=response.content, status=response.status_code, headers=response.headers)
 
 
 @subscriber(JobStarted)
