@@ -4,6 +4,7 @@ from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 from pyramid.response import Response
+from pyramid.response import FileIter
 
 from phoenix.utils import ActionButton
 from phoenix.utils import format_tags
@@ -169,10 +170,10 @@ def download_wpsoutputs(request):
     # forward request to target (without Host Header)
     # h = dict(request.headers)
     # h.pop("Host", h)
-    response = requests.get(url, verify=False)
+    response = requests.get(url, stream=True, verify=False)
     response.raise_for_status()
 
-    def remove_header(key, values):
+    def remove_header(key, headers):
         # the default header key should be the standard capitilized version e.g 'Content-Length'
         #TODO: move code to twitcher owsproxy
         try:
@@ -185,6 +186,7 @@ def download_wpsoutputs(request):
                     del headers[key.upper()]
                 except KeyError:
                     pass
+
     # clean up headers
     headers = dict(response.headers)
     keys = [k.lower() for k in headers.keys()]
@@ -199,7 +201,7 @@ def download_wpsoutputs(request):
     if 'keep-alive' in keys:
         remove_header('Keep-Alive', headers)
 
-    proxy_response = Response(body=response.content, status=response.status_code)
+    proxy_response = Response(app_iter=FileIter(response.raw), status=response.status_code)
     proxy_response.headers.update(headers)
     return proxy_response
 
