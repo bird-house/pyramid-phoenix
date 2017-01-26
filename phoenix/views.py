@@ -80,7 +80,7 @@ def unknown_failure(request, exc):
     return response
 
 
-@view_config(route_name='download')
+@view_config(route_name='download_storage')
 def download(request):
     filename = request.matchdict.get('filename')
     #filename = request.params['filename']
