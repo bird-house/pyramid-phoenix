@@ -172,7 +172,36 @@ def download_wpsoutputs(request):
     response = requests.get(url, verify=False)
     response.raise_for_status()
 
-    return Response(body=response.content, status=response.status_code, headers=response.headers)
+    def remove_header(key, values):
+        # the default header key should be the standard capitilized version e.g 'Content-Length'
+        #TODO: move code to twitcher owsproxy
+        try:
+            del headers[key]
+        except KeyError:
+            try:
+                del headers[key.lower()]
+            except KeyError:
+                try:
+                    del headers[key.upper()]
+                except KeyError:
+                    pass
+    # clean up headers
+    headers = dict(response.headers)
+    keys = [k.lower() for k in headers.keys()]
+    if 'content-length' in keys:
+        remove_header('Content-Length', headers)
+    if 'transfer-encoding' in keys:
+        remove_header('Transfer-Encoding', headers)
+    if 'content-encoding' in keys:
+        remove_header('Content-Encoding', headers)
+    if 'connection' in keys:
+        remove_header('Connection', headers)
+    if 'keep-alive' in keys:
+        remove_header('Keep-Alive', headers)
+
+    proxy_response = Response(body=response.content, status=response.status_code)
+    proxy_response.headers.update(headers)
+    return proxy_response
 
 
 def includeme(config):
