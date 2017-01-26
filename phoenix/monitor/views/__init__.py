@@ -1,26 +1,9 @@
-import requests
-
 from pyramid.events import subscriber
-from pyramid.response import Response
 
 from phoenix.events import JobFinished, JobStarted
 
 import logging
 LOGGER = logging.getLogger(__name__)
-
-
-def wpsoutputs(request):
-    path = '/'.join(request.matchdict['subpath'])
-    url = request.registry.settings.get('wps.output.url')
-    url += '/' + path
-    LOGGER.debug("delegate to wpsoutputs: %s", url)
-    # forward request to target (without Host Header)
-    # h = dict(request.headers)
-    # h.pop("Host", h)
-    response = requests.get(url, verify=False)
-    response.raise_for_status()
-
-    return Response(body=response.content, status=response.status_code, headers=response.headers)
 
 
 @subscriber(JobStarted)

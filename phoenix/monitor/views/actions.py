@@ -1,13 +1,15 @@
+import requests
+
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
+from pyramid.response import Response
 
 from phoenix.utils import ActionButton
 from phoenix.utils import format_tags
 
 import logging
-
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 @view_defaults(permission='submit')
@@ -159,6 +161,20 @@ def monitor_buttons(context, request):
     return buttons
 
 
+def download_wpsoutputs(request):
+    path = '/'.join(request.matchdict['subpath'])
+    url = request.registry.settings.get('wps.output.url')
+    url += '/' + path
+    LOGGER.debug("delegate to wpsoutputs: %s", url)
+    # forward request to target (without Host Header)
+    # h = dict(request.headers)
+    # h.pop("Host", h)
+    response = requests.get(url, verify=False)
+    response.raise_for_status()
+
+    return Response(body=response.content, status=response.status_code, headers=response.headers)
+
+
 def includeme(config):
     """ Pyramid includeme hook.
 
@@ -174,3 +190,6 @@ def includeme(config):
     config.add_route('make_private', 'make_private')
     config.add_route('set_favorite', 'set_favorite')
     config.add_route('unset_favorite', 'unset_favorite')
+    # download internal wps outputs
+    config.add_route('download_wpsoutputs', '/download/wpsoutputs*subpath')
+    config.add_view(download_wpsoutputs, route_name='download_wpsoutputs')

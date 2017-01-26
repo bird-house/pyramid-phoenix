@@ -46,7 +46,7 @@ class Outputs(object):
                     dataset = "outputs" + output.reference.split('wpsoutputs')[1]
                 if wps_output_url and output.reference.startswith(wps_output_url):
                     proxy_reference = self.request.route_url(
-                        'wpsoutputs',
+                        'download_wpsoutputs',
                         subpath=output.reference.split(wps_output_url)[1])
                     logger.debug("proxy reference: %s", proxy_reference)
             if output.mimeType:
