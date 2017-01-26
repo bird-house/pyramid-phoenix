@@ -1,6 +1,5 @@
 import requests
 
-from pyramid.view import view_config
 from pyramid.events import subscriber
 from pyramid.response import Response
 
@@ -10,12 +9,10 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
-@view_config(route_name='wpsoutputs')
 def wpsoutputs(request):
-    filename = request.matchdict.get('filename')
+    path = '/'.join(request.matchdict['subpath'])
     url = request.registry.settings.get('wps.output.url')
-    url += '/wpsoutputs'
-    url += filename
+    url += '/' + path
     LOGGER.debug("delegate to wpsoutputs: %s", url)
     # forward request to target (without Host Header)
     # h = dict(request.headers)
