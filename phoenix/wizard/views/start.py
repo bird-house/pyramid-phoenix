@@ -39,10 +39,11 @@ def job_to_state(request, job_id):
 
             # TODO: get the correct worker wps url
             # TODO: avoid getcaps
-            wps = WebProcessingService(url=workflow['worker']['url'], verify=False, skip_caps=False)
+            wps = WebProcessingService(url=workflow['worker']['url'].split('?')[0], verify=False, skip_caps=False)
             process = wps.describeprocess(workflow['worker']['identifier'])
 
-            state['wizard_wps'] = {'identifier': parse_service_name(wps.url)}
+            service = request.catalog.get_service_by_url(wps.url)
+            state['wizard_wps'] = {'identifier': service['name']}
             state['wizard_process'] = {'identifier': workflow['worker']['identifier']}
             inputs = {}
             for inp in workflow['worker']['inputs']:
