@@ -110,8 +110,12 @@ class Catalog(object):
         return service['name']
 
     def get_service_by_name(self, name):
-        """Get service from twitcher registry for given service name."""
+        """Get service from twitcher registry by given service name."""
         return self.service_registry.get_service_by_name(name)
+
+    def get_service_by_url(self, url):
+        """Get service from twitcher registry by given url."""
+        return self.service_registry.get_service_by_url(url)
 
     def get_services(self, service_type=None, maxrecords=100):
         raise NotImplementedError
