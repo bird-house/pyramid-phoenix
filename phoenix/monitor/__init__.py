@@ -1,11 +1,11 @@
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 def includeme(config):
-    # settings = config.registry.settings
+    settings = config.registry.settings
 
-    # logger.debug('Adding monitor ...')
+    LOGGER.debug('Monitor enabled ...')
 
     # views
     config.add_route('monitor', '/monitor')

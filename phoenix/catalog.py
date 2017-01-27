@@ -7,12 +7,12 @@ from owslib.csw import CatalogueServiceWeb
 from owslib.fes import PropertyIsEqualTo, And
 from owslib.wps import WebProcessingService
 
-from twitcher.registry import service_registry_factory
 
 from pyramid.settings import asbool
 from pyramid.events import NewRequest
 
 from phoenix.db import mongodb
+from phoenix.twitcherclient import twitcher_service_factory
 
 import logging
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ def includeme(config):
 def catalog_factory(registry):
     settings = registry.settings
 
-    service_registry = service_registry_factory(registry)
+    service_registry = twitcher_service_factory(registry)
 
     if asbool(settings.get('phoenix.csw', True)):
         csw = CatalogueServiceWeb(url=settings['csw.url'], skip_caps=True)
@@ -104,17 +104,18 @@ class Catalog(object):
     def harvest(self, url, service_type, service_name=None, service_title=None, public=False, c4i=False):
         raise NotImplementedError
 
-    def get_service_by_url(self, url):
-        # TODO: separate interface from abstract class
-        return self.service_registry.get_service_by_url(url)
-
     def get_service_name(self, record):
         """Get service name from twitcher registry for given service (url)."""
-        return self.get_service_name_by_url(record.source)
+        service = self.service_registry.get_service_by_url(record.source)
+        return service['name']
 
-    def get_service_name_by_url(self, url):
-        """Get service name from twitcher registry for given service (url)."""
-        return self.service_registry.get_service_name(url)
+    def get_service_by_name(self, name):
+        """Get service from twitcher registry by given service name."""
+        return self.service_registry.get_service_by_name(name)
+
+    def get_service_by_url(self, url):
+        """Get service from twitcher registry by given url."""
+        return self.service_registry.get_service_by_url(url)
 
     def get_services(self, service_type=None, maxrecords=100):
         raise NotImplementedError
@@ -144,7 +145,7 @@ class CatalogService(Catalog):
         if service_type == THREDDS_TYPE:
             self.insert_record(_fetch_thredds_metadata(url, service_title))
         else:  # ogc services
-            self.service_registry.register_service(url=url, name=service_name, public=public)
+            self.service_registry.register_service(url=url, data={'name': service_name, 'public': public})
             try:
                 self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
             except:
@@ -198,7 +199,11 @@ class MongodbCatalog(Catalog):
         elif service_type == WPS_TYPE:
             # register service first
             service = self.service_registry.register_service(
-                url=url, name=service_name, public=public, overwrite=False, c4i=c4i)
+                url=url,
+                data={'name': service_name,
+                      'public': public,
+                      'c4i': c4i},
+                overwrite=False)
             try:
                 # fetch metadata
                 record = _fetch_wps_metadata(service['url'], title=service_title)

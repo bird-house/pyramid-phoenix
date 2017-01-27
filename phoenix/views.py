@@ -39,7 +39,6 @@ class MyView(object):
         self.title = title
         self.description = description
         # TODO: refactor db access
-        self.db = self.request.db
         self.userdb = self.request.db.users
 
         # set breadcrumbs
@@ -81,7 +80,7 @@ def unknown_failure(request, exc):
     return response
 
 
-@view_config(route_name='download')
+@view_config(route_name='download_storage')
 def download(request):
     filename = request.matchdict.get('filename')
     #filename = request.params['filename']

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pyramid.view import view_config, view_defaults
 from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPFound
@@ -6,7 +8,14 @@ from deform import Form, ValidationFailure, Button
 
 from phoenix.views import MyView
 from phoenix.utils import ActionButton
-from ..schema import ProfileSchema, TwitcherSchema, ESGFCredentialsSchema, C4ISchema, GroupSchema
+from ..schema import (
+    ProfileSchema,
+    TwitcherSchema,
+    ESGFSLCSTokenSchema,
+    ESGFCredentialsSchema,
+    C4ISchema,
+    GroupSchema
+)
 
 import logging
 logger = logging.getLogger(__name__)
@@ -26,6 +35,8 @@ class Profile(MyView):
             title = "Personal access token"
         elif self.tab == 'c4i':
             title = "C4I access token"
+        elif self.tab == 'esgf_slcs':
+            title = "ESGF SLCS access token"
         elif self.tab == 'esgf':
             title = "ESGF access token"
         elif self.tab == 'group':
@@ -35,13 +46,28 @@ class Profile(MyView):
         return title
 
     def appstruct(self):
-        return self.collection.find_one({'identifier': self.userid})
+        appstruct = self.collection.find_one({'identifier': self.userid})
+        token = self.user.get('esgf_token')
+        if token:
+            appstruct['esgf_token'] = token.get('access_token')
+            expires_at = datetime.utcfromtimestamp(
+                int(token.get('expires_at'))).strftime(format="%Y-%m-%d %H:%M:%S UTC")
+            appstruct['esgf_token_expires_at'] = expires_at
+        token = self.user.get('twitcher_token')
+        if token:
+            appstruct['twitcher_token'] = token.get('access_token')
+            expires_at = datetime.utcfromtimestamp(
+                int(token.get('expires_at'))).strftime(format="%Y-%m-%d %H:%M:%S UTC")
+            appstruct['twitcher_token_expires_at'] = expires_at
+        return appstruct
 
     def schema(self):
         if self.tab == 'twitcher':
             schema = TwitcherSchema()
         elif self.tab == 'c4i':
             schema = C4ISchema()
+        elif self.tab == 'esgf_slcs':
+            schema = ESGFSLCSTokenSchema()
         elif self.tab == 'esgf':
             schema = ESGFCredentialsSchema()
         elif self.tab == 'group':
@@ -76,12 +102,17 @@ class Profile(MyView):
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('generate_twitcher_token'))
         elif self.tab == 'c4i':
-            btn = ActionButton(name='generate_c4i_token', title='Generate C4I Token',
+            btn = ActionButton(name='generate_c4i_token', title='Generate Token',
                                css_class="btn btn-success btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href="https://dev.climate4impact.eu/impactportal/account/tokenapi.jsp")
+        elif self.tab == 'esgf_slcs':
+            btn = ActionButton(name='generate_esgf_slcs_token', title='Generate Token',
+                               css_class="btn btn-success btn-xs",
+                               disabled=not self.request.has_permission('submit'),
+                               href=self.request.route_path('generate_esgf_slcs_token'))
         elif self.tab == 'esgf':
-            btn = ActionButton(name='forget_esgf_certs', title='Forget ESGF credential',
+            btn = ActionButton(name='forget_esgf_certs', title='Forget ESGF Credential',
                                css_class="btn btn-danger btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('forget_esgf_certs'))

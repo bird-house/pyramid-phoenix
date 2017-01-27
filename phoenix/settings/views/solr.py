@@ -3,7 +3,6 @@ from pyramid.httpexceptions import HTTPFound
 
 from phoenix.tasks.solr import clear_index
 from phoenix.tasks.solr import index_thredds
-from phoenix.settings import load_settings
 from phoenix.views import MyView
 
 import logging
@@ -25,10 +24,10 @@ class SolrSettings(MyView):
     def index_service(self):
         service_id = self.request.matchdict.get('service_id')
         service = self.request.catalog.get_record_by_id(service_id)
-        settings = load_settings(self.request)
+        settings = self.request.registry.settings
         index_thredds.delay(url=service.source,
-                            maxrecords=settings.get('solr_maxrecords'),
-                            depth=settings.get('solr_depth'))
+                            maxrecords=settings.get('solr.maxrecords'),
+                            depth=settings.get('solr.depth'))
         self.session.flash('Start Indexing of Service %s. Reload page to see status ...' % service.title,
                            queue="danger")
         return HTTPFound(location=self.request.route_path(self.name, tab="index"))

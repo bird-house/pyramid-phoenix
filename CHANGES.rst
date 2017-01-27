@@ -1,11 +1,26 @@
 Changes
 *******
 
+0.7.0 (2017-01-27)
+==================
+
+* updated to twitcher 0.3.1.
+* mongodb-dbname is configurable.
+* added settings page for esgf-slcs service.
+* update esgf token with refresh-token.
+* added download action for inputs/outputs in monitor.
+* added twitcher-delegate option.
+* updated leaflet timedimension plugin v1.0.6.
+
+Bug-Fixes:
+
+* fixed #136: encoding of wps xml response.
+
 0.6.4 (2017-01-04)
 ==================
 
 * fixed install on ubuntu 16.04: updated conda env.
-* simplified version string.
+* simplified version setting.
 
 0.6.3 (2016-12-23)
 ==================

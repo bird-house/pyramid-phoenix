@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 from phoenix.db import mongodb
-from phoenix.security import generate_access_token
+from phoenix.twitcherclient import generate_access_token
 
 from pyramid_celery import celery_app as app
 from celery.utils.log import get_task_logger
@@ -79,11 +79,9 @@ def get_access_token(userid):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
 
-    # update access token
-    generate_access_token(registry, userid)
-
-    user = db.users.find_one(dict(identifier=userid))
-    return user.get('twitcher_token')
+    # refresh access token
+    token = generate_access_token(registry, userid=userid)
+    return token.get('access_token')
 
 
 def get_c4i_access_token(userid):

@@ -1,7 +1,7 @@
 from pyramid.settings import asbool
 from pyramid.events import NewRequest
 
-from twitcher.registry import service_registry_factory
+from phoenix.twitcherclient import twitcher_service_factory
 
 from owslib.wps import WebProcessingService
 
@@ -13,6 +13,8 @@ def includeme(config):
     settings = config.registry.settings
 
     if asbool(settings.get('phoenix.wizard', 'false')):
+        config.include('phoenix.twitcherclient')
+
         config.include('phoenix.wizard.views.start')
         config.include('phoenix.wizard.views.wps')
         config.include('phoenix.wizard.views.wpsprocess')
@@ -25,23 +27,23 @@ def includeme(config):
         config.include('phoenix.wizard.views.done')
 
         # add malleefowl wps
-        def add_wps(event):
-            request = event.request
-            # settings = event.request.registry.settings
-            if not 'wps' in settings:
+        def get_wps(request):
+            settings = request.registry.settings
+            if 'wps' not in settings:
                 logger.debug('register malleefowl wps service')
                 try:
                     service_name = 'malleefowl'
-                    registry = service_registry_factory(request.registry)
+                    registry = twitcher_service_factory(request.registry)
                     logger.debug("register: name=%s, url=%s", service_name, settings['wps.url'])
-                    registry.register_service(name=service_name, url=settings['wps.url'], overwrite=True)
+                    registry.register_service(url=settings['wps.url'], data={'name': service_name}, overwrite=True)
                     settings['wps'] = WebProcessingService(
                         url=request.route_url('owsproxy', service_name=service_name),
                         skip_caps=True, verify=False)
+                    logger.debug('malleefowl proxy url: %s', settings['wps'].url)
                 except:
                     logger.exception('Could not connect malleefowl wps %s', settings['wps.url'])
-            event.request.wps = settings.get('wps')
-        config.add_subscriber(add_wps, NewRequest)
+            return settings.get('wps')
+        config.add_request_method(get_wps, 'wps', reify=True)
 
     # check if wizard is activated
     def wizard_activated(request):

@@ -49,13 +49,13 @@ class GroupSchema(colander.MappingSchema):
 class TwitcherSchema(colander.MappingSchema):
     twitcher_token = colander.SchemaNode(
         colander.String(),
-        title="Twitcher access token",
+        title="Access Token",
         missing='',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
     )
-    twitcher_token_expires = colander.SchemaNode(
+    twitcher_token_expires_at = colander.SchemaNode(
         colander.String(),
-        title="Expires",
+        title="Expires at",
         missing='',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
     )
@@ -64,9 +64,24 @@ class TwitcherSchema(colander.MappingSchema):
 class C4ISchema(colander.MappingSchema):
     c4i_token = colander.SchemaNode(
         colander.String(),
-        title="C4I access token",
+        title="Access Token",
         missing='',
         widget=deform.widget.TextInputWidget(),
+    )
+
+
+class ESGFSLCSTokenSchema(colander.MappingSchema):
+    esgf_token = colander.SchemaNode(
+        colander.String(),
+        title="Access Token",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+    )
+    esgf_token_expires_at = colander.SchemaNode(
+        colander.String(),
+        title="Expires at",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
     )
 
 

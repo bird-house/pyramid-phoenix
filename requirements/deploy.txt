@@ -6,11 +6,10 @@ pyramid_layout
 pyramid_deform
 pyramid_beaker
 pyramid_mailer
-pyramid_ldap
 pyramid_celery
 pyramid_storage
 pyramid_celery
-pyramid_twitcher
+pyramid_twitcher>=0.3.0
 deform
 #js.deform
 #js.bootstrap
@@ -21,7 +20,6 @@ webhelpers2
 webhelpers2_grid
 mako
 pyyaml
-ldappool<2
 owslib
 lxml
 python-dateutil
