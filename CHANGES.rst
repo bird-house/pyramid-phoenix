@@ -1,7 +1,7 @@
 Changes
 *******
 
-0.7.0 (2017-01-xx)
+0.7.0 (2017-01-27)
 ==================
 
 * updated to twitcher 0.3.1.
@@ -10,6 +10,7 @@ Changes
 * update esgf token with refresh-token.
 * added download action for inputs/outputs in monitor.
 * added twitcher-delegate option.
+* updated leaflet timedimension plugin v1.0.6.
 
 Bug-Fixes:
 
