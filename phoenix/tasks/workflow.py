@@ -38,9 +38,9 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
         # logger.debug('workflow=%s', workflow)
         headers = wps_headers(userid)
         # TODO: handle access token in workflow
-        workflow['worker']['url'] = build_get_url(
-            workflow['worker']['url'],
-            {'access_token': headers.get('Access-Token', '')})
+        # workflow['worker']['url'] = build_get_url(
+        #    workflow['worker']['url'],
+        #    {'access_token': headers.get('Access-Token', '')})
         # logger.debug('workflow_mod=%s', workflow)
         inputs = [('workflow', ComplexDataInput(
             # TODO: pywps-4 expects base64 encoding when not set to ''
