@@ -5,7 +5,7 @@ import colander
 import deform
 
 from phoenix.tasks.utils import task_result
-from phoenix.tasks.esgf import esgf_logon
+from phoenix.tasks.esgflogon import esgf_logon
 from phoenix.wizard.views import Wizard
 
 import logging
