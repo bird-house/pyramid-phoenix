@@ -8,10 +8,40 @@ from io import BytesIO
 import OpenSSL
 from dateutil import parser as date_parser
 
+from pyramid_storage.interfaces import IFileStorage
+
 from pyesgf.logon import LogonManager, ESGF_CREDENTIALS
+
+from phoenix.db import mongodb
 
 import logging
 LOGGER = logging.getLogger(__name__)
+
+
+def save_credentials(registry, userid, file=None, filename=None, openid=None):
+    settings = registry.settings
+    db = mongodb(registry)
+    storage = registry.getUtility(IFileStorage)
+
+    # store credentials.pem in storage
+    if filename:
+        stored_credentials = storage.save_filename(
+            filename,
+            folder="esgf_certs",
+            extensions=('pem',),
+            randomize=True)
+    else:
+        raise Exception("No credentials to save. Use file or filename parameter.")
+    # get cert infos
+    cert_expires = cert_infos(storage.path(stored_credentials)).get('expires')
+
+    # update database
+    user = db.users.find_one({'identifier': userid})
+    if openid:
+        user['openid'] = openid
+    user['credentials'] = storage.url(stored_credentials)
+    user['cert_expires'] = cert_expires
+    db.users.update({'identifier': userid}, user)
 
 
 def logon_with_openid(openid, password=None, interactive=False, outdir=None):
