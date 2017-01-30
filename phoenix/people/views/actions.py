@@ -17,6 +17,10 @@ class Actions(object):
         self.collection = self.request.db.users
         self.userid = self.request.matchdict.get('userid', authenticated_userid(self.request))
 
+    @view_config(route_name='update_esgf_certs', permission='submit')
+    def update_esgf_certs(self):
+        return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_certs'))
+
     @view_config(route_name='forget_esgf_certs', permission='submit')
     def forget_esgf_certs(self):
         user = self.collection.find_one({'identifier': self.userid})
@@ -70,6 +74,7 @@ def includeme(config):
     :param config: app config
     :type config: :class:`pyramid.config.Configurator`
     """
+    config.add_route('update_esgf_certs', 'people/update_esgf_certs')
     config.add_route('forget_esgf_certs', 'people/forget_esgf_certs')
     config.add_route('generate_twitcher_token', 'people/gentoken')
     config.add_route('generate_esgf_slcs_token', 'people/generate_esgf_token')
