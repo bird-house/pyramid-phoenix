@@ -117,5 +117,5 @@ def cert_infos(filename):
     with open(filename) as fh:
         data = fh.read()
         cert = OpenSSL.crypto.load_certificate(OpenSSL.SSL.FILETYPE_PEM, data)
-        expires = date_parser.parse(cert.get_notAfter())
+        expires = date_parser.parse(cert.get_notAfter()).replace(microsecond=0).isoformat()
     return dict(expires=expires)
