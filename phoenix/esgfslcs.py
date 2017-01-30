@@ -1,3 +1,7 @@
+from OpenSSL import crypto
+from base64 import b64encode
+from StringIO import StringIO
+
 from requests_oauthlib import OAuth2Session
 
 from pyramid.security import authenticated_userid
@@ -91,3 +95,51 @@ class ESGFSLCSClient(object):
             self.collection.update_one(
                 {'identifier': self.userid},
                 {'$set': {'esgf_token': token, }})
+
+    def get_certificate(self):
+        """
+        Generates a new private key and certificate request, submits the request to be
+        signed by the SLCS CA and prints the resulting key/certificate pair.
+
+        Uses automatic refreshing of tokens if they have expired.
+        """
+        token = self.get_token()
+        if not token:
+            return False
+        # Generate a new key pair
+        key_pair = crypto.PKey()
+        key_pair.generate_key(crypto.TYPE_RSA, 2048)
+        private_key = crypto.dump_privatekey(crypto.FILETYPE_PEM, key_pair).decode("utf-8")
+        # Generates a certificate request using the key pair
+        cert_request = crypto.X509Req()
+        cert_request.set_pubkey(key_pair)
+        cert_request.sign(key_pair, "md5")
+        cert_request = crypto.dump_certificate_request(crypto.FILETYPE_ASN1, cert_request)
+        # Build th oauth session object
+        client = OAuth2Session(
+            self.client_id,
+            token=token,
+            auto_refresh_url=self.refresh_url,
+            auto_refresh_kwargs={
+                'client_id': self.client_id,
+                'client_secret': self.client_secret,
+            },
+            # Update the token with the new token if it is refreshed
+            token_updater=self.save_token,
+        )
+        response = client.post(
+            self.certificate_url,
+            data={'certificate_request': b64encode(cert_request)},
+            verify=False
+        )
+        # Store credentials
+        stored_credentials = self.request.storage.save_file(
+            StringIO(response.text),
+            filename="credentials.pem",
+            folder="esgf_certs",
+            extensions=('pem',),
+            randomize=True)
+        user = self.collection.find_one({'identifier': self.userid})
+        user['credentials'] = self.request.storage.url(stored_credentials)
+        self.collection.update({'identifier': self.userid}, user)
+        return True
