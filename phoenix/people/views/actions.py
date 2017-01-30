@@ -23,8 +23,8 @@ class Actions(object):
         user['credentials'] = None
         user['cert_expires'] = None
         self.collection.update({'identifier': self.userid}, user)
-        self.session.flash("ESGF Certficate removed.", queue='info')
-        return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf'))
+        self.session.flash("ESGF credentials removed.", queue='info')
+        return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_certs'))
 
     @view_config(route_name='generate_twitcher_token', permission='submit')
     def generate_twitcher_token(self):

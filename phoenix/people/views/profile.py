@@ -37,8 +37,8 @@ class Profile(MyView):
             title = "C4I access token"
         elif self.tab == 'esgf_slcs':
             title = "ESGF SLCS access token"
-        elif self.tab == 'esgf':
-            title = "ESGF access token"
+        elif self.tab == 'esgf_certs':
+            title = "ESGF X509 credentials"
         elif self.tab == 'group':
             title = 'Group permission'
         else:
@@ -68,7 +68,7 @@ class Profile(MyView):
             schema = C4ISchema()
         elif self.tab == 'esgf_slcs':
             schema = ESGFSLCSTokenSchema()
-        elif self.tab == 'esgf':
+        elif self.tab == 'esgf_certs':
             schema = ESGFCredentialsSchema()
         elif self.tab == 'group':
             schema = GroupSchema()
@@ -111,8 +111,8 @@ class Profile(MyView):
                                css_class="btn btn-success btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('generate_esgf_slcs_token'))
-        elif self.tab == 'esgf':
-            btn = ActionButton(name='forget_esgf_certs', title='Forget ESGF Credential',
+        elif self.tab == 'esgf_certs':
+            btn = ActionButton(name='forget_esgf_certs', title='Forget ESGF Credentials',
                                css_class="btn btn-danger btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('forget_esgf_certs'))
