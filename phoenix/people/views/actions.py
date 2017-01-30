@@ -20,8 +20,12 @@ class Actions(object):
     @view_config(route_name='update_esgf_certs', permission='submit')
     def update_esgf_certs(self):
         client = ESGFSLCSClient(self.request)
-        client.get_certificate()
-        return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_certs'))
+        if client.get_token():
+            client.get_certificate()
+            return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_certs'))
+        else:
+            auth_url = client.authorize()
+            return HTTPFound(location=auth_url)
 
     @view_config(route_name='forget_esgf_certs', permission='submit')
     def forget_esgf_certs(self):
