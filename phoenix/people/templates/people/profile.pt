@@ -45,14 +45,16 @@
                             <div class="panel-heading">
                                 <span class="panel-title">
                                     ${title}
-                                    <div tal:condition="button" class="pull-right">
+                                    <div tal:condition="buttons" class="pull-right">
+                                      <tal:button tal:repeat="button buttons">
                                          <a class="${button.css_class}"
                                             rel="tooltip"
                                             data-toggle="tooltip"
                                             title="${button.title}"
                                             href="${button.href}">
                                             ${button.title}
-                                        </a>
+                                          </a>
+                                        </tal:button>
                                     </div>
                                 </span>
                             </div>

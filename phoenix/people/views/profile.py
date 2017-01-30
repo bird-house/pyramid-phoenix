@@ -94,29 +94,33 @@ class Profile(MyView):
             form = Form(schema=self.schema(), formid='deform')
         return form
 
-    def generate_button(self):
-        btn = None
+    def generate_buttons(self):
+        btns = []
         if self.tab == 'twitcher':
             btn = ActionButton(name='generate_twitcher_token', title='Generate Token',
                                css_class="btn btn-success btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('generate_twitcher_token'))
+            btns.append(btn)
         elif self.tab == 'c4i':
             btn = ActionButton(name='generate_c4i_token', title='Generate Token',
                                css_class="btn btn-success btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href="https://dev.climate4impact.eu/impactportal/account/tokenapi.jsp")
+            btns.append(btn)
         elif self.tab == 'esgf_slcs':
             btn = ActionButton(name='generate_esgf_slcs_token', title='Generate Token',
                                css_class="btn btn-success btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('generate_esgf_slcs_token'))
+            btns.append(btn)
         elif self.tab == 'esgf_certs':
             btn = ActionButton(name='forget_esgf_certs', title='Forget ESGF Credentials',
                                css_class="btn btn-danger btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('forget_esgf_certs'))
-        return btn
+            btns.append(btn)
+        return btns
 
     def process_form(self, form):
         try:
@@ -142,7 +146,7 @@ class Profile(MyView):
 
         return dict(user_name=self.user.get('name', 'Unknown'),
                     title=self.panel_title(),
-                    button=self.generate_button(),
+                    buttons=self.generate_buttons(),
                     userid=self.userid,
                     active=self.tab,
                     form=form.render(self.appstruct()))
