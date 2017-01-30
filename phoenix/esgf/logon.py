@@ -24,12 +24,19 @@ def save_credentials(registry, userid, file=None, filename=None, openid=None):
     storage = registry.getUtility(IFileStorage)
 
     # store credentials.pem in storage
-    if filename:
+    storage_options = dict(
+        folder="esgf_certs",
+        extensions=('pem',),
+        randomize=True)
+    if file:
+        stored_credentials = storage.save_file(
+            file,
+            filename=ESGF_CREDENTIALS,
+            **storage_options)
+    elif filename:
         stored_credentials = storage.save_filename(
             filename,
-            folder="esgf_certs",
-            extensions=('pem',),
-            randomize=True)
+            **storage_options)
     else:
         raise Exception("No credentials to save. Use file or filename parameter.")
     # get cert infos

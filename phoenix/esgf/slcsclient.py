@@ -6,6 +6,8 @@ from requests_oauthlib import OAuth2Session
 
 from pyramid.security import authenticated_userid
 
+from phoenix.esgf.logon import save_credentials
+
 import logging
 LOGGER = logging.getLogger(__name__)
 
@@ -133,13 +135,5 @@ class ESGFSLCSClient(object):
             verify=False
         )
         # Store credentials
-        stored_credentials = self.request.storage.save_file(
-            StringIO(response.text),
-            filename="credentials.pem",
-            folder="esgf_certs",
-            extensions=('pem',),
-            randomize=True)
-        user = self.collection.find_one({'identifier': self.userid})
-        user['credentials'] = self.request.storage.url(stored_credentials)
-        self.collection.update({'identifier': self.userid}, user)
+        save_credentials(self.request.registry, self.userid, file=StringIO(response.text))
         return True
