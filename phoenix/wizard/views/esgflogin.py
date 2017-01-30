@@ -72,11 +72,11 @@ class ESGFLogin(Wizard):
     def loading(self):
         result = task_result(self.session.get('task_id'))
         if result.ready():
-            if result.get() == 'ProcessSucceeded':
+            if result.get().get('status') == 'Success':
                 self.session.flash('ESGF logon was successful.', queue='success')
                 return self.next('wizard_done')
             else:
-                self.session.flash('ESGF logon failed.', queue='danger')
+                self.session.flash('ESGF logon failed: {}.'.format(result.get().get('message')), queue='danger')
                 return HTTPFound(location=self.request.route_path(self.name))
         return {}
 
