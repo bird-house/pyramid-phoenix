@@ -32,6 +32,9 @@ def main(global_config, **settings):
     config.include('pyramid_celery')
     config.configure_celery(global_config['__file__'])
 
+    # storage
+    config.include('pyramid_storage')
+
     # ldap
     config.include('phoenix.ldap')
     # FK: Ldap setup functions will be called on demand.

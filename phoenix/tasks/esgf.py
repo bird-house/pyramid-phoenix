@@ -24,12 +24,15 @@ def esgf_logon(self, userid, url, openid, password):
     LOGGER.debug("esgf_logon, url=%s", url)
     result = {'status': "Running"}
     registry = app.conf['PYRAMID_REGISTRY']
+    settings = registry.settings
     db = mongodb(registry)
     storage = registry.getUtility(IFileStorage)
 
     try:
         # need temp folder for outputs
-        outdir = tempfile.mkdtemp()
+        if not os.path.isdir(settings.get('phoenix.workdir')):
+            os.makedirs(settings.get('phoenix.workdir'), mode=0700)
+        outdir = tempfile.mkdtemp(prefix='phoenix-', dir=settings.get('phoenix.workdir'))
         # use myproxy logon to get credentials
         credentials = myproxy_logon_with_openid(openid=openid, password=password, outdir=outdir)
         cert_expires = cert_infos(credentials).get('expires')
