@@ -43,7 +43,12 @@ class Actions(object):
 
     @view_config(route_name='generate_twitcher_token', permission='submit')
     def generate_twitcher_token(self):
-        generate_access_token(self.request.registry, userid=self.userid)
+        try:
+            generate_access_token(self.request.registry, userid=self.userid)
+        except Exception as err:
+            self.session.flash('Could not refresh token: {}'.format(err.message), queue="danger")
+        else:
+            self.session.flash('Twitcher token was updated.', queue="success")
         return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='twitcher'))
 
     @view_config(route_name='generate_esgf_slcs_token', permission='submit')
@@ -76,6 +81,7 @@ class Actions(object):
         """
         client = ESGFSLCSClient(self.request)
         client.delete_token()
+        self.session.flash("ESGF token removed.", queue='info')
         return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_slcs'))
 
     @view_config(route_name='esgf_oauth_callback', permission='submit')
