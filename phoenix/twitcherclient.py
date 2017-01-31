@@ -28,7 +28,7 @@ def twitcher_service_factory(registry):
     return service
 
 
-def generate_access_token(registry, userid=None, valid_in_hours=1):
+def generate_access_token(registry, userid, valid_in_hours=1):
     service = twitcher_service_factory(registry)
     db = mongodb(registry)
     collection = db.users
@@ -37,9 +37,13 @@ def generate_access_token(registry, userid=None, valid_in_hours=1):
     user = collection.find_one({'identifier': userid})
     esgf_token = user.get('esgf_token')
     if esgf_token:
-        refresh_token(registry, token=esgf_token, userid=userid)
-        data['esgf_access_token'] = esgf_token.get('access_token', '')
-        data['esgf_slcs_service_url'] = registry.settings.get('esgf_slcs_url', '')
+        try:
+            refresh_token(registry, token=esgf_token, userid=userid)
+        except Exception as err:
+            LOGGER.warn("Could not refresh token: {}".format(err.message))
+        else:
+            data['esgf_access_token'] = esgf_token.get('access_token', '')
+            data['esgf_slcs_service_url'] = registry.settings.get('esgf_slcs_url', '')
     esgf_cert = user.get('credentials')
     if esgf_cert:
         data['esgf_credentials'] = esgf_cert
