@@ -48,11 +48,19 @@ class Actions(object):
         """
         client = ESGFSLCSClient(self.request)
         if client.get_token():
-            client.refresh_token()
+            try:
+                client.refresh_token()
+            except Exception as err:
+                self.session.flash('Could not refresh token: {}'.format(err.message), queue="danger")
             return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_slcs'))
         else:
-            auth_url = client.authorize()
-            return HTTPFound(location=auth_url)
+            try:
+                auth_url = client.authorize()
+            except Exception as err:
+                self.session.flash('Could not retrieve token: {}'.format(err.message), queue="danger")
+                return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_slcs'))
+            else:
+                return HTTPFound(location=auth_url)
 
     @view_config(route_name='forget_esgf_slcs_token', permission='submit')
     def forget_esgf_slcs_token(self):
