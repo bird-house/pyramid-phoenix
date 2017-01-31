@@ -19,6 +19,3 @@ class PageLayout(object):
 
     def add_heading(self, name, *args, **kw):
         self.headings.append((name, args, kw))
-
-
-
