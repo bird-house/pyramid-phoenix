@@ -2,10 +2,7 @@ import deform
 import colander
 from colander import Invalid
 
-from phoenix.geoform.widget import (
-    TagsWidget,
-    ESGFSearchWidget,
-    )
+from phoenix.geoform.widget import TagsWidget, ESGFSearchWidget
 
 import logging
 logger = logging.getLogger(__name__)
@@ -15,7 +12,7 @@ def esgfsearch_validator(node, value):
     import json
     search = json.loads(value)
     if search.get('hit-count', 0) > 100:
-        raise Invalid(node, 'More than 100 datasets selected: %r.' %  search['hit-count'])
+        raise Invalid(node, 'More than 100 datasets selected: %r.' % search['hit-count'])
 
 
 class SwiftLoginSchema(colander.MappingSchema):
@@ -25,7 +22,7 @@ class SwiftLoginSchema(colander.MappingSchema):
         description="Your Swift Username: account:user",
         missing='',
         default='',
-        )
+    )
     password = colander.SchemaNode(
         colander.String(),
         title='Password',
@@ -43,7 +40,7 @@ class ESGFSearchSchema(colander.MappingSchema):
 
 
 class UploadSchema(SwiftLoginSchema):
-    
+
     container = colander.SchemaNode(colander.String())
     prefix = colander.SchemaNode(colander.String())
     source = colander.SchemaNode(
@@ -62,7 +59,7 @@ class PublishSchema(colander.MappingSchema):
     @colander.deferred
     def deferred_default_format(node, kw):
         return kw.get('format', "application/x-netcdf")
-        
+
     identifier = colander.SchemaNode(
         colander.String(),
         default=uuid.uuid4().get_urn())
@@ -85,19 +82,16 @@ class PublishSchema(colander.MappingSchema):
         colander.String(),
         default=deferred_default_format,
         description='Format of your source. Example: NetCDF',
-        )
+    )
     subjects = colander.SchemaNode(
         colander.String(),
         default='test',
         missing='test',
         description="Keywords: tas, temperature, ...",
         widget=TagsWidget(),
-        )
+    )
     rights = colander.SchemaNode(
         colander.String(),
         missing='Unknown',
         default='Free for non-commercial use',
-        )
-
-
-
+    )
