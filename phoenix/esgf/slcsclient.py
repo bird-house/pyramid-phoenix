@@ -7,14 +7,47 @@ from requests_oauthlib import OAuth2Session
 from pyramid.security import authenticated_userid
 
 from phoenix.esgf.logon import save_credentials
+from phoenix.db import mongodb
 
 import logging
 LOGGER = logging.getLogger(__name__)
 
 
+def refresh_token(registry, token, userid):
+    settings = registry.settings
+
+    client_id = settings.get('esgf.slcs.client.id')
+    client_secret = settings.get('esgf.slcs.client.secret')
+    refresh_url = "{}/oauth/access_token".format(settings.get('esgf.slcs.url'))
+
+    token['expires_in'] = '-30'  # need to be negative to refresh token
+
+    extra = {
+        'client_id': client_id,
+        'client_secret': client_secret,
+    }
+
+    client = OAuth2Session(client_id, token=token)
+    token = client.refresh_token(refresh_url, verify=False, **extra)
+    save_token(registry, token, userid)
+    LOGGER.debug('refresh token done.')
+    return True
+
+
+def save_token(registry, token, userid):
+    """
+    Store the token in the database.
+    """
+    db = mongodb(registry)
+    db.users.update_one(
+        {'identifier': userid},
+        {'$set': {'esgf_token': token, }})
+
+
 class ESGFSLCSClient(object):
     def __init__(self, request):
         self.request = request
+        self.registry = self.request.registry
         self.session = self.request.session
         settings = self.request.registry.settings
         self.collection = self.request.db.users
@@ -70,18 +103,7 @@ class ESGFSLCSClient(object):
         token = self.get_token()
         if not token:
             return False
-        else:
-            token['expires_in'] = '-30'  # need to be negative to refresh token
-
-        extra = {
-            'client_id': self.client_id,
-            'client_secret': self.client_secret,
-        }
-
-        client = OAuth2Session(self.client_id, token=token)
-        token = client.refresh_token(self.refresh_url, verify=False, **extra)
-        self.save_token(token)
-        LOGGER.debug('refresh token done.')
+        refresh_token(self.registry, token=token, userid=self.userid)
         return True
 
     def get_token(self):
@@ -93,10 +115,7 @@ class ESGFSLCSClient(object):
         """
         Store the token in the database.
         """
-        if self.userid:
-            self.collection.update_one(
-                {'identifier': self.userid},
-                {'$set': {'esgf_token': token, }})
+        save_token(self.registry, token=token, userid=self.userid)
 
     def get_certificate(self):
         """
