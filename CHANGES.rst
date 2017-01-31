@@ -1,6 +1,14 @@
 Changes
 *******
 
+
+0.7.1 (2017-02-xx)
+==================
+
+* updated to twitcher 0.3.2.
+* added esgflogon task.
+* update certificate with ESGF oauth token.
+
 0.7.0 (2017-01-27)
 ==================
 
