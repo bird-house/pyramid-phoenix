@@ -26,7 +26,7 @@ def esgf_logon(self, userid, url, openid, password):
         credentials = logon_with_openid(openid=openid, password=password, outdir=outdir)
 
         # store credentials
-        save_credentials(registry, userid, filename=credentials, openid=openid)
+        save_credentials(registry, userid, filename=credentials)
 
         # remove tempfolder
         shutil.rmtree(outdir)
