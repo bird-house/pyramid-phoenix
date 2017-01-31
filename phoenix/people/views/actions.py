@@ -54,6 +54,15 @@ class Actions(object):
             auth_url = client.authorize()
             return HTTPFound(location=auth_url)
 
+    @view_config(route_name='forget_esgf_slcs_token', permission='submit')
+    def forget_esgf_slcs_token(self):
+        """
+        Forget ESGF slcs token.
+        """
+        client = ESGFSLCSClient(self.request)
+        client.delete_token()
+        return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_slcs'))
+
     @view_config(route_name='esgf_oauth_callback', permission='submit')
     def esgf_oauth_callback(self):
         """
@@ -84,5 +93,6 @@ def includeme(config):
     config.add_route('forget_esgf_certs', 'people/forget_esgf_certs')
     config.add_route('generate_twitcher_token', 'people/gentoken')
     config.add_route('generate_esgf_slcs_token', 'people/generate_esgf_token')
+    config.add_route('forget_esgf_slcs_token', 'people/forget_esgf_token')
     config.add_route('esgf_oauth_callback', 'account/oauth/esgf/callback')
     config.add_route('delete_user', 'people/delete/{userid}')

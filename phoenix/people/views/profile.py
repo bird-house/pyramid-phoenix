@@ -114,6 +114,11 @@ class Profile(MyView):
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('generate_esgf_slcs_token'))
             btns.append(btn)
+            btn = ActionButton(name='forget_esgf_slcs_token', title='Forget Token',
+                               css_class="btn btn-danger btn-xs",
+                               disabled=not self.request.has_permission('submit'),
+                               href=self.request.route_path('forget_esgf_slcs_token'))
+            btns.append(btn)
         elif self.tab == 'esgf_certs':
             btn = ActionButton(name='update_esgf_certs', title='Update Credentials',
                                css_class="btn btn-success btn-xs",

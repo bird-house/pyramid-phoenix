@@ -117,6 +117,12 @@ class ESGFSLCSClient(object):
         """
         save_token(self.registry, token=token, userid=self.userid)
 
+    def delete_token(self):
+        """
+        Remove token from database.
+        """
+        save_token(self.registry, token=None, userid=self.userid)
+
     def get_certificate(self):
         """
         Generates a new private key and certificate request, submits the request to be
