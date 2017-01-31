@@ -18,7 +18,7 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
-def save_credentials(registry, userid, file=None, filename=None, openid=None):
+def save_credentials(registry, userid, file=None, filename=None):
     settings = registry.settings
     db = mongodb(registry)
     storage = registry.getUtility(IFileStorage)
@@ -40,14 +40,13 @@ def save_credentials(registry, userid, file=None, filename=None, openid=None):
     else:
         raise Exception("No credentials to save. Use file or filename parameter.")
     # get cert infos
-    cert_expires = cert_infos(storage.path(stored_credentials)).get('expires')
+    infos = cert_infos(storage.path(stored_credentials))
 
     # update database
     user = db.users.find_one({'identifier': userid})
-    if openid:
-        user['openid'] = openid
+    user['openid'] = infos.get('openid')
     user['credentials'] = storage.url(stored_credentials)
-    user['cert_expires'] = cert_expires
+    user['cert_expires'] = infos.get('expires_at')
     db.users.update({'identifier': userid}, user)
 
 
@@ -112,5 +111,6 @@ def cert_infos(filename):
     with open(filename) as fh:
         data = fh.read()
         cert = OpenSSL.crypto.load_certificate(OpenSSL.SSL.FILETYPE_PEM, data)
-        expires = date_parser.parse(cert.get_notAfter()).replace(microsecond=0).isoformat()
-    return dict(expires=expires)
+        expires_at = date_parser.parse(cert.get_notAfter()).replace(microsecond=0).isoformat()
+        openid = dict(cert.get_subject().get_components()).get('CN')
+    return dict(expires_at=expires_at, openid=openid)
