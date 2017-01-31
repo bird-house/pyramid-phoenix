@@ -104,7 +104,7 @@ class ESGFCredentialsSchema(colander.MappingSchema):
     )
     cert_expires = colander.SchemaNode(
         colander.String(),
-        title="Expires",
+        title="Expires at",
         description="When your Proxy Certificate expires",
         missing='',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
