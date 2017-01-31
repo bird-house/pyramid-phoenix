@@ -31,7 +31,7 @@ def refresh_token(registry, token, userid):
     token = client.refresh_token(refresh_url, verify=False, **extra)
     save_token(registry, token, userid)
     LOGGER.debug('refresh token done.')
-    return True
+    return token
 
 
 def save_token(registry, token, userid):
