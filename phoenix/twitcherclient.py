@@ -35,18 +35,18 @@ def generate_access_token(registry, userid, valid_in_hours=1):
 
     data = {}
     user = collection.find_one({'identifier': userid})
-    esgf_token = user.get('esgf_token')
-    if esgf_token:
+    if user.get('esgf_token'):
         try:
-            refresh_token(registry, token=esgf_token, userid=userid)
+            esgf_token = refresh_token(registry, token=user['esgf_token'], userid=userid)
         except Exception as err:
             LOGGER.warn("Could not refresh token: {}".format(err.message))
         else:
             data['esgf_access_token'] = esgf_token.get('access_token', '')
-            data['esgf_slcs_service_url'] = registry.settings.get('esgf_slcs_url', '')
-    esgf_cert = user.get('credentials')
-    if esgf_cert:
-        data['esgf_credentials'] = esgf_cert
+            data['esgf_slcs_service_url'] = registry.settings.get('esgf.slcs.url', '')
+            LOGGER.debug("passing token with esgf slcs token")
+    elif user.get('credentials'):
+        data['esgf_credentials'] = user['credentials']
+        LOGGER.debug("passing token with esgf credentials")
 
     # call to service
     token = service.generate_token(valid_in_hours, data)
