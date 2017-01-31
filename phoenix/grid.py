@@ -81,13 +81,13 @@ class CustomGrid(Grid):
             size_in_bytes = get_value(record, attribute)
             size = ''
             if size_in_bytes is not None:
-                size = format_byte_size( size_in_bytes )
+                size = format_byte_size(size_in_bytes)
             return HTML.td(size)
         return _column_format
 
     def userid_td(self, attribute):
         def _column_format(column_number, i, record):
-            #TODO: avoid database access ... maybe store additional info at job
+            # TODO: avoid database access ... maybe store additional info at job
             userid = get_value(record, attribute)
             label = 'Unknown'
             if userid:
@@ -99,7 +99,7 @@ class CustomGrid(Grid):
 
     def user_td(self, attribute):
         def _column_format(column_number, i, record):
-            #TODO: avoid database access ... maybe store additional info at job
+            # TODO: avoid database access ... maybe store additional info at job
             userid = get_value(record, attribute)
             label = 'Unknown'
             if userid:
@@ -132,7 +132,7 @@ class CustomGrid(Grid):
         <a class="${span_class}" href="${source}" data-format="${format}">${format}</a>
         """)
         return HTML.td(HTML.literal(anchor.substitute(
-            {'source': source, 'span_class': span_class, 'format': format} )))
+            {'source': source, 'span_class': span_class, 'format': format})))
 
     def render_preview_td(self, format, source):
         return self.render_td(renderer="preview_td.mako", format=format, source=source)
