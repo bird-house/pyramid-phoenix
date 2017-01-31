@@ -133,7 +133,9 @@ def get_user(request):
     return request.db.users.find_one(dict(identifier=userid))
 
 
-def user_cert_valid(request, valid_hours=6):
+def user_cert_valid(request, valid_hours=3):
+    if get_user(request).get('esgf_token'):
+        return True
     cert_expires = get_user(request).get('cert_expires')
     if cert_expires is not None:
         timestamp = datetime_parser.parse(cert_expires)
