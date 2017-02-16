@@ -12,15 +12,29 @@
                             <a href="${request.route_path('profile', userid=userid, tab='profile')}">Profile</a>
                         </li>
                         <li class="${'active' if active=='twitcher' else ''}">
-                            <a href="${request.route_path('profile', userid=userid, tab='twitcher')}">Personal access
-                                token
+                            <a href="${request.route_path('profile', userid=userid, tab='twitcher')}">
+                              Twitcher access token
+                            </a>
+                        </li>
+                        <li class="${'active' if active=='c4i' else ''}">
+                            <a href="${request.route_path('profile', userid=userid, tab='c4i')}">
+                              C4I access token
+                            </a>
+                        </li>
+                        <li class="${'active' if active=='esgf_slcs' else ''}">
+                            <a href="${request.route_path('profile', userid=userid, tab='esgf_slcs')}">
+                              ESGF SLCS access token
                             </a>
                         </li>
                         <li class="${'active' if active=='esgf' else ''}">
-                            <a href="${request.route_path('profile', userid=userid, tab='esgf')}">ESGF access token</a>
+                            <a href="${request.route_path('profile', userid=userid, tab='esgf')}">
+                              ESGF certificate
+                            </a>
                         </li>
                         <li class="${'active' if active=='group' else ''}">
-                            <a href="${request.route_path('profile', userid=userid, tab='group')}">Group Permission</a>
+                            <a href="${request.route_path('profile', userid=userid, tab='group')}">
+                              Group Permission
+                            </a>
                         </li>
                     </ul>
                 </div>

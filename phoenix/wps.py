@@ -4,6 +4,11 @@ import deform
 import dateutil
 import re
 import types
+import uuid
+import requests
+from lxml import etree
+
+from owslib.wps import WPSExecution
 
 from pyramid.security import authenticated_userid
 
@@ -14,6 +19,33 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def check_status(url=None, response=None, sleep_secs=2, verify=False):
+    """
+    Run owslib.wps check_status with additional exception handling.
+
+    :param verify: Flag to enable SSL verification. Default: False
+    :return: OWSLib.wps.WPSExecution object.
+    """
+    execution = WPSExecution()
+    if response:
+        logger.debug("using response document ...")
+        xml = response
+    elif url:
+        logger.debug('using status_location url ...')
+        xml = requests.get(url, verify=verify).content
+    else:
+        raise Exception("you need to provide a status-location url or response object.")
+    if type(xml) is unicode:
+        xml = xml.encode('utf8', errors='ignore')
+    execution.checkStatus(response=xml, sleepSecs=sleep_secs)
+    if execution.response is None:
+        raise Exception("check_status failed!")
+    # TODO: workaround for owslib type change of reponse
+    if not isinstance(execution.response, etree._Element):
+        execution.response = etree.fromstring(execution.response)
+    return execution
+
+
 def appstruct_to_inputs(request, appstruct):
     """
     Transforms appstruct to wps inputs.
@@ -21,29 +53,13 @@ def appstruct_to_inputs(request, appstruct):
     # logger.debug("appstruct=%s", appstruct)
     inputs = []
     for key, values in appstruct.items():
+        if key in ['_async_check']:
+            continue
         if not isinstance(values, types.ListType):
             values = [values]
         for value in values:
             # logger.debug("key=%s, value=%s, type=%s", key, value, type(value))
-            # check if we have a mapping type for complex input
-            if isinstance(value, dict):
-                # prefer upload if available
-                if value.get('upload', colander.null) is not colander.null:
-                    value = value['upload']
-                    # logger.debug('uploaded file %s', value)
-                    folder = authenticated_userid(request)
-                    if not folder:
-                        folder = 'guest'
-                    logger.debug('folder %s', folder)
-                    relpath = os.path.join(folder, value['filename'])
-                    # value = 'file://' + request.storage.path(relpath)
-                    # value = request.route_url('download', filename=relpath)
-                    value = request.storage.url(relpath)
-                    # logger.debug('uploaded file as reference = %s', value)
-                # otherwise use url
-                else:
-                    value = value['url']
-            inputs.append( (str(key).strip(), str(value).strip()) )
+            inputs.append((str(key).strip(), str(value).strip()))
     # logger.debug("inputs form appstruct=%s", inputs)
     return inputs
 
@@ -63,7 +79,7 @@ class WPSSchema(colander.MappingSchema):
 
     appstruct = {}
 
-    def __init__(self, request, hide_complex=False, process=None, unknown='ignore', user=None, **kw):
+    def __init__(self, request, hide_complex=False, process=None, use_async=False, unknown='ignore', user=None, **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
@@ -103,7 +119,20 @@ class WPSSchema(colander.MappingSchema):
         self.unknown = unknown
         self.user = user
         self.kwargs = kwargs or {}
+        if use_async:
+            self.add_async_check()
         self.add_nodes(process)
+
+    def add_async_check(self):
+        node = colander.SchemaNode(
+            colander.Boolean(),
+            name='_async_check',
+            title='Run async',
+            description='Check this to run process async.',
+            default=True,
+            widget=deform.widget.CheckboxWidget(),
+        )
+        self.add(node)
 
     def add_nodes(self, process):
         if process is None:
@@ -138,7 +167,7 @@ class WPSSchema(colander.MappingSchema):
             self.colander_literal_type(data_input),
             name=data_input.identifier,
             title=data_input.title,
-            )
+        )
 
         # sometimes abstract is not set
         node.description = getattr(data_input, 'abstract', '')
@@ -166,7 +195,7 @@ class WPSSchema(colander.MappingSchema):
                 name=data_input.identifier,
                 title=data_input.title,
                 validator=colander.Length(max=data_input.maxOccurs)
-                )
+            )
 
         return node
 
@@ -228,7 +257,7 @@ class WPSSchema(colander.MappingSchema):
             title=data_input.title,
             validator=BBoxValidator(),
             widget=BBoxWidget()
-            )
+        )
 
         # sometimes abstract is not set
         node.description = getattr(data_input, 'abstract') or 'No summary'
@@ -244,17 +273,15 @@ class WPSSchema(colander.MappingSchema):
                 name=data_input.identifier,
                 title=data_input.title,
                 validator=colander.Length(max=data_input.maxOccurs)
-                )
+            )
 
         return node
 
     def complex_data(self, data_input):
-        if self.request.has_permission('submit'):
-            folder = authenticated_userid(self.request)
-            storage_url = os.path.join(self.request.storage.base_url, folder)
-            widget = ResourceWidget(cart=True, upload=True, storage_url=storage_url)
-        else:
-            widget = deform.widget.TextInputWidget()
+        widget = ResourceWidget(
+            cart=self.request.has_permission('submit'),
+            upload=True,
+            storage_url=self.request.storage.base_url)
 
         resource_node = colander.SchemaNode(
             colander.String(),
@@ -311,7 +338,7 @@ class WPSSchema(colander.MappingSchema):
             title=data_input.title,
             default="0,-90,180,90",
             widget=deform.widget.TextInputWidget()
-            )
+        )
         # sometimes abstract is not set
         node.description = getattr(data_input, 'abstract', '')
 
@@ -335,7 +362,7 @@ class WPSSchema(colander.MappingSchema):
                 name=data_input.identifier,
                 title=data_input.title,
                 validator=colander.Length(max=data_input.maxOccurs)
-                )
+            )
 
         return node
 

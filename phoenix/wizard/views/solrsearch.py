@@ -11,6 +11,10 @@ logger = logging.getLogger(__name__)
 
 def includeme(config):
     config.add_route('wizard_solr', '/wizard/solrsearch')
+    config.add_view('phoenix.wizard.views.solrsearch.SolrSearch',
+                    route_name='wizard_solr',
+                    attr='view',
+                    renderer='../templates/wizard/solrsearch.pt')
 
 
 class SolrSearch(Wizard):
@@ -36,6 +40,5 @@ class SolrSearch(Wizard):
         self.success(appstruct)
         return self.next('wizard_done')
 
-    @view_config(route_name='wizard_solr', renderer='../templates/wizard/solrsearch.pt')
     def view(self):
         return super(SolrSearch, self).view()

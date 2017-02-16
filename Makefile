@@ -1,4 +1,4 @@
-VERSION := 0.3.6
+VERSION := 0.3.7
 RELEASE := master
 
 # Include custom config if it is available
@@ -14,7 +14,7 @@ CPU_ARCH := $(shell uname -m 2>/dev/null || uname -p 2>/dev/null || echo "unknow
 
 # Python
 SETUPTOOLS_VERSION := 27.2.0
-CONDA_VERSION := 4.2.12
+CONDA_VERSION := 4.2.13
 
 # Anaconda
 ANACONDA_HOME ?= $(HOME)/anaconda
@@ -223,7 +223,7 @@ envclean: stop
 .PHONY: srcclean
 srcclean:
 	@echo "Removing *.pyc files ..."
-	@-find $(APP_ROOT) -type f -name "*.pyc" -print0 | xargs -0r rm
+	@-find $(APP_ROOT) -type f -name "*.pyc" -print | xargs rm
 
 .PHONY: distclean
 distclean: backup clean

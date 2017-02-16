@@ -7,6 +7,7 @@ from phoenix.events import JobStarted
 from phoenix.views import MyView
 from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
+from phoenix.wps import check_status
 from phoenix.utils import wps_describe_url
 from phoenix.security import has_execute_permission
 
@@ -23,21 +24,21 @@ class ExecuteProcess(MyView):
     def __init__(self, request):
         self.request = request
         self.execution = None
+        self.service_name = None
+        self.processid = None
+        self.process = None
         if 'job_id' in request.params:
             job = request.db.jobs.find_one(
                 {'identifier': request.params['job_id']})
-            self.execution = WPSExecution()
-            self.execution.checkStatus(url=job['status_location'], sleepSecs=0)
+            self.service_name = job.get('service_name')
+            self.execution = check_status(
+                url=job.get('status_location'),
+                response=job.get('response'),
+                verify=False, sleep_secs=0)
             self.processid = self.execution.process.identifier
-            self.service_name = self.request.catalog.get_service_name_by_url(
-                url=self.execution.serviceInstance)
         elif 'wps' in request.params:
             self.service_name = request.params.get('wps')
             self.processid = request.params.get('process')
-        else:
-            self.service_name = None
-            self.processid = None
-            self.process = None
 
         if self.service_name:
             # TODO: avoid getcaps
@@ -49,22 +50,6 @@ class ExecuteProcess(MyView):
             self.process = self.wps.describeprocess(self.processid)
         super(ExecuteProcess, self).__init__(request, name='processes_execute',
                                              title='')
-
-    def breadcrumbs(self):
-        breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
-        breadcrumbs.append(dict(
-            route_path=self.request.route_path('processes'),
-            title='Processes'))
-        if self.service_name:
-            route_path = self.request.route_path(
-                'processes_list', _query=[('wps', self.service_name)])
-            breadcrumbs.append(dict(
-                route_path=route_path,
-                title=self.wps.identification.title))
-            breadcrumbs.append(dict(
-                route_path=self.request.route_path(self.name),
-                title=self.process.title))
-        return breadcrumbs
 
     def appstruct(self):
         # TODO: not a nice way to get inputs ... should be cleaned up in owslib
@@ -93,6 +78,7 @@ class ExecuteProcess(MyView):
     def generate_form(self, formid='deform'):
         schema = WPSSchema(request=self.request,
                            process=self.process,
+                           use_async=self.request.has_permission('submit'),
                            user=self.get_user())
         submit_button = Button(name='submit', title='Execute',
                                css_class='btn btn-success btn-lg btn-block',
@@ -102,7 +88,7 @@ class ExecuteProcess(MyView):
             schema,
             buttons=(submit_button,),
             formid=formid,
-            )
+        )
 
     def process_form(self, form):
         controls = self.request.POST.items()
@@ -116,11 +102,10 @@ class ExecuteProcess(MyView):
         except ValidationFailure, e:
             logger.exception('validation of exectue view failed.')
             self.session.flash("There are errors on this page.", queue='danger')
-            return dict(description=getattr(self.process, 'abstract', ''),
+            return dict(process=self.process,
                         url=wps_describe_url(self.wps.url, self.processid),
-                        metadata=self.process.metadata,
                         form=e.render())
-        if self.request.user is None:
+        if not self.request.user:
             return HTTPFound(location=self.request.route_url('processes_loading'))
         else:
             return HTTPFound(location=self.request.route_url('monitor'))
@@ -149,8 +134,11 @@ class ExecuteProcess(MyView):
         result = execute_process.delay(
             userid=self.request.unauthenticated_userid,
             url=self.wps.url,
+            service_name=self.service_name,
             identifier=self.process.identifier,
-            inputs=inputs, outputs=outputs)
+            inputs=inputs,
+            outputs=outputs,
+            async=appstruct.get('_async_check', True))
         self.session['task_id'] = result.id
         self.request.registry.notify(JobStarted(self.request, result.id))
 
@@ -169,7 +157,8 @@ class ExecuteProcess(MyView):
         collection = self.request.db.jobs
         if collection.find({"task_id": task_id}).count() == 1:
             job = collection.find_one({"task_id": task_id})
-            return HTTPFound(location=self.request.route_path('monitor_details', tab='log', job_id=job.get('identifier')))
+            return HTTPFound(location=self.request.route_path(
+                'monitor_details', tab='log', job_id=job.get('identifier')))
         return {}
 
     @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt')
@@ -180,7 +169,6 @@ class ExecuteProcess(MyView):
         if not has_execute_permission(self.request, self.service_name):
             self.session.flash("You are not allowed to execute processes. Please sign-in.", queue='warning')
         return dict(
-            description=getattr(self.process, 'abstract', ''),
+            process=self.process,
             url=wps_describe_url(self.wps.url, self.processid),
-            metadata=self.process.metadata,
             form=form.render(self.appstruct()))

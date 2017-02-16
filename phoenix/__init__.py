@@ -1,12 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-__version__ = (0, 6, 1, 'final', 1)
-
-
-def get_version():
-    import phoenix.version
-    return phoenix.version.get_version(__version__)
+__version__ = '0.7.0'
 
 
 def main(global_config, **settings):
@@ -15,7 +10,7 @@ def main(global_config, **settings):
     """
     from pyramid.config import Configurator
 
-    config = Configurator(settings=settings)
+    config = Configurator(settings=settings, autocommit=False)
 
     # security
     config.include('phoenix.security')
@@ -38,7 +33,7 @@ def main(global_config, **settings):
     config.configure_celery(global_config['__file__'])
 
     # ldap
-    config.include('pyramid_ldap')
+    config.include('phoenix.ldap')
     # FK: Ldap setup functions will be called on demand.
 
     # static views (stylesheets etc)
@@ -46,16 +41,22 @@ def main(global_config, **settings):
     config.add_static_view('static-deform', 'deform:static', cache_max_age=3600)
 
     # database
-    config.include('phoenix.db')
+    # TODO: overwrite request.db from twitcher
+    # See: http://docs.pylonsproject.org/projects/pyramid/en/latest/api/config.html
+    # config.include('phoenix.db')
+    from phoenix.db import includeme as include_db
+    include_db(config)
 
     # twitcher
-    config.include('twitcher.owsproxy')
-    config.include('twitcher.tweens')
+    config.include('phoenix.twitcherclient')
 
     # routes
     config.add_route('home', '/')
-    config.add_route('download', 'download/{filename:.*}')
+    config.add_route('download_storage', 'download/storage/{filename:.*}')
     config.add_route('upload', 'upload')
+
+    # settings
+    config.include('phoenix.settings')
 
     # account
     config.include('phoenix.account')
@@ -74,9 +75,6 @@ def main(global_config, **settings):
 
     # user profiles
     config.include('phoenix.people')
-
-    # settings
-    config.include('phoenix.settings')
 
     # supervisor
     config.include('phoenix.supervisor')
@@ -130,5 +128,8 @@ def main(global_config, **settings):
     config.add_renderer('json', json_renderer)
 
     config.scan('phoenix')
+
+    # enable autocommit
+    config.autocommit = True
 
     return config.make_wsgi_app()

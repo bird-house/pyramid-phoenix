@@ -22,7 +22,7 @@
         </div>
         <div class="buttons">
           <a class="qq-upload-button-selector btn btn-success">
-            <i class="fa fa-plus"></i> 
+            <i class="fa fa-plus"></i>
             <span>Upload a file</span>
           </a>
         </div>
@@ -95,31 +95,27 @@
 
   <div metal:fill-slot="content">
     <div class="container">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h2 class="panel-title">Description</h2>
-        </div>
-        <div class="panel-body">
-          <div>
-            ${description}
-          </div>
-          <div>
-            <a class="label label-warning" href="${url}" target="_blank">XML</a>
-            <a tal:repeat="item metadata" tal:content="item.title" class="label label-info" href="${item.url}" target="_blank"/>
-          </div>
+      <div class="page-header">
+        <h2>${process.title}
+            <small>Please complete the form below and submit a job.</small>
+        </h2>
+      </div>
+
+      <div class="well">
+        <h4>${getattr(process, 'abstract', 'No Summary')}</h4>
+        <div>
+          <a class="label label-warning" href="${url}" target="_blank">View as XML</a>
+          <a tal:repeat="item process.metadata" tal:content="item.title" class="label label-info" href="${item.url}" target="_blank"/>
         </div>
       </div>
-      
+
       <div class="panel panel-default">
-        <div class="panel-heading">
-          <h2 class="panel-title">Inputs</h2>
-        </div>
         <div class="panel-body">
           <tal:form replace="structure form">The form will render here</tal:form>
         </div>
       </div>
-      
+
     </div>
   </div>
-   
+
 </metal:block>

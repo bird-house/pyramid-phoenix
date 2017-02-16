@@ -1,13 +1,13 @@
 from pyramid_layout.panel import panel_config
 
+from phoenix.wps import check_status
+
 import logging
 logger = logging.getLogger(__name__)
 
 
-def collect_outputs(status_location):
-    from owslib.wps import WPSExecution
-    execution = WPSExecution()
-    execution.checkStatus(url=status_location, sleepSecs=0)
+def collect_outputs(status_location=None, response=None):
+    execution = check_status(url=status_location, response=response, sleep_secs=0)
     outputs = {}
     for output in execution.processOutputs:
         outputs[output.identifier] = output
@@ -19,9 +19,9 @@ def process_outputs(request, job_id):
     outputs = {}
     if job and job.get('status') == 'ProcessSucceeded':
         if job.get('is_workflow', False):
-            outputs = collect_outputs(job['worker_status_location'])
+            outputs = collect_outputs(status_location=job.get('worker_status_location'))
         else:
-            outputs = collect_outputs(job['status_location'])
+            outputs = collect_outputs(status_location=job.get('status_location'), response=job.get('response'))
     return outputs
 
 
@@ -34,17 +34,27 @@ class Outputs(object):
     @panel_config(name='monitor_outputs', renderer='../templates/monitor/panels/media.pt')
     def panel(self):
         job_id = self.request.matchdict.get('job_id')
+        wps_output_url = self.request.registry.settings.get('wps.output.url')
 
         items = []
         for output in process_outputs(self.request, job_id).values():
             dataset = None
-            if self.request.wms_activated and output.mimeType and 'netcdf' in output.mimeType:
-                if output.reference and 'wpsoutputs' in output.reference:
+            proxy_reference = output.reference
+            logger.debug("output reference: %s", output.reference)
+            if output.reference and 'wpsoutputs' in output.reference:
+                if self.request.map_activated and output.mimeType and 'netcdf' in output.mimeType:
                     dataset = "outputs" + output.reference.split('wpsoutputs')[1]
+                if wps_output_url and output.reference.startswith(wps_output_url):
+                    proxy_reference = self.request.route_url(
+                        'download_wpsoutputs',
+                        subpath=output.reference.split(wps_output_url)[1])
+                    logger.debug("proxy reference: %s", proxy_reference)
             if output.mimeType:
                 category = 'ComplexType'
             else:
                 category = 'LiteralType'
+
+            logger.debug("proxy_reference: %s", proxy_reference)
 
             items.append(dict(title=output.title,
                               abstract=output.abstract,
@@ -52,12 +62,8 @@ class Outputs(object):
                               mime_type=output.mimeType,
                               data=output.data,
                               reference=output.reference,
+                              proxy_reference=proxy_reference,
                               dataset=dataset,
                               category=category))
         items = sorted(items, key=lambda item: item['identifier'], reverse=1)
         return dict(items=items)
-
-        
-
-
-

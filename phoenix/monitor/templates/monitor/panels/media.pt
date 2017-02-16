@@ -8,6 +8,7 @@
           </a>
         </div>
         <div class="media-body">
+          <div tal:condition="request.has_permission('submit')">
           <btn tal:condition="item.reference and item.reference not in request.cart"
                id="btn-cart-${repeat.item.number}"
                class="btn btn-default btn-xs pull-right btn-cart-add"
@@ -22,6 +23,7 @@
                role="button">
             <icon class="fa fa-lg fa-times"></icon>
           </btn>
+          </div>
           <h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4>
           <p>${item.get('abstract') or 'No summary'}</p>
           <p>
@@ -43,7 +45,7 @@
             </a>
           </p>
           <p tal:condition="item.reference">
-            <a href="${item.reference}" target="_" data-toggle="tooltip"
+            <a href="${item.proxy_reference}" target="_" data-toggle="tooltip"
                title="Download file" data-value="value" class="btn btn-link">
               <i class="fa fa-download"></i> Download
             </a>
@@ -62,4 +64,3 @@
     </li>
   </ul>
 </div>
-

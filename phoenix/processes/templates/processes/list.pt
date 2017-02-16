@@ -2,27 +2,21 @@
 
   <div metal:fill-slot="content">
     <div class="container">
+        <div class="page-header">
+            <h2>${title}
+                <small>Please choose one of the processes to submit a job.</small>
+            </h2>
+        </div>
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h2 class="panel-title">Description</h2>
-        </div>
-        <div class="panel-body">
+        <div class="well">
+          <h4>${description}</h4>
           <div>
-            ${description}
-          </div>
-          <div>
-            <a class="label label-warning" href="${url}" target="_blank">XML</a>
-            <a tal:condition="provider_site" tal:condition="provider_name" class="label label-info" href="${provider_site}" target="_blank">Provider: ${provider_name}</a>
+            <a class="label label-warning" href="${url}" target="_blank">Capabilities (XML)</a>
+            <a tal:condition="provider_site" tal:condition="provider_name" class="label label-info" href="${provider_site}" target="_blank">${provider_name}</a>
           </div>
         </div>
-      </div>
-      
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h2 class="panel-title">Processes</h2>
-        </div>
-        <div class="panel-body">
+
+        <div>
           <ul class="list-group">
             <li class="list-group-item" tal:repeat="item items">
               <div class="media">
@@ -45,8 +39,6 @@
           </ul>
         </div>
       </div>
-
     </div>
-  </div>
-   
+
 </metal:block>

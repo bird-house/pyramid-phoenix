@@ -11,9 +11,10 @@ from authomatic.adapters import WebObAdapter
 
 from phoenix.views import MyView
 from phoenix.security import Admin, Guest, authomatic, passwd_check
-from phoenix.security import auth_protocols
-from phoenix.security import generate_access_token
-from .schema import PhoenixSchema, LdapSchema, ESGFOpenIDSchema,  OpenIDSchema, OAuthSchema
+from phoenix.security import allowed_auth_protocols
+from phoenix.security import AUTH_PROTOCOLS
+from phoenix.twitcherclient import generate_access_token
+from phoenix.account.schema import PhoenixSchema, LdapSchema, ESGFOpenIDSchema, OpenIDSchema, OAuthSchema
 
 import logging
 logger = logging.getLogger(__name__)
@@ -32,7 +33,7 @@ def add_user(request, login_id, email='', openid='', name='unknown', organisatio
         creation_time=datetime.now(),
         last_login=datetime.now())
     request.db.users.save(user)
-    return request.db.users.find_one({'identifier':user['identifier']})
+    return request.db.users.find_one({'identifier': user['identifier']})
 
 
 @forbidden_view_config(renderer='templates/account/forbidden.pt', layout="default")
@@ -84,7 +85,8 @@ class Account(MyView):
             logger.exception('validation of form failed.')
             return dict(
                 active=protocol,
-                auth_protocols=auth_protocols(self.request),
+                protocol_name=AUTH_PROTOCOLS[protocol],
+                auth_protocols=allowed_auth_protocols(self.request),
                 form=e.render())
         else:
             if protocol == 'phoenix':
@@ -92,20 +94,22 @@ class Account(MyView):
             elif protocol == 'ldap':
                 return self.ldap_login()
             elif protocol == 'oauth2':
-                return HTTPFound(location=self.request.route_path('account_auth', provider_name=appstruct.get('provider')))
+                return HTTPFound(location=self.request.route_path('account_auth',
+                                 provider_name=appstruct.get('provider')))
             elif protocol == 'esgf':
                 return HTTPFound(location=self.request.route_path('account_auth',
                                  provider_name=appstruct.get('provider'),
                                  _query=dict(username=appstruct.get('username'))))
             elif protocol == 'openid':
                 openid = appstruct.get('openid')
-                return HTTPFound(location=self.request.route_path('account_auth', provider_name='openid', _query=dict(id=openid)))
+                return HTTPFound(location=self.request.route_path('account_auth',
+                                 provider_name='openid', _query=dict(id=openid)))
             else:
                 return HTTPForbidden()
 
     def send_notification(self, email, subject, message):
         """Sends email notification to admins.
-        
+
         Sends email with the pyramid_mailer module.
         For configuration look at documentation http://pythonhosted.org//pyramid_mailer/
         """
@@ -115,7 +119,7 @@ class Account(MyView):
         sender = "noreply@%s" % (self.request.server_name)
 
         recipients = set()
-        for user in self.request.db.users.find({'group':Admin}):
+        for user in self.request.db.users.find({'group': Admin}):
             email = user.get('email')
             if email:
                 recipients.add(email)
@@ -123,9 +127,9 @@ class Account(MyView):
         if len(recipients) > 0:
             from pyramid_mailer.message import Message
             message = Message(subject=subject,
-                            sender=sender,
-                            recipients=recipients,
-                            body=message)
+                              sender=sender,
+                              recipients=recipients,
+                              body=message)
             try:
                 mailer.send_immediately(message, fail_silently=True)
             except:
@@ -139,7 +143,8 @@ class Account(MyView):
             logger.warn("new user: %s", login_id)
             user = add_user(self.request, login_id=login_id, email=email, group=Guest)
             subject = 'New user %s logged in on %s' % (name, self.request.server_name)
-            message = 'Please check the activation of the user %s on the Phoenix host %s' % (name, self.request.server_name)
+            message = 'Please check the activation of the user {0} on the Phoenix host {1}'.format(
+                name, self.request.server_name)
             self.send_notification(email, subject, message)
         if local and login_id == 'phoenix@localhost':
             user['group'] = Admin
@@ -153,7 +158,7 @@ class Account(MyView):
             self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any processes.",
                                queue='info')
         else:
-            generate_access_token(self.request.registry, user['identifier'])
+            generate_access_token(self.request.registry, userid=user['identifier'])
         headers = remember(self.request, user['identifier'])
         return HTTPFound(location=self.request.route_path('home'), headers=headers)
 
@@ -163,12 +168,12 @@ class Account(MyView):
             msg = 'Sorry, login failed: {0}'.format(message)
         self.session.flash(msg, queue='danger')
         logger.warn(msg)
-        return HTTPFound(location = self.request.route_path('home'))
-    
+        return HTTPFound(location=self.request.route_path('home'))
+
     @view_config(route_name='account_login', renderer='templates/account/login.pt')
     def login(self):
         protocol = self.request.matchdict.get('protocol', 'phoenix')
-        allowed_protocols = auth_protocols(self.request)
+        allowed_protocols = allowed_auth_protocols(self.request)
 
         # Make sure disabled protocols are not accessed directly
         if protocol not in allowed_protocols:
@@ -182,17 +187,15 @@ class Account(MyView):
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
         # TODO: Add ldap to title?
-        protocal_names = dict(phoenix='Phoenix', esgf='ESGF', ldap='LDAP',
-                              oauth2='Oauth 2.0', openid='Open ID')
         return dict(active=protocol,
-                    protocol_name=protocal_names[protocol],
+                    protocol_name=AUTH_PROTOCOLS[protocol],
                     auth_protocols=allowed_protocols,
                     form=form.render(self.appstruct(protocol)))
 
     @view_config(route_name='account_logout', permission='edit')
     def logout(self):
         headers = forget(self.request)
-        return HTTPFound(location = self.request.route_path('home'), headers = headers)
+        return HTTPFound(location=self.request.route_path('home'), headers=headers)
 
     def phoenix_login(self, appstruct):
         password = appstruct.get('password')
@@ -203,7 +206,7 @@ class Account(MyView):
     @view_config(route_name='account_auth')
     def authomatic_login(self):
         _authomatic = authomatic(self.request)
-        
+
         provider_name = self.request.matchdict.get('provider_name')
 
         # Start the login procedure.
@@ -233,13 +236,11 @@ class Account(MyView):
                     if result.user.credentials:
                         pass
                     return self.login_success(login_id=login_id, name=result.user.name)
-                elif result.provider.name == 'ceda':
-                    return self.login_success(login_id='cedatest', name='cedatest')
         return response
 
     def ldap_prepare(self):
         """Lazy LDAP connector construction"""
-        ldap_settings = self.db.ldap.find_one()
+        ldap_settings = self.request.db.ldap.find_one()
 
         if ldap_settings is None:
             # Warn if LDAP is about to be used but not set up.
@@ -256,14 +257,14 @@ class Account(MyView):
 
             # FK: Do we have to think about race conditions here?
             from pyramid.config import Configurator
-            config = Configurator(registry = self.request.registry)
+            config = Configurator(registry=self.request.registry)
             config.ldap_setup(ldap_settings['server'],
-                    bind=ldap_settings['bind'],
-                    passwd=ldap_settings['passwd'])
+                              bind=ldap_settings['bind'],
+                              passwd=ldap_settings['passwd'])
             config.ldap_set_login_query(
-                    base_dn=ldap_settings['base_dn'],
-                    filter_tmpl=ldap_settings['filter_tmpl'],
-                    scope=ldap_scope)
+                base_dn=ldap_settings['base_dn'],
+                filter_tmpl=ldap_settings['filter_tmpl'],
+                scope=ldap_scope)
             config.commit()
 
     def ldap_login(self):
@@ -278,11 +279,9 @@ class Account(MyView):
 
         if auth is not None:
             # Get user name and email
-            ldap_settings = self.db.ldap.find_one()
-            name  = (auth[1].get(ldap_settings['name'])[0]
-                    if ldap_settings['name'] != '' else 'Unknown')
-            email = (auth[1].get(ldap_settings['email'])[0]
-                    if ldap_settings['email'] != '' else '')
+            ldap_settings = self.request.db.ldap.find_one()
+            name = (auth[1].get(ldap_settings['name'])[0] if ldap_settings['name'] != '' else 'Unknown')
+            email = (auth[1].get(ldap_settings['email'])[0] if ldap_settings['email'] != '' else '')
 
             # Authentication successful
             return self.login_success(login_id=auth[0], name=name, email=email)  # login_id=user_dn

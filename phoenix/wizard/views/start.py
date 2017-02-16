@@ -5,31 +5,45 @@ from pyramid.security import authenticated_userid
 import colander
 from deform.widget import SelectWidget
 
-from owslib.wps import WPSExecution, WebProcessingService
+from owslib.wps import WebProcessingService
 
+from phoenix.wps import check_status
 from phoenix.utils import time_ago_in_words
 from phoenix.wizard.views import Wizard
 
+from twitcher.utils import parse_service_name
+
 import logging
 logger = logging.getLogger(__name__)
+
+
+def includeme(config):
+    config.add_route('wizard', '/wizard')
+    config.add_view('phoenix.wizard.views.start.Start',
+                    route_name='wizard',
+                    attr='view',
+                    renderer='../templates/wizard/start.pt')
 
 
 def job_to_state(request, job_id):
     # TODO: quite dirty ... needs clean up
     state = {}
     job = request.db.jobs.find_one({'identifier': job_id})
-    execution = WPSExecution()
-    execution.checkStatus(url=job['status_location'], sleepSecs=0)
+    execution = check_status(
+        url=job.get('status_location'),
+        response=job.get('response'),
+        verify=False, sleep_secs=0)
     if len(execution.dataInputs) == 1:
         if len(execution.dataInputs[0].data) == 1:
             workflow = yaml.load(execution.dataInputs[0].data[0])
 
             # TODO: get the correct worker wps url
             # TODO: avoid getcaps
-            wps = WebProcessingService(url=workflow['worker']['url'], verify=False, skip_caps=False)
+            wps = WebProcessingService(url=workflow['worker']['url'].split('?')[0], verify=False, skip_caps=False)
             process = wps.describeprocess(workflow['worker']['identifier'])
 
-            state['wizard_wps'] = {'identifier': request.catalog.get_service_name_by_url(wps.url)}
+            service = request.catalog.get_service_by_url(wps.url)
+            state['wizard_wps'] = {'identifier': service['name']}
             state['wizard_process'] = {'identifier': workflow['worker']['identifier']}
             inputs = {}
             for inp in workflow['worker']['inputs']:
@@ -38,10 +52,10 @@ def job_to_state(request, job_id):
                     inputs[key].extend(value)
                 else:
                     inputs[key] = [value]
-            
+
             for inp in process.dataInputs:
                 if 'boolean' in inp.dataType and inp.identifier in inputs:
-                    inputs[inp.identifier] = [ val.lower() == 'true' for val in inputs[inp.identifier]]
+                    inputs[inp.identifier] = [val.lower() == 'true' for val in inputs[inp.identifier]]
                 if inp.maxOccurs < 2 and inp.identifier in inputs:
                     inputs[inp.identifier] = inputs[inp.identifier][0]
             state['wizard_literal_inputs'] = inputs
@@ -69,10 +83,10 @@ class FavoriteSchema(colander.MappingSchema):
             time_ago_in_words(job.get('finished')))
         choices = [('', 'No Favorite')]
         if last:
-             choices.append( ('last', 'Last Run') )
+            choices.append(('last', 'Last Run'))
         logger.debug('jobs %s', jobs)
-        choices.extend( [(job['identifier'], gentitle(job) ) for job in jobs] )
-        return SelectWidget(values = choices)
+        choices.extend([(job['identifier'], gentitle(job)) for job in jobs])
+        return SelectWidget(values=choices)
 
     job_id = colander.SchemaNode(
         colander.String(),
@@ -86,7 +100,7 @@ class Start(Wizard):
         super(Start, self).__init__(request, name='wizard', title='Choose a Favorite')
         self.collection = request.db.jobs
         self.wizard_state.clear()
-            
+
     def schema(self):
         jobs = []
         # add restarted job
@@ -108,7 +122,7 @@ class Start(Wizard):
     def appstruct(self):
         struct = {'job_id': 'last'}
         if 'job_id' in self.request.params:
-            struct['job_id'] =self.request.params['job_id']
+            struct['job_id'] = self.request.params['job_id']
         return struct
 
     def success(self, appstruct):
@@ -125,6 +139,5 @@ class Start(Wizard):
         self.success(appstruct)
         return self.next('wizard_wps')
 
-    @view_config(route_name='wizard', renderer='../templates/wizard/start.pt')
     def view(self):
         return super(Start, self).view()

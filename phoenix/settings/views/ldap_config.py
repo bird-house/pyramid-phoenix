@@ -21,7 +21,7 @@ class Ldap(MyView):
     @view_config(route_name='settings_ldap', renderer='../templates/settings/ldap.pt')
     def view(self):
         # Get LDAP settings
-        ldap_settings = self.db.ldap.find_one()
+        ldap_settings = self.request.db.ldap.find_one()
         if ldap_settings is None:
             ldap_settings = dict()
 
@@ -48,7 +48,7 @@ class Ldap(MyView):
                 # Optional:
                 ldap_settings['name'] = appstruct['name']
                 ldap_settings['email'] = appstruct['email']
-                self.db.ldap.save(ldap_settings)
+                self.request.db.ldap.save(ldap_settings)
 
                 import ldap
                 if ldap_settings['scope'] == 'ONELEVEL':

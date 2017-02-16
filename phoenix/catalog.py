@@ -7,12 +7,12 @@ from owslib.csw import CatalogueServiceWeb
 from owslib.fes import PropertyIsEqualTo, And
 from owslib.wps import WebProcessingService
 
-from twitcher.registry import service_registry_factory
 
 from pyramid.settings import asbool
 from pyramid.events import NewRequest
 
 from phoenix.db import mongodb
+from phoenix.twitcherclient import twitcher_service_factory
 
 import logging
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ def includeme(config):
 def catalog_factory(registry):
     settings = registry.settings
 
-    service_registry = service_registry_factory(registry)
+    service_registry = twitcher_service_factory(registry)
 
     if asbool(settings.get('phoenix.csw', True)):
         csw = CatalogueServiceWeb(url=settings['csw.url'], skip_caps=True)
@@ -101,20 +101,21 @@ class Catalog(object):
     def insert_record(self, record):
         raise NotImplementedError
 
-    def harvest(self, url, service_type, service_name=None, service_title=None, public=False):
+    def harvest(self, url, service_type, service_name=None, service_title=None, public=False, c4i=False):
         raise NotImplementedError
-
-    def get_service_by_url(self, url):
-        # TODO: separate interface from abstract class
-        return self.service_registry.get_service_by_url(url)
 
     def get_service_name(self, record):
         """Get service name from twitcher registry for given service (url)."""
-        return self.get_service_name_by_url(record.source)
+        service = self.service_registry.get_service_by_url(record.source)
+        return service['name']
 
-    def get_service_name_by_url(self, url):
-        """Get service name from twitcher registry for given service (url)."""
-        return self.service_registry.get_service_name(url)
+    def get_service_by_name(self, name):
+        """Get service from twitcher registry by given service name."""
+        return self.service_registry.get_service_by_name(name)
+
+    def get_service_by_url(self, url):
+        """Get service from twitcher registry by given url."""
+        return self.service_registry.get_service_by_url(url)
 
     def get_services(self, service_type=None, maxrecords=100):
         raise NotImplementedError
@@ -122,7 +123,7 @@ class Catalog(object):
     def clear_services(self):
         raise NotImplementedError
 
-    
+
 class CatalogService(Catalog):
     def __init__(self, csw, service_registry):
         self.csw = csw
@@ -133,19 +134,24 @@ class CatalogService(Catalog):
         return self.csw.records[identifier]
 
     def delete_record(self, identifier):
-        self.csw.transaction(ttype='delete', typename='csw:Record', identifier=identifier )
+        self.csw.transaction(ttype='delete', typename='csw:Record', identifier=identifier)
 
     def insert_record(self, record):
         record['identifier'] = uuid.uuid4().get_urn()
         templ_dc = Template(filename=join(dirname(__file__), "templates", "catalog", "dublin_core.xml"))
         self.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
 
-    def harvest(self, url, service_type, service_name=None, service_title=None, public=False):
+    def harvest(self, url, service_type, service_name=None, service_title=None, public=False, c4i=False):
         if service_type == THREDDS_TYPE:
             self.insert_record(_fetch_thredds_metadata(url, service_title))
         else:  # ogc services
-            self.service_registry.register_service(url=url, name=service_name, public=public)
-            self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
+            self.service_registry.register_service(url=url, data={'name': service_name, 'public': public})
+            try:
+                self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
+            except:
+                logger.exception("could not harvest metadata")
+                self.service_registry.unregister_service(name=service_name)
+                raise Exception("could not harvest metadata")
 
     def get_services(self, service_type=None, maxrecords=100):
         cs = PropertyIsEqualTo('dc:type', 'service')
@@ -159,7 +165,7 @@ class CatalogService(Catalog):
 def doc2record(document):
     """Converts ``document`` from mongodb to a ``Record`` object."""
     record = None
-    if isinstance(document, dict): 
+    if isinstance(document, dict):
         if '_id' in document:
             # _id field not allowed in record
             del document["_id"]
@@ -187,17 +193,26 @@ class MongodbCatalog(Catalog):
         record['identifier'] = uuid.uuid4().get_urn()
         self.collection.update_one({'source': record['source']}, {'$set': record}, True)
 
-    def harvest(self, url, service_type, service_name=None, service_title=None, public=False):
+    def harvest(self, url, service_type, service_name=None, service_title=None, public=False, c4i=False):
         if service_type == THREDDS_TYPE:
             self.insert_record(_fetch_thredds_metadata(url, title=service_title))
         elif service_type == WPS_TYPE:
             # register service first
             service = self.service_registry.register_service(
-                url=url, name=service_name, public=public, overwrite=False)
-            # fetch metadata
-            record = _fetch_wps_metadata(service['url'], title=service_title)
-            record['public'] = public
-            self.insert_record(record)
+                url=url,
+                data={'name': service_name,
+                      'public': public,
+                      'c4i': c4i},
+                overwrite=False)
+            try:
+                # fetch metadata
+                record = _fetch_wps_metadata(service['url'], title=service_title)
+                record['public'] = public
+                self.insert_record(record)
+            except:
+                logger.exception("could not harvest metadata")
+                self.service_registry.unregister_service(name=service_name)
+                raise Exception("could not harvest metadata")
         else:
             raise NotImplementedError
 
@@ -210,12 +225,3 @@ class MongodbCatalog(Catalog):
     def clear_services(self):
         self.service_registry.clear_services()
         self.collection.drop()
-
-
-
-
-
-
-       
-
-

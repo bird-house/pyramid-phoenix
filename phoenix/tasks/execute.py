@@ -1,4 +1,6 @@
 from datetime import datetime
+from lxml import etree
+from time import sleep
 
 from pyramid_celery import celery_app as app
 
@@ -6,42 +8,48 @@ from owslib.wps import WebProcessingService
 
 from phoenix.db import mongodb
 from phoenix.events import JobFinished
-from phoenix.tasks.utils import wps_headers, log, log_error, add_job, wait_secs
+from phoenix.tasks.utils import wps_headers, save_log, add_job, wait_secs
+from phoenix.wps import check_status
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 
 @app.task(bind=True)
-def execute_process(self, url, identifier, inputs, outputs, userid=None, caption=None):
+def execute_process(self, url, service_name, identifier, inputs, outputs, async=True, userid=None, caption=None):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
     job = add_job(
         db,
         userid=userid,
         task_id=self.request.id,
-        service=url,
+        service_name=service_name,
         process_id=identifier,
         is_workflow=False,
+        async=async,
         caption=caption)
 
     try:
         wps = WebProcessingService(url=url, skip_caps=False, verify=False, headers=wps_headers(userid))
-        execution = wps.execute(identifier, inputs=inputs, output=outputs, lineage=True)
-        job['service'] = wps.identification.title
+        execution = wps.execute(identifier, inputs=inputs, output=outputs, async=async, lineage=True)
+        # job['service'] = wps.identification.title
         # job['title'] = getattr(execution.process, "title")
         job['abstract'] = getattr(execution.process, "abstract")
         job['status_location'] = execution.statusLocation
+        job['request'] = execution.request
+        job['response'] = etree.tostring(execution.response)
 
         logger.debug("job init done %s ...", self.request.id)
 
         num_retries = 0
         run_step = 0
-        while execution.isNotComplete():
+        while execution.isNotComplete() or run_step == 0:
             if num_retries >= 5:
                 raise Exception("Could not read status document after 5 retries. Giving up.")
             try:
-                execution.checkStatus(sleepSecs=wait_secs(run_step))
+                execution = check_status(url=execution.statusLocation, verify=False,
+                                         sleep_secs=wait_secs(run_step))
+                job['response'] = etree.tostring(execution.response)
                 job['status'] = execution.getStatus()
                 job['status_message'] = execution.statusMessage
                 job['progress'] = execution.percentCompleted
@@ -51,28 +59,30 @@ def execute_process(self, url, identifier, inputs, outputs, userid=None, caption
                 if execution.isComplete():
                     job['finished'] = datetime.now()
                     if execution.isSucceded():
+                        logger.debug("job succeded")
                         job['progress'] = 100
-                        log(job)
                     else:
+                        logger.debug("job failed.")
                         job['status_message'] = '\n'.join(error.text for error in execution.errors)
                         for error in execution.errors:
-                            log_error(job, error)
-                else:
-                    log(job)
+                            save_log(job, error)
             except:
                 num_retries += 1
                 logger.exception("Could not read status xml document for job %s. Trying again ...", self.request.id)
+                sleep(1)
             else:
                 logger.debug("update job %s ...", self.request.id)
                 num_retries = 0
                 run_step += 1
+            finally:
+                save_log(job)
                 db.jobs.update({'identifier': job['identifier']}, job)
     except Exception as exc:
         logger.exception("Failed to run Job")
         job['status'] = "ProcessFailed"
-        job['status_message'] = "Failed to run Job. %s" % exc.message
+        job['status_message'] = "Error: {0}".format(exc.message)
     finally:
-        log(job)
+        save_log(job)
         db.jobs.update({'identifier': job['identifier']}, job)
 
     registry.notify(JobFinished(job))

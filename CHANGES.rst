@@ -1,9 +1,62 @@
 Changes
 *******
 
-0.6.1
+0.7.0 (2017-01-27)
 ==================
 
+* updated to twitcher 0.3.1.
+* mongodb-dbname is configurable.
+* added settings page for esgf-slcs service.
+* update esgf token with refresh-token.
+* added download action for inputs/outputs in monitor.
+* added twitcher-delegate option.
+* updated leaflet timedimension plugin v1.0.6.
+
+Bug-Fixes:
+
+* fixed #136: encoding of wps xml response.
+
+0.6.4 (2017-01-04)
+==================
+
+* fixed install on ubuntu 16.04: updated conda env.
+* simplified version setting.
+
+0.6.3 (2016-12-23)
+==================
+
+* updated ncwms=2.2.5.
+* fixed #133: page rendering failed when showing validation message.
+* fixed #127: wizard views are loaded dynamically.
+* map views are loaded dynamically.
+* added /robots.txt and /favicon.ico.
+* removed disabled swiftbrowser from wizard.
+* removed disabled csw catalog search from wizard.
+* removed disabled upload from wizard.
+* added `profiles/minimal.cfg` with disabled wizard and map.
+* updated twitcher 0.2.4.
+* fixed default esgf-search-url.
+
+0.6.2 (2016-12-06)
+==================
+
+* added sync/async tags.
+* simplified execution and monitor views.
+* auto-update monitor details view.
+* store job xml response.
+* added monitor details panel for job xml response.
+* added workaround for cows wps with ordered parameters for getcaps request.
+* cleaned up status-log of running jobs.
+* show only 250 chars of status-message in monitor/details view.
+* cleaned up dependencies.
+
+0.6.1 (2016-11-21)
+==================
+
+* show wps registration name in monitor.
+* updated twitcher.
+* added c4i token to profile.
+* added sync flag to run processes.
 * updated mongodb 2.6.12 with yaml config.
 * updated Dockerfile.
 * configured pep8 checks.

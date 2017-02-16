@@ -1,0 +1,52 @@
+<wps:ExecuteResponse xmlns:gml="http://www.opengis.net/gml" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" service="WPS" version="1.0.0" xml:lang="en-US" serviceInstance="https://localhost:28092/wps?service=WPS&amp;request=GetCapabilities" statusLocation="https://localhost:28090/wpsoutputs/hummingbird/56cd4294-bd69-11e6-80fe-68f72837e1b4.xml">
+  <wps:Process wps:processVersion="0.2.0">
+    <ows:Identifier>spotchecker</ows:Identifier>
+    <ows:Title>Spot Checker</ows:Title>
+    <ows:Abstract>The Spot Checker is a Python tool to             check local/remote datasets against a variety of             compliance standards. Each compliance standard is executed             by a Check Suite, which functions similar to a             Python standard Unit Test.             A Check Suite runs one or more checks against a dataset,             returning a list of Results which are then aggregated             into a summary.             Available compliance standards are the Climate and Forecast conventions (CF)             and project specific rules for CMIP6 and CORDEX.</ows:Abstract>
+  </wps:Process>
+  <wps:Status creationTime="2016-12-08T18:11:21Z">
+    <wps:ProcessSucceeded>PyWPS Process Spot Checker finished</wps:ProcessSucceeded>
+  </wps:Status>
+  <wps:DataInputs>
+    <wps:Input>
+      <ows:Identifier>test</ows:Identifier>
+      <ows:Title>Test Suite</ows:Title>
+      <ows:Abstract>Select the test you want to run.                          Default: CF-1.6 (climate forecast conventions)</ows:Abstract>
+      <wps:Data>
+        <wps:LiteralData dataType="string">CF-1.6</wps:LiteralData>
+      </wps:Data>
+    </wps:Input>
+    <wps:Input>
+      <ows:Identifier>dataset</ows:Identifier>
+      <ows:Title>NetCDF File</ows:Title>
+      <ows:Abstract>Enter a URL pointing to a NetCDF file (optional)</ows:Abstract>
+      <wps:Reference xlink:href="http://localhost:8081/download/tasmax_WAS-44_MPI-M-MPI-ESM-LR_historical_r1i1p1_MPI-CSC-REMO2009_v1_day_20010101-20051231.nc" mimeType="application/x-netcdf" method="GET"/>
+    </wps:Input>
+  </wps:DataInputs>
+  <wps:OutputDefinitions>
+    <wps:Output>
+      <ows:Identifier>output</ows:Identifier>
+      <ows:Title>Test Report</ows:Title>
+      <ows:Abstract>Compliance checker test report.</ows:Abstract>
+    </wps:Output>
+    <wps:Output>
+      <ows:Identifier>ncdump</ows:Identifier>
+      <ows:Title>ncdump of metadata</ows:Title>
+      <ows:Abstract>ncdump of header of checked dataset.</ows:Abstract>
+    </wps:Output>
+  </wps:OutputDefinitions>
+  <wps:ProcessOutputs>
+    <wps:Output>
+      <ows:Identifier>output</ows:Identifier>
+      <ows:Title>Test Report</ows:Title>
+      <ows:Abstract>Compliance checker test report.</ows:Abstract>
+      <wps:Reference xlink:href="https://localhost:28090/wpsoutputs/hummingbird/reportVkLP1x.html" mimeType="text/plain"/>
+    </wps:Output>
+    <wps:Output>
+      <ows:Identifier>ncdump</ows:Identifier>
+      <ows:Title>ncdump of metadata</ows:Title>
+      <ows:Abstract>ncdump of header of checked dataset.</ows:Abstract>
+      <wps:Reference xlink:href="https://localhost:28090/wpsoutputs/hummingbird/nc_dumpTNjgkh.txt" mimeType="text/plain"/>
+    </wps:Output>
+  </wps:ProcessOutputs>
+</wps:ExecuteResponse>

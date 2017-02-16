@@ -49,22 +49,21 @@ class ActionButton(object):
 # upload helpers
 
 def save_upload(request, filename, fs=None):
-    folder=authenticated_userid(request)
-    path = os.path.join(folder, os.path.basename(filename))
-    if request.storage.exists(path):
-        request.storage.delete(path)
-    stored_filename = None
+    logger.debug("save_upload: filename=%s, fs=%s", filename, fs)
+    if request.storage.exists(os.path.basename(filename)):
+        request.storage.delete(os.path.basename(filename))
     if fs is None:
-        stored_filename = request.storage.save_filename(filename, folder=folder)
+        stored_filename = request.storage.save_filename(filename)
+        logger.debug('saved chunked file to upload storage %s', stored_filename)
     else:
-        stored_filename = request.storage.save_file(fs.file, filename=os.path.basename(path), folder=folder)
-    logger.debug('saved file to upload storage %s', stored_filename)
+        stored_filename = request.storage.save_file(fs.file, filename=filename)
+        logger.debug('saved file to upload storage %s', stored_filename)
 
-    
+
 def save_chunk(fs, path):
     """
     Save an uploaded chunk.
-    
+
     Chunks are stored in chunks/
     """
     if not os.path.exists(os.path.dirname(path)):
@@ -72,17 +71,17 @@ def save_chunk(fs, path):
     with open(path, 'wb+') as destination:
         destination.write(fs.read())
 
-        
+
 def combine_chunks(total_parts, source_folder, dest):
     """
     Combine a chunked file into a whole file again. Goes through each part
     , in order, and appends that part's bytes to another destination file.
-    
+
     Chunks are stored in chunks/
     """
 
     logger.debug("Combining chunks: %s", source_folder)
-    
+
     if not os.path.exists(os.path.dirname(dest)):
         os.makedirs(os.path.dirname(dest))
 
@@ -94,6 +93,7 @@ def combine_chunks(total_parts, source_folder, dest):
         logger.debug("Combined: %s", dest)
 
 # misc
+
 
 def make_tags(tags_str):
     tags = [tag.strip().lower() for tag in tags_str.split(',') if len(tag.strip()) > 0]
@@ -109,6 +109,7 @@ def make_tags(tags_str):
     tags.sort()
     return tags
 
+
 def format_tags(tags):
     if tags is None:
         tags = []
@@ -119,20 +120,22 @@ def localize_datetime(dt, tz_name='UTC'):
     """Provide a timzeone-aware object for a given datetime and timezone name
     """
     import pytz
-    assert dt.tzinfo == None
+    assert dt.tzinfo is None
     utc = pytz.timezone('UTC')
     aware = utc.localize(dt)
     timezone = pytz.timezone(tz_name)
     tz_aware_dt = aware.astimezone(timezone)
     return tz_aware_dt
 
+
 def get_user(request):
     userid = authenticated_userid(request)
     return request.db.users.find_one(dict(identifier=userid))
 
+
 def user_cert_valid(request, valid_hours=6):
     cert_expires = get_user(request).get('cert_expires')
-    if cert_expires != None:
+    if cert_expires is not None:
         timestamp = datetime_parser.parse(cert_expires)
         now = localize_datetime(datetime.utcnow())
         valid_hours = timedelta(hours=valid_hours)
@@ -141,11 +144,13 @@ def user_cert_valid(request, valid_hours=6):
             return True
     return False
 
+
 def is_url(url):
     """Check wheather given text is url or not
     """
     from urlparse import urlparse
-    return bool(urlparse(url ).scheme)
+    return bool(urlparse(url).scheme)
+
 
 def build_url(url, query):
     import urllib
@@ -153,21 +158,38 @@ def build_url(url, query):
         url = url + '?'
     return url + urllib.urlencode(query)
 
+
 def wps_caps_url(url):
     # TODO: move code to owslib?
-    params = {'service': 'WPS', 'request': 'GetCapabilities', 'version': '1.0.0'}
+    # TODO: patch for cows wps
+    from collections import OrderedDict
+    params = OrderedDict()
+    params['Service'] = 'WPS'
+    params['Request'] = 'GetCapabilities'
+    params['Version'] = '1.0.0'
+    # Service=WPS&Request=GetCapabilities&Version=1.0.0
+    #params = {'service': 'WPS', 'request': 'GetCapabilities', 'version': '1.0.0'}
     return build_get_url(url, params, overwrite=True)
+
 
 def wps_describe_url(url, identifier):
     # TODO: move code to owslib?
-    params = {'service': 'WPS', 'request': 'DescribeProcess', 'version': '1.0.0', 'identifier': identifier}
+    # TODO: patch for cows wps
+    from collections import OrderedDict
+    params = OrderedDict()
+    params['Service'] = 'WPS'
+    params['Request'] = 'DescribeProcess'
+    params['Version'] = '1.0.0'
+    params['Identifier'] = identifier
+    # params = {'service': 'WPS', 'request': 'DescribeProcess', 'version': '1.0.0', 'identifier': identifier}
     return build_get_url(url, params, overwrite=True)
+
 
 def time_ago_in_words(from_time):
     from webhelpers2.date import time_ago_in_words as _time_ago_in_words
     try:
         delta = datetime.now() - from_time
-        granularity='minute'
+        granularity = 'minute'
         if delta.days > 365:
             granularity = 'year'
         elif delta.days > 30:
@@ -183,9 +205,9 @@ def time_ago_in_words(from_time):
     finally:
         return time_ago
 
+
 def root_path(path):
     try:
         return path.split(os.sep, 2)[1]
     except:
         return None
-    

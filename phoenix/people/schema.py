@@ -39,26 +39,50 @@ class GroupSchema(colander.MappingSchema):
     choices = ((Admin, 'Admin'), (User, 'User'), (Guest, 'Guest'))
 
     group = colander.SchemaNode(
-         colander.String(),
-         validator=colander.OneOf([x[0] for x in choices]),
-         widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
-         title='Group',
-         description='Select Group')
+        colander.String(),
+        validator=colander.OneOf([x[0] for x in choices]),
+        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
+        title='Group',
+        description='Select Group')
 
 
 class TwitcherSchema(colander.MappingSchema):
     twitcher_token = colander.SchemaNode(
         colander.String(),
-        title="Twitcher access token",
+        title="Access Token",
         missing='',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-    twitcher_token_expires = colander.SchemaNode(
+    )
+    twitcher_token_expires_at = colander.SchemaNode(
         colander.String(),
-        title="Expires",
+        title="Expires at",
         missing='',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
+    )
+
+
+class C4ISchema(colander.MappingSchema):
+    c4i_token = colander.SchemaNode(
+        colander.String(),
+        title="Access Token",
+        missing='',
+        widget=deform.widget.TextInputWidget(),
+    )
+
+
+class ESGFSLCSTokenSchema(colander.MappingSchema):
+    esgf_token = colander.SchemaNode(
+        colander.String(),
+        title="Access Token",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+    )
+    esgf_token_expires_at = colander.SchemaNode(
+        colander.String(),
+        title="Expires at",
+        missing='',
+        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+    )
 
 
 class ESGFCredentialsSchema(colander.MappingSchema):
@@ -69,7 +93,7 @@ class ESGFCredentialsSchema(colander.MappingSchema):
         validator=colander.url,
         missing='',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
+    )
     credentials = colander.SchemaNode(
         colander.String(),
         title="Credentials",
@@ -77,15 +101,11 @@ class ESGFCredentialsSchema(colander.MappingSchema):
         validator=colander.url,
         missing='',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
+    )
     cert_expires = colander.SchemaNode(
         colander.String(),
         title="Expires",
         description="When your Proxy Certificate expires",
         missing='',
         widget=deform.widget.TextInputWidget(template='readonly/textinput'),
-        )
-
-
-
-
+    )

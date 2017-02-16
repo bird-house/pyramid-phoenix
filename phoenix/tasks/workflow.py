@@ -1,7 +1,9 @@
 from datetime import datetime
+from lxml import etree
 import yaml
 import json
 import urllib
+from time import sleep
 
 from pyramid_celery import celery_app as app
 
@@ -10,22 +12,23 @@ from owslib.util import build_get_url
 
 from phoenix.db import mongodb
 from phoenix.events import JobFinished
-from phoenix.tasks.utils import wps_headers, log, log_error, add_job
+from phoenix.tasks.utils import wps_headers, save_log, add_job
 from phoenix.tasks.utils import wait_secs
+from phoenix.wps import check_status
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 
 @app.task(bind=True)
-def execute_workflow(self, userid, url, workflow, caption=None):
+def execute_workflow(self, userid, url, service_name, workflow, caption=None):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
     job = add_job(db,
                   userid=userid,
                   task_id=self.request.id,
                   is_workflow=True,
-                  service=url,
+                  service_name=service_name,
                   process_id=workflow['worker']['identifier'],
                   caption=caption)
 
@@ -40,7 +43,8 @@ def execute_workflow(self, userid, url, workflow, caption=None):
             {'access_token': headers.get('Access-Token', '')})
         # logger.debug('workflow_mod=%s', workflow)
         inputs = [('workflow', ComplexDataInput(
-            json.dumps(workflow), mimeType="text/yaml", encoding="UTF-8"))]
+            # TODO: pywps-4 expects base64 encoding when not set to ''
+            json.dumps(workflow), mimeType="text/yaml", encoding=""))]
         # logger.debug('inputs=%s', inputs)
         outputs = [('output', True), ('logfile', True)]
 
@@ -50,10 +54,11 @@ def execute_workflow(self, userid, url, workflow, caption=None):
                                           skip_caps=False, verify=False)
         execution = wps.execute(identifier='workflow',
                                 inputs=inputs, output=outputs, lineage=True)
-        job['service'] = worker_wps.identification.title
+        # job['service'] = worker_wps.identification.title
         # job['title'] = getattr(execution.process, "title")
         # job['abstract'] = getattr(execution.process, "abstract")
         job['status_location'] = execution.statusLocation
+        job['response'] = etree.tostring(execution.response)
 
         logger.debug("job init done %s ...", self.request.id)
         run_step = 0
@@ -62,7 +67,9 @@ def execute_workflow(self, userid, url, workflow, caption=None):
             if num_retries >= 5:
                 raise Exception("Could not read status document after 5 retries. Giving up.")
             try:
-                execution.checkStatus(sleepSecs=wait_secs(run_step))
+                execution = check_status(url=execution.statusLocation, verify=False,
+                                         sleep_secs=wait_secs(run_step))
+                job['response'] = etree.tostring(execution.response)
                 job['status'] = execution.getStatus()
                 job['status_message'] = execution.statusMessage
                 job['progress'] = execution.percentCompleted
@@ -76,16 +83,17 @@ def execute_workflow(self, userid, url, workflow, caption=None):
                                 result = yaml.load(urllib.urlopen(output.reference))
                                 job['worker_status_location'] = result['worker']['status_location']
                         job['progress'] = 100
-                        log(job)
+                        save_log(job)
                     else:
                         job['status_message'] = '\n'.join(error.text for error in execution.errors)
                         for error in execution.errors:
-                            log_error(job, error)
+                            save_log(job, error)
                 else:
-                    log(job)
+                    save_log(job)
             except:
                 num_retries += 1
                 logger.exception("Could not read status xml document for job %s. Trying again ...", self.request.id)
+                sleep(1)
             else:
                 logger.debug("update job %s ...", self.request.id)
                 num_retries = 0
@@ -96,7 +104,7 @@ def execute_workflow(self, userid, url, workflow, caption=None):
         job['status'] = "ProcessFailed"
         job['status_message'] = "Failed to run Job. %s" % exc.message
     finally:
-        log(job)
+        save_log(job)
         db.jobs.update({'identifier': job['identifier']}, job)
 
     registry.notify(JobFinished(job))

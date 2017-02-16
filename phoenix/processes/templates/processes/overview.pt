@@ -3,9 +3,9 @@
     <div metal:fill-slot="content">
         <div class="container">
             <div class="page-header">
-                <h1>Processes
-                    <small>Available Web Processing Services</small>
-                </h1>
+                <h2>Web Processing Services
+                    <small>Please choose one of the available Web Processing Services.</small>
+                </h2>
             </div>
 
             <ul class="list-group">

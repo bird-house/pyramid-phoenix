@@ -10,6 +10,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def includeme(config):
+    config.add_route('wizard_literal_inputs', '/wizard/literal_inputs')
+    config.add_view('phoenix.wizard.views.literalinputs.LiteralInputs',
+                    route_name='wizard_literal_inputs',
+                    attr='view',
+                    renderer='../templates/wizard/inputs.pt')
+
+
 class LiteralInputs(Wizard):
     def __init__(self, request):
         super(LiteralInputs, self).__init__(request, name='wizard_literal_inputs', title="Literal Inputs")
@@ -30,8 +38,7 @@ class LiteralInputs(Wizard):
     def next_success(self, appstruct):
         self.success(appstruct)
         return self.next('wizard_complex_inputs')
-    
-    @view_config(route_name='wizard_literal_inputs', renderer='../templates/wizard/inputs.pt')
+
     def view(self):
         return super(LiteralInputs, self).view()
 
@@ -41,4 +48,3 @@ class LiteralInputs(Wizard):
             summary=getattr(self.process, 'abstract', 'No summary'),
             url=wps_describe_url(self.wps.url, self.process.identifier),
             metadata=self.process.metadata)
-

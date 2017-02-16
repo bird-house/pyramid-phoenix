@@ -17,12 +17,6 @@ class ProcessList(MyView):
             url=request.route_url('owsproxy', service_name=self.service_name),
             verify=False)
         super(ProcessList, self).__init__(request, name='processes_list', title='')
-        
-    def breadcrumbs(self):
-        breadcrumbs = super(ProcessList, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path('processes'), title='Processes'))
-        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.wps.identification.title))
-        return breadcrumbs
 
     @view_config(route_name='processes_list', renderer='../templates/processes/list.pt')
     def view(self):
@@ -36,8 +30,8 @@ class ProcessList(MyView):
             items.append(item)
         return dict(
             url=wps_caps_url(self.wps.url),
+            title=self.wps.identification.title,
             description=self.wps.identification.abstract,
             provider_name=self.wps.provider.name,
             provider_site=self.wps.provider.url,
             items=items)
-
