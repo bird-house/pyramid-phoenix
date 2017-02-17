@@ -161,7 +161,7 @@ class ExecuteProcess(MyView):
                 'monitor_details', tab='log', job_id=job.get('identifier')))
         return {}
 
-    @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt')
+    @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt', accept='text/html')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
