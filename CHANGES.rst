@@ -5,6 +5,8 @@ Changes
 0.7.2 (2017-02-xx)
 ==================
 
+* wizard: esgf-logon with provider + username
+
 0.7.1 (2017-02-20)
 ==================
 
