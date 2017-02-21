@@ -13,7 +13,13 @@ logger = logging.getLogger(__name__)
 
 
 class ESGFLogonSchema(colander.MappingSchema):
-    choices = (('badc', 'BADC'), ('esgf-data.dkrz.de', 'DKRZ'), )
+    choices = (
+        ('myproxy.ceda.ac.uk', 'BADC'),
+        ('esgf-data.dkrz.de', 'DKRZ'),
+        ('esgf-node.ipsl.fr', 'IPSL'),
+        ('pcmdi.llnl.gov', 'PCMDI'),
+        ('esg-dn1.nsc.liu.se', 'SMHI'),
+    )
 
     provider = colander.SchemaNode(
         colander.String(),
