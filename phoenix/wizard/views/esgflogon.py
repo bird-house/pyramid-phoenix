@@ -12,7 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class ESGFLoginSchema(colander.MappingSchema):
+class ESGFLogonSchema(colander.MappingSchema):
     openid = colander.SchemaNode(
         colander.String(),
         title="OpenID",
@@ -28,28 +28,28 @@ class ESGFLoginSchema(colander.MappingSchema):
         widget=deform.widget.PasswordWidget())
 
 
-class ESGFLogin(Wizard):
+class ESGFLogon(Wizard):
     def __init__(self, request):
-        super(ESGFLogin, self).__init__(
+        super(ESGFLogon, self).__init__(
             request,
-            name='wizard_esgf_login',
-            title="ESGF Login")
+            name='wizard_esgf_logon',
+            title="ESGF Logon")
 
     def breadcrumbs(self):
-        breadcrumbs = super(ESGFLogin, self).breadcrumbs()
+        breadcrumbs = super(ESGFLogon, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
     def schema(self):
-        return ESGFLoginSchema()
+        return ESGFLogonSchema()
 
     def appstruct(self):
-        appstruct = super(ESGFLogin, self).appstruct()
+        appstruct = super(ESGFLogon, self).appstruct()
         appstruct['openid'] = self.get_user().get('openid')
         return appstruct
 
     def success(self, appstruct):
-        super(ESGFLogin, self).success(appstruct)
+        super(ESGFLogon, self).success(appstruct)
 
         self.wizard_state.set('password', appstruct.get('password'))
         result = esgf_logon.delay(authenticated_userid(self.request), self.request.wps.url,
@@ -80,4 +80,4 @@ class ESGFLogin(Wizard):
         return {}
 
     def view(self):
-        return super(ESGFLogin, self).view()
+        return super(ESGFLogon, self).view()
