@@ -62,58 +62,6 @@ def logon(username=None, password=None, hostname=None, interactive=False, outdir
     return os.path.join(outdir, ESGF_CREDENTIALS)
 
 
-def logon_with_openid(openid, password=None, interactive=False, outdir=None):
-    """
-    Tries to get MyProxy parameters from OpenID and calls :meth:`logon`.
-
-    :param openid: OpenID used to login at ESGF node.
-    """
-    username, hostname, port = parse_openid(openid)
-    return logon(username=username, password=password, hostname=hostname,
-                 interactive=interactive, outdir=outdir)
-
-
-def parse_openid(openid, ssl_verify=False):
-    """
-    parse openid document to get myproxy service
-    """
-    XRI_NS = 'xri://$xrd*($v*2.0)'
-    MYPROXY_URN = 'urn:esg:security:myproxy-service'
-    ESGF_OPENID_REXP = r'https://.*/esgf-idp/openid/(.*)'
-    MYPROXY_URI_REXP = r'socket://([^:]*):?(\d+)?'
-
-    response = requests.get(openid, verify=ssl_verify)
-    xml = etree.parse(BytesIO(response.content))
-
-    hostname = None
-    port = None
-    username = None
-
-    services = xml.findall('.//{%s}Service' % XRI_NS)
-    for service in services:
-        try:
-            service_type = service.find('{%s}Type' % XRI_NS).text
-        except AttributeError:
-            continue
-
-        # Detect myproxy hostname and port
-        if service_type == MYPROXY_URN:
-            myproxy_uri = service.find('{%s}URI' % XRI_NS).text
-            mo = re.match(MYPROXY_URI_REXP, myproxy_uri)
-            if mo:
-                hostname, port = mo.groups()
-
-    # If the OpenID matches the standard ESGF pattern assume it contains
-    # the username, otherwise prompt or raise an exception
-    mo = re.match(ESGF_OPENID_REXP, openid)
-    if mo:
-        username = mo.group(1)
-
-    port = port or "7512"
-
-    return username, hostname, port
-
-
 def cert_infos(filename):
     expires = None
     with open(filename) as fh:
