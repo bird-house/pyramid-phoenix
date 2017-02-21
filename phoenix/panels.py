@@ -29,6 +29,7 @@ def navbar(context, request):
     subitems.append(nav_item('Dashboard', request.route_path('dashboard', tab='overview'), icon='fa fa-dashboard'))
     # dropdown browse
     browse_items = list()
+    browse_items.append(nav_item('ESGF search', request.route_path('esgfsearch'), icon='fa fa-search'))
     if request.solr_activated:
         browse_items.append(nav_item('Solr search', request.route_path('solrsearch'), icon='fa fa-search'))
     subitems.append(dropdown('Browse', items=browse_items, icon='fa fa-search'))
