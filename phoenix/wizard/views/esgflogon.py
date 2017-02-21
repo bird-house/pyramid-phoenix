@@ -13,17 +13,27 @@ logger = logging.getLogger(__name__)
 
 
 class ESGFLogonSchema(colander.MappingSchema):
-    openid = colander.SchemaNode(
+    choices = (('badc', 'BADC'), ('esgf-data.dkrz.de', 'DKRZ'), )
+
+    provider = colander.SchemaNode(
         colander.String(),
-        title="OpenID",
-        description="Type your OpenID from your ESGF provider.\
-         For example: https://esgf-data.dkrz.de/esgf-idp/openid/username",
-        validator=colander.url
+        title="Provider",
+        description="Choose your ESGF provider.",
+        validator=colander.OneOf([x[0] for x in choices]),
+        widget=deform.widget.RadioChoiceWidget(values=choices,
+                                               inline=True),
+        default='esgf-data.dkrz.de',
+    )
+    username = colander.SchemaNode(
+        colander.String(),
+        title="Username",
+        description="Type your username for your ESGF account.",
+        validator=colander.Length(min=2),
     )
     password = colander.SchemaNode(
         colander.String(),
         title='Password',
-        description='Type your password for your ESGF OpenID',
+        description='Type your password for your ESGF account.',
         validator=colander.Length(min=6),
         widget=deform.widget.PasswordWidget())
 
@@ -43,17 +53,13 @@ class ESGFLogon(Wizard):
     def schema(self):
         return ESGFLogonSchema()
 
-    def appstruct(self):
-        appstruct = super(ESGFLogon, self).appstruct()
-        appstruct['openid'] = self.get_user().get('openid')
-        return appstruct
-
     def success(self, appstruct):
         super(ESGFLogon, self).success(appstruct)
 
         self.wizard_state.set('password', appstruct.get('password'))
-        result = esgf_logon.delay(authenticated_userid(self.request), self.request.wps.url,
-                                  appstruct.get('openid'),
+        result = esgf_logon.delay(authenticated_userid(self.request),
+                                  appstruct.get('provider'),
+                                  appstruct.get('username'),
                                   appstruct.get('password'))
         self.session['task_id'] = result.id
 

@@ -50,19 +50,27 @@ def save_credentials(registry, userid, file=None, filename=None):
     db.users.update({'identifier': userid}, user)
 
 
+def logon(username=None, password=None, hostname=None, interactive=False, outdir=None):
+    """
+    Logon to MyProxy and fetch proxy certificate.
+    """
+    outdir = outdir or os.curdir
+    lm = LogonManager(esgf_dir=outdir, dap_config=os.path.join(outdir, 'dodsrc'))
+    lm.logoff()
+    lm.logon(username=username, password=password, hostname=hostname,
+             bootstrap=True, update_trustroots=False, interactive=interactive)
+    return os.path.join(outdir, ESGF_CREDENTIALS)
+
+
 def logon_with_openid(openid, password=None, interactive=False, outdir=None):
     """
     Tries to get MyProxy parameters from OpenID and calls :meth:`logon`.
 
     :param openid: OpenID used to login at ESGF node.
     """
-    outdir = outdir or os.curdir
     username, hostname, port = parse_openid(openid)
-    lm = LogonManager(esgf_dir=outdir, dap_config=os.path.join(outdir, 'dodsrc'))
-    lm.logoff()
-    lm.logon(username=username, password=password, hostname=hostname,
-             bootstrap=True, update_trustroots=False, interactive=interactive)
-    return os.path.join(outdir, ESGF_CREDENTIALS)
+    return logon(username=username, password=password, hostname=hostname,
+                 interactive=interactive, outdir=outdir)
 
 
 def parse_openid(openid, ssl_verify=False):
