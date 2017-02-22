@@ -44,7 +44,9 @@
         <h1>ESGF search</h1>
       </div>
 
-      <tal:form replace="structure form">The form will render here</tal:form>
+      <div class="row">
+        <tal:form replace="structure form">The form will render here</tal:form>
+      </div>
     </div>
   </div>
 

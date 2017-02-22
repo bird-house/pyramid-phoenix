@@ -14,4 +14,5 @@ class ESGFSearch(object):
 
     def view(self):
         form = Form(schema=ESGFSearchSchema())
-        return dict(form=form)
+        appstruct = dict()
+        return dict(form=form.render(appstruct))
