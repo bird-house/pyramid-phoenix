@@ -47,6 +47,19 @@
     </div>
   </div>
 
+  <!-- tag categories -->
+  <div class="row">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">Categories</h4>
+      </div>
+      <div class="panel-body">
+        <input type="text" name="Search Categories" class="tm-facets"
+               id="tm-facets"/>
+      </div>
+    </div>
+  </div>
+
   <div class="panel-group" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="heading-options">
@@ -87,21 +100,6 @@
       </div>
     </div>
 
-     <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="heading-categories">
-        <h4 class="panel-title">
-          <a data-toggle="collapse" href="#collapse-categories" aria-expanded="true" aria-controls="collapse-categories">
-            <i class="glyphicon glyphicon-chevron-down"></i> Categories
-          </a>
-        </h4>
-      </div>
-      <div id="collapse-categories" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-categories">
-        <div class="panel-body">
-          <input type="text" name="Search Categories" class="tm-facets"
-                 id="tm-facets"/>
-        </div>
-      </div>
-    </div>
 
      <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="heading-keywords">
