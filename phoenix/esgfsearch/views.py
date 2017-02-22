@@ -1,5 +1,7 @@
 from pyramid.view import view_defaults
+from deform import Form
 
+from phoenix.schema import ESGFSearchSchema
 
 import logging
 logger = logging.getLogger(__name__)
@@ -11,4 +13,5 @@ class ESGFSearch(object):
         self.request = request
 
     def view(self):
-        return dict()
+        form = Form(schema=ESGFSearchSchema())
+        return dict(form=form)
