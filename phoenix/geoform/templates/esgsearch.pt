@@ -15,6 +15,7 @@
     Searching ...
   </label>
 
+  <!-- freetext search -->
   <div class="row">
     <form>
       <div class="form-group">
@@ -29,6 +30,21 @@
         </div>
       </div>
     </form>
+  </div>
+
+  <!-- tag selection -->
+  <div class="row">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">Your Selection</h4>
+      </div>
+      <div class="panel-body">
+        <input type="text" name="Current Selection" class="tm-selection"
+               id="tm-selection"/>
+        <input type="hidden" name="facets" value="${facets}"
+               id="${oid}-facets">
+      </div>
+    </div>
   </div>
 
   <div class="panel-group" role="tablist" aria-multiselectable="true">
@@ -67,24 +83,6 @@
                    tal:attributes="checked temporal == true_val;"
                    id="${oid}-temporal"/> Temporal Search
           </label>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="heading-selection">
-        <h4 class="panel-title">
-          <a data-toggle="collapse" href="#collapse-selection" aria-expanded="true" aria-controls="collapse-selection">
-            <i class="glyphicon glyphicon-chevron-down"></i> Your keyword selections
-          </a>
-        </h4>
-      </div>
-      <div id="collapse-selection" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-selection">
-        <div class="panel-body">
-          <input type="text" name="Current Selection" class="tm-selection"
-                 id="tm-selection"/>
-          <input type="hidden" name="facets" value="${facets}"
-                 id="${oid}-facets">
         </div>
       </div>
     </div>
