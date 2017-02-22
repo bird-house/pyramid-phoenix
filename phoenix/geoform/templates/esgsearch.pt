@@ -60,6 +60,19 @@
     </div>
   </div>
 
+  <!-- tags -->
+  <div class="row">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title" id="search-label-category">Keywords: project</h4>
+      </div>
+      <div class="panel-body">
+        <input type="text" name="Categorie: xxx" class="tm-facet"
+               id="tm-facet"/>
+      </div>
+    </div>
+  </div>
+
   <div class="panel-group" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="heading-options">
@@ -96,24 +109,6 @@
                    tal:attributes="checked temporal == true_val;"
                    id="${oid}-temporal"/> Temporal Search
           </label>
-        </div>
-      </div>
-    </div>
-
-
-     <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="heading-keywords">
-        <h4 class="panel-title">
-          <a data-toggle="collapse" href="#collapse-keywords" aria-expanded="true" aria-controls="collapse-keywords">
-            <i class="glyphicon glyphicon-chevron-down"></i>
-            <span id="search-label-category">Keywords: project</span>
-          </a>
-        </h4>
-      </div>
-      <div id="collapse-keywords" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-keywords">
-        <div class="panel-body">
-          <input type="text" name="Categorie: xxx" class="tm-facet"
-                 id="tm-facet"/>
         </div>
       </div>
     </div>
