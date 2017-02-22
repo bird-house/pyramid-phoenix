@@ -40,9 +40,9 @@
 
   <div metal:fill-slot="content">
     <div class="container">
-      <div class="page-header">
+      <!-- div class="page-header">
         <h1>ESGF search</h1>
-      </div>
+      </div -->
 
       <div class="row">
         <tal:form replace="structure form">The form will render here</tal:form>
