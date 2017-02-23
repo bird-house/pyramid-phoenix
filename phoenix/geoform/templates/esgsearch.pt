@@ -12,12 +12,39 @@
 
   <div class="row">
     <div class="col-md-3">
+
+      <!-- status -->
       <label for="${oid}-hit-count" id="tm-hit-count">
         <input type="hidden" name="hit-count" value="0"
                id="${oid}-hit-count"/>
         Searching ...
       </label>
+
       <div class="panel-group" role="tablist" aria-multiselectable="true">
+
+        <!-- freetext search -->
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="heading-text">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" href="#collapse-text" aria-expanded="false" aria-controls="collapse-text">
+                <i class="fa fa-chevron-right"></i> TEXT
+              </a>
+            </h4>
+          </div>
+          <div id="collapse-text" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-text">
+            <div class="panel-body">
+              <div class="input-group">
+                <input type="text" class="form-control" name="query" value="${query}" placeholder="Search datasets..."
+                       id="${oid}-query"/>
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- options -->
         <div class="panel panel-default">
           <div class="panel-heading" role="tab" id="heading-options">
             <h4 class="panel-title">
@@ -57,7 +84,8 @@
           </div>
         </div>
 
-         <div class="panel panel-default">
+        <!-- date -->
+        <div class="panel panel-default">
           <div class="panel-heading" role="tab" id="heading-date">
             <h4 class="panel-title">
               <a data-toggle="collapse" href="#collapse-date" aria-expanded="false" aria-controls="collapse-date">
@@ -79,24 +107,8 @@
       </div>
     </div>
     <div class="col-md-9">
-      <!-- freetext search -->
-      <div class="row">
-        <form>
-          <div class="form-group">
-            <div class="input-group">
-              <input type="text" class="form-control input-lg" name="query" value="${query}" placeholder="Search datasets..."
-                     id="${oid}-query"/>
-              <span class="input-group-btn">
-                <button class="btn btn-default btn-lg input-lg btn-primary">
-                  <span><i class="fa fa-search"></i></span>
-                </button>
-              </span>
-            </div>
-          </div>
-        </form>
-      </div>
 
-      <!-- tag selection -->
+      <!-- selection -->
       <div class="row">
         <div class="panel panel-default">
           <div class="panel-heading">
@@ -111,11 +123,11 @@
         </div>
       </div>
 
-      <!-- tag categories -->
+      <!-- categories -->
       <div class="row">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h4 class="panel-title">Categories</h4>
+            <h4 class="panel-title">CATEGORIES</h4>
           </div>
           <div class="panel-body">
             <input type="text" name="Search Categories" class="tm-facets"
@@ -124,11 +136,11 @@
         </div>
       </div>
 
-      <!-- tags -->
+      <!-- keywords -->
       <div class="row">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h4 class="panel-title" id="search-label-category">Keywords: project</h4>
+            <h4 class="panel-title" id="search-label-category">KEYWORDS: project</h4>
           </div>
           <div class="panel-body">
             <input type="text" name="Categorie: xxx" class="tm-facet"
