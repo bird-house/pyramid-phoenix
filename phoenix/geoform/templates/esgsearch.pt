@@ -11,14 +11,10 @@
   <p/>
 
   <div class="row">
-    <div class="col-md-3">
 
-      <!-- status -->
-      <label for="${oid}-hit-count" id="tm-hit-count">
-        <input type="hidden" name="hit-count" value="0"
-               id="${oid}-hit-count"/>
-        Searching ...
-      </label>
+    <!-- sidebar column -->
+
+    <div class="col-md-3">
 
       <div class="panel-group" role="tablist" aria-multiselectable="true">
 
@@ -106,7 +102,17 @@
          </div>
       </div>
     </div>
+
+    <!-- search column -->
+
     <div class="col-md-9">
+
+      <!-- status -->
+      <label for="${oid}-hit-count" id="tm-hit-count">
+        <input type="hidden" name="hit-count" value="0"
+               id="${oid}-hit-count"/>
+        Searching ...
+      </label>
 
       <!-- selection -->
       <div class="row">
