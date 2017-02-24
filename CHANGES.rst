@@ -5,7 +5,10 @@ Changes
 0.7.2 (2017-02-xx)
 ==================
 
-* wizard: esgf-logon with provider + username
+* wizard: esgf-logon with provider + username.
+* updated pyramid 1.8.2 and deform 2.0.4.
+* refactored esgfsearch.
+* esgfsearch can be opened from the search menu.
 
 0.7.1 (2017-02-20)
 ==================
