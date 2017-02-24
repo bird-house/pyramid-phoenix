@@ -1,12 +1,9 @@
 <div tal:define="name name|field.name;
-                 size size|field.widget.size;
                  true_val true_val|field.widget.true_val;
-                 css_class css_class|field.widget.css_class;
                  oid oid|field.oid;
-                 style style|field.widget.style|None;
-                 url url|field.widget.url;"
-      i18n:domain="deform"
-      tal:omit-tag="">
+                 url url|field.widget.url;
+                 title title|field.title;"
+      i18n:domain="deform">
   ${field.start_mapping()}
   <p/>
 

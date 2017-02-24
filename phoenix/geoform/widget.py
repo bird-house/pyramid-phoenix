@@ -157,7 +157,9 @@ class TagsWidget(Widget):
 
 class ESGFSearchWidget(Widget):
     """
-    Renders an esg search widget
+    Renders an esg search widget.
+
+    TODO: maybe use MappingWidget
 
     **Attributes/Arguments**
 
@@ -169,8 +171,9 @@ class ESGFSearchWidget(Widget):
     false_val = 'false'
 
     template = 'esgsearch'
-    size = None
-    style = None
+    item_template = 'mapping_item'
+    error_class = None
+    category = 'structural'
     requirements = ()
     url = ''
 
