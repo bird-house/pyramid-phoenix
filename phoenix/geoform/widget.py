@@ -16,8 +16,7 @@ from deform.widget import (
     Widget,
 )
 
-# TODO: replace by real deform
-from .deformng import StrippedString
+from deform.widget import _StrippedString
 
 import logging
 import json
@@ -79,10 +78,10 @@ class BBoxWidget(Widget):
 
     _pstruct_schema = SchemaNode(
         Mapping(),
-        SchemaNode(StrippedString(), name='minx'),
-        SchemaNode(StrippedString(), name='miny'),
-        SchemaNode(StrippedString(), name='maxx'),
-        SchemaNode(StrippedString(), name='maxy'))
+        SchemaNode(_StrippedString(), name='minx'),
+        SchemaNode(_StrippedString(), name='miny'),
+        SchemaNode(_StrippedString(), name='maxx'),
+        SchemaNode(_StrippedString(), name='maxy'))
 
     def serialize(self, field, cstruct, **kw):
         if cstruct is null:
