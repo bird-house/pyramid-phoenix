@@ -1,6 +1,6 @@
 /* ESGF Dataset search */
 
-(function($) {  
+(function($) {
   $.extend({
     EsgDatasetSearch: function(options) {
       var defaults = {
@@ -9,7 +9,7 @@
       };
       var searchOptions = $.extend(defaults, options);
       var selectedFacet = 'project';
-      
+
       var init = function() {
         init_toggle_collapse();
         init_search_options();
@@ -24,7 +24,7 @@
 
       var init_toggle_collapse = function() {
         $('a[data-toggle="collapse"]').click(function () {
-          $(this).find('i').toggleClass('glyphicon-chevron-right glyphicon-chevron-down');
+          $(this).find('i').toggleClass('fa-chevron-right fa-chevron-down');
         })
       };
 
@@ -64,7 +64,7 @@
 
       var selected_facet_handler = function (facet) {
         selectedFacet = facet;
-        $('#search-label-category').text("Keywords: " + selectedFacet)
+        $('#search-label-category').text("KEYWORDS: " + selectedFacet)
         search();
       };
 
@@ -78,7 +78,7 @@
       };
 
       var update_counts = function(counts) {
-        $('#tm-hit-count').text("Datesets found: " + counts);
+        $('#tm-hit-count').text("Total: " + counts);
         $('#' + searchOptions.oid + '-hit-count').val(counts);
       };
 
@@ -212,10 +212,10 @@
           selectHandler: selected_facet_value_handler,
         });
       };
-    
+
       var search = function() {
         $.EsgSearch({
-          url: searchOptions.url, 
+          url: searchOptions.url,
           limit: 0,
           distrib: $('#' + searchOptions.oid + '-distrib').is(":checked"),
           latest: $('#' + searchOptions.oid + '-latest').is(":checked"),
@@ -244,7 +244,7 @@
           jQuery(".tm-facet").tagsManager('limitPushTags');
           jQuery(".tm-facet").tagsManager('pushTag', value);
         });
-          
+
         update_counts(result.numFound());
       };
 
@@ -252,7 +252,3 @@
     },
   });
 })(jQuery);
-
-
-
-
