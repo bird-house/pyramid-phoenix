@@ -58,7 +58,7 @@
       };
 
       var deleted_constraint_handler = function(constraint) {
-        jQuery(".tm-selection").tagsManager('limitPopTags');
+        $(".tm-selection").tagsManager('limitPopTags');
         search();
       };
 
@@ -70,7 +70,7 @@
 
       var selected_facet_value_handler = function (facet_value) {
         value = selectedFacet  + ':' + facet_value;
-        jQuery(".tm-selection").tagsManager('limitPushTags');
+        $(".tm-selection").tagsManager('limitPushTags');
         $(".tm-selection").tagsManager('pushTag', value);
         if (!ctrlPressed) {
           search();
@@ -248,22 +248,22 @@
       var callback = function(result) {
         $(".tm-facets").tagsManager('empty');
         $.each(result.facets(), function(i, tag) {
-          jQuery(".tm-facets").tagsManager('limitPushTags');
-          jQuery(".tm-facets").tagsManager('pushTag', tag);
+          $(".tm-facets").tagsManager('limitPushTags');
+          $(".tm-facets").tagsManager('pushTag', tag);
         });
 
         $(".tm-facet").tagsManager('empty');
         $.each(result.facetValues(selectedFacet), function(i,value) {
-          jQuery(".tm-facet").tagsManager('limitPushTags');
-          jQuery(".tm-facet").tagsManager('pushTag', value);
+          $(".tm-facet").tagsManager('limitPushTags');
+          $(".tm-facet").tagsManager('pushTag', value);
         });
 
         $(".tm-pinned-facets").tagsManager('empty');
         $.each(result.pinnedFacets(), function(i, tag) {
           selection = $("#" + searchOptions.oid + '-facets').val();
           if (selection.indexOf(tag) < 0) {
-            jQuery(".tm-pinned-facets").tagsManager('limitPushTags');
-            jQuery(".tm-pinned-facets").tagsManager('pushTag', tag);
+            $(".tm-pinned-facets").tagsManager('limitPushTags');
+            $(".tm-pinned-facets").tagsManager('pushTag', tag);
           }
         });
 
