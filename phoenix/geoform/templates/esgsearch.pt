@@ -152,49 +152,6 @@
         </div>
       </div>
 
-      <!-- pagination -->
-
-      <div class="row"
-           tal:define="start 1;end 10;hits 1001;page 1;">
-        <ul class="pagination pagination-sm pull-left">
-          <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
-            <a href="#">
-              <strong><i class="fa fa-angle-left"></i></strong>
-              </a>
-          </li>
-
-          <li class="next" tal:attributes="class 'next' if end < hits else 'next disabled'">
-            <a href="#">
-              <strong><i class="fa fa-angle-right"></i></strong>
-            </a>
-          </li>
-        </ul>
-
-        <h3 class="pull-right"> Showing ${start}-${end} of ${hits} </h3>
-      </div>
-
-      <!-- item list -->
-
-      <div class="row">
-        <ul class="list-group">
-          <li class="list-group-item" tal:repeat="title ['test1']">
-            <div class="media">
-              <div class="media-left media-middle">
-                <a href="#">
-                  <img class="media-object" src="/static/phoenix/img/missing_thumb.png" alt="No Preview"/>
-                </a>
-              </div>
-              <div class="media-body">
-                <div class="media-heading">
-                  <h4>${title}</h4>
-                </div>
-                <p><small>No summary</small></p>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-
     </div>
   </div>
 
