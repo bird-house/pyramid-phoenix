@@ -170,7 +170,7 @@ class ESGFSearchWidget(Widget):
     true_val = 'true'
     false_val = 'false'
 
-    template = 'esgsearch'
+    template = 'esgfsearch'
     item_template = 'mapping_item'
     error_class = None
     category = 'structural'
