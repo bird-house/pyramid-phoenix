@@ -26,6 +26,17 @@ $.extend(EsgSearchResult.prototype, {
     return this._facets;
   },
 
+  pinnedFacets: function() {
+    var facets = [];
+    var facet_counts = this._json.facet_counts.facet_fields;
+    $.each(facet_counts, function(tag, values) {
+      if (values.length == 2) {
+        facets.push(tag + ":" + values[0]);
+      }
+    });
+    return facets.sort();
+  },
+
   facetValues: function(facet) {
     var counts = this._json.facet_counts.facet_fields[facet];
     var facet_values = [];
@@ -64,7 +75,7 @@ $.extend(EsgSearchResult.prototype, {
 });
 
 
-(function($) {  
+(function($) {
   $.extend({
     EsgSearch: function(options) {
       var defaults = {
@@ -116,7 +127,7 @@ $.extend(EsgSearchResult.prototype, {
         if (searchOptions.datasetId != null) {
           query += '&dataset_id=' + searchOptions.datasetId;
         }
-        
+
         var tags = searchOptions.constraints.split(",");
         $.each(tags.sort(), function(i, tag) {
           var constraint = tag.split(":");
@@ -124,7 +135,7 @@ $.extend(EsgSearchResult.prototype, {
             query += '&' + constraint[0] + '=' + constraint[1];
           }
         });
-        
+
         if (searchOptions.distrib == true) {
           query += '&distrib=true';
         } else {
@@ -153,6 +164,3 @@ $.extend(EsgSearchResult.prototype, {
     },
   });
 })(jQuery);
-
-
-

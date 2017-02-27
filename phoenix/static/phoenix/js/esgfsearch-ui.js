@@ -17,6 +17,7 @@
         init_constraints();
         init_facets();
         init_facet_values();
+        init_pinned_facets();
         init_time_constraints();
         //init_spatial_constraints();
         search();
@@ -214,6 +215,16 @@
         });
       };
 
+      var init_pinned_facets = function() {
+        $(".tm-pinned-facets").tagsManager({
+          //prefilled: ["hello"],
+          preventSubmitOnEnter: true,
+          delimiters: [9, 13, 44],
+          tagClass: 'tm-tag tm-tag-disabled',
+          isSelectable: false,
+        });
+      };
+
       var search = function() {
         $.EsgSearch({
           url: searchOptions.url,
@@ -245,6 +256,15 @@
         $.each(result.facetValues(selectedFacet), function(i,value) {
           jQuery(".tm-facet").tagsManager('limitPushTags');
           jQuery(".tm-facet").tagsManager('pushTag', value);
+        });
+
+        $(".tm-pinned-facets").tagsManager('empty');
+        $.each(result.pinnedFacets(), function(i, tag) {
+          selection = $("#" + searchOptions.oid + '-facets').val();
+          if (selection.indexOf(tag) < 0) {
+            jQuery(".tm-pinned-facets").tagsManager('limitPushTags');
+            jQuery(".tm-pinned-facets").tagsManager('pushTag', tag);
+          }
         });
 
         update_counts(result.numFound());

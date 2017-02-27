@@ -120,6 +120,8 @@
             <h4 class="panel-title">SELECTION</h4>
           </div>
           <div class="panel-body">
+            <input type="text" name="pinned" class="tm-pinned-facets"
+                   id="tm-pinned-facets"/>
             <input type="text" name="selection" class="tm-selection"
                    id="tm-selection"/>
             <input type="hidden" name="facets" value="${facets}"
