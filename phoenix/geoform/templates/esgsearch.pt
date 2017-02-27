@@ -41,12 +41,12 @@
         <div class="panel panel-default">
           <div class="panel-heading" role="tab" id="heading-options">
             <h4 class="panel-title">
-              <a data-toggle="collapse" href="#collapse-options" aria-expanded="true" aria-controls="collapse-options">
+              <a data-toggle="collapse" href="#collapse-options" aria-expanded="false" aria-controls="collapse-options">
                 <i class="fa fa-chevron-right"></i> OPTIONS
               </a>
             </h4>
           </div>
-          <div id="collapse-options" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-options">
+          <div id="collapse-options" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-options">
             <div class="panel-body">
               <label>
                 <input type="checkbox" name="distrib" value="${true_val}"
@@ -81,12 +81,12 @@
         <div class="panel panel-default">
           <div class="panel-heading" role="tab" id="heading-date">
             <h4 class="panel-title">
-              <a data-toggle="collapse" href="#collapse-date" aria-expanded="true" aria-controls="collapse-date">
+              <a data-toggle="collapse" href="#collapse-date" aria-expanded="false" aria-controls="collapse-date">
                 <i class="fa fa-chevron-right"></i> DATE
               </a>
             </h4>
           </div>
-          <div id="collapse-date" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-date">
+          <div id="collapse-date" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-date">
             <div class="panel-body">
               <label>Start Year:</label>
               <input type="text" name="start" value="${start}" class="form-control"
