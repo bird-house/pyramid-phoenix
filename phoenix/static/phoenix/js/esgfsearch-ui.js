@@ -44,7 +44,6 @@
       // using delete to remove selections of current category
       $(window).keydown(function(e) {
         if (e.which == 46) { // delete
-          console.log('delete');
           $(".tm-selection").tagsManager('empty');
           search();
         }
@@ -141,8 +140,9 @@
       var init_time_constraints = function() {
         //var options = { 'format': date_format, 'parse': parse_date };
         // TODO: fix jquery pickadate
-        var options = {"selectMonths": true, "submitFormat": "yyyy-mm-dd", "selectYears": true, "format": "yyyy-mm-dd"};
-        $('#' + searchOptions.oid + '-start').pickadate(options);
+        // var options = {"selectMonths": true, "submitFormat": "yyyy-mm-dd", "selectYears": true, "format": "yyyy-mm-dd"};
+        // $('#' + searchOptions.oid + '-start').pickadate(options);
+        //$('#' + searchOptions.oid + '-start').val("2001")
         $('#' + searchOptions.oid + '-start').keypress(function(e) {
           // disable ENTER
           if (e.which == 13) {
@@ -153,7 +153,8 @@
           search();
         });
 
-        $('#' + searchOptions.oid + '-end').pickadate(options);
+        // $('#' + searchOptions.oid + '-end').pickadate(options);
+        //$('#' + searchOptions.oid + '-end').val("2005")
         $('#' + searchOptions.oid + '-end').keypress(function(e) {
           // disable ENTER
           if (e.which == 13) {
@@ -225,8 +226,8 @@
           constraints: $("#" + searchOptions.oid + '-facets').val(),
           type: 'Dataset',
           temporal: $('#' + searchOptions.oid + '-temporal').is(":checked"),
-          start: $('#' + searchOptions.oid + '-start').val() + 'T12:00:00Z',
-          end: $('#' + searchOptions.oid + '-end').val()  + 'T12:00:00Z',
+          start: $('#' + searchOptions.oid + '-start').val() + '-01-01T12:00:00Z',
+          end: $('#' + searchOptions.oid + '-end').val()  + '-12-31T12:00:00Z',
           //spatial: $('#' + searchOptions.oid + '-spatial').is(":checked"),
           //bbox: $('#' + searchOptions.oid + '-bbox').val(),
           callback: function(result) { callback(result); },

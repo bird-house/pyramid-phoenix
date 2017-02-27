@@ -209,13 +209,13 @@ class ESGFSearchWidget(Widget):
         # TODO: quick hack for date format used in esgsearch
         start = search.get('start', '2001-01-01')
         timestamp = datetime_parser.parse(start)
-        start = timestamp.isoformat().split('T')[0]
-        kw.setdefault('start', start)
+        # start = timestamp.isoformat().split('T')[0]
+        kw.setdefault('start', timestamp.year)
 
-        end = search.get('end', '2010-12-31')
+        end = search.get('end', '2005-12-31')
         timestamp = datetime_parser.parse(end)
-        end = timestamp.isoformat().split('T')[0]
-        kw.setdefault('end', end)
+        # end = timestamp.isoformat().split('T')[0]
+        kw.setdefault('end', timestamp.year)
 
         # kw.setdefault('bbox', search.get('bbox', '-180,-90,180,90'))
         kw.setdefault('bbox', '-180,-90,180,90')
@@ -241,8 +241,8 @@ class ESGFSearchWidget(Widget):
         else:
             result['latest'] = None
         # TODO: quick hack for date format used in esgsearch
-        result['start'] = pstruct['start'].strip() + "T12:00:00Z"
-        result['end'] = pstruct['end'].strip() + "T12:00:00Z"
+        result['start'] = pstruct['start'].strip() + "-01-01T12:00:00Z"
+        result['end'] = pstruct['end'].strip() + "-12-31T12:00:00Z"
         result['temporal'] = 'temporal' in pstruct
         # result['spatial'] = pstruct.has_key('spatial')
         result['spatial'] = False

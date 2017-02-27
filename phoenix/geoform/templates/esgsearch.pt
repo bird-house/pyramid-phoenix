@@ -88,11 +88,11 @@
           </div>
           <div id="collapse-date" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-date">
             <div class="panel-body">
-              <label>Date begins after:</label>
-              <input data-date-format="YYYY-MM-DD" type="text" name="start" value="${start}" class="form-control hasDatepicker"
+              <label>Start Year:</label>
+              <input type="date" name="start" value="${start}" class="form-control"
                      id="${oid}-start"/>
-              <label>Date ends before:</label>
-              <input data-date-format="YYYY-MM-DD" type="text" name="end" value="${end}" class="form-control hasDatepicker"
+              <label>End Year:</label>
+              <input type="date" name="end" value="${end}" class="form-control"
                      id="${oid}-end"/>
             </div>
           </div>
