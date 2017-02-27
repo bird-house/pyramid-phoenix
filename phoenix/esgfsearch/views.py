@@ -1,7 +1,7 @@
 from pyramid.view import view_defaults
 from deform import Form
 
-from phoenix.schema import ESGFSearchSchema
+from phoenix.esgfsearch.schema import ESGFSearchSchema
 
 import logging
 logger = logging.getLogger(__name__)

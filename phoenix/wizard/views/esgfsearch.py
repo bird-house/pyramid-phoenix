@@ -40,7 +40,7 @@ class ESGFSearch(Wizard):
         return breadcrumbs
 
     def schema(self):
-        from phoenix.schema import ESGFSearchSchema
+        from phoenix.esgfsearch.schema import ESGFSearchSchema
         return ESGFSearchSchema()
 
     def next_success(self, appstruct):
