@@ -89,10 +89,12 @@
           <div id="collapse-date" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-date">
             <div class="panel-body">
               <label>Start Year:</label>
-              <input type="date" name="start" value="${start}" class="form-control"
+              <input type="text" name="start" value="${start}" class="form-control"
+                     maxlength="4"
                      id="${oid}-start"/>
               <label>End Year:</label>
-              <input type="date" name="end" value="${end}" class="form-control"
+              <input type="text" name="end" value="${end}" class="form-control"
+                     maxlength="4"
                      id="${oid}-end"/>
             </div>
           </div>
