@@ -16,6 +16,13 @@ class Actions(object):
         else:
             selected = 'project'
 
+        constraints = dict()
+        if 'constraints' in self.request.params:
+            for constrain in self.request.params['constraints'].split(','):
+                if constrain.strip():
+                    key, value = constrain.split(':', 1)
+                    constraints[key] = value
+
         if 'limit' in self.request.params:
             limit = int(self.request.params['limit'])
         else:
@@ -56,11 +63,6 @@ class Actions(object):
             "version",
         ]
 
-        constraints = dict()
-        for param in self.request.params:
-            if param in ['', 'limit', 'distrib', 'type', 'format', 'facets', 'latest', 'replica', 'selected']:
-                continue
-            constraints[param] = self.request.params[param]
         conn = SearchConnection(self.settings.get('esgfsearch.url'), distrib=distrib)
         ctx = conn.new_context(latest=latest, facets=','.join(facets), replica=replica)
         ctx = ctx.constrain(**constraints)

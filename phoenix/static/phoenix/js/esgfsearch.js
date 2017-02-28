@@ -30,7 +30,7 @@ $.extend(EsgSearchResult.prototype, {
       var defaults = {
         url: null,
         selected: 'project',
-        query: '*:*', // TODO: rename query to freetext
+        query: '*:*',
         constraints: null,
         limit: 0,
         facets: '*',
@@ -41,8 +41,6 @@ $.extend(EsgSearchResult.prototype, {
         temporal: false,
         start: '',
         end: '',
-        spatial: false,
-        bbox: '',
         callback: function(result) { console.log('no callback defined.')},
       };
       var searchOptions = $.extend(defaults, options);
@@ -64,19 +62,11 @@ $.extend(EsgSearchResult.prototype, {
 
       var buildQuery = function() {
         var query = '';
-
         query += 'selected=' + searchOptions.selected;
         query += '&facets=' + searchOptions.facets;
         query += '&fields=' + searchOptions.fields;
         query += '&limit=' + searchOptions.limit;
-
-        var tags = searchOptions.constraints.split(",");
-        $.each(tags.sort(), function(i, tag) {
-          var constraint = tag.split(":");
-          if (searchOptions.type != 'Aggregation' || constraint[0] == 'variable') {
-            query += '&' + constraint[0] + '=' + constraint[1];
-          }
-        });
+        query += '&constraints=' + searchOptions.constraints;
 
         if (searchOptions.distrib == true) {
           query += '&distrib=true';
@@ -94,11 +84,7 @@ $.extend(EsgSearchResult.prototype, {
           query += '&start=' + searchOptions.start;
           query += '&end=' + searchOptions.end;
         }
-        if (searchOptions.spatial == true) {
-          query += '&bbox=' + searchOptions.bbox;
-        }
 
-        //console.log(query);
         return query;
       };
 
