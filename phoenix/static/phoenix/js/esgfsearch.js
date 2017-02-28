@@ -1,29 +1,3 @@
-var EsgSearchResult = function(json) {
-  this._json = json;
-  this._facets = null;
-};
-
-$.extend(EsgSearchResult.prototype, {
-
-  numFound: function() {
-    return this._json.numFound;
-  },
-
-  facets: function() {
-    return this._json.facets;
-  },
-
-  pinnedFacets: function() {
-    return this._json.pinnedFacets;
-  },
-
-  facetValues: function(facet) {
-    return this._json.facetValues;
-  },
-
-});
-
-
 (function($) {
   $.extend({
     EsgSearch: function(options) {
@@ -55,8 +29,7 @@ $.extend(EsgSearchResult.prototype, {
         searchURL += query;
 
         $.getJSON(searchURL, function(json) {
-          var result = new EsgSearchResult(json);
-          searchOptions.callback(result);
+          searchOptions.callback(json);
         });
       };
 

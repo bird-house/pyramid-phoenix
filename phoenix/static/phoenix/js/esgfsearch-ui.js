@@ -222,19 +222,19 @@
 
       var callback = function(result) {
         $(".tm-facets").tagsManager('empty');
-        $.each(result.facets(), function(i, tag) {
+        $.each(result.facets, function(i, tag) {
           $(".tm-facets").tagsManager('limitPushTags');
           $(".tm-facets").tagsManager('pushTag', tag);
         });
 
         $(".tm-facet").tagsManager('empty');
-        $.each(result.facetValues(selectedFacet), function(i,value) {
+        $.each(result.facetValues, function(i,value) {
           $(".tm-facet").tagsManager('limitPushTags');
           $(".tm-facet").tagsManager('pushTag', value);
         });
 
         $(".tm-pinned-facets").tagsManager('empty');
-        $.each(result.pinnedFacets(), function(i, tag) {
+        $.each(result.pinnedFacets, function(i, tag) {
           selection = $("#" + searchOptions.oid + '-facets').val();
           if (selection.indexOf(tag) < 0) {
             $(".tm-pinned-facets").tagsManager('limitPushTags');
@@ -242,7 +242,7 @@
           }
         });
 
-        update_counts(result.numFound());
+        update_counts(result.numFound);
       };
 
       init();
