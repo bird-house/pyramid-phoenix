@@ -229,7 +229,7 @@
         $.EsgSearch({
           url: searchOptions.url,
           limit: 10,
-          facets: "access,cf_standard_name,cmor_table,data_node,domain,driving_model,ensemble,experiment,institute,model,product,project,realm,time_frequency,variable,variable_long_name,version",
+          facets: "*",
           distrib: $('#' + searchOptions.oid + '-distrib').is(":checked"),
           latest: $('#' + searchOptions.oid + '-latest').is(":checked"),
           replica: $('#' + searchOptions.oid + '-replica').is(":checked"),

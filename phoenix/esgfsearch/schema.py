@@ -17,4 +17,4 @@ class ESGFSearchSchema(colander.MappingSchema):
         colander.String(),
         validator=esgfsearch_validator,
         title='ESGF Search',
-        widget=ESGFSearchWidget(url="/esg-search"))
+        widget=ESGFSearchWidget(url="/esgfsearch"))
