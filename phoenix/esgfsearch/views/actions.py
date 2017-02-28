@@ -11,7 +11,11 @@ class Actions(object):
         self.settings = self.request.registry.settings
 
     def search(self):
-        query_dict = {}
+        if 'selected' in self.request.params:
+            selected = self.request.params['selected']
+        else:
+            selected = 'project'
+
         if 'limit' in self.request.params:
             limit = int(self.request.params['limit'])
         else:
@@ -21,6 +25,16 @@ class Actions(object):
             distrib = self.request.params['distrib'] == 'true'
         else:
             distrib = False
+
+        if 'latest' in self.request.params:
+            latest = self.request.params['latest'] == 'true'
+        else:
+            latest = True
+
+        if 'replica' in self.request.params:
+            replica = self.request.params['replica'] == 'true'
+        else:
+            replica = False
 
         facets = [
             "access",
@@ -42,11 +56,25 @@ class Actions(object):
             "version",
         ]
 
+        constraints = dict()
         for param in self.request.params:
-            if param in ['', 'limit', 'distrib', 'type', 'format', 'facets']:
+            if param in ['', 'limit', 'distrib', 'type', 'format', 'facets', 'latest', 'replica', 'selected']:
                 continue
-            query_dict[param] = self.request.params[param]
-        query_dict.update({'facets': ','.join(facets)})
-        LOGGER.debug(query_dict)
+            constraints[param] = self.request.params[param]
         conn = SearchConnection(self.settings.get('esgfsearch.url'), distrib=distrib)
-        return conn.send_search(query_dict, limit=limit)
+        ctx = conn.new_context(latest=latest, facets=','.join(facets), replica=replica)
+        ctx = ctx.constrain(**constraints)
+        #return conn.send_search(query_dict=ctx._build_query(), limit=limit)
+        #ctx.hit_count
+        results = ctx.search(batch_size=10, ignore_facet_check=True)
+        categories = [tag for tag in ctx.facet_counts if len(ctx.facet_counts[tag]) > 1]
+        keywords = ctx.facet_counts[selected].keys()
+        pinned_facets = []
+        for facet in ctx.facet_counts:
+            if len(ctx.facet_counts[facet]) == 1:
+                pinned_facets.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
+        return dict(
+            numFound=ctx.hit_count,
+            facets=categories,
+            facetValues=keywords,
+            pinnedFacets=pinned_facets)

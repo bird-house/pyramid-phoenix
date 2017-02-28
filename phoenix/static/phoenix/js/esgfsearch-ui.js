@@ -203,6 +203,7 @@
       var search = function() {
         $.EsgSearch({
           url: searchOptions.url,
+          selected: selectedFacet,
           limit: 10,
           facets: "*",
           distrib: $('#' + searchOptions.oid + '-distrib').is(":checked"),
@@ -210,7 +211,6 @@
           replica: $('#' + searchOptions.oid + '-replica').is(":checked"),
           query: $('#' + searchOptions.oid + '-query').val(),
           constraints: $("#" + searchOptions.oid + '-facets').val(),
-          type: 'Dataset',
           temporal: $('#' + searchOptions.oid + '-temporal').is(":checked"),
           start: $('#' + searchOptions.oid + '-start').val() + '-01-01T12:00:00Z',
           end: $('#' + searchOptions.oid + '-end').val()  + '-12-31T12:00:00Z',

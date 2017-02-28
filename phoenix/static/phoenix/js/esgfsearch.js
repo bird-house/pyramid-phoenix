@@ -4,74 +4,23 @@ var EsgSearchResult = function(json) {
 };
 
 $.extend(EsgSearchResult.prototype, {
-  raw: function() {
-    return this._json;
-  },
 
   numFound: function() {
-    return this._json.response.numFound;
+    return this._json.numFound;
   },
 
   facets: function() {
-    if (this._facets == null) {
-      var facets = [];
-      var facet_counts = this._json.facet_counts.facet_fields;
-      $.each(facet_counts, function(tag, values) {
-        if (values.length > 2) {
-          facets.push(tag);
-        }
-      });
-      this._facets = facets.sort();
-    }
-    return this._facets;
+    return this._json.facets;
   },
 
   pinnedFacets: function() {
-    var facets = [];
-    var facet_counts = this._json.facet_counts.facet_fields;
-    $.each(facet_counts, function(tag, values) {
-      if (values.length == 2) {
-        facets.push(tag + ":" + values[0]);
-      }
-    });
-    return facets.sort();
+    return this._json.pinnedFacets;
   },
 
   facetValues: function(facet) {
-    var counts = this._json.facet_counts.facet_fields[facet];
-    var facet_values = [];
-    $.each(counts, function(i,value) {
-      if (i % 2 == 0) {
-        facet_values.push(value);
-      }
-    });
-    return facet_values.sort();
+    return this._json.facetValues;
   },
 
-  docs: function() {
-    return this._json.response.docs;
-  },
-
-  url: function(doc, type) {
-    var url = null;
-    var serviceType = 'HTTPServer';
-    if (type == 'Aggregation') {
-      serviceType = 'OPENDAP';
-    }
-    $.each(doc.url, function(i, encoded) {
-      var service = encoded.split("|");
-      //console.log('service: ' + service[2]);
-      if (service[2] == serviceType) {
-        url = service[0];
-      };
-      if (serviceType == 'OPENDAP' && url != null) {
-        url = url.replace('.html', '');
-      }
-    });
-
-    //console.log('url: ' + url);
-    return url;
-  },
 });
 
 
@@ -80,8 +29,8 @@ $.extend(EsgSearchResult.prototype, {
     EsgSearch: function(options) {
       var defaults = {
         url: null,
+        selected: 'project',
         query: '*:*', // TODO: rename query to freetext
-        datasetId: null,
         constraints: null,
         limit: 0,
         facets: '*',
@@ -94,7 +43,6 @@ $.extend(EsgSearchResult.prototype, {
         end: '',
         spatial: false,
         bbox: '',
-        type: 'Dataset',
         callback: function(result) { console.log('no callback defined.')},
       };
       var searchOptions = $.extend(defaults, options);
@@ -104,11 +52,9 @@ $.extend(EsgSearchResult.prototype, {
       };
 
       var search = function(query) {
-        var format = 'application%2Fsolr%2Bjson';
         var servlet = 'search';
         var searchURL = searchOptions.url + '/' + servlet + '?';
         searchURL += query;
-        searchURL += '&format=' + format;
 
         $.getJSON(searchURL, function(json) {
           var result = new EsgSearchResult(json);
@@ -119,14 +65,10 @@ $.extend(EsgSearchResult.prototype, {
       var buildQuery = function() {
         var query = '';
 
-        query += 'type=' + searchOptions.type;
+        query += 'selected=' + searchOptions.selected;
         query += '&facets=' + searchOptions.facets;
         query += '&fields=' + searchOptions.fields;
         query += '&limit=' + searchOptions.limit;
-
-        if (searchOptions.datasetId != null) {
-          query += '&dataset_id=' + searchOptions.datasetId;
-        }
 
         var tags = searchOptions.constraints.split(",");
         $.each(tags.sort(), function(i, tag) {
