@@ -200,49 +200,58 @@
         });
       };
 
-      var search = function() {
-        $.EsgSearch({
-          url: searchOptions.url,
-          selected: selectedFacet,
-          limit: 10,
-          facets: "*",
-          distrib: $('#' + searchOptions.oid + '-distrib').is(":checked"),
-          latest: $('#' + searchOptions.oid + '-latest').is(":checked"),
-          replica: $('#' + searchOptions.oid + '-replica').is(":checked"),
-          query: $('#' + searchOptions.oid + '-query').val(),
-          constraints: $("#" + searchOptions.oid + '-facets').val(),
-          temporal: $('#' + searchOptions.oid + '-temporal').is(":checked"),
-          start: $('#' + searchOptions.oid + '-start').val() + '-01-01T12:00:00Z',
-          end: $('#' + searchOptions.oid + '-end').val()  + '-12-31T12:00:00Z',
-          //spatial: $('#' + searchOptions.oid + '-spatial').is(":checked"),
-          //bbox: $('#' + searchOptions.oid + '-bbox').val(),
-          callback: function(result) { callback(result); },
-        });
+      var buildQuery = function() {
+        var servlet = 'search';
+        var searchURL = searchOptions.url + '/' + servlet + '?';
+        var query = searchURL;
+        query += 'selected=' + selectedFacet;
+        query += '&constraints=' + $("#" + searchOptions.oid + '-facets').val();
+
+        if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {
+          query += '&distrib=true';
+        } else {
+          query += '&distrib=false';
+        }
+        if ($('#' + searchOptions.oid + '-latest').is(":checked") == true) {
+          query += '&latest=true';
+        }
+        if ($('#' + searchOptions.oid + '-replica').is(":checked") == false) {
+          query += '&replica=false';
+        }
+        query += '&query=' + $('#' + searchOptions.oid + '-query').val();
+        if ($('#' + searchOptions.oid + '-temporal').is(":checked") == true) {
+          query += '&start=' + $('#' + searchOptions.oid + '-start').val() + '-01-01T12:00:00Z';
+          query += '&end=' + $('#' + searchOptions.oid + '-end').val()  + '-12-31T12:00:00Z';
+        }
+
+        return query;
       };
 
-      var callback = function(result) {
-        $(".tm-facets").tagsManager('empty');
-        $.each(result.facets, function(i, tag) {
-          $(".tm-facets").tagsManager('limitPushTags');
-          $(".tm-facets").tagsManager('pushTag', tag);
-        });
+      var search = function() {
+        $.getJSON(buildQuery(), function(result) {
+          $(".tm-facets").tagsManager('empty');
+          $.each(result.facets, function(i, tag) {
+            $(".tm-facets").tagsManager('limitPushTags');
+            $(".tm-facets").tagsManager('pushTag', tag);
+          });
 
-        $(".tm-facet").tagsManager('empty');
-        $.each(result.facetValues, function(i,value) {
-          $(".tm-facet").tagsManager('limitPushTags');
-          $(".tm-facet").tagsManager('pushTag', value);
-        });
+          $(".tm-facet").tagsManager('empty');
+          $.each(result.facetValues, function(i,value) {
+            $(".tm-facet").tagsManager('limitPushTags');
+            $(".tm-facet").tagsManager('pushTag', value);
+          });
 
-        $(".tm-pinned-facets").tagsManager('empty');
-        $.each(result.pinnedFacets, function(i, tag) {
-          selection = $("#" + searchOptions.oid + '-facets').val();
-          if (selection.indexOf(tag) < 0) {
-            $(".tm-pinned-facets").tagsManager('limitPushTags');
-            $(".tm-pinned-facets").tagsManager('pushTag', tag);
-          }
-        });
+          $(".tm-pinned-facets").tagsManager('empty');
+          $.each(result.pinnedFacets, function(i, tag) {
+            selection = $("#" + searchOptions.oid + '-facets').val();
+            if (selection.indexOf(tag) < 0) {
+              $(".tm-pinned-facets").tagsManager('limitPushTags');
+              $(".tm-pinned-facets").tagsManager('pushTag', tag);
+            }
+          });
 
-        update_counts(result.numFound);
+          update_counts(result.numFound);
+        });
       };
 
       init();

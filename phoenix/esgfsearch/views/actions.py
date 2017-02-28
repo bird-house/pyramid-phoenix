@@ -66,6 +66,8 @@ class Actions(object):
         conn = SearchConnection(self.settings.get('esgfsearch.url'), distrib=distrib)
         ctx = conn.new_context(latest=latest, facets=','.join(facets), replica=replica)
         ctx = ctx.constrain(**constraints)
+        if 'start' in self.request.params and 'end' in self.request.params:
+            ctx = ctx.constrain(from_timestamp=self.request.params['start'], to_timestamp=self.request.params['end'])
         #return conn.send_search(query_dict=ctx._build_query(), limit=limit)
         #ctx.hit_count
         results = ctx.search(batch_size=10, ignore_facet_check=True)
