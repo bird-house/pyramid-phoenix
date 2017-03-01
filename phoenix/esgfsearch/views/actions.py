@@ -1,3 +1,5 @@
+from pyramid.settings import asbool
+
 from pyesgf.search import SearchConnection
 
 import logging
@@ -11,10 +13,17 @@ class Actions(object):
         self.settings = self.request.registry.settings
 
     def search(self):
-        if 'selected' in self.request.params:
-            selected = self.request.params['selected']
-        else:
-            selected = 'project'
+        selected = self.request.params.get('selected', 'project')
+        limit = int(self.request.params.get('limit', '0'))
+        distrib = asbool(self.request.params.get('distrib', 'false'))
+        LOGGER.debug("latest param=%s", self.request.params.get('latest'))
+        latest = asbool(self.request.params.get('latest', 'true'))
+        if latest is False:
+            latest = None  # all versions
+        LOGGER.debug("replica param=%s", self.request.params.get('replica'))
+        replica = asbool(self.request.params.get('replica', 'false'))
+        if replica is True:
+            replica = None  # master + replica
 
         constraints = dict()
         if 'constraints' in self.request.params:
@@ -22,26 +31,7 @@ class Actions(object):
                 if constrain.strip():
                     key, value = constrain.split(':', 1)
                     constraints[key] = value
-
-        if 'limit' in self.request.params:
-            limit = int(self.request.params['limit'])
-        else:
-            limit = 0
-
-        if 'distrib' in self.request.params:
-            distrib = self.request.params['distrib'] == 'true'
-        else:
-            distrib = False
-
-        if 'latest' in self.request.params:
-            latest = self.request.params['latest'] == 'true'
-        else:
-            latest = True
-
-        if 'replica' in self.request.params:
-            replica = self.request.params['replica'] == 'true'
-        else:
-            replica = False
+        LOGGER.debug('constraints: %s', constraints)
 
         facets = [
             "access",
@@ -64,7 +54,8 @@ class Actions(object):
         ]
 
         conn = SearchConnection(self.settings.get('esgfsearch.url'), distrib=distrib)
-        ctx = conn.new_context(latest=latest, facets=','.join(facets), replica=replica)
+        ctx = conn.new_context(facets=','.join(facets), latest=latest, replica=replica)
+        LOGGER.debug("latest=%s, replica=%s", latest, replica)
         ctx = ctx.constrain(**constraints)
         if 'start' in self.request.params and 'end' in self.request.params:
             ctx = ctx.constrain(from_timestamp=self.request.params['start'], to_timestamp=self.request.params['end'])

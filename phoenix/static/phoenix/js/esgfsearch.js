@@ -214,8 +214,12 @@
         }
         if ($('#' + searchOptions.oid + '-latest').is(":checked") == true) {
           query += '&latest=true';
+        } else {
+          query += '&latest=false';
         }
-        if ($('#' + searchOptions.oid + '-replica').is(":checked") == false) {
+        if ($('#' + searchOptions.oid + '-replica').is(":checked") == true) {
+          query += '&replica=true';
+        } else {
           query += '&replica=false';
         }
         query += '&query=' + $('#' + searchOptions.oid + '-query').val();
