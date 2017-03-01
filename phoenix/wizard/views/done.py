@@ -65,8 +65,10 @@ class Done(Wizard):
             source['catalog_url'] = self.wizard_state.get('wizard_threddsbrowser').get('url')
             workflow['source']['thredds'] = source
         elif 'esgf' in source_type:
-            selection = self.wizard_state.get('wizard_esgf_search')['selection']
-            source = json.loads(selection)
+            source = dict()
+            source.update(self.wizard_state.get('wizard_esgf_search'))
+            #selection = self.wizard_state.get('wizard_esgf_search')['selection']
+            # source = json.loads(selection)
             source['url'] = self.request.registry.settings.get('esgfsearch.url')
             # source['credentials'] = user.get('credentials')
             workflow['source']['esgf'] = source

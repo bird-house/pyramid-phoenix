@@ -14,6 +14,7 @@ from phoenix.db import mongodb
 from phoenix.events import JobFinished
 from phoenix.tasks.utils import wps_headers, save_log, add_job
 from phoenix.tasks.utils import wait_secs
+from phoenix.tasks.utils import dump_json
 from phoenix.wps import check_status
 
 from celery.utils.log import get_task_logger
@@ -41,11 +42,10 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
         # workflow['worker']['url'] = build_get_url(
         #    workflow['worker']['url'],
         #    {'access_token': headers.get('Access-Token', '')})
-        # logger.debug('workflow_mod=%s', workflow)
+        logger.debug('workflow=%s', workflow)
         inputs = [('workflow', ComplexDataInput(
             # TODO: pywps-4 expects base64 encoding when not set to ''
-            json.dumps(workflow), mimeType="text/yaml", encoding=""))]
-        # logger.debug('inputs=%s', inputs)
+            dump_json(workflow), mimeType="text/yaml", encoding=""))]
         outputs = [('output', True), ('logfile', True)]
 
         wps = WebProcessingService(url=url, skip_caps=True, verify=False,

@@ -1,5 +1,6 @@
 import uuid
-from datetime import datetime
+import datetime
+import json
 
 from phoenix.db import mongodb
 from phoenix.twitcherclient import generate_access_token
@@ -19,6 +20,16 @@ def wait_secs(run_step=-1):
     if run_step >= len(secs_list):
         run_step = -1
     return secs_list[run_step]
+
+
+def dump_json(obj):
+    date_handler = lambda obj: (
+        obj.isoformat()
+        if isinstance(obj, datetime.datetime)
+        or isinstance(obj, datetime.date)
+        else None
+    )
+    return json.dumps(obj, default=date_handler)
 
 
 def save_log(job, error=None):
@@ -64,7 +75,7 @@ def add_job(db, task_id, process_id, title=None, abstract=None,
         title=title or process_id,              # process title (identifier or title)
         abstract=abstract or "No Summary",
         status_location=status_location,
-        created=datetime.now(),
+        created=datetime.datetime.now(),
         tags=tags,
         caption=caption,
         status="ProcessAccepted",

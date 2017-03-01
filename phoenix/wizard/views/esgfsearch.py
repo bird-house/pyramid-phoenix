@@ -3,8 +3,10 @@ from pyramid.view import view_config
 from phoenix.wizard.views import Wizard
 from phoenix.utils import user_cert_valid
 
+from phoenix.esgfsearch.schema import ESGFSearchSchema
+
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 def includeme(config):
@@ -40,10 +42,15 @@ class ESGFSearch(Wizard):
         return breadcrumbs
 
     def schema(self):
-        from phoenix.esgfsearch.schema import ESGFSearchSchema
         return ESGFSearchSchema()
 
+    def appstruct(self):
+        appstruct = super(ESGFSearch, self).appstruct()
+        LOGGER.debug("esgfsearch appstruct before: %s", appstruct)
+        return appstruct
+
     def next_success(self, appstruct):
+        LOGGER.debug("esgfsearch appstruct after: %s", appstruct)
         self.success(appstruct)
 
         # TODO: need to check pre conditions in wizard
