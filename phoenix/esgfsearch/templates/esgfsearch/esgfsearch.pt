@@ -6,14 +6,6 @@
     <link rel="stylesheet" href="${request.static_url('phoenix:static/phoenix/css/tags.css')}"/>
   </div>
 
-  <div metal:fill-slot="js_preload">
-    <!-- deform used for esgfsearch widget -->
-    <script src="${request.static_path('deform:static/scripts/deform.js')}"
-            type="text/javascript"></script>
-    <script src="${request.static_path('deform:static/scripts/modernizr.custom.input-types-and-atts.js')}"
-            type="text/javascript"></script>
-  </div>
-
   <div metal:fill-slot="javascript">
     <!-- cart -->
     <script src="${request.static_url('phoenix:static/phoenix/js/cart.js')}"

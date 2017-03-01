@@ -52,6 +52,8 @@
             type="text/javascript"></script>
     <script src="${request.static_path('deform:static/scripts/deform.js')}"
             type="text/javascript"></script>
+    <script src="${request.static_path('deform:static/scripts/modernizr.custom.input-types-and-atts.js')}"
+            type="text/javascript"></script>
     <!-- ... bootstrap -->
     <!-- script src="${request.static_path('deform:static/scripts/bootstrap.min.js')}"
             type="text/javascript"></script -->
