@@ -16,11 +16,9 @@ class Actions(object):
         selected = self.request.params.get('selected', 'project')
         limit = int(self.request.params.get('limit', '0'))
         distrib = asbool(self.request.params.get('distrib', 'false'))
-        LOGGER.debug("latest param=%s", self.request.params.get('latest'))
         latest = asbool(self.request.params.get('latest', 'true'))
         if latest is False:
             latest = None  # all versions
-        LOGGER.debug("replica param=%s", self.request.params.get('replica'))
         replica = asbool(self.request.params.get('replica', 'false'))
         if replica is True:
             replica = None  # master + replica
@@ -31,7 +29,6 @@ class Actions(object):
                 if constrain.strip():
                     key, value = constrain.split(':', 1)
                     constraints[key] = value
-        LOGGER.debug('constraints: %s', constraints)
 
         facets = [
             "access",
