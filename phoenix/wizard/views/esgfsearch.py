@@ -4,6 +4,7 @@ from phoenix.wizard.views import Wizard
 from phoenix.utils import user_cert_valid
 
 from phoenix.esgfsearch.schema import ESGFSearchSchema
+from phoenix.esgfsearch.search import search
 
 import logging
 LOGGER = logging.getLogger(__name__)
@@ -14,7 +15,7 @@ def includeme(config):
     config.add_view('phoenix.wizard.views.esgfsearch.ESGFSearch',
                     route_name='wizard_esgf_search',
                     attr='view',
-                    renderer='../templates/wizard/esgfsearch.pt')
+                    renderer='phoenix.esgfsearch:templates/esgfsearch/esgfsearch.pt')
     config.add_route('wizard_esgf_logon', '/wizard/esgf_logon')
     config.add_view('phoenix.wizard.views.esgflogon.ESGFLogon',
                     route_name='wizard_esgf_logon',
@@ -60,4 +61,16 @@ class ESGFSearch(Wizard):
         return self.next('wizard_esgf_logon')
 
     def view(self):
-        return super(ESGFSearch, self).view()
+        result = super(ESGFSearch, self).view()
+        result.update(dict(
+            query=self.request.params.get('query', ''),
+            distrib=self.request.params.get('distrib', 'false'),
+            replica=self.request.params.get('replica', 'false'),
+            latest=self.request.params.get('latest', 'true'),
+            temporal=self.request.params.get('temporal', 'true'),
+            start=self.request.params.get('start', '2001'),
+            end=self.request.params.get('end', '2005'),
+            constraints=self.request.params.get('constraints', ''),
+        ))
+        result.update(search(self.request))
+        return result

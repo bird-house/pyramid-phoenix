@@ -6,6 +6,10 @@
       var defaults = {
         oid: null,
         url: null,
+        constraints: null,
+        categories: null,
+        keywords: null,
+        pinnedFacets: null,
       };
       var searchOptions = $.extend(defaults, options);
       var selectedFacet = 'project';
@@ -20,7 +24,7 @@
         init_pinned_facets();
         init_time_constraints();
         //init_spatial_constraints();
-        search();
+        //search();
       };
 
       var init_toggle_collapse = function() {
@@ -77,10 +81,12 @@
         }
       };
 
+      /*
       var update_counts = function(counts) {
         $('#tm-hit-count').text("Total: " + counts);
         $('#' + searchOptions.oid + '-hit-count').val(counts);
       };
+      */
 
       var init_search_options = function() {
         $('#' + searchOptions.oid + '-distrib').click(function () {
@@ -148,8 +154,9 @@
           delimiters: [9, 13, 44],
           //maxTags: 2,
           tagClass: 'tm-tag tm-tag-success',
-          hiddenTagListId: searchOptions.oid + '-facets',
+          hiddenTagListId: searchOptions.oid + '-constraints',
           deleteHandler: deleted_constraint_handler,
+          prefilled: searchOptions.constraints,
         });
       };
 
@@ -175,6 +182,7 @@
           tagClass: 'tm-tag tm-tag-info',
           isSelectable: true,
           selectHandler: selected_facet_handler,
+          prefilled: searchOptions.categories,
         });
       };
 
@@ -187,6 +195,7 @@
           tagClass: 'tm-tag tm-tag-warning tm-tag-mini',
           isSelectable: true,
           selectHandler: selected_facet_value_handler,
+          prefilled: searchOptions.keywords,
         });
       };
 
@@ -197,15 +206,15 @@
           delimiters: [9, 13, 44],
           tagClass: 'tm-tag tm-tag-disabled',
           isSelectable: false,
+          prefilled: searchOptions.pinnedFacets,
         });
       };
 
       var buildQuery = function() {
-        var servlet = 'search';
-        var searchURL = searchOptions.url + '/' + servlet + '?';
+        var searchURL = searchOptions.url + '?';
         var query = searchURL;
         query += 'selected=' + selectedFacet;
-        query += '&constraints=' + $("#" + searchOptions.oid + '-facets').val();
+        query += '&constraints=' + $("#" + searchOptions.oid + '-constraints').val();
 
         if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {
           query += '&distrib=true';
@@ -224,14 +233,19 @@
         }
         query += '&query=' + $('#' + searchOptions.oid + '-query').val();
         if ($('#' + searchOptions.oid + '-temporal').is(":checked") == true) {
-          query += '&start=' + $('#' + searchOptions.oid + '-start').val() + '-01-01T12:00:00Z';
-          query += '&end=' + $('#' + searchOptions.oid + '-end').val()  + '-12-31T12:00:00Z';
+          query += '&start=' + $('#' + searchOptions.oid + '-start').val();
+          query += '&end=' + $('#' + searchOptions.oid + '-end').val();
         }
 
         return query;
       };
 
       var search = function() {
+        query = buildQuery();
+        // alert("run search: " + query);
+        window.location = query;
+
+        /*
         $.getJSON(buildQuery(), function(result) {
           $(".tm-facets").tagsManager('empty');
           $.each(result.facets, function(i, tag) {
@@ -256,6 +270,7 @@
 
           update_counts(result.numFound);
         });
+        */
       };
 
       init();

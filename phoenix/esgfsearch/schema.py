@@ -13,7 +13,7 @@ def esgfsearch_validator(node, value):
 
 
 class ESGFSearchSchema(colander.MappingSchema):
-    facets = colander.SchemaNode(
+    constraints = colander.SchemaNode(
         colander.String(),
         default='',
         missing=colander.null,
@@ -56,13 +56,13 @@ class ESGFSearchSchema(colander.MappingSchema):
         widget=deform.widget.HiddenWidget(),
     )
     start = colander.SchemaNode(
-        colander.DateTime(),
-        default=datetime.datetime(year=2001, month=1, day=1),
+        colander.Integer(),
+        default=2001,
         widget=deform.widget.HiddenWidget(),
     )
     end = colander.SchemaNode(
-        colander.DateTime(),
-        default=datetime.datetime(year=2005, month=12, day=31),
+        colander.Integer(),
+        default=2005,
         widget=deform.widget.HiddenWidget(),
     )
     bbox = colander.SchemaNode(
