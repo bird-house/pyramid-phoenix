@@ -46,6 +46,7 @@ class ESGFSearch(Wizard):
 
     def appstruct(self):
         appstruct = super(ESGFSearch, self).appstruct()
+        appstruct['latest'] = self.request.params.get('latest', False)
         LOGGER.debug("esgfsearch appstruct before: %s", appstruct)
         return appstruct
 
