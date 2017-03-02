@@ -64,6 +64,7 @@ class ESGFSearch(Wizard):
         result = super(ESGFSearch, self).view()
         result.update(dict(
             query=self.request.params.get('query', ''),
+            selected=self.request.params.get('selected', 'project'),
             distrib=self.request.params.get('distrib', 'false'),
             replica=self.request.params.get('replica', 'false'),
             latest=self.request.params.get('latest', 'true'),

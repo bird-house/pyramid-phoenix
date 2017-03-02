@@ -10,9 +10,10 @@
         categories: null,
         keywords: null,
         pinnedFacets: null,
+        selectedFacet: 'project',
       };
       var searchOptions = $.extend(defaults, options);
-      var selectedFacet = 'project';
+      var selectedFacet = searchOptions.selectedFacet;
 
       var init = function() {
         init_toggle_collapse();

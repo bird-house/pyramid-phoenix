@@ -19,8 +19,9 @@
           url: '${request.current_route_path(_query=[])}',
           constraints: "${constraints}",
           categories: "${categories}",
-          keywords: 'CORDEX', //"${keywords}",
-          pinnedFacets: '', //"${pinned_facets}",
+          keywords: "${keywords}",
+          pinnedFacets: "${pinned_facets}",
+          selectedFacet: '${selected}',
         });
     </script>
   </div>
@@ -171,7 +172,7 @@
               <div class="row">
                 <div class="panel panel-default">
                   <div class="panel-heading">
-                    <h4 class="panel-title" id="search-label-category">KEYWORDS: project</h4>
+                    <h4 class="panel-title" id="search-label-category">KEYWORDS: ${selected}</h4>
                   </div>
                   <div class="panel-body">
                     <input type="text" name="Categorie: xxx" class="tm-facet"
