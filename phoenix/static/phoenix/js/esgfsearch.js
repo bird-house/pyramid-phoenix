@@ -255,11 +255,6 @@
           });
 
           update_counts(result.numFound);
-
-          // update deform controls
-          $('#deformField1').val($('#' + searchOptions.oid + '-facets').val());
-          $('#deformField8').val($('#' + searchOptions.oid + '-start').val() + '-01-01T12:00:00Z');
-          $('#deformField9').val($('#' + searchOptions.oid + '-end').val() + '-12-31T12:00:00Z');
         });
       };
 
