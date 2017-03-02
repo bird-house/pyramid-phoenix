@@ -67,6 +67,7 @@ class Done(Wizard):
         elif 'esgf' in source_type:
             source = dict()
             source.update(self.wizard_state.get('wizard_esgf_search'))
+            source['facets'] = source['constraints']  # backward compatibility
             #selection = self.wizard_state.get('wizard_esgf_search')['selection']
             # source = json.loads(selection)
             source['url'] = self.request.registry.settings.get('esgfsearch.url')

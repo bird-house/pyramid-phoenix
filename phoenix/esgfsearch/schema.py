@@ -16,7 +16,6 @@ class ESGFSearchSchema(colander.MappingSchema):
     constraints = colander.SchemaNode(
         colander.String(),
         default='',
-        missing=colander.null,
         widget=deform.widget.HiddenWidget(),
     )
     query = colander.SchemaNode(
@@ -28,19 +27,16 @@ class ESGFSearchSchema(colander.MappingSchema):
     distrib = colander.SchemaNode(
         colander.Boolean(),
         default=False,
-        missing=colander.null,
         widget=deform.widget.HiddenWidget(),
     )
     replica = colander.SchemaNode(
         colander.Boolean(),
         default=False,
-        missing=colander.null,
         widget=deform.widget.HiddenWidget(),
     )
     latest = colander.SchemaNode(
         colander.Boolean(),
         default=True,
-        missing=colander.null,
         widget=deform.widget.HiddenWidget(),
     )
     temporal = colander.SchemaNode(
@@ -56,13 +52,13 @@ class ESGFSearchSchema(colander.MappingSchema):
         widget=deform.widget.HiddenWidget(),
     )
     start = colander.SchemaNode(
-        colander.Integer(),
-        default=2001,
+        colander.DateTime(),
+        default=datetime.datetime(2001, 1, 1),
         widget=deform.widget.HiddenWidget(),
     )
     end = colander.SchemaNode(
-        colander.Integer(),
-        default=2005,
+        colander.DateTime(),
+        default=datetime.datetime(2005, 12, 31),
         widget=deform.widget.HiddenWidget(),
     )
     bbox = colander.SchemaNode(

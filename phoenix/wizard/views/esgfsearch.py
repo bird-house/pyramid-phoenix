@@ -1,4 +1,7 @@
 from pyramid.view import view_config
+from pyramid.settings import asbool
+
+import datetime
 
 from phoenix.wizard.views import Wizard
 from phoenix.utils import user_cert_valid
@@ -47,7 +50,14 @@ class ESGFSearch(Wizard):
 
     def appstruct(self):
         appstruct = super(ESGFSearch, self).appstruct()
-        appstruct.update(self.request.params)
+        appstruct['query'] = self.request.params.get('query', '')
+        appstruct['distrib'] = asbool(self.request.params.get('distrib', 'false'))
+        appstruct['replica'] = asbool(self.request.params.get('replica', 'false'))
+        appstruct['latest'] = asbool(self.request.params.get('latest', 'true'))
+        appstruct['temporal'] = asbool(self.request.params.get('temporal', 'true'))
+        appstruct['start'] = datetime.datetime(int(self.request.params.get('start', '2001')), 1, 1)
+        appstruct['end'] = datetime.datetime(int(self.request.params.get('end', '2005')), 12, 31)
+        appstruct['constraints'] = self.request.params.get('constraints', '')
         LOGGER.debug("esgfsearch appstruct before: %s", appstruct)
         return appstruct
 
@@ -60,9 +70,8 @@ class ESGFSearch(Wizard):
             return self.next('wizard_done')
         return self.next('wizard_esgf_logon')
 
-    def view(self):
-        result = super(ESGFSearch, self).view()
-        result.update(dict(
+    def custom_view(self):
+        result = dict(
             query=self.request.params.get('query', ''),
             selected=self.request.params.get('selected', 'project'),
             distrib=self.request.params.get('distrib', 'false'),
@@ -72,6 +81,6 @@ class ESGFSearch(Wizard):
             start=self.request.params.get('start', '2001'),
             end=self.request.params.get('end', '2005'),
             constraints=self.request.params.get('constraints', ''),
-        ))
+        )
         result.update(search(self.request))
         return result
