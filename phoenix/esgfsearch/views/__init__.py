@@ -25,4 +25,5 @@ class ESGFSearch(object):
         result.update(search(self.request))
         result['form'] = Form(ESGFSearchSchema())
         result['quickview'] = True
+        result['page'] = 0
         return result

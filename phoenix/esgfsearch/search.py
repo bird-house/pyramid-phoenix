@@ -62,8 +62,12 @@ def search(request):
     for facet in ctx.facet_counts:
         if len(ctx.facet_counts[facet]) == 1:
             pinned_facets.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
+    paged_results = []
+    for i in range(0, 10):
+        paged_results.append(dict(title=results[i].dataset_id))
     return dict(
         hit_count=ctx.hit_count,
         categories=','.join(categories),
         keywords=','.join(keywords),
-        pinned_facets=','.join(pinned_facets))
+        pinned_facets=','.join(pinned_facets),
+        results=paged_results)
