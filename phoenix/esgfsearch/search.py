@@ -63,7 +63,7 @@ def search(request):
         if len(ctx.facet_counts[facet]) == 1:
             pinned_facets.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
     paged_results = []
-    for i in range(0, 10):
+    for i in range(0, min(10, ctx.hit_count)):
         paged_results.append(dict(
             title=results[i].dataset_id,
             catalog_url=results[i].urls['THREDDS'][0][0]))

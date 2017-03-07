@@ -236,51 +236,49 @@
                 </div>
               </div>
 
+              <!-- pagination -->
+              <div class="row">
+                <ul class="pagination pagination-sm pull-left">
+                  <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
+                    <a href="">
+                      <strong><i class="fa fa-angle-left"></i></strong>
+                      </a>
+                  </li>
+
+                  <li class="next" tal:attributes="class 'next' if 10 < hit_count else 'next disabled'">
+                    <a href="">
+                      <strong><i class="fa fa-angle-right"></i></strong>
+                    </a>
+                  </li>
+                </ul>
+
+                <h3 class="pull-right"> Showing 0-10 of ${hit_count} </h3>
+              </div>
+
+              <!-- items -->
+              <div class="row">
+                <ul class="list-group">
+                  <li class="list-group-item" tal:repeat="result results">
+                    <div class="media">
+                      <div class="media-body">
+                        <div class="media-heading">
+                          <h4>${result.title}</h4>
+                        </div>
+                        <p>
+                          <a tal:condition="'catalog_url' in result" href="${result.catalog_url}" target="_">
+                            <i class="fa fa-book"></i> Catalog</a>
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
             </div>
           </div>
         </div>
 
       </div>
-
-
-
-      <!-- pagination -->
-      <div class="row">
-        <ul class="pagination pagination-sm pull-left">
-          <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
-            <a href="">
-              <strong><i class="fa fa-angle-left"></i></strong>
-              </a>
-          </li>
-
-          <li class="next" tal:attributes="class 'next' if 10 < hit_count else 'next disabled'">
-            <a href="">
-              <strong><i class="fa fa-angle-right"></i></strong>
-            </a>
-          </li>
-        </ul>
-
-        <h3 class="pull-right"> Showing 0-10 of ${hit_count} </h3>
-      </div>
-
-      <div class="row">
-        <ul class="list-group">
-          <li class="list-group-item" tal:repeat="result results">
-            <div class="media">
-              <div class="media-body">
-                <div class="media-heading">
-                  <h4>${result.title}</h4>
-                </div>
-                <p>
-                  <a tal:condition="'catalog_url' in result" href="${result.catalog_url}" target="_">
-                    <i class="fa fa-book"></i> Catalog</a>
-                </p>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-
 
       <tal:form replace="structure form">The form will render here</tal:form>
     </div>
