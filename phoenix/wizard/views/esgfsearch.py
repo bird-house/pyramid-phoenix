@@ -14,7 +14,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def includeme(config):
-    config.add_route('wizard_esgf_search', '/wizard/esgf_search')
+    config.add_route('wizard_esgf_search', '/wizard/esgfsearch')
     config.add_view('phoenix.wizard.views.esgfsearch.ESGFSearch',
                     route_name='wizard_esgf_search',
                     attr='view',
