@@ -23,5 +23,6 @@ class ESGFSearch(object):
             constraints=self.request.params.get('constraints', ''),
         )
         result.update(search(self.request))
-        result.update(form=Form(ESGFSearchSchema()))
+        result['form'] = Form(ESGFSearchSchema())
+        result['quickview'] = True
         return result

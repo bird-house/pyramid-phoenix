@@ -29,6 +29,10 @@
   <div metal:fill-slot="content">
     <div class="container">
 
+      <div tal:condition="quickview" class="page-header">
+        <h1>ESGF Search</h1>
+      </div>
+
       <div class="row">
         <div class="container"
              tal:define="true_val 'true'">

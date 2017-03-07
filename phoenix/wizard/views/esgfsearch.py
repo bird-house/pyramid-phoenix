@@ -83,4 +83,5 @@ class ESGFSearch(Wizard):
             constraints=self.request.params.get('constraints', ''),
         )
         result.update(search(self.request))
+        result['quickview'] = False
         return result
