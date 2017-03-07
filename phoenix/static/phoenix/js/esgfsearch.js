@@ -82,6 +82,14 @@
         }
       };
 
+      var numTags = function(tags) {
+        var result = 1;
+        if (tags != '') {
+          result = tags.split(',').length;
+        }
+        return result;
+      };
+
       /*
       var update_counts = function(counts) {
         $('#tm-hit-count').text("Total: " + counts);
@@ -158,6 +166,7 @@
           hiddenTagListId: searchOptions.oid + '-constraints',
           deleteHandler: deleted_constraint_handler,
           prefilled: searchOptions.constraints,
+          maxTags: numTags(searchOptions.constraints),
         });
       };
 
@@ -184,6 +193,7 @@
           isSelectable: true,
           selectHandler: selected_facet_handler,
           prefilled: searchOptions.categories,
+          maxTags: numTags(searchOptions.categories),
         });
       };
 
@@ -197,6 +207,7 @@
           isSelectable: true,
           selectHandler: selected_facet_value_handler,
           prefilled: searchOptions.keywords,
+          maxTags: numTags(searchOptions.keywords),
         });
       };
 
@@ -208,6 +219,7 @@
           tagClass: 'tm-tag tm-tag-disabled',
           isSelectable: false,
           prefilled: searchOptions.pinnedFacets,
+          maxTags: numTags(searchOptions.pinnedFacets),
         });
       };
 
