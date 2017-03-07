@@ -221,7 +221,7 @@
                   <h4>${result.title}</h4>
                 </div>
                 <p>
-                  <a tal:condition="'catalog_url' in result" href="" target="_">
+                  <a tal:condition="'catalog_url' in result" href="${result.catalog_url}" target="_">
                     <i class="fa fa-book"></i> Catalog</a>
                 </p>
               </div>
