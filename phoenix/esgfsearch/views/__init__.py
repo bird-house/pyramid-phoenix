@@ -12,6 +12,7 @@ class ESGFSearch(object):
 
     def view(self):
         result = dict(
+            search_type='Dataset',
             query=self.request.params.get('query', ''),
             selected=self.request.params.get('selected', 'project'),
             distrib=self.request.params.get('distrib', 'false'),
