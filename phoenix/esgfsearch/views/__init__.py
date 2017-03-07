@@ -11,14 +11,18 @@ class ESGFSearch(object):
         self.request = request
 
     def view(self):
+        if 'start' in self.request.params and 'end' in self.request.params:
+            temporal = 'true'
+        else:
+            temporal = 'false'
         result = dict(
-            search_type='Dataset',
+            search_type=self.request.params.get('search_type', 'Dataset'),
             query=self.request.params.get('query', ''),
             selected=self.request.params.get('selected', 'project'),
             distrib=self.request.params.get('distrib', 'false'),
             replica=self.request.params.get('replica', 'false'),
             latest=self.request.params.get('latest', 'true'),
-            temporal=self.request.params.get('temporal', 'true'),
+            temporal=temporal,
             start=self.request.params.get('start', '2001'),
             end=self.request.params.get('end', '2005'),
             constraints=self.request.params.get('constraints', ''),

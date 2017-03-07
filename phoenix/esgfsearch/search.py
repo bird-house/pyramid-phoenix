@@ -1,6 +1,7 @@
 from pyramid.settings import asbool
 
 from pyesgf.search import SearchConnection
+from pyesgf.search.consts import TYPE_DATASET, TYPE_AGGREGATION, TYPE_FILE
 
 import logging
 LOGGER = logging.getLogger(__name__)
@@ -17,6 +18,7 @@ def search(request):
     replica = asbool(request.params.get('replica', 'false'))
     if replica is True:
         replica = None  # master + replica
+    search_type = request.params.get('search_type', 'Dataset')
 
     constraints = dict()
     if 'constraints' in request.params:
@@ -46,8 +48,8 @@ def search(request):
     ]
 
     conn = SearchConnection(settings.get('esgfsearch.url'), distrib=distrib)
-    ctx = conn.new_context(facets=','.join(facets), latest=latest, replica=replica)
-    LOGGER.debug("latest=%s, replica=%s", latest, replica)
+    # ctx = conn.new_context(facets=','.join(facets), search_type=search_type, latest=latest, replica=replica)
+    ctx = conn.new_context(search_type=search_type, latest=latest, replica=replica)
     ctx = ctx.constrain(**constraints)
     if 'start' in request.params and 'end' in request.params:
         ctx = ctx.constrain(
@@ -55,7 +57,7 @@ def search(request):
             to_timestamp="{}-12-31T12:00:00Z".format(request.params['end']))
     #return conn.send_search(query_dict=ctx._build_query(), limit=limit)
     #ctx.hit_count
-    results = ctx.search(batch_size=10, ignore_facet_check=True)
+    results = ctx.search(batch_size=10, ignore_facet_check=False)
     categories = [tag for tag in ctx.facet_counts if len(ctx.facet_counts[tag]) > 1]
     keywords = ctx.facet_counts[selected].keys()
     pinned_facets = []
@@ -64,9 +66,19 @@ def search(request):
             pinned_facets.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
     paged_results = []
     for i in range(0, min(10, ctx.hit_count)):
-        paged_results.append(dict(
-            title=results[i].dataset_id,
-            catalog_url=results[i].urls['THREDDS'][0][0]))
+        if search_type == TYPE_DATASET:
+            paged_results.append(dict(
+                title=results[i].dataset_id,
+                catalog_url=results[i].urls['THREDDS'][0][0]))
+        elif search_type == TYPE_AGGREGATION:
+            paged_results.append(dict(
+                title=results[i].aggregation_id,
+                opendap_url=results[i].opendap_url))
+        elif search_type == TYPE_FILE:
+            paged_results.append(dict(
+                title=results[i].filename,
+                download_url=results[i].download_url,
+                opendap_url=results[i].opendap_url))
     return dict(
         hit_count=ctx.hit_count,
         categories=','.join(categories),

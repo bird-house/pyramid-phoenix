@@ -18,6 +18,7 @@
       var init = function() {
         init_toggle_collapse();
         init_search_options();
+        initSearchType();
         init_query();
         init_constraints();
         init_facets();
@@ -119,6 +120,20 @@
           search();
         });
         */
+      };
+
+      var initSearchType = function() {
+        $('#' + searchOptions.oid + '-dataset-type').click(function () {
+          search();
+        });
+
+        $('#' + searchOptions.oid + '-aggregation-type').click(function () {
+          search();
+        });
+
+        $('#' + searchOptions.oid + '-file-type').click(function () {
+          search();
+        });
       };
 
       var init_query = function() {
@@ -229,6 +244,16 @@
         query += 'selected=' + selectedFacet;
         query += '&constraints=' + $("#" + searchOptions.oid + '-constraints').val();
 
+        // search type
+        if ($('#' + searchOptions.oid + '-dataset-type').is(":checked") == true) {
+          query += '&search_type=Dataset';
+        } else if ($('#' + searchOptions.oid + '-aggregation-type').is(":checked") == true) {
+          query += '&search_type=Aggregation';
+        } else if ($('#' + searchOptions.oid + '-file-type').is(":checked") == true) {
+          query += '&search_type=File';
+        }
+
+        // search options
         if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {
           query += '&distrib=true';
         } else {
@@ -244,6 +269,8 @@
         } else {
           query += '&replica=false';
         }
+
+        // date options
         query += '&query=' + $('#' + searchOptions.oid + '-query').val();
         if ($('#' + searchOptions.oid + '-temporal').is(":checked") == true) {
           query += '&start=' + $('#' + searchOptions.oid + '-start').val();

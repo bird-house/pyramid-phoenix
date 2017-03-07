@@ -99,7 +99,8 @@
                         <label>
                           <input type="checkbox" name="latest" value="${true_val}"
                                  tal:attributes="checked latest == true_val;"
-                                 id="esgfsearch-latest"/> Latest Version
+                                 id="esgfsearch-latest"/>
+                          Latest Version
                         </label>
                       </div>
 
@@ -107,7 +108,8 @@
                         <label>
                           <input type="checkbox" name="temporal" value="${true_val}"
                                  tal:attributes="checked temporal == true_val;"
-                                 id="esgfsearch-temporal"/> Temporal Search
+                                 id="esgfsearch-temporal"/>
+                          Temporal Search
                         </label>
                       </div>
 
@@ -267,7 +269,12 @@
                         <p>
                           <a tal:condition="'catalog_url' in result" href="${result.catalog_url}" target="_">
                             <i class="fa fa-book"></i> Catalog</a>
+                          <a tal:condition="'download_url' in result" href="${result.download_url}">
+                            <i class="fa fa-download"></i> Download</a>
+                          <a tal:condition="'opendap_url' in result" href="${result.opendap_url+'.html'}" target="_">
+                            <i class="fa fa-cube"></i> OpenDAP</a>
                         </p>
+
                       </div>
                     </div>
                   </li>
