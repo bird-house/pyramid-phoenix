@@ -21,7 +21,6 @@ def search(request):
     replica = asbool(request.params.get('replica', 'false'))
     if replica is True:
         replica = None  # master + replica
-    search_type = request.params.get('search_type', 'Dataset')
 
     constraints = dict()
     if 'constraints' in request.params:
@@ -51,7 +50,7 @@ def search(request):
     ]
 
     conn = SearchConnection(settings.get('esgfsearch.url'), distrib=distrib)
-    # ctx = conn.new_context(facets=','.join(facets), search_type=search_type, latest=latest, replica=replica)
+    # ctx = conn.new_context(facets=','.join(facets), latest=latest, replica=replica)
     ctx = conn.new_context(search_type=TYPE_DATASET, latest=latest, replica=replica)
     ctx = ctx.constrain(**constraints)
     if 'start' in request.params and 'end' in request.params:

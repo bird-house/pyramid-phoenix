@@ -18,7 +18,6 @@
       var init = function() {
         init_toggle_collapse();
         init_search_options();
-        initSearchType();
         init_query();
         init_constraints();
         init_facets();
@@ -120,20 +119,6 @@
           search();
         });
         */
-      };
-
-      var initSearchType = function() {
-        $('#' + searchOptions.oid + '-dataset-type').click(function () {
-          search();
-        });
-
-        $('#' + searchOptions.oid + '-aggregation-type').click(function () {
-          search();
-        });
-
-        $('#' + searchOptions.oid + '-file-type').click(function () {
-          search();
-        });
       };
 
       var init_query = function() {

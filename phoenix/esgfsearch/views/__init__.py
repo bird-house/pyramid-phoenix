@@ -16,7 +16,6 @@ class ESGFSearch(object):
         else:
             temporal = 'false'
         result = dict(
-            search_type=self.request.params.get('search_type', 'Dataset'),
             query=self.request.params.get('query', ''),
             selected=self.request.params.get('selected', 'project'),
             distrib=self.request.params.get('distrib', 'false'),
