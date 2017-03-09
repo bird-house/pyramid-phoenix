@@ -64,13 +64,12 @@ def search(request):
         if len(ctx.facet_counts[facet]) == 1:
             pinned_facets.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
     paged_results = []
-    for i in range(0, min(2, ctx.hit_count)):
+    for i in range(0, min(10, ctx.hit_count)):
         paged_results.append(dict(
             title=results[i].dataset_id,
             dataset_id=results[i].dataset_id,
             number_of_files=results[i].number_of_files,
-            catalog_url=results[i].urls['THREDDS'][0][0],
-            file_context=results[i].file_context()))
+            catalog_url=results[i].urls['THREDDS'][0][0]))
     return dict(
         hit_count=ctx.hit_count,
         categories=','.join(categories),

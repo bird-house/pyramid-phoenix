@@ -242,15 +242,7 @@
                                 <i class="fa fa-book"></i> Catalog</a>
                             </p>
                           </li>
-                          <li class="list-group-item" tal:repeat="file_result result.file_context.search()">
-                            ${file_result.filename}
-                            <p>
-                              <a tal:condition="file_result.download_url" href="${file_result.download_url}" target="_">
-                                <i class="fa fa-download"></i> Download</a>
-                              <a tal:condition="file_result.opendap_url" href="${file_result.opendap_url+'.html'}" target="_">
-                                <i class="fa fa-cube"></i> OpenDAP</a>
-                            </p>
-                          </li>
+                          <div class="files"/>
                         </ul>
                       </div>
                     </div>

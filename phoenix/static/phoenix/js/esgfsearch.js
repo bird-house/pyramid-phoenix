@@ -31,7 +31,15 @@
 
       var initDatasetCollapse = function() {
         $('.dataset').on('show.bs.collapse', function () {
-          console.log("show files");
+          text = '<li class="list-group-item">'
+          text += '<p>'
+          text += '<a href="file_result.download_url" target="_">'
+          text += '<i class="fa fa-download"></i> Download</a>'
+          text += '<a href="file_result.opendap_url.html" target="_">'
+          text += '<i class="fa fa-cube"></i> OpenDAP</a>'
+          text += '</p>'
+          text += '</li>'
+          $(this).find('.files').html(text);
         })
       };
 
