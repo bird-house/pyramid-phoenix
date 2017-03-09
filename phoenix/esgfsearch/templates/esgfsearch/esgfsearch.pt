@@ -219,16 +219,18 @@
               <div class="row">
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                   <div class="panel panel-default" tal:repeat="result results">
-                    <div class="panel-heading" role="tab" id="headingOne">
+                    <div class="panel-heading" role="tab" id="heading-${repeat.result.number}">
                       <h4 class="panel-title">
-                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-${repeat.result.number}"
-                          aria-expanded="true" aria-controls="collapse-${repeat.result.number}">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                          href="#collapse-${repeat.result.number}"
+                          aria-expanded="false" aria-controls="collapse-${repeat.result.number}">
                           ${result.title}
                           <span class="badge">${result.number_of_files}</span>
                         </a>
                       </h4>
                     </div>
-                    <div id="collapse-${repeat.result.number}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                    <div id="collapse-${repeat.result.number}" class="panel-collapse collapse" role="tabpanel"
+                      aria-labelledby="heading-${repeat.result.number}">
                       <div class="panel-body">
                         <ul class="list-group">
                           <li class="list-group-item" tal:repeat="file_result file_results">
