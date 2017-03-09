@@ -9,7 +9,6 @@ LOGGER = logging.getLogger(__name__)
 
 def search(request):
     settings = request.registry.settings
-    dataset_id = request.params.get('dataset_id')
     selected = request.params.get('selected', 'project')
     limit = int(request.params.get('limit', '0'))
     distrib = asbool(request.params.get('distrib', 'false'))
@@ -65,23 +64,16 @@ def search(request):
         if len(ctx.facet_counts[facet]) == 1:
             pinned_facets.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
     paged_results = []
-    for i in range(0, min(10, ctx.hit_count)):
+    for i in range(0, min(2, ctx.hit_count)):
         paged_results.append(dict(
             title=results[i].dataset_id,
             dataset_id=results[i].dataset_id,
             number_of_files=results[i].number_of_files,
-            catalog_url=results[i].urls['THREDDS'][0][0]))
-    # get files of dataset
-    if dataset_id:
-        fctx = conn.new_context(search_type=TYPE_FILE, latest=latest, replica=replica)
-        fctx = fctx.constrain(dataset_id=dataset_id)
-        file_results = fctx.search(batch_size=10, ignore_facet_check=False)
-    else:
-        file_results = []
+            catalog_url=results[i].urls['THREDDS'][0][0],
+            file_context=results[i].file_context()))
     return dict(
         hit_count=ctx.hit_count,
         categories=','.join(categories),
         keywords=','.join(keywords),
         pinned_facets=','.join(pinned_facets),
-        results=paged_results,
-        file_results=file_results)
+        results=paged_results)

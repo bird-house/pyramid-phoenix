@@ -242,7 +242,7 @@
                                 <i class="fa fa-book"></i> Catalog</a>
                             </p>
                           </li>
-                          <li class="list-group-item" tal:repeat="file_result file_results">
+                          <li class="list-group-item" tal:repeat="file_result result.file_context.search()">
                             ${file_result.filename}
                             <p>
                               <a tal:condition="file_result.download_url" href="${file_result.download_url}" target="_">

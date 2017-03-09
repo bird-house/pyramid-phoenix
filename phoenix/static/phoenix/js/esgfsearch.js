@@ -236,9 +236,6 @@
         query += 'selected=' + selectedFacet;
         query += '&constraints=' + $("#" + searchOptions.oid + '-constraints').val();
 
-        // dataset_id
-        query += '&dataset_id=cordex.output.AFR-44.DMI.ECMWF-ERAINT.evaluation.r1i1p1.HIRHAM5.v2.day.prhmax.v20140804|cordexesg.dmi.dk'
-
         // search options
         if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {
           query += '&distrib=true';
