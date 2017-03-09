@@ -9,6 +9,9 @@ LOGGER = logging.getLogger(__name__)
 
 def search(request):
     settings = request.registry.settings
+    dataset_id = request.params.get(
+        'dataset_id',
+        u'cordex.output.AFR-44.DMI.ECMWF-ERAINT.evaluation.r1i1p1.HIRHAM5.v2.day.prhmax.v20140804|cordexesg.dmi.dk')
     selected = request.params.get('selected', 'project')
     limit = int(request.params.get('limit', '0'))
     distrib = asbool(request.params.get('distrib', 'false'))
@@ -49,7 +52,7 @@ def search(request):
 
     conn = SearchConnection(settings.get('esgfsearch.url'), distrib=distrib)
     # ctx = conn.new_context(facets=','.join(facets), search_type=search_type, latest=latest, replica=replica)
-    ctx = conn.new_context(search_type=search_type, latest=latest, replica=replica)
+    ctx = conn.new_context(search_type=TYPE_DATASET, latest=latest, replica=replica)
     ctx = ctx.constrain(**constraints)
     if 'start' in request.params and 'end' in request.params:
         ctx = ctx.constrain(
@@ -66,22 +69,17 @@ def search(request):
             pinned_facets.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
     paged_results = []
     for i in range(0, min(10, ctx.hit_count)):
-        if search_type == TYPE_DATASET:
-            paged_results.append(dict(
-                title=results[i].dataset_id,
-                catalog_url=results[i].urls['THREDDS'][0][0]))
-        elif search_type == TYPE_AGGREGATION:
-            paged_results.append(dict(
-                title=results[i].aggregation_id,
-                opendap_url=results[i].opendap_url))
-        elif search_type == TYPE_FILE:
-            paged_results.append(dict(
-                title=results[i].filename,
-                download_url=results[i].download_url,
-                opendap_url=results[i].opendap_url))
+        paged_results.append(dict(
+            title=results[i].dataset_id,
+            catalog_url=results[i].urls['THREDDS'][0][0]))
+    # get files for dataset
+    fctx = conn.new_context(search_type=TYPE_FILE, latest=latest, replica=replica)
+    fctx = fctx.constrain(dataset_id=dataset_id)
+    file_results = fctx.search(batch_size=10, ignore_facet_check=False)
     return dict(
         hit_count=ctx.hit_count,
         categories=','.join(categories),
         keywords=','.join(keywords),
         pinned_facets=','.join(pinned_facets),
-        results=paged_results)
+        results=paged_results,
+        file_results=file_results)

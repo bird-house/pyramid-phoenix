@@ -264,7 +264,7 @@
                     <div class="media">
                       <div class="media-body">
                         <div class="media-heading">
-                          <h4>${result.title}</h4>
+                          <h4>${result.title} (${len(file_results)})</h4>
                         </div>
                         <p>
                           <a tal:condition="'catalog_url' in result" href="${result.catalog_url}" target="_">
