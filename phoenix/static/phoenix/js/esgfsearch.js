@@ -16,6 +16,7 @@
       var selectedFacet = searchOptions.selectedFacet;
 
       var init = function() {
+        initDatasetCollapse();
         init_toggle_collapse();
         init_search_options();
         init_query();
@@ -26,6 +27,12 @@
         init_time_constraints();
         //init_spatial_constraints();
         //search();
+      };
+
+      var initDatasetCollapse = function() {
+        $('.dataset').on('show.bs.collapse', function () {
+          console.log("show files");
+        })
       };
 
       var init_toggle_collapse = function() {
@@ -229,14 +236,8 @@
         query += 'selected=' + selectedFacet;
         query += '&constraints=' + $("#" + searchOptions.oid + '-constraints').val();
 
-        // search type
-        if ($('#' + searchOptions.oid + '-dataset-type').is(":checked") == true) {
-          query += '&search_type=Dataset';
-        } else if ($('#' + searchOptions.oid + '-aggregation-type').is(":checked") == true) {
-          query += '&search_type=Aggregation';
-        } else if ($('#' + searchOptions.oid + '-file-type').is(":checked") == true) {
-          query += '&search_type=File';
-        }
+        // dataset_id
+        query += '&dataset_id=cordex.output.AFR-44.DMI.ECMWF-ERAINT.evaluation.r1i1p1.HIRHAM5.v2.day.prhmax.v20140804|cordexesg.dmi.dk'
 
         // search options
         if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {

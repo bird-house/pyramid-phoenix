@@ -231,7 +231,7 @@
                         </a>
                       </h4>
                     </div>
-                    <div id="collapse-${repeat.result.number}" class="panel-collapse collapse" role="tabpanel"
+                    <div id="collapse-${repeat.result.number}" class="panel-collapse collapse dataset" role="tabpanel"
                       aria-labelledby="heading-${repeat.result.number}">
                       <div class="panel-body">
                         <ul class="list-group">

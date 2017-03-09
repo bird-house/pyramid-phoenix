@@ -9,9 +9,7 @@ LOGGER = logging.getLogger(__name__)
 
 def search(request):
     settings = request.registry.settings
-    dataset_id = request.params.get(
-        'dataset_id',
-        u'cordex.output.AFR-44.DMI.ECMWF-ERAINT.evaluation.r1i1p1.HIRHAM5.v2.day.prhmax.v20140804|cordexesg.dmi.dk')
+    dataset_id = request.params.get('dataset_id')
     selected = request.params.get('selected', 'project')
     limit = int(request.params.get('limit', '0'))
     distrib = asbool(request.params.get('distrib', 'false'))
@@ -73,10 +71,13 @@ def search(request):
             dataset_id=results[i].dataset_id,
             number_of_files=results[i].number_of_files,
             catalog_url=results[i].urls['THREDDS'][0][0]))
-    # get files for dataset
-    fctx = conn.new_context(search_type=TYPE_FILE, latest=latest, replica=replica)
-    fctx = fctx.constrain(dataset_id=dataset_id)
-    file_results = fctx.search(batch_size=10, ignore_facet_check=False)
+    # get files of dataset
+    if dataset_id:
+        fctx = conn.new_context(search_type=TYPE_FILE, latest=latest, replica=replica)
+        fctx = fctx.constrain(dataset_id=dataset_id)
+        file_results = fctx.search(batch_size=10, ignore_facet_check=False)
+    else:
+        file_results = []
     return dict(
         hit_count=ctx.hit_count,
         categories=','.join(categories),
