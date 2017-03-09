@@ -147,11 +147,13 @@
             <div class="col-md-9">
 
               <!-- status -->
+              <!--
               <label for="esgfsearch-hit-count" id="tm-hit-count">
                 <input type="hidden" name="hit-count" value="${hit_count}"
                        id="esgfsearch-hit-count"/>
                 Total: ${hit_count}
               </label>
+              -->
 
               <!-- selection -->
               <div class="row">
