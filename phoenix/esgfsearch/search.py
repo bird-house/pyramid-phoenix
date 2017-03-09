@@ -70,6 +70,8 @@ def search(request):
     for i in range(0, min(10, ctx.hit_count)):
         paged_results.append(dict(
             title=results[i].dataset_id,
+            dataset_id=results[i].dataset_id,
+            number_of_files=results[i].number_of_files,
             catalog_url=results[i].urls['THREDDS'][0][0]))
     # get files for dataset
     fctx = conn.new_context(search_type=TYPE_FILE, latest=latest, replica=replica)

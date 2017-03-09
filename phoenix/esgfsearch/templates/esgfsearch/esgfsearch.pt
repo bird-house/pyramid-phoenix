@@ -219,25 +219,13 @@
               <div class="row">
                 <ul class="list-group">
                   <li class="list-group-item" tal:repeat="result results">
-                    <div class="media">
-                      <div class="media-body">
-                        <div class="media-heading">
-                          <h4>${result.title} (${len(file_results)})</h4>
-                        </div>
-                        <p>
-                          <a tal:condition="'catalog_url' in result" href="${result.catalog_url}" target="_">
-                            <i class="fa fa-book"></i> Catalog</a>
-                          <a tal:condition="'download_url' in result" href="${result.download_url}">
-                            <i class="fa fa-download"></i> Download</a>
-                          <a tal:condition="'opendap_url' in result" href="${result.opendap_url+'.html'}" target="_">
-                            <i class="fa fa-cube"></i> OpenDAP</a>
-                        </p>
-
-                      </div>
-                    </div>
+                    <span class="badge">${result.number_of_files}</span>
+                    ${result.title}
                   </li>
                 </ul>
               </div>
+
+
 
             </div>
           </div>
