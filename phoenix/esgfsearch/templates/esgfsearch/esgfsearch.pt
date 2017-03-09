@@ -233,8 +233,21 @@
                       aria-labelledby="heading-${repeat.result.number}">
                       <div class="panel-body">
                         <ul class="list-group">
+                          <li class="list-group-item">
+                            ${result.title}
+                            <p>
+                              <a tal:condition="'catalog_url' in result" href="${result.catalog_url}" target="_">
+                                <i class="fa fa-book"></i> Catalog</a>
+                            </p>
+                          </li>
                           <li class="list-group-item" tal:repeat="file_result file_results">
                             ${file_result.filename}
+                            <p>
+                              <a tal:condition="file_result.download_url" href="${file_result.download_url}" target="_">
+                                <i class="fa fa-download"></i> Download</a>
+                              <a tal:condition="file_result.opendap_url" href="${file_result.opendap_url+'.html'}" target="_">
+                                <i class="fa fa-cube"></i> OpenDAP</a>
+                            </p>
                           </li>
                         </ul>
                       </div>
