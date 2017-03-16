@@ -7,6 +7,75 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
+def date_from_filename(filename):
+    """Example cordex:
+    tas_EUR-44i_ECMWF-ERAINT_evaluation_r1i1p1_HMS-ALADIN52_v1_mon_200101-200812.nc
+    """
+    LOGGER.debug('filename=%s', filename)
+    result = None
+    value = filename.split('.')
+    value.pop()  # remove .nc
+    value = value[-1]  # part with date
+    value = value.split('_')[-1]  # only date part
+    LOGGER.debug('date part = %s', value)
+    if value != 'fx':
+        value = value.split('-')  # split start-end
+        start_year = int(value[0][:4])  # keep only the year
+        end_year = int(value[1][:4])
+        result = (start_year, end_year)
+    return result
+
+
+def variable_filter(constraints, variables):
+    """return True if variable fulfills contraints"""
+    var_types = ['variable', 'cf_standard_name', 'variable_long_name']
+
+    success = True
+    cs = constraints.mixed()
+    # check different types of variables
+    for var_type in var_types:
+        # is there a constrain for this variable type?
+        if var_type in cs:
+            # at least one variable constraint must be fulfilled
+            success = False
+            # do we have this variable type?
+            if var_type in variables:
+                # do we have an allowed value?
+                allowed_values = cs.get(var_type)
+                if variables[var_type] in allowed_values:
+                    # if one variables matches then we are ok
+                    return True
+    return success
+
+
+def temporal_filter(filename, start=None, end=None):
+    """return True if file is in timerange start/end"""
+    # TODO: keep fixed fields fx ... see esgsearch.js
+    """
+    // fixed fields are always in time range
+    if ($.inArray("fx", doc.time_frequency) >= 0) {
+    return true;
+    }
+    """
+
+    LOGGER.debug('filename=%s, start_date=%s, end_date=%s', filename, start, end)
+
+    if start is None or end is None:
+        return True
+    start_end = date_from_filename(filename)
+    if start_end is None:  # fixed field
+        return True
+    start_year = start_end[0]
+    end_year = start_end[1]
+    if end and start_year > end:
+        LOGGER.debug('skip: %s > %s', start_year, end)
+        return False
+    if start and end_year < start:
+        LOGGER.debug('skip: %s < %s', end_year, start)
+        return False
+    return True
+
+
 def search(request):
     settings = request.registry.settings
     selected = request.params.get('selected', 'project')

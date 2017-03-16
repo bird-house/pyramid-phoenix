@@ -6,7 +6,7 @@ from pyesgf.search import SearchConnection
 from pyesgf.search.consts import TYPE_DATASET, TYPE_AGGREGATION, TYPE_FILE
 
 from phoenix.esgfsearch.schema import ESGFSearchSchema
-from phoenix.esgfsearch.search import search
+from phoenix.esgfsearch.search import search, temporal_filter
 
 
 @view_defaults(permission='view', layout='default')
@@ -28,15 +28,24 @@ class ESGFSearch(object):
         dataset_id = self.request.params.get(
             'dataset_id',
             'cmip5.output1.MPI-M.MPI-ESM-LR.1pctCO2.day.atmos.cfDay.r1i1p1.v20120314|esgf1.dkrz.de')
+        if 'start' in self.request.params:
+            start = int(self.request.params['start'])
+        else:
+            start = None
+        if 'end' in self.request.params:
+            end = int(self.request.params['end'])
+        else:
+            end = None
         ctx = self.conn.new_context(search_type=TYPE_FILE, latest=self.latest, replica=self.replica)
         ctx = ctx.constrain(dataset_id=dataset_id)
         paged_results = []
         for result in ctx.search():
-            paged_results.append(dict(
-                filename=result.filename,
-                download_url=result.download_url,
-                opendap_url=result.opendap_url,
-            ))
+            if temporal_filter(result.filename, start, end):
+                paged_results.append(dict(
+                    filename=result.filename,
+                    download_url=result.download_url,
+                    opendap_url=result.opendap_url,
+                ))
         return dict(files=paged_results)
 
     def view(self):
