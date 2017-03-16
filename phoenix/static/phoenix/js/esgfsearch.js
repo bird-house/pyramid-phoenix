@@ -31,7 +31,9 @@
 
       var initDatasetCollapse = function() {
         $('.dataset').on('show.bs.collapse', function () {
-          _el = $(this);
+          var _el = $(this);
+          var waitDialog = $('#please-wait-dialog');
+          waitDialog.modal('show');
           $.getJSON('/esgfsearch/files', function(result) {
             text = '';
             $.each(result.files, function(i, file) {
@@ -46,6 +48,7 @@
               text += '</li>';
             });
             _el.find('.files').html(text);
+            waitDialog.modal('hide');
           });
         })
       };
@@ -55,6 +58,7 @@
           $(this).find('i').toggleClass('fa-chevron-right fa-chevron-down');
         })
       };
+
 
       // using ctrl for multiple selection of facets
       var ctrlPressed = false;
