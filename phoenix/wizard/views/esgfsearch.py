@@ -81,6 +81,7 @@ class ESGFSearch(Wizard):
             start=self.request.params.get('start', '2001'),
             end=self.request.params.get('end', '2005'),
             constraints=self.request.params.get('constraints', ''),
+            page=0,
         )
         result.update(search(self.request))
         result['quickview'] = False
