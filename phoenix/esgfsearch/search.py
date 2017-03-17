@@ -73,6 +73,7 @@ def temporal_filter(filename, start=None, end=None):
     if start and end_year < start:
         LOGGER.debug('skip: %s < %s', end_year, start)
         return False
+    LOGGER.debug("pass: %s", filename)
     return True
 
 

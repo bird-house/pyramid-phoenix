@@ -272,8 +272,9 @@
           query += '&replica=false';
         }
 
-        // date options
+        // query option
         query += '&query=' + $('#' + searchOptions.oid + '-query').val();
+        // date options
         if ($('#' + searchOptions.oid + '-temporal').is(":checked") == true) {
           query += '&start=' + $('#' + searchOptions.oid + '-start').val();
           query += '&end=' + $('#' + searchOptions.oid + '-end').val();
@@ -283,7 +284,28 @@
       };
 
       var buildFileSearchQuery = function() {
-        var query = "/esgfsearch/files";
+        var query = "/esgfsearch/files?";
+        // search options
+        if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {
+          query += '&distrib=true';
+        } else {
+          query += '&distrib=false';
+        }
+        if ($('#' + searchOptions.oid + '-latest').is(":checked") == true) {
+          query += '&latest=true';
+        } else {
+          query += '&latest=false';
+        }
+        if ($('#' + searchOptions.oid + '-replica').is(":checked") == true) {
+          query += '&replica=true';
+        } else {
+          query += '&replica=false';
+        }
+        // date options
+        if ($('#' + searchOptions.oid + '-temporal').is(":checked") == true) {
+          query += '&start=' + $('#' + searchOptions.oid + '-start').val();
+          query += '&end=' + $('#' + searchOptions.oid + '-end').val();
+        }
         return query;
       };
 

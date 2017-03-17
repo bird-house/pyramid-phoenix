@@ -8,6 +8,9 @@ from pyesgf.search.consts import TYPE_DATASET, TYPE_AGGREGATION, TYPE_FILE
 from phoenix.esgfsearch.schema import ESGFSearchSchema
 from phoenix.esgfsearch.search import search, temporal_filter
 
+import logging
+LOGGER = logging.getLogger(__name__)
+
 
 @view_defaults(permission='view', layout='default')
 class ESGFSearch(object):
@@ -40,6 +43,7 @@ class ESGFSearch(object):
         ctx = ctx.constrain(dataset_id=dataset_id)
         paged_results = []
         for result in ctx.search():
+            LOGGER.debug("check: %s", result.filename)
             if temporal_filter(result.filename, start, end):
                 paged_results.append(dict(
                     filename=result.filename,
