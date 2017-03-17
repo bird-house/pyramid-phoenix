@@ -34,7 +34,7 @@
           var _el = $(this);
           var waitDialog = $('#please-wait-dialog');
           waitDialog.modal('show');
-          $.getJSON('/esgfsearch/files', function(result) {
+          $.getJSON(buildFileSearchQuery(), function(result) {
             text = '';
             $.each(result.files, function(i, file) {
               text += '<li class="list-group-item">';
@@ -249,7 +249,7 @@
         });
       };
 
-      var buildQuery = function() {
+      var buildSearchQuery = function() {
         var searchURL = searchOptions.url + '?';
         var query = searchURL;
         query += 'selected=' + selectedFacet;
@@ -282,8 +282,13 @@
         return query;
       };
 
+      var buildFileSearchQuery = function() {
+        var query = "/esgfsearch/files";
+        return query;
+      };
+
       var search = function() {
-        query = buildQuery();
+        query = buildSearchQuery();
         // alert("run search: " + query);
         window.location = query;
 
