@@ -32,9 +32,10 @@
       var initDatasetCollapse = function() {
         $('.dataset').on('show.bs.collapse', function () {
           var _el = $(this);
+          var dataset_id = $(this).find('.files').attr('id');
           var waitDialog = $('#please-wait-dialog');
           waitDialog.modal('show');
-          $.getJSON(buildFileSearchQuery(), function(result) {
+          $.getJSON(buildFileSearchQuery(dataset_id), function(result) {
             text = '';
             $.each(result.files, function(i, file) {
               text += '<li class="list-group-item">';
@@ -283,8 +284,8 @@
         return query;
       };
 
-      var buildFileSearchQuery = function() {
-        var query = "/esgfsearch/files?";
+      var buildFileSearchQuery = function(dataset_id) {
+        var query = "/esgfsearch/files?dataset_id=" + dataset_id;
         // search options
         if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {
           query += '&distrib=true';

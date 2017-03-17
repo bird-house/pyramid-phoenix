@@ -242,7 +242,7 @@
                                 <i class="fa fa-book"></i> Catalog</a>
                             </p>
                           </li>
-                          <div class="files"/>
+                          <div id="${result.dataset_id}" class="files"/>
                         </ul>
                       </div>
                     </div>
