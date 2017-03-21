@@ -21,9 +21,9 @@ class ESGFSearchActions(object):
         result = dict(
             query=self.request.params.get('query', ''),
             selected=self.request.params.get('selected', 'project'),
-            distrib=self.request.params.get('distrib', 'false'),
-            replica=self.request.params.get('replica', 'false'),
-            latest=self.request.params.get('latest', 'true'),
+            distrib=str(self.esgfsearch.distrib).lower(),
+            replica=str(self.esgfsearch.replica).lower(),
+            latest=str(self.esgfsearch.latest).lower(),
             temporal=str(self.esgfsearch.temporal).lower(),
             start=self.request.params.get('start', '2001'),
             end=self.request.params.get('end', '2005'),

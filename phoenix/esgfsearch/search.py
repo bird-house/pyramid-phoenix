@@ -81,7 +81,7 @@ class ESGFSearch(object):
     def __init__(self, request):
         self.request = request
         settings = self.request.registry.settings
-        distrib = asbool(self.request.params.get('distrib', 'false'))
+        self.distrib = asbool(self.request.params.get('distrib', 'false'))
         self.latest = asbool(self.request.params.get('latest', 'true'))
         if self.latest is False:
             self.latest = None  # all versions
@@ -92,7 +92,7 @@ class ESGFSearch(object):
             self.temporal = True
         else:
             self.temporal = False
-        self.conn = SearchConnection(settings.get('esgfsearch.url'), distrib=distrib)
+        self.conn = SearchConnection(settings.get('esgfsearch.url'), distrib=self.distrib)
 
     def search_files(self):
         dataset_id = self.request.params.get(
