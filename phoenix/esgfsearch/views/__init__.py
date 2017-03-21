@@ -18,17 +18,8 @@ class ESGFSearchActions(object):
         return self.esgfsearch.search_files()
 
     def search_datasets(self):
-        result = dict(
-            query=self.request.params.get('query', ''),
-            selected=self.esgfsearch.selected,
-            distrib=str(self.esgfsearch.distrib).lower(),
-            replica=str(self.esgfsearch.replica).lower(),
-            latest=str(self.esgfsearch.latest).lower(),
-            temporal=str(self.esgfsearch.temporal).lower(),
-            start=self.esgfsearch.start or 2001,
-            end=self.esgfsearch.end or 2005,
-            constraints=self.request.params.get('constraints', ''),
-        )
+        result = dict()
+        result.update(self.esgfsearch.query_params())
         result.update(self.esgfsearch.search_datasets())
         result['form'] = Form(ESGFSearchSchema())
         result['quickview'] = True

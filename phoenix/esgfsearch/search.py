@@ -81,6 +81,7 @@ class ESGFSearch(object):
     def __init__(self, request):
         self.request = request
         settings = self.request.registry.settings
+        self.query = self.request.params.get('query', ''),
         self.selected = self.request.params.get('selected', 'project')
         self.limit = int(self.request.params.get('limit', '0'))
         self.distrib = asbool(self.request.params.get('distrib', 'false'))
@@ -99,6 +100,19 @@ class ESGFSearch(object):
             self.start = self.end = None
         self.constraints = self.request.params.get('constraints')
         self.conn = SearchConnection(settings.get('esgfsearch.url'), distrib=self.distrib)
+
+    def query_params(self):
+        return dict(
+            query=self.query,
+            selected=self.selected,
+            distrib=str(self.distrib).lower(),
+            replica=str(self.replica).lower(),
+            latest=str(self.latest).lower(),
+            temporal=str(self.temporal).lower(),
+            start=self.start or 2001,
+            end=self.end or 2005,
+            constraints=self.constraints,
+        )
 
     def search_files(self):
         dataset_id = self.request.params.get(
