@@ -77,7 +77,7 @@ def temporal_filter(filename, start=None, end=None):
     return True
 
 
-def search(request):
+def search_datasets(request):
     settings = request.registry.settings
     selected = request.params.get('selected', 'project')
     limit = int(request.params.get('limit', '0'))

@@ -6,7 +6,8 @@ from pyesgf.search import SearchConnection
 from pyesgf.search.consts import TYPE_DATASET, TYPE_AGGREGATION, TYPE_FILE
 
 from phoenix.esgfsearch.schema import ESGFSearchSchema
-from phoenix.esgfsearch.search import search, temporal_filter
+from phoenix.esgfsearch.search import search_datasets as esgf_search_datasets
+from phoenix.esgfsearch.search import temporal_filter
 
 import logging
 LOGGER = logging.getLogger(__name__)
@@ -65,7 +66,7 @@ class ESGFSearch(object):
             end=self.request.params.get('end', '2005'),
             constraints=self.request.params.get('constraints', ''),
         )
-        result.update(search(self.request))
+        result.update(esgf_search_datasets(self.request))
         result['form'] = Form(ESGFSearchSchema())
         result['quickview'] = True
         result['page'] = 0

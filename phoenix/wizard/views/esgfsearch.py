@@ -7,7 +7,7 @@ from phoenix.wizard.views import Wizard
 from phoenix.utils import user_cert_valid
 
 from phoenix.esgfsearch.schema import ESGFSearchSchema
-from phoenix.esgfsearch.search import search
+from phoenix.esgfsearch.search import search_datasets as esgf_search_datasets
 
 import logging
 LOGGER = logging.getLogger(__name__)
@@ -83,6 +83,6 @@ class ESGFSearch(Wizard):
             constraints=self.request.params.get('constraints', ''),
             page=0,
         )
-        result.update(search(self.request))
+        result.update(esgf_search_datasets(self.request))
         result['quickview'] = False
         return result
