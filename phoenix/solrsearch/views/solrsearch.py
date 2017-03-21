@@ -15,5 +15,3 @@ class SolrSearch(MyView):
     @view_config(route_name='solrsearch', renderer='../templates/solrsearch/solrsearch.pt')
     def view(self):
         return dict()
-
-

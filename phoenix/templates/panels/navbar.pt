@@ -22,7 +22,7 @@
           <li>
         </div>
       </ul>
-      
+
       <!-- static links -->
       <ul class="nav navbar-nav">
         <li>
@@ -31,13 +31,26 @@
       </ul>
 
       <!-- nav on right side -->
-     
+
       <ul class="nav navbar-nav navbar-right">
         <div tal:repeat="item subitems" class="nav navbar-nav">
-          <li class="${'active' if item['active'] else ''}">
+          <!-- subitem -->
+          <li tal:condition="'items' not in item" class="${'active' if item['active'] else ''}">
             <a class="navbar-link btn-lg" href="${item.url}" data-toggle="tooltip" title="${item.name}">
-              <span class="${item.icon}"></span> 
+              <span class="${item.icon}"></span>
             </a>
+          </li>
+          <!-- dropdown -->
+          <li tal:condition="'items' in item" class="dropdown">
+            <a href="#" class="dropdown-toggle nav-user-dropdown btn-lg" data-toggle="dropdown" role="button" aria-expanded="false">
+              <span class="${item.icon}"></span> <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li tal:repeat="dropdown_item item['items']">
+                <a href="${dropdown_item.url}">
+                  <i class="${dropdown_item.icon}"></i> ${dropdown_item.name}
+                </a>
+              </li>
+            </ul>
           </li>
         </div>
         <!-- sign-in -->
@@ -65,4 +78,3 @@
     </div>
   </div>
 </nav>
-

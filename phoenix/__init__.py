@@ -1,7 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-__version__ = '0.7.1'
+__version__ = '0.7.2'
 
 
 def main(global_config, **settings):
@@ -75,6 +75,9 @@ def main(global_config, **settings):
 
     # job monitor
     config.include('phoenix.monitor')
+
+    # esgf search
+    config.include('phoenix.esgfsearch')
 
     # user profiles
     config.include('phoenix.people')

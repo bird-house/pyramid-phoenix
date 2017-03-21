@@ -13,18 +13,18 @@ def includeme(config):
                     route_name='wizard_esgf_search',
                     attr='view',
                     renderer='../templates/wizard/esgfsearch.pt')
-    config.add_route('wizard_esgf_login', '/wizard/esgf_login')
-    config.add_view('phoenix.wizard.views.esgflogin.ESGFLogin',
-                    route_name='wizard_esgf_login',
+    config.add_route('wizard_esgf_logon', '/wizard/esgf_logon')
+    config.add_view('phoenix.wizard.views.esgflogon.ESGFLogon',
+                    route_name='wizard_esgf_logon',
                     attr='view',
                     renderer='../templates/wizard/default.pt')
     config.add_route('wizard_loading', '/wizard/loading')
-    config.add_view('phoenix.wizard.views.esgflogin.ESGFLogin',
+    config.add_view('phoenix.wizard.views.esgflogon.ESGFLogon',
                     route_name='wizard_loading',
                     attr='loading',
                     renderer='../templates/wizard/loading.pt')
     config.add_route('wizard_check_logon', '/wizard/check_logon.json')
-    config.add_view('phoenix.wizard.views.esgflogin.ESGFLogin',
+    config.add_view('phoenix.wizard.views.esgflogon.ESGFLogon',
                     route_name='wizard_check_logon',
                     attr='check_logon',
                     renderer='json')
@@ -40,7 +40,7 @@ class ESGFSearch(Wizard):
         return breadcrumbs
 
     def schema(self):
-        from phoenix.schema import ESGFSearchSchema
+        from phoenix.esgfsearch.schema import ESGFSearchSchema
         return ESGFSearchSchema()
 
     def next_success(self, appstruct):
@@ -49,7 +49,7 @@ class ESGFSearch(Wizard):
         # TODO: need to check pre conditions in wizard
         if not self.request.has_permission('submit') or user_cert_valid(self.request):
             return self.next('wizard_done')
-        return self.next('wizard_esgf_login')
+        return self.next('wizard_esgf_logon')
 
     def view(self):
         return super(ESGFSearch, self).view()

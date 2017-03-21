@@ -1,6 +1,7 @@
 from pyramid_layout.panel import panel_config
 
 from phoenix.security import default_auth_protocol
+from phoenix.utils import root_path
 
 import logging
 logger = logging.getLogger(__name__)
@@ -9,9 +10,12 @@ logger = logging.getLogger(__name__)
 @panel_config(name='navbar', renderer='phoenix:templates/panels/navbar.pt')
 def navbar(context, request):
     def nav_item(name, url, icon=None):
-        from phoenix.utils import root_path
         active = root_path(request.current_route_path()) == root_path(url)
         return dict(name=name, url=url, active=active, icon=icon)
+
+    def dropdown(name, items=None, icon=None):
+        items = items or []
+        return dict(name=name, icon=icon, items=items)
 
     items = list()
     items.append(nav_item('Processes', request.route_path('processes')))
@@ -23,8 +27,12 @@ def navbar(context, request):
 
     subitems = list()
     subitems.append(nav_item('Dashboard', request.route_path('dashboard', tab='overview'), icon='fa fa-dashboard'))
+    # dropdown browse
+    browse_items = list()
+    browse_items.append(nav_item('ESGF search', request.route_path('esgfsearch'), icon='fa fa-globe'))
     if request.solr_activated:
-        subitems.append(nav_item('Browse', request.route_path('solrsearch'), icon='fa fa-search'))
+        browse_items.append(nav_item('Birdhouse Solr', request.route_path('solrsearch'), icon='fa fa-sun-o'))
+    subitems.append(dropdown('Browse', items=browse_items, icon='fa fa-search'))
     if request.has_permission('submit'):
         subitems.append(nav_item('Cart', request.route_path('cart'), icon='fa fa-shopping-cart'))
     if request.has_permission('admin'):

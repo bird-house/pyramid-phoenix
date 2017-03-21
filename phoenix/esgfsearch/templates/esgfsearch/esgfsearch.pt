@@ -15,6 +15,9 @@
   </div>
 
   <div metal:fill-slot="javascript">
+    <!-- cart -->
+    <script src="${request.static_url('phoenix:static/phoenix/js/cart.js')}"
+            type="text/javascript"></script>
     <!-- tags -->
     <script src="${request.static_path('phoenix:static/bootstrap-tagmanager/bootstrap-tagmanager.js')}"></script>
     <!-- phoenix esgf search -->
@@ -24,7 +27,13 @@
 
   <div metal:fill-slot="content">
     <div class="container">
-      <tal:form replace="structure form">The form will render here</tal:form>
+      <div class="page-header">
+        <h1>ESGF Search</h1>
+      </div>
+
+      <div class="row">
+        <tal:form replace="structure form">The form will render here</tal:form>
+      </div>
     </div>
   </div>
 

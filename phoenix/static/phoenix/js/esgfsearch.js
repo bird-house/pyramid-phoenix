@@ -1,158 +1,264 @@
-var EsgSearchResult = function(json) {
-  this._json = json;
-  this._facets = null;
-};
+/* ESGF Dataset search */
 
-$.extend(EsgSearchResult.prototype, {
-  raw: function() {
-    return this._json;
-  },
-
-  numFound: function() {
-    return this._json.response.numFound;
-  },
-
-  facets: function() {
-    if (this._facets == null) {
-      var facets = [];
-      var facet_counts = this._json.facet_counts.facet_fields;
-      $.each(facet_counts, function(tag, values) {
-        if (values.length > 2) {
-          facets.push(tag);
-        }
-      });
-      this._facets = facets.sort();
-    }
-    return this._facets;
-  },
-
-  facetValues: function(facet) {
-    var counts = this._json.facet_counts.facet_fields[facet];
-    var facet_values = [];
-    $.each(counts, function(i,value) {
-      if (i % 2 == 0) {
-        facet_values.push(value);
-      }
-    });
-    return facet_values.sort();
-  },
-
-  docs: function() {
-    return this._json.response.docs;
-  },
-
-  url: function(doc, type) {
-    var url = null;
-    var serviceType = 'HTTPServer';
-    if (type == 'Aggregation') {
-      serviceType = 'OPENDAP';
-    }
-    $.each(doc.url, function(i, encoded) {
-      var service = encoded.split("|");
-      //console.log('service: ' + service[2]);
-      if (service[2] == serviceType) {
-        url = service[0];
-      };
-      if (serviceType == 'OPENDAP' && url != null) {
-        url = url.replace('.html', '');
-      }
-    });
-
-    //console.log('url: ' + url);
-    return url;
-  },
-});
-
-
-(function($) {  
+(function($) {
   $.extend({
-    EsgSearch: function(options) {
+    EsgDatasetSearch: function(options) {
       var defaults = {
+        oid: null,
         url: null,
-        query: '*:*', // TODO: rename query to freetext
-        datasetId: null,
-        constraints: null,
-        limit: 0,
-        facets: '*',
-        fields: '*',
-        distrib: true,
-        latest: true,
-        replica: false,
-        temporal: false,
-        start: '',
-        end: '',
-        spatial: false,
-        bbox: '',
-        type: 'Dataset',
-        callback: function(result) { console.log('no callback defined.')},
       };
       var searchOptions = $.extend(defaults, options);
+      var selectedFacet = 'project';
 
-      var execute = function() {
-        search(buildQuery());
+      var init = function() {
+        init_toggle_collapse();
+        init_search_options();
+        init_query();
+        init_constraints();
+        init_facets();
+        init_facet_values();
+        init_pinned_facets();
+        init_time_constraints();
+        //init_spatial_constraints();
+        search();
       };
 
-      var search = function(query) {
-        var format = 'application%2Fsolr%2Bjson';
-        var servlet = 'search';
-        var searchURL = searchOptions.url + '/' + servlet + '?';
-        searchURL += query;
-        searchURL += '&format=' + format;
+      var init_toggle_collapse = function() {
+        $('a[data-toggle="collapse"]').click(function () {
+          $(this).find('i').toggleClass('fa-chevron-right fa-chevron-down');
+        })
+      };
 
-        $.getJSON(searchURL, function(json) {
-          var result = new EsgSearchResult(json);
-          searchOptions.callback(result);
+      // using ctrl for multiple selection of facets
+      var ctrlPressed = false;
+      $(window).keydown(function(e) {
+        if (e.which == 17) { // ctrl
+          ctrlPressed = true;
+        }
+      }).keyup(function(e) {
+        if (e.which == 17) { // ctrl
+          ctrlPressed = false;
+          search();
+        }
+      });
+
+      // using delete to remove selections of current category
+      $(window).keydown(function(e) {
+        if (e.which == 46) { // delete
+          $(".tm-selection").tagsManager('empty');
+          search();
+        }
+      });
+
+      var killEvent = function (e) {
+        e.cancelBubble = true;
+        e.returnValue = false;
+        e.stopPropagation();
+        e.preventDefault();
+      };
+
+      var deleted_constraint_handler = function(constraint) {
+        $(".tm-selection").tagsManager('limitPopTags');
+        search();
+      };
+
+      var selected_facet_handler = function (facet) {
+        selectedFacet = facet;
+        $('#search-label-category').text("KEYWORDS: " + selectedFacet)
+        search();
+      };
+
+      var selected_facet_value_handler = function (facet_value) {
+        value = selectedFacet  + ':' + facet_value;
+        $(".tm-selection").tagsManager('limitPushTags');
+        $(".tm-selection").tagsManager('pushTag', value);
+        if (!ctrlPressed) {
+          search();
+        }
+      };
+
+      var update_counts = function(counts) {
+        $('#tm-hit-count').text("Total: " + counts);
+        $('#' + searchOptions.oid + '-hit-count').val(counts);
+      };
+
+      var init_search_options = function() {
+        $('#' + searchOptions.oid + '-distrib').click(function () {
+          search();
+        });
+
+        $('#' + searchOptions.oid + '-replica').click(function () {
+          search();
+        });
+
+        $('#' + searchOptions.oid + '-latest').click(function () {
+          search();
+        });
+
+        $('#' + searchOptions.oid + '-temporal').click(function () {
+          search();
+        });
+
+        /*
+        $('#' + searchOptions.oid + '-spatial').click(function () {
+          search();
+        });
+        */
+      };
+
+      var init_query = function() {
+        $('#' + searchOptions.oid + '-query').keypress(function(e) {
+          // disable ENTER
+          if (e.which == 13) {
+            killEvent(e);
+            search();
+          };
+        });
+      };
+
+      var init_time_constraints = function() {
+        // start year
+        $('#' + searchOptions.oid + '-start').keypress(function(e) {
+          // disable ENTER and run search
+          if (e.which == 13) {
+            killEvent(e);
+            search();
+          };
+        });
+        $('#' + searchOptions.oid + '-start').on('change', function(){
+          search();
+        });
+
+        // end year
+        $('#' + searchOptions.oid + '-end').keypress(function(e) {
+          // disable ENTER and run search
+          if (e.which == 13) {
+            killEvent(e);
+            search();
+          };
+        });
+        $('#' + searchOptions.oid + '-end').on('change', function(){
+          search();
+        });
+      };
+
+      var init_constraints = function() {
+        $(".tm-selection").tagsManager({
+          preventSubmitOnEnter: true,
+          delimiters: [9, 13, 44],
+          //maxTags: 2,
+          tagClass: 'tm-tag tm-tag-success',
+          hiddenTagListId: searchOptions.oid + '-facets',
+          deleteHandler: deleted_constraint_handler,
+        });
+      };
+
+      var init_spatial_constraints = function() {
+        $('#' + searchOptions.oid + '-bbox').keypress(function(e) {
+          // disable ENTER
+          if (e.which == 13) {
+            killEvent(e);
+            search();
+          };
+        });
+        $('#' + searchOptions.oid + '-bbox').on('change', function(){
+          search();
+        });
+      };
+
+      var init_facets = function() {
+        $(".tm-facets").tagsManager({
+          //prefilled: ["hello"],
+          preventSubmitOnEnter: true,
+          delimiters: [9, 13, 44],
+          //maxTags: 1,
+          tagClass: 'tm-tag tm-tag-info',
+          isSelectable: true,
+          selectHandler: selected_facet_handler,
+        });
+      };
+
+      var init_facet_values = function() {
+        $(".tm-facet").tagsManager({
+          //prefilled: ["MPI-M", "NCC", "MIROC", "BCC"],
+          preventSubmitOnEnter: true,
+          delimiters: [9, 13, 44],
+          //maxTags: 4,
+          tagClass: 'tm-tag tm-tag-warning tm-tag-mini',
+          isSelectable: true,
+          selectHandler: selected_facet_value_handler,
+        });
+      };
+
+      var init_pinned_facets = function() {
+        $(".tm-pinned-facets").tagsManager({
+          //prefilled: ["hello"],
+          preventSubmitOnEnter: true,
+          delimiters: [9, 13, 44],
+          tagClass: 'tm-tag tm-tag-disabled',
+          isSelectable: false,
         });
       };
 
       var buildQuery = function() {
-        var query = '';
+        var servlet = 'search';
+        var searchURL = searchOptions.url + '/' + servlet + '?';
+        var query = searchURL;
+        query += 'selected=' + selectedFacet;
+        query += '&constraints=' + $("#" + searchOptions.oid + '-facets').val();
 
-        query += 'type=' + searchOptions.type;
-        query += '&facets=' + searchOptions.facets;
-        query += '&fields=' + searchOptions.fields;
-        query += '&limit=' + searchOptions.limit;
-
-        if (searchOptions.datasetId != null) {
-          query += '&dataset_id=' + searchOptions.datasetId;
-        }
-        
-        var tags = searchOptions.constraints.split(",");
-        $.each(tags.sort(), function(i, tag) {
-          var constraint = tag.split(":");
-          if (searchOptions.type != 'Aggregation' || constraint[0] == 'variable') {
-            query += '&' + constraint[0] + '=' + constraint[1];
-          }
-        });
-        
-        if (searchOptions.distrib == true) {
+        if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {
           query += '&distrib=true';
         } else {
           query += '&distrib=false';
         }
-        if (searchOptions.latest == true) {
+        if ($('#' + searchOptions.oid + '-latest').is(":checked") == true) {
           query += '&latest=true';
+        } else {
+          query += '&latest=false';
         }
-        if (searchOptions.replica == false) {
+        if ($('#' + searchOptions.oid + '-replica').is(":checked") == true) {
+          query += '&replica=true';
+        } else {
           query += '&replica=false';
         }
-        query += '&query=' + searchOptions.query;
-        if (searchOptions.temporal == true) {
-          query += '&start=' + searchOptions.start;
-          query += '&end=' + searchOptions.end;
-        }
-        if (searchOptions.spatial == true) {
-          query += '&bbox=' + searchOptions.bbox;
+        query += '&query=' + $('#' + searchOptions.oid + '-query').val();
+        if ($('#' + searchOptions.oid + '-temporal').is(":checked") == true) {
+          query += '&start=' + $('#' + searchOptions.oid + '-start').val() + '-01-01T12:00:00Z';
+          query += '&end=' + $('#' + searchOptions.oid + '-end').val()  + '-12-31T12:00:00Z';
         }
 
-        //console.log(query);
         return query;
       };
 
-      execute();
+      var search = function() {
+        $.getJSON(buildQuery(), function(result) {
+          $(".tm-facets").tagsManager('empty');
+          $.each(result.facets, function(i, tag) {
+            $(".tm-facets").tagsManager('limitPushTags');
+            $(".tm-facets").tagsManager('pushTag', tag);
+          });
+
+          $(".tm-facet").tagsManager('empty');
+          $.each(result.facetValues, function(i,value) {
+            $(".tm-facet").tagsManager('limitPushTags');
+            $(".tm-facet").tagsManager('pushTag', value);
+          });
+
+          $(".tm-pinned-facets").tagsManager('empty');
+          $.each(result.pinnedFacets, function(i, tag) {
+            selection = $("#" + searchOptions.oid + '-facets').val();
+            if (selection.indexOf(tag) < 0) {
+              $(".tm-pinned-facets").tagsManager('limitPushTags');
+              $(".tm-pinned-facets").tagsManager('pushTag', tag);
+            }
+          });
+
+          update_counts(result.numFound);
+        });
+      };
+
+      init();
     },
   });
 })(jQuery);
-
-
-

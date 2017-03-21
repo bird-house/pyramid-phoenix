@@ -12,48 +12,60 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class ESGFLoginSchema(colander.MappingSchema):
-    openid = colander.SchemaNode(
+class ESGFLogonSchema(colander.MappingSchema):
+    choices = (
+        ('slcs1.ceda.ac.uk', 'CEDA (England)'),
+        ('esgf-data.dkrz.de', 'DKRZ (Hamburg, Germany)'),
+        ('esgf-node.ipsl.upmc.fr', 'IPSL (Paris, France)'),
+        # ('pcmdi.llnl.gov', 'PCMDI'),
+        # ('esg-dn1.nsc.liu.se', 'SMHI'),
+    )
+
+    provider = colander.SchemaNode(
         colander.String(),
-        title="OpenID",
-        description="Type your OpenID from your ESGF provider.\
-         For example: https://esgf-data.dkrz.de/esgf-idp/openid/username",
-        validator=colander.url
+        title="Provider",
+        description="Choose your ESGF provider.",
+        validator=colander.OneOf([x[0] for x in choices]),
+        widget=deform.widget.RadioChoiceWidget(values=choices,
+                                               inline=True),
+        default='esgf-data.dkrz.de',
+    )
+    username = colander.SchemaNode(
+        colander.String(),
+        title="Username",
+        description="Type your username for your ESGF account.",
+        validator=colander.Length(min=2),
     )
     password = colander.SchemaNode(
         colander.String(),
         title='Password',
-        description='Type your password for your ESGF OpenID',
+        description='Type your password for your ESGF account.',
         validator=colander.Length(min=6),
         widget=deform.widget.PasswordWidget())
 
 
-class ESGFLogin(Wizard):
+class ESGFLogon(Wizard):
     def __init__(self, request):
-        super(ESGFLogin, self).__init__(
+        super(ESGFLogon, self).__init__(
             request,
-            name='wizard_esgf_login',
-            title="ESGF Login")
+            name='wizard_esgf_logon',
+            title="ESGF Logon")
 
     def breadcrumbs(self):
-        breadcrumbs = super(ESGFLogin, self).breadcrumbs()
+        breadcrumbs = super(ESGFLogon, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
     def schema(self):
-        return ESGFLoginSchema()
-
-    def appstruct(self):
-        appstruct = super(ESGFLogin, self).appstruct()
-        appstruct['openid'] = self.get_user().get('openid')
-        return appstruct
+        return ESGFLogonSchema()
 
     def success(self, appstruct):
-        super(ESGFLogin, self).success(appstruct)
+        super(ESGFLogon, self).success(appstruct)
 
         self.wizard_state.set('password', appstruct.get('password'))
-        result = esgf_logon.delay(authenticated_userid(self.request), self.request.wps.url,
-                                  appstruct.get('openid'),
+        result = esgf_logon.delay(authenticated_userid(self.request),
+                                  appstruct.get('provider'),
+                                  appstruct.get('username'),
                                   appstruct.get('password'))
         self.session['task_id'] = result.id
 
@@ -80,4 +92,4 @@ class ESGFLogin(Wizard):
         return {}
 
     def view(self):
-        return super(ESGFLogin, self).view()
+        return super(ESGFLogon, self).view()

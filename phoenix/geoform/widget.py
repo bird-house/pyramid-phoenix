@@ -16,8 +16,7 @@ from deform.widget import (
     Widget,
 )
 
-# TODO: replace by real deform
-from .deformng import StrippedString
+from deform.widget import _StrippedString
 
 import logging
 import json
@@ -79,10 +78,10 @@ class BBoxWidget(Widget):
 
     _pstruct_schema = SchemaNode(
         Mapping(),
-        SchemaNode(StrippedString(), name='minx'),
-        SchemaNode(StrippedString(), name='miny'),
-        SchemaNode(StrippedString(), name='maxx'),
-        SchemaNode(StrippedString(), name='maxy'))
+        SchemaNode(_StrippedString(), name='minx'),
+        SchemaNode(_StrippedString(), name='miny'),
+        SchemaNode(_StrippedString(), name='maxx'),
+        SchemaNode(_StrippedString(), name='maxy'))
 
     def serialize(self, field, cstruct, **kw):
         if cstruct is null:
@@ -158,7 +157,9 @@ class TagsWidget(Widget):
 
 class ESGFSearchWidget(Widget):
     """
-    Renders an esg search widget
+    Renders an esg search widget.
+
+    TODO: maybe use MappingWidget
 
     **Attributes/Arguments**
 
@@ -169,9 +170,10 @@ class ESGFSearchWidget(Widget):
     true_val = 'true'
     false_val = 'false'
 
-    template = 'esgsearch'
-    size = None
-    style = None
+    template = 'esgfsearch'
+    item_template = 'mapping_item'
+    error_class = None
+    category = 'structural'
     requirements = ()
     url = ''
 
@@ -207,13 +209,13 @@ class ESGFSearchWidget(Widget):
         # TODO: quick hack for date format used in esgsearch
         start = search.get('start', '2001-01-01')
         timestamp = datetime_parser.parse(start)
-        start = timestamp.isoformat().split('T')[0]
-        kw.setdefault('start', start)
+        # start = timestamp.isoformat().split('T')[0]
+        kw.setdefault('start', timestamp.year)
 
-        end = search.get('end', '2010-12-31')
+        end = search.get('end', '2005-12-31')
         timestamp = datetime_parser.parse(end)
-        end = timestamp.isoformat().split('T')[0]
-        kw.setdefault('end', end)
+        # end = timestamp.isoformat().split('T')[0]
+        kw.setdefault('end', timestamp.year)
 
         # kw.setdefault('bbox', search.get('bbox', '-180,-90,180,90'))
         kw.setdefault('bbox', '-180,-90,180,90')
@@ -239,8 +241,8 @@ class ESGFSearchWidget(Widget):
         else:
             result['latest'] = None
         # TODO: quick hack for date format used in esgsearch
-        result['start'] = pstruct['start'].strip() + "T12:00:00Z"
-        result['end'] = pstruct['end'].strip() + "T12:00:00Z"
+        result['start'] = pstruct['start'].strip() + "-01-01T12:00:00Z"
+        result['end'] = pstruct['end'].strip() + "-12-31T12:00:00Z"
         result['temporal'] = 'temporal' in pstruct
         # result['spatial'] = pstruct.has_key('spatial')
         result['spatial'] = False

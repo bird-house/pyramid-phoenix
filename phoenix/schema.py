@@ -1,18 +1,10 @@
 import deform
 import colander
-from colander import Invalid
 
-from phoenix.geoform.widget import TagsWidget, ESGFSearchWidget
+from phoenix.geoform.widget import TagsWidget
 
 import logging
 logger = logging.getLogger(__name__)
-
-
-def esgfsearch_validator(node, value):
-    import json
-    search = json.loads(value)
-    if search.get('hit-count', 0) > 100:
-        raise Invalid(node, 'More than 100 datasets selected: %r.' % search['hit-count'])
 
 
 class SwiftLoginSchema(colander.MappingSchema):
@@ -29,14 +21,6 @@ class SwiftLoginSchema(colander.MappingSchema):
         missing='',
         default='',
         widget=deform.widget.PasswordWidget(size=30))
-
-
-class ESGFSearchSchema(colander.MappingSchema):
-    selection = colander.SchemaNode(
-        colander.String(),
-        validator=esgfsearch_validator,
-        title='ESGF Search',
-        widget=ESGFSearchWidget(url="/esg-search"))
 
 
 class UploadSchema(SwiftLoginSchema):
