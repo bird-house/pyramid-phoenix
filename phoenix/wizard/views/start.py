@@ -10,8 +10,7 @@ from owslib.wps import WebProcessingService
 from phoenix.wps import check_status
 from phoenix.utils import time_ago_in_words
 from phoenix.wizard.views import Wizard
-
-from twitcher.utils import parse_service_name
+from phoenix._compat import urlparse
 
 import logging
 logger = logging.getLogger(__name__)
@@ -37,13 +36,19 @@ def job_to_state(request, job_id):
         if len(execution.dataInputs[0].data) == 1:
             workflow = yaml.load(execution.dataInputs[0].data[0])
 
-            # TODO: get the correct worker wps url
             # TODO: avoid getcaps
-            wps = WebProcessingService(url=workflow['worker']['url'].split('?')[0], verify=False, skip_caps=False)
-            process = wps.describeprocess(workflow['worker']['identifier'])
-
-            service = request.catalog.get_service_by_url(wps.url)
-            state['wizard_wps'] = {'identifier': service['name']}
+            logger.debug("worker url: %s", workflow['worker']['url'])
+            parsed_url = urlparse(workflow['worker']['url'])
+            url = "{0.scheme}://{0.netloc}{0.path}".format(parsed_url)
+            wps = WebProcessingService(url=url, verify=False, skip_caps=False)
+            logger.debug("wps url: %s", wps.url)
+            if '/ows/proxy' in parsed_url.path:
+                service_name = parsed_url.path.split('/')[-1]
+            else:
+                service = request.catalog.get_service_by_url(wps.url)
+                service_name = service['name']
+            logger.debug('service_name=%s', service_name)
+            state['wizard_wps'] = {'identifier': service_name}
             state['wizard_process'] = {'identifier': workflow['worker']['identifier']}
             inputs = {}
             for inp in workflow['worker']['inputs']:
@@ -53,6 +58,7 @@ def job_to_state(request, job_id):
                 else:
                     inputs[key] = [value]
 
+            process = wps.describeprocess(workflow['worker']['identifier'])
             for inp in process.dataInputs:
                 if 'boolean' in inp.dataType and inp.identifier in inputs:
                     inputs[inp.identifier] = [val.lower() == 'true' for val in inputs[inp.identifier]]
