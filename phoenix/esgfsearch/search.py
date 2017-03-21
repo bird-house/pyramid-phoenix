@@ -149,7 +149,7 @@ class ESGFSearch(object):
                 to_timestamp="{}-12-31T12:00:00Z".format(self.end))
         results = ctx.search(batch_size=10, ignore_facet_check=False)
         categories = [tag for tag in ctx.facet_counts if len(ctx.facet_counts[tag]) > 1]
-        keywords = ctx.facet_counts[self.selected].keys()
+        keywords = sorted(ctx.facet_counts[self.selected].keys())
         pinned_facets = []
         for facet in ctx.facet_counts:
             if len(ctx.facet_counts[facet]) == 1:
