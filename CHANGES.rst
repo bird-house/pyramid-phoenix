@@ -2,13 +2,15 @@ Changes
 *******
 
 
-0.7.2 (2017-02-xx)
+0.7.2 (2017-03-21)
 ==================
 
 * wizard: esgf-logon with provider + username.
 * updated pyramid 1.8.2 and deform 2.0.4.
 * refactored esgfsearch.
 * esgfsearch can be opened from the search menu.
+* fixed wizard to use proxy url for worker wps.
+* added _compat.py module.
 
 0.7.1 (2017-02-20)
 ==================
