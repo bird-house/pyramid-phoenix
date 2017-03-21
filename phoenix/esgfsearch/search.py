@@ -81,6 +81,8 @@ class ESGFSearch(object):
     def __init__(self, request):
         self.request = request
         settings = self.request.registry.settings
+        self.selected = self.request.params.get('selected', 'project')
+        self.limit = int(self.request.params.get('limit', '0'))
         self.distrib = asbool(self.request.params.get('distrib', 'false'))
         self.latest = asbool(self.request.params.get('latest', 'true'))
         if self.latest is False:
@@ -90,25 +92,24 @@ class ESGFSearch(object):
             self.replica = None  # master + replica
         if 'start' in self.request.params and 'end' in self.request.params:
             self.temporal = True
+            self.start = int(self.request.params['start'])
+            self.end = int(self.request.params['end'])
         else:
             self.temporal = False
+            self.start = self.end = None
+        self.constraints = self.request.params.get('constraints')
         self.conn = SearchConnection(settings.get('esgfsearch.url'), distrib=self.distrib)
 
     def search_files(self):
         dataset_id = self.request.params.get(
             'dataset_id',
             'cmip5.output1.MPI-M.MPI-ESM-LR.1pctCO2.day.atmos.cfDay.r1i1p1.v20120314|esgf1.dkrz.de')
-        if self.temporal:
-            start = int(self.request.params['start'])
-            end = int(self.request.params['end'])
-        else:
-            start = end = None
         ctx = self.conn.new_context(search_type=TYPE_FILE, latest=self.latest, replica=self.replica)
         ctx = ctx.constrain(dataset_id=dataset_id)
         paged_results = []
         for result in ctx.search():
             LOGGER.debug("check: %s", result.filename)
-            if temporal_filter(result.filename, start, end):
+            if temporal_filter(result.filename, self.start, self.end):
                 paged_results.append(dict(
                     filename=result.filename,
                     download_url=result.download_url,
@@ -117,25 +118,21 @@ class ESGFSearch(object):
         return dict(files=paged_results)
 
     def search_datasets(self):
-        selected = self.request.params.get('selected', 'project')
-        limit = int(self.request.params.get('limit', '0'))
-
         constraints = dict()
-        if 'constraints' in self.request.params:
-            for constrain in self.request.params['constraints'].split(','):
+        if self.constraints:
+            for constrain in self.constraints.split(','):
                 if constrain.strip():
                     key, value = constrain.split(':', 1)
                     constraints[key] = value
-
         ctx = self.conn.new_context(search_type=TYPE_DATASET, latest=self.latest, replica=self.replica)
         ctx = ctx.constrain(**constraints)
-        if 'start' in self.request.params and 'end' in self.request.params:
+        if self.temporal:
             ctx = ctx.constrain(
-                from_timestamp="{}-01-01T12:00:00Z".format(self.request.params['start']),
-                to_timestamp="{}-12-31T12:00:00Z".format(self.request.params['end']))
+                from_timestamp="{}-01-01T12:00:00Z".format(self.start),
+                to_timestamp="{}-12-31T12:00:00Z".format(self.end))
         results = ctx.search(batch_size=10, ignore_facet_check=False)
         categories = [tag for tag in ctx.facet_counts if len(ctx.facet_counts[tag]) > 1]
-        keywords = ctx.facet_counts[selected].keys()
+        keywords = ctx.facet_counts[self.selected].keys()
         pinned_facets = []
         for facet in ctx.facet_counts:
             if len(ctx.facet_counts[facet]) == 1:

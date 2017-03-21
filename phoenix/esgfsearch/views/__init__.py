@@ -20,13 +20,13 @@ class ESGFSearchActions(object):
     def search_datasets(self):
         result = dict(
             query=self.request.params.get('query', ''),
-            selected=self.request.params.get('selected', 'project'),
+            selected=self.esgfsearch.selected,
             distrib=str(self.esgfsearch.distrib).lower(),
             replica=str(self.esgfsearch.replica).lower(),
             latest=str(self.esgfsearch.latest).lower(),
             temporal=str(self.esgfsearch.temporal).lower(),
-            start=self.request.params.get('start', '2001'),
-            end=self.request.params.get('end', '2005'),
+            start=self.esgfsearch.start or 2001,
+            end=self.esgfsearch.end or 2005,
             constraints=self.request.params.get('constraints', ''),
         )
         result.update(self.esgfsearch.search_datasets())
