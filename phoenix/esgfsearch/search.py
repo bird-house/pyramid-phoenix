@@ -77,73 +77,80 @@ def temporal_filter(filename, start=None, end=None):
     return True
 
 
-def search_datasets(request):
-    settings = request.registry.settings
-    selected = request.params.get('selected', 'project')
-    limit = int(request.params.get('limit', '0'))
-    distrib = asbool(request.params.get('distrib', 'false'))
-    latest = asbool(request.params.get('latest', 'true'))
-    if latest is False:
-        latest = None  # all versions
-    replica = asbool(request.params.get('replica', 'false'))
-    if replica is True:
-        replica = None  # master + replica
+class ESGFSearch(object):
+    def __init__(self, request):
+        self.request = request
+        settings = self.request.registry.settings
+        distrib = asbool(self.request.params.get('distrib', 'false'))
+        self.latest = asbool(self.request.params.get('latest', 'true'))
+        if self.latest is False:
+            self.latest = None  # all versions
+        self.replica = asbool(self.request.params.get('replica', 'false'))
+        if self.replica is True:
+            self.replica = None  # master + replica
+        if 'start' in self.request.params and 'end' in self.request.params:
+            self.temporal = True
+        else:
+            self.temporal = False
+        self.conn = SearchConnection(settings.get('esgfsearch.url'), distrib=distrib)
 
-    constraints = dict()
-    if 'constraints' in request.params:
-        for constrain in request.params['constraints'].split(','):
-            if constrain.strip():
-                key, value = constrain.split(':', 1)
-                constraints[key] = value
+    def search_files(self):
+        dataset_id = self.request.params.get(
+            'dataset_id',
+            'cmip5.output1.MPI-M.MPI-ESM-LR.1pctCO2.day.atmos.cfDay.r1i1p1.v20120314|esgf1.dkrz.de')
+        if self.temporal:
+            start = int(self.request.params['start'])
+            end = int(self.request.params['end'])
+        else:
+            start = end = None
+        ctx = self.conn.new_context(search_type=TYPE_FILE, latest=self.latest, replica=self.replica)
+        ctx = ctx.constrain(dataset_id=dataset_id)
+        paged_results = []
+        for result in ctx.search():
+            LOGGER.debug("check: %s", result.filename)
+            if temporal_filter(result.filename, start, end):
+                paged_results.append(dict(
+                    filename=result.filename,
+                    download_url=result.download_url,
+                    opendap_url=result.opendap_url,
+                ))
+        return dict(files=paged_results)
 
-    facets = [
-        "access",
-        "cf_standard_name",
-        "cmor_table",
-        "data_node",
-        "domain",
-        "driving_model",
-        "ensemble",
-        "experiment",
-        "institute",
-        "model",
-        "product",
-        "project",
-        "realm",
-        "time_frequency",
-        "variable",
-        "variable_long_name",
-        "version",
-    ]
+    def search_datasets(self):
+        selected = self.request.params.get('selected', 'project')
+        limit = int(self.request.params.get('limit', '0'))
 
-    conn = SearchConnection(settings.get('esgfsearch.url'), distrib=distrib)
-    # ctx = conn.new_context(facets=','.join(facets), latest=latest, replica=replica)
-    ctx = conn.new_context(search_type=TYPE_DATASET, latest=latest, replica=replica)
-    ctx = ctx.constrain(**constraints)
-    if 'start' in request.params and 'end' in request.params:
-        ctx = ctx.constrain(
-            from_timestamp="{}-01-01T12:00:00Z".format(request.params['start']),
-            to_timestamp="{}-12-31T12:00:00Z".format(request.params['end']))
-    #return conn.send_search(query_dict=ctx._build_query(), limit=limit)
-    #ctx.hit_count
-    results = ctx.search(batch_size=10, ignore_facet_check=False)
-    categories = [tag for tag in ctx.facet_counts if len(ctx.facet_counts[tag]) > 1]
-    keywords = ctx.facet_counts[selected].keys()
-    pinned_facets = []
-    for facet in ctx.facet_counts:
-        if len(ctx.facet_counts[facet]) == 1:
-            pinned_facets.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
-    paged_results = []
-    for i in range(0, min(10, ctx.hit_count)):
-        paged_results.append(dict(
-            id=results[i].json['master_id'],
-            title=results[i].json['title'],
-            dataset_id=results[i].dataset_id,
-            number_of_files=results[i].number_of_files,
-            catalog_url=results[i].urls['THREDDS'][0][0]))
-    return dict(
-        hit_count=ctx.hit_count,
-        categories=','.join(categories),
-        keywords=','.join(keywords),
-        pinned_facets=','.join(pinned_facets),
-        results=paged_results)
+        constraints = dict()
+        if 'constraints' in self.request.params:
+            for constrain in self.request.params['constraints'].split(','):
+                if constrain.strip():
+                    key, value = constrain.split(':', 1)
+                    constraints[key] = value
+
+        ctx = self.conn.new_context(search_type=TYPE_DATASET, latest=self.latest, replica=self.replica)
+        ctx = ctx.constrain(**constraints)
+        if 'start' in self.request.params and 'end' in self.request.params:
+            ctx = ctx.constrain(
+                from_timestamp="{}-01-01T12:00:00Z".format(self.request.params['start']),
+                to_timestamp="{}-12-31T12:00:00Z".format(self.request.params['end']))
+        results = ctx.search(batch_size=10, ignore_facet_check=False)
+        categories = [tag for tag in ctx.facet_counts if len(ctx.facet_counts[tag]) > 1]
+        keywords = ctx.facet_counts[selected].keys()
+        pinned_facets = []
+        for facet in ctx.facet_counts:
+            if len(ctx.facet_counts[facet]) == 1:
+                pinned_facets.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
+        paged_results = []
+        for i in range(0, min(10, ctx.hit_count)):
+            paged_results.append(dict(
+                id=results[i].json['master_id'],
+                title=results[i].json['title'],
+                dataset_id=results[i].dataset_id,
+                number_of_files=results[i].number_of_files,
+                catalog_url=results[i].urls['THREDDS'][0][0]))
+        return dict(
+            hit_count=ctx.hit_count,
+            categories=','.join(categories),
+            keywords=','.join(keywords),
+            pinned_facets=','.join(pinned_facets),
+            results=paged_results)
