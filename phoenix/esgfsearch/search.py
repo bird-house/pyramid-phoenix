@@ -80,8 +80,12 @@ def temporal_filter(filename, start=None, end=None):
 class ESGFSearch(object):
     def __init__(self, request):
         self.request = request
+        self.parse_params()
         settings = self.request.registry.settings
-        self.query = self.request.params.get('query', ''),
+        self.conn = SearchConnection(settings.get('esgfsearch.url'), distrib=self.distrib)
+
+    def parse_params(self):
+        self.query = self.request.params.get('query', '')
         self.selected = self.request.params.get('selected', 'project')
         self.limit = int(self.request.params.get('limit', '0'))
         self.distrib = asbool(self.request.params.get('distrib', 'false'))
@@ -99,11 +103,10 @@ class ESGFSearch(object):
             self.temporal = False
             self.start = self.end = None
         self.constraints = self.request.params.get('constraints')
-        self.conn = SearchConnection(settings.get('esgfsearch.url'), distrib=self.distrib)
 
     def query_params(self):
         return dict(
-            query=self.query,
+            query=self.query or '',
             selected=self.selected,
             distrib=str(self.distrib).lower(),
             replica=str(self.replica).lower(),
