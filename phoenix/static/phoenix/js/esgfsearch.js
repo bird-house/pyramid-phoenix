@@ -39,12 +39,12 @@
             text = '';
             $.each(result.files, function(i, file) {
               text += '<li class="list-group-item">';
-              text += file.filename;
-              text += '<p>';
+              text += '<span class="list-group-item-heading">' + file.filename + '</span>';
+              text += '<p class="list-group-item-text">';
               text += '<a href="' + file.download_url + '" target="_">';
-              text += '<i class="fa fa-download"></i> Download</a>';
+              text += '<i class="fa fa-download"></i> Download </a>';
               text += '<a href="' + file.opendap_url + '".html target="_">';
-              text += '<i class="fa fa-cube"></i> OpenDAP</a>';
+              text += '<i class="fa fa-cube"></i> OpenDAP </a>';
               text += '</p>';
               text += '</li>';
             });

@@ -13,6 +13,9 @@
     <!-- phoenix esgf search -->
     <script src="${request.static_url('phoenix:static/phoenix/js/esgfsearch.js')}"
             type="text/javascript"></script>
+    <!-- phoenix cart -->
+    <script src="${request.static_url('phoenix:static/phoenix/js/cart.js')}"
+            type="text/javascript"></script>
     <script>
         $.EsgDatasetSearch( {
           oid: 'esgfsearch',
@@ -236,8 +239,8 @@
                       <div class="panel-body">
                         <ul class="list-group">
                           <li class="list-group-item">
-                            ${result.title}
-                            <p>
+                            <span class="list-group-item-heading">${result.title}</span>
+                            <p class="list-group-item-text">
                               <a tal:condition="'catalog_url' in result" href="${result.catalog_url}" target="_">
                                 <i class="fa fa-book"></i> Catalog</a>
                             </p>
