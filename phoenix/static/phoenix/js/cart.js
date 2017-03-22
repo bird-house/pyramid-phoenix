@@ -6,10 +6,11 @@ $(function() {
 
   $(document.body).on('click', '.btn-cart-add' ,function() {
     var url = $(this).attr('data-value');
+    var mimeType = $(this).attr('data-type');
     var btn = $(this);
     // call json
     $.getJSON(
-      '/add_to_cart.json', {'url': url}, function(json) {
+      '/add_to_cart.json', {'url': url, 'mimetype': mimeType}, function(json) {
         btn.removeClass('btn-cart-add');
         btn.addClass('btn-cart-remove');
         btn.attr('title', "Remove from Cart");

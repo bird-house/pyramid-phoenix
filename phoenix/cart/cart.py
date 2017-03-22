@@ -3,7 +3,7 @@ class CartItem(object):
         self.url = url
         self._title = title
         self._abstract = abstract
-        self.mime_type = mime_type
+        self.mime_type = mime_type or 'application/x-netcdf'
         self.dataset = dataset
 
     @property
@@ -48,12 +48,12 @@ class Cart(object):
         """
         return url in self.items
 
-    def add_item(self, url, title=None, abstract=None):
+    def add_item(self, url, title=None, abstract=None, mime_type=None):
         """
         Add cart item.
         """
         if url:
-            item = CartItem(url, title=title, abstract=abstract)
+            item = CartItem(url, title=title, abstract=abstract, mime_type=mime_type)
             self.items[url] = item
             self.save()
         else:

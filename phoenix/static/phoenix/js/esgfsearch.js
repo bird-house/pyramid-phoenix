@@ -51,6 +51,7 @@
               }
               text += ' data-toggle="tooltip"';
               text += ' data-value="' + file.opendap_url + '"';
+              text += ' data-type="application/x-ogc-dods"';
               text += ' role="button">';
               text += '<icon class="fa fa-lg';
               if (file.is_in_cart) {

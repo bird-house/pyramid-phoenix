@@ -31,7 +31,8 @@ class CartActions(object):
         url = self.request.params.get('url')
         title = self.request.params.get('title')
         abstract = self.request.params.get('abstract')
-        self.request.cart.add_item(url, title=title, abstract=abstract)
+        mime_type = self.request.params.get('mimetype')
+        self.request.cart.add_item(url, title=title, abstract=abstract, mime_type=mime_type)
         return {}
 
     @view_config(renderer='json', name='remove_from_cart.json')
