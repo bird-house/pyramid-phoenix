@@ -239,7 +239,21 @@
                       <div class="panel-body">
                         <ul class="list-group">
                           <li class="list-group-item">
-                            <span class="list-group-item-heading">${result.title}</span>
+                            <span class="list-group-item-heading">
+                              <btn tal:condition="'catalog_url' in result and result.catalog_url not in request.cart"
+                                   class="btn btn-default btn-xs pull-right btn-cart-add"
+                                   data-toggle="tooltip" title="Add to Cart" data-value="${result.catalog_url}"
+                                   role="button">
+                                <icon class="fa fa-lg fa-cart-plus"></icon>
+                              </btn>
+                              <btn tal:condition="'catalog_url' in result and result.catalog_url in request.cart"
+                                   class="btn btn-default btn-xs pull-right btn-cart-remove"
+                                   data-toggle="tooltip" title="Remove from Cart" data-value="${result.catalog_url}"
+                                   role="button">
+                                <icon class="fa fa-lg fa-times"></icon>
+                              </btn>
+                              ${result.title}
+                            </span>
                             <p class="list-group-item-text">
                               <a tal:condition="'catalog_url' in result" href="${result.catalog_url}" target="_">
                                 <i class="fa fa-book"></i> Catalog</a>

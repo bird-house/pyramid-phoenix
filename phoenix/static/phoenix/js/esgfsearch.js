@@ -39,7 +39,17 @@
             text = '';
             $.each(result.files, function(i, file) {
               text += '<li class="list-group-item">';
-              text += '<span class="list-group-item-heading">' + file.filename + '</span>';
+              text += '<span class="list-group-item-heading">';
+              text += '<btn';
+              text += ' class="btn btn-default btn-xs pull-right btn-cart-add"';
+              text += ' title="Add to Cart"';
+              text += ' data-toggle="tooltip"';
+              text += ' data-value="' + file.opendap_url + '"';
+              text += ' role="button">';
+              text += '<icon class="fa fa-lg fa-cart-plus"></icon>';
+              text += '</btn>';
+              text += file.filename;
+              text += '</span>';
               text += '<p class="list-group-item-text">';
               text += '<a href="' + file.download_url + '" target="_">';
               text += '<i class="fa fa-download"></i> Download </a>';
