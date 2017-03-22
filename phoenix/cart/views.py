@@ -19,11 +19,13 @@ class CartActions(object):
     @view_config(renderer='json', name='list_cart.json')
     def list_cart(self):
         limit = int(self.request.params.get('limit', '100'))
+        mime_type = self.request.params.get('mimetype')
         items = list()
         for item in self.request.cart:
             if limit and len(items) >= limit:
                 break
-            items.append(dict(title=item.filename, url=item.download_url()))
+            if not mime_type or item.mime_type == mime_type:
+                items.append(dict(title=item.filename, url=item.url))
         return items
 
     @view_config(renderer='json', name='add_to_cart.json')

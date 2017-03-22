@@ -88,7 +88,7 @@
               $("#"+oid+"-cart").click(function(event) {
                    // set cart items
                    var cartItems = '';
-                   $.getJSON("/list_cart.json", function(json) {
+                   $.getJSON("/list_cart.json?mimetype=application/x-netcdf", function(json) {
                      $.each(json, function(i, item) {
                        cartItems += '<option value=' + item.url + '>' + item.title + '</option>';
                      });
