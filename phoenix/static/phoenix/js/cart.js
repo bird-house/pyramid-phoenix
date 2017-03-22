@@ -11,7 +11,6 @@ $(function() {
     // call json
     $.getJSON(
       '/add_to_cart.json', {'url': url}, function(json) {
-        alert("add to cart");
         // TODO: this can also be done with jquery
         location.reload();
         // btn.attr('class', "btn btn-default btn-xs pull-right btn-cart-remove");
