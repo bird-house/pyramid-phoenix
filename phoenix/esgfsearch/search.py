@@ -118,9 +118,9 @@ class ESGFSearch(object):
         )
 
     def search_files(self):
-        dataset_id = self.request.params.get(
-            'dataset_id',
-            'cmip5.output1.MPI-M.MPI-ESM-LR.1pctCO2.day.atmos.cfDay.r1i1p1.v20120314|esgf1.dkrz.de')
+        dataset_id = self.request.params.get('dataset_id')
+        if not dataset_id:
+            return dict(files=[])
         ctx = self.conn.new_context(search_type=TYPE_FILE, latest=self.latest, replica=self.replica)
         ctx = ctx.constrain(dataset_id=dataset_id)
         paged_results = []
@@ -131,6 +131,7 @@ class ESGFSearch(object):
                     filename=result.filename,
                     download_url=result.download_url,
                     opendap_url=result.opendap_url,
+                    is_in_cart=result.opendap_url in self.request.cart,
                 ))
         return dict(files=paged_results)
 
