@@ -243,6 +243,7 @@
                               <btn tal:condition="'catalog_url' in result and result.catalog_url not in request.cart"
                                    class="btn btn-default btn-xs pull-right btn-cart-add"
                                    data-toggle="tooltip" title="Add to Cart" data-value="${result.catalog_url}"
+                                   data-type="application/x-thredds-catalog"
                                    role="button">
                                 <icon class="fa fa-lg fa-cart-plus"></icon>
                               </btn>

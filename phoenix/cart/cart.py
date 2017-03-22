@@ -18,8 +18,14 @@ class CartItem(object):
     def filename(self):
         return self.url.split('/')[-1]
 
+    def is_service(self):
+        return self.is_opendap() or self.is_thredds_catalog()
+
     def is_opendap(self):
         return self.mime_type == 'application/x-ogc-dods'
+
+    def is_thredds_catalog(self):
+        return self.mime_type == 'application/x-thredds-catalog'
 
     def to_json(self):
         return dict(url=self.url, title=self._title, abstract=self._abstract,
