@@ -152,7 +152,7 @@ class ESGFSearch(object):
         keywords = sorted(ctx.facet_counts[self.selected].keys())
         pinned_facets = []
         for facet in ctx.facet_counts:
-            if len(ctx.facet_counts[facet]) == 1:
+            if facet not in constraints and len(ctx.facet_counts[facet]) == 1:
                 pinned_facets.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
         pinned_facets = sorted(pinned_facets)
         paged_results = []
