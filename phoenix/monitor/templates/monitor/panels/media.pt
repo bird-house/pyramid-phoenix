@@ -13,6 +13,7 @@
                id="btn-cart-${repeat.item.number}"
                class="btn btn-default btn-xs pull-right btn-cart-add"
                data-toggle="tooltip" title="Add to Cart" data-value="${item.reference}"
+               data-type="${item.mime_type}"
                role="button">
             <icon class="fa fa-lg fa-cart-plus"></icon>
           </btn>
