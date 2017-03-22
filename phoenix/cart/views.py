@@ -20,11 +20,13 @@ class CartActions(object):
     def list_cart(self):
         limit = int(self.request.params.get('limit', '100'))
         mime_type = self.request.params.get('mimetype')
+        if mime_type:
+            mime_type = mime_type.split(',')
         items = list()
         for item in self.request.cart:
             if limit and len(items) >= limit:
                 break
-            if not mime_type or item.mime_type == mime_type:
+            if not mime_type or item.mime_type in mime_type:
                 items.append(dict(title=item.filename, url=item.url))
         return items
 

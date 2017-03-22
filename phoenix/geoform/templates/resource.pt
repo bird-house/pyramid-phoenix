@@ -4,6 +4,7 @@
                  mask mask|field.widget.mask;
                  mask_placeholder mask_placeholder|field.widget.mask_placeholder;
                  cart cart|field.widget.cart;
+                 mime_types mime_types|field.widget.mime_types;
                  upload upload|field.widget.upload;
                  storage_url storage_url|field.widget.storage_url;
                  style style|field.widget.style;
@@ -88,7 +89,9 @@
               $("#"+oid+"-cart").click(function(event) {
                    // set cart items
                    var cartItems = '';
-                   $.getJSON("/list_cart.json?mimetype=application/x-netcdf", function(json) {
+                   var queryURL = '/list_cart.json';
+                   queryURL += "?mimetype=${','.join(mime_types)}";
+                   $.getJSON(queryURL, function(json) {
                      $.each(json, function(i, item) {
                        cartItems += '<option value=' + item.url + '>' + item.title + '</option>';
                      });

@@ -36,6 +36,7 @@ class ResourceWidget(Widget):
     mask = None
     mask_placeholder = "_"
     cart = False
+    mime_types = ['application/x-netcdf']
     upload = False
     storage_url = None
     requirements = (('jquery.maskedinput', None),)

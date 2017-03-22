@@ -278,8 +278,11 @@ class WPSSchema(colander.MappingSchema):
         return node
 
     def complex_data(self, data_input):
+        mime_types = [value.mimeType for value in data_input.supportedValues]
+        logger.debug("mime_types for resource widget: %s", mime_types)
         widget = ResourceWidget(
             cart=self.request.has_permission('submit'),
+            mime_types=mime_types,
             upload=True,
             storage_url=self.request.storage.base_url)
 
