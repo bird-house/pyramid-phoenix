@@ -149,15 +149,6 @@
 
             <div class="col-md-9">
 
-              <!-- status -->
-              <!--
-              <label for="esgfsearch-hit-count" id="tm-hit-count">
-                <input type="hidden" name="hit-count" value="${hit_count}"
-                       id="esgfsearch-hit-count"/>
-                Total: ${hit_count}
-              </label>
-              -->
-
               <!-- selection -->
               <div class="row">
                 <div class="panel panel-default">
@@ -201,72 +192,60 @@
                 </div>
               </div>
 
-              <!-- pagination -->
+              <!-- datasets -->
               <div class="row">
-                <ul class="pagination pagination-sm pull-left">
-                  <li class="previous" tal:attributes="class 'previous' if page > 0 else 'previous disabled'">
-                    <a href="">
-                      <strong><i class="fa fa-angle-left"></i></strong>
-                      </a>
-                  </li>
-
-                  <li class="next" tal:attributes="class 'next' if 10 < hit_count else 'next disabled'">
-                    <a href="">
-                      <strong><i class="fa fa-angle-right"></i></strong>
-                    </a>
-                  </li>
-                </ul>
-
-                <h3 class="pull-right"> Showing 0-10 of ${hit_count} </h3>
-              </div>
-
-              <!-- items -->
-              <div class="row">
-                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                  <div class="panel panel-default" tal:repeat="result results">
-                    <div class="panel-heading" role="tab" id="heading-${repeat.result.number}">
-                      <h4 class="panel-title">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                          href="#collapse-${repeat.result.number}"
-                          aria-expanded="false" aria-controls="collapse-${repeat.result.number}">
-                          <i class="fa fa-chevron-right"></i> ${result.title}
-                          <span class="badge">${result.number_of_files}</span>
-                        </a>
-                      </h4>
-                    </div>
-                    <div id="collapse-${repeat.result.number}" class="panel-collapse collapse dataset" role="tabpanel"
-                      aria-labelledby="heading-${repeat.result.number}">
-                      <div class="panel-body">
-                        <ul class="list-group">
-                          <li class="list-group-item">
-                            <span class="list-group-item-heading">
-                              <btn tal:condition="'catalog_url' in result and result.catalog_url not in request.cart"
-                                   class="btn btn-default btn-xs pull-right btn-cart-add"
-                                   data-toggle="tooltip" title="Add to Cart" data-value="${result.catalog_url}"
-                                   data-type="application/x-thredds-catalog"
-                                   role="button">
-                                <icon class="fa fa-lg fa-cart-plus"></icon>
-                              </btn>
-                              <btn tal:condition="'catalog_url' in result and result.catalog_url in request.cart"
-                                   class="btn btn-default btn-xs pull-right btn-cart-remove"
-                                   data-toggle="tooltip" title="Remove from Cart" data-value="${result.catalog_url}"
-                                   role="button">
-                                <icon class="fa fa-lg fa-times"></icon>
-                              </btn>
-                              ${result.title}
-                            </span>
-                            <p class="list-group-item-text">
-                              <a tal:condition="'catalog_url' in result" href="${result.catalog_url}" target="_">
-                                <i class="fa fa-book"></i> Catalog</a>
-                            </p>
-                          </li>
-                          <div id="${result.dataset_id}" class="files"/>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>  <!-- panel -->
-                </div>  <!-- panel-group -->
-              </div>  <!-- row -->
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">DATASETS <span class="badge pull-right">${hit_count}</span></h4>
+                  </div>
+                  <div class="panel-body">
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                      <div class="panel panel-default" tal:repeat="result results">
+                        <div class="panel-heading" role="tab" id="heading-${repeat.result.number}">
+                          <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                              href="#collapse-${repeat.result.number}"
+                              aria-expanded="false" aria-controls="collapse-${repeat.result.number}">
+                              <i class="fa fa-chevron-right"></i> ${result.title}
+                              <span class="badge">${result.number_of_files}</span>
+                            </a>
+                          </h4>
+                        </div>
+                        <div id="collapse-${repeat.result.number}" class="panel-collapse collapse dataset" role="tabpanel"
+                          aria-labelledby="heading-${repeat.result.number}">
+                          <div class="panel-body">
+                            <ul class="list-group">
+                              <li class="list-group-item">
+                                <span class="list-group-item-heading">
+                                  <btn tal:condition="'catalog_url' in result and result.catalog_url not in request.cart"
+                                       class="btn btn-default btn-xs pull-right btn-cart-add"
+                                       data-toggle="tooltip" title="Add to Cart" data-value="${result.catalog_url}"
+                                       data-type="application/x-thredds-catalog"
+                                       role="button">
+                                    <icon class="fa fa-lg fa-cart-plus"></icon>
+                                  </btn>
+                                  <btn tal:condition="'catalog_url' in result and result.catalog_url in request.cart"
+                                       class="btn btn-default btn-xs pull-right btn-cart-remove"
+                                       data-toggle="tooltip" title="Remove from Cart" data-value="${result.catalog_url}"
+                                       role="button">
+                                    <icon class="fa fa-lg fa-times"></icon>
+                                  </btn>
+                                  ${result.title}
+                                </span>
+                                <p class="list-group-item-text">
+                                  <a tal:condition="'catalog_url' in result" href="${result.catalog_url}" target="_">
+                                    <i class="fa fa-book"></i> Catalog</a>
+                                </p>
+                              </li>
+                              <div id="${result.dataset_id}" class="files"/>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>  <!-- panel -->
+                    </div>  <!-- panel-group -->
+                  </div> <!-- panel-body -->
+                </div> <!-- datasets panel -->
+              </div> <!-- row -->
             </div>
           </div>
         </div>
