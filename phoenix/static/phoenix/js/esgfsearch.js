@@ -295,14 +295,16 @@
         } else {
           query += '&replica=false';
         }
-
-        // query option
-        query += '&query=' + $('#' + searchOptions.oid + '-query').val();
         // date options
         if ($('#' + searchOptions.oid + '-temporal').is(":checked") == true) {
-          query += '&start=' + $('#' + searchOptions.oid + '-start').val();
-          query += '&end=' + $('#' + searchOptions.oid + '-end').val();
+          query += '&temporal=true';
+        } else {
+          query += '&temporal=false';
         }
+        query += '&start=' + $('#' + searchOptions.oid + '-start').val();
+        query += '&end=' + $('#' + searchOptions.oid + '-end').val();
+        // query option
+        query += '&query=' + $('#' + searchOptions.oid + '-query').val();
 
         return query;
       };
@@ -327,9 +329,12 @@
         }
         // date options
         if ($('#' + searchOptions.oid + '-temporal').is(":checked") == true) {
-          query += '&start=' + $('#' + searchOptions.oid + '-start').val();
-          query += '&end=' + $('#' + searchOptions.oid + '-end').val();
+          query += '&temporal=true';
+        } else {
+          query += '&temporal=false';
         }
+        query += '&start=' + $('#' + searchOptions.oid + '-start').val();
+        query += '&end=' + $('#' + searchOptions.oid + '-end').val();
         return query;
       };
 

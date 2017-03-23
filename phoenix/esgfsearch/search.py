@@ -90,18 +90,17 @@ class ESGFSearch(object):
         self.limit = int(self.request.params.get('limit', '0'))
         self.distrib = asbool(self.request.params.get('distrib', 'false'))
         self.latest = self._latest = asbool(self.request.params.get('latest', 'true'))
+        self.temporal = asbool(self.request.params.get('temporal', 'true'))
         if self.latest is False:
             self._latest = None  # all versions
         self.replica = self._replica = asbool(self.request.params.get('replica', 'false'))
         if self.replica is True:
             self._replica = None  # master + replica
-        if 'start' in self.request.params and 'end' in self.request.params:
-            self.temporal = True
-            self.start = int(self.request.params['start'])
-            self.end = int(self.request.params['end'])
-        else:
-            self.temporal = False
-            self.start = self.end = None
+        self.start = self._start = int(self.request.params.get('start', '2001'))
+        self.end = self._end = int(self.request.params.get('end', '2005'))
+        if not self.temporal:
+            self._start = None
+            self._end = None
         self.constraints = self.request.params.get('constraints')
 
     def query_params(self):
@@ -112,8 +111,8 @@ class ESGFSearch(object):
             replica=str(self.replica).lower(),
             latest=str(self.latest).lower(),
             temporal=str(self.temporal).lower(),
-            start=self.start or 2001,
-            end=self.end or 2005,
+            start=self.start,
+            end=self.end,
             constraints=self.constraints,
         )
 
@@ -126,7 +125,7 @@ class ESGFSearch(object):
         paged_results = []
         for result in ctx.search():
             LOGGER.debug("check: %s", result.filename)
-            if temporal_filter(result.filename, self.start, self.end):
+            if temporal_filter(result.filename, self._start, self._end):
                 paged_results.append(dict(
                     filename=result.filename,
                     download_url=result.download_url,
