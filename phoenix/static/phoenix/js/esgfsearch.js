@@ -40,34 +40,38 @@
             $.each(result.files, function(i, file) {
               text += '<li class="list-group-item">';
               text += '<span class="list-group-item-heading">';
-              text += '<btn';
-              text += ' class="btn btn-default btn-xs pull-right';
-              if (file.is_in_cart) {
-                text += ' btn-cart-remove"';
-                text += ' title="Remove from Cart"';
-              } else {
-                text += ' btn-cart-add"';
-                text += ' title="Add to Cart"';
+              if (file.cart_available) {
+                text += '<btn';
+                text += ' class="btn btn-default btn-xs pull-right';
+                if (file.is_in_cart) {
+                  text += ' btn-cart-remove"';
+                  text += ' title="Remove from Cart"';
+                } else {
+                  text += ' btn-cart-add"';
+                  text += ' title="Add to Cart"';
+                }
+                text += ' data-toggle="tooltip"';
+                text += ' data-value="' + file.opendap_url + '"';
+                text += ' data-type="application/x-ogc-dods"';
+                text += ' role="button">';
+                text += '<icon class="fa fa-lg';
+                if (file.is_in_cart) {
+                  text += ' fa-times">';
+                } else {
+                  text += ' fa-cart-plus">';
+                }
+                text += '</icon>';
+                text += '</btn>';
               }
-              text += ' data-toggle="tooltip"';
-              text += ' data-value="' + file.opendap_url + '"';
-              text += ' data-type="application/x-ogc-dods"';
-              text += ' role="button">';
-              text += '<icon class="fa fa-lg';
-              if (file.is_in_cart) {
-                text += ' fa-times">';
-              } else {
-                text += ' fa-cart-plus">';
-              }
-              text += '</icon>';
-              text += '</btn>';
               text += file.filename;
               text += '</span>';
               text += '<p class="list-group-item-text">';
               text += '<a href="' + file.download_url + '" target="_">';
               text += '<i class="fa fa-download"></i> Download </a>';
-              text += '<a href="' + file.opendap_url + '".html target="_">';
-              text += '<i class="fa fa-cube"></i> OpenDAP </a>';
+              if (file.opendap_url) {
+                text += '<a href="' + file.opendap_url + '".html target="_">';
+                text += '<i class="fa fa-cube"></i> OpenDAP </a>';
+              }
               text += '</p>';
               text += '</li>';
             });
