@@ -29,6 +29,46 @@
         //search();
       };
 
+      var _buildListGroupItem = function(item) {
+        var text = '<li class="list-group-item list-group-item-info">';
+        text += '<span class="list-group-item-heading">';
+        if (item.cart_available) {
+          text += '<btn';
+          text += ' class="btn btn-default btn-xs pull-right';
+          if (item.is_in_cart) {
+            text += ' btn-cart-remove"';
+            text += ' title="Remove from Cart"';
+          } else {
+            text += ' btn-cart-add"';
+            text += ' title="Add to Cart"';
+          }
+          text += ' data-toggle="tooltip"';
+          text += ' data-value="' + item.opendap_url + '"';
+          text += ' data-type="application/x-ogc-dods"';
+          text += ' role="button">';
+          text += '<icon class="fa fa-lg';
+          if (item.is_in_cart) {
+            text += ' fa-times">';
+          } else {
+            text += ' fa-cart-plus">';
+          }
+          text += '</icon>';
+          text += '</btn>';
+        }
+        text += item.title;
+        text += '</span>';
+        text += '<p class="list-group-item-text">';
+        text += '<a href="' + item.download_url + '" target="_">';
+        text += '<i class="fa fa-download"></i> Download </a>';
+        if (item.opendap_url) {
+          text += '<a href="' + item.opendap_url + '".html target="_">';
+          text += '<i class="fa fa-cube"></i> OpenDAP </a>';
+        }
+        text += '</p>';
+        text += '</li>';
+        return text;
+      };
+
       var initDatasetCollapse = function() {
         $('.dataset').on('show.bs.collapse', function () {
           var _el = $(this);
@@ -80,42 +120,7 @@
           $.getJSON(buildFileSearchQuery(dataset_id), function(result) {
             var text = '';
             $.each(result.items, function(i, item) {
-              text += '<li class="list-group-item list-group-item-info">';
-              text += '<span class="list-group-item-heading">';
-              if (item.cart_available) {
-                text += '<btn';
-                text += ' class="btn btn-default btn-xs pull-right';
-                if (item.is_in_cart) {
-                  text += ' btn-cart-remove"';
-                  text += ' title="Remove from Cart"';
-                } else {
-                  text += ' btn-cart-add"';
-                  text += ' title="Add to Cart"';
-                }
-                text += ' data-toggle="tooltip"';
-                text += ' data-value="' + item.opendap_url + '"';
-                text += ' data-type="application/x-ogc-dods"';
-                text += ' role="button">';
-                text += '<icon class="fa fa-lg';
-                if (item.is_in_cart) {
-                  text += ' fa-times">';
-                } else {
-                  text += ' fa-cart-plus">';
-                }
-                text += '</icon>';
-                text += '</btn>';
-              }
-              text += item.title;
-              text += '</span>';
-              text += '<p class="list-group-item-text">';
-              text += '<a href="' + item.download_url + '" target="_">';
-              text += '<i class="fa fa-download"></i> Download </a>';
-              if (item.opendap_url) {
-                text += '<a href="' + item.opendap_url + '".html target="_">';
-                text += '<i class="fa fa-cube"></i> OpenDAP </a>';
-              }
-              text += '</p>';
-              text += '</li>';
+              text += _buildListGroupItem(item);
             });
             _el.find('.files').html(text);
             waitDialog.modal('hide');
