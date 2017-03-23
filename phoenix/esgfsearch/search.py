@@ -29,23 +29,23 @@ def date_from_filename(filename):
 
 def variable_filter(constraints, variables):
     """return True if variable fulfills contraints"""
-    var_types = ['variable', 'cf_standard_name', 'variable_long_name']
+    var_types = [u'variable', u'cf_standard_name', u'variable_long_name']
 
     success = True
-    cs = constraints.mixed()
     # check different types of variables
     for var_type in var_types:
         # is there a constrain for this variable type?
-        if var_type in cs:
+        if var_type in constraints:
             # at least one variable constraint must be fulfilled
             success = False
             # do we have this variable type?
             if var_type in variables:
                 # do we have an allowed value?
-                allowed_values = cs.get(var_type)
-                if variables[var_type] in allowed_values:
-                    # if one variable matches then we are ok
-                    return True
+                allowed_values = constraints.getall(var_type)
+                for var in variables[var_type]:
+                    if var in allowed_values:
+                        # if one variable matches then we are ok
+                        return True
     return success
 
 
@@ -133,6 +133,7 @@ class ESGFSearch(object):
         for result in ctx.search():
             LOGGER.debug("check: %s", result.filename)
             if temporal_filter(result.filename, self._start, self._end):
+                if variable_filter(self._constraints, variables=result.json):
                     paged_results.append(dict(
                         filename=result.filename,
                         download_url=result.download_url,

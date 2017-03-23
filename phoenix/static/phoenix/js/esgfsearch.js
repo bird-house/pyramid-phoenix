@@ -311,6 +311,8 @@
 
       var buildFileSearchQuery = function(dataset_id) {
         var query = "/esgfsearch/files?dataset_id=" + dataset_id;
+        // constraints
+        query += '&constraints=' + $("#" + searchOptions.oid + '-constraints').val();
         // search options
         if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {
           query += '&distrib=true';
