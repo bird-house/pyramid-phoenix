@@ -153,7 +153,7 @@
               <div class="row">
                 <div class="panel panel-default">
                   <div class="panel-heading">
-                    <h4 class="panel-title">SELECTION</h4>
+                    <h4 class="panel-title">SELECTION <span class="badge pull-right">${hit_count}</span></h4>
                   </div>
                   <div class="panel-body">
                     <input type="text" name="pinned" class="tm-pinned-facets"
@@ -196,7 +196,7 @@
               <div class="row" tal:condition="quickview">
                 <div class="panel panel-default">
                   <div class="panel-heading">
-                    <h4 class="panel-title">DATASETS <span class="badge pull-right">${hit_count}</span></h4>
+                    <h4 class="panel-title">DATASETS</h4>
                   </div>
                   <div class="panel-body">
                     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
