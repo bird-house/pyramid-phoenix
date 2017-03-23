@@ -89,12 +89,12 @@ class ESGFSearch(object):
         self.selected = self.request.params.get('selected', 'project')
         self.limit = int(self.request.params.get('limit', '0'))
         self.distrib = asbool(self.request.params.get('distrib', 'false'))
-        self.latest = asbool(self.request.params.get('latest', 'true'))
+        self.latest = self._latest = asbool(self.request.params.get('latest', 'true'))
         if self.latest is False:
-            self.latest = None  # all versions
-        self.replica = asbool(self.request.params.get('replica', 'false'))
+            self._latest = None  # all versions
+        self.replica = self._replica = asbool(self.request.params.get('replica', 'false'))
         if self.replica is True:
-            self.replica = None  # master + replica
+            self._replica = None  # master + replica
         if 'start' in self.request.params and 'end' in self.request.params:
             self.temporal = True
             self.start = int(self.request.params['start'])
@@ -121,7 +121,7 @@ class ESGFSearch(object):
         dataset_id = self.request.params.get('dataset_id')
         if not dataset_id:
             return dict(files=[])
-        ctx = self.conn.new_context(search_type=TYPE_FILE, latest=self.latest, replica=self.replica)
+        ctx = self.conn.new_context(search_type=TYPE_FILE, latest=self._latest, replica=self._replica)
         ctx = ctx.constrain(dataset_id=dataset_id)
         paged_results = []
         for result in ctx.search():
@@ -142,7 +142,7 @@ class ESGFSearch(object):
                 if constrain.strip():
                     key, value = constrain.split(':', 1)
                     constraints[key] = value
-        ctx = self.conn.new_context(search_type=TYPE_DATASET, latest=self.latest, replica=self.replica)
+        ctx = self.conn.new_context(search_type=TYPE_DATASET, latest=self._latest, replica=self._replica)
         ctx = ctx.constrain(**constraints)
         if self.temporal:
             ctx = ctx.constrain(
