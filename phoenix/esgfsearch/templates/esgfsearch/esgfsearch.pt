@@ -215,7 +215,7 @@
                           aria-labelledby="heading-${repeat.result.number}">
                           <div class="panel-body">
                             <ul class="list-group">
-                              <li class="list-group-item">
+                              <li class="list-group-item list-group-item-warning">
                                 <span class="list-group-item-heading">
                                   <btn tal:condition="'catalog_url' in result and result.catalog_url not in request.cart"
                                        class="btn btn-default btn-xs pull-right btn-cart-add"

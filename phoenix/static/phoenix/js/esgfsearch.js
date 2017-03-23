@@ -38,7 +38,7 @@
           $.getJSON(buildFileSearchQuery(dataset_id), function(result) {
             text = '';
             $.each(result.files, function(i, file) {
-              text += '<li class="list-group-item">';
+              text += '<li class="list-group-item list-group-item-info">';
               text += '<span class="list-group-item-heading">';
               if (file.cart_available) {
                 text += '<btn';
