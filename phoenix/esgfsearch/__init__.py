@@ -5,14 +5,8 @@ def includeme(config):
                     attr='search_datasets',
                     renderer='templates/esgfsearch/esgfsearch.pt')
 
-    config.add_route('esgfsearch_files', '/esgfsearch/files')
+    config.add_route('esgfsearch_items', '/esgfsearch/items')
     config.add_view('phoenix.esgfsearch.views.ESGFSearchActions',
-                    route_name='esgfsearch_files',
-                    attr='search_files',
-                    renderer='json')
-
-    config.add_route('esgfsearch_aggregations', '/esgfsearch/aggregations')
-    config.add_view('phoenix.esgfsearch.views.ESGFSearchActions',
-                    route_name='esgfsearch_aggregations',
-                    attr='search_aggregations',
+                    route_name='esgfsearch_items',
+                    attr='search_items',
                     renderer='json')

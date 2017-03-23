@@ -123,43 +123,35 @@ class ESGFSearch(object):
             constraints=self.constraints,
         )
 
-    def search_files(self):
+    def search_items(self):
         dataset_id = self.request.params.get('dataset_id')
-        if not dataset_id:
-            return dict(files=[])
-        ctx = self.conn.new_context(search_type=TYPE_FILE, latest=self._latest, replica=self._replica)
-        ctx = ctx.constrain(dataset_id=dataset_id)
         items = []
-        for result in ctx.search():
-            if temporal_filter(result.filename, self._start, self._end):
-                if variable_filter(self._constraints, variables=result.json):
-                    items.append(dict(
-                        title=result.json.get('title'),
-                        type=result.json.get('type'),
-                        download_url=result.download_url,
-                        opendap_url=result.opendap_url,
-                        cart_available=result.opendap_url is not None,
-                        is_in_cart=result.opendap_url in self.request.cart,
-                    ))
+        items.extend(self._run_search_items(dataset_id, search_type=TYPE_AGGREGATION))
+        items.extend(self._run_search_items(dataset_id, search_type=TYPE_FILE))
         return dict(items=items)
 
-    def search_aggregations(self):
-        dataset_id = self.request.params.get('dataset_id')
+    def _run_search_items(self, dataset_id, search_type):
         if not dataset_id:
-            return dict(aggregations=[])
-        ctx = self.conn.new_context(search_type=TYPE_AGGREGATION, latest=self._latest, replica=self._replica)
+            return []
+        ctx = self.conn.new_context(search_type=search_type, latest=self._latest, replica=self._replica)
         ctx = ctx.constrain(dataset_id=dataset_id)
         items = []
+        LOGGER.debug("hit_count: %s", ctx.hit_count)
         for result in ctx.search():
+            if search_type == TYPE_FILE:
+                if not temporal_filter(result.filename, self._start, self._end):
+                    continue
+                if not variable_filter(self._constraints, variables=result.json):
+                    continue
             items.append(dict(
                 title=result.json.get('title'),
                 type=result.json.get('type'),
-                download_url=None,
+                download_url=result.download_url,
                 opendap_url=result.opendap_url,
                 cart_available=result.opendap_url is not None,
                 is_in_cart=result.opendap_url in self.request.cart,
             ))
-        return dict(items=items)
+        return items
 
     def search_datasets(self):
         ctx = self.conn.new_context(search_type=TYPE_DATASET, latest=self._latest, replica=self._replica)

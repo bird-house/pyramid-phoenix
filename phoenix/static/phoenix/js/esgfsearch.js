@@ -78,24 +78,16 @@
       var initDatasetCollapse = function() {
         $('.dataset').on('show.bs.collapse', function () {
           var _el = $(this);
-          var dataset_id = $(this).find('.files').attr('dataset_id');
+          var dataset_id = $(this).find('.items').attr('dataset_id');
           var waitDialog = $('#please-wait-dialog');
           waitDialog.modal('show');
-          // fill dataset aggregations
-          $.getJSON(buildAggregationSearchQuery(dataset_id), function(result) {
-            var aggHTML = '';
+          // fill dataset items
+          $.getJSON(buildItemsSearchQuery(dataset_id), function(result) {
+            var html = '';
             $.each(result.items, function(i, item) {
-              aggHTML += _buildListGroupItem(item);
+              html += _buildListGroupItem(item);
             });
-            _el.find('.aggregations').html(aggHTML);
-          });
-          // fill dataset files
-          $.getJSON(buildFileSearchQuery(dataset_id), function(result) {
-            var filesHTML = '';
-            $.each(result.items, function(i, item) {
-              filesHTML += _buildListGroupItem(item);
-            });
-            _el.find('.files').html(filesHTML);
+            _el.find('.items').html(html);
             waitDialog.modal('hide');
           });
         })
@@ -162,13 +154,6 @@
         }
         return result;
       };
-
-      /*
-      var update_counts = function(counts) {
-        $('#tm-hit-count').text("Total: " + counts);
-        $('#' + searchOptions.oid + '-hit-count').val(counts);
-      };
-      */
 
       var init_search_options = function() {
         $('#' + searchOptions.oid + '-distrib').click(function () {
@@ -333,14 +318,8 @@
         return _buildQuery(searchURL);
       };
 
-      var buildFileSearchQuery = function(dataset_id) {
-        var searchURL = "/esgfsearch/files?";
-        searchURL += "dataset_id=" + dataset_id;
-        return _buildQuery(searchURL);
-      };
-
-      var buildAggregationSearchQuery = function(dataset_id) {
-        var searchURL = "/esgfsearch/aggregations?";
+      var buildItemsSearchQuery = function(dataset_id) {
+        var searchURL = "/esgfsearch/items?";
         searchURL += "dataset_id=" + dataset_id;
         return _buildQuery(searchURL);
       };

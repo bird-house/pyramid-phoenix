@@ -22,8 +22,5 @@ class ESGFSearchActions(object):
         result['quickview'] = True
         return result
 
-    def search_aggregations(self):
-        return self.esgfsearch.search_aggregations()
-
-    def search_files(self):
-        return self.esgfsearch.search_files()
+    def search_items(self):
+        return self.esgfsearch.search_items()
