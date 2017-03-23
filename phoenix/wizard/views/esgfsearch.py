@@ -15,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 
 def includeme(config):
     config.add_route('wizard_esgf_search', '/wizard/esgfsearch')
-    config.add_view('phoenix.wizard.views.esgfsearch.ESGFSearch',
+    config.add_view('phoenix.wizard.views.esgfsearch.ESGFSearchView',
                     route_name='wizard_esgf_search',
                     attr='view',
                     renderer='phoenix.esgfsearch:templates/esgfsearch/esgfsearch.pt')
@@ -36,12 +36,12 @@ def includeme(config):
                     renderer='json')
 
 
-class ESGFSearch(Wizard):
+class ESGFSearchView(Wizard):
     def __init__(self, request):
-        super(ESGFSearch, self).__init__(request, name='wizard_esgf_search', title="ESGF Search")
+        super(ESGFSearchView, self).__init__(request, name='wizard_esgf_search', title="ESGF Search")
 
     def breadcrumbs(self):
-        breadcrumbs = super(ESGFSearch, self).breadcrumbs()
+        breadcrumbs = super(ESGFSearchView, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
@@ -49,7 +49,7 @@ class ESGFSearch(Wizard):
         return ESGFSearchSchema()
 
     def appstruct(self):
-        appstruct = super(ESGFSearch, self).appstruct()
+        appstruct = super(ESGFSearchView, self).appstruct()
         appstruct['query'] = self.request.params.get('query', '')
         appstruct['distrib'] = asbool(self.request.params.get('distrib', 'false'))
         appstruct['replica'] = asbool(self.request.params.get('replica', 'false'))
