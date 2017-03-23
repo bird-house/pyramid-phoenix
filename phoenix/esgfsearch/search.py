@@ -143,7 +143,7 @@ class ESGFSearch(object):
 
     def search_datasets(self):
         ctx = self.conn.new_context(search_type=TYPE_DATASET, latest=self._latest, replica=self._replica)
-        ctx = ctx.constrain(**self._constraints)
+        ctx = ctx.constrain(**self._constraints.mixed())
         if self.temporal:
             ctx = ctx.constrain(
                 from_timestamp="{}-01-01T12:00:00Z".format(self.start),
