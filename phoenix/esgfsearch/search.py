@@ -2,6 +2,7 @@ from pyramid.settings import asbool
 
 from pyesgf.search import SearchConnection
 from pyesgf.search.consts import TYPE_DATASET, TYPE_AGGREGATION, TYPE_FILE
+from pyesgf.multidict import MultiDict
 
 import logging
 LOGGER = logging.getLogger(__name__)
@@ -43,7 +44,7 @@ def variable_filter(constraints, variables):
                 # do we have an allowed value?
                 allowed_values = cs.get(var_type)
                 if variables[var_type] in allowed_values:
-                    # if one variables matches then we are ok
+                    # if one variable matches then we are ok
                     return True
     return success
 
@@ -102,6 +103,12 @@ class ESGFSearch(object):
             self._start = None
             self._end = None
         self.constraints = self.request.params.get('constraints')
+        self._constraints = MultiDict()
+        if self.constraints:
+            for constrain in self.constraints.split(','):
+                if constrain.strip():
+                    key, value = constrain.split(':', 1)
+                    self._constraints.add(key, value)
 
     def query_params(self):
         return dict(
@@ -126,23 +133,17 @@ class ESGFSearch(object):
         for result in ctx.search():
             LOGGER.debug("check: %s", result.filename)
             if temporal_filter(result.filename, self._start, self._end):
-                paged_results.append(dict(
-                    filename=result.filename,
-                    download_url=result.download_url,
-                    opendap_url=result.opendap_url,
-                    is_in_cart=result.opendap_url in self.request.cart,
-                ))
+                    paged_results.append(dict(
+                        filename=result.filename,
+                        download_url=result.download_url,
+                        opendap_url=result.opendap_url,
+                        is_in_cart=result.opendap_url in self.request.cart,
+                    ))
         return dict(files=paged_results)
 
     def search_datasets(self):
-        constraints = dict()
-        if self.constraints:
-            for constrain in self.constraints.split(','):
-                if constrain.strip():
-                    key, value = constrain.split(':', 1)
-                    constraints[key] = value
         ctx = self.conn.new_context(search_type=TYPE_DATASET, latest=self._latest, replica=self._replica)
-        ctx = ctx.constrain(**constraints)
+        ctx = ctx.constrain(**self._constraints)
         if self.temporal:
             ctx = ctx.constrain(
                 from_timestamp="{}-01-01T12:00:00Z".format(self.start),
@@ -152,7 +153,7 @@ class ESGFSearch(object):
         keywords = sorted(ctx.facet_counts[self.selected].keys())
         pinned_facets = []
         for facet in ctx.facet_counts:
-            if facet not in constraints and len(ctx.facet_counts[facet]) == 1:
+            if facet not in self._constraints and len(ctx.facet_counts[facet]) == 1:
                 pinned_facets.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
         pinned_facets = sorted(pinned_facets)
         paged_results = []
