@@ -39,6 +39,7 @@ def includeme(config):
 class ESGFSearchView(Wizard):
     def __init__(self, request):
         super(ESGFSearchView, self).__init__(request, name='wizard_esgf_search', title="ESGF Search")
+        self.esgfsearch = ESGFSearch(self.request)
 
     def breadcrumbs(self):
         breadcrumbs = super(ESGFSearchView, self).breadcrumbs()
@@ -50,14 +51,15 @@ class ESGFSearchView(Wizard):
 
     def appstruct(self):
         appstruct = super(ESGFSearchView, self).appstruct()
-        appstruct['query'] = self.request.params.get('query', '')
-        appstruct['distrib'] = asbool(self.request.params.get('distrib', 'false'))
-        appstruct['replica'] = asbool(self.request.params.get('replica', 'false'))
-        appstruct['latest'] = asbool(self.request.params.get('latest', 'true'))
-        appstruct['temporal'] = asbool(self.request.params.get('temporal', 'true'))
-        appstruct['start'] = datetime.datetime(int(self.request.params.get('start', '2001')), 1, 1)
-        appstruct['end'] = datetime.datetime(int(self.request.params.get('end', '2005')), 12, 31)
-        appstruct['constraints'] = self.request.params.get('constraints', '')
+        appstruct['query'] = self.esgfsearch.query
+        appstruct['distrib'] = self.esgfsearch.distrib
+        appstruct['replica'] = self.esgfsearch.replica
+        appstruct['latest'] = self.esgfsearch.latest
+        appstruct['temporal'] = self.esgfsearch.temporal
+        if self.esgfsearch.start and self.esgfsearch.end:
+            appstruct['start'] = datetime.datetime(int(self.esgfsearch.start), 1, 1)
+            appstruct['end'] = datetime.datetime(int(self.esgfsearch.end), 12, 31)
+        appstruct['constraints'] = self.esgfsearch.constraints
         LOGGER.debug("esgfsearch appstruct before: %s", appstruct)
         return appstruct
 
@@ -71,18 +73,8 @@ class ESGFSearchView(Wizard):
         return self.next('wizard_esgf_logon')
 
     def custom_view(self):
-        result = dict(
-            query=self.request.params.get('query', ''),
-            selected=self.request.params.get('selected', 'project'),
-            distrib=self.request.params.get('distrib', 'false'),
-            replica=self.request.params.get('replica', 'false'),
-            latest=self.request.params.get('latest', 'true'),
-            temporal=self.request.params.get('temporal', 'true'),
-            start=self.request.params.get('start', '2001'),
-            end=self.request.params.get('end', '2005'),
-            constraints=self.request.params.get('constraints', ''),
-            page=0,
-        )
-        result.update(ESGFSearch(self.request).search_datasets())
+        result = dict(page=0)
+        result.update(self.esgfsearch.query_params())
+        result.update(self.esgfsearch.search_datasets())
         result['quickview'] = False
         return result
