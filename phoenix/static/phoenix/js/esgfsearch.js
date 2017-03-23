@@ -35,6 +35,7 @@
           var dataset_id = $(this).find('.files').attr('dataset_id');
           var waitDialog = $('#please-wait-dialog');
           waitDialog.modal('show');
+          /*
           $.getJSON(buildAggregationSearchQuery(dataset_id), function(result) {
             var text = '';
             $.each(result.items, function(i, item) {
@@ -75,6 +76,7 @@
             });
             _el.find('.aggregations').html(text);
           });
+          */
           $.getJSON(buildFileSearchQuery(dataset_id), function(result) {
             var text = '';
             $.each(result.items, function(i, item) {
@@ -316,12 +318,10 @@
         });
       };
 
-      var buildSearchQuery = function() {
-        var searchURL = searchOptions.url + '?';
-        var query = searchURL;
-        query += 'selected=' + selectedFacet;
+      var _buildQuery = function(baseURL) {
+        var query = baseURL;
+        // constraints
         query += '&constraints=' + $("#" + searchOptions.oid + '-constraints').val();
-
         // search options
         if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {
           query += '&distrib=true';
@@ -346,105 +346,30 @@
         }
         query += '&start=' + $('#' + searchOptions.oid + '-start').val();
         query += '&end=' + $('#' + searchOptions.oid + '-end').val();
-        // query option
-        query += '&query=' + $('#' + searchOptions.oid + '-query').val();
-
         return query;
+      }
+
+      var buildDatasetSearchQuery = function() {
+        var searchURL = searchOptions.url + '?';
+        searchURL += 'selected=' + selectedFacet;
+        return _buildQuery(searchURL);
       };
 
       var buildFileSearchQuery = function(dataset_id) {
-        var query = "/esgfsearch/files?dataset_id=" + dataset_id;
-        // constraints
-        query += '&constraints=' + $("#" + searchOptions.oid + '-constraints').val();
-        // search options
-        if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {
-          query += '&distrib=true';
-        } else {
-          query += '&distrib=false';
-        }
-        if ($('#' + searchOptions.oid + '-latest').is(":checked") == true) {
-          query += '&latest=true';
-        } else {
-          query += '&latest=false';
-        }
-        if ($('#' + searchOptions.oid + '-replica').is(":checked") == true) {
-          query += '&replica=true';
-        } else {
-          query += '&replica=false';
-        }
-        // date options
-        if ($('#' + searchOptions.oid + '-temporal').is(":checked") == true) {
-          query += '&temporal=true';
-        } else {
-          query += '&temporal=false';
-        }
-        query += '&start=' + $('#' + searchOptions.oid + '-start').val();
-        query += '&end=' + $('#' + searchOptions.oid + '-end').val();
-        return query;
+        var searchURL = "/esgfsearch/files?";
+        searchURL += "dataset_id=" + dataset_id;
+        return _buildQuery(searchURL);
       };
 
       var buildAggregationSearchQuery = function(dataset_id) {
-        var query = "/esgfsearch/aggregations?dataset_id=" + dataset_id;
-        // constraints
-        query += '&constraints=' + $("#" + searchOptions.oid + '-constraints').val();
-        // search options
-        if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {
-          query += '&distrib=true';
-        } else {
-          query += '&distrib=false';
-        }
-        if ($('#' + searchOptions.oid + '-latest').is(":checked") == true) {
-          query += '&latest=true';
-        } else {
-          query += '&latest=false';
-        }
-        if ($('#' + searchOptions.oid + '-replica').is(":checked") == true) {
-          query += '&replica=true';
-        } else {
-          query += '&replica=false';
-        }
-        // date options
-        if ($('#' + searchOptions.oid + '-temporal').is(":checked") == true) {
-          query += '&temporal=true';
-        } else {
-          query += '&temporal=false';
-        }
-        query += '&start=' + $('#' + searchOptions.oid + '-start').val();
-        query += '&end=' + $('#' + searchOptions.oid + '-end').val();
-        return query;
+        var searchURL = "/esgfsearch/aggregations?";
+        searchURL += "dataset_id=" + dataset_id;
+        return _buildQuery(searchURL);
       };
 
       var search = function() {
-        query = buildSearchQuery();
-        // alert("run search: " + query);
+        query = buildDatasetSearchQuery();
         window.location = query;
-
-        /*
-        $.getJSON(buildQuery(), function(result) {
-          $(".tm-facets").tagsManager('empty');
-          $.each(result.facets, function(i, tag) {
-            $(".tm-facets").tagsManager('limitPushTags');
-            $(".tm-facets").tagsManager('pushTag', tag);
-          });
-
-          $(".tm-facet").tagsManager('empty');
-          $.each(result.facetValues, function(i,value) {
-            $(".tm-facet").tagsManager('limitPushTags');
-            $(".tm-facet").tagsManager('pushTag', value);
-          });
-
-          $(".tm-pinned-facets").tagsManager('empty');
-          $.each(result.pinnedFacets, function(i, tag) {
-            selection = $("#" + searchOptions.oid + '-facets').val();
-            if (selection.indexOf(tag) < 0) {
-              $(".tm-pinned-facets").tagsManager('limitPushTags');
-              $(".tm-pinned-facets").tagsManager('pushTag', tag);
-            }
-          });
-
-          update_counts(result.numFound);
-        });
-        */
       };
 
       init();
