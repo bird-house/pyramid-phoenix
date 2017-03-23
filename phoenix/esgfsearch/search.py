@@ -138,11 +138,10 @@ class ESGFSearch(object):
         items = []
         LOGGER.debug("hit_count: %s", ctx.hit_count)
         for result in ctx.search():
-            if search_type == TYPE_FILE:
-                if not temporal_filter(result.filename, self._start, self._end):
-                    continue
-                if not variable_filter(self._constraints, variables=result.json):
-                    continue
+            if search_type == TYPE_FILE and not temporal_filter(result.filename, self._start, self._end):
+                continue
+            if not variable_filter(self._constraints, variables=result.json):
+                continue
             items.append(dict(
                 title=result.json.get('title'),
                 type=result.json.get('type'),
