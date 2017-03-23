@@ -10,3 +10,9 @@ def includeme(config):
                     route_name='esgfsearch_files',
                     attr='search_files',
                     renderer='json')
+
+    config.add_route('esgfsearch_aggregations', '/esgfsearch/aggregations')
+    config.add_view('phoenix.esgfsearch.views.ESGFSearchActions',
+                    route_name='esgfsearch_aggregations',
+                    attr='search_aggregations',
+                    renderer='json')

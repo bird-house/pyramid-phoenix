@@ -32,18 +32,18 @@
       var initDatasetCollapse = function() {
         $('.dataset').on('show.bs.collapse', function () {
           var _el = $(this);
-          var dataset_id = $(this).find('.files').attr('id');
+          var dataset_id = $(this).find('.files').attr('dataset_id');
           var waitDialog = $('#please-wait-dialog');
           waitDialog.modal('show');
-          $.getJSON(buildFileSearchQuery(dataset_id), function(result) {
-            text = '';
-            $.each(result.files, function(i, file) {
-              text += '<li class="list-group-item list-group-item-info">';
+          $.getJSON(buildAggregationSearchQuery(dataset_id), function(result) {
+            var text = '';
+            $.each(result.items, function(i, item) {
+              text += '<li class="list-group-item list-group-item-success">';
               text += '<span class="list-group-item-heading">';
-              if (file.cart_available) {
+              if (item.cart_available) {
                 text += '<btn';
                 text += ' class="btn btn-default btn-xs pull-right';
-                if (file.is_in_cart) {
+                if (item.is_in_cart) {
                   text += ' btn-cart-remove"';
                   text += ' title="Remove from Cart"';
                 } else {
@@ -51,11 +51,11 @@
                   text += ' title="Add to Cart"';
                 }
                 text += ' data-toggle="tooltip"';
-                text += ' data-value="' + file.opendap_url + '"';
+                text += ' data-value="' + item.opendap_url + '"';
                 text += ' data-type="application/x-ogc-dods"';
                 text += ' role="button">';
                 text += '<icon class="fa fa-lg';
-                if (file.is_in_cart) {
+                if (item.is_in_cart) {
                   text += ' fa-times">';
                 } else {
                   text += ' fa-cart-plus">';
@@ -63,13 +63,53 @@
                 text += '</icon>';
                 text += '</btn>';
               }
-              text += file.filename;
+              text += item.title;
               text += '</span>';
               text += '<p class="list-group-item-text">';
-              text += '<a href="' + file.download_url + '" target="_">';
+              if (item.opendap_url) {
+                text += '<a href="' + item.opendap_url + '".html target="_">';
+                text += '<i class="fa fa-cube"></i> OpenDAP </a>';
+              }
+              text += '</p>';
+              text += '</li>';
+            });
+            _el.find('.aggregations').html(text);
+          });
+          $.getJSON(buildFileSearchQuery(dataset_id), function(result) {
+            var text = '';
+            $.each(result.items, function(i, item) {
+              text += '<li class="list-group-item list-group-item-info">';
+              text += '<span class="list-group-item-heading">';
+              if (item.cart_available) {
+                text += '<btn';
+                text += ' class="btn btn-default btn-xs pull-right';
+                if (item.is_in_cart) {
+                  text += ' btn-cart-remove"';
+                  text += ' title="Remove from Cart"';
+                } else {
+                  text += ' btn-cart-add"';
+                  text += ' title="Add to Cart"';
+                }
+                text += ' data-toggle="tooltip"';
+                text += ' data-value="' + item.opendap_url + '"';
+                text += ' data-type="application/x-ogc-dods"';
+                text += ' role="button">';
+                text += '<icon class="fa fa-lg';
+                if (item.is_in_cart) {
+                  text += ' fa-times">';
+                } else {
+                  text += ' fa-cart-plus">';
+                }
+                text += '</icon>';
+                text += '</btn>';
+              }
+              text += item.title;
+              text += '</span>';
+              text += '<p class="list-group-item-text">';
+              text += '<a href="' + item.download_url + '" target="_">';
               text += '<i class="fa fa-download"></i> Download </a>';
-              if (file.opendap_url) {
-                text += '<a href="' + file.opendap_url + '".html target="_">';
+              if (item.opendap_url) {
+                text += '<a href="' + item.opendap_url + '".html target="_">';
                 text += '<i class="fa fa-cube"></i> OpenDAP </a>';
               }
               text += '</p>';
@@ -86,7 +126,6 @@
           $(this).find('i').toggleClass('fa-chevron-right fa-chevron-down');
         })
       };
-
 
       // using ctrl for multiple selection of facets
       var ctrlPressed = false;
@@ -315,6 +354,37 @@
 
       var buildFileSearchQuery = function(dataset_id) {
         var query = "/esgfsearch/files?dataset_id=" + dataset_id;
+        // constraints
+        query += '&constraints=' + $("#" + searchOptions.oid + '-constraints').val();
+        // search options
+        if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {
+          query += '&distrib=true';
+        } else {
+          query += '&distrib=false';
+        }
+        if ($('#' + searchOptions.oid + '-latest').is(":checked") == true) {
+          query += '&latest=true';
+        } else {
+          query += '&latest=false';
+        }
+        if ($('#' + searchOptions.oid + '-replica').is(":checked") == true) {
+          query += '&replica=true';
+        } else {
+          query += '&replica=false';
+        }
+        // date options
+        if ($('#' + searchOptions.oid + '-temporal').is(":checked") == true) {
+          query += '&temporal=true';
+        } else {
+          query += '&temporal=false';
+        }
+        query += '&start=' + $('#' + searchOptions.oid + '-start').val();
+        query += '&end=' + $('#' + searchOptions.oid + '-end').val();
+        return query;
+      };
+
+      var buildAggregationSearchQuery = function(dataset_id) {
+        var query = "/esgfsearch/aggregations?dataset_id=" + dataset_id;
         // constraints
         query += '&constraints=' + $("#" + searchOptions.oid + '-constraints').val();
         // search options

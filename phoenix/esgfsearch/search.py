@@ -129,19 +129,34 @@ class ESGFSearch(object):
             return dict(files=[])
         ctx = self.conn.new_context(search_type=TYPE_FILE, latest=self._latest, replica=self._replica)
         ctx = ctx.constrain(dataset_id=dataset_id)
-        paged_results = []
+        items = []
         for result in ctx.search():
-            LOGGER.debug("check: %s", result.filename)
             if temporal_filter(result.filename, self._start, self._end):
                 if variable_filter(self._constraints, variables=result.json):
-                    paged_results.append(dict(
-                        filename=result.filename,
+                    items.append(dict(
+                        title=result.json.get('title'),
                         download_url=result.download_url,
                         opendap_url=result.opendap_url,
                         cart_available=result.opendap_url is not None,
                         is_in_cart=result.opendap_url in self.request.cart,
                     ))
-        return dict(files=paged_results)
+        return dict(items=items)
+
+    def search_aggregations(self):
+        dataset_id = self.request.params.get('dataset_id')
+        if not dataset_id:
+            return dict(aggregations=[])
+        ctx = self.conn.new_context(search_type=TYPE_AGGREGATION, latest=self._latest, replica=self._replica)
+        ctx = ctx.constrain(dataset_id=dataset_id)
+        items = []
+        for result in ctx.search():
+            items.append(dict(
+                title=result.json.get('title'),
+                opendap_url=result.opendap_url,
+                cart_available=result.opendap_url is not None,
+                is_in_cart=result.opendap_url in self.request.cart,
+            ))
+        return dict(items=items)
 
     def search_datasets(self):
         ctx = self.conn.new_context(search_type=TYPE_DATASET, latest=self._latest, replica=self._replica)

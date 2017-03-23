@@ -237,7 +237,8 @@
                                     <i class="fa fa-book"></i> Catalog</a>
                                 </p>
                               </li>
-                              <div id="${result.dataset_id}" class="files"/>
+                              <div dataset_id="${result.dataset_id}" class="aggregations"/>
+                              <div dataset_id="${result.dataset_id}" class="files"/>
                             </ul>
                           </div>
                         </div>

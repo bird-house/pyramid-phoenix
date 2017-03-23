@@ -14,9 +14,6 @@ class ESGFSearchActions(object):
         self.request = request
         self.esgfsearch = ESGFSearch(request)
 
-    def search_files(self):
-        return self.esgfsearch.search_files()
-
     def search_datasets(self):
         result = dict()
         result.update(self.esgfsearch.query_params())
@@ -24,3 +21,9 @@ class ESGFSearchActions(object):
         result['form'] = Form(ESGFSearchSchema())
         result['quickview'] = True
         return result
+
+    def search_aggregations(self):
+        return self.esgfsearch.search_aggregations()
+
+    def search_files(self):
+        return self.esgfsearch.search_files()
