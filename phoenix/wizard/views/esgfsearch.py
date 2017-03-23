@@ -73,7 +73,7 @@ class ESGFSearchView(Wizard):
         return self.next('wizard_esgf_logon')
 
     def custom_view(self):
-        result = dict(page=0)
+        result = dict()
         result.update(self.esgfsearch.query_params())
         result.update(self.esgfsearch.search_datasets())
         result['quickview'] = False

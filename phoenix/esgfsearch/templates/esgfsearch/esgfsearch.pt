@@ -193,7 +193,7 @@
               </div>
 
               <!-- datasets -->
-              <div class="row">
+              <div class="row" tal:condition="quickview">
                 <div class="panel panel-default">
                   <div class="panel-heading">
                     <h4 class="panel-title">DATASETS <span class="badge pull-right">${hit_count}</span></h4>

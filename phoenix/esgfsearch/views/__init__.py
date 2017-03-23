@@ -23,5 +23,4 @@ class ESGFSearchActions(object):
         result.update(self.esgfsearch.search_datasets())
         result['form'] = Form(ESGFSearchSchema())
         result['quickview'] = True
-        result['page'] = 0
         return result
