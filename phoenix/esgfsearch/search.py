@@ -135,6 +135,7 @@ class ESGFSearch(object):
                 if variable_filter(self._constraints, variables=result.json):
                     items.append(dict(
                         title=result.json.get('title'),
+                        type=result.json.get('type'),
                         download_url=result.download_url,
                         opendap_url=result.opendap_url,
                         cart_available=result.opendap_url is not None,
@@ -152,6 +153,8 @@ class ESGFSearch(object):
         for result in ctx.search():
             items.append(dict(
                 title=result.json.get('title'),
+                type=result.json.get('type'),
+                download_url=None,
                 opendap_url=result.opendap_url,
                 cart_available=result.opendap_url is not None,
                 is_in_cart=result.opendap_url in self.request.cart,

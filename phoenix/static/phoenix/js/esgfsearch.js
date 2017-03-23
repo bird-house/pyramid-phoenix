@@ -30,7 +30,11 @@
       };
 
       var _buildListGroupItem = function(item) {
-        var text = '<li class="list-group-item list-group-item-info">';
+        var color = 'info';
+        if (item.type == 'Aggregation') {
+          color = 'success';
+        }
+        var text = '<li class="list-group-item list-group-item-' + color + '">';
         text += '<span class="list-group-item-heading">';
         if (item.cart_available) {
           text += '<btn';
@@ -58,8 +62,10 @@
         text += item.title;
         text += '</span>';
         text += '<p class="list-group-item-text">';
-        text += '<a href="' + item.download_url + '" target="_">';
-        text += '<i class="fa fa-download"></i> Download </a>';
+        if (item.download_url) {
+          text += '<a href="' + item.download_url + '" target="_">';
+          text += '<i class="fa fa-download"></i> Download </a>';
+        }
         if (item.opendap_url) {
           text += '<a href="' + item.opendap_url + '".html target="_">';
           text += '<i class="fa fa-cube"></i> OpenDAP </a>';
@@ -75,54 +81,21 @@
           var dataset_id = $(this).find('.files').attr('dataset_id');
           var waitDialog = $('#please-wait-dialog');
           waitDialog.modal('show');
-          /*
+          // fill dataset aggregations
           $.getJSON(buildAggregationSearchQuery(dataset_id), function(result) {
-            var text = '';
+            var aggHTML = '';
             $.each(result.items, function(i, item) {
-              text += '<li class="list-group-item list-group-item-success">';
-              text += '<span class="list-group-item-heading">';
-              if (item.cart_available) {
-                text += '<btn';
-                text += ' class="btn btn-default btn-xs pull-right';
-                if (item.is_in_cart) {
-                  text += ' btn-cart-remove"';
-                  text += ' title="Remove from Cart"';
-                } else {
-                  text += ' btn-cart-add"';
-                  text += ' title="Add to Cart"';
-                }
-                text += ' data-toggle="tooltip"';
-                text += ' data-value="' + item.opendap_url + '"';
-                text += ' data-type="application/x-ogc-dods"';
-                text += ' role="button">';
-                text += '<icon class="fa fa-lg';
-                if (item.is_in_cart) {
-                  text += ' fa-times">';
-                } else {
-                  text += ' fa-cart-plus">';
-                }
-                text += '</icon>';
-                text += '</btn>';
-              }
-              text += item.title;
-              text += '</span>';
-              text += '<p class="list-group-item-text">';
-              if (item.opendap_url) {
-                text += '<a href="' + item.opendap_url + '".html target="_">';
-                text += '<i class="fa fa-cube"></i> OpenDAP </a>';
-              }
-              text += '</p>';
-              text += '</li>';
+              aggHTML += _buildListGroupItem(item);
             });
-            _el.find('.aggregations').html(text);
+            _el.find('.aggregations').html(aggHTML);
           });
-          */
+          // fill dataset files
           $.getJSON(buildFileSearchQuery(dataset_id), function(result) {
-            var text = '';
+            var filesHTML = '';
             $.each(result.items, function(i, item) {
-              text += _buildListGroupItem(item);
+              filesHTML += _buildListGroupItem(item);
             });
-            _el.find('.files').html(text);
+            _el.find('.files').html(filesHTML);
             waitDialog.modal('hide');
           });
         })
