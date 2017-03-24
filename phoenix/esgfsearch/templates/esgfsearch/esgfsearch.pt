@@ -160,7 +160,7 @@
                            rel="tooltip"
                            data-toggle="tooltip"
                            title="Clear all"
-                           href="/esgfsearch">
+                           href="${request.current_route_path(_query=[])}">
                            Clear all
                         </a>
                       </div>
