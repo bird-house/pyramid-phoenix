@@ -153,7 +153,20 @@
               <div class="row">
                 <div class="panel panel-default">
                   <div class="panel-heading">
-                    <h4 class="panel-title">SELECTION <span class="badge pull-right">${hit_count}</span></h4>
+                    <span class="panel-title">
+                      SELECTION <!-- span class="badge">${hit_count}</span -->
+                      <div class="pull-right">
+                        <button>
+                        <a class="btn btn-danger btn-xs"
+                           rel="tooltip"
+                           data-toggle="tooltip"
+                           title="Clear all"
+                           href="#">
+                           Clear all
+                        </a>
+                      </button>
+                      </div>
+                    </span>
                   </div>
                   <div class="panel-body">
                     <input type="text" name="pinned" class="tm-pinned-facets"
