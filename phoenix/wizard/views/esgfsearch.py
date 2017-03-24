@@ -50,6 +50,8 @@ class ESGFSearchView(Wizard):
 
     def appstruct(self):
         appstruct = super(ESGFSearchView, self).appstruct()
+        # TODO: not so nice to update appstruct like this
+        appstruct.update(self.esgfsearch.params())
         LOGGER.debug("esgfsearch appstruct before: %s", appstruct)
         return appstruct
 

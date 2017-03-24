@@ -26,9 +26,10 @@
         init_pinned_facets();
         initTimeConstraints();
         //init_spatial_constraints();
-        updateHiddenFields();
+        //updateHiddenFields();
       };
 
+      /*
       var updateHiddenFields = function() {
         // TODO: this is not the way it should be done
         $('#deformField1').val($("#" + searchOptions.oid + '-constraints').val());
@@ -42,6 +43,7 @@
         $('#deformField9').val($("#" + searchOptions.oid + '-end').val()+'-12-31');
         // $('#deformField10').val($("#" + searchOptions.oid + '-bbox').val());
       };
+      */
 
       var _buildListGroupItem = function(item) {
         var color = 'info';

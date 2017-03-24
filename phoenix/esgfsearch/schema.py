@@ -20,8 +20,8 @@ class ESGFSearchSchema(colander.MappingSchema):
     )
     query = colander.SchemaNode(
         colander.String(),
-        default=colander.drop,
-        # default='*:*',
+        default='',
+        missing='',
         widget=deform.widget.HiddenWidget(),
     )
     distrib = colander.SchemaNode(

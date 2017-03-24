@@ -80,6 +80,23 @@ def temporal_filter(filename, start=None, end=None):
     return True
 
 
+def query_params_from_appstruct(appstruct):
+    LOGGER.debug("query from appstruct = %s", appstruct)
+    if not appstruct:
+        return None
+    return dict(
+        query=appstruct.get('query', ''),
+        selected=appstruct.get('selected', 'project'),
+        distrib=str(appstruct.get('distrib', False)).lower(),
+        replica=str(appstruct.get('replica', False)).lower(),
+        latest=str(appstruct.get('latest', True)).lower(),
+        temporal=str(appstruct.get('temporal', True)).lower(),
+        start=appstruct.get('start', datetime.date(2001, 1, 1)).year,
+        end=appstruct.get('end', datetime.date(2005, 12, 31)).year,
+        constraints=appstruct.get('constraints'),
+    )
+
+
 class ESGFSearch(object):
     def __init__(self, request):
         self.request = request
@@ -136,8 +153,8 @@ class ESGFSearch(object):
         if self.query:
             params['query'] = self.query
         if self.start and self.end:
-            params['start'] = datetime.datetime(int(self.start), 1, 1)
-            params['end'] = datetime.datetime(int(self.end), 12, 31)
+            params['start'] = datetime.date(int(self.start), 1, 1)
+            params['end'] = datetime.date(int(self.end), 12, 31)
         return params
 
     def search_items(self):
