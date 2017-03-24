@@ -38,8 +38,8 @@
         $('#deformField5').val($("#" + searchOptions.oid + '-latest').val());
         $('#deformField6').val($("#" + searchOptions.oid + '-temporal').val());
         // $('#deformField7').val($("#" + searchOptions.oid + '-spatial').val());
-        $('#deformField8').val($("#" + searchOptions.oid + '-start').val());
-        $('#deformField9').val($("#" + searchOptions.oid + '-end').val());
+        $('#deformField8').val($("#" + searchOptions.oid + '-start').val()+'-01-01');
+        $('#deformField9').val($("#" + searchOptions.oid + '-end').val()+'-12-31');
         // $('#deformField10').val($("#" + searchOptions.oid + '-bbox').val());
       };
 
