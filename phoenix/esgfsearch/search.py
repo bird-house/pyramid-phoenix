@@ -1,3 +1,5 @@
+import datetime
+
 from pyramid.settings import asbool
 
 from pyesgf.search import SearchConnection
@@ -122,6 +124,21 @@ class ESGFSearch(object):
             end=self.end,
             constraints=self.constraints,
         )
+
+    def params(self):
+        params = dict(
+            distrib=self.distrib,
+            replica=self.replica,
+            latest=self.latest,
+            temporal=self.temporal,
+            constraints=self.constraints,
+        )
+        if self.query:
+            params['query'] = self.query
+        if self.start and self.end:
+            params['start'] = datetime.datetime(int(self.start), 1, 1)
+            params['end'] = datetime.datetime(int(self.end), 12, 31)
+        return params
 
     def search_items(self):
         dataset_id = self.request.params.get('dataset_id')
