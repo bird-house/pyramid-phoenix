@@ -5,6 +5,7 @@ from pyramid.view import view_config
 
 from owslib.wps import WebProcessingService
 
+from phoenix.esgfsearch.search import query_params_from_appstruct
 from phoenix.wizard.views import Wizard
 
 SOURCE_TYPES = {
@@ -61,7 +62,12 @@ class ChooseSource(Wizard):
 
     def next_success(self, appstruct):
         self.success(appstruct)
-        return self.next(appstruct.get('source'))
+        # TODO: that is a dirty way to init esgf search
+        if appstruct.get('source') == 'wizard_esgf_search':
+            query = query_params_from_appstruct(self.wizard_state.get('wizard_esgf_search'))
+        else:
+            query = None
+        return self.next(appstruct.get('source'), query=query)
 
     def view(self):
         return super(ChooseSource, self).view()

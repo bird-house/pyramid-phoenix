@@ -1,4 +1,5 @@
 import yaml
+import dateparser
 
 from pyramid.view import view_config
 from pyramid.security import authenticated_userid
@@ -68,8 +69,12 @@ def job_to_state(request, job_id):
             state['wizard_complex_inputs'] = {'identifier': workflow['worker']['resource']}
             if workflow['name'] == 'wizard_esgf_search':
                 state['wizard_source'] = {'source': 'wizard_esgf_search'}
-                import json
-                state['wizard_esgf_search'] = {'selection': json.dumps(workflow['source']['esgf'])}
+                state['wizard_esgf_search'] = workflow['source']['esgf']
+                # TODO: thats the wrong place and probably the wrong way to do this
+                if 'start' in state['wizard_esgf_search']:
+                    state['wizard_esgf_search']['start'] = dateparser.parse(state['wizard_esgf_search']['start'])
+                if 'end' in state['wizard_esgf_search']:
+                    state['wizard_esgf_search']['end'] = dateparser.parse(state['wizard_esgf_search']['end'])
             elif workflow['name'] == 'wizard_solr':
                 state['wizard_source'] = {'source': 'wizard_solr'}
             elif workflow['name'] == 'wizard_threddsservice':

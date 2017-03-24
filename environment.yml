@@ -27,6 +27,7 @@ dependencies:
   - gevent=1.2
   - lxml=3.7
   - mako=1.0 
+  - dateparser=0.5
   - python-dateutil=2.6 
   - requests=2.12 
   - pyyaml=3.12

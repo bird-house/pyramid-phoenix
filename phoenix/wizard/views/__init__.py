@@ -202,9 +202,9 @@ class Wizard(MyView):
         self.wizard_state.previous()
         return HTTPFound(location=self.request.route_path(self.wizard_state.current_step()))
 
-    def next(self, step):
+    def next(self, step, query=None):
         self.wizard_state.next(step)
-        return HTTPFound(location=self.request.route_path(self.wizard_state.current_step()))
+        return HTTPFound(location=self.request.route_path(self.wizard_state.current_step(), _query=query))
 
     def cancel(self):
         self.wizard_state.clear()

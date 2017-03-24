@@ -1,8 +1,6 @@
 from pyramid.view import view_config
 from pyramid.settings import asbool
 
-import datetime
-
 from phoenix.wizard.views import Wizard
 from phoenix.utils import user_cert_valid
 
@@ -47,19 +45,13 @@ class ESGFSearchView(Wizard):
         return breadcrumbs
 
     def schema(self):
+        LOGGER.debug("esgfsearch schema")
         return ESGFSearchSchema()
 
     def appstruct(self):
         appstruct = super(ESGFSearchView, self).appstruct()
-        appstruct['query'] = self.esgfsearch.query
-        appstruct['distrib'] = self.esgfsearch.distrib
-        appstruct['replica'] = self.esgfsearch.replica
-        appstruct['latest'] = self.esgfsearch.latest
-        appstruct['temporal'] = self.esgfsearch.temporal
-        if self.esgfsearch.start and self.esgfsearch.end:
-            appstruct['start'] = datetime.datetime(int(self.esgfsearch.start), 1, 1)
-            appstruct['end'] = datetime.datetime(int(self.esgfsearch.end), 12, 31)
-        appstruct['constraints'] = self.esgfsearch.constraints
+        # TODO: not so nice to update appstruct like this
+        appstruct.update(self.esgfsearch.params())
         LOGGER.debug("esgfsearch appstruct before: %s", appstruct)
         return appstruct
 
