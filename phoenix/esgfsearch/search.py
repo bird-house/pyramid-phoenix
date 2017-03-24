@@ -112,7 +112,7 @@ class ESGFSearch(object):
 
     def query_params(self):
         return dict(
-            query=self.query or '',
+            query=self.query,
             selected=self.selected,
             distrib=str(self.distrib).lower(),
             replica=str(self.replica).lower(),
@@ -155,6 +155,8 @@ class ESGFSearch(object):
     def search_datasets(self):
         ctx = self.conn.new_context(search_type=TYPE_DATASET, latest=self._latest, replica=self._replica)
         ctx = ctx.constrain(**self._constraints.mixed())
+        if self.query:
+            ctx = ctx.constrain(query=self.query)
         if self.temporal:
             ctx = ctx.constrain(
                 from_timestamp="{}-01-01T12:00:00Z".format(self.start),
