@@ -24,7 +24,7 @@
         init_facets();
         init_facet_values();
         init_pinned_facets();
-        init_time_constraints();
+        initTimeConstraints();
         //init_spatial_constraints();
         //search();
       };
@@ -186,10 +186,13 @@
             killEvent(e);
             search();
           };
+          $('#' + searchOptions.oid + '-query').on('change', function(){
+            search();
+          });
         });
       };
 
-      var init_time_constraints = function() {
+      var initTimeConstraints = function() {
         // start year
         $('#' + searchOptions.oid + '-start').keypress(function(e) {
           // disable ENTER and run search
