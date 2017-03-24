@@ -153,7 +153,18 @@
               <div class="row">
                 <div class="panel panel-default">
                   <div class="panel-heading">
-                    <h4 class="panel-title">SELECTION <span class="badge pull-right">${hit_count}</span></h4>
+                    <span class="panel-title">
+                      SELECTION <span class="badge">${hit_count}</span>
+                      <div class="pull-right">
+                        <a class="btn btn-danger btn-xs"
+                           rel="tooltip"
+                           data-toggle="tooltip"
+                           title="Clear all"
+                           href="${request.current_route_path(_query=[])}">
+                           Clear all
+                        </a>
+                      </div>
+                    </span>
                   </div>
                   <div class="panel-body">
                     <input type="text" name="pinned" class="tm-pinned-facets"
