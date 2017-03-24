@@ -49,7 +49,7 @@ class ESGFSearchView(Wizard):
 
     def appstruct(self):
         appstruct = super(ESGFSearchView, self).appstruct()
-        appstruct.update(self.esgfsearch.params())
+        # appstruct.update(self.esgfsearch.params())
         LOGGER.debug("esgfsearch appstruct before: %s", appstruct)
         return appstruct
 
