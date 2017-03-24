@@ -16,7 +16,7 @@ def test_cart():
     assert cart.count() == 1
 
     for item in cart:
-        assert item.download_url() == url
+        assert item.url == url
 
     assert url in cart
 
@@ -45,7 +45,3 @@ class CartTests(unittest.TestCase):
     def test_cart_from_request(self):
         request = testing.DummyRequest()
         request.cart is not None
-
-
-
-
