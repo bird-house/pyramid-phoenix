@@ -20,8 +20,8 @@ class ESGFSearchSchema(colander.MappingSchema):
     )
     query = colander.SchemaNode(
         colander.String(),
-        default='*:*',
-        missing=colander.null,
+        default=colander.drop,
+        # default='*:*',
         widget=deform.widget.HiddenWidget(),
     )
     distrib = colander.SchemaNode(
@@ -42,13 +42,11 @@ class ESGFSearchSchema(colander.MappingSchema):
     temporal = colander.SchemaNode(
         colander.Boolean(),
         default=True,
-        missing=colander.null,
         widget=deform.widget.HiddenWidget(),
     )
     spatial = colander.SchemaNode(
         colander.Boolean(),
         default=False,
-        missing=colander.null,
         widget=deform.widget.HiddenWidget(),
     )
     start = colander.SchemaNode(
@@ -64,6 +62,5 @@ class ESGFSearchSchema(colander.MappingSchema):
     bbox = colander.SchemaNode(
         colander.String(),
         default='-180,-90,180,90',
-        missing=colander.null,
         widget=deform.widget.HiddenWidget(),
     )

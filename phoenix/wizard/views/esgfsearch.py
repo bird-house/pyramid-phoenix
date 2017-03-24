@@ -45,11 +45,11 @@ class ESGFSearchView(Wizard):
         return breadcrumbs
 
     def schema(self):
+        LOGGER.debug("esgfsearch schema")
         return ESGFSearchSchema()
 
     def appstruct(self):
         appstruct = super(ESGFSearchView, self).appstruct()
-        # appstruct.update(self.esgfsearch.params())
         LOGGER.debug("esgfsearch appstruct before: %s", appstruct)
         return appstruct
 

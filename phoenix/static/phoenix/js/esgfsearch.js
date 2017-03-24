@@ -26,7 +26,21 @@
         init_pinned_facets();
         initTimeConstraints();
         //init_spatial_constraints();
-        //search();
+        updateHiddenFields();
+      };
+
+      var updateHiddenFields = function() {
+        // TODO: this is not the way it should be done
+        $('#deformField1').val($("#" + searchOptions.oid + '-constraints').val());
+        $('#deformField2').val($("#" + searchOptions.oid + '-query').val());
+        $('#deformField3').val($("#" + searchOptions.oid + '-distrib').val());
+        $('#deformField4').val($("#" + searchOptions.oid + '-replica').val());
+        $('#deformField5').val($("#" + searchOptions.oid + '-latest').val());
+        $('#deformField6').val($("#" + searchOptions.oid + '-temporal').val());
+        // $('#deformField7').val($("#" + searchOptions.oid + '-spatial').val());
+        $('#deformField8').val($("#" + searchOptions.oid + '-start').val());
+        $('#deformField9').val($("#" + searchOptions.oid + '-end').val());
+        // $('#deformField10').val($("#" + searchOptions.oid + '-bbox').val());
       };
 
       var _buildListGroupItem = function(item) {
