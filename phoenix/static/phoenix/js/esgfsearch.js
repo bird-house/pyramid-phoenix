@@ -17,14 +17,14 @@
 
       var init = function() {
         initDatasetCollapse();
-        init_toggle_collapse();
+        initToggleCollapse();
         init_search_options();
-        init_query();
+        initQuery();
         init_constraints();
         init_facets();
         init_facet_values();
         init_pinned_facets();
-        init_time_constraints();
+        initTimeConstraints();
         //init_spatial_constraints();
         //search();
       };
@@ -93,7 +93,7 @@
         })
       };
 
-      var init_toggle_collapse = function() {
+      var initToggleCollapse = function() {
         $('a[data-toggle="collapse"]').click(function () {
           $(this).find('i').toggleClass('fa-chevron-right fa-chevron-down');
         })
@@ -179,17 +179,20 @@
         */
       };
 
-      var init_query = function() {
+      var initQuery = function() {
         $('#' + searchOptions.oid + '-query').keypress(function(e) {
           // disable ENTER
           if (e.which == 13) {
             killEvent(e);
             search();
           };
+          $('#' + searchOptions.oid + '-query').on('change', function(){
+            search();
+          });
         });
       };
 
-      var init_time_constraints = function() {
+      var initTimeConstraints = function() {
         // start year
         $('#' + searchOptions.oid + '-start').keypress(function(e) {
           // disable ENTER and run search
@@ -285,22 +288,26 @@
         var query = baseURL;
         // constraints
         query += '&constraints=' + $("#" + searchOptions.oid + '-constraints').val();
-        // search options
+        // distrib option
         if ($('#' + searchOptions.oid + '-distrib').is(":checked") == true) {
           query += '&distrib=true';
         } else {
           query += '&distrib=false';
         }
+        // latest option
         if ($('#' + searchOptions.oid + '-latest').is(":checked") == true) {
           query += '&latest=true';
         } else {
           query += '&latest=false';
         }
+        // replica option
         if ($('#' + searchOptions.oid + '-replica').is(":checked") == true) {
           query += '&replica=true';
         } else {
           query += '&replica=false';
         }
+        // freetext search
+        query += '&query=' + $('#' + searchOptions.oid + '-query').val();
         // date options
         if ($('#' + searchOptions.oid + '-temporal').is(":checked") == true) {
           query += '&temporal=true';
