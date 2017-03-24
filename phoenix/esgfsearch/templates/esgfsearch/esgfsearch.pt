@@ -154,7 +154,7 @@
                 <div class="panel panel-default">
                   <div class="panel-heading">
                     <span class="panel-title">
-                      SELECTION <!-- span class="badge">${hit_count}</span -->
+                      SELECTION <span class="badge">${hit_count}</span>
                       <div class="pull-right">
                         <a class="btn btn-danger btn-xs"
                            rel="tooltip"
