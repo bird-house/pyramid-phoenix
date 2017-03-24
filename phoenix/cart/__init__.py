@@ -9,5 +9,3 @@ def includeme(config):
     config.add_route('cart', 'cart')
     config.add_route('clear_cart', 'cart/clear')
     config.add_route('remove_cart_item', 'cart/remove')
-
-

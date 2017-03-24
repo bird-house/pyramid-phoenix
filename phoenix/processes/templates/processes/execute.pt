@@ -5,11 +5,6 @@
   </div>
 
   <div metal:fill-slot="js_preload">
-    <!-- deform used for widgets -->
-    <script src="${request.static_path('deform:static/scripts/deform.js')}"
-            type="text/javascript"></script>
-    <script src="${request.static_path('deform:static/scripts/modernizr.custom.input-types-and-atts.js')}"
-            type="text/javascript"></script>
     <script src="${request.static_path('phoenix:static/jquery.fine-uploader/jquery.fine-uploader.js')}"
             type="text/javascript"></script>
     <script type="text/template" id="qq-template">

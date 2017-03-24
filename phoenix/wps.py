@@ -247,6 +247,19 @@ class WPSSchema(colander.MappingSchema):
             node.widget = deform.widget.CheckboxWidget()
         elif 'password' in data_input.identifier:
             node.widget = deform.widget.PasswordWidget(size=20)
+        elif type(node.typ) == colander.String:
+            widget = None
+            if hasattr(data_input, 'metadata'):
+                for metadata in data_input.metadata:
+                    mime_types = ['application/x-ogc-dods']
+                    if metadata.title in mime_types:
+                        widget = ResourceWidget(
+                            cart=self.request.has_permission('submit'),
+                            mime_types=mime_types,
+                            upload=False,
+                            storage_url=self.request.storage.base_url)
+                        break
+            node.widget = widget or deform.widget.TextInputWidget()
         else:
             node.widget = deform.widget.TextInputWidget()
 
@@ -278,8 +291,11 @@ class WPSSchema(colander.MappingSchema):
         return node
 
     def complex_data(self, data_input):
+        mime_types = [value.mimeType for value in data_input.supportedValues]
+        logger.debug("mime_types for resource widget: %s", mime_types)
         widget = ResourceWidget(
             cart=self.request.has_permission('submit'),
+            mime_types=mime_types,
             upload=True,
             storage_url=self.request.storage.base_url)
 

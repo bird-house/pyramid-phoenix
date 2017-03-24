@@ -44,15 +44,23 @@
                       </div>
                     </p>
                     <p tal:condition="item.mime_type">
-                      <a href="${item.download_url()}" target="_" class="label label-warning"
+                      <a href="${item.url}" target="_" class="label label-warning"
                          data-toggle="tooltip" title="${item.filename}" data-value="value">
                         ${item.mime_type}
                       </a>
                     </p>
                     <p>
-                      <a href="${item.download_url()}" target="_" data-toggle="tooltip"
-                         title="Download file" data-value="value" class="btn btn-link">
-                        <i class="fa fa-download"></i> Download
+                      <a href="${item.url}" target="_" data-toggle="tooltip"
+                         title="Data Reference" data-value="value" class="btn btn-link">
+                        <span tal:condition="not item.is_service()">
+                          <i class="fa fa-download"></i> Download
+                        </span>
+                        <span tal:condition="item.is_opendap()">
+                          <i class="fa fa-cube"></i> OpenDAP
+                        </span>
+                        <span tal:condition="item.is_thredds_catalog()">
+                          <i class="fa fa-book"></i> Catalog
+                        </span>
                       </a>
                       <a tal:condition="item.dataset" data-toggle="tooltip" title="Show on Map" data-value="value"
                          href="${request.route_path('map', _query=[('dataset', item.dataset)])}"

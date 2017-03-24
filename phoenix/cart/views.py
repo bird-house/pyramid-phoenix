@@ -19,11 +19,15 @@ class CartActions(object):
     @view_config(renderer='json', name='list_cart.json')
     def list_cart(self):
         limit = int(self.request.params.get('limit', '100'))
+        mime_type = self.request.params.get('mimetype')
+        if mime_type:
+            mime_type = mime_type.split(',')
         items = list()
         for item in self.request.cart:
             if limit and len(items) >= limit:
                 break
-            items.append(dict(title=item.filename, url=item.download_url()))
+            if not mime_type or item.mime_type in mime_type:
+                items.append(dict(title=item.filename, url=item.url))
         return items
 
     @view_config(renderer='json', name='add_to_cart.json')
@@ -31,7 +35,8 @@ class CartActions(object):
         url = self.request.params.get('url')
         title = self.request.params.get('title')
         abstract = self.request.params.get('abstract')
-        self.request.cart.add_item(url, title=title, abstract=abstract)
+        mime_type = self.request.params.get('mimetype')
+        self.request.cart.add_item(url, title=title, abstract=abstract, mime_type=mime_type)
         return {}
 
     @view_config(renderer='json', name='remove_from_cart.json')

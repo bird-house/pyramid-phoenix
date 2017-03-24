@@ -3,7 +3,7 @@ class CartItem(object):
         self.url = url
         self._title = title
         self._abstract = abstract
-        self.mime_type = mime_type
+        self.mime_type = mime_type or 'application/x-netcdf'
         self.dataset = dataset
 
     @property
@@ -18,8 +18,14 @@ class CartItem(object):
     def filename(self):
         return self.url.split('/')[-1]
 
-    def download_url(self):
-        return self.url
+    def is_service(self):
+        return self.is_opendap() or self.is_thredds_catalog()
+
+    def is_opendap(self):
+        return self.mime_type == 'application/x-ogc-dods'
+
+    def is_thredds_catalog(self):
+        return self.mime_type == 'application/x-thredds-catalog'
 
     def to_json(self):
         return dict(url=self.url, title=self._title, abstract=self._abstract,
@@ -48,12 +54,12 @@ class Cart(object):
         """
         return url in self.items
 
-    def add_item(self, url, title=None, abstract=None):
+    def add_item(self, url, title=None, abstract=None, mime_type=None):
         """
         Add cart item.
         """
         if url:
-            item = CartItem(url, title=title, abstract=abstract)
+            item = CartItem(url, title=title, abstract=abstract, mime_type=mime_type)
             self.items[url] = item
             self.save()
         else:
