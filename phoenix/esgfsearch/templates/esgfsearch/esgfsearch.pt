@@ -156,15 +156,13 @@
                     <span class="panel-title">
                       SELECTION <!-- span class="badge">${hit_count}</span -->
                       <div class="pull-right">
-                        <button>
                         <a class="btn btn-danger btn-xs"
                            rel="tooltip"
                            data-toggle="tooltip"
                            title="Clear all"
-                           href="#">
+                           href="/esgfsearch">
                            Clear all
                         </a>
-                      </button>
                       </div>
                     </span>
                   </div>
