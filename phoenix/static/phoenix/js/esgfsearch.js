@@ -17,7 +17,7 @@
 
       var init = function() {
         initDatasetCollapse();
-        init_toggle_collapse();
+        initToggleCollapse();
         init_search_options();
         init_query();
         init_constraints();
@@ -93,7 +93,7 @@
         })
       };
 
-      var init_toggle_collapse = function() {
+      var initToggleCollapse = function() {
         $('a[data-toggle="collapse"]').click(function () {
           $(this).find('i').toggleClass('fa-chevron-right fa-chevron-down');
         })
