@@ -76,6 +76,8 @@
           text += '</btn>';
         }
         text += item.title;
+        text += '</p>';
+        text += item.abstract;
         text += '</span>';
         text += '<p class="list-group-item-text">';
         if (item.download_url) {
