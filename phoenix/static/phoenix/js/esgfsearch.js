@@ -76,6 +76,8 @@
           text += '</btn>';
         }
         text += item.title;
+        text += '</p>';
+        text += item.abstract;
         text += '</span>';
         text += '<p class="list-group-item-text">';
         if (item.download_url) {
@@ -83,9 +85,13 @@
           text += '<i class="fa fa-download"></i> Download </a>';
         }
         if (item.opendap_url) {
-          text += '<a href="' + item.opendap_url + '".html target="_">';
+          text += '<a href="' + item.opendap_url + '.html' + '" target="_">';
           text += '<i class="fa fa-cube"></i> OpenDAP </a>';
         }
+        /*
+        text += '<a href="" target="_">';
+        text += '<i class="fa fa-info"></i> Info </a>';
+        */
         text += '</p>';
         text += '</li>';
         return text;
