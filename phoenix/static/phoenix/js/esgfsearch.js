@@ -250,7 +250,7 @@
 
       var initBBoxExtent = function() {
         var map = L.map('map', {
-          center: [5.6, 3.9],
+          center: [0, 0],
           zoom: 0,
           zoomControl: false,
         });  // map
