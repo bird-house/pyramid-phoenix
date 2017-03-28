@@ -11,6 +11,7 @@
         keywords: null,
         pinnedFacets: null,
         selectedFacet: 'project',
+        bbox: null,
       };
       var searchOptions = $.extend(defaults, options);
       var selectedFacet = searchOptions.selectedFacet;
@@ -18,32 +19,15 @@
       var init = function() {
         initDatasetCollapse();
         initToggleCollapse();
-        init_search_options();
+        initSearchOptions();
         initQuery();
-        init_constraints();
-        init_facets();
-        init_facet_values();
-        init_pinned_facets();
-        initTimeConstraints();
-        //init_spatial_constraints();
-        //updateHiddenFields();
+        initConstraints();
+        initCategories();
+        initKeywords();
+        initPinnedKeywords();
+        initTimeExtent();
+        initBBoxExtent();
       };
-
-      /*
-      var updateHiddenFields = function() {
-        // TODO: this is not the way it should be done
-        $('#deformField1').val($("#" + searchOptions.oid + '-constraints').val());
-        $('#deformField2').val($("#" + searchOptions.oid + '-query').val());
-        $('#deformField3').val($("#" + searchOptions.oid + '-distrib').val());
-        $('#deformField4').val($("#" + searchOptions.oid + '-replica').val());
-        $('#deformField5').val($("#" + searchOptions.oid + '-latest').val());
-        $('#deformField6').val($("#" + searchOptions.oid + '-temporal').val());
-        // $('#deformField7').val($("#" + searchOptions.oid + '-spatial').val());
-        $('#deformField8').val($("#" + searchOptions.oid + '-start').val()+'-01-01');
-        $('#deformField9').val($("#" + searchOptions.oid + '-end').val()+'-12-31');
-        // $('#deformField10').val($("#" + searchOptions.oid + '-bbox').val());
-      };
-      */
 
       var _buildListGroupItem = function(item) {
         var color = 'info';
@@ -177,7 +161,7 @@
         return result;
       };
 
-      var init_search_options = function() {
+      var initSearchOptions = function() {
         $('#' + searchOptions.oid + '-distrib').click(function () {
           search();
         });
@@ -193,12 +177,6 @@
         $('#' + searchOptions.oid + '-temporal').click(function () {
           search();
         });
-
-        /*
-        $('#' + searchOptions.oid + '-spatial').click(function () {
-          search();
-        });
-        */
       };
 
       var initQuery = function() {
@@ -214,7 +192,7 @@
         });
       };
 
-      var initTimeConstraints = function() {
+      var initTimeExtent = function() {
         // start year
         $('#' + searchOptions.oid + '-start').keypress(function(e) {
           // disable ENTER and run search
@@ -240,7 +218,7 @@
         });
       };
 
-      var init_constraints = function() {
+      var initConstraints = function() {
         $(".tm-selection").tagsManager({
           preventSubmitOnEnter: true,
           delimiters: [9, 13, 44],
@@ -253,20 +231,22 @@
         });
       };
 
-      var init_spatial_constraints = function() {
-        $('#' + searchOptions.oid + '-bbox').keypress(function(e) {
-          // disable ENTER
-          if (e.which == 13) {
-            killEvent(e);
-            search();
-          };
+      var initBBoxExtent = function() {
+        var map = L.map('map', {
+          center: [0, 0],
+          zoom: 0,
+          zoomControl: false,
+        });  // map
+        // base layer
+        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {foo: 'bar'}).addTo(map);
+        map.on('moveend', function() {
+          searchOptions.bbox = map.getBounds().toBBoxString();
+          //search();
         });
-        $('#' + searchOptions.oid + '-bbox').on('change', function(){
-          search();
-        });
-      };
 
-      var init_facets = function() {
+      };   // bbox extent
+
+      var initCategories = function() {
         $(".tm-facets").tagsManager({
           //prefilled: ["hello"],
           preventSubmitOnEnter: true,
@@ -280,7 +260,7 @@
         });
       };
 
-      var init_facet_values = function() {
+      var initKeywords = function() {
         $(".tm-facet").tagsManager({
           //prefilled: ["MPI-M", "NCC", "MIROC", "BCC"],
           preventSubmitOnEnter: true,
@@ -294,7 +274,7 @@
         });
       };
 
-      var init_pinned_facets = function() {
+      var initPinnedKeywords = function() {
         $(".tm-pinned-facets").tagsManager({
           //prefilled: ["hello"],
           preventSubmitOnEnter: true,

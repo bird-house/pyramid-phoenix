@@ -113,6 +113,7 @@ class ESGFSearch(object):
         self.distrib = asbool(self.request.params.get('distrib', 'false'))
         self.latest = self._latest = asbool(self.request.params.get('latest', 'true'))
         self.temporal = asbool(self.request.params.get('temporal', 'true'))
+        self.bbox = asbool(self.request.params.get('bbox', 'false'))
         if self.latest is False:
             self._latest = None  # all versions
         self.replica = self._replica = asbool(self.request.params.get('replica', 'false'))
@@ -139,6 +140,7 @@ class ESGFSearch(object):
             replica=str(self.replica).lower(),
             latest=str(self.latest).lower(),
             temporal=str(self.temporal).lower(),
+            bbox=str(self.bbox).lower(),
             start=self.start,
             end=self.end,
             constraints=self.constraints,
