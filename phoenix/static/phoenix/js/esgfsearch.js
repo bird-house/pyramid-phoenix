@@ -9,12 +9,12 @@
         constraints: null,
         categories: null,
         keywords: null,
-        pinnedFacets: null,
-        selectedFacet: 'project',
+        pinnedKeywords: null,
+        selectedCategory: 'project',
         bbox: null,
       };
       var searchOptions = $.extend(defaults, options);
-      var selectedFacet = searchOptions.selectedFacet;
+      var selectedCategory = searchOptions.selectedCategory;
 
       var init = function() {
         initDatasetCollapse();
@@ -139,13 +139,13 @@
       };
 
       var selected_facet_handler = function (facet) {
-        selectedFacet = facet;
-        $('#search-label-category').text("KEYWORDS: " + selectedFacet)
+        selectedCategory = facet;
+        $('#search-label-category').text("KEYWORDS: " + selectedCategory)
         search();
       };
 
       var selected_facet_value_handler = function (facet_value) {
-        value = selectedFacet  + ':' + facet_value;
+        value = selectedCategory  + ':' + facet_value;
         $(".tm-selection").tagsManager('limitPushTags');
         $(".tm-selection").tagsManager('pushTag', value);
         if (!ctrlPressed) {
@@ -281,8 +281,8 @@
           delimiters: [9, 13, 44],
           tagClass: 'tm-tag tm-tag-disabled',
           isSelectable: false,
-          prefilled: searchOptions.pinnedFacets,
-          maxTags: numTags(searchOptions.pinnedFacets),
+          prefilled: searchOptions.pinnedKeywords,
+          maxTags: numTags(searchOptions.pinnedKeywords),
         });
       };
 
@@ -323,7 +323,7 @@
 
       var buildDatasetSearchQuery = function() {
         var searchURL = searchOptions.url + '?';
-        searchURL += 'selected=' + selectedFacet;
+        searchURL += 'selected=' + selectedCategory;
         return _buildQuery(searchURL);
       };
 

@@ -1,4 +1,5 @@
 import datetime
+from collections import Counter
 
 from webhelpers2.number import format_byte_size
 
@@ -212,11 +213,12 @@ class ESGFSearch(object):
         results = ctx.search(batch_size=5, ignore_facet_check=False)
         categories = sorted([tag for tag in ctx.facet_counts if len(ctx.facet_counts[tag]) > 1])
         keywords = sorted(ctx.facet_counts[self.selected].keys())
-        pinned_facets = []
+        pinned_keywords = []
         for facet in ctx.facet_counts:
             if facet not in self._constraints and len(ctx.facet_counts[facet]) == 1:
-                pinned_facets.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
-        pinned_facets = sorted(pinned_facets)
+                pinned_keywords.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
+        pinned_keywords = sorted(pinned_keywords)
+        projects = Counter(ctx.facet_counts['project']).most_common(7)
         paged_results = []
         for i in range(0, min(5, ctx.hit_count)):
             paged_results.append(dict(
@@ -224,10 +226,12 @@ class ESGFSearch(object):
                 title=results[i].json['title'],
                 dataset_id=results[i].dataset_id,
                 number_of_files=results[i].number_of_files,
+                size=format_byte_size(results[i].json.get('size', '0')),
                 catalog_url=results[i].urls['THREDDS'][0][0]))
         return dict(
             hit_count=ctx.hit_count,
             categories=','.join(categories),
             keywords=','.join(keywords),
-            pinned_facets=','.join(pinned_facets),
+            pinned_keywords=','.join(pinned_keywords),
+            projects=projects,
             results=paged_results)
