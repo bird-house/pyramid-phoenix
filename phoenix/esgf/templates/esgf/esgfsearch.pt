@@ -141,7 +141,22 @@
                              id="esgfsearch-end"/>
                     </div>
                   </div>
-                 </div>
+                </div> <!-- end date -->
+
+                <!-- extent -->
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="heading-extent">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" href="#collapse-extent" aria-expanded="false" aria-controls="collapse-extent">
+                        <i class="fa fa-chevron-down"></i> EXTENT
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="collapse-extent" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-extent">
+                    <div class="panel-body">
+                    </div>
+                  </div>
+                </div> <!-- end extent -->
               </div>
             </div>
 
@@ -159,9 +174,9 @@
                         <a class="btn btn-danger btn-xs"
                            rel="tooltip"
                            data-toggle="tooltip"
-                           title="Clear all"
+                           title="Clear the current selection."
                            href="${request.current_route_path(_query=[])}">
-                           Clear all
+                           Clear
                         </a>
                       </div>
                     </span>
