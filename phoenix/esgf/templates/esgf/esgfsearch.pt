@@ -26,7 +26,7 @@
           categories: "${categories}",
           keywords: "${keywords}",
           pinnedKeywords: "${pinned_keywords}",
-          selectedFacet: '${selected}',
+          selectedCategory: '${selected}',
         });
     </script>
   </div>
