@@ -143,8 +143,9 @@
                   <div id="collapse-project" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-project">
                     <div class="panel-body">
                       <ul class="nav nav-tabs nav-stacked">
-                        <li role="presentation"><a href="#">CMIP5 <span class="badge pull-right">7</span></a></li>
-                        <li role="presentation"><a href="#">CORDEX <span class="badge pull-right">101</span></a></li>
+                        <li role="presentation" tal:repeat="project projects">
+                          <a href="#">${project[0]} <span class="badge pull-right">${project[1]}</span></a>
+                        </li>
                       </ul>
                     </div>
                   </div>

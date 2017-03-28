@@ -1,4 +1,5 @@
 import datetime
+from collections import Counter
 
 from webhelpers2.number import format_byte_size
 
@@ -217,6 +218,7 @@ class ESGFSearch(object):
             if facet not in self._constraints and len(ctx.facet_counts[facet]) == 1:
                 pinned_keywords.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
         pinned_keywords = sorted(pinned_keywords)
+        projects = Counter(ctx.facet_counts['project']).most_common(7)
         paged_results = []
         for i in range(0, min(5, ctx.hit_count)):
             paged_results.append(dict(
@@ -230,4 +232,5 @@ class ESGFSearch(object):
             categories=','.join(categories),
             keywords=','.join(keywords),
             pinned_keywords=','.join(pinned_keywords),
+            projects=projects,
             results=paged_results)
