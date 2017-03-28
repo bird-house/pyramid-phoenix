@@ -11,6 +11,7 @@
         keywords: null,
         pinnedFacets: null,
         selectedFacet: 'project',
+        bbox: null,
       };
       var searchOptions = $.extend(defaults, options);
       var selectedFacet = searchOptions.selectedFacet;
@@ -25,7 +26,7 @@
         init_facet_values();
         init_pinned_facets();
         initTimeConstraints();
-        //init_spatial_constraints();
+        initBBoxExtent();
         //updateHiddenFields();
       };
 
@@ -193,12 +194,6 @@
         $('#' + searchOptions.oid + '-temporal').click(function () {
           search();
         });
-
-        /*
-        $('#' + searchOptions.oid + '-spatial').click(function () {
-          search();
-        });
-        */
       };
 
       var initQuery = function() {
@@ -253,18 +248,20 @@
         });
       };
 
-      var init_spatial_constraints = function() {
-        $('#' + searchOptions.oid + '-bbox').keypress(function(e) {
-          // disable ENTER
-          if (e.which == 13) {
-            killEvent(e);
-            search();
-          };
+      var initBBoxExtent = function() {
+        var map = L.map('map', {
+          center: [5.6, 3.9],
+          zoom: 0,
+          zoomControl: false,
+        });  // map
+        // base layer
+        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {foo: 'bar'}).addTo(map);
+        map.on('moveend', function() {
+          searchOptions.bbox = map.getBounds().toBBoxString();
+          //search();
         });
-        $('#' + searchOptions.oid + '-bbox').on('change', function(){
-          search();
-        });
-      };
+
+      };   // bbox extent
 
       var init_facets = function() {
         $(".tm-facets").tagsManager({
