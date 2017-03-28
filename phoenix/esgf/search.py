@@ -226,6 +226,7 @@ class ESGFSearch(object):
                 title=results[i].json['title'],
                 dataset_id=results[i].dataset_id,
                 number_of_files=results[i].number_of_files,
+                size=format_byte_size(results[i].json.get('size', '0')),
                 catalog_url=results[i].urls['THREDDS'][0][0]))
         return dict(
             hit_count=ctx.hit_count,

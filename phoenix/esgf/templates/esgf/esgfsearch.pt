@@ -268,6 +268,7 @@
                               href="#collapse-${repeat.result.number}"
                               aria-expanded="false" aria-controls="collapse-${repeat.result.number}">
                               <i class="fa fa-chevron-right"></i> ${result.title}
+                              <span class="badge">${result.size}</span>
                               <span class="badge">${result.number_of_files}</span>
                             </a>
                           </h4>
