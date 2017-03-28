@@ -9,7 +9,7 @@
         constraints: null,
         categories: null,
         keywords: null,
-        pinnedFacets: null,
+        pinnedKeywords: null,
         selectedFacet: 'project',
         bbox: null,
       };
@@ -281,8 +281,8 @@
           delimiters: [9, 13, 44],
           tagClass: 'tm-tag tm-tag-disabled',
           isSelectable: false,
-          prefilled: searchOptions.pinnedFacets,
-          maxTags: numTags(searchOptions.pinnedFacets),
+          prefilled: searchOptions.pinnedKeywords,
+          maxTags: numTags(searchOptions.pinnedKeywords),
         });
       };
 

@@ -212,11 +212,11 @@ class ESGFSearch(object):
         results = ctx.search(batch_size=5, ignore_facet_check=False)
         categories = sorted([tag for tag in ctx.facet_counts if len(ctx.facet_counts[tag]) > 1])
         keywords = sorted(ctx.facet_counts[self.selected].keys())
-        pinned_facets = []
+        pinned_keywords = []
         for facet in ctx.facet_counts:
             if facet not in self._constraints and len(ctx.facet_counts[facet]) == 1:
-                pinned_facets.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
-        pinned_facets = sorted(pinned_facets)
+                pinned_keywords.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
+        pinned_keywords = sorted(pinned_keywords)
         paged_results = []
         for i in range(0, min(5, ctx.hit_count)):
             paged_results.append(dict(
@@ -229,5 +229,5 @@ class ESGFSearch(object):
             hit_count=ctx.hit_count,
             categories=','.join(categories),
             keywords=','.join(keywords),
-            pinned_facets=','.join(pinned_facets),
+            pinned_keywords=','.join(pinned_keywords),
             results=paged_results)
