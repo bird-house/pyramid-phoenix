@@ -178,13 +178,14 @@ class ESGFSearch(object):
                 continue
             if not variable_filter(self._constraints, variables=result.json):
                 continue
+            # build abstract
             abstract = ''
-            for field in ['type', 'variable', 'cf_standard_name', 'institute', 'experiment', 'time_frequency']:
+            for field in ['variable', 'cf_standard_name', 'institute', 'experiment', 'domain', 'time_frequency']:
                 if result.json.get(field):
                     abstract += ' <span class="label label-info">{}</span>'.format(
                         result.json.get(field)[0])
             if result.json.get('size'):
-                abstract = ' <span class="label label-info">{}</span>'.format(
+                abstract += ' <span class="label label-info">{}</span>'.format(
                     format_byte_size(int(result.json.get('size', '0'))))
             items.append(dict(
                 title=result.json.get('title', 'Unknown'),
