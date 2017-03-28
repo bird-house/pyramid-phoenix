@@ -5,7 +5,7 @@ from pyramid.view import view_config
 
 from owslib.wps import WebProcessingService
 
-from phoenix.esgfsearch.search import query_params_from_appstruct
+from phoenix.esgf.search import query_params_from_appstruct
 from phoenix.wizard.views import Wizard
 
 SOURCE_TYPES = {

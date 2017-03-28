@@ -4,8 +4,8 @@ from pyramid.settings import asbool
 from phoenix.wizard.views import Wizard
 from phoenix.utils import user_cert_valid
 
-from phoenix.esgfsearch.schema import ESGFSearchSchema
-from phoenix.esgfsearch.search import ESGFSearch
+from phoenix.esgf.schema import ESGFSearchSchema
+from phoenix.esgf.search import ESGFSearch
 
 import logging
 LOGGER = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ def includeme(config):
     config.add_view('phoenix.wizard.views.esgfsearch.ESGFSearchView',
                     route_name='wizard_esgf_search',
                     attr='view',
-                    renderer='phoenix.esgfsearch:templates/esgfsearch/esgfsearch.pt')
+                    renderer='phoenix.esgf:templates/esgf/esgfsearch.pt')
     config.add_route('wizard_esgf_logon', '/wizard/esgf_logon')
     config.add_view('phoenix.wizard.views.esgflogon.ESGFLogon',
                     route_name='wizard_esgf_logon',

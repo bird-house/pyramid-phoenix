@@ -77,7 +77,7 @@ def main(global_config, **settings):
     config.include('phoenix.monitor')
 
     # esgf search
-    config.include('phoenix.esgfsearch')
+    config.include('phoenix.esgf')
 
     # user profiles
     config.include('phoenix.people')
