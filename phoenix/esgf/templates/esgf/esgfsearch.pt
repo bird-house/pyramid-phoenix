@@ -174,9 +174,9 @@
                         <a class="btn btn-danger btn-xs"
                            rel="tooltip"
                            data-toggle="tooltip"
-                           title="Clear all"
+                           title="Clear the current selection."
                            href="${request.current_route_path(_query=[])}">
-                           Clear all
+                           Clear
                         </a>
                       </div>
                     </span>
