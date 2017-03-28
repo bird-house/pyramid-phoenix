@@ -114,7 +114,16 @@
                           <input type="checkbox" name="temporal" value="${true_val}"
                                  tal:attributes="checked temporal == true_val;"
                                  id="esgfsearch-temporal"/>
-                          Temporal Search
+                          Temporal Extent
+                        </label>
+                      </div>
+
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="bbox" value="${true_val}"
+                                 tal:attributes="checked bbox == true_val;"
+                                 id="esgfsearch-bbox"/>
+                          BBox Extent
                         </label>
                       </div>
 
