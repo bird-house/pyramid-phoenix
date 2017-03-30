@@ -1,3 +1,5 @@
+import dateparser
+
 from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
 from deform import Form, Button
@@ -67,9 +69,15 @@ class ExecuteProcess(MyView):
                         # add reference to complex input
                         result[inp.identifier].append(inp.reference)
         for inp in self.process.dataInputs:
+            # TODO: dupliate code in wizard.start
             # convert boolean
             if 'boolean' in inp.dataType and inp.identifier in result:
                 result[inp.identifier] = [val.lower() == 'true' for val in result[inp.identifier]]
+            elif inp.dataType in ['date', 'time', 'dateTime'] and inp.identifier in result:
+                result[inp.identifier] = [dateparser.parse(val) for val in result[inp.identifier]]
+            elif inp.dataType == 'BoundingBoxData' and inp.identifier in result:
+                result[inp.identifier] = [
+                    "{0.minx},{0.miny},{0.maxx},{0.maxy}".format(bbox) for bbox in result[inp.identifier]]
             # TODO: very dirty ... if single value then take the first
             if inp.maxOccurs < 2 and inp.identifier in result:
                 result[inp.identifier] = result[inp.identifier][0]
