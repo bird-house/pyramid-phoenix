@@ -58,14 +58,19 @@ class Inputs(object):
                 LOGGER.debug("proxy reference: %s", proxy_reference)
             if inp.mimeType:
                 category = 'ComplexType'
+                data = inp.data
+            elif inp.dataType == 'BoundingBoxData':
+                category = 'BoundingBoxType'
+                data = ["{0.minx},{0.miny},{0.maxx},{0.maxy}".format(bbox) for bbox in inp.data]
             else:
                 category = 'LiteralType'
+                data = inp.data
 
             items.append(dict(title=inp.title,
                               abstract=inp.abstract,
                               identifier=inp.identifier,
                               mime_type=inp.mimeType,
-                              data=inp.data,
+                              data=data,
                               reference=inp.reference,
                               proxy_reference=proxy_reference,
                               dataset=dataset,
