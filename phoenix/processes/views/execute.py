@@ -13,7 +13,7 @@ from phoenix.security import has_execute_permission
 
 from owslib.wps import WebProcessingService
 from owslib.wps import WPSExecution
-from owslib.wps import ComplexDataInput
+from owslib.wps import ComplexDataInput, BoundingBoxDataInput
 
 import logging
 logger = logging.getLogger(__name__)
@@ -114,13 +114,18 @@ class ExecuteProcess(MyView):
         inputs = appstruct_to_inputs(self.request, appstruct)
         # need to use ComplexDataInput
         complex_inpts = []
+        bbox_inpts = []
         for inpt in self.process.dataInputs:
             if 'ComplexData' in inpt.dataType:
                 complex_inpts.append(inpt.identifier)
+            elif 'BoundingBoxData' in inpt.dataType:
+                bbox_inpts.append(inpt.identifier)
         new_inputs = []
         for inpt in inputs:
             if inpt[0] in complex_inpts:
                 new_inputs.append((inpt[0], ComplexDataInput(inpt[1])))
+            elif inpt[0] in bbox_inpts:
+                new_inputs.append((inpt[0], BoundingBoxDataInput(inpt[1])))
             else:
                 new_inputs.append(inpt)
         inputs = new_inputs
