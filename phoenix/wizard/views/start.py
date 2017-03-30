@@ -63,6 +63,8 @@ def job_to_state(request, job_id):
             for inp in process.dataInputs:
                 if 'boolean' in inp.dataType and inp.identifier in inputs:
                     inputs[inp.identifier] = [val.lower() == 'true' for val in inputs[inp.identifier]]
+                elif inp.dataType in ['date', 'time', 'dateTime'] and inp.identifier in inputs:
+                    inputs[inp.identifier] = [dateparser.parse(val) for val in inputs[inp.identifier]]
                 if inp.maxOccurs < 2 and inp.identifier in inputs:
                     inputs[inp.identifier] = inputs[inp.identifier][0]
             state['wizard_literal_inputs'] = inputs
