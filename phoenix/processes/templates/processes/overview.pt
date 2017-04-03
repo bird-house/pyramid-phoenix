@@ -28,7 +28,7 @@
                             <h4 class="media-heading">
                               <a href="${item.url}">${item.title}</a>
 			      <span class="text-muted" aria-hidden="true">
-				<i tal:attributes="class 'fa fa-unlock text-danger' if item.public else 'fa fa-lock text-success'"></i>
+				<i tal:attributes="class 'fa fa-unlock text-success' if item.public else 'fa fa-lock text-danger'"></i>
                               </span>
                             </h4>
                             <div>
