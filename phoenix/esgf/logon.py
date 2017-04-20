@@ -55,6 +55,10 @@ def logon(username=None, password=None, hostname=None, interactive=False, outdir
     Logon to MyProxy and fetch proxy certificate.
     """
     outdir = outdir or os.curdir
+    # use myproxy patch
+    from phoenix.patch import patch_myproxy_client
+    patch_myproxy_client()
+    # end patch
     lm = LogonManager(esgf_dir=outdir, dap_config=os.path.join(outdir, 'dodsrc'))
     lm.logoff()
     lm.logon(username=username, password=password, hostname=hostname,
