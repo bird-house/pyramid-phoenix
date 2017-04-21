@@ -9,7 +9,7 @@ LOGGER = logging.getLogger(__name__)
 @subscriber(JobStarted)
 def notify_job_started(event):
     event.request.session.flash(
-        '<h4><img src="/static/phoenix/img/ajax-loader.gif"></img> Job Created. Please wait ...</h4>', queue='warning')
+        '<h4><img src="/static/phoenix/img/ajax-loader.gif"></img> Job Created. Please wait ...</h4>', queue='success')
 
 
 @subscriber(JobFinished)
