@@ -48,11 +48,11 @@ class Schema(colander.MappingSchema):
         title="Public access?",
         description="Check this option if your service has no access restrictions.",
         default=False)
-    c4i = colander.SchemaNode(
-        colander.Bool(),
-        title="Climate4Impact WPS Service?",
-        description="Check this option if your service uses Climate4Impact access tokens.",
-        default=False)
+    # c4i = colander.SchemaNode(
+    #     colander.Bool(),
+    #     title="Climate4Impact WPS Service?",
+    #     description="Check this option if your service uses Climate4Impact access tokens.",
+    #     default=False)
 
 
 @view_defaults(permission='admin', layout='default')
