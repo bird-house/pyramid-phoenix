@@ -128,7 +128,7 @@ class JobList(MyView):
         else:
             self.session.flash("Labels updated.", queue='success')
         return HTTPFound(location=self.request.route_path('monitor'))
-    
+
     @view_config(route_name='monitor', renderer='../templates/monitor/list.pt', accept='text/html')
     def view(self):
         if not self.request.has_permission('submit'):
