@@ -16,7 +16,7 @@
             <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
                 <span class="qq-upload-drop-area-text-selector"></span>
             </div>
-            <div class="qq-upload-button-selector qq-upload-button">
+            <div class="btn btn-success qq-upload-button-selector">
                 <div>Upload a file</div>
             </div>
                 <span class="qq-drop-processing-selector qq-drop-processing">
