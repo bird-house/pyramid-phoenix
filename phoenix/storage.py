@@ -3,6 +3,15 @@ import os
 import logging
 logger = logging.getLogger(__name__)
 
+
+def includeme(config):
+    # settings = config.registry.settings
+    logger.debug('Adding storage ...')
+
+    config.include('pyramid_storage')
+    config.add_route('download_storage', 'download/storage/{filename:.*}')
+    config.add_route('upload', 'upload')
+
 # upload helpers
 
 
