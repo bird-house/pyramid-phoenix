@@ -34,12 +34,12 @@ def navbar(context, request):
     if request.solr_activated:
         browse_items.append(nav_item('Birdhouse Solr', request.route_path('solrsearch'), icon='fa fa-sun-o'))
     subitems.append(dropdown('Browse', items=browse_items, icon='fa fa-search'))
-    if request.has_permission('submit'):
-        subitems.append(nav_item('Cart', request.route_path('cart'), icon='fa fa-shopping-cart'))
-    if request.has_permission('admin'):
-        subitems.append(nav_item('People', request.route_path('people'), icon="fa fa-users"))
-        subitems.append(nav_item('Supervisor', request.route_path('supervisor'), icon="fa fa-eye"))
-        subitems.append(nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench"))
+    # if request.has_permission('submit'):
+    #     subitems.append(nav_item('Cart', request.route_path('cart'), icon='fa fa-shopping-cart'))
+    # if request.has_permission('admin'):
+    #     subitems.append(nav_item('People', request.route_path('people'), icon="fa fa-users"))
+    #     subitems.append(nav_item('Supervisor', request.route_path('supervisor'), icon="fa fa-eye"))
+    #     subitems.append(nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench"))
 
     return dict(items=items, subitems=subitems, protocol=default_auth_protocol(request))
 
