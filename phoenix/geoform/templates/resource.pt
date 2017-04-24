@@ -157,32 +157,10 @@ $("#"+oid+"-fine-uploader").fineUploader({
     sizeLimit: 268435456, // 256 MB = 256 * 1024 * 1024 bytes
   },
   callbacks: {
-    onValidate: function(id, name) {
-      console.log("onValidate");
-    },
-    onSubmit: function(id, name) {
-      console.log("onSubmit");
-    },
-    onUpload: function(id, name) {
-      console.log("onUpload");
-    },
-    onProgress: function(id, name) {
-      console.log("onProgress");
-    },
-    onCancel: function(id, name) {
-      console.log("onCancel");
-    },
-    onError: function(id, name) {
-      console.log("onError");
-    },
     onComplete: function(id, name, response) {
       console.log("onComplete");
-      //var previewLink = qq(this.getItemByFileId(id)).getByClass('preview-link')[0];
-
       if (response.success) {
-        //previewLink.setAttribute("href", response.tempLink)
-        console.log(name);
-        $("#"+oid).val("${storage_url}"+name);
+        $("#"+oid).val("${storage_url}"+response.uuid+"/"+name);
         $("#"+oid).prop('title', name);
       }
     }
