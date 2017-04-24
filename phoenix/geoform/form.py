@@ -4,8 +4,6 @@ from UserDict import DictMixin
 import colander
 from pyramid.security import authenticated_userid
 
-from pyramid_storage.exceptions import FileNotAllowed
-
 import logging
 logger = logging.getLogger(__name__)
 
