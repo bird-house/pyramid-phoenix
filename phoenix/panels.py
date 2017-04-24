@@ -19,11 +19,12 @@ def navbar(context, request):
 
     items = list()
     items.append(nav_item('Processes', request.route_path('processes')))
-    if request.wizard_activated:
-        items.append(nav_item('Wizard', request.route_path('wizard')))
-    items.append(nav_item('Monitor', request.route_path('monitor')))
-    if request.map_activated:
-        items.append(nav_item('Map', request.route_path('map')))
+    if request.has_permission('edit'):
+        if request.wizard_activated:
+            items.append(nav_item('Wizard', request.route_path('wizard')))
+        items.append(nav_item('Monitor', request.route_path('monitor')))
+        if request.map_activated:
+            items.append(nav_item('Map', request.route_path('map')))
 
     subitems = list()
     subitems.append(nav_item('Dashboard', request.route_path('dashboard', tab='overview'), icon='fa fa-dashboard'))
