@@ -141,7 +141,7 @@ $("#"+oid+"-fine-uploader").fineUploader({
     //}
   },
   deleteFile: {
-    enabled: false,
+    enabled: true,
     endpoint: '/upload'
   },
   resume: {

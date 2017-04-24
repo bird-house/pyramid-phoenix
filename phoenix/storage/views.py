@@ -18,6 +18,20 @@ def download(request):
     return FileResponse(request.storage.path(filename))
 
 
+@view_config(route_name='upload_delete', renderer='json', request_method="DELETE", xhr=True, accept="application/json")
+def delete(request):
+    """
+    A DELETE request. If found, deletes a file with the corresponding
+    UUID from the servers filesystem.
+    """
+    try:
+        handle_delete(request, uuid=request.matchdict.get('uuid'))
+        result = {"success": True}
+    except Exception, e:
+        result = {"success": False, "error": e.message}
+    return result
+
+
 @view_config(route_name='upload', renderer='json', request_method="POST", xhr=True, accept="application/json")
 def upload(request):
     result = {"success": False}
@@ -28,9 +42,15 @@ def upload(request):
             result = {'success': True, 'filename': filename}
         except FileNotAllowed:
             result = {"success": False, 'error': "Filename extension not allowed", "preventRetry": True}
-        except Exception:
-            result = {"success": False, 'error': "Upload failed"}
+        except Exception, e:
+            result = {"success": False, 'error': e.message}
     return result
+
+
+def handle_delete(request, uuid):
+    """ Handles a filesystem delete based on UUID."""
+    location = request.storage.path(uuid)
+    shutil.rmtree(location)
 
 
 def handle_upload(request, attrs):
@@ -60,19 +80,10 @@ def handle_upload(request, attrs):
                 int(attrs['qqtotalparts']),
                 source_folder=os.path.dirname(dest),
                 dest=filename)
-            save_upload(request, filename=filename, folder=attrs['qquuid'])
+            request.storage.save_filename(filename=filename, folder=attrs['qquuid'])
             shutil.rmtree(dest_folder)
     else:  # not chunked
-        save_upload(request, fs=fs, filename=attrs['qqfilename'], folder=attrs['qquuid'])
-
-
-def save_upload(request, filename, fs=None, folder=None):
-    LOGGER.debug("save: filename=%s, fs=%s", filename, fs)
-    if not fs:
-        stored_filename = request.storage.save_filename(filename, folder=folder)
-    else:
-        stored_filename = request.storage.save_file(fs.file, filename=filename, folder=folder)
-    return stored_filename
+        request.storage.save_file(fs.file, filename=attrs['qqfilename'], folder=attrs['qquuid'])
 
 
 def save_chunk(fs, path):
