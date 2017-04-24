@@ -119,7 +119,7 @@
              });
              // uploader
 $("#"+oid+"-fine-uploader").fineUploader({
-  debug: true,
+  debug: false,
   template: 'qq-template',
   request: {
     endpoint: '/upload'
@@ -158,9 +158,8 @@ $("#"+oid+"-fine-uploader").fineUploader({
   },
   callbacks: {
     onComplete: function(id, name, response) {
-      console.log("onComplete");
       if (response.success) {
-        $("#"+oid).val("${storage_url}"+response.uuid+"/"+name);
+        $("#"+oid).val("${storage_url}"+response.filename);
         $("#"+oid).prop('title', name);
       }
     }

@@ -24,7 +24,8 @@ def upload(request):
     if 'qqfile' in request.POST:
         try:
             handle_upload(request, request.POST)
-            result = {'success': True, 'uuid': request.POST['qquuid']}
+            filename = os.path.join(request.POST['qquuid'], request.POST['qqfilename'])
+            result = {'success': True, 'filename': filename}
         except FileNotAllowed:
             result = {"success": False, 'error': "Filename extension not allowed", "preventRetry": True}
         except Exception:
