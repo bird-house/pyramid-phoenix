@@ -7,6 +7,7 @@
                  mime_types mime_types|field.widget.mime_types;
                  upload upload|field.widget.upload;
                  storage_url storage_url|field.widget.storage_url;
+                 size_limit size_limit|field.widget.size_limit;
                  style style|field.widget.style;
                  "
      tal:omit-tag="">
@@ -154,7 +155,7 @@ $("#"+oid+"-fine-uploader").fineUploader({
   validation: {
     allowedExtensions: ['nc'],
     itemLimit: 1,
-    sizeLimit: 268435456, // 256 MB = 256 * 1024 * 1024 bytes
+    sizeLimit: ${size_limit}
   },
   callbacks: {
     onComplete: function(id, name, response) {

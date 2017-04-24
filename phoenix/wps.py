@@ -297,7 +297,8 @@ class WPSSchema(colander.MappingSchema):
             cart=self.request.has_permission('submit'),
             mime_types=mime_types,
             upload=True,
-            storage_url=self.request.storage.base_url)
+            storage_url=self.request.storage.base_url,
+            size_limit=self.request.max_file_size * 1048576)
 
         resource_node = colander.SchemaNode(
             colander.String(),
