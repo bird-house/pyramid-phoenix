@@ -39,6 +39,7 @@ class ResourceWidget(Widget):
     mime_types = ['application/x-netcdf']
     upload = False
     storage_url = None
+    size_limit = 2 * 1024 * 1024  # 2 MB in bytes
     requirements = (('jquery.maskedinput', None),)
 
     def serialize(self, field, cstruct, **kw):

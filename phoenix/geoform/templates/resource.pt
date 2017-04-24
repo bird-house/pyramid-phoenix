@@ -7,6 +7,7 @@
                  mime_types mime_types|field.widget.mime_types;
                  upload upload|field.widget.upload;
                  storage_url storage_url|field.widget.storage_url;
+                 size_limit size_limit|field.widget.size_limit;
                  style style|field.widget.style;
                  "
      tal:omit-tag="">
@@ -119,7 +120,7 @@
              });
              // uploader
 $("#"+oid+"-fine-uploader").fineUploader({
-  debug: true,
+  debug: false,
   template: 'qq-template',
   request: {
     endpoint: '/upload'
@@ -141,7 +142,7 @@ $("#"+oid+"-fine-uploader").fineUploader({
     //}
   },
   deleteFile: {
-    enabled: false,
+    enabled: true,
     endpoint: '/upload'
   },
   resume: {
@@ -154,35 +155,12 @@ $("#"+oid+"-fine-uploader").fineUploader({
   validation: {
     allowedExtensions: ['nc'],
     itemLimit: 1,
-    sizeLimit: 268435456, // 256 MB = 256 * 1024 * 1024 bytes
+    sizeLimit: ${size_limit}
   },
   callbacks: {
-    onValidate: function(id, name) {
-      console.log("onValidate");
-    },
-    onSubmit: function(id, name) {
-      console.log("onSubmit");
-    },
-    onUpload: function(id, name) {
-      console.log("onUpload");
-    },
-    onProgress: function(id, name) {
-      console.log("onProgress");
-    },
-    onCancel: function(id, name) {
-      console.log("onCancel");
-    },
-    onError: function(id, name) {
-      console.log("onError");
-    },
     onComplete: function(id, name, response) {
-      console.log("onComplete");
-      //var previewLink = qq(this.getItemByFileId(id)).getByClass('preview-link')[0];
-
       if (response.success) {
-        //previewLink.setAttribute("href", response.tempLink)
-        console.log(name);
-        $("#"+oid).val("${storage_url}"+name);
+        $("#"+oid).val("${storage_url}"+response.filename);
         $("#"+oid).prop('title', name);
       }
     }
