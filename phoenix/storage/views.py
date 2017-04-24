@@ -11,14 +11,14 @@ from pyramid_storage.exceptions import FileNotAllowed
 from phoenix.storage import save_upload, save_chunk, combine_chunks
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 @view_config(route_name='download_storage')
 def download(request):
     filename = request.matchdict.get('filename')
     #filename = request.params['filename']
-    logger.debug("download: %s", request.storage.path(filename))
+    LOGGER.debug("download: %s", request.storage.path(filename))
     return FileResponse(request.storage.path(filename))
 
 
@@ -40,7 +40,7 @@ def handle_upload(request, attrs):
     if 'qqtotalparts' in attrs and int(attrs['qqtotalparts']) > 1:
         dest_folder = os.path.join(request.storage.path('chunks'), attrs['qquuid'])
         dest = os.path.join(dest_folder, "parts", str(attrs['qqpartindex']))
-        logger.debug('Chunked upload received')
+        LOGGER.debug('Chunked upload received')
         save_chunk(fs.file, dest)
 
         # If the last chunk has been sent, combine the parts.
@@ -60,7 +60,7 @@ def handle_upload(request, attrs):
 
 @view_config(route_name='upload', renderer='json', request_method="POST", xhr=True, accept="application/json")
 def upload(request):
-    logger.debug("upload post=%s", request.POST)
+    LOGGER.debug("upload post=%s", request.POST)
     result = {"success": False}
     if 'qqfile' in request.POST:
         try:
@@ -68,10 +68,10 @@ def upload(request):
             result = {'success': True}
         except FileNotAllowed:
             msg = "Filename extension not allowed"
-            logger.warn(msg)
+            LOGGER.warn(msg)
             result = {"success": False, 'error': msg, "preventRetry": True}
         except Exception:
             msg = "Upload failed"
-            logger.exception(msg)
+            LOGGER.exception(msg)
             result = {"success": False, 'error': msg}
     return result
