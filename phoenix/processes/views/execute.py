@@ -160,25 +160,23 @@ class ExecuteProcess(MyView):
         task_id = self.session.get('task_id')
         collection = self.request.db.jobs
         status = 'ProcessAccepted'
+        log = None
         if collection.find({"task_id": task_id}).count() == 1:
             job = collection.find_one({"task_id": task_id})
+            progress = job.get('progress', 0)
             status = job['status']
-            log = '\n'.join(job.get('log', ['No status message ...']))
+            log = job.get('log', ['No status message'])
             if status == 'ProcessSucceeded':
-                msg = '<h4>Job Succeeded <a href="{0}"> Results</a></h4><pre>{1}</pre>'
+                msg = '<h4>Job Succeeded <a href="{0}"> Results</a></h4>'
                 url = self.request.route_path('monitor_details', tab='outputs', job_id=job.get('identifier'))
-                self.session.flash(msg.format(url, log), queue="success")
+                self.session.flash(msg.format(url), queue="success")
             elif status == 'ProcessFailed':
-                msg = '<h4>Job Failed [{0}/100]</h4><pre>{1}</pre>'
-                self.session.flash(
-                    msg.format(job.get('progress', 0), log),
-                    queue="danger")
+                msg = '<h4>Job Failed [{0}/100]</h4>'
+                self.session.flash(msg.format(progress), queue="danger")
             else:
-                msg = '<h4><img src="/static/phoenix/img/ajax-loader.gif"></img> Job Running [{0}/100]</h4><pre>{1}</pre>'  # noqa
-                self.session.flash(
-                    msg.format(job.get('progress', 0), log),
-                    queue="warning")
-        return {'status': status}
+                msg = '<h4><img src="/static/phoenix/img/ajax-loader.gif"></img> Job Running [{0}/100]</h4>'  # noqa
+                self.session.flash(msg.format(progress), queue="warning")
+        return dict(status=status, log=log)
 
     @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt', accept='text/html')
     def view(self):
