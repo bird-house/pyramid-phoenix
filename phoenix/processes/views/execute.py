@@ -167,9 +167,18 @@ class ExecuteProcess(MyView):
             status = job['status']
             log = job.get('log', ['No status message'])
             if status == 'ProcessSucceeded':
-                msg = '<h4>Job Succeeded <a href="{0}"> Results</a></h4>'
+                execution = check_status(job['status_location'], verify=False)
+                for output in execution.processOutputs:
+                    if output.identifier == 'output':
+                        break
+                if output.reference:
+                    result = '<a href="{0}" class="btn btn-success btn-xs" target="_blank">Show Output</a>'.format(
+                        output.reference)
+                else:
+                    result = '{0}'.format(', '.join(output.data))
+                msg = '<h4>Job Succeeded: {1} <a href="{0}" class="btn btn-info btn-xs"> Details</a></h4>'
                 url = self.request.route_path('monitor_details', tab='outputs', job_id=job.get('identifier'))
-                self.session.flash(msg.format(url), queue="success")
+                self.session.flash(msg.format(url, result), queue="success")
             elif status == 'ProcessFailed':
                 msg = '<h4>Job Failed [{0}/100]</h4>'
                 self.session.flash(msg.format(progress), queue="danger")
