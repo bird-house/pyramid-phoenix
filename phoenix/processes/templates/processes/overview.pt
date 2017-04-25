@@ -9,7 +9,7 @@
             </div>
 
             <!-- pinned process -->
-            <section class="pinned">
+            <section class="pinned" tal:condition="processes">
               <div class="container">
                 <div class="row">
                   <div class="col-md-12">
@@ -23,7 +23,18 @@
                     <a href="${process.url}"><h4 class="list-group-item-heading">${process.title}</h4></a>
                     <p class="list-group-item-text">
                       ${process.description}
-                      <h5></h5>
+                    </p>
+                    <p>
+                      <div class="pull-left text-muted text-left" style="font-size: 1.0em;">
+                          <span>
+                              <i class="fa fa-cogs"></i>
+                              Hummingbird
+                          </span>
+                          <span>
+                              <i class="fa fa-star"></i>
+                              11
+                          </span>
+                      </div>
                     </p>
                   </div>
               </div>
