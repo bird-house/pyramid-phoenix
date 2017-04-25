@@ -5,10 +5,9 @@ LOGGER = logging.getLogger(__name__)
 def includeme(config):
     settings = config.registry.settings
 
-    LOGGER.debug('Monitor enabled ...')
-
     # views
     config.add_route('monitor', '/monitor')
     config.add_route('monitor_details', '/monitor/details/{job_id}/{tab}')
-
+    config.add_route('job_status', '/monitor/status')
+    # actions
     config.include('phoenix.monitor.views.actions')

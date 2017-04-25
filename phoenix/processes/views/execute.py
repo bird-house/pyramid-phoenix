@@ -113,8 +113,8 @@ class ExecuteProcess(MyView):
             return dict(process=self.process,
                         url=wps_describe_url(self.wps.url, self.processid),
                         form=e.render())
-        if not self.request.user:
-            return HTTPFound(location=self.request.route_url('processes_loading'))
+        if not self.request.user:  # not logged-in
+            return HTTPFound(location=self.request.route_url('job_status'))
         else:
             return HTTPFound(location=self.request.route_url('monitor'))
 
@@ -154,38 +154,6 @@ class ExecuteProcess(MyView):
             async=appstruct.get('_async_check', True))
         self.session['task_id'] = result.id
         self.request.registry.notify(JobStarted(self.request, result.id))
-
-    @view_config(route_name='processes_loading', renderer='../templates/processes/loading.pt')
-    def loading(self):
-        task_id = self.session.get('task_id')
-        collection = self.request.db.jobs
-        status = 'ProcessAccepted'
-        log = None
-        if collection.find({"task_id": task_id}).count() == 1:
-            job = collection.find_one({"task_id": task_id})
-            progress = job.get('progress', 0)
-            status = job['status']
-            log = job.get('log', ['No status message'])
-            if status == 'ProcessSucceeded':
-                execution = check_status(job['status_location'], verify=False)
-                for output in execution.processOutputs:
-                    if output.identifier == 'output':
-                        break
-                if output.reference:
-                    result = '<a href="{0}" class="btn btn-success btn-xs" target="_blank">Show Output</a>'.format(
-                        output.reference)
-                else:
-                    result = '{0}'.format(', '.join(output.data))
-                msg = '<h4>Job Succeeded: {1} <a href="{0}" class="btn btn-info btn-xs"> Details</a></h4>'
-                url = self.request.route_path('monitor_details', tab='outputs', job_id=job.get('identifier'))
-                self.session.flash(msg.format(url, result), queue="success")
-            elif status == 'ProcessFailed':
-                msg = '<h4>Job Failed [{0}/100]</h4>'
-                self.session.flash(msg.format(progress), queue="danger")
-            else:
-                msg = '<h4><img src="/static/phoenix/img/ajax-loader.gif"></img> Job Running [{0}/100]</h4>'  # noqa
-                self.session.flash(msg.format(progress), queue="warning")
-        return dict(status=status, log=log)
 
     @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt', accept='text/html')
     def view(self):
