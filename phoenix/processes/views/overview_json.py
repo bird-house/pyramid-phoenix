@@ -5,6 +5,7 @@ from phoenix.processes.views.overview import Overview
 import logging
 logger = logging.getLogger(__name__)
 
+
 @view_defaults(permission='view', layout="default")
 class OverviewJson(Overview):
     def __init__(self, request):
