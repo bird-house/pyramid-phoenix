@@ -10,7 +10,6 @@ LOGGER = logging.getLogger(__name__)
 
 def includeme(config):
     config.add_route('list_processes', 'processes/list.json')
-    config.add_route('check_job', '/processes/check_job.json')
 
 
 class ProcessesActions(object):
@@ -31,12 +30,3 @@ class ProcessesActions(object):
                 verify=False)
             processes[service_name] = [process.identifier for process in wps.processes]
         return processes
-
-    @view_config(route_name='check_job', renderer='json', permission='view')
-    def check_job(self):
-        status = 'running'
-        task_id = self.session.get('task_id')
-        collection = self.request.db.jobs
-        if collection.find({"task_id": task_id}).count() == 1:
-            status = 'ready'
-        return dict(status=status)
