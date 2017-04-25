@@ -18,7 +18,7 @@ from owslib.wps import WPSExecution
 from owslib.wps import ComplexDataInput, BoundingBoxDataInput
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 @view_defaults(permission='view', layout='default')
@@ -103,12 +103,12 @@ class ExecuteProcess(MyView):
         try:
             # TODO: uploader puts qqfile in controls
             controls = [control for control in controls if 'qqfile' not in control[0]]
-            logger.debug("before validate %s", controls)
+            LOGGER.debug("before validate %s", controls)
             appstruct = form.validate(controls)
-            logger.debug("before execute %s", appstruct)
+            LOGGER.debug("before execute %s", appstruct)
             self.execute(appstruct)
         except ValidationFailure, e:
-            logger.exception('validation of exectue view failed.')
+            LOGGER.exception('validation of exectue view failed.')
             self.session.flash("There are errors on this page.", queue='danger')
             return dict(process=self.process,
                         url=wps_describe_url(self.wps.url, self.processid),
