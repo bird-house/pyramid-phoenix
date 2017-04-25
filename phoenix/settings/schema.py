@@ -14,7 +14,10 @@ def deferred_processes_widget(node, kw):
     processes = kw.get('processes', [])
     choices = [('', "Select up to six public processes you'd like to show.")]
     for group in processes.keys():
-        options = zip(processes[group], processes[group])
+        options = []
+        for process in processes[group]:
+            option = "{}.{}".format(group, process)
+            options.append((option, process))
         choices.append(OptGroup(group, *options))
     return deform.widget.Select2Widget(values=choices, multiple=True)
 
