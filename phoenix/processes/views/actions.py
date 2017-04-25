@@ -9,19 +9,18 @@ LOGGER = logging.getLogger(__name__)
 
 
 def includeme(config):
-    config.add_route('process_list', 'processes/list.json')
+    config.add_route('list_processes', 'processes/list.json')
 
 
-@view_defaults(permission='admin')
 class ProcessesActions(object):
-    """Actions related to processe."""
+    """Actions related to processes."""
 
     def __init__(self, context, request):
         self.context = context
         self.request = request
         self.session = self.request.session
 
-    @view_config(route_name='process_list', renderer='json')
+    @view_config(route_name='list_processes', renderer='json', permission='admin')
     def list_processes(self):
         processes = {}
         for service in self.request.catalog.get_services(service_type=WPS_TYPE):

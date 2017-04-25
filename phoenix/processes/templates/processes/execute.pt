@@ -78,7 +78,7 @@
       <div class="well">
         <h4>${getattr(process, 'abstract', 'No Summary')}</h4>
         <div>
-          <a class="label label-warning" href="${url}" target="_blank">View as XML</a>
+          <a class="label label-warning" href="${url}" target="_blank" tal:condition="request.has_permission('user')">View as XML</a>
           <a tal:repeat="item process.metadata" tal:content="item.title" class="label label-info" href="${item.url}" target="_blank"/>
         </div>
       </div>

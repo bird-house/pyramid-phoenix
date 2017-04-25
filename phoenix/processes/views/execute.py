@@ -18,7 +18,7 @@ from owslib.wps import WPSExecution
 from owslib.wps import ComplexDataInput, BoundingBoxDataInput
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 @view_defaults(permission='view', layout='default')
@@ -103,20 +103,20 @@ class ExecuteProcess(MyView):
         try:
             # TODO: uploader puts qqfile in controls
             controls = [control for control in controls if 'qqfile' not in control[0]]
-            logger.debug("before validate %s", controls)
+            LOGGER.debug("before validate %s", controls)
             appstruct = form.validate(controls)
-            logger.debug("before execute %s", appstruct)
-            self.execute(appstruct)
+            LOGGER.debug("before execute %s", appstruct)
+            job_id = self.execute(appstruct)
         except ValidationFailure, e:
-            logger.exception('validation of exectue view failed.')
-            self.session.flash("There are errors on this page.", queue='danger')
+            self.session.flash("Page validation failed.", queue='danger')
             return dict(process=self.process,
                         url=wps_describe_url(self.wps.url, self.processid),
                         form=e.render())
-        if not self.request.user:
-            return HTTPFound(location=self.request.route_url('processes_loading'))
         else:
-            return HTTPFound(location=self.request.route_url('monitor'))
+            if not self.request.user:  # not logged-in
+                return HTTPFound(location=self.request.route_url('job_status', job_id=job_id))
+            else:
+                return HTTPFound(location=self.request.route_url('monitor'))
 
     def execute(self, appstruct):
         inputs = appstruct_to_inputs(self.request, appstruct)
@@ -154,25 +154,7 @@ class ExecuteProcess(MyView):
             async=appstruct.get('_async_check', True))
         self.session['task_id'] = result.id
         self.request.registry.notify(JobStarted(self.request, result.id))
-
-    @view_config(renderer='json', route_name='processes_check_queue')
-    def check_queue(self):
-        status = 'running'
-        task_id = self.session.get('task_id')
-        collection = self.request.db.jobs
-        if collection.find({"task_id": task_id}).count() == 1:
-            status = 'ready'
-        return dict(status=status)
-
-    @view_config(route_name='processes_loading', renderer='../templates/processes/loading.pt')
-    def loading(self):
-        task_id = self.session.get('task_id')
-        collection = self.request.db.jobs
-        if collection.find({"task_id": task_id}).count() == 1:
-            job = collection.find_one({"task_id": task_id})
-            return HTTPFound(location=self.request.route_path(
-                'monitor_details', tab='log', job_id=job.get('identifier')))
-        return {}
+        return result.id
 
     @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt', accept='text/html')
     def view(self):
