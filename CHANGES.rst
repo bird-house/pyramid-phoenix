@@ -1,6 +1,10 @@
 Changes
 *******
 
+current
+=======
+
+* added pinned processes.
 
 0.7.2 (2017-03-21)
 ==================
