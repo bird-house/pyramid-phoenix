@@ -31,5 +31,13 @@ class Overview(MyView):
             wps = WebProcessingService(url=self.request.route_url('owsproxy', service_name=service_name), verify=False)
             # TODO: need to fix owslib to handle special identifiers
             process = wps.describeprocess(identifier)
-            processes.append(dict(title=process.identifier, description=process.abstract[:100], url=url))
+            if process.abstract:
+                description = "{} [..]".format(process.abstract[:100])
+            else:
+                description = "No summary"
+            processes.append(dict(
+                title=process.identifier,
+                description=description,
+                url=url,
+                service_title=wps.identification.title))
         return dict(title="Web Processing Services", items=items, processes=processes)

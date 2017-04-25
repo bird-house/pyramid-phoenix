@@ -25,7 +25,8 @@ def deferred_processes_widget(node, kw):
 class ProcessesSchema(colander.MappingSchema):
     pinned_processes = colander.SchemaNode(
         colander.Set(),
-        widget=deferred_processes_widget
+        widget=deferred_processes_widget,
+        validator=colander.Length(min=0, max=6)
     )
 
 

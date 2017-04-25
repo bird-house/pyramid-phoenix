@@ -4,7 +4,7 @@
         <div class="container">
             <div class="page-header">
                 <h2>Processes
-                    <small>Please choose one of the available Web Processing Services.</small>
+                    <small>Please choose one of the available Web Processing Services or pinned Processes.</small>
                 </h2>
             </div>
 
@@ -16,9 +16,9 @@
                     <a href="${request.route_path('settings_processes')}" class="pull-right text-muted">
                       Customize pinned processes
                     </a>
-                    <h4 class="pull-left">
+                    <h5 class="pull-left">
                       Pinned processes
-                    </h4>
+                    </h5>
                   </div>
                 </div>
                 <div class="row">
@@ -33,11 +33,11 @@
                       <div class="pull-left text-muted text-left" style="font-size: 1.0em;">
                           <span>
                               <i class="fa fa-cogs"></i>
-                              Hummingbird
+                              ${process.service_title}
                           </span>
                           <span>
                               <i class="fa fa-star"></i>
-                              11
+                              3
                           </span>
                       </div>
                     </p>
