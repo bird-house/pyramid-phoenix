@@ -34,7 +34,7 @@ class JobStatus(MyView):
                     result = '<a href="{0}" class="btn btn-success btn-xs" target="_blank">Show Output</a>'.format(
                         output.reference)
                 else:
-                    result = '{0}'.format(', '.join(output.data))
+                    result = '<strong>{0}</strong>'.format(', '.join(output.data))
                 msg = '<h4>Job Succeeded: {1} <a href="{0}" class="btn btn-info btn-xs"> Details</a></h4>'
                 url = self.request.route_path('job_details', tab='outputs', job_id=self.job_id)
                 self.session.flash(msg.format(url, result), queue="success")
