@@ -1,5 +1,7 @@
 from pyramid.view import view_config, view_defaults
 
+from owslib.wps import WebProcessingService
+
 from phoenix.catalog import WPS_TYPE
 from phoenix.views import MyView
 
@@ -23,8 +25,11 @@ class Overview(MyView):
             items.append(dict(title=service.title, description=service.abstract, public=service.public, url=url))
         settings = self.request.db.settings.find_one() or {}
         processes = []
-        for process in settings.get('pinned_processes'):
-            service, identifier = process.split('.', 1)
-            url = self.request.route_path('processes_execute', _query=[('wps', service), ('process', identifier)])
-            processes.append(dict(title=identifier, description='Spot Checker checks ...', url=url))
+        for pinned in settings.get('pinned_processes'):
+            service_name, identifier = pinned.split('.', 1)
+            url = self.request.route_path('processes_execute', _query=[('wps', service_name), ('process', identifier)])
+            wps = WebProcessingService(url=self.request.route_url('owsproxy', service_name=service_name), verify=False)
+            # TODO: need to fix owslib to handle special identifiers
+            process = wps.describeprocess(identifier)
+            processes.append(dict(title=process.identifier, description=process.abstract[:100], url=url))
         return dict(title="Web Processing Services", items=items, processes=processes)
