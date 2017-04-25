@@ -1,4 +1,5 @@
 import deform
+from deform.widget import OptGroup
 import colander
 
 from phoenix.security import Admin, User, Guest
@@ -6,6 +7,23 @@ from phoenix.security import AUTH_PROTOCOLS
 
 import logging
 logger = logging.getLogger(__name__)
+
+
+@colander.deferred
+def deferred_processes_widget(node, kw):
+    processes = kw.get('processes', [])
+    choices = [('', "Select up to six public processes you'd like to show.")]
+    for group in processes.keys():
+        options = zip(processes[group], processes[group])
+        choices.append(OptGroup(group, *options))
+    return deform.widget.Select2Widget(values=choices, multiple=True)
+
+
+class ProcessesSchema(colander.MappingSchema):
+    pinned_processes = colander.SchemaNode(
+        colander.Set(),
+        widget=deferred_processes_widget
+    )
 
 
 class AuthProtocolSchema(colander.MappingSchema):

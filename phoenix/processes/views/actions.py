@@ -22,7 +22,7 @@ class ProcessesActions(object):
         self.session = self.request.session
 
     @view_config(route_name='process_list', renderer='json')
-    def process_list(self):
+    def list_processes(self):
         processes = {}
         for service in self.request.catalog.get_services(service_type=WPS_TYPE):
             service_name = self.request.catalog.get_service_name(service)

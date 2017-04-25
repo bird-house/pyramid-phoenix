@@ -13,7 +13,7 @@
               <div class="container">
                 <div class="row">
                   <div class="col-md-12">
-                    <a href="#" class="pull-right text-muted">
+                    <a href="${request.route_path('settings_processes')}" class="pull-right text-muted">
                       Customize pinned processes
                     </a>
                     <h4 class="pull-left">
