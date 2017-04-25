@@ -12,3 +12,5 @@ def includeme(config):
     config.add_route('processes_execute', '/processes/execute')
     config.add_route('processes_loading', '/processes/loading')
     config.add_route('processes_check_queue', '/processes/check_queue.json')
+
+    config.include('phoenix.processes.views.actions')

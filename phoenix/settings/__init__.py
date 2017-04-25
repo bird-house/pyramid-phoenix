@@ -17,6 +17,7 @@ def includeme(config):
     config.add_route('settings_github', '/settings/github')
     config.add_route('settings_esgf', '/settings/esgf')
     config.add_route('settings_solr', '/settings/solr/{tab}')
+    config.add_route('settings_processes', '/settings/processes')
 
     def add_github(event):
         settings = event.request.registry.settings
