@@ -1,4 +1,3 @@
-import uuid
 import datetime
 import json
 
@@ -65,7 +64,7 @@ def add_job(db, task_id, process_id, title=None, abstract=None,
     else:
         tags.append('sync')
     job = dict(
-        identifier=uuid.uuid4().get_hex(),
+        identifier=task_id,
         task_id=task_id,             # TODO: why not using as identifier?
         userid=userid or 'guest',
         is_workflow=is_workflow,
