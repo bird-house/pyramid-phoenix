@@ -106,17 +106,17 @@ class ExecuteProcess(MyView):
             LOGGER.debug("before validate %s", controls)
             appstruct = form.validate(controls)
             LOGGER.debug("before execute %s", appstruct)
-            self.execute(appstruct)
+            job_id = self.execute(appstruct)
         except ValidationFailure, e:
-            LOGGER.exception('validation of exectue view failed.')
-            self.session.flash("There are errors on this page.", queue='danger')
+            self.session.flash("Page validation failed.", queue='danger')
             return dict(process=self.process,
                         url=wps_describe_url(self.wps.url, self.processid),
                         form=e.render())
-        if not self.request.user:  # not logged-in
-            return HTTPFound(location=self.request.route_url('job_status'))
         else:
-            return HTTPFound(location=self.request.route_url('monitor'))
+            if not self.request.user:  # not logged-in
+                return HTTPFound(location=self.request.route_url('job_status', job_id=job_id))
+            else:
+                return HTTPFound(location=self.request.route_url('monitor'))
 
     def execute(self, appstruct):
         inputs = appstruct_to_inputs(self.request, appstruct)
@@ -154,6 +154,7 @@ class ExecuteProcess(MyView):
             async=appstruct.get('_async_check', True))
         self.session['task_id'] = result.id
         self.request.registry.notify(JobStarted(self.request, result.id))
+        return result.id
 
     @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt', accept='text/html')
     def view(self):

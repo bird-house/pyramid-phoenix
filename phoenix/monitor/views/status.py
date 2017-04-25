@@ -11,16 +11,17 @@ LOGGER = logging.getLogger(__name__)
 class JobStatus(MyView):
     def __init__(self, request):
         self.request = request
+        self.job_id = self.request.matchdict.get('job_id')
+        self.collection = self.request.db.jobs
         super(JobStatus, self).__init__(request, name='job_status', title='')
 
     @view_config(route_name='job_status', renderer='../templates/monitor/status.pt')
     def view(self):
-        task_id = self.session.get('task_id')
-        collection = self.request.db.jobs
         status = 'ProcessAccepted'
         log = None
-        if collection.find({"task_id": task_id}).count() == 1:
-            job = collection.find_one({"task_id": task_id})
+        # is job running?
+        if self.collection.find({"task_id": self.job_id}).count() == 1:
+            job = self.collection.find_one({"task_id": self.job_id})
             progress = job.get('progress', 0)
             status = job['status']
             log = job.get('log', ['No status message'])
