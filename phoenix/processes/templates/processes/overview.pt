@@ -3,10 +3,33 @@
     <div metal:fill-slot="content">
         <div class="container">
             <div class="page-header">
-                <h2>Web Processing Services
+                <h2>Processes
                     <small>Please choose one of the available Web Processing Services.</small>
                 </h2>
             </div>
+
+            <!-- pinned process -->
+            <section class="pinned">
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-12">
+                    <h4 class="title">
+                      Pinned Processes
+                    </h4>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4" tal:repeat="process processes">
+                    <a href="${process.url}"><h4 class="list-group-item-heading">${process.title}</h4></a>
+                    <p class="list-group-item-text">
+                      ${process.description}
+                      <h5></h5>
+                    </p>
+                  </div>
+              </div>
+            </section>
+
+            <section class="services">
 
             <ul class="list-group">
                 <li class="list-group-item" tal:repeat="item items">
@@ -27,8 +50,8 @@
                             </div>
                             <h4 class="media-heading">
                               <a href="${item.url}">${item.title}</a>
-			      <span class="text-muted" aria-hidden="true">
-				<i tal:attributes="class 'fa fa-unlock text-success' if item.public else 'fa fa-lock text-danger'"></i>
+			                          <span class="text-muted" aria-hidden="true">
+				                          <i tal:attributes="class 'fa fa-unlock text-success' if item.public else 'fa fa-lock text-danger'"></i>
                               </span>
                             </h4>
                             <div>
@@ -38,6 +61,8 @@
                     </div>
                 </li>
             </ul>
+
+            </section>
 
         </div>
     </div>

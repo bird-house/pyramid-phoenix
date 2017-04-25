@@ -21,4 +21,9 @@ class Overview(MyView):
             LOGGER.debug('got wps service name: %s', service_name)
             url = self.request.route_path('processes_list', _query=[('wps', service_name)])
             items.append(dict(title=service.title, description=service.abstract, public=service.public, url=url))
-        return dict(title="Web Processing Services", items=items)
+        processes = []
+        url = self.request.route_path('processes_execute', _query=[('wps', 'hummingbird'), ('process', 'spotchecker')])
+        processes.append(dict(title='spotchecker', description='Spot Checker checks ...', url=url))
+        url = self.request.route_path('processes_execute', _query=[('wps', 'hummingbird'), ('process', 'ncdump')])
+        processes.append(dict(title='ncdump', description='NCDump dumps ...', url=url))
+        return dict(title="Web Processing Services", items=items, processes=processes)
