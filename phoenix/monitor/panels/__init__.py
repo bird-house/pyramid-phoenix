@@ -29,20 +29,20 @@ def job_details(request, job_id):
     return details
 
 
-@panel_config(name='monitor_details', renderer='../templates/monitor/panels/details.pt')
+@panel_config(name='job_details', renderer='../templates/monitor/panels/details.pt')
 def details(context, request):
     job_id = request.matchdict.get('job_id')
     return dict(job=job_details(request, job_id=job_id))
 
 
-@panel_config(name='monitor_log', renderer='../templates/monitor/panels/log.pt')
+@panel_config(name='job_log', renderer='../templates/monitor/panels/log.pt')
 def log(context, request):
     job_id = request.matchdict.get('job_id')
     job = request.db.jobs.find_one({'identifier': job_id})
     return dict(log=job.get('log', []))
 
 
-@panel_config(name='monitor_xml', renderer='../templates/monitor/panels/xml.pt')
+@panel_config(name='job_xml', renderer='../templates/monitor/panels/xml.pt')
 def xml(context, request):
     job_id = request.matchdict.get('job_id')
     job = request.db.jobs.find_one({'identifier': job_id})

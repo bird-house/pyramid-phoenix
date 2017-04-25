@@ -9,10 +9,9 @@ logger = logging.getLogger(__name__)
 @view_defaults(permission='view', layout='default')
 class Details(MyView):
     def __init__(self, request):
-        super(Details, self).__init__(
-            request, name='monitor_details', title='Details')
+        super(Details, self).__init__(request, name='job_details', title='Job Details')
 
-    @view_config(route_name='monitor_details', renderer='../templates/monitor/details.pt')
+    @view_config(route_name='job_details', renderer='../templates/monitor/details.pt')
     def view(self):
         tab = self.request.matchdict.get('tab')
         job_id = self.request.matchdict.get('job_id')

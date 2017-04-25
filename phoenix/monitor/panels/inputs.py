@@ -28,7 +28,7 @@ class Inputs(object):
         self.request = request
         self.session = self.request.session
 
-    @panel_config(name='monitor_inputs', renderer='../templates/monitor/panels/media.pt')
+    @panel_config(name='job_inputs', renderer='../templates/monitor/panels/media.pt')
     def panel(self):
         job_id = self.request.matchdict.get('job_id')
         wps_output_url = self.request.registry.settings.get('wps.output.url')

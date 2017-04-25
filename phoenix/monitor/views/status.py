@@ -36,7 +36,7 @@ class JobStatus(MyView):
                 else:
                     result = '{0}'.format(', '.join(output.data))
                 msg = '<h4>Job Succeeded: {1} <a href="{0}" class="btn btn-info btn-xs"> Details</a></h4>'
-                url = self.request.route_path('monitor_details', tab='outputs', job_id=job.get('identifier'))
+                url = self.request.route_path('job_details', tab='outputs', job_id=job.get('identifier'))
                 self.session.flash(msg.format(url, result), queue="success")
             elif status == 'ProcessFailed':
                 msg = '<h4>Job Failed [{0}/100]</h4>'
