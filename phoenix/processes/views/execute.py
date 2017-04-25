@@ -155,15 +155,6 @@ class ExecuteProcess(MyView):
         self.session['task_id'] = result.id
         self.request.registry.notify(JobStarted(self.request, result.id))
 
-    @view_config(renderer='json', route_name='processes_check_queue')
-    def check_queue(self):
-        status = 'running'
-        task_id = self.session.get('task_id')
-        collection = self.request.db.jobs
-        if collection.find({"task_id": task_id}).count() == 1:
-            status = 'ready'
-        return dict(status=status)
-
     @view_config(route_name='processes_loading', renderer='../templates/processes/loading.pt')
     def loading(self):
         task_id = self.session.get('task_id')

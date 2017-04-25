@@ -4,7 +4,7 @@ $(function() {
 
   var checkQueue = function() {
     $.getJSON(
-      '/processes/check_queue.json',
+      '/processes/check_job.json',
       {},
       function(json) {
         if (json.status == 'ready') {
@@ -19,5 +19,5 @@ $(function() {
   timerId = setInterval(function() {
     checkQueue();
   }, 1000);
- 
+
 });
