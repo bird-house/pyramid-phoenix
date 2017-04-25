@@ -165,18 +165,19 @@ class ExecuteProcess(MyView):
             status = job['status']
             log = '\n'.join(job.get('log', ['No status message ...']))
             if status == 'ProcessSucceeded':
-                return HTTPFound(location=self.request.route_path(
-                    'monitor_details', tab='log', job_id=job.get('identifier')))
+                msg = '<h4>Job Succeeded <a href="{0}"> Results</a></h4><pre>{1}</pre>'
+                url = self.request.route_path('monitor_details', tab='outputs', job_id=job.get('identifier'))
+                self.session.flash(msg.format(url, log), queue="success")
             elif status == 'ProcessFailed':
-                msg = '<h4>Job Failed: {0} [{1}/100]</h4><pre>{2}</pre>'
+                msg = '<h4>Job Failed [{0}/100]</h4><pre>{1}</pre>'
                 self.session.flash(
-                    msg.format(status, job.get('progress', 0), log),
+                    msg.format(job.get('progress', 0), log),
                     queue="danger")
             else:
-                msg = '<h4><img src="/static/phoenix/img/ajax-loader.gif"></img> Job Running: {0} [{1}/100]</h4><pre>{2}</pre>'  # noqa
+                msg = '<h4><img src="/static/phoenix/img/ajax-loader.gif"></img> Job Running [{0}/100]</h4><pre>{1}</pre>'  # noqa
                 self.session.flash(
-                    msg.format(status, job.get('progress', 0), log),
-                    queue="success")
+                    msg.format(job.get('progress', 0), log),
+                    queue="warning")
         return {'status': status}
 
     @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt', accept='text/html')
