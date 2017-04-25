@@ -15,9 +15,9 @@ $(function() {
     );
   };
 
-  // refresh job list each 1 secs ...
+  // refresh job list each 3 secs ...
   timerId = setInterval(function() {
     checkQueue();
-  }, 1000);
+  }, 3000);
 
 });

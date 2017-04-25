@@ -159,11 +159,25 @@ class ExecuteProcess(MyView):
     def loading(self):
         task_id = self.session.get('task_id')
         collection = self.request.db.jobs
+        status = 'ProcessAccepted'
         if collection.find({"task_id": task_id}).count() == 1:
             job = collection.find_one({"task_id": task_id})
-            return HTTPFound(location=self.request.route_path(
-                'monitor_details', tab='log', job_id=job.get('identifier')))
-        return {}
+            status = job['status']
+            log = '\n'.join(job.get('log', ['No status message ...']))
+            if status == 'ProcessSucceeded':
+                return HTTPFound(location=self.request.route_path(
+                    'monitor_details', tab='log', job_id=job.get('identifier')))
+            elif status == 'ProcessFailed':
+                msg = '<h4>Job Failed: {0} [{1}/100]</h4><pre>{2}</pre>'
+                self.session.flash(
+                    msg.format(status, job.get('progress', 0), log),
+                    queue="danger")
+            else:
+                msg = '<h4><img src="/static/phoenix/img/ajax-loader.gif"></img> Job Running: {0} [{1}/100]</h4><pre>{2}</pre>'  # noqa
+                self.session.flash(
+                    msg.format(status, job.get('progress', 0), log),
+                    queue="success")
+        return {'status': status}
 
     @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt', accept='text/html')
     def view(self):
