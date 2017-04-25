@@ -13,15 +13,17 @@
               <div class="container">
                 <div class="row">
                   <div class="col-md-12">
-                    <h4 class="title">
-                      Pinned Processes
+                    <h4>
+                      Pinned processes
                     </h4>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-md-4" tal:repeat="process processes">
-                    <a href="${process.url}"><h4 class="list-group-item-heading">${process.title}</h4></a>
-                    <p class="list-group-item-text">
+                    <a href="${process.url}">
+                      <h4>${process.title}</h4>
+                    </a>
+                    <p>
                       ${process.description}
                     </p>
                     <p>
