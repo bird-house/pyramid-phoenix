@@ -5,7 +5,9 @@
   </div>
 
   <div metal:fill-slot="content">
-    <pre class="pre-scrollable log-output" tal:condition="log">${"\n".join( ["{0:3d} {1}".format(i+1, log[i]) for i in range(len(log))])}</pre>
+    <div class="container">
+      <pre class="pre-scrollable log-output" tal:condition="log">${"\n".join( ["{0:3d} {1}".format(i+1, log[i]) for i in range(len(log))])}</pre>
+    </div>
   </div>
 
 </metal:block>
