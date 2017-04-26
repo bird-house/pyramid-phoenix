@@ -4,6 +4,7 @@ from pyramid.httpexceptions import HTTPFound
 from deform import Form, Button
 from deform import ValidationFailure
 
+from phoenix.security import default_auth_protocol
 from phoenix.views import MyView
 
 import logging
@@ -234,8 +235,10 @@ class Wizard(MyView):
             return self.cancel()
 
         if not self.request.has_permission('submit'):
-            self.session.flash("You are not allowed to execute jobs. Please sign-in.", queue='warning')
-
+            msg = """<strong>Warning:</strong> You are not allowed to use the Wizard.
+            Please <a href="{0}" class="alert-link">sign in</a> and wait for account activation."""
+            msg = msg.format(self.request.route_path('account_login', protocol=default_auth_protocol(self.request)))
+            self.session.flash(msg, queue='warning')
         result = dict(title=self.title, form=form.render(self.appstruct()))
         custom = self.custom_view()
         return dict(result, **custom)

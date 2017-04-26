@@ -131,7 +131,7 @@ class JobList(MyView):
 
     @view_config(route_name='monitor', renderer='../templates/monitor/list.pt', accept='text/html')
     def view(self):
-        if not self.request.has_permission('submit'):
+        if not self.request.has_permission('edit'):
             msg = """<strong>Warning:</strong> You are not allowed to monitor jobs.
             Please <a href="%s" class="alert-link">sign in</a>.
             """ % self.request.route_path('account_login', protocol=default_auth_protocol(self.request))
