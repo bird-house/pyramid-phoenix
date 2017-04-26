@@ -62,6 +62,12 @@
               <i class="fa fa-calendar"></i> ${job.get('finished', '???')}
             </span>
           </dd>
+          <p/>
+          <dd>
+            <span class="text-muted" data-toggle="tooltip" title="Job note.">
+              <i class="fa fa-sticky-note-o"></i> ${job.get('caption', '???')}
+            </span>
+          </dd>
         </dl>
       </div>
       <div class="col-md-3">
@@ -83,9 +89,11 @@
       <div class="col-md-6">
         <dl>
           <dt>Status Message</dt>
-          <dd>${job.get('status_message')}</dd>
-          <dt>Caption</dt>
-          <dd>${job.get('caption', '???')}</dd>
+          <dd>
+            <span class="text-muted" data-toggle="tooltip" title="Job status message">
+              ${job.get('status_message')}
+            </span>
+          </dd>
         </dl>
       </div>
     </div>
