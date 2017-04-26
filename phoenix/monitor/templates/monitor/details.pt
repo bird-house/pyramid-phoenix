@@ -31,7 +31,7 @@
       <ul class="nav nav-tabs">
          <li class="${'active' if active=='log' else ''}" role="presentation">
           <a href="${request.route_path('job_details', job_id=job_id, tab='log')}">
-            <i class="fa fa-list"></i> Job Log
+            <i class="fa fa-comments-o"></i> Job Log
           </a>
         </li>
         <li class="${'active' if active=='inputs' else ''}" role="presentation">
