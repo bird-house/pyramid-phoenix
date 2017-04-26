@@ -7,7 +7,12 @@
 
   <div metal:fill-slot="content">
     <div class="container">
-      <h1 class="page-header">Monitor</h1>
+      <h2 class="page-header">
+        Job Monitor
+        <small>
+          This page shows the status of all your jobs.
+        </small>
+      </h2>
       <div class="panel panel-default">
         <div class="panel-body">
           <form id="from-contents" method="post"
@@ -24,12 +29,12 @@
                   <a tal:attributes="class 'btn btn-default active' if access=='private' else 'btn btn-default'"
                      href="${request.route_path('monitor', _query=[('access', 'private'), ('status', status), ('limit', limit)])}">
                     Private</a>
-                  <a tal:condition="request.has_permission('admin')" 
+                  <a tal:condition="request.has_permission('admin')"
                      tal:attributes="class 'btn btn-default active' if access=='all' else 'btn btn-default'"
                      href="${request.route_path('monitor', _query=[('access', 'all'), ('status', status), ('limit', limit)])}">
                     All</a>
                 </div>
-              
+
                 <div class="col-md-2">
                   <label class="control-label">
                     <select id="status-select" class="form-control">
@@ -49,49 +54,49 @@
                     Process Status
                   </label>
                 </div>
-                
+
                 <tal:button tal:repeat="button buttons">
                   <button name="${button.name}" type="submit" class="${button.css_class}">
                     ${button.title}
                   </button>
                 </tal:button>
-                
+
               </div>
             </div>
-            
+
             <div class="panel panel-default">
               <div class="panel-heading">
-             
+
                 <span class="panel-title">
                   <ul class="nav nav-pills" role="tablist">
-                    <li role="presentation" 
+                    <li role="presentation"
                         tal:attributes="class 'active' if status=='Running' else ''">
-                      <a href="${request.route_path('monitor', _query=[('status', 'Running'), ('access', access), ('limit', limit)])}" 
-                         class="btn btn-link"> 
+                      <a href="${request.route_path('monitor', _query=[('status', 'Running'), ('access', access), ('limit', limit)])}"
+                         class="btn btn-link">
                         Running <span class="badge">${count_running}</span>
                       </a>
                     </li>
                     <li role="presentation"
                         tal:attributes="class 'active' if status=='Finished' else ''">
-                      <a href="${request.route_path('monitor', _query=[('status', 'Finished'), ('access', access), ('limit', limit)])}" 
-                         class="btn btn-link"> 
+                      <a href="${request.route_path('monitor', _query=[('status', 'Finished'), ('access', access), ('limit', limit)])}"
+                         class="btn btn-link">
                         Finished <span class="badge">${count_finished}</span>
                       </a>
                     </li>
                     <li role="presentation">
-                      <a href="${request.current_route_path()}" 
-                         class="btn btn-link disabled" 
+                      <a href="${request.current_route_path()}"
+                         class="btn btn-link disabled"
                          tal:condition="not tag">
                         Matching <span class="badge">${count}</span>
                       </a>
-                      <a href="${request.route_path('monitor', _query=[('tag', tag)])}" 
-                         class="btn btn-link disabled" 
+                      <a href="${request.route_path('monitor', _query=[('tag', tag)])}"
+                         class="btn btn-link disabled"
                          tal:condition="tag"
                          tal:define="taglabel 'label-danger' if tag=='bug' else 'label-info'">
                         Matching <span class="label ${taglabel}">${tag}</span> <span class="badge">${count}</span>
                       </a>
                     </li>
-               
+
                     <li>
                       <div class="btn-group pull-right">
 
@@ -105,7 +110,7 @@
                             </a>
                           </li>
                         </ul>
-                        
+
                         <a class="btn btn-success"
                            rel="tooltip"
                            data-toggle="tooltip"
@@ -124,7 +129,7 @@
                 </table>
               </div>
             </div>
-            
+
             <div class="col-md-2">
               <label class="control-label">
                 <select id="limit-select" class="form-control">
@@ -138,13 +143,13 @@
                 Entries on page
               </label>
             </div>
-            
-            <div tal:define="numpages max(1, (count+limit-1)/limit); 
+
+            <div tal:define="numpages max(1, (count+limit-1)/limit);
                              last min((page + 1) * limit, count);
                              previous request.route_path('monitor', _query=[('page', page-1), ('limit', limit), ('status', status), ('access', access), ('sort', sort)]);
                              next request.route_path('monitor', _query=[('page', page+1), ('limit', limit), ('status', status), ('access', access), ('sort', sort)])"
                  class="clearfix">
-            
+
               <nav>
                 <ul class="pagination pull-right">
                   <li tal:attributes="class '' if page > 0 else 'disabled'">
@@ -161,14 +166,14 @@
                     </a>
                   </li>
                 </ul>
-             
+
               </nav>
-            
+
             </div>
 
           </form>
         </div>
-     
+
       </div>
 
       <!-- Add form to edit job caption -->
@@ -185,7 +190,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Add form to edit job labels -->
       <div id="labels-form" class="modal fade">
         <div class="modal-dialog">
@@ -200,8 +205,8 @@
           </div>
         </div>
       </div>
-    
+
     </div>
   </div>
-   
+
 </metal:block>
