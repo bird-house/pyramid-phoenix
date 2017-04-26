@@ -27,20 +27,24 @@ class Overview(MyView):
         processes = []
         if 'pinned_processes' in settings:
             for pinned in settings.get('pinned_processes'):
-                service_name, identifier = pinned.split('.', 1)
-                url = self.request.route_path(
-                    'processes_execute', _query=[('wps', service_name), ('process', identifier)])
-                wps = WebProcessingService(
-                    url=self.request.route_url('owsproxy', service_name=service_name), verify=False)
-                # TODO: need to fix owslib to handle special identifiers
-                process = wps.describeprocess(identifier)
-                if process.abstract:
-                    description = "{} [..]".format(process.abstract[:100])
+                try:
+                    service_name, identifier = pinned.split('.', 1)
+                    url = self.request.route_path(
+                        'processes_execute', _query=[('wps', service_name), ('process', identifier)])
+                    wps = WebProcessingService(
+                        url=self.request.route_url('owsproxy', service_name=service_name), verify=False)
+                    # TODO: need to fix owslib to handle special identifiers
+                    process = wps.describeprocess(identifier)
+                    if process.abstract:
+                        description = "{} [..]".format(process.abstract[:100])
+                    else:
+                        description = "No summary"
+                except Exception, err:
+                    LOGGER.warn("could not add pinned process %s", pinned)
                 else:
-                    description = "No summary"
-                processes.append(dict(
-                    title=process.identifier,
-                    description=description,
-                    url=url,
-                    service_title=wps.identification.title))
+                    processes.append(dict(
+                        title=process.identifier,
+                        description=description,
+                        url=url,
+                        service_title=wps.identification.title))
         return dict(title="Web Processing Services", items=items, processes=processes)
