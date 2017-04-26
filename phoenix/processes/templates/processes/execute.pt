@@ -69,11 +69,13 @@
 
   <div metal:fill-slot="content">
     <div class="container">
-      <div class="page-header">
-        <h2>${process.title}
-            <small>Please complete the form below and submit a job.</small>
-        </h2>
-      </div>
+      <!-- header -->
+      <h2 class="page-header">
+        <i class="fa fa-cog"></i> ${process.title}
+        <small>
+          Please complete the form below and submit a job.
+        </small>
+      </h2>
 
       <div class="well">
         <h4>${getattr(process, 'abstract', 'No Summary')}</h4>
