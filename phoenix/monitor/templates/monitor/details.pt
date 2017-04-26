@@ -19,10 +19,9 @@
   <div metal:fill-slot="content">
     <div class="container">
       <div class="page-header">
-        <h2>Details
+        <h2>Job Details
             <small>
-              Please note that offline jobs are scheduled and may take a long time to run.
-              This page will continue to poll offline jobs when they are running.
+              This page shows the job details and polls the status of a running job.
             </small>
         </h2>
       </div>

@@ -21,13 +21,20 @@
     <h3 class="panel-title">
       ${job.get('title')}
       <i class="${icon_class}" data-toggle="tooltip" title="${job.get('status')}"> </i>
-      <div tal:condition="request.has_permission('submit')" class="pull-right">
+      <div tal:condition="request.has_permission('submit') and job.get('status') == 'ProcessSucceeded'" class="pull-right">
         <a class="btn btn-danger btn-xs"
            rel="tooltip"
            data-toggle="tooltip"
            title="Delete Job"
            href="${request.route_path('delete_job', job_id=job.get('identifier'))}">
-          Delete Job
+          <i class="fa fa-trash"></i> Delete Job
+        </a>
+        <a class="btn btn-success btn-xs"
+           rel="tooltip"
+           data-toggle="tooltip"
+           title="Restart Job"
+           href="${request.route_path('restart_job', job_id=job.get('identifier'))}">
+          <i class="fa fa-repeat"></i> Restart Job
         </a>
       </div>
     </h3>
@@ -39,12 +46,28 @@
     <div>
       <div class="col-md-3">
         <dl>
-          <dt>Status</dt>
-          <dd class="${status_class}">${job.get('status')}</dd>
-          <dt>Duration</dt>
-          <dd>${job.get('duration', '???')}</dd>
-          <dt>Finished</dt>
-          <dd>${job.get('finished', '???')}</dd>
+          <dd>
+            <span class="text-muted ${status_class}" data-toggle="tooltip" title="Job running status.">
+              <i class="${icon_class}"></i> ${job.get('status')}
+            </span>
+          </dd>
+          <p/>
+          <dd>
+            <span class="text-muted" data-toggle="tooltip" title="Duration time of Job.">
+              <i class="fa fa-clock-o"></i> Ran for ${job.get('duration', '???')}
+            </span>
+          </dd>
+          <dd>
+            <span class="text-muted" data-toggle="tooltip" title="Job finished at date.">
+              <i class="fa fa-calendar"></i> ${job.get('finished', '???')}
+            </span>
+          </dd>
+          <p/>
+          <dd>
+            <span class="text-muted" data-toggle="tooltip" title="Job note.">
+              <i class="fa fa-sticky-note-o"></i> ${job.get('caption', '???')}
+            </span>
+          </dd>
         </dl>
       </div>
       <div class="col-md-3">
@@ -66,9 +89,11 @@
       <div class="col-md-6">
         <dl>
           <dt>Status Message</dt>
-          <dd>${job.get('status_message')}</dd>
-          <dt>Caption</dt>
-          <dd>${job.get('caption', '???')}</dd>
+          <dd>
+            <span class="text-muted" data-toggle="tooltip" title="Job status message">
+              ${job.get('status_message')}
+            </span>
+          </dd>
         </dl>
       </div>
     </div>
