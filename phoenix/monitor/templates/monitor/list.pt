@@ -7,174 +7,170 @@
 
   <div metal:fill-slot="content">
     <div class="container">
+      <!-- header -->
       <h2 class="page-header">
-        Job Monitor
+        <i class="fa fa-tasks"></i> Job Monitor
         <small>
           This page shows the status of all your jobs.
         </small>
-      </h2>
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <form id="from-contents" method="post"
-                action="${request.route_path('monitor', _query=[('status', status)])}">
-            <div class="form-group">
-              <div class="btn-toolbar">
-                <div class="btn-group">
-                  <a tal:attributes="class 'btn btn-default' if access else 'btn btn-default active'"
-                     href="${request.route_path('monitor', _query=[('status', status)])}">
-                    My Jobs</a>
-                  <a tal:attributes="class 'btn btn-default active' if access=='public' else 'btn btn-default'"
-                     href="${request.route_path('monitor', _query=[('access', 'public'), ('status', status), ('limit', limit)])}">
-                    Public</a>
-                  <a tal:attributes="class 'btn btn-default active' if access=='private' else 'btn btn-default'"
-                     href="${request.route_path('monitor', _query=[('access', 'private'), ('status', status), ('limit', limit)])}">
-                    Private</a>
-                  <a tal:condition="request.has_permission('admin')"
-                     tal:attributes="class 'btn btn-default active' if access=='all' else 'btn btn-default'"
-                     href="${request.route_path('monitor', _query=[('access', 'all'), ('status', status), ('limit', limit)])}">
-                    All</a>
-                </div>
+      </h2><!-- header -->
 
-                <div class="col-md-2">
-                  <label class="control-label">
-                    <select id="status-select" class="form-control">
-                      <option value="${request.route_path('monitor', _query=[('access', access)])}">All</option>
-                      <optgroup>
-                        <option value="${request.route_path('monitor', _query=[('status', 'Running'), ('access', access)])}"
-                                tal:attributes="selected True if 'Running'==status else False">Running</option>
-                        <option value="${request.route_path('monitor', _query=[('status', 'Finished'), ('access', access)])}"
-                                tal:attributes="selected True if 'Finished'==status else False">Finished</option>
-                      </optgroup>
-                      <optgroup>
-                        <option value="${request.route_path('monitor', _query=[('status', new_status), ('access', access), ('limit', limit)])}"
-                                tal:attributes="selected True if new_status==status else False"
-                                tal:repeat="new_status ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused', 'ProcessSucceeded', 'ProcessFailed']">${new_status}</option>
-                      </optgroup>
-                    </select>
-                    Process Status
-                  </label>
-                </div>
-
-                <tal:button tal:repeat="button buttons">
-                  <button name="${button.name}" type="submit" class="${button.css_class}">
-                    ${button.title}
-                  </button>
-                </tal:button>
-
+      <!-- monitor form -->
+      <div class="container">
+        <form id="from-contents" method="post"
+              action="${request.route_path('monitor', _query=[('status', status)])}">
+          <div class="form-group">
+            <div class="btn-toolbar">
+              <div class="btn-group">
+                <a tal:attributes="class 'btn btn-default' if access else 'btn btn-default active'"
+                   href="${request.route_path('monitor', _query=[('status', status)])}">
+                  My Jobs</a>
+                <a tal:attributes="class 'btn btn-default active' if access=='public' else 'btn btn-default'"
+                   href="${request.route_path('monitor', _query=[('access', 'public'), ('status', status), ('limit', limit)])}">
+                  Public</a>
+                <a tal:attributes="class 'btn btn-default active' if access=='private' else 'btn btn-default'"
+                   href="${request.route_path('monitor', _query=[('access', 'private'), ('status', status), ('limit', limit)])}">
+                  Private</a>
+                <a tal:condition="request.has_permission('admin')"
+                   tal:attributes="class 'btn btn-default active' if access=='all' else 'btn btn-default'"
+                   href="${request.route_path('monitor', _query=[('access', 'all'), ('status', status), ('limit', limit)])}">
+                  All</a>
               </div>
-            </div>
 
-            <div class="panel panel-default">
-              <div class="panel-heading">
-
-                <span class="panel-title">
-                  <ul class="nav nav-pills" role="tablist">
-                    <li role="presentation"
-                        tal:attributes="class 'active' if status=='Running' else ''">
-                      <a href="${request.route_path('monitor', _query=[('status', 'Running'), ('access', access), ('limit', limit)])}"
-                         class="btn btn-link">
-                        Running <span class="badge">${count_running}</span>
-                      </a>
-                    </li>
-                    <li role="presentation"
-                        tal:attributes="class 'active' if status=='Finished' else ''">
-                      <a href="${request.route_path('monitor', _query=[('status', 'Finished'), ('access', access), ('limit', limit)])}"
-                         class="btn btn-link">
-                        Finished <span class="badge">${count_finished}</span>
-                      </a>
-                    </li>
-                    <li role="presentation">
-                      <a href="${request.current_route_path()}"
-                         class="btn btn-link disabled"
-                         tal:condition="not tag">
-                        Matching <span class="badge">${count}</span>
-                      </a>
-                      <a href="${request.route_path('monitor', _query=[('tag', tag)])}"
-                         class="btn btn-link disabled"
-                         tal:condition="tag"
-                         tal:define="taglabel 'label-danger' if tag=='bug' else 'label-info'">
-                        Matching <span class="label ${taglabel}">${tag}</span> <span class="badge">${count}</span>
-                      </a>
-                    </li>
-
-                    <li>
-                      <div class="btn-group pull-right">
-
-                        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          Sort <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                          <li tal:repeat="param ['user', 'process', 'service', 'duration', 'finished', 'created']">
-                            <a href="${request.route_path('monitor', _query=[('status', status), ('access', access), ('sort', param), ('limit', limit)])}">
-                              <i tal:define="invisible 'invisible' if sort != param else ''" class="fa fa-check ${invisible}"></i> ${param.title()}
-                            </a>
-                          </li>
-                        </ul>
-
-                        <a class="btn btn-success"
-                           rel="tooltip"
-                           data-toggle="tooltip"
-                           title="Refresh job list"
-                           href="${request.route_path('monitor', _query=[('page', page), ('limit', limit), ('status', status), ('access', access)])}">
-                          <i class="fa fa-lg fa-repeat"></i>
-                        </a>
-                      </div>
-                    </li>
-                  </ul>
-                </span>
+              <div class="col-md-2">
+                <label class="control-label">
+                  <select id="status-select" class="form-control">
+                    <option value="${request.route_path('monitor', _query=[('access', access)])}">All</option>
+                    <optgroup>
+                      <option value="${request.route_path('monitor', _query=[('status', 'Running'), ('access', access)])}"
+                              tal:attributes="selected True if 'Running'==status else False">Running</option>
+                      <option value="${request.route_path('monitor', _query=[('status', 'Finished'), ('access', access)])}"
+                              tal:attributes="selected True if 'Finished'==status else False">Finished</option>
+                    </optgroup>
+                    <optgroup>
+                      <option value="${request.route_path('monitor', _query=[('status', new_status), ('access', access), ('limit', limit)])}"
+                              tal:attributes="selected True if new_status==status else False"
+                              tal:repeat="new_status ['ProcessAccepted', 'ProcessStarted', 'ProcessPaused', 'ProcessSucceeded', 'ProcessFailed']">${new_status}</option>
+                    </optgroup>
+                  </select>
+                  Process Status
+                </label>
               </div>
-              <div class="panel-body">
-                <table class="table table-condensed table-striped table-hover" tal:condition="count">
-                  <tal:rows replace="structure grid" />
-                </table>
-              </div>
+
+              <tal:button tal:repeat="button buttons">
+                <button name="${button.name}" type="submit" class="${button.css_class}">
+                  ${button.title}
+                </button>
+              </tal:button>
+
             </div>
+          </div>
 
-            <div class="col-md-2">
-              <label class="control-label">
-                <select id="limit-select" class="form-control">
-                  <option
-                     value="${request.route_path('monitor', _query=[('status', status), ('access', access), ('limit', new_limit)])}"
-                     tal:attributes="selected True if new_limit==limit else False"
-                     tal:repeat="new_limit [10, 20, 50, 100]">
-                    ${new_limit}
-                  </option>
-                </select>
-                Entries on page
-              </label>
-            </div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
 
-            <div tal:define="numpages max(1, (count+limit-1)/limit);
-                             last min((page + 1) * limit, count);
-                             previous request.route_path('monitor', _query=[('page', page-1), ('limit', limit), ('status', status), ('access', access), ('sort', sort)]);
-                             next request.route_path('monitor', _query=[('page', page+1), ('limit', limit), ('status', status), ('access', access), ('sort', sort)])"
-                 class="clearfix">
-
-              <nav>
-                <ul class="pagination pull-right">
-                  <li tal:attributes="class '' if page > 0 else 'disabled'">
-                    <a tal:attributes="href previous if page > 0 else '#'" aria-label="Previous">
-                      <span aria-hidden="true">&laquo;</span>
+              <span class="panel-title">
+                <ul class="nav nav-pills" role="tablist">
+                  <li role="presentation"
+                      tal:attributes="class 'active' if status=='Running' else ''">
+                    <a href="${request.route_path('monitor', _query=[('status', 'Running'), ('access', access), ('limit', limit)])}"
+                       class="btn btn-link">
+                      Running <span class="badge">${count_running}</span>
                     </a>
                   </li>
+                  <li role="presentation"
+                      tal:attributes="class 'active' if status=='Finished' else ''">
+                    <a href="${request.route_path('monitor', _query=[('status', 'Finished'), ('access', access), ('limit', limit)])}"
+                       class="btn btn-link">
+                      Finished <span class="badge">${count_finished}</span>
+                    </a>
+                  </li>
+                  <li role="presentation">
+                    <a href="${request.current_route_path()}"
+                       class="btn btn-link disabled"
+                       tal:condition="not tag">
+                      Matching <span class="badge">${count}</span>
+                    </a>
+                    <a href="${request.route_path('monitor', _query=[('tag', tag)])}"
+                       class="btn btn-link disabled"
+                       tal:condition="tag"
+                       tal:define="taglabel 'label-danger' if tag=='bug' else 'label-info'">
+                      Matching <span class="label ${taglabel}">${tag}</span> <span class="badge">${count}</span>
+                    </a>
+                  </li>
+
                   <li>
-                    <span>page ${page+1} of ${numpages}</span>
-                  </li>
-                  <li tal:attributes="class '' if last < count else 'disabled'">
-                    <a tal:attributes="href next if last < count else '#'" aria-label="Next">
-                      <span aria-hidden="true">&raquo;</span>
-                    </a>
+                    <div class="btn-group pull-right">
+
+                      <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Sort <span class="caret"></span>
+                      </a>
+                      <ul class="dropdown-menu">
+                        <li tal:repeat="param ['user', 'process', 'service', 'duration', 'finished', 'created']">
+                          <a href="${request.route_path('monitor', _query=[('status', status), ('access', access), ('sort', param), ('limit', limit)])}">
+                            <i tal:define="invisible 'invisible' if sort != param else ''" class="fa fa-check ${invisible}"></i> ${param.title()}
+                          </a>
+                        </li>
+                      </ul>
+
+                      <a class="btn btn-success"
+                         rel="tooltip"
+                         data-toggle="tooltip"
+                         title="Refresh job list"
+                         href="${request.route_path('monitor', _query=[('page', page), ('limit', limit), ('status', status), ('access', access)])}">
+                        <i class="fa fa-lg fa-repeat"></i>
+                      </a>
+                    </div>
                   </li>
                 </ul>
-
-              </nav>
-
+              </span>
             </div>
+            <div class="panel-body">
+              <table class="table table-condensed table-striped table-hover" tal:condition="count">
+                <tal:rows replace="structure grid" />
+              </table>
+            </div>
+          </div>
 
-          </form>
-        </div>
+          <div class="col-md-2">
+            <label class="control-label">
+              <select id="limit-select" class="form-control">
+                <option
+                   value="${request.route_path('monitor', _query=[('status', status), ('access', access), ('limit', new_limit)])}"
+                   tal:attributes="selected True if new_limit==limit else False"
+                   tal:repeat="new_limit [10, 20, 50, 100]">
+                  ${new_limit}
+                </option>
+              </select>
+              Entries on page
+            </label>
+          </div>
 
-      </div>
+          <div tal:define="numpages max(1, (count+limit-1)/limit);
+                           last min((page + 1) * limit, count);
+                           previous request.route_path('monitor', _query=[('page', page-1), ('limit', limit), ('status', status), ('access', access), ('sort', sort)]);
+                           next request.route_path('monitor', _query=[('page', page+1), ('limit', limit), ('status', status), ('access', access), ('sort', sort)])"
+               class="clearfix">
+            <nav>
+              <ul class="pagination pull-right">
+                <li tal:attributes="class '' if page > 0 else 'disabled'">
+                  <a tal:attributes="href previous if page > 0 else '#'" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                <li>
+                  <span>page ${page+1} of ${numpages}</span>
+                </li>
+                <li tal:attributes="class '' if last < count else 'disabled'">
+                  <a tal:attributes="href next if last < count else '#'" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div><!-- pagination -->
+        </form><!-- contents form -->
+      </div><!-- form container -->
 
       <!-- Add form to edit job caption -->
       <div id="caption-form" class="modal fade">
@@ -189,7 +185,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div><!-- edit caption form -->
 
       <!-- Add form to edit job labels -->
       <div id="labels-form" class="modal fade">
@@ -204,7 +200,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div><!-- edit labels form -->
 
     </div>
   </div>
