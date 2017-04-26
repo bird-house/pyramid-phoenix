@@ -1,85 +1,95 @@
 <metal:block use-macro="main_template">
 
     <div metal:fill-slot="content">
-        <div class="container">
-            <div class="page-header">
-                <h2>Processes
-                    <small>Please choose one of the available Web Processing Services or pinned Processes.</small>
-                </h2>
+      <div class="container">
+        <!-- header -->
+        <h2 class="page-header">
+          <i class="fa fa-cogs"></i> Processes
+          <small>
+            Choose one of the pinned processes or a Web Processing Service.
+          </small>
+        </h2>
+
+        <!-- pinned process -->
+        <div class="container" tal:condition="processes">
+          <div class="row">
+            <div class="col-md-12">
+              <a href="${request.route_path('settings_processes')}" class="pull-right text-muted"
+                tal:condition="request.has_permission('admin')">
+                Customize pinned processes
+              </a>
+              <h4 class="pull-left">
+                Pinned processes
+              </h4>
             </div>
-
-            <!-- pinned process -->
-            <section class="pinned" tal:condition="processes">
-              <div class="container">
-                <div class="row">
-                  <div class="col-md-12">
-                    <a href="${request.route_path('settings_processes')}" class="pull-right text-muted"
-                      tal:condition="request.has_permission('admin')">
-                      Customize pinned processes
-                    </a>
-                    <h5 class="pull-left">
-                      Pinned processes
-                    </h5>
-                  </div>
+          </div><!-- row -->
+          <div class="row">
+            <div class="col-md-4" tal:repeat="process processes">
+              <a href="${process.url}">
+                <h4>${process.title}</h4>
+              </a>
+              <p><span class="text-muted">${process.description}</span></p>
+              <p>
+                <div class="pull-left text-muted text-left" style="font-size: 1.0em;">
+                    <span>
+                        <i class="fa fa-cogs"></i>
+                        ${process.service_title}
+                    </span>
+                    <span>
+                        <i class="fa fa-star"></i>
+                        3
+                    </span>
                 </div>
-                <div class="row">
-                  <div class="col-md-4" tal:repeat="process processes">
-                    <a href="${process.url}">
-                      <h4>${process.title}</h4>
-                    </a>
-                    <p>
-                      ${process.description}
-                    </p>
-                    <p>
-                      <div class="pull-left text-muted text-left" style="font-size: 1.0em;">
-                          <span>
-                              <i class="fa fa-cogs"></i>
-                              ${process.service_title}
-                          </span>
-                          <span>
-                              <i class="fa fa-star"></i>
-                              3
-                          </span>
-                      </div>
-                    </p>
-                  </div>
-              </div>
-            </section>
+              </p>
+            </div>
+          </div><!-- row -->
+        </div><!-- container pinned -->
 
-            <section class="services">
-
-            <ul class="list-group">
+        <!-- section wps services -->
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <p/>
+              <h4 class="pull-left">
+                Available Web Processing Services
+              </h4>
+            </div>
+          </div> <!-- row -->
+          <div class="row">
+            <div class="col-md-12">
+              <ul class="list-group">
                 <li class="list-group-item" tal:repeat="item items">
                     <div class="media">
-                        <span class="pull-left text-muted" aria-hidden="true">
-                            <i class='fa fa-cogs'></i>
-                        </span>
-                        <div class="media-body">
-                            <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
-                                <span>
-                                    <i class="fa fa-cogs"></i>
-                                    7
-                                </span>
-                                <span>
-                                    <i class="fa fa-star"></i>
-                                    11
-                                </span>
-                            </div>
-                            <h4 class="media-heading">
-                              <a href="${item.url}">${item.title}</a>
-			                          <span class="text-muted" aria-hidden="true">
-				                          <i tal:attributes="class 'fa fa-unlock text-success' if item.public else 'fa fa-lock text-danger'"></i>
+                      <span class="pull-left text-muted" aria-hidden="true">
+                          <i class='fa fa-cogs'></i>
+                      </span>
+                      <div class="media-body">
+                          <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
+                              <span>
+                                  <i class="fa fa-cogs"></i>
+                                  7
                               </span>
-                            </h4>
-                            <div>
-                                <span>${item.description}</span>
-                            </div>
-                        </div>
-                    </div>
+                              <span>
+                                  <i class="fa fa-star"></i>
+                                  11
+                              </span>
+                          </div>
+                          <h4 class="media-heading">
+                            <a href="${item.url}">${item.title}</a>
+  	                          <span class="text-muted" aria-hidden="true">
+  		                          <i tal:attributes="class 'fa fa-unlock text-success' if item.public else 'fa fa-lock text-danger'"></i>
+                            </span>
+                          </h4>
+                          <div>
+                              <span class="text-muted">${item.description}</span>
+                          </div>
+                      </div><!-- media body -->
+                    </div><!-- media -->
                 </li>
-            </ul>
-
-            </section>
+              </ul>
+            </div>
+          </div> <!-- row -->
+        </div> <!-- container services-->
 
         </div>
     </div>
