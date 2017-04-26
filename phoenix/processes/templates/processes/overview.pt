@@ -11,7 +11,7 @@
         </h2>
 
         <!-- pinned process -->
-        <div class="container" tal:condition="processes">
+        <div class="container-fluid" tal:condition="processes">
           <div class="row">
             <div class="col-md-12">
               <a href="${request.route_path('settings_processes')}" class="pull-right text-muted"
@@ -22,27 +22,27 @@
                 Pinned processes
               </h4>
             </div>
-          </div><!-- row -->
+          </div><!-- row title -->
           <div class="row">
-            <div class="col-md-4" tal:repeat="process processes">
-              <a href="${process.url}">
-                <h4>${process.title}</h4>
-              </a>
-              <p><span class="text-muted">${process.description}</span></p>
-              <p>
-                <div class="pull-left text-muted text-left" style="font-size: 1.0em;">
-                    <span>
-                        <i class="fa fa-cogs"></i>
-                        ${process.service_title}
-                    </span>
-                    <span>
-                        <i class="fa fa-star"></i>
-                        3
-                    </span>
-                </div>
-              </p>
+            <div class="col-xs-6 col-md-4" tal:repeat="process processes[:3]">
+              <div class="thumbnail">
+                <div class="caption">
+                  <a href="${process.url}"><h4>${process.title}</h4></a>
+                  <p><span class="text-muted">${process.description}</span></p>
+                </div><!-- thumbnail caption -->
+              </div><!-- thumbnail -->
             </div>
-          </div><!-- row -->
+          </div><!-- row box -->
+          <div class="row">
+            <div class="col-xs-6 col-md-4" tal:repeat="process processes[3:]">
+              <div class="thumbnail">
+                <div class="caption">
+                  <a href="${process.url}"><h4>${process.title}</h4></a>
+                  <p><span class="text-muted">${process.description}</span></p>
+                </div><!-- thumbnail caption -->
+              </div><!-- thumbnail -->
+            </div>
+          </div><!-- row box -->
         </div><!-- container pinned -->
 
         <!-- section wps services -->
