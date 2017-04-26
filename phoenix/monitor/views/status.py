@@ -20,8 +20,8 @@ class JobStatus(MyView):
         status = 'ProcessAccepted'
         log = None
         # is job running?
-        if self.collection.find({"task_id": self.job_id}).count() == 1:
-            job = self.collection.find_one({"task_id": self.job_id})
+        if self.collection.find({"identifier": self.job_id}).count() == 1:
+            job = self.collection.find_one({"identifier": self.job_id})
             progress = job.get('progress', 0)
             status = job['status']
             log = job.get('log', ['No status message'])
