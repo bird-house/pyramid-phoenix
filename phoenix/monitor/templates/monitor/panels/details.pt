@@ -39,12 +39,22 @@
     <div>
       <div class="col-md-3">
         <dl>
-          <dt>Status</dt>
-          <dd class="${status_class}">${job.get('status')}</dd>
-          <dt>Duration</dt>
-          <dd>${job.get('duration', '???')}</dd>
-          <dt>Finished</dt>
-          <dd>${job.get('finished', '???')}</dd>
+          <dd>
+            <span class="text-muted ${status_class}" data-toggle="tooltip" title="Job running status.">
+              <i class="${icon_class}"></i> ${job.get('status')}
+            </span>
+          </dd>
+          <p/>
+          <dd>
+            <span class="text-muted" data-toggle="tooltip" title="Duration time of Job.">
+              <i class="fa fa-clock-o"></i> Ran for ${job.get('duration', '???')}
+            </span>
+          </dd>
+          <dd>
+            <span class="text-muted" data-toggle="tooltip" title="Job finished at date.">
+              <i class="fa fa-calendar"></i> ${job.get('finished', '???')}
+            </span>
+          </dd>
         </dl>
       </div>
       <div class="col-md-3">
