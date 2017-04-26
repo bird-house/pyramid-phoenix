@@ -21,13 +21,20 @@
     <h3 class="panel-title">
       ${job.get('title')}
       <i class="${icon_class}" data-toggle="tooltip" title="${job.get('status')}"> </i>
-      <div tal:condition="request.has_permission('submit')" class="pull-right">
+      <div tal:condition="request.has_permission('submit') and job.get('status') == 'ProcessSucceeded'" class="pull-right">
         <a class="btn btn-danger btn-xs"
            rel="tooltip"
            data-toggle="tooltip"
            title="Delete Job"
            href="${request.route_path('delete_job', job_id=job.get('identifier'))}">
-          Delete Job
+          Delete
+        </a>
+        <a class="btn btn-success btn-xs"
+           rel="tooltip"
+           data-toggle="tooltip"
+           title="Restart Job"
+           href="${request.route_path('restart_job', job_id=job.get('identifier'))}">
+          Restart
         </a>
       </div>
     </h3>
