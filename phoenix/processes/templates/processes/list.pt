@@ -11,7 +11,7 @@
         <div class="well">
           <h4>${description}</h4>
           <div>
-            <a class="label label-warning" href="${url}" target="_blank" tal:condition="request.has_permission('user')">Capabilities (XML)</a>
+            <a class="label label-warning" href="${url}" target="_blank" tal:condition="request.has_permission('submit')">Capabilities (XML)</a>
             <a tal:condition="provider_site" tal:condition="provider_name" class="label label-info" href="${provider_site}" target="_blank">${provider_name}</a>
           </div>
         </div>

@@ -5,6 +5,7 @@ current
 =======
 
 * added pinned processes.
+* updated ncmws 2.2.7.
 
 0.7.2 (2017-03-21)
 ==================
