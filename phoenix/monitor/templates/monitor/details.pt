@@ -18,13 +18,13 @@
 
   <div metal:fill-slot="content">
     <div class="container">
-      <div class="page-header">
-        <h2>Job Details
-          <small>
-            This page shows the job details and polls the status of a running job.
-          </small>
-        </h2>
-      </div>
+      <!-- header -->
+      <h2 class="page-header">
+        <i class="fa fa-info-circle text-muted"></i> Job Details
+        <small>
+          This page shows the job details and polls the status of a running job.
+        </small>
+      </h2><!-- header -->
 
       ${panel('job_details')}
 

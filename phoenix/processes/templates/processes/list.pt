@@ -2,43 +2,41 @@
 
   <div metal:fill-slot="content">
     <div class="container">
-        <div class="page-header">
-            <h2>${title}
-                <small>Please choose one of the processes to submit a job.</small>
-            </h2>
-        </div>
+      <h2 class="page-header"><i class="fa fa-cogs text-muted"></i> ${title}
+          <small>Please choose one of the processes to submit a job.</small>
+      </h2><!-- header -->
 
-        <div class="well">
-          <h4>${description}</h4>
-          <div>
-            <a class="label label-warning" href="${url}" target="_blank" tal:condition="request.has_permission('submit')">Capabilities (XML)</a>
-            <a tal:condition="provider_site" tal:condition="provider_name" class="label label-info" href="${provider_site}" target="_blank">${provider_name}</a>
-          </div>
-        </div>
-
+      <div class="well">
+        <h4>${description}</h4>
         <div>
-          <ul class="list-group">
-            <li class="list-group-item" tal:repeat="item items">
-              <div class="media">
-                <span class="pull-left text-muted" aria-hidden="true">
-                  <i class="fa fa-cog"></i>
-                </span>
-                <div class="media-body">
-                  <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
-                    <span>
-                      <i class="fa fa-star"></i> 3
-                    </span>
-                  </div>
-                  <h4 class="media-heading">
-                    <a href="${item.url}">${item.title}</a>
-                  </h4>
-                  ${item.description}
-                </div>
-              </div>
-            </li>
-          </ul>
+          <a class="label label-warning" href="${url}" target="_blank" tal:condition="request.has_permission('submit')">Capabilities (XML)</a>
+          <a tal:condition="provider_site" tal:condition="provider_name" class="label label-info" href="${provider_site}" target="_blank">${provider_name}</a>
         </div>
-      </div>
-    </div>
+      </div><!-- service description -->
+
+      <div>
+        <ul class="list-group">
+          <li class="list-group-item" tal:repeat="item items">
+            <div class="media">
+              <span class="pull-left text-muted" aria-hidden="true">
+                <i class="fa fa-cog"></i>
+              </span>
+              <div class="media-body">
+                <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
+                  <span>
+                    <i class="fa fa-star"></i> 3
+                  </span>
+                </div>
+                <h4 class="media-heading">
+                  <a href="${item.url}">${item.title}</a>
+                </h4>
+                ${item.description}
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div><!-- processes -->
+    </div><!-- container -->
+  </div>
 
 </metal:block>
