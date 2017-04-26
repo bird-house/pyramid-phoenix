@@ -51,8 +51,16 @@ class ExecuteProcess(MyView):
                 verify=False)
             # TODO: need to fix owslib to handle special identifiers
             self.process = self.wps.describeprocess(self.processid)
-        super(ExecuteProcess, self).__init__(request, name='processes_execute',
-                                             title='')
+        super(ExecuteProcess, self).__init__(request, name='processes_execute', title='')
+
+    def breadcrumbs(self):
+        breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
+        breadcrumbs.append(dict(route_path=self.request.route_path('processes'), title='Processes'))
+        breadcrumbs.append(dict(route_path=self.request.route_path(
+            'processes_list', _query=[('wps', self.service_name)]),
+            title=self.service_name))
+        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.process.identifier))
+        return breadcrumbs
 
     def appstruct(self):
         # TODO: not a nice way to get inputs ... should be cleaned up in owslib
