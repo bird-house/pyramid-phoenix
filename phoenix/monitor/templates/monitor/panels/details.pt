@@ -16,14 +16,9 @@
      status_class="text-danger"
 ?>
 
-<!-- project description -->
-<div class="well">
-  <h4>${job.get('abstract') or 'No summary'}</h4>
-</div>
-
 <div class="panel panel-default">
   <div class="panel-body">
-    <div>
+    <div class="container">
       <div class="col-md-3">
         <dl>
           <dd>
@@ -49,7 +44,7 @@
             </span>
           </dd>
         </dl>
-      </div>
+      </div><!-- column -->
       <div class="col-md-3">
         <dl>
           <dt>Progress</dt>
@@ -65,8 +60,8 @@
             <a tal:repeat="label job.get('tags', [])" href="/monitor?tag=${label}" class="label label-info">${label}</a>
           </dd>
         </dl>
-      </div>
-      <div class="col-md-6">
+      </div><!-- column -->
+      <div class="col-md-5">
         <dl>
           <dt>
             <div tal:condition="request.has_permission('submit') and job.get('status') == 'ProcessSucceeded'" class="pull-right">
@@ -97,7 +92,11 @@
             </span>
           </dd>
         </dl>
-      </div>
-    </div>
-  </div>
+      </div><!-- column -->
+    </div><!-- conatiner -->
+  </div><!-- panel body -->
+</div><!-- panel -->
+<!-- project description -->
+<div class="well">
+  <h4>${job.get('abstract') or 'No summary'}</h4>
 </div>
