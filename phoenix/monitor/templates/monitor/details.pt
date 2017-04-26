@@ -32,7 +32,7 @@
       <ul class="nav nav-tabs">
          <li class="${'active' if active=='log' else ''}" role="presentation">
           <a href="${request.route_path('job_details', job_id=job_id, tab='log')}">
-            <i class="fa fa-list"></i> Log
+            <i class="fa fa-list"></i> Job Log
           </a>
         </li>
         <li class="${'active' if active=='inputs' else ''}" role="presentation">
@@ -46,7 +46,7 @@
             <i class="fa fa-arrow-circle-o-up"></i> Outputs
           </a>
         </li>
-        <li class="${'active' if active=='xml' else ''}" role="presentation" tal:condition="request.has_permission('user')">
+        <li class="${'active' if active=='xml' else ''}" role="presentation" tal:condition="request.has_permission('submit')">
           <a href="${request.route_path('job_details', job_id=job_id, tab='xml')}">
             <i class="fa fa-code"></i> View as XML
           </a>
