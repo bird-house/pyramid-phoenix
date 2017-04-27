@@ -23,6 +23,13 @@ body {
 /* .breadcrumbs {
     background: white;
 } */
+
+/* Flash messages
+----------------------- */
+.flash-messages {
+  margin-top: -20px;
+}
+
 /* Home
 ----------------------- */
 .jumbotron {
