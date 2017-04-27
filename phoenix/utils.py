@@ -45,7 +45,21 @@ class ActionButton(object):
     def __repr__(self):
         return u'ActionButton({0}, {1})'.format(self.name, self.title)
 
+
 # misc
+
+def headline(text, max_length=120):
+    if text:
+        if max_length < 25:
+            max_length = 25
+        elif max_length > 120:
+            max_length = 120
+        caption = text.split('.', 1)[0].strip() + '.'
+        if len(caption) > max_length:
+            caption = "{} ...".format(caption[:max_length - 4])
+    else:
+        caption = "No summary"
+    return caption
 
 
 def make_tags(tags_str):
