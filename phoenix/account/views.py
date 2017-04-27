@@ -142,7 +142,7 @@ class Account(MyView):
         if user is None:
             logger.warn("new user: %s", login_id)
             user = add_user(self.request, login_id=login_id, email=email, group=Guest)
-            subject = 'New user %s logged in on %s' % (name, self.request.server_name)
+            subject = 'Phoenix: New user %s logged in on %s' % (name, self.request.server_name)
             message = 'Please check the activation of the user {0} on the Phoenix host {1}'.format(
                 name, self.request.server_name)
             self.send_notification(email, subject, message)
