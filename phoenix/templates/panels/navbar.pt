@@ -25,8 +25,36 @@
 
       <!-- static links -->
       <ul class="nav navbar-nav">
-        <li>
-          <a class="navbar-link" href="${request.route_url('readthedocs', part='index')}" target="_">Help</a>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle nav-user-dropdown" data-toggle="dropdown" role="button" aria-expanded="false">
+            <span class="fa fa-info-circle"></span> Community<span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <a href="${request.route_url('readthedocs', part='index')}" target="_">
+                <i class="fa fa-book"></i> User Documentation
+              </a>
+            </li>
+            <li>
+              <a href="${request.route_url('readthedocs', part='tutorial')}" target="_">
+                <i class="fa fa-medkit"></i> Tutorial
+              </a>
+            </li>
+            <li>
+              <a href="https://birdhouse.readthedocs.io/en/latest/contributing.html" target="_">
+                <i class="fa fa-retweet"></i> Contributing
+              </a>
+            </li>
+            <li>
+              <a href="http://bird-house.github.io/" target="_">
+                <i class="fa fa-home"></i> Birdhouse
+              </a>
+            </li>
+            <li>
+              <a href="http://geoprocessing.info/" target="_">
+                <i class="fa fa-road"></i> Further Reading on Web Processing Services
+              </a>
+            </li>
+          </ul>
         </li>
       </ul>
 
