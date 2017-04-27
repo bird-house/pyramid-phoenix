@@ -4,6 +4,7 @@ from owslib.wps import WebProcessingService
 
 from phoenix.catalog import WPS_TYPE
 from phoenix.views import MyView
+from phoenix.utils import headline
 
 import logging
 LOGGER = logging.getLogger(__name__)
@@ -37,10 +38,7 @@ class Overview(MyView):
                         url=self.request.route_url('owsproxy', service_name=service_name), verify=False)
                     # TODO: need to fix owslib to handle special identifiers
                     process = wps.describeprocess(identifier)
-                    if process.abstract:
-                        description = "{} [..]".format(process.abstract[:100])
-                    else:
-                        description = "No summary"
+                    description = headline(process.abstract)
                 except Exception, err:
                     LOGGER.warn("could not add pinned process %s", pinned)
                 else:
