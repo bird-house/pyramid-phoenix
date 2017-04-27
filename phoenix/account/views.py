@@ -153,10 +153,13 @@ class Account(MyView):
             user['openid'] = openid
         user['name'] = name
         self.userdb.update({'login_id': login_id}, user)
-        self.session.flash("Welcome {0}.".format(name), queue='info')
+        self.session.flash("Hello <strong>{0}</strong>. Welcome to Phoenix.".format(name), queue='info')
         if user.get('group') == Guest:
-            self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any processes.",
-                               queue='info')
+            msg = """
+            You are member of the <strong>Guest</strong> group.
+            You are allowed to submit processes without <strong>access restrictions</strong>.
+            """
+            self.session.flash(msg, queue='info')
         else:
             generate_access_token(self.request.registry, userid=user['identifier'])
         headers = remember(self.request, user['identifier'])
