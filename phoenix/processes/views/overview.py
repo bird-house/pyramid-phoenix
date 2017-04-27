@@ -4,6 +4,7 @@ from owslib.wps import WebProcessingService
 
 from phoenix.catalog import WPS_TYPE
 from phoenix.views import MyView
+from phoenix.utils import headline
 
 import logging
 LOGGER = logging.getLogger(__name__)
@@ -14,8 +15,7 @@ class Overview(MyView):
     def __init__(self, request):
         super(Overview, self).__init__(request, name='processes', title='')
 
-    @view_config(route_name='processes', renderer='../templates/processes/overview.pt', accept='text/html')
-    def view(self):
+    def wps_services(self):
         items = []
         for service in self.request.catalog.get_services(service_type=WPS_TYPE):
             # TODO: get name from service object
@@ -23,6 +23,9 @@ class Overview(MyView):
             LOGGER.debug('got wps service name: %s', service_name)
             url = self.request.route_path('processes_list', _query=[('wps', service_name)])
             items.append(dict(title=service.title, description=service.abstract, public=service.public, url=url))
+        return items
+
+    def pinned_processes(self):
         settings = self.request.db.settings.find_one() or {}
         processes = []
         if 'pinned_processes' in settings:
@@ -35,10 +38,7 @@ class Overview(MyView):
                         url=self.request.route_url('owsproxy', service_name=service_name), verify=False)
                     # TODO: need to fix owslib to handle special identifiers
                     process = wps.describeprocess(identifier)
-                    if process.abstract:
-                        description = "{} [..]".format(process.abstract[:100])
-                    else:
-                        description = "No summary"
+                    description = headline(process.abstract)
                 except Exception, err:
                     LOGGER.warn("could not add pinned process %s", pinned)
                 else:
@@ -47,4 +47,10 @@ class Overview(MyView):
                         description=description,
                         url=url,
                         service_title=wps.identification.title))
-        return dict(title="Web Processing Services", items=items, processes=processes)
+        return processes
+
+    @view_config(route_name='processes', renderer='../templates/processes/overview.pt', accept='text/html')
+    def view(self):
+        return dict(title="Web Processing Services",
+                    items=self.wps_services(),
+                    processes=self.pinned_processes())

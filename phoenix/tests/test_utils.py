@@ -3,6 +3,16 @@ from datetime import datetime, timedelta
 from phoenix import utils
 
 
+def test_headline():
+    assert utils.headline(None) == 'No summary'
+    assert utils.headline("A short text. With more after.") == 'A short text.'
+    assert utils.headline("No point ") == 'No point.'
+    assert utils.headline("""
+        Calls the Climate Data Operators (CDO) tool with a single dataset (NetCDF, OpenDAP)
+        provided and uses the chosen operator to calculate climate indices
+        written to a NetCDF file.""", 25) == 'Calls the Climate Dat ...'
+
+
 def test_time_ago_in_words():
     assert utils.time_ago_in_words(datetime.now() - timedelta(minutes=1)) == '1 minute ago'
     assert utils.time_ago_in_words(datetime.now() - timedelta(hours=1, minutes=7)) == '1 hour ago'
