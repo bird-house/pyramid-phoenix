@@ -4,10 +4,13 @@
 
     <div class="jumbotron">
       <div class="container">
-        <h1>Welcome</h1>
-        <p>Phoenix is a web application to make it easy to interact with <a href="http://geoprocessing.info/">Web Processing Services</a>.</p>
-        <p>If you have any questions about the software or service, join our <a href="http://birdhouse.readthedocs.io/en/latest/contributing.html">mailing list or chat</a>.</p>
-        <span>Need help? <a href="${request.route_url('readthedocs', part='tutorial')}" target="_">Getting Started</a></span>
+        <h1>
+          <span class="title">Phoenix</span>
+        </h1>
+        <h2>
+          A <strong>Python Pyramid</strong> Web Application<br>
+          to interact with <strong>Web Processing Services</strong>
+        </h2>
       </div>
     </div>
 
