@@ -51,8 +51,19 @@ body {
 ----------------------- */
 .infobox {
     text-align: center;
+    background: #C5C997;
+    padding: 20px;
+}
+
+/* Highlight Box
+----------------------- */
+.hilitbox {
+    text-align: center;
     background: white;
     padding: 20px;
+}
+.hilitbox a {
+    color: orange
 }
 
 /* Birdhouse Box

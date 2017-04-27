@@ -8,7 +8,7 @@ from owslib.util import build_get_url
 from pyramid.security import authenticated_userid
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 # buttons
 # see kotti: https://github.com/Kotti/Kotti
@@ -44,6 +44,34 @@ class ActionButton(object):
 
     def __repr__(self):
         return u'ActionButton({0}, {1})'.format(self.name, self.title)
+
+# processes
+
+
+def pinned_processes(request):
+    from owslib.wps import WebProcessingService
+    settings = request.db.settings.find_one() or {}
+    processes = []
+    if 'pinned_processes' in settings:
+        for pinned in settings.get('pinned_processes'):
+            try:
+                service_name, identifier = pinned.split('.', 1)
+                url = request.route_path(
+                    'processes_execute', _query=[('wps', service_name), ('process', identifier)])
+                wps = WebProcessingService(
+                    url=request.route_url('owsproxy', service_name=service_name), verify=False)
+                # TODO: need to fix owslib to handle special identifiers
+                process = wps.describeprocess(identifier)
+                description = headline(process.abstract)
+            except Exception, err:
+                LOGGER.warn("could not add pinned process %s", pinned)
+            else:
+                processes.append(dict(
+                    title=process.identifier,
+                    description=description,
+                    url=url,
+                    service_title=wps.identification.title))
+    return processes
 
 
 # misc

@@ -14,12 +14,37 @@
       </div>
     </div>
 
+    <!-- highlighted processes -->
+    <section class="hilitbox">
+      <div class="container" tal:condition="processes">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <h2><strong>Highlighted Processes</strong></h2>
+            <h3>Run one of these favorite processes or explore <a href="/processes">more</a>.</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-3 col-md-2"  tal:repeat="process processes[:6]">
+            <a href="${process.url}" class="thumbnail text-center text-muted"
+               rel="tooltip"
+               data-toggle="tooltip"
+               title="${process.description}">
+              <icon class="fa fa-cog fa-5x"></icon>
+              <div class="caption">
+                <h4>${process.title}</h4>
+              </div><!-- thumbnail caption -->
+            </a><!-- thumbnail -->
+          </div>
+        </div><!-- row box -->
+      </div><!-- container pinned -->
+    </section>
+
     <!-- info boxes -->
     <section class="infobox">
       <div class="container">
         <div class="row">
           <div class="col-md-12 text-center">
-            <h2><b>Explore Phoenix</b></h2>
+            <h2><strong>Explore Phoenix</strong></h2>
             <h3>Making it easy to run processes from a Web Processing Service and to visualize and share the results.</h3>
             <h3></h3>
           </div>

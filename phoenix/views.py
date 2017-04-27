@@ -91,4 +91,6 @@ class Home(object):
 
     @view_config(route_name='home', renderer='phoenix:templates/home.pt')
     def view(self):
-        return {}
+        from phoenix.utils import pinned_processes
+        processes = pinned_processes(self.request)
+        return dict(processes=processes)
