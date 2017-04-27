@@ -1,4 +1,4 @@
-<div id="flash-messages">
+<div class="flash-messages">
 
   <!--! Flash messages -->
   <!--! one flash message that can be used by js -->

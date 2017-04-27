@@ -17,7 +17,7 @@ from phoenix.twitcherclient import generate_access_token
 from phoenix.account.schema import PhoenixSchema, LdapSchema, ESGFOpenIDSchema, OpenIDSchema, OAuthSchema
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 def add_user(request, login_id, email='', openid='', name='unknown', organisation='', notes='', group=Guest):
@@ -82,7 +82,7 @@ class Account(MyView):
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
         except ValidationFailure, e:
-            logger.exception('validation of form failed.')
+            LOGGER.exception('validation of form failed.')
             return dict(
                 active=protocol,
                 protocol_name=AUTH_PROTOCOLS[protocol],
@@ -133,16 +133,16 @@ class Account(MyView):
             try:
                 mailer.send_immediately(message, fail_silently=True)
             except:
-                logger.exception("failed to send notification")
+                LOGGER.exception("failed to send notification")
         else:
-            logger.warn("Can't send notification. No admin emails are available.")
+            LOGGER.warn("Can't send notification. No admin emails are available.")
 
     def login_success(self, login_id, email='', name="Unknown", openid=None, local=False):
         user = self.request.db.users.find_one(dict(login_id=login_id))
         if user is None:
-            logger.warn("new user: %s", login_id)
+            LOGGER.warn("new user: %s", login_id)
             user = add_user(self.request, login_id=login_id, email=email, group=Guest)
-            subject = 'New user %s logged in on %s' % (name, self.request.server_name)
+            subject = 'Phoenix: New user %s logged in on %s' % (name, self.request.server_name)
             message = 'Please check the activation of the user {0} on the Phoenix host {1}'.format(
                 name, self.request.server_name)
             self.send_notification(email, subject, message)
@@ -153,10 +153,13 @@ class Account(MyView):
             user['openid'] = openid
         user['name'] = name
         self.userdb.update({'login_id': login_id}, user)
-        self.session.flash("Welcome {0}.".format(name), queue='info')
+        self.session.flash("Hello <strong>{0}</strong>. Welcome to Phoenix.".format(name), queue='info')
         if user.get('group') == Guest:
-            self.session.flash("You are member of the group 'Guest'. You are not allowed to submit any processes.",
-                               queue='info')
+            msg = """
+            You are member of the <strong>Guest</strong> group.
+            You are allowed to submit processes without <strong>access restrictions</strong>.
+            """
+            self.session.flash(msg, queue='info')
         else:
             generate_access_token(self.request.registry, userid=user['identifier'])
         headers = remember(self.request, user['identifier'])
@@ -167,7 +170,7 @@ class Account(MyView):
         if message:
             msg = 'Sorry, login failed: {0}'.format(message)
         self.session.flash(msg, queue='danger')
-        logger.warn(msg)
+        LOGGER.warn(msg)
         return HTTPFound(location=self.request.route_path('home'))
 
     @view_config(route_name='account_login', renderer='templates/account/login.pt')
@@ -221,7 +224,7 @@ class Account(MyView):
                 if not (result.user.name and result.user.id):
                     result.user.update()
                 # Hooray, we have the user!
-                logger.info("login successful for user %s", result.user.name)
+                LOGGER.info("login successful for user %s", result.user.name)
                 if result.provider.name in ['openid', 'dkrz', 'ipsl', 'smhi', 'badc', 'pcmdi']:
                     # TODO: change login_id ... more infos ...
                     return self.login_success(login_id=result.user.id,
@@ -246,7 +249,7 @@ class Account(MyView):
             # Warn if LDAP is about to be used but not set up.
             self.session.flash('LDAP does not seem to be set up correctly!', queue='danger')
         elif getattr(self.request, 'ldap_connector', None) is None:
-            logger.debug('Set up LDAP connector...')
+            LOGGER.debug('Set up LDAP connector...')
 
             # Set LDAP settings
             import ldap

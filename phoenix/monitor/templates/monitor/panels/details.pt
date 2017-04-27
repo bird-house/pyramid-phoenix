@@ -2,18 +2,23 @@
    if job.get('status') == 'ProcessSucceeded':
      icon_class="fa fa-check-circle text-success"
      status_class="text-success"
+     progress_class="progress-bar-success"
    elif job.get('status') == 'ProcessFailed':
      icon_class="fa fa-times-circle text-danger"
      status_class="text-danger"
+     progress_class="progress-bar-danger"
    elif job.get('status') == 'ProcessPaused':
      icon_class="fa fa-pause text-muted"
      status_class="text-muted"
+     progress_class="progress-bar-info progress-bar-striped"
    elif job.get('status') == 'ProcessStarted' or job.get('status') == 'ProcessAccepted':
      icon_class="fa fa-cog fa-spin text-muted"
      status_class="text-muted"
+     progress_class="progress-bar-warning progress-bar-striped active"
    else:
      icon_class="fa fa-question-circle text-danger"
      status_class="text-danger"
+     progress_class="progress-bar-warning progress-bar-striped active"
 ?>
 
 <div class="panel panel-default">
@@ -28,6 +33,32 @@
           </dd>
           <p/>
           <dd>
+            <span class="text-muted" data-toggle="tooltip" title="Job note.">
+              <i class="fa fa-sticky-note-o"></i> ${job.get('caption') or '???'}
+            </span>
+          </dd>
+          <p/>
+          <dd>
+            <span class="text-muted" data-toggle="tooltip" title="Job labels.">
+              <i class="fa fa-tags"></i>
+              <a tal:repeat="label job.get('tags', [])" href="/monitor?tag=${label}" class="label label-info">${label}</a>
+            </span>
+          </dd>
+        </dl>
+      </div><!-- column -->
+      <div class="col-md-3">
+        <dl>
+          <dd>
+            <div class="progress" data-toggle="tooltip" title="Job progress.">
+              <div class="progress-bar ${progress_class}" role="progressbar" aria-valuenow="${job.get('progress', 0)}"
+                   aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: ${job.get('progress', 0)}%;">
+                <span>
+                  ${job.get('progress', 0)}%
+                </span>
+              </div>
+            </div>
+          </dd>
+          <dd>
             <span class="text-muted" data-toggle="tooltip" title="Duration time of Job.">
               <i class="fa fa-clock-o"></i> Ran for ${job.get('duration') or '???'}
             </span>
@@ -36,28 +67,6 @@
             <span class="text-muted" data-toggle="tooltip" title="Job finished at date.">
               <i class="fa fa-calendar"></i> ${job.get('finished') or '???'}
             </span>
-          </dd>
-          <p/>
-          <dd>
-            <span class="text-muted" data-toggle="tooltip" title="Job note.">
-              <i class="fa fa-sticky-note-o"></i> ${job.get('caption') or '???'}
-            </span>
-          </dd>
-        </dl>
-      </div><!-- column -->
-      <div class="col-md-3">
-        <dl>
-          <dt>Progress</dt>
-          <dd>
-            <div class="progress">
-              <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="${job.get('progress', 0)}" aria-valuemin="0" aria-valuemax="100" style="width: ${job.get('progress', 0)}%;">
-                <span>${job.get('progress', 0)}%</span>
-              </div>
-            </div>
-          </dd>
-          <dt>Labels</dt>
-          <dd>
-            <a tal:repeat="label job.get('tags', [])" href="/monitor?tag=${label}" class="label label-info">${label}</a>
           </dd>
         </dl>
       </div><!-- column -->
