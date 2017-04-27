@@ -2,11 +2,16 @@
   <div metal:fill-slot="javascript">
     <script src="${request.static_path('phoenix:static/phoenix/js/authomatic.js')}"></script>
   </div>
- 
+
   <div metal:fill-slot="content">
     <div class="container">
+      <h1 class="page-header">Sign in to Phoenix <small>choose one of the providers.</small></h1>
+      <!-- div class="row">
+        <div class="col-md-3">
+          <button class="btn btn-success">Sign in with GitHub <icon class="fa fa-github"></icon></button>
+        </div>
+      </div-->
       <div class="row">
-        <h1 class="page-header">Sign in <small>Use one of the Providers to sign-in to Phoenix</small></h1>
         <div class="col-md-3">
           <ul class="nav nav-pills nav-stacked">
             <li tal:condition="'phoenix' in auth_protocols" role="presentation" class="${'active' if active=='phoenix' else ''}">
@@ -19,7 +24,7 @@
               <a href="${request.route_path('account_login', protocol='openid')}">OpenID</a>
             </li>
             <li tal:condition="'oauth2' in auth_protocols" role="presentation" class="${'active' if active=='oauth2' else ''}">
-              <a href="${request.route_path('account_login', protocol='oauth2')}">OAuth 2.0</a>
+              <a href="${request.route_path('account_login', protocol='oauth2')}">OAuth (GitHub)</a>
             </li>
             <li tal:condition="'ldap' in auth_protocols" role="presentation" class="${'active' if active=='ldap' else ''}">
               <a href="${request.route_path('account_login', protocol='ldap')}">LDAP</a>
