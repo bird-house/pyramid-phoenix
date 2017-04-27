@@ -35,22 +35,22 @@ class Inputs(object):
 
         items = []
         for inp in process_inputs(self.request, job_id):
-            dataset = None
+            wms_dataset_path = None
             proxy_reference = inp.reference
             # TODO: use config for nwms dynamic services
             if self.request.map_activated and inp.mimeType and 'netcdf' in inp.mimeType and inp.reference:
                 if 'cache' in inp.reference:
-                    dataset = "cache" + inp.reference.split('cache')[1]
+                    wms_dataset_path = "cache" + inp.reference.split('cache')[1]
                 elif 'wpsoutputs' in inp.reference:
-                    dataset = "outputs" + inp.reference.split('wpsoutputs')[1]
+                    wms_dataset_path = "outputs" + inp.reference.split('wpsoutputs')[1]
                 elif 'download' in inp.reference:
-                    dataset = "uploads" + inp.reference.split('download')[1]
+                    wms_dataset_path = "uploads" + inp.reference.split('download')[1]
                 elif 'CMIP5/data' in inp.reference:
-                    dataset = "archive-cmip5" + inp.reference.split('CMIP5/data')[1]
+                    wms_dataset_path = "archive-cmip5" + inp.reference.split('CMIP5/data')[1]
                 elif 'CORDEX/data' in inp.reference:
-                    dataset = "archive-cordex" + inp.reference.split('CORDEX/data')[1]
+                    wms_dataset_path = "archive-cordex" + inp.reference.split('CORDEX/data')[1]
                 elif 'OBS4MIPS/data' in inp.reference:
-                    dataset = "archive-obs4mips" + inp.reference.split('OBS4MIPS/data')[1]
+                    wms_dataset_path = "archive-obs4mips" + inp.reference.split('OBS4MIPS/data')[1]
             if inp.reference and wps_output_url and inp.reference.startswith(wps_output_url):
                 proxy_reference = self.request.route_url(
                     'download_wpsoutputs',
@@ -73,7 +73,7 @@ class Inputs(object):
                               data=data,
                               reference=inp.reference,
                               proxy_reference=proxy_reference,
-                              dataset=dataset,
+                              wms_dataset_path=wms_dataset_path,
                               category=category))
 
         items = sorted(items, key=lambda item: item['identifier'], reverse=1)
