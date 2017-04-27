@@ -3,7 +3,7 @@ from pyramid_layout.panel import panel_config
 from phoenix.wps import check_status
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 def collect_outputs(status_location=None, response=None):
@@ -40,7 +40,7 @@ class Outputs(object):
         for output in process_outputs(self.request, job_id).values():
             dataset = None
             proxy_reference = output.reference
-            logger.debug("output reference: %s", output.reference)
+            LOGGER.debug("output reference: %s", output.reference)
             if output.reference and 'wpsoutputs' in output.reference:
                 if self.request.map_activated and output.mimeType and 'netcdf' in output.mimeType:
                     dataset = "outputs" + output.reference.split('wpsoutputs')[1]
@@ -48,7 +48,7 @@ class Outputs(object):
                     proxy_reference = self.request.route_url(
                         'download_wpsoutputs',
                         subpath=output.reference.split(wps_output_url)[1])
-                    logger.debug("proxy reference: %s", proxy_reference)
+                    LOGGER.debug("proxy reference: %s", proxy_reference)
             if output.mimeType:
                 category = 'ComplexType'
                 data = output.data
@@ -59,7 +59,7 @@ class Outputs(object):
                 category = 'LiteralType'
                 data = output.data
 
-            logger.debug("proxy_reference: %s", proxy_reference)
+            LOGGER.debug("proxy_reference: %s", proxy_reference)
 
             items.append(dict(title=output.title,
                               abstract=output.abstract,
