@@ -2,6 +2,7 @@ from pyramid.view import view_config, view_defaults
 
 from phoenix.views import MyView
 from phoenix.wps import check_status
+from phoenix.monitor.utils import output_details
 
 import logging
 LOGGER = logging.getLogger(__name__)
@@ -30,11 +31,12 @@ class JobStatus(MyView):
                 for output in execution.processOutputs:
                     if output.identifier == 'output':
                         break
-                if output.reference:
+                details = output_details(self.request, output)
+                if details.proxy_reference:
                     result = '<a href="{0}" class="btn btn-success btn-xs" target="_blank">Show Output</a>'.format(
-                        output.reference)
+                        details.proxy_reference)
                 else:
-                    result = '<strong>{0}</strong>'.format(', '.join(output.data))
+                    result = '<strong>{0}</strong>'.format(', '.join(details.data))
                 msg = '<h4>Job Succeeded: {1} <a href="{0}" class="btn btn-info btn-xs"> Details</a></h4>'
                 url = self.request.route_path('job_details', tab='outputs', job_id=self.job_id)
                 self.session.flash(msg.format(url, result), queue="success")
