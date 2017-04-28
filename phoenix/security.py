@@ -25,6 +25,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 Admin = 'group.admin'
+Developer = 'group.develper'
 User = 'group.user'
 Guest = 'group.guest'
 
@@ -95,6 +96,8 @@ def groupfinder(userid, request):
     if user:
         if user.get('group') == Admin:
             return [Admin]
+        elif user.get('group') == Developer:
+            return [Developer]
         elif user.get('group') == User:
             return [User]
         else:
@@ -109,6 +112,7 @@ class Root():
         (Allow, Everyone, 'view'),
         (Allow, Authenticated, 'edit'),
         (Allow, User, 'submit'),
+        (Allow, Developer, 'explore'),
         (Allow, Admin, ALL_PERMISSIONS)
     ]
 
