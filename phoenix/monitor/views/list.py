@@ -17,7 +17,7 @@ from phoenix.utils import make_tags
 from phoenix.security import default_auth_protocol
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 class CaptionSchema(colander.MappingSchema):
@@ -45,7 +45,7 @@ class LabelsSchema(colander.MappingSchema):
         missing="dev")
 
 
-@view_defaults(permission='view', layout='default')
+@view_defaults(permission='edit', layout='default')
 class JobList(MyView):
     def __init__(self, request):
         super(JobList, self).__init__(request, name='monitor', title='Job List')
@@ -91,15 +91,15 @@ class JobList(MyView):
     def process_caption_form(self, form):
         try:
             controls = self.request.POST.items()
-            logger.debug("controls %s", controls)
+            LOGGER.debug("controls %s", controls)
             appstruct = form.validate(controls)
             self.collection.update_one({'identifier': appstruct['identifier']},
                                        {'$set': {'caption': appstruct['caption']}})
         except ValidationFailure, e:
-            logger.exception("Validation of caption failed.")
+            LOGGER.exception("Validation of caption failed.")
             self.session.flash("Validation of caption failed.", queue='danger')
         except Exception, e:
-            logger.exception("Edit caption failed.")
+            LOGGER.exception("Edit caption failed.")
             self.session.flash("Edit caption failed.", queue='danger')
         else:
             self.session.flash("Caption updated.", queue='success')
@@ -115,15 +115,15 @@ class JobList(MyView):
     def process_labels_form(self, form):
         try:
             controls = self.request.POST.items()
-            logger.debug("controls %s", controls)
+            LOGGER.debug("controls %s", controls)
             appstruct = form.validate(controls)
             tags = make_tags(appstruct['labels'])
             self.collection.update_one({'identifier': appstruct['identifier']}, {'$set': {'tags': tags}})
         except ValidationFailure, e:
-            logger.exception("Validation of labels failed.")
+            LOGGER.exception("Validation of labels failed.")
             self.session.flash("Validation of labels failed.", queue='danger')
         except Exception, e:
-            logger.exception("Edit labels failed.")
+            LOGGER.exception("Edit labels failed.")
             self.session.flash("Edit labels failed.", queue='danger')
         else:
             self.session.flash("Labels updated.", queue='success')
@@ -159,7 +159,7 @@ class JobList(MyView):
                 self.session['phoenix.selected-children'] = children
                 self.session.changed()
                 location = button.url(self.context, self.request)
-                logger.debug("button url = %s", location)
+                LOGGER.debug("button url = %s", location)
                 return HTTPFound(location, request=self.request)
 
         items, count = self.filter_jobs(page=page, limit=limit, tag=tag, access=access, status=status, sort=sort)

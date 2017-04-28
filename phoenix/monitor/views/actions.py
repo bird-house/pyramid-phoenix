@@ -13,7 +13,7 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
-@view_defaults(permission='submit')
+@view_defaults(permission='edit')
 class NodeActions(object):
     """Actions related to job monitor."""
 
@@ -146,19 +146,19 @@ def monitor_buttons(context, request):
     #                                css_class=u'btn btn-danger'))
     buttons.append(ActionButton('delete_jobs', title=u'Delete',
                                 css_class=u'btn btn-danger',
-                                disabled=not request.has_permission('submit')))
+                                disabled=not request.has_permission('edit')))
     buttons.append(ActionButton('make_public', title=u'Make Public',
                                 css_class=u'btn btn-warning',
-                                disabled=not request.has_permission('submit')))
+                                disabled=not request.has_permission('edit')))
     buttons.append(ActionButton('make_private', title=u'Make Private',
                                 css_class=u'btn btn-warning',
-                                disabled=not request.has_permission('submit')))
+                                disabled=not request.has_permission('edit')))
     buttons.append(ActionButton('set_favorite', title=u'Set Favorite',
                                 css_class=u'btn btn-success',
-                                disabled=not request.has_permission('submit')))
+                                disabled=not request.has_permission('edit')))
     buttons.append(ActionButton('unset_favorite', title=u'Unset Favorite',
                                 css_class=u'btn btn-success',
-                                disabled=not request.has_permission('submit')))
+                                disabled=not request.has_permission('edit')))
     return buttons
 
 
