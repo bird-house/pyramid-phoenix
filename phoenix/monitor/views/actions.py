@@ -10,7 +10,7 @@ from phoenix.utils import ActionButton
 from phoenix.utils import format_tags
 
 import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 @view_defaults(permission='edit')
