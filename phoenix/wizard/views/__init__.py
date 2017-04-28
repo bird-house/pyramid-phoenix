@@ -92,7 +92,7 @@ class WizardState(object):
         self.session.changed()
 
 
-@view_defaults(permission='view', layout='default')
+@view_defaults(permission='submit', layout='default')
 class Wizard(MyView):
     def __init__(self, request, name, title, description=None):
         super(Wizard, self).__init__(request, name, title, description)
@@ -233,12 +233,6 @@ class Wizard(MyView):
             return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
             return self.cancel()
-
-        if not self.request.has_permission('submit'):
-            msg = """<strong>Warning:</strong> You are not allowed to use the Wizard.
-            Please <a href="{0}" class="alert-link">sign in</a> and wait for account activation."""
-            msg = msg.format(self.request.route_path('account_login', protocol=default_auth_protocol(self.request)))
-            self.session.flash(msg, queue='warning')
         result = dict(title=self.title, form=form.render(self.appstruct()))
         custom = self.custom_view()
         return dict(result, **custom)
