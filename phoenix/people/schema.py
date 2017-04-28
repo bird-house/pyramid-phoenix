@@ -51,13 +51,13 @@ class TwitcherSchema(colander.MappingSchema):
         colander.String(),
         title="Access Token",
         missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget=deform.widget.TextInputWidget(readonly=True),
     )
     twitcher_token_expires_at = colander.SchemaNode(
         colander.String(),
         title="Expires at",
         missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget=deform.widget.TextInputWidget(readonly=True),
     )
 
 
@@ -75,13 +75,13 @@ class ESGFSLCSTokenSchema(colander.MappingSchema):
         colander.String(),
         title="Access Token",
         missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget=deform.widget.TextInputWidget(readonly=True),
     )
     esgf_token_expires_at = colander.SchemaNode(
         colander.String(),
         title="Expires at",
         missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget=deform.widget.TextInputWidget(readonly=True),
     )
 
 
@@ -92,7 +92,7 @@ class ESGFCredentialsSchema(colander.MappingSchema):
         description="OpenID to access ESGF data",
         validator=colander.url,
         missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget=deform.widget.TextInputWidget(readonly=True),
     )
     credentials = colander.SchemaNode(
         colander.String(),
@@ -100,12 +100,12 @@ class ESGFCredentialsSchema(colander.MappingSchema):
         description="URL to ESGF Proxy Certificate",
         validator=colander.url,
         missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget=deform.widget.TextInputWidget(readonly=True),
     )
     cert_expires = colander.SchemaNode(
         colander.String(),
         title="Expires at",
         description="When your Proxy Certificate expires",
         missing='',
-        widget=deform.widget.TextInputWidget(template='readonly/textinput'),
+        widget=deform.widget.TextInputWidget(readonly=True),
     )

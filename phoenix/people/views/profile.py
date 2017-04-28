@@ -18,7 +18,7 @@ from ..schema import (
 )
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 @view_defaults(permission='edit', layout='default')
@@ -61,6 +61,12 @@ class Profile(MyView):
             appstruct['twitcher_token_expires_at'] = expires_at
         return appstruct
 
+    def readonly(self):
+        if self.tab == 'group':
+            return not self.request.has_permission('admin')
+        else:
+            return False
+
     def schema(self):
         if self.tab == 'twitcher':
             schema = TwitcherSchema()
@@ -82,7 +88,6 @@ class Profile(MyView):
                          css_class="btn btn-success btn-lg btn-block",
                          disabled=not self.request.has_permission('admin'))
             form = Form(schema=self.schema(), buttons=(btn,),
-                        readonly=not self.request.has_permission('admin'),
                         formid='deform')
         elif self.tab == 'profile':
             btn = Button(name='update', title='Update Profile', css_class="btn btn-success btn-lg btn-block")
@@ -141,7 +146,7 @@ class Profile(MyView):
                     self.user[key] = appstruct.get(key)
             self.collection.update({'identifier': self.userid}, self.user)
         except ValidationFailure, e:
-            logger.exception('validation of form failed.')
+            LOGGER.exception('validation of form failed.')
             return dict(form=e.render())
         else:
             self.request.session.flash("Your profile was updated.", queue='success')
@@ -159,4 +164,4 @@ class Profile(MyView):
                     buttons=self.generate_buttons(),
                     userid=self.userid,
                     active=self.tab,
-                    form=form.render(self.appstruct()))
+                    form=form.render(self.appstruct(), readonly=self.readonly()))
