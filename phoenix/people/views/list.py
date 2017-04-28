@@ -1,11 +1,11 @@
 from pyramid.view import view_config, view_defaults
 
 from phoenix.views import MyView
-from phoenix.security import Admin, User, Guest
+from phoenix.security import Admin, Developer, User, Guest
 from phoenix.grid import CustomGrid
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 @view_defaults(permission='admin', layout='default')
@@ -18,10 +18,10 @@ class People(MyView):
     def view(self):
         user_items = list(self.collection.find().sort('last_login', -1))
         grid = PeopleGrid(
-                self.request,
-                user_items,
-                ['name', 'userid', 'email', 'organisation', 'notes', 'group', 'last_login', ''],
-            )
+            self.request,
+            user_items,
+            ['name', 'userid', 'email', 'organisation', 'notes', 'group', 'last_login', ''],
+        )
         return dict(grid=grid)
 
 
@@ -40,6 +40,8 @@ class PeopleGrid(CustomGrid):
         label = "???"
         if group == Admin:
             label = "Admin"
+        elif group == Developer:
+            label = "Developer"
         elif group == User:
             label = "User"
         elif group == Guest:
@@ -55,5 +57,3 @@ class PeopleGrid(CustomGrid):
         buttons.append(ActionButton('delete', title='Delete', css_class="btn btn-danger",
                                     href=self.request.route_path('delete_user', userid=item.get('identifier'))))
         return self.render_buttongroup_td(buttons=buttons)
-    
-

@@ -1,10 +1,10 @@
 import colander
 import deform
 
-from phoenix.security import Admin, User, Guest
+from phoenix.security import Admin, Developer, User, Guest
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 class ProfileSchema(colander.MappingSchema):
@@ -36,7 +36,7 @@ class ProfileSchema(colander.MappingSchema):
 
 
 class GroupSchema(colander.MappingSchema):
-    choices = ((Admin, 'Admin'), (User, 'User'), (Guest, 'Guest'))
+    choices = ((Admin, 'Admin'), (Developer, 'Developer'), (User, 'User'), (Guest, 'Guest'))
 
     group = colander.SchemaNode(
         colander.String(),

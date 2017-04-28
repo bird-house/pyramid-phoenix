@@ -2,11 +2,10 @@ import deform
 from deform.widget import OptGroup
 import colander
 
-from phoenix.security import Admin, User, Guest
 from phoenix.security import AUTH_PROTOCOLS
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 @colander.deferred
