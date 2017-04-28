@@ -22,7 +22,7 @@ from phoenix.providers import esgfopenid
 from phoenix.twitcherclient import is_public
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 Admin = 'group.admin'
 Developer = 'group.develper'
@@ -112,7 +112,7 @@ class Root():
         (Allow, Everyone, 'view'),
         (Allow, Authenticated, 'edit'),
         (Allow, User, 'submit'),
-        (Allow, Developer, 'explore'),
+        (Allow, Developer, ('submit', 'explore')),
         (Allow, Admin, ALL_PERMISSIONS)
     ]
 
@@ -131,7 +131,7 @@ def authomatic(request):
         config=authomatic_config(request),
         secret=request.registry.settings.get('authomatic.secret'),
         report_errors=True,
-        logging_level=logger.level)
+        logging_level=LOGGER.level)
 
 
 def authomatic_config(request):
