@@ -107,6 +107,8 @@ class Catalog(object):
     def get_service_name(self, record):
         """Get service name from twitcher registry for given service (url)."""
         service = self.service_registry.get_service_by_url(record.source)
+        if not service:
+            raise Exception("Could not find service with url=%s", record.source)
         return service['name']
 
     def get_service_by_name(self, name):
