@@ -7,7 +7,7 @@ from phoenix.views import MyView
 from phoenix.utils import headline
 
 import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 @view_defaults(permission='view', layout="default")
@@ -18,11 +18,14 @@ class Overview(MyView):
     def wps_services(self):
         items = []
         for service in self.request.catalog.get_services(service_type=WPS_TYPE):
-            # TODO: get name from service object
-            service_name = self.request.catalog.get_service_name(service)
-            LOGGER.debug('got wps service name: %s', service_name)
-            url = self.request.route_path('processes_list', _query=[('wps', service_name)])
-            items.append(dict(title=service.title, description=service.abstract, public=service.public, url=url))
+            try:
+                # TODO: get name from service object
+                service_name = self.request.catalog.get_service_name(service)
+                LOGGER.debug('got wps service name: %s', service_name)
+                url = self.request.route_path('processes_list', _query=[('wps', service_name)])
+                items.append(dict(title=service.title, description=service.abstract, public=service.public, url=url))
+            except Exception, err:
+                self.session.flash("<strong>Error:</strong>Service is not available.")
         return items
 
     def pinned_processes(self):
