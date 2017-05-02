@@ -254,7 +254,7 @@ class WPSSchema(colander.MappingSchema):
                     mime_types = ['application/x-ogc-dods']
                     if metadata.title in mime_types:
                         widget = ResourceWidget(
-                            cart=self.request.has_permission('submit'),
+                            cart=self.request.has_permission('edit'),
                             mime_types=mime_types,
                             upload=False,
                             storage_url=self.request.storage.base_url)
@@ -294,7 +294,7 @@ class WPSSchema(colander.MappingSchema):
         mime_types = [value.mimeType for value in data_input.supportedValues]
         logger.debug("mime_types for resource widget: %s", mime_types)
         widget = ResourceWidget(
-            cart=self.request.has_permission('submit'),
+            cart=self.request.has_permission('edit'),
             mime_types=mime_types,
             upload=True,
             storage_url=self.request.storage.base_url,

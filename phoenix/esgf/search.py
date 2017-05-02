@@ -190,13 +190,17 @@ class ESGFSearch(object):
             if result.json.get('size'):
                 abstract += ' <span class="label label-info">{}</span>'.format(
                     format_byte_size(int(result.json.get('size', '0'))))
+            if self.request.has_permission('edit'):
+                cart_available = result.opendap_url is not None
+            else:
+                cart_available = False
             items.append(dict(
                 title=result.json.get('title', 'Unknown'),
                 abstract=abstract,
                 type=result.json.get('type'),
                 download_url=result.download_url,
                 opendap_url=result.opendap_url,
-                cart_available=result.opendap_url is not None,
+                cart_available=cart_available,
                 is_in_cart=result.opendap_url in self.request.cart,
             ))
         return items

@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-@view_defaults(permission='submit')
+@view_defaults(permission='edit')
 class CartActions(object):
     """Actions related to cart."""
 
@@ -59,7 +59,7 @@ class CartActions(object):
         return HTTPFound(self.request.route_path('cart'))
 
 
-@view_defaults(permission='submit', layout='default')
+@view_defaults(permission='edit', layout='default')
 class Cart(MyView):
     def __init__(self, request):
         super(Cart, self).__init__(request, name='cart', title='Cart')
