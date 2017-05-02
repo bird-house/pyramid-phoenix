@@ -21,7 +21,7 @@
               <span class="text-muted">OR</span>
               <br/><br/>
               <tal:form replace="structure form">The form will render here</tal:form>
-
+              <a href="${request.route_path('account_register')}" class="btn btn-link">Register for an account</a>
             </div>
           </div><!-- panel -->
         </div>
