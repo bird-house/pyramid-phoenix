@@ -8,7 +8,7 @@ from phoenix.db import mongodb
 from phoenix.esgf.slcsclient import refresh_token
 
 import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 def includeme(config):
