@@ -15,7 +15,7 @@ from phoenix.db import mongodb
 from phoenix.twitcherclient import twitcher_service_factory
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 def includeme(config):
@@ -27,9 +27,9 @@ def includeme(config):
             try:
                 settings['catalog'] = catalog_factory(config.registry)
             except:
-                logger.exception('Could not connect catalog service.')
+                LOGGER.exception('Could not connect catalog service.')
         else:
-            logger.debug("catalog already initialized")
+            LOGGER.debug("catalog already initialized")
         event.request.catalog = settings.get('catalog')
     config.add_subscriber(add_catalog, NewRequest)
 
@@ -149,7 +149,7 @@ class CatalogService(Catalog):
             try:
                 self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
             except:
-                logger.exception("could not harvest metadata")
+                LOGGER.exception("could not harvest metadata")
                 self.service_registry.unregister_service(name=service_name)
                 raise Exception("could not harvest metadata")
 
@@ -210,7 +210,7 @@ class MongodbCatalog(Catalog):
                 record['public'] = public
                 self.insert_record(record)
             except:
-                logger.exception("could not harvest metadata")
+                LOGGER.exception("could not harvest metadata")
                 self.service_registry.unregister_service(name=service_name)
                 raise Exception("could not harvest metadata")
         else:
