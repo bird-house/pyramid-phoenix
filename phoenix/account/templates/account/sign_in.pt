@@ -15,7 +15,8 @@
               <a href="${request.route_path('account_auth', provider_name='github')}"
                  class="btn btn-success">Sign in with GitHub <icon class="fa fa-lg fa-github"></icon></a>
               <br/><br/>
-              <button class="btn btn-success">Sign in with ESGF <icon class="fa fa-globe"></icon></button>
+              <a href="${request.route_path('account_login', protocol='esgf')}"
+                 class="btn btn-success">Sign in with ESGF <icon class="fa fa-lg fa-globe"></icon></a>
               <br/><br/>
               <span class="text-muted">OR</span>
               <br/><br/>
@@ -25,7 +26,7 @@
           </div><!-- panel -->
         </div>
       </div><!-- row -->
-    </div>
+    </div><!-- container -->
   </div>
 
 </metal:block>
