@@ -62,8 +62,8 @@ class Account(MyView):
             return dict()
 
     def generate_form(self, protocol):
-        if protocol == 'phoenix':
-            schema = PhoenixSchema()
+        if protocol == 'ldap':
+            schema = LdapSchema()
         elif protocol == 'esgf':
             schema = ESGFOpenIDSchema()
         elif protocol == 'openid':
@@ -71,8 +71,8 @@ class Account(MyView):
         elif protocol == 'oauth2':
             schema = OAuthSchema()
         else:
-            schema = LdapSchema()
-        btn = Button(name='submit', title='Log in',
+            schema = PhoenixSchema()
+        btn = Button(name='submit', title='Sign In',
                      css_class="btn btn-success btn-lg btn-block")
         form = Form(schema=schema, buttons=(btn,), formid='deform')
         return form
@@ -172,6 +172,14 @@ class Account(MyView):
         self.session.flash(msg, queue='danger')
         LOGGER.warn(msg)
         return HTTPFound(location=self.request.route_path('home'))
+
+    @view_config(route_name='sign_in', renderer='templates/account/sign_in.pt')
+    def sign_in(self):
+        protocol = 'phoenix'
+        form = self.generate_form(protocol)
+        if 'submit' in self.request.POST:
+            return self.process_form(form, protocol)
+        return dict(form=form.render(self.appstruct(protocol)))
 
     @view_config(route_name='account_login', renderer='templates/account/login.pt')
     def login(self):

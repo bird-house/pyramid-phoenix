@@ -1,12 +1,11 @@
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 def includeme(config):
     settings = config.registry.settings
 
-    logger.info('Adding account ...')
-
+    config.add_route('sign_in', '/account/sign_in')
     config.add_route('account_login', '/account/login/{protocol}')
     config.add_route('account_logout', '/account/logout')
     config.add_route('account_auth', '/account/auth/{provider_name}')

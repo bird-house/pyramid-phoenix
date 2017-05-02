@@ -84,7 +84,7 @@
         <!-- sign-in -->
         <li tal:condition="not request.user">
           <div class="col-sm-12">
-            <a href="/account/login/${protocol}" class="btn btn-link navbar-btn">Sign In</a>
+            <a href="/account/sign_in" class="btn btn-link navbar-btn">Sign In</a>
           </div>
         </li>
         <!-- user -->
