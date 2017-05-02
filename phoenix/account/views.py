@@ -17,7 +17,7 @@ from phoenix.twitcherclient import generate_access_token
 from phoenix.account.schema import PhoenixSchema, LdapSchema, ESGFOpenIDSchema, OpenIDSchema, OAuthSchema
 
 import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 def add_user(request, login_id, email='', openid='', name='unknown', organisation='', notes='', group=Guest):
