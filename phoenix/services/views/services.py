@@ -27,7 +27,7 @@ class Services(MyView):
             try:
                 service_name = self.request.catalog.get_service_name(service)
             except Exception, err:
-                self.session.flash("Error: This service is not available.", queue='danger')
+                self.session.flash("<strong>Error</strong>: This service is not available.", queue='danger')
                 service_name = 'unknown'
         return dict(service=service, service_name=service_name)
 
