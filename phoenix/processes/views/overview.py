@@ -25,7 +25,7 @@ class Overview(MyView):
                 url = self.request.route_path('processes_list', _query=[('wps', service_name)])
                 items.append(dict(title=service.title, description=service.abstract, public=service.public, url=url))
             except Exception, err:
-                self.session.flash("<strong>Error:</strong>Service is not available.")
+                LOGGER.warn("Service not available ... skipping.")
         return items
 
     def pinned_processes(self):
