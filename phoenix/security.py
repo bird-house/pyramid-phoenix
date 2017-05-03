@@ -40,23 +40,6 @@ def has_execute_permission(request, service_name):
     return is_public(request.registry, service_name) or request.has_permission('submit')
 
 
-def allowed_auth_protocols(request):
-    # TODO: refactor auth settings handling
-    settings = request.db.settings.find_one() or {}
-    protocols = ['phoenix', 'esgf', 'oauth2']
-    if 'auth_protocol' in settings:
-        protocols.extend(settings['auth_protocol'])
-    return protocols
-
-
-def default_auth_protocol(request):
-    allowed_protocols = allowed_auth_protocols(request)
-    # use reverse order to get defaul protocol
-    for protocol in AUTH_PROTOCOLS.keys()[::-1]:
-        if protocol in allowed_protocols:
-            return protocol
-
-
 def passwd_check(request, passphrase):
     """
     code taken from IPython.lib.security

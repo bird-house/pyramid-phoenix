@@ -4,7 +4,6 @@ from pyramid.httpexceptions import HTTPFound
 from deform import Form, Button
 from deform import ValidationFailure
 
-from phoenix.security import default_auth_protocol
 from phoenix.views import MyView
 
 import logging

@@ -10,28 +10,11 @@ from deform import Form, Button, ValidationFailure
 from authomatic.adapters import WebObAdapter
 
 from phoenix.security import Admin, Guest, authomatic
-from phoenix.security import allowed_auth_protocols
 from phoenix.security import AUTH_PROTOCOLS
 from phoenix.twitcherclient import generate_access_token
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
-
-
-def add_user(request, login_id, email='', openid='', name='unknown', organisation='', notes='', group=Guest):
-    user = dict(
-        identifier=str(uuid.uuid1()),
-        login_id=login_id,
-        email=email,
-        openid=openid,
-        name=name,
-        organisation=organisation,
-        notes=notes,
-        group=group,
-        creation_time=datetime.now(),
-        last_login=datetime.now())
-    request.db.users.save(user)
-    return request.db.users.find_one({'identifier': user['identifier']})
 
 
 @forbidden_view_config(renderer='templates/account/forbidden.pt', layout="default")
@@ -57,7 +40,7 @@ class Account(object):
         return dict()
 
     def schema(self):
-        return None
+        raise NotImplementedError("Needs to be implemented in subclass")
 
     def generate_form(self):
         btn = Button(name='submit', title='Sign In',
@@ -108,21 +91,35 @@ class Account(object):
         else:
             LOGGER.warn("Can't send notification. No admin emails are available.")
 
-    def login_success(self, login_id, email='', name="Unknown", openid=None, local=False):
+    def add_user(self, login_id, email=None):
+        user = dict(
+            identifier=str(uuid.uuid1()),
+            login_id=login_id,
+            email=email or '',
+            openid='',
+            name='Guest',
+            organisation='',
+            notes='',
+            group=Guest,
+            creation_time=datetime.now(),
+            last_login=datetime.now())
+        self.collection.save(user)
+        return self.collection.find_one({'identifier': user['identifier']})
+
+    def login_success(self, login_id, email=None, name=None, openid=None, local=False):
         user = self.collection.find_one(dict(login_id=login_id))
         if user is None:
             LOGGER.warn("new user: %s", login_id)
-            user = add_user(self.request, login_id=login_id, email=email, group=Guest)
-            subject = 'Phoenix: New user %s logged in on %s' % (name, self.request.server_name)
-            message = 'Please check the activation of the user {0} on the Phoenix host {1}'.format(
-                name, self.request.server_name)
+            user = self.add_user(login_id=login_id, email=email)
+            subject = 'Phoenix: New user {} logged in on {}'.format(user['name'], self.request.server_name)
+            message = 'Please check the activation of the user {} on the Phoenix host {}.'.format(
+                user['name'], self.request.server_name)
             self.send_notification(email, subject, message)
-        if local and login_id == 'phoenix@localhost':
+        if local:
             user['group'] = Admin
         user['last_login'] = datetime.now()
-        if openid:
-            user['openid'] = openid
-        user['name'] = name
+        user['openid'] = openid or ''
+        user['name'] = name or 'Guest'
         self.collection.update({'login_id': login_id}, user)
         self.session.flash("Hello <strong>{0}</strong>. Welcome to Phoenix.".format(name), queue='info')
         if user.get('group') == Guest:
@@ -137,11 +134,12 @@ class Account(object):
         return HTTPFound(location=self.request.route_path('home'), headers=headers)
 
     def login_failure(self, message=None):
-        msg = 'Sorry, login failed.'
         if message:
             msg = 'Sorry, login failed: {0}'.format(message)
+        else:
+            msg = 'Sorry, login failed.'
         self.session.flash(msg, queue='danger')
-        return HTTPFound(location=self.request.route_path('home'))
+        return HTTPFound(location=self.request.route_path('sign_in'))
 
     def login(self):
         form = self.generate_form()
