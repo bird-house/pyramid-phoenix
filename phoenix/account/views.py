@@ -54,15 +54,13 @@ class Account(object):
         self.session = request.session
         self.collection = request.db.users
 
-    def appstruct(self, protocol):
-        if protocol == 'oauth2':
-            return dict(provider='github')
-        elif protocol == 'esgf':
+    def appstruct(self, protocol=None):
+        if protocol == 'esgf':
             return dict(provider='dkrz')
         else:
             return dict()
 
-    def generate_form(self, protocol):
+    def generate_form(self, protocol=None):
         if protocol == 'ldap':
             schema = LdapSchema()
         elif protocol == 'esgf':
@@ -78,7 +76,7 @@ class Account(object):
         form = Form(schema=schema, buttons=(btn,), formid='deform')
         return form
 
-    def process_form(self, form, protocol):
+    def process_form(self, form, protocol=None):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
@@ -90,9 +88,7 @@ class Account(object):
                 auth_protocols=allowed_auth_protocols(self.request),
                 form=e.render())
         else:
-            if protocol == 'phoenix':
-                return self.phoenix_login(appstruct)
-            elif protocol == 'ldap':
+            if protocol == 'ldap':
                 return self.ldap_login()
             elif protocol == 'oauth2':
                 return HTTPFound(location=self.request.route_path('account_auth',
@@ -106,7 +102,7 @@ class Account(object):
                 return HTTPFound(location=self.request.route_path('account_auth',
                                  provider_name='openid', _query=dict(id=openid)))
             else:
-                return HTTPForbidden()
+                return self.phoenix_login(appstruct)
 
     def send_notification(self, email, subject, message):
         """Sends email notification to admins.
@@ -120,7 +116,7 @@ class Account(object):
         sender = "noreply@%s" % (self.request.server_name)
 
         recipients = set()
-        for user in self.request.db.users.find({'group': Admin}):
+        for user in self.collection.find({'group': Admin}):
             email = user.get('email')
             if email:
                 recipients.add(email)
@@ -175,11 +171,10 @@ class Account(object):
 
     @view_config(route_name='sign_in', renderer='templates/account/sign_in.pt')
     def sign_in(self):
-        protocol = 'phoenix'
-        form = self.generate_form(protocol)
+        form = self.generate_form()
         if 'submit' in self.request.POST:
-            return self.process_form(form, protocol)
-        return dict(form=form.render(self.appstruct(protocol)))
+            return self.process_form(form)
+        return dict(form=form.render(self.appstruct()))
 
     @view_config(route_name='account_login', renderer='templates/account/login.pt')
     def login(self):
