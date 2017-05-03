@@ -13,7 +13,7 @@ from phoenix.security import Admin, Guest, authomatic, passwd_check
 from phoenix.security import allowed_auth_protocols
 from phoenix.security import AUTH_PROTOCOLS
 from phoenix.twitcherclient import generate_access_token
-from phoenix.account.schema import PhoenixSchema, LdapSchema, ESGFOpenIDSchema, OpenIDSchema, OAuthSchema
+from phoenix.account.schema import PhoenixSchema, LdapSchema, ESGFOpenIDSchema, OAuthSchema
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -65,8 +65,6 @@ class Account(object):
             schema = LdapSchema()
         elif protocol == 'esgf':
             schema = ESGFOpenIDSchema()
-        elif protocol == 'openid':
-            schema = OpenIDSchema()
         elif protocol == 'oauth2':
             schema = OAuthSchema()
         else:
@@ -97,10 +95,6 @@ class Account(object):
                 return HTTPFound(location=self.request.route_path('account_auth',
                                  provider_name=appstruct.get('provider'),
                                  _query=dict(username=appstruct.get('username'))))
-            elif protocol == 'openid':
-                openid = appstruct.get('openid')
-                return HTTPFound(location=self.request.route_path('account_auth',
-                                 provider_name='openid', _query=dict(id=openid)))
             else:
                 return self.phoenix_login(appstruct)
 
@@ -228,7 +222,7 @@ class Account(object):
                     result.user.update()
                 # Hooray, we have the user!
                 LOGGER.info("login successful for user %s", result.user.name)
-                if result.provider.name in ['openid', 'dkrz', 'ipsl', 'smhi', 'badc', 'pcmdi']:
+                if result.provider.name in ['dkrz', 'ipsl', 'smhi', 'badc', 'pcmdi']:
                     # TODO: change login_id ... more infos ...
                     return self.login_success(login_id=result.user.id,
                                               email=result.user.email,

@@ -22,15 +22,6 @@ class OAuthSchema(colander.MappingSchema):
         description='Select your OAuth Provider.')
 
 
-class OpenIDSchema(colander.MappingSchema):
-    openid = colander.SchemaNode(
-        colander.String(),
-        validator=colander.url,
-        title="OpenID",
-        description="Example: https://esgf-data.dkrz.de/esgf-idp/openid/myname or https://openid.stackexchange.com/",
-        default='https://openid.stackexchange.com/')
-
-
 class ESGFOpenIDSchema(colander.MappingSchema):
     choices = [('badc', 'BADC'), ('dkrz', 'DKRZ'), ('ipsl', 'IPSL'), ('smhi', 'SMHI'), ('pcmdi', 'PCMDI')]
 

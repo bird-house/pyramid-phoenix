@@ -16,7 +16,7 @@ from pyramid.security import (
     ALL_PERMISSIONS)
 
 from authomatic import Authomatic, provider_id
-from authomatic.providers import oauth2, openid
+from authomatic.providers import oauth2
 from phoenix.providers import esgfopenid
 
 from phoenix.twitcherclient import is_public
@@ -32,7 +32,6 @@ Guest = 'group.guest'
 AUTH_PROTOCOLS = OrderedDict([
     ('phoenix', 'Phoenix'),
     ('esgf', 'ESGF OpenID'),
-    ('openid', 'OpenID'),
     ('oauth2', 'OAuth 2.0'),
     ('ldap', 'LDAP')])
 
@@ -140,12 +139,6 @@ def authomatic_config(request):
         'popup': True,
     }
 
-    OPENID = {
-        'openid': {
-            'class_': openid.OpenID,
-        },
-    }
-
     ESGF = {
         'dkrz': {
             'class_': esgfopenid.ESGFOpenID,
@@ -188,7 +181,6 @@ def authomatic_config(request):
     # Concatenate the configs.
     config = {}
     config.update(OAUTH2)
-    config.update(OPENID)
     config.update(ESGF)
     config['__defaults__'] = DEFAULTS
     return config
