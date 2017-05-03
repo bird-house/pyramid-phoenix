@@ -54,11 +54,8 @@ class Account(object):
         self.session = request.session
         self.collection = request.db.users
 
-    def appstruct(self, protocol=None):
-        if protocol == 'esgf':
-            return dict(provider='dkrz')
-        else:
-            return dict()
+    def appstruct(self):
+        return dict()
 
     def generate_form(self, protocol=None):
         if protocol == 'ldap':
@@ -187,10 +184,7 @@ class Account(object):
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
         # TODO: Add ldap to title?
-        return dict(active=protocol,
-                    protocol_name=AUTH_PROTOCOLS[protocol],
-                    auth_protocols=allowed_protocols,
-                    form=form.render(self.appstruct(protocol)))
+        return dict(form=form.render(self.appstruct()))
 
     @view_config(route_name='account_logout', permission='edit')
     def logout(self):
