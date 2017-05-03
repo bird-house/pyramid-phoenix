@@ -13,7 +13,7 @@ from phoenix.security import Admin, Guest, authomatic, passwd_check
 from phoenix.security import allowed_auth_protocols
 from phoenix.security import AUTH_PROTOCOLS
 from phoenix.twitcherclient import generate_access_token
-from phoenix.account.schema import PhoenixSchema, LdapSchema, ESGFOpenIDSchema, OAuthSchema
+from phoenix.account.schema import PhoenixSchema, LdapSchema
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -57,18 +57,13 @@ class Account(object):
     def appstruct(self):
         return dict()
 
-    def generate_form(self, protocol=None):
-        if protocol == 'ldap':
-            schema = LdapSchema()
-        elif protocol == 'esgf':
-            schema = ESGFOpenIDSchema()
-        elif protocol == 'oauth2':
-            schema = OAuthSchema()
-        else:
-            schema = PhoenixSchema()
+    def schema(self):
+        return PhoenixSchema()
+
+    def generate_form(self):
         btn = Button(name='submit', title='Sign In',
                      css_class="btn btn-success btn-lg btn-block")
-        form = Form(schema=schema, buttons=(btn,), formid='deform')
+        form = Form(schema=self.schema(), buttons=(btn,), formid='deform')
         return form
 
     def process_form(self, form, protocol=None):
@@ -77,17 +72,10 @@ class Account(object):
             appstruct = form.validate(controls)
         except ValidationFailure, e:
             self.session.flash("<strong>Error:</strong> Validation failed %s".format(e.message), queue='danger')
-            return dict(
-                active=protocol,
-                protocol_name=AUTH_PROTOCOLS[protocol],
-                auth_protocols=allowed_auth_protocols(self.request),
-                form=e.render())
+            return dict(form=e.render())
         else:
             if protocol == 'ldap':
                 return self.ldap_login()
-            elif protocol == 'oauth2':
-                return HTTPFound(location=self.request.route_path('account_auth',
-                                 provider_name=appstruct.get('provider')))
             elif protocol == 'esgf':
                 return HTTPFound(location=self.request.route_path('account_auth',
                                  provider_name=appstruct.get('provider'),

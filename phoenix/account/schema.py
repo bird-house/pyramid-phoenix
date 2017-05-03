@@ -11,17 +11,6 @@ class PhoenixSchema(colander.MappingSchema):
         widget=deform.widget.PasswordWidget())
 
 
-class OAuthSchema(colander.MappingSchema):
-    choices = [('github', 'GitHub'), ]
-
-    provider = colander.SchemaNode(
-        colander.String(),
-        validator=colander.OneOf([x[0] for x in choices]),
-        widget=deform.widget.RadioChoiceWidget(values=choices, inline=True),
-        title='OAuth 2.0 Provider',
-        description='Select your OAuth Provider.')
-
-
 class ESGFOpenIDSchema(colander.MappingSchema):
     choices = [('badc', 'BADC'), ('dkrz', 'DKRZ'), ('ipsl', 'IPSL'), ('smhi', 'SMHI'), ('pcmdi', 'PCMDI')]
 
