@@ -9,11 +9,10 @@ from pyramid.security import remember, forget
 from deform import Form, Button, ValidationFailure
 from authomatic.adapters import WebObAdapter
 
-from phoenix.security import Admin, Guest, authomatic, passwd_check
+from phoenix.security import Admin, Guest, authomatic
 from phoenix.security import allowed_auth_protocols
 from phoenix.security import AUTH_PROTOCOLS
 from phoenix.twitcherclient import generate_access_token
-from phoenix.account.schema import PhoenixSchema
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -58,7 +57,7 @@ class Account(object):
         return dict()
 
     def schema(self):
-        return PhoenixSchema()
+        return None
 
     def generate_form(self):
         btn = Button(name='submit', title='Sign In',
@@ -77,7 +76,7 @@ class Account(object):
             return self._handle_appstruct(appstruct)
 
     def _handle_appstruct(self, appstruct):
-        return self.phoenix_login(appstruct)
+        raise NotImplementedError("Needs to be implemented in subclass")
 
     def send_notification(self, email, subject, message):
         """Sends email notification to admins.
@@ -144,13 +143,6 @@ class Account(object):
         self.session.flash(msg, queue='danger')
         return HTTPFound(location=self.request.route_path('home'))
 
-    @view_config(route_name='sign_in', renderer='templates/account/sign_in.pt')
-    def sign_in(self):
-        form = self.generate_form()
-        if 'submit' in self.request.POST:
-            return self.process_form(form)
-        return dict(form=form.render(self.appstruct()))
-
     @view_config(route_name='account_login', renderer='templates/account/login.pt')
     def login(self):
         protocol = self.request.matchdict.get('protocol', 'phoenix')
@@ -170,12 +162,6 @@ class Account(object):
     def logout(self):
         headers = forget(self.request)
         return HTTPFound(location=self.request.route_path('home'), headers=headers)
-
-    def phoenix_login(self, appstruct):
-        password = appstruct.get('password')
-        if passwd_check(self.request, password):
-            return self.login_success(login_id="phoenix@localhost", name="Phoenix", local=True)
-        return self.login_failure()
 
     @view_config(route_name='account_auth')
     def authomatic_login(self):
