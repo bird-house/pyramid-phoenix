@@ -10,22 +10,15 @@ from deform import Form, Button, ValidationFailure
 from authomatic.adapters import WebObAdapter
 
 from phoenix.security import Admin, Guest, authomatic
-from phoenix.security import AUTH_PROTOCOLS
 from phoenix.twitcherclient import generate_access_token
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@forbidden_view_config(renderer='templates/account/forbidden.pt', layout="default")
+@forbidden_view_config(renderer='templates/account/forbidden.pt')
 def forbidden(request):
     request.response.status = 403
-    return dict()
-
-
-@view_config(route_name='account_register', renderer='templates/account/register.pt',
-             permission='view', layout="default")
-def register(request):
     return dict()
 
 
@@ -106,6 +99,12 @@ class Account(object):
         self.collection.save(user)
         return self.collection.find_one({'identifier': user['identifier']})
 
+    def login(self):
+        form = self.generate_form()
+        if 'submit' in self.request.POST:
+            return self.process_form(form)
+        return dict(form=form.render(self.appstruct()))
+
     def login_success(self, login_id, email=None, name=None, openid=None, local=False):
         user = self.collection.find_one(dict(login_id=login_id))
         if user is None:
@@ -141,16 +140,14 @@ class Account(object):
         self.session.flash(msg, queue='danger')
         return HTTPFound(location=self.request.route_path('sign_in'))
 
-    def login(self):
-        form = self.generate_form()
-        if 'submit' in self.request.POST:
-            return self.process_form(form)
-        return dict(form=form.render(self.appstruct()))
-
     @view_config(route_name='account_logout', permission='edit')
     def logout(self):
         headers = forget(self.request)
         return HTTPFound(location=self.request.route_path('home'), headers=headers)
+
+    @view_config(route_name='account_register', renderer='templates/account/register.pt')
+    def register(self):
+        return dict()
 
     @view_config(route_name='account_auth')
     def authomatic_login(self):
