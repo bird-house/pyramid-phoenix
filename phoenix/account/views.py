@@ -9,7 +9,6 @@ from pyramid.security import remember, forget
 from deform import Form, Button, ValidationFailure
 from authomatic.adapters import WebObAdapter
 
-from phoenix.views import MyView
 from phoenix.security import Admin, Guest, authomatic, passwd_check
 from phoenix.security import allowed_auth_protocols
 from phoenix.security import AUTH_PROTOCOLS
@@ -49,9 +48,11 @@ def register(request):
 
 
 @view_defaults(permission='view', layout='default')
-class Account(MyView):
+class Account(object):
     def __init__(self, request):
-        super(Account, self).__init__(request, name="account", title='Account')
+        self.request = request
+        self.session = request.session
+        self.collection = request.db.users
 
     def appstruct(self, protocol):
         if protocol == 'oauth2':
@@ -82,7 +83,7 @@ class Account(MyView):
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
         except ValidationFailure, e:
-            LOGGER.exception('validation of form failed.')
+            self.session.flash("<strong>Error:</strong> Validation failed %s".format(e.message), queue='danger')
             return dict(
                 active=protocol,
                 protocol_name=AUTH_PROTOCOLS[protocol],
@@ -133,12 +134,12 @@ class Account(MyView):
             try:
                 mailer.send_immediately(message, fail_silently=True)
             except:
-                LOGGER.exception("failed to send notification")
+                LOGGER.error("failed to send notification")
         else:
             LOGGER.warn("Can't send notification. No admin emails are available.")
 
     def login_success(self, login_id, email='', name="Unknown", openid=None, local=False):
-        user = self.request.db.users.find_one(dict(login_id=login_id))
+        user = self.collection.find_one(dict(login_id=login_id))
         if user is None:
             LOGGER.warn("new user: %s", login_id)
             user = add_user(self.request, login_id=login_id, email=email, group=Guest)
@@ -152,7 +153,7 @@ class Account(MyView):
         if openid:
             user['openid'] = openid
         user['name'] = name
-        self.userdb.update({'login_id': login_id}, user)
+        self.collection.update({'login_id': login_id}, user)
         self.session.flash("Hello <strong>{0}</strong>. Welcome to Phoenix.".format(name), queue='info')
         if user.get('group') == Guest:
             msg = """
@@ -170,7 +171,6 @@ class Account(MyView):
         if message:
             msg = 'Sorry, login failed: {0}'.format(message)
         self.session.flash(msg, queue='danger')
-        LOGGER.warn(msg)
         return HTTPFound(location=self.request.route_path('home'))
 
     @view_config(route_name='sign_in', renderer='templates/account/sign_in.pt')
