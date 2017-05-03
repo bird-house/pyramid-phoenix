@@ -143,19 +143,10 @@ class Account(object):
         self.session.flash(msg, queue='danger')
         return HTTPFound(location=self.request.route_path('home'))
 
-    @view_config(route_name='account_login', renderer='templates/account/login.pt')
     def login(self):
-        protocol = self.request.matchdict.get('protocol', 'phoenix')
-        allowed_protocols = allowed_auth_protocols(self.request)
-
-        # Make sure disabled protocols are not accessed directly
-        if protocol not in allowed_protocols:
-            return HTTPForbidden()
-
-        form = self.generate_form(protocol)
+        form = self.generate_form()
         if 'submit' in self.request.POST:
-            return self.process_form(form, protocol)
-        # TODO: Add ldap to title?
+            return self.process_form(form)
         return dict(form=form.render(self.appstruct()))
 
     @view_config(route_name='account_logout', permission='edit')

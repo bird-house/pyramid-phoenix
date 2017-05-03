@@ -12,14 +12,13 @@ from phoenix.wps import WPSSchema
 from phoenix.wps import check_status
 from phoenix.utils import wps_describe_url
 from phoenix.security import has_execute_permission
-from phoenix.security import default_auth_protocol
 
 from owslib.wps import WebProcessingService
 from owslib.wps import WPSExecution
 from owslib.wps import ComplexDataInput, BoundingBoxDataInput
 
 import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 @view_defaults(permission='view', layout='default')
@@ -172,7 +171,7 @@ class ExecuteProcess(MyView):
         if not has_execute_permission(self.request, self.service_name):
             msg = """<strong>Warning:</strong> You are not allowed to run this process.
             Please <a href="{0}" class="alert-link">sign in</a> and wait for account activation."""
-            msg = msg.format(self.request.route_path('account_login', protocol=default_auth_protocol(self.request)))
+            msg = msg.format(self.request.route_path('sign_in'))
             self.session.flash(msg, queue='warning')
         return dict(
             process=self.process,

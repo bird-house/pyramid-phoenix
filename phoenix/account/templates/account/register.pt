@@ -1,7 +1,7 @@
 <metal:block use-macro="main_template">
 
   <div metal:fill-slot="content">
-    
+
     <div class="jumbotron">
       <div class="container">
         <h1>Please ask for registration</h1>
@@ -19,7 +19,7 @@
             When you are not registered you will be asked for group registration once.
           </li>
           <li>
-            <a href="${request.route_path('account_login', protocol='oauth2')}">Sign in</a> with your OpenID at Phoenix.
+            <a href="${request.route_path('sign_in')}">Sign in</a> with your OpenID at Phoenix.
           </li>
           <li>
             You will only have <b>guest</b> status and an admin needs to activate your account.
@@ -33,8 +33,7 @@
         </ol>
       </div>
     </div>
-    
+
   </div>
 
 </metal:block>
-

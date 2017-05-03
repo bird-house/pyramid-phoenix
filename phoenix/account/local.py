@@ -19,7 +19,4 @@ class LocalAccount(Account):
 
     @view_config(route_name='sign_in', renderer='templates/account/sign_in.pt')
     def sign_in(self):
-        form = self.generate_form()
-        if 'submit' in self.request.POST:
-            return self.process_form(form)
-        return dict(form=form.render(self.appstruct()))
+        return self.login()
