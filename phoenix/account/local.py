@@ -1,15 +1,26 @@
+import colander
+import deform
+
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
 from phoenix.security import passwd_check
 from phoenix.account.base import Account
-from phoenix.account.schema import PhoenixSchema
+
+
+class LocalSchema(colander.MappingSchema):
+    password = colander.SchemaNode(
+        colander.String(),
+        title='Password',
+        description='If you have not configured your password yet then it is likely to be "qwerty"',
+        validator=colander.Length(min=6),
+        widget=deform.widget.PasswordWidget())
 
 
 class LocalAccount(Account):
 
     def schema(self):
-        return PhoenixSchema()
+        return LocalSchema()
 
     def _handle_appstruct(self, appstruct):
         password = appstruct.get('password')

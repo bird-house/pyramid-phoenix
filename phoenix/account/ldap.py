@@ -1,12 +1,25 @@
+import colander
+import deform
+
 from pyramid.view import view_config
 
 from phoenix.account.base import Account
-from phoenix.account.schema import LdapSchema
+
+
+class LDAPSchema(colander.MappingSchema):
+    username = colander.SchemaNode(
+        colander.String(),
+        title="Username",
+    )
+    password = colander.SchemaNode(
+        colander.String(),
+        title='Password',
+        widget=deform.widget.PasswordWidget())
 
 
 class LDAPAccount(Account):
     def schema(self):
-        return LdapSchema()
+        return LDAPSchema()
 
     def _handle_appstruct(self, appstruct):
         """
