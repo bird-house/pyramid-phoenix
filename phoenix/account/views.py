@@ -13,7 +13,7 @@ from phoenix.security import Admin, Guest, authomatic, passwd_check
 from phoenix.security import allowed_auth_protocols
 from phoenix.security import AUTH_PROTOCOLS
 from phoenix.twitcherclient import generate_access_token
-from phoenix.account.schema import PhoenixSchema, LdapSchema
+from phoenix.account.schema import PhoenixSchema
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -66,7 +66,7 @@ class Account(object):
         form = Form(schema=self.schema(), buttons=(btn,), formid='deform')
         return form
 
-    def process_form(self, form, protocol=None):
+    def process_form(self, form):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
@@ -74,14 +74,10 @@ class Account(object):
             self.session.flash("<strong>Error:</strong> Validation failed %s".format(e.message), queue='danger')
             return dict(form=e.render())
         else:
-            if protocol == 'ldap':
-                return self.ldap_login()
-            elif protocol == 'esgf':
-                return HTTPFound(location=self.request.route_path('account_auth',
-                                 provider_name=appstruct.get('provider'),
-                                 _query=dict(username=appstruct.get('username'))))
-            else:
-                return self.phoenix_login(appstruct)
+            return self._handle_appstruct(appstruct)
+
+    def _handle_appstruct(self, appstruct):
+        return self.phoenix_login(appstruct)
 
     def send_notification(self, email, subject, message):
         """Sends email notification to admins.
@@ -164,10 +160,6 @@ class Account(object):
         if protocol not in allowed_protocols:
             return HTTPForbidden()
 
-        if protocol == 'ldap':
-            # Ensure that the ldap connector is created
-            self.ldap_prepare()
-
         form = self.generate_form(protocol)
         if 'submit' in self.request.POST:
             return self.process_form(form, protocol)
@@ -219,54 +211,3 @@ class Account(object):
                         pass
                     return self.login_success(login_id=login_id, name=result.user.name)
         return response
-
-    def ldap_prepare(self):
-        """Lazy LDAP connector construction"""
-        ldap_settings = self.request.db.ldap.find_one()
-
-        if ldap_settings is None:
-            # Warn if LDAP is about to be used but not set up.
-            self.session.flash('LDAP does not seem to be set up correctly!', queue='danger')
-        elif getattr(self.request, 'ldap_connector', None) is None:
-            LOGGER.debug('Set up LDAP connector...')
-
-            # Set LDAP settings
-            import ldap
-            if ldap_settings['scope'] == 'ONELEVEL':
-                ldap_scope = ldap.SCOPE_ONELEVEL
-            else:
-                ldap_scope = ldap.SCOPE_SUBTREE
-
-            # FK: Do we have to think about race conditions here?
-            from pyramid.config import Configurator
-            config = Configurator(registry=self.request.registry)
-            config.ldap_setup(ldap_settings['server'],
-                              bind=ldap_settings['bind'],
-                              passwd=ldap_settings['passwd'])
-            config.ldap_set_login_query(
-                base_dn=ldap_settings['base_dn'],
-                filter_tmpl=ldap_settings['filter_tmpl'],
-                scope=ldap_scope)
-            config.commit()
-
-    def ldap_login(self):
-        """LDAP login"""
-        username = self.request.params.get('username')
-        password = self.request.params.get('password')
-
-        # Performing ldap login
-        from pyramid_ldap import get_ldap_connector
-        connector = get_ldap_connector(self.request)
-        auth = connector.authenticate(username, password)
-
-        if auth is not None:
-            # Get user name and email
-            ldap_settings = self.request.db.ldap.find_one()
-            name = (auth[1].get(ldap_settings['name'])[0] if ldap_settings['name'] != '' else 'Unknown')
-            email = (auth[1].get(ldap_settings['email'])[0] if ldap_settings['email'] != '' else '')
-
-            # Authentication successful
-            return self.login_success(login_id=auth[0], name=name, email=email)  # login_id=user_dn
-        else:
-            # Authentification failed
-            return self.login_failure()
