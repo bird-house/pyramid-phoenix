@@ -84,13 +84,13 @@
         <!-- sign-in -->
         <li tal:condition="not request.user">
           <div class="col-sm-12">
-            <a href="/account/sign_in" class="btn btn-link navbar-btn">Sign In</a>
+            <a href="${request.route_path('sign_in')}" class="btn btn-link navbar-btn">Sign In</a>
           </div>
         </li>
         <!-- user -->
         <li tal:condition="request.user" class="dropdown">
           <a href="#" class="dropdown-toggle nav-user-dropdown" data-toggle="dropdown" role="button" aria-expanded="false">
-            <span class="fa fa-user-circle-o fa-lg"></span> ${request.user.get('name', 'Unknown')} <span class="caret"></span></a>
+            <span class="fa fa-user-circle-o fa-lg"></span> ${request.user.get('name', 'Guest')} <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li>
               <a href="${request.route_path('profile', userid=request.unauthenticated_userid, tab='profile')}"><i class="fa fa-user fa-lg p-r-xs"></i> My Profile</a>
