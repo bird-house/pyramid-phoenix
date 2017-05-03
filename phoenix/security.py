@@ -32,7 +32,7 @@ Guest = 'group.guest'
 AUTH_PROTOCOLS = OrderedDict([
     ('phoenix', 'Phoenix'),
     ('esgf', 'ESGF OpenID'),
-    ('oauth2', 'OAuth 2.0'),
+    ('github', 'GitHub'),
     ('ldap', 'LDAP')])
 
 

@@ -152,12 +152,11 @@ class Account(object):
     @view_config(route_name='account_auth')
     def authomatic_login(self):
         _authomatic = authomatic(self.request)
-
-        provider_name = self.request.matchdict.get('provider_name')
+        provider = self.request.matchdict.get('provider')
 
         # Start the login procedure.
         response = Response()
-        result = _authomatic.login(WebObAdapter(self.request, response), provider_name)
+        result = _authomatic.login(WebObAdapter(self.request, response), provider)
 
         if result:
             if result.error:
@@ -168,18 +167,14 @@ class Account(object):
                     result.user.update()
                 # Hooray, we have the user!
                 LOGGER.info("login successful for user %s", result.user.name)
-                if result.provider.name in ['dkrz', 'ipsl', 'smhi', 'badc', 'pcmdi']:
+                if result.provider.name == 'github':
+                    # TODO: fix email ... get more infos ... which login_id?
+                    login_id = "{0.username}@github.com".format(result.user)
+                    return self.login_success(login_id=login_id, name=result.user.name)
+                else:
                     # TODO: change login_id ... more infos ...
                     return self.login_success(login_id=result.user.id,
                                               email=result.user.email,
                                               openid=result.user.id,
                                               name=result.user.name)
-                elif result.provider.name == 'github':
-                    # TODO: fix email ... get more infos ... which login_id?
-                    login_id = "{0.username}@github.com".format(result.user)
-                    #email = "{0.username}@github.com".format(result.user)
-                    # get extra info
-                    if result.user.credentials:
-                        pass
-                    return self.login_success(login_id=login_id, name=result.user.name)
         return response

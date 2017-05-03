@@ -10,5 +10,5 @@ def includeme(config):
     config.add_route('github_login', '/account/login/github')
     config.add_route('ldap_login', '/account/login/ldap')
     config.add_route('account_logout', '/account/logout')
-    config.add_route('account_auth', '/account/auth/{provider_name}')
+    config.add_route('account_auth', '/account/auth/{provider}')
     config.add_route('account_register', '/account/register')

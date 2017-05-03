@@ -31,7 +31,7 @@ class ESGFAccount(Account):
 
     def _handle_appstruct(self, appstruct):
         return HTTPFound(location=self.request.route_path('account_auth',
-                         provider_name=appstruct.get('provider'),
+                         provider=appstruct.get('provider'),
                          _query=dict(username=appstruct.get('username'))))
 
     @view_config(route_name='esgf_login', renderer='templates/account/login.pt')

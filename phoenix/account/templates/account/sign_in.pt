@@ -12,7 +12,7 @@
             <div class="panel-body">
               <h2>Sign In</h2>
               <br/>
-              <a href="${request.route_path('account_auth', provider_name='github')}"
+              <a href="${request.route_path('account_auth', provider='github')}"
                  class="btn btn-success">Sign in with GitHub <icon class="fa fa-lg fa-github"></icon></a>
               <br/><br/>
               <a href="${request.route_path('esgf_login')}"
