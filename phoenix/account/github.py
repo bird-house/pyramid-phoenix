@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 
-from phoenix.account.views import Account
+from phoenix.account.base import Account
 
 
 class GitHubAccount(Account):

@@ -1,7 +1,7 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
-from phoenix.account.views import Account
+from phoenix.account.base import Account
 from phoenix.account.schema import ESGFOpenIDSchema
 
 
