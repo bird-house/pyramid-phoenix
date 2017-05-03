@@ -110,7 +110,7 @@
             </li>
             <li role="separator" class="divider"></li>
             <li>
-              <a href="/account/logout"><i class="fa fa-sign-out fa-lg p-r-xs"></i> Log out</a>
+              <a href="/account/logout"><i class="fa fa-sign-out fa-lg p-r-xs"></i> Sign Out</a>
             </li>
           </ul>
         </li>
