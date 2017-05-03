@@ -33,20 +33,17 @@ class LDAPAccount(Account):
             return self.login_failure()
 
     @view_config(route_name='ldap_login', renderer='templates/account/login.pt')
-    def login(self):
-        self.ldap_prepare()
-        form = self.generate_form()
-        if 'submit' in self.request.POST:
-            return self.process_form(form)
-        return dict(form=form.render(self.appstruct()))
+    def ldap_login(self):
+        self.init_ldap()
+        return self.login()
 
-    def ldap_prepare(self):
+    def init_ldap(self):
         """Lazy LDAP connector construction"""
         ldap_settings = self.request.db.ldap.find_one()
 
         if ldap_settings is None:
             # Warn if LDAP is about to be used but not set up.
-            self.session.flash('LDAP does not seem to be set up correctly!', queue='danger')
+            self.session.flash('<strong>Error</strong>:LDAP does not seem to be set up correctly!', queue='danger')
         elif getattr(self.request, 'ldap_connector', None) is None:
             LOGGER.debug('Set up LDAP connector...')
 

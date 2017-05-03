@@ -18,8 +18,5 @@ class ESGFAccount(Account):
                          _query=dict(username=appstruct.get('username'))))
 
     @view_config(route_name='esgf_login', renderer='templates/account/login.pt')
-    def login(self):
-        form = self.generate_form()
-        if 'submit' in self.request.POST:
-            return self.process_form(form)
-        return dict(form=form.render(self.appstruct()))
+    def esgf_login(self):
+        return self.login()
