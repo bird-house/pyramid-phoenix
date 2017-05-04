@@ -7,7 +7,7 @@ from phoenix.views import MyView
 from phoenix.events import SettingsChanged
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 @view_defaults(permission='admin', layout='default')
