@@ -95,35 +95,3 @@ class LdapSchema(colander.MappingSchema):
         title='User e-mail attribute',
         description='Optional: LDAP attribute to receive user e-mail from query, e.g. "mail"',
         missing='')
-
-
-class GitHubSchema(colander.MappingSchema):
-    github_client_id = colander.SchemaNode(
-        colander.String(),
-        title='GitHub Client ID',
-        description="Register at GitHub: https://github.com/settings/applications/new",
-        validator=colander.Length(min=20),
-    )
-    github_client_secret = colander.SchemaNode(
-        colander.String(),
-        title='GitHub Client Secret',
-        validator=colander.Length(min=20),
-    )
-
-
-class ESGFSLCSSchema(colander.MappingSchema):
-    esgf_slcs_url = colander.SchemaNode(
-        colander.String(),
-        title='URL of ESGF SLCS Service',
-        validator=colander.url,
-    )
-    esgf_slcs_client_id = colander.SchemaNode(
-        colander.String(),
-        title='ESGF SLCS Client ID',
-        validator=colander.Length(min=20),
-    )
-    esgf_slcs_client_secret = colander.SchemaNode(
-        colander.String(),
-        title='ESGF SLCS Client Secret',
-        validator=colander.Length(min=20),
-    )

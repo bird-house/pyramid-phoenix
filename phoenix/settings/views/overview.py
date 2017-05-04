@@ -24,10 +24,6 @@ class Overview(MyView):
                             icon_class="fa fa-lock fa-2x", title="Auth"))
         buttons.append(dict(url=self.request.route_path('settings_ldap'),
                             icon_class="fa fa-sitemap fa-2x", title="LDAP"))
-        buttons.append(dict(url=self.request.route_path('settings_github'),
-                            icon_class="fa fa-github fa-2x", title="GitHub"))
-        buttons.append(dict(url=self.request.route_path('settings_esgf'),
-                            icon_class="fa fa-key fa-2x", title="ESGF SLCS"))
         buttongroups.append(dict(title='Settings', buttons=buttons))
 
         return dict(buttongroups=buttongroups)
