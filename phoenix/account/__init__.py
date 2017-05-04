@@ -11,3 +11,8 @@ def includeme(config):
     config.add_route('account_logout', '/account/logout')
     config.add_route('account_auth', '/account/auth/{provider}')
     config.add_route('account_register', '/account/register')
+
+    def github_activated(request):
+        settings = request.registry.settings
+        return len(settings.get('github.client.id', '').strip()) >= 10
+    config.add_request_method(github_activated, reify=True)
