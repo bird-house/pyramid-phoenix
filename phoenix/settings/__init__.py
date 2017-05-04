@@ -9,10 +9,7 @@ LOGGER = logging.getLogger("PHOENIX")
 def includeme(config):
     settings = config.registry.settings
 
-    LOGGER.debug('Enable settings ...')
-
     config.add_route('settings', '/settings')
-    config.add_route('settings_auth', '/settings/auth')
     config.add_route('settings_ldap', '/settings/ldap')
     config.add_route('settings_solr', '/settings/solr/{tab}')
     config.add_route('settings_processes', '/settings/processes')
