@@ -52,13 +52,12 @@ class LDAPAccount(Account):
 
     def init_ldap(self):
         """Lazy LDAP connector construction"""
-        ldap_settings = self.request.db.ldap.find_one()
-
-        if ldap_settings is None:
+        if not self.request.ldap_activated:
             # Warn if LDAP is about to be used but not set up.
             self.session.flash('<strong>Error</strong>:LDAP does not seem to be set up correctly!', queue='danger')
         elif getattr(self.request, 'ldap_connector', None) is None:
             LOGGER.debug('Set up LDAP connector...')
+            ldap_settings = self.request.db.ldap.find_one()
 
             # Set LDAP settings
             import ldap
