@@ -11,7 +11,7 @@ from phoenix.account.base import Account
 class LocalSchema(colander.MappingSchema):
     password = colander.SchemaNode(
         colander.String(),
-        title='Password',
+        title='Admin password',
         description='If you have not configured your password yet then it is likely to be "qwerty"',
         validator=colander.Length(min=6),
         widget=deform.widget.PasswordWidget())
