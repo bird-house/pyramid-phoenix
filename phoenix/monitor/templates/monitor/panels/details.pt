@@ -73,7 +73,7 @@
       <div class="col-md-5">
         <dl>
           <dt>
-            <div tal:condition="request.has_permission('submit') and job.get('status') == 'ProcessSucceeded'" class="pull-right">
+            <div tal:condition="request.has_permission('submit')" class="pull-right">
               <a class="btn btn-danger btn-xs"
                  rel="tooltip"
                  data-toggle="tooltip"
@@ -81,7 +81,7 @@
                  href="${request.route_path('delete_job', job_id=job.get('identifier'))}">
                 <i class="fa fa-trash"></i> Delete Job
               </a>
-              <a class="btn btn-success btn-xs"
+              <a tal:condition="job.get('status') == 'ProcessSucceeded'" class="btn btn-success btn-xs"
                  rel="tooltip"
                  data-toggle="tooltip"
                  title="Restart Job"
