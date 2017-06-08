@@ -16,6 +16,7 @@ from phoenix.security import has_execute_permission
 from owslib.wps import WebProcessingService
 from owslib.wps import WPSExecution
 from owslib.wps import ComplexDataInput, BoundingBoxDataInput
+from owslib.wps import is_reference
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -138,10 +139,15 @@ class ExecuteProcess(MyView):
                 bbox_inpts.append(inpt.identifier)
         new_inputs = []
         for inpt in inputs:
-            if inpt[0] in complex_inpts:
-                new_inputs.append((inpt[0], ComplexDataInput(inpt[1])))
-            elif inpt[0] in bbox_inpts:
-                new_inputs.append((inpt[0], BoundingBoxDataInput(inpt[1])))
+            identifier = inpt[0]
+            value = inpt[1]
+            if identifier in complex_inpts:
+                new_inputs.append((identifier, ComplexDataInput(value)))
+                if is_reference(value):
+                    if value not in self.request.cart:
+                        self.request.cart.add_item(value)
+            elif identifier in bbox_inpts:
+                new_inputs.append((identifier, BoundingBoxDataInput(value)))
             else:
                 new_inputs.append(inpt)
         inputs = new_inputs
