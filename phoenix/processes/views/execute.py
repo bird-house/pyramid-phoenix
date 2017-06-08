@@ -130,11 +130,11 @@ class ExecuteProcess(MyView):
     def execute(self, appstruct):
         inputs = appstruct_to_inputs(self.request, appstruct)
         # need to use ComplexDataInput
-        complex_inpts = []
+        complex_inpts = {}
         bbox_inpts = []
         for inpt in self.process.dataInputs:
             if 'ComplexData' in inpt.dataType:
-                complex_inpts.append(inpt.identifier)
+                complex_inpts[inpt.identifier] = inpt
             elif 'BoundingBoxData' in inpt.dataType:
                 bbox_inpts.append(inpt.identifier)
         new_inputs = []
@@ -145,7 +145,12 @@ class ExecuteProcess(MyView):
                 new_inputs.append((identifier, ComplexDataInput(value)))
                 if is_reference(value):
                     if value not in self.request.cart:
-                        self.request.cart.add_item(value)
+                        if complex_inpts[identifier].supportedValues:
+                            mime_type = complex_inpts[identifier].supportedValues[0].mimeType
+                        else:
+                            mime_type = None
+                        LOGGER.debug("add input to cart: %s %s", identifier, mime_type)
+                        self.request.cart.add_item(value, mime_type=mime_type)
             elif identifier in bbox_inpts:
                 new_inputs.append((identifier, BoundingBoxDataInput(value)))
             else:
