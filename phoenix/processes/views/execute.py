@@ -150,7 +150,10 @@ class ExecuteProcess(MyView):
                         else:
                             mime_type = None
                         LOGGER.debug("add input to cart: %s %s", identifier, mime_type)
-                        self.request.cart.add_item(value, mime_type=mime_type)
+                        self.request.cart.add_item(
+                            value,
+                            abstract="Automatically added in process execution.",
+                            mime_type=mime_type)
             elif identifier in bbox_inpts:
                 new_inputs.append((identifier, BoundingBoxDataInput(value)))
             else:
