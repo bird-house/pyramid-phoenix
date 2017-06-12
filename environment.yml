@@ -7,8 +7,8 @@ dependencies:
   - python=2.7.13 
   - setuptools=27.2.0
   - curl=7.49.0 
-  - pyopenssl=16.2.0
-  - cryptography=1.7
+  - pyopenssl=17.0
+  - cryptography=1.8
   - icu=56
 # tests
   - pytest 
@@ -50,7 +50,6 @@ dependencies:
   - threddsclient=0.3.4       
 #  - python-ldap=2.4.13
   - funcsigs=1.0.2
-  - bird-feeder=0.2.0
   - pip:
       - genshi==0.7
       - sphinx-autoapi==0.4.0

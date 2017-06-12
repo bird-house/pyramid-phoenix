@@ -1,7 +1,5 @@
 from pyramid_celery import celery_app as app
 
-from birdfeeder import feed_from_thredds, clear
-
 from phoenix.db import mongodb
 
 from celery.utils.log import get_task_logger
@@ -10,6 +8,7 @@ logger = get_task_logger(__name__)
 
 @app.task(bind=True)
 def index_thredds(self, url, maxrecords=-1, depth=2):
+    from birdfeeder import feed_from_thredds
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
     task = dict(task_id=self.request.id, url=url, status='started')
@@ -27,6 +26,7 @@ def index_thredds(self, url, maxrecords=-1, depth=2):
 
 @app.task(bind=True)
 def clear_index(self):
+    from birdfeeder import clear
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
     service = registry.settings.get('solr.url')
