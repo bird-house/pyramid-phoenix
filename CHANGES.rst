@@ -1,13 +1,15 @@
 Changes
 *******
 
-current
-=======
+0.7.3 (2017-06-12)
+==================
 
+* updated layout.
 * added pinned processes.
-* updated ncmws 2.2.7.
+* updated ncmws 2.2.8.
 * updated twitcher 0.3.4.
-* make twitcher workdir configurable.
+* made twitcher workdir configurable.
+* added PR #138 with json backend.
 
 0.7.2 (2017-03-21)
 ==================
