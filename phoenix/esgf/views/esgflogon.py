@@ -19,6 +19,8 @@ class ESGFLogon(object):
     def __init__(self, request):
         self.request = request
         self.session = self.request.session
+        if 'callback' in self.request.params:
+            self.session['esgflogon_callback'] = self.request.params.get('callback')
 
     def appstruct(self):
         return {}
@@ -57,11 +59,18 @@ class ESGFLogon(object):
         if result.ready():
             if result.get().get('status') == 'Success':
                 self.session.flash('ESGF logon was successful.', queue='success')
-                return HTTPFound(location=self.request.route_path('esgflogon'))
+                return self.callback()
             else:
                 self.session.flash('ESGF logon failed: {}.'.format(result.get().get('message')), queue='danger')
                 return HTTPFound(location=self.request.route_path('esgflogon'))
         return {}
+
+    def callback(self):
+        callback = self.session.get('esgflogon_callback')
+        callback = callback or 'esgflogon'
+        if 'esgflogon_callback' in self.session:
+            del self.session['esgflogon_callback']
+        return HTTPFound(location=self.request.route_path(callback))
 
     def view(self):
         form = self.generate_form()
