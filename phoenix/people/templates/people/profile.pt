@@ -16,7 +16,7 @@
                               Twitcher access token
                             </a>
                         </li>
-                        <li class="${'active' if active=='esgf_slcs' else ''}" tal:condition="request.has_permission('submit')">
+                        <li class="${'active' if active=='esgf_slcs' else ''}" tal:condition="request.has_permission('explore')">
                             <a href="${request.route_path('profile', userid=userid, tab='esgf_slcs')}">
                               ESGF SLCS access token
                             </a>
