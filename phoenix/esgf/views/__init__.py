@@ -1,5 +1,6 @@
 from pyramid.view import view_defaults
 from deform import Form
+from deform import Button
 
 from phoenix.esgf.schema import ESGFLogonSchema
 from phoenix.esgf.schema import ESGFSearchSchema
@@ -17,8 +18,14 @@ class ESGFLogon(object):
     def appstruct(self):
         return {}
 
+    def generate_form(self):
+        submit_button = Button(name='submit', title='Submit', css_class='btn btn-success')
+        return Form(schema=ESGFLogonSchema(), buttons=(submit_button,), formid="esgflogon")
+
     def view(self):
-        form = Form(ESGFLogonSchema())
+        form = self.generate_form()
+        if 'submit' in self.request.POST:
+            return self.process_form(form)
         return dict(
             form=form.render(self.appstruct()))
 
