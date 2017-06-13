@@ -4,44 +4,13 @@ from pyramid.security import authenticated_userid
 import colander
 import deform
 
+from phoenix.esgf.schema import ESGFLogonSchema
 from phoenix.tasks.utils import task_result
 from phoenix.tasks.esgflogon import esgf_logon
 from phoenix.wizard.views import Wizard
 
 import logging
-logger = logging.getLogger(__name__)
-
-
-class ESGFLogonSchema(colander.MappingSchema):
-    choices = (
-        ('slcs1.ceda.ac.uk', 'CEDA (England)'),
-        ('esgf-data.dkrz.de', 'DKRZ (Hamburg, Germany)'),
-        ('esgf-node.ipsl.upmc.fr', 'IPSL (Paris, France)'),
-        # ('pcmdi.llnl.gov', 'PCMDI'),
-        # ('esg-dn1.nsc.liu.se', 'SMHI'),
-    )
-
-    provider = colander.SchemaNode(
-        colander.String(),
-        title="Provider",
-        description="Choose your ESGF provider.",
-        validator=colander.OneOf([x[0] for x in choices]),
-        widget=deform.widget.RadioChoiceWidget(values=choices,
-                                               inline=True),
-        default='esgf-data.dkrz.de',
-    )
-    username = colander.SchemaNode(
-        colander.String(),
-        title="Username",
-        description="Type your username for your ESGF account.",
-        validator=colander.Length(min=2),
-    )
-    password = colander.SchemaNode(
-        colander.String(),
-        title='Password',
-        description='Type your password for your ESGF account.',
-        validator=colander.Length(min=6),
-        widget=deform.widget.PasswordWidget())
+LOGGER = logging.getLogger("PHOENIX")
 
 
 class ESGFLogon(Wizard):
