@@ -8,12 +8,11 @@ from deform import Form, ValidationFailure, Button
 
 from phoenix.views import MyView
 from phoenix.utils import ActionButton
-from ..schema import (
+from phoenix.people.schema import (
     ProfileSchema,
     TwitcherSchema,
     ESGFSLCSTokenSchema,
     ESGFCredentialsSchema,
-    C4ISchema,
     GroupSchema
 )
 
@@ -33,8 +32,6 @@ class Profile(MyView):
     def panel_title(self):
         if self.tab == 'twitcher':
             title = "Personal access token"
-        elif self.tab == 'c4i':
-            title = "C4I access token"
         elif self.tab == 'esgf_slcs':
             title = "ESGF SLCS access token"
         elif self.tab == 'esgf_certs':
@@ -70,8 +67,6 @@ class Profile(MyView):
     def schema(self):
         if self.tab == 'twitcher':
             schema = TwitcherSchema()
-        elif self.tab == 'c4i':
-            schema = C4ISchema()
         elif self.tab == 'esgf_slcs':
             schema = ESGFSLCSTokenSchema()
         elif self.tab == 'esgf_certs':
@@ -92,9 +87,6 @@ class Profile(MyView):
         elif self.tab == 'profile':
             btn = Button(name='update', title='Update Profile', css_class="btn btn-success btn-lg btn-block")
             form = Form(schema=self.schema(), buttons=(btn,), formid='deform')
-        elif self.tab == 'c4i':
-            btn = Button(name='update', title='Update C4I Token', css_class="btn btn-success btn-lg btn-block")
-            form = Form(schema=self.schema(), buttons=(btn,), formid='deform')
         else:
             form = Form(schema=self.schema(), formid='deform')
         return form
@@ -106,12 +98,6 @@ class Profile(MyView):
                                css_class="btn btn-success btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('generate_twitcher_token'))
-            btns.append(btn)
-        elif self.tab == 'c4i':
-            btn = ActionButton(name='generate_c4i_token', title='Generate Token',
-                               css_class="btn btn-success btn-xs",
-                               disabled=not self.request.has_permission('submit'),
-                               href="https://dev.climate4impact.eu/impactportal/account/tokenapi.jsp")
             btns.append(btn)
         elif self.tab == 'esgf_slcs':
             btn = ActionButton(name='generate_esgf_slcs_token', title='Generate Token',
@@ -141,7 +127,7 @@ class Profile(MyView):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
-            for key in ['name', 'email', 'organisation', 'notes', 'group', 'c4i_token']:
+            for key in ['name', 'email', 'organisation', 'notes', 'group']:
                 if key in appstruct:
                     self.user[key] = appstruct.get(key)
             self.collection.update({'identifier': self.userid}, self.user)

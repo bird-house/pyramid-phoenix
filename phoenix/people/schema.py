@@ -61,15 +61,6 @@ class TwitcherSchema(colander.MappingSchema):
     )
 
 
-class C4ISchema(colander.MappingSchema):
-    c4i_token = colander.SchemaNode(
-        colander.String(),
-        title="Access Token",
-        missing='',
-        widget=deform.widget.TextInputWidget(),
-    )
-
-
 class ESGFSLCSTokenSchema(colander.MappingSchema):
     esgf_token = colander.SchemaNode(
         colander.String(),
