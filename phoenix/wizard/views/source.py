@@ -68,11 +68,11 @@ class ChooseSource(Wizard):
             query = query_params_from_appstruct(self.wizard_state.get('wizard_esgf_search'))
             if not cert_ok(self.request):
                 msg = 'You are not allowed to access ESGF data. Please <a href="{}">update</a> your ESGF credentials.'
+                callback = self.request.route_path(self.name)
                 self.session.flash(
-                    msg.format(
-                        self.request.route_path('esgflogon',
-                                                _query=[('callback', 'wizard_source')])),
+                    msg.format(self.request.route_path('esgflogon', _query=[('callback', callback)])),
                     queue='danger')
+                return self.next(self.name)
         else:
             query = None
         return self.next(appstruct.get('source'), query=query)

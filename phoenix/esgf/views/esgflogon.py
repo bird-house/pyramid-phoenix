@@ -67,10 +67,10 @@ class ESGFLogon(object):
 
     def callback(self):
         callback = self.session.get('esgflogon_callback')
-        callback = callback or 'esgflogon'
+        callback = callback or self.request.route_path('esgflogon')
         if 'esgflogon_callback' in self.session:
             del self.session['esgflogon_callback']
-        return HTTPFound(location=self.request.route_path(callback))
+        return HTTPFound(location=callback)
 
     def view(self):
         form = self.generate_form()

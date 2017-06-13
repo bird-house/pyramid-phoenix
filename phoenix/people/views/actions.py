@@ -32,7 +32,8 @@ class Actions(object):
             auth_url = client.authorize()
             return HTTPFound(location=auth_url)
         else:
-            return HTTPFound(location=self.request.route_path('esgflogon'))
+            callback = self.request.route_path('profile', userid=self.userid, tab='esgf_certs')
+            return HTTPFound(location=self.request.route_path('esgflogon', _query=[('callback', callback)]))
 
     @view_config(route_name='forget_esgf_certs', permission='submit')
     def forget_esgf_certs(self):
