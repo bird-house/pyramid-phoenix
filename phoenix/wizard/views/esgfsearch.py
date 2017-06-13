@@ -17,21 +17,6 @@ def includeme(config):
                     route_name='wizard_esgf_search',
                     attr='view',
                     renderer='phoenix.esgf:templates/esgf/esgfsearch.pt')
-    config.add_route('wizard_esgf_logon', '/wizard/esgf_logon')
-    config.add_view('phoenix.wizard.views.esgflogon.ESGFLogon',
-                    route_name='wizard_esgf_logon',
-                    attr='view',
-                    renderer='../templates/wizard/default.pt')
-    config.add_route('wizard_loading', '/wizard/loading')
-    config.add_view('phoenix.wizard.views.esgflogon.ESGFLogon',
-                    route_name='wizard_loading',
-                    attr='loading',
-                    renderer='../templates/wizard/loading.pt')
-    config.add_route('wizard_check_logon', '/wizard/check_logon.json')
-    config.add_view('phoenix.wizard.views.esgflogon.ESGFLogon',
-                    route_name='wizard_check_logon',
-                    attr='check_logon',
-                    renderer='json')
 
 
 class ESGFSearchView(Wizard):
@@ -55,14 +40,13 @@ class ESGFSearchView(Wizard):
         LOGGER.debug("esgfsearch appstruct before: %s", appstruct)
         return appstruct
 
+    def next_ok(self):
+        return user_cert_valid(self.request)
+
     def next_success(self, appstruct):
         LOGGER.debug("esgfsearch appstruct after: %s", appstruct)
         self.success(appstruct)
-
-        # TODO: need to check pre conditions in wizard
-        if not self.request.has_permission('submit') or user_cert_valid(self.request):
-            return self.next('wizard_done')
-        return self.next('wizard_esgf_logon')
+        return self.next('wizard_done')
 
     def custom_view(self):
         result = dict()
