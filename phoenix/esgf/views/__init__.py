@@ -4,6 +4,8 @@ from deform import ValidationFailure
 from pyramid.view import view_defaults
 from pyramid.httpexceptions import HTTPFound
 
+from phoenix.tasks.esgflogon import esgf_logon
+from phoenix.tasks.utils import task_result
 from phoenix.esgf.schema import ESGFLogonSchema
 from phoenix.esgf.schema import ESGFSearchSchema
 from phoenix.esgf.search import ESGFSearch
@@ -29,6 +31,11 @@ class ESGFLogon(object):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
+            result = esgf_logon.delay(authenticated_userid(self.request),
+                                      appstruct.get('provider'),
+                                      appstruct.get('username'),
+                                      appstruct.get('password'))
+            self.session['task_id'] = result.id
         except ValidationFailure, e:
             self.session.flash("Form validation failed.", queue='danger')
             return dict(form=e.render())
@@ -36,7 +43,25 @@ class ESGFLogon(object):
             self.session.flash("ESGF logon failed.", queue='danger')
         else:
             self.session.flash("ESGF logon succeded", queue='success')
-        return HTTPFound(location=self.request.route_path('esgflogon'))
+        return HTTPFound(location=self.request.route_path('esgflogon_loading'))
+
+    def check_logon(self):
+        status = 'running'
+        result = task_result(self.session.get('task_id'))
+        if result.ready():
+            status = 'ready'
+        return dict(status=status)
+
+    def loading(self):
+        result = task_result(self.session.get('task_id'))
+        if result.ready():
+            if result.get().get('status') == 'Success':
+                self.session.flash('ESGF logon was successful.', queue='success')
+                return HTTPFound(location=self.request.route_path('esgflogon'))
+            else:
+                self.session.flash('ESGF logon failed: {}.'.format(result.get().get('message')), queue='danger')
+                return HTTPFound(location=self.request.route_path('esgflogon'))
+        return {}
 
     def view(self):
         form = self.generate_form()
