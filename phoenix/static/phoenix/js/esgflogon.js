@@ -4,7 +4,7 @@ $(function() {
 
   var checkLogon = function() {
     $.getJSON(
-      '/wizard/check_logon.json',
+      '/esgf/check_logon.json',
       {},
       function(json) {
         if (json.status == 'ready') {
@@ -19,5 +19,5 @@ $(function() {
   timerId = setInterval(function() {
     checkLogon();
   }, 1000);
- 
+
 });

@@ -3,6 +3,7 @@ from deform import Button
 from deform import ValidationFailure
 from pyramid.view import view_defaults
 from pyramid.httpexceptions import HTTPFound
+from pyramid.security import authenticated_userid
 
 from phoenix.tasks.esgflogon import esgf_logon
 from phoenix.tasks.utils import task_result
@@ -40,10 +41,10 @@ class ESGFLogon(object):
             self.session.flash("Form validation failed.", queue='danger')
             return dict(form=e.render())
         except Exception, e:
-            self.session.flash("ESGF logon failed.", queue='danger')
+            self.session.flash("ESGF logon failed: {}.".format(e.message), queue='danger')
+            return HTTPFound(location=self.request.route_path('esgflogon'))
         else:
-            self.session.flash("ESGF logon succeded", queue='success')
-        return HTTPFound(location=self.request.route_path('esgflogon_loading'))
+            return HTTPFound(location=self.request.route_path('esgflogon_loading'))
 
     def check_logon(self):
         status = 'running'

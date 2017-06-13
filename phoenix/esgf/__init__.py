@@ -8,7 +8,7 @@ def includeme(config):
     config.add_view('phoenix.esgf.views.ESGFLogon',
                     route_name='esgflogon_loading',
                     attr='loading',
-                    renderer='../templates/esgf/loading.pt')
+                    renderer='templates/esgf/loading.pt')
     config.add_route('esgf_check_logon', '/esgf/check_logon.json')
     config.add_view('phoenix.esgf.views.ESGFLogon',
                     route_name='esgf_check_logon',
