@@ -28,9 +28,12 @@ class Actions(object):
             else:
                 self.session.flash('ESGF certificate was updated.', queue="success")
             return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_certs'))
-        else:
+        elif False:  # TODO: update slcs token ... slcs does not work yet
             auth_url = client.authorize()
             return HTTPFound(location=auth_url)
+        else:
+            self.session.flash('Could not update certificate.', queue="danger")
+            return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_certs'))
 
     @view_config(route_name='forget_esgf_certs', permission='submit')
     def forget_esgf_certs(self):
