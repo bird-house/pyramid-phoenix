@@ -6,7 +6,7 @@ from pyramid.view import view_config
 from owslib.wps import WebProcessingService
 
 from phoenix.esgf.search import query_params_from_appstruct
-from phoenix.utils import user_cert_valid
+from phoenix.esgf.validator import cert_ok
 from phoenix.wizard.views import Wizard
 
 SOURCE_TYPES = {
@@ -66,7 +66,7 @@ class ChooseSource(Wizard):
         # TODO: that is a dirty way to init esgf search
         if appstruct.get('source') == 'wizard_esgf_search':
             query = query_params_from_appstruct(self.wizard_state.get('wizard_esgf_search'))
-            if not user_cert_valid(self.request):
+            if not cert_ok(self.request):
                 msg = 'You are not allowed to access ESGF data. Please <a href="{}">update</a> your ESGF credentials.'
                 self.session.flash(msg.format(self.request.route_path('esgflogon')), queue='danger')
         else:

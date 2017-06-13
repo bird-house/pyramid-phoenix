@@ -1,14 +1,12 @@
 import os
 from datetime import datetime
-from datetime import timedelta
-from dateutil import parser as datetime_parser
 
 from owslib.util import build_get_url
 
 from pyramid.security import authenticated_userid
 
 import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 # buttons
 # see kotti: https://github.com/Kotti/Kotti
@@ -126,20 +124,6 @@ def localize_datetime(dt, tz_name='UTC'):
 def get_user(request):
     userid = authenticated_userid(request)
     return request.db.users.find_one(dict(identifier=userid))
-
-
-def user_cert_valid(request, valid_hours=3):
-    if get_user(request).get('esgf_token'):
-        return True
-    cert_expires = get_user(request).get('cert_expires')
-    if cert_expires is not None:
-        timestamp = datetime_parser.parse(cert_expires)
-        now = localize_datetime(datetime.utcnow())
-        valid_hours = timedelta(hours=valid_hours)
-        # cert must be valid for some hours
-        if timestamp > now + valid_hours:
-            return True
-    return False
 
 
 def is_url(url):
