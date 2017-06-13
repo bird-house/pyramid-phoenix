@@ -8,7 +8,7 @@ from phoenix.esgf.schema import ESGFSearchSchema
 from phoenix.esgf.search import ESGFSearch
 
 import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 def includeme(config):
@@ -30,7 +30,6 @@ class ESGFSearchView(Wizard):
         return breadcrumbs
 
     def schema(self):
-        LOGGER.debug("esgfsearch schema")
         return ESGFSearchSchema()
 
     def appstruct(self):
