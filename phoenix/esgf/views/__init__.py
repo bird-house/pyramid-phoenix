@@ -1,11 +1,21 @@
 from pyramid.view import view_defaults
 from deform import Form
 
+from phoenix.esgf.schema import ESGFLogonSchema
 from phoenix.esgf.schema import ESGFSearchSchema
 from phoenix.esgf.search import ESGFSearch
 
 import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
+
+
+@view_defaults(permission='edit', layout='default')
+class ESGFLogon(object):
+    def __init__(self, request):
+        self.request = request
+
+    def view(self):
+        return {}
 
 
 @view_defaults(permission='view', layout='default')
