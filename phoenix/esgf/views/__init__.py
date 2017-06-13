@@ -9,13 +9,18 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='edit', layout='default')
+@view_defaults(permission='submit', layout='default')
 class ESGFLogon(object):
     def __init__(self, request):
         self.request = request
 
-    def view(self):
+    def appstruct(self):
         return {}
+
+    def view(self):
+        form = Form(ESGFLogonSchema())
+        return dict(
+            form=form.render(self.appstruct()))
 
 
 @view_defaults(permission='view', layout='default')

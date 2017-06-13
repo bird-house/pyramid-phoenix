@@ -3,7 +3,7 @@ def includeme(config):
     config.add_view('phoenix.esgf.views.ESGFLogon',
                     route_name='esgflogon',
                     attr='view',
-                    renderer='templates/esgf/default.pt')
+                    renderer='templates/esgf/esgflogon.pt')
     config.add_route('esgfsearch', '/esgfsearch')
     config.add_view('phoenix.esgf.views.ESGFSearchActions',
                     route_name='esgfsearch',
