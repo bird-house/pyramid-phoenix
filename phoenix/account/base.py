@@ -123,10 +123,10 @@ class Account(object):
         self.session.flash("Hello <strong>{0}</strong>. Welcome to Phoenix.".format(name), queue='info')
         if user.get('group') == Guest:
             msg = """
-            You are member of the <strong>Guest</strong> group.
-            You are allowed to submit processes without <strong>access restrictions</strong>.
+            <strong>Warning:</strong> You are a member of the <strong>Guest</strong> group.
+            You are only allowed to submit processes <strong>without access restrictions</strong>.
             """
-            self.session.flash(msg, queue='info')
+            self.session.flash(msg, queue='warning')
         else:
             generate_access_token(self.request.registry, userid=user['identifier'])
         headers = remember(self.request, user['identifier'])
