@@ -1,6 +1,3 @@
-ESGF_ROLE_CONSTRAINTS = 'https://www.earthsystemcog.org/spec/esgf_search/2.1.0/def/constraints'
-
-
 def includeme(config):
     # security
     config.include('phoenix.security')
