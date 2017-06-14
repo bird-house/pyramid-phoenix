@@ -10,7 +10,7 @@ from pyesgf.search.consts import TYPE_DATASET, TYPE_AGGREGATION, TYPE_FILE
 from pyesgf.multidict import MultiDict
 
 import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 def date_from_filename(filename):
