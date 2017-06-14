@@ -93,7 +93,7 @@ $(function() {
 
   // monitor auto-update
   // -------------------
-  
+
   var timerId = 0;
 
   // update job table with current values
@@ -128,7 +128,7 @@ $(function() {
             else {
               iconClass = "fa fa-fw fa-clock-o pulse text-muted";
             }
-    
+
             $("#status-"+job.identifier).attr('class', iconClass);
             $("#status-"+job.identifier).attr('title', job.status);
             $("#progress-"+job.identifier).attr('style', "width: "+job.progress+"%");
@@ -140,10 +140,10 @@ $(function() {
     );
   };
 
-  // refresh job list each 3 secs ...
+  // refresh job list each 30 secs ...
   timerId = setInterval(function() {
     updateJobs();
-  }, 3000); 
-  
+}, 30000);
+
 
 });
