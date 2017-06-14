@@ -14,7 +14,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='submit', layout='default')
+@view_defaults(permission='edit', layout='default')
 class ESGFLogon(object):
     def __init__(self, request):
         self.request = request

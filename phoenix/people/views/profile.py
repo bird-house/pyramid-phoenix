@@ -113,12 +113,12 @@ class Profile(MyView):
         elif self.tab == 'esgf_certs':
             btn = ActionButton(name='update_esgf_certs', title='Update Credentials',
                                css_class="btn btn-success btn-xs",
-                               disabled=not self.request.has_permission('submit'),
+                               disabled=not self.request.has_permission('edit'),
                                href=self.request.route_path('update_esgf_certs'))
             btns.append(btn)
             btn = ActionButton(name='forget_esgf_certs', title='Forget Credentials',
                                css_class="btn btn-danger btn-xs",
-                               disabled=not self.request.has_permission('submit'),
+                               disabled=not self.request.has_permission('edit'),
                                href=self.request.route_path('forget_esgf_certs'))
             btns.append(btn)
         return btns
@@ -145,7 +145,7 @@ class Profile(MyView):
         if 'update' in self.request.POST:
             return self.process_form(form)
 
-        return dict(user_name=self.user.get('name', 'Unknown'),
+        return dict(user_name=self.user.get('name', 'Guest'),
                     title=self.panel_title(),
                     buttons=self.generate_buttons(),
                     userid=self.userid,

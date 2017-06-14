@@ -5,9 +5,6 @@ from pyramid.security import authenticated_userid
 from phoenix.twitcherclient import generate_access_token
 from phoenix.esgf.slcsclient import ESGFSLCSClient
 
-import logging
-logger = logging.getLogger(__name__)
-
 
 class Actions(object):
     def __init__(self, request):
@@ -17,7 +14,7 @@ class Actions(object):
         self.collection = self.request.db.users
         self.userid = self.request.matchdict.get('userid', authenticated_userid(self.request))
 
-    @view_config(route_name='update_esgf_certs', permission='submit')
+    @view_config(route_name='update_esgf_certs', permission='edit')
     def update_esgf_certs(self):
         client = ESGFSLCSClient(self.request)
         if client.get_token():
@@ -35,7 +32,7 @@ class Actions(object):
             callback = self.request.route_path('profile', userid=self.userid, tab='esgf_certs')
             return HTTPFound(location=self.request.route_path('esgflogon', _query=[('callback', callback)]))
 
-    @view_config(route_name='forget_esgf_certs', permission='submit')
+    @view_config(route_name='forget_esgf_certs', permission='edit')
     def forget_esgf_certs(self):
         user = self.collection.find_one({'identifier': self.userid})
         user['credentials'] = None

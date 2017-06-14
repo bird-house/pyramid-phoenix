@@ -1,7 +1,3 @@
-import logging
-logger = logging.getLogger(__name__)
-
-
 def includeme(config):
     # needs settings
     config.include('phoenix.settings')

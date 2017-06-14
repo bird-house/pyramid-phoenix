@@ -21,7 +21,7 @@
                               ESGF SLCS access token
                             </a>
                         </li>
-                        <li class="${'active' if active=='esgf_certs' else ''}" tal:condition="request.has_permission('submit')">
+                        <li class="${'active' if active=='esgf_certs' else ''}" tal:condition="request.has_permission('edit')">
                             <a href="${request.route_path('profile', userid=userid, tab='esgf_certs')}">
                               ESGF credentials
                             </a>
