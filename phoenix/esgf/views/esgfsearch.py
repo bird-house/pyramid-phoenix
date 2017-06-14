@@ -9,9 +9,16 @@ from phoenix.esgf.search import ESGFSearch
 class ESGFSearchActions(object):
     def __init__(self, request):
         self.request = request
+        self.session = request.session
         self.esgfsearch = ESGFSearch(request)
 
     def search_datasets(self):
+        if not self.request.cert_ok:
+            msg = 'You are not allowed to access ESGF data. Please <a href="{}">update</a> your ESGF credentials.'
+            callback = self.request.route_path('esgfsearch')
+            self.session.flash(
+                msg.format(self.request.route_path('esgflogon', _query=[('callback', callback)])),
+                queue='danger')
         result = dict()
         result.update(self.esgfsearch.query_params())
         result.update(self.esgfsearch.search_datasets())
