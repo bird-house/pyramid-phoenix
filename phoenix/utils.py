@@ -3,8 +3,6 @@ from datetime import datetime
 
 from owslib.util import build_get_url
 
-from pyramid.security import authenticated_userid
-
 import logging
 LOGGER = logging.getLogger("PHOENIX")
 
@@ -119,11 +117,6 @@ def localize_datetime(dt, tz_name='UTC'):
     timezone = pytz.timezone(tz_name)
     tz_aware_dt = aware.astimezone(timezone)
     return tz_aware_dt
-
-
-def get_user(request):
-    userid = authenticated_userid(request)
-    return request.db.users.find_one(dict(identifier=userid))
 
 
 def is_url(url):

@@ -5,7 +5,6 @@ from pyramid.view import notfound_view_config
 from pyramid.response import Response
 from pyramid.events import subscriber, BeforeRender
 
-from phoenix.utils import get_user
 
 import logging
 logger = logging.getLogger(__name__)
@@ -33,16 +32,12 @@ class MyView(object):
         self.description = description
         # TODO: refactor db access
         self.userdb = self.request.db.users
-
         # set breadcrumbs
         for item in self.breadcrumbs():
             lm = self.request.layout_manager
             lm.layout.add_breadcrumb(
                 route_path=item.get('route_path'),
                 title=item.get('title'))
-
-    def get_user(self):
-        return get_user(self.request)
 
     def breadcrumbs(self):
         return [dict(route_path=self.request.route_path("home"), title="Home")]

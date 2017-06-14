@@ -14,6 +14,7 @@ from pyramid.security import (
     Everyone,
     Authenticated,
     ALL_PERMISSIONS)
+from pyramid.security import unauthenticated_userid
 
 from authomatic import Authomatic, provider_id
 from authomatic.providers import oauth2
@@ -177,7 +178,7 @@ class MyAuthenticationPolicy(AuthTktAuthenticationPolicy):
 
 
 def get_user(request):
-    user_id = request.unauthenticated_userid
+    user_id = unauthenticated_userid(request)
     if user_id is not None:
         user = request.db.users.find_one({'identifier': user_id})
         return user

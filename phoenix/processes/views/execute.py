@@ -96,7 +96,7 @@ class ExecuteProcess(MyView):
         schema = WPSSchema(request=self.request,
                            process=self.process,
                            use_async=self.request.has_permission('admin'),
-                           user=self.get_user())
+                           user=self.request.user)
         submit_button = Button(name='submit', title='Submit',
                                css_class='btn btn-success btn-lg btn-block',
                                disabled=not has_execute_permission(

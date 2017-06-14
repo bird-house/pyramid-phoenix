@@ -59,7 +59,6 @@ class Done(Wizard):
         workflow = dict(name=source_type, source={}, worker={})
 
         # source
-        user = self.get_user()
         if 'thredds' in source_type:
             source = dict()
             source['catalog_url'] = self.wizard_state.get('wizard_threddsbrowser').get('url')

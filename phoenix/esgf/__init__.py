@@ -1,4 +1,8 @@
 def includeme(config):
+    # security
+    config.include('phoenix.security')
+
+    # esgf logon views
     config.add_route('esgflogon', '/esgf/logon')
     config.add_view('phoenix.esgf.views.ESGFLogon',
                     route_name='esgflogon',
@@ -14,6 +18,7 @@ def includeme(config):
                     route_name='esgf_check_logon',
                     attr='check_logon',
                     renderer='json')
+    # esgf search views
     config.add_route('esgfsearch', '/esgfsearch')
     config.add_view('phoenix.esgf.views.ESGFSearchActions',
                     route_name='esgfsearch',
@@ -24,3 +29,9 @@ def includeme(config):
                     route_name='esgfsearch_items',
                     attr='search_items',
                     renderer='json')
+
+    # shortcuts
+    def add_cert_ok(request):
+        from phoenix.esgf.validator import cert_ok
+        return cert_ok(request)
+    config.add_request_method(add_cert_ok, 'cert_ok', reify=True)

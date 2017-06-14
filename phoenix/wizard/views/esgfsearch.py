@@ -2,7 +2,6 @@ from pyramid.view import view_config
 from pyramid.settings import asbool
 
 from phoenix.wizard.views import Wizard
-from phoenix.esgf.validator import cert_ok
 from phoenix.esgf.schema import ESGFSearchSchema
 from phoenix.esgf.search import ESGFSearch
 
@@ -39,7 +38,7 @@ class ESGFSearchView(Wizard):
         return appstruct
 
     def next_ok(self):
-        return cert_ok(self.request)
+        return self.request.cert_ok
 
     def next_success(self, appstruct):
         LOGGER.debug("esgfsearch appstruct after: %s", appstruct)
