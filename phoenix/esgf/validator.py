@@ -6,6 +6,8 @@ from phoenix.utils import localize_datetime
 
 
 def cert_ok(request, valid_hours=3):
+    if not request.user:
+        return False
     if request.user.get('esgf_token'):
         return True
     cert_expires = request.user.get('cert_expires')
