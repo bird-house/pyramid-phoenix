@@ -4,6 +4,9 @@ from pyramid.settings import asbool
 from phoenix.wizard.views import Wizard
 from phoenix.esgf.schema import ESGFSearchSchema
 from phoenix.esgf.search import ESGFSearch
+from phoenix.esgf import ESGF_ROLE_CONSTRAINTS
+
+from owslib.wps import WebProcessingService
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -21,6 +24,13 @@ class ESGFSearchView(Wizard):
     def __init__(self, request):
         super(ESGFSearchView, self).__init__(request, name='wizard_esgf_search', title="ESGF Search")
         self.esgfsearch = ESGFSearch(self.request)
+        wps = WebProcessingService(
+            url=request.route_url('owsproxy', service_name=self.wizard_state.get('wizard_wps')['identifier']),
+            verify=False, skip_caps=True)
+        process = wps.describeprocess(self.wizard_state.get('wizard_process')['identifier'])
+        for metadata in process.metadata:
+            if metadata.role == ESGF_ROLE_CONSTRAINTS:
+                LOGGER.debug(metadata.url)
 
     def breadcrumbs(self):
         breadcrumbs = super(ESGFSearchView, self).breadcrumbs()

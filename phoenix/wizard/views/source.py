@@ -50,7 +50,6 @@ class ChooseSource(Wizard):
             if data_input.identifier == self.wizard_state.get('wizard_complex_inputs')['identifier']:
                 self.title = "Choose Data Source for %s" % data_input.title
                 break
-        # self.description = self.wizard_state.get('wizard_complex_inputs')['identifier']
 
     def breadcrumbs(self):
         breadcrumbs = super(ChooseSource, self).breadcrumbs()
