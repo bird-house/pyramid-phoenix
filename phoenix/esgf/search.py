@@ -99,6 +99,16 @@ def query_params_from_appstruct(appstruct, defaults):
     )
 
 
+def build_constraint_dict(constraints):
+    c_dict = MultiDict()
+    if constraints:
+        for constrain in constraints.split(','):
+            if ':' in constrain.strip():
+                key, value = constrain.split(':', 1)
+                c_dict.add(key, value)
+    return c_dict
+
+
 class ESGFSearch(object):
     def __init__(self, request):
         self.request = request
@@ -125,13 +135,7 @@ class ESGFSearch(object):
             self._start = None
             self._end = None
         self.constraints = self.request.params.get('constraints')
-        self._constraints = MultiDict()
-        if self.constraints:
-            for constrain in self.constraints.split(','):
-                if ':' in constrain.strip():
-                    LOGGER.debug("constrain %s", constrain)
-                    key, value = constrain.split(':', 1)
-                    self._constraints.add(key, value)
+        self._constraints = build_constraint_dict(self.constraints)
 
     def query_params(self):
         return dict(
