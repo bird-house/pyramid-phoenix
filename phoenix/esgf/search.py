@@ -1,4 +1,5 @@
 import datetime
+from dateutil import parser as date_parser
 from collections import Counter
 
 from webhelpers2.number import format_byte_size
@@ -118,8 +119,8 @@ class ESGFSearch(object):
         self.replica = self._replica = asbool(self.request.params.get('replica', 'false'))
         if self.replica is True:
             self._replica = None  # master + replica
-        self.start = self._start = int(self.request.params.get('start', '2001'))
-        self.end = self._end = int(self.request.params.get('end', '2005'))
+        self.start = self._start = date_parser.parse(self.request.params.get('start', '2001')).year
+        self.end = self._end = date_parser.parse(self.request.params.get('end', '2005')).year
         if not self.temporal:
             self._start = None
             self._end = None
