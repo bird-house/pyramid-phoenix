@@ -1,7 +1,7 @@
 Changes
 *******
 
-0.7.3 (2017-06-14)
+0.7.3 (2017-06-19)
 ==================
 
 * updated layout.
@@ -11,6 +11,7 @@ Changes
 * made twitcher workdir configurable.
 * added PR #138 with json backend.
 * esgflogon can be called from wizard, process execute and esgfsearch.
+* added esgf.metadata with search constraints.
 
 0.7.2 (2017-03-21)
 ==================
