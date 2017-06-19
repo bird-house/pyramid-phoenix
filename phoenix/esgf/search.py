@@ -128,7 +128,8 @@ class ESGFSearch(object):
         self._constraints = MultiDict()
         if self.constraints:
             for constrain in self.constraints.split(','):
-                if constrain.strip():
+                if ':' in constrain.strip():
+                    LOGGER.debug("constrain %s", constrain)
                     key, value = constrain.split(':', 1)
                     self._constraints.add(key, value)
 
