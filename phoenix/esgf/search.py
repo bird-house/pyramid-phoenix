@@ -84,7 +84,6 @@ def temporal_filter(filename, start=None, end=None):
 
 
 def query_params_from_appstruct(appstruct):
-    LOGGER.debug("query from appstruct = %s", appstruct)
     if not appstruct:
         return None
     return dict(

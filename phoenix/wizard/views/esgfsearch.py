@@ -22,9 +22,6 @@ class ESGFSearchView(Wizard):
     def __init__(self, request):
         super(ESGFSearchView, self).__init__(request, name='wizard_esgf_search', title="ESGF Search")
         self.esgfsearch = ESGFSearch(self.request)
-        process_constraints(
-            url=request.route_url('owsproxy', service_name=self.wizard_state.get('wizard_wps')['identifier']),
-            identifier=self.wizard_state.get('wizard_process')['identifier'])
 
     def breadcrumbs(self):
         breadcrumbs = super(ESGFSearchView, self).breadcrumbs()
