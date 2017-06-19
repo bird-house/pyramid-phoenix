@@ -18,3 +18,17 @@ def test_date_from_filename():
     date = search.date_from_filename(
         "tas_EUR-44i_ECMWF-ERAINT_evaluation_r1i1p1_HMS-ALADIN52_v1_mon_200101-200812.nc")
     assert date == (2001, 2008)
+
+
+def test_temporal_filter():
+    assert search.temporal_filter(
+        "tas_EUR-44i_ECMWF-ERAINT_evaluation_r1i1p1_HMS-ALADIN52_v1_mon_200101-200812.nc") is True
+    assert search.temporal_filter(
+        "tas_EUR-44i_ECMWF-ERAINT_evaluation_r1i1p1_HMS-ALADIN52_v1_mon_200101-200812.nc",
+        2001, 2008) is True
+    assert search.temporal_filter(
+        "tas_EUR-44i_ECMWF-ERAINT_evaluation_r1i1p1_HMS-ALADIN52_v1_mon_200101-200812.nc",
+        2009, 2010) is False
+    assert search.temporal_filter(
+        "tas_EUR-44i_ECMWF-ERAINT_evaluation_r1i1p1_HMS-ALADIN52_v1_mon_200101-200812.nc",
+        1990, 2000) is False
