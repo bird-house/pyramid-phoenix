@@ -64,10 +64,8 @@ class ChooseSource(Wizard):
         self.success(appstruct)
         # TODO: that is a dirty way to init esgf search
         if appstruct.get('source') == 'wizard_esgf_search':
-            query = query_params_from_appstruct(self.wizard_state.get('wizard_esgf_search'))
-            if not query:
-                query = {}
-                query['constraints'] = process_constraints(url=self.wps.url, identifier=self.process.identifier)
+            defaults = dict(constraints=process_constraints(self.process))
+            query = query_params_from_appstruct(self.wizard_state.get('wizard_esgf_search'), defaults)
             if not self.request.cert_ok:
                 msg = """<strong>Error:</strong> You are not allowed to access ESGF data.
                 Please <a href="{}" class="alert-link">update</a> your ESGF credentials."""

@@ -83,9 +83,8 @@ def temporal_filter(filename, start=None, end=None):
     return True
 
 
-def query_params_from_appstruct(appstruct):
-    if not appstruct:
-        return None
+def query_params_from_appstruct(appstruct, defaults):
+    appstruct = appstruct or {}
     return dict(
         query=appstruct.get('query', ''),
         selected=appstruct.get('selected', 'project'),
@@ -95,7 +94,7 @@ def query_params_from_appstruct(appstruct):
         temporal=str(appstruct.get('temporal', True)).lower(),
         start=appstruct.get('start', datetime.date(2001, 1, 1)).year,
         end=appstruct.get('end', datetime.date(2005, 12, 31)).year,
-        constraints=appstruct.get('constraints'),
+        constraints=appstruct.get('constraints', defaults.get('constraints')),
     )
 
 
