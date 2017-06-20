@@ -119,6 +119,9 @@ class ESGFSearch(object):
         self.conn = SearchConnection(url, distrib=self.distrib)
 
     def _parse_params(self):
+        """
+        parse search params.
+        """
         self.query = self.request.params.get('query', '')
         self.selected = self.request.params.get('selected', 'project')
         self.limit = int(self.request.params.get('limit', '0'))
@@ -140,6 +143,9 @@ class ESGFSearch(object):
         self._constraints = build_constraint_dict(self.constraints)
 
     def query_params(self):
+        """
+        search params as string used for query.
+        """
         return dict(
             query=self.query,
             selected=self.selected,
@@ -154,6 +160,9 @@ class ESGFSearch(object):
         )
 
     def params(self):
+        """
+        search params as object.
+        """
         params = dict(
             distrib=self.distrib,
             replica=self.replica,
