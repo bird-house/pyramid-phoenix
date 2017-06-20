@@ -142,6 +142,7 @@ class ESGFSearch(object):
         self.constraints = self.request.params.get('constraints')
         self._constraints = build_constraint_dict(self.constraints)
         # fixed constraints
+        # TODO: use marker for fixed constraints
         # self.fixed = self.request.params.get('fixed')
         # self._fixed = build_constraint_dict(self.fixed)
 
