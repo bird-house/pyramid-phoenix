@@ -110,13 +110,15 @@ def build_constraint_dict(constraints):
 
 
 class ESGFSearch(object):
-    def __init__(self, request):
+    def __init__(self, request, url=None):
         self.request = request
-        self.parse_params()
-        settings = self.request.registry.settings
-        self.conn = SearchConnection(settings.get('esgfsearch.url'), distrib=self.distrib)
+        self._parse_params()
+        if not url:
+            settings = self.request.registry.settings
+            url = settings.get('esgfsearch.url')
+        self.conn = SearchConnection(url, distrib=self.distrib)
 
-    def parse_params(self):
+    def _parse_params(self):
         self.query = self.request.params.get('query', '')
         self.selected = self.request.params.get('selected', 'project')
         self.limit = int(self.request.params.get('limit', '0'))

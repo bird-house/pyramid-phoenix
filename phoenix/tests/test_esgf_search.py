@@ -1,4 +1,7 @@
+import unittest
+from pyramid import testing
 from phoenix.esgf import search
+from phoenix.esgf.search import ESGFSearch
 
 
 def test_build_constraints_dict():
@@ -32,3 +35,19 @@ def test_variable_filter():
         'variable:tas,variable:tasmax,variable:tasmin')
     assert search.variable_filter(c_dict, {'variable': ['tas']}) is True
     assert search.variable_filter(c_dict, {'variable': ['pr']}) is False
+
+
+class ESGFSearchTests(unittest.TestCase):
+    def setUp(self):
+        self.config = testing.setUp()
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_query_params(self):
+        request = testing.DummyRequest()
+        esgfsearch = ESGFSearch(request, url='https://esgf-data.dkrz.de/esg-search')
+        params = esgfsearch.query_params()
+        assert params['distrib'] == 'false'
+        assert params['start'] == 2001
+        assert params['end'] == 2005
