@@ -170,6 +170,7 @@ class ESGFSearch(object):
 
     def search_items(self):
         dataset_id = self.request.params.get('dataset_id')
+        LOGGER.debug('dataset_id = %s', dataset_id)
         items = []
         items.extend(self._run_search_items(dataset_id, search_type=TYPE_AGGREGATION))
         items.extend(self._run_search_items(dataset_id, search_type=TYPE_FILE))
@@ -182,10 +183,13 @@ class ESGFSearch(object):
         ctx = ctx.constrain(dataset_id=dataset_id)
         items = []
         LOGGER.debug("hit_count: %s", ctx.hit_count)
+        print ctx.hit_count
         for result in ctx.search():
             if search_type == TYPE_FILE and not temporal_filter(result.filename, self._start, self._end):
+                LOGGER.debug("skipped by temporal filter")
                 continue
             if not variable_filter(self._constraints, variables=result.json):
+                LOGGER.debug("skipped by variable filter")
                 continue
             # build abstract
             abstract = ''

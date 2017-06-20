@@ -36,6 +36,7 @@ def test_variable_filter():
         'variable:tas,variable:tasmax,variable:tasmin')
     assert search.variable_filter(c_dict, {'variable': ['tas']}) is True
     assert search.variable_filter(c_dict, {'variable': ['pr']}) is False
+    assert search.variable_filter({}, {'variable': ['tas']}) is True
 
 
 class ESGFSearchTests(unittest.TestCase):
@@ -58,6 +59,8 @@ class ESGFSearchTests(unittest.TestCase):
         esgfsearch = ESGFSearch(request, url='https://esgf-data.dkrz.de/esg-search')
         params = esgfsearch.params()
         assert params['distrib'] is False
+        assert params['latest'] is True
+        assert params['replica'] is False
         assert params['start'].year == 2001
         assert params['end'].year == 2005
 
@@ -68,3 +71,15 @@ class ESGFSearchTests(unittest.TestCase):
         result = esgfsearch.search_datasets()
         assert len(result['projects'])
         assert len(result['categories'])
+
+    @pytest.mark.online
+    def test_search_items(self):
+        request = testing.DummyRequest(
+            params={
+                'dataset_id':
+                'cordex.output.EUR-44.MPI-CSC.MPI-M-MPI-ESM-LR.historical.r1i1p1.REMO2009.v1.mon.tas.v20150609|esgf1.dkrz.de',  # noqa
+            })
+        setattr(request, 'cart', {})
+        esgfsearch = ESGFSearch(request, url='https://esgf-data.dkrz.de/esg-search')
+        result = esgfsearch.search_items()
+        assert len(result['items'])
