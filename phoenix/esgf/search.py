@@ -178,6 +178,9 @@ class ESGFSearch(object):
         return params
 
     def search_items(self):
+        """
+        search files and aggregations with download url and opendap url.
+        """
         dataset_id = self.request.params.get('dataset_id')
         LOGGER.debug('dataset_id = %s', dataset_id)
         items = []
@@ -225,6 +228,9 @@ class ESGFSearch(object):
         return items
 
     def search_datasets(self):
+        """
+        search datasets according to search parameters.
+        """
         ctx = self.conn.new_context(search_type=TYPE_DATASET, latest=self._latest, replica=self._replica)
         ctx = ctx.constrain(**self._constraints.mixed())
         if self.query:
