@@ -1,3 +1,4 @@
+import pytest
 import unittest
 from pyramid import testing
 from phoenix.esgf import search
@@ -59,3 +60,11 @@ class ESGFSearchTests(unittest.TestCase):
         assert params['distrib'] is False
         assert params['start'].year == 2001
         assert params['end'].year == 2005
+
+    @pytest.mark.online
+    def test_search_datasets(self):
+        request = testing.DummyRequest()
+        esgfsearch = ESGFSearch(request, url='https://esgf-data.dkrz.de/esg-search')
+        result = esgfsearch.search_datasets()
+        assert len(result['projects'])
+        assert len(result['categories'])
