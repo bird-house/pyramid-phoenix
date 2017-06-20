@@ -34,4 +34,3 @@ class UserSettingsFunctionalTests(unittest.TestCase):
     def test_user_view(self):
         res = self.testapp.get('/', status=200)
         self.assertIn(b'<h1>Hi Home View', res.body)
-

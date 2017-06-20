@@ -10,7 +10,7 @@ def invalid_exc(func, *arg, **kw):
     except Invalid as e:
         return e
     else:
-        raise AssertionError('Invalid not raised') # pragma: no cover
+        raise AssertionError('Invalid not raised')  # pragma: no cover
 
 
 class TestBBoxValidator(unittest.TestCase):
