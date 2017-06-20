@@ -124,13 +124,13 @@ class ESGFSearch(object):
         self.limit = int(self.request.params.get('limit', '0'))
         self.distrib = asbool(self.request.params.get('distrib', 'false'))
         self.latest = self._latest = asbool(self.request.params.get('latest', 'true'))
-        self.temporal = asbool(self.request.params.get('temporal', 'true'))
-        self.bbox = asbool(self.request.params.get('bbox', 'false'))
         if self.latest is False:
             self._latest = None  # all versions
         self.replica = self._replica = asbool(self.request.params.get('replica', 'false'))
         if self.replica is True:
             self._replica = None  # master + replica
+        self.temporal = asbool(self.request.params.get('temporal', 'true'))
+        self.bbox = asbool(self.request.params.get('bbox', 'false'))
         self.start = self._start = date_parser.parse(self.request.params.get('start', '2001')).year
         self.end = self._end = date_parser.parse(self.request.params.get('end', '2005')).year
         if not self.temporal:
