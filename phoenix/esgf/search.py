@@ -141,6 +141,8 @@ class ESGFSearch(object):
             self._end = None
         self.constraints = self.request.params.get('constraints')
         self._constraints = build_constraint_dict(self.constraints)
+        self.fixed = self.request.params.get('fixed')
+        self._fixed = build_constraint_dict(self.fixed)
 
     def query_params(self):
         """
@@ -203,6 +205,9 @@ class ESGFSearch(object):
             if not variable_filter(self._constraints, variables=result.json):
                 LOGGER.debug("skipped by variable filter")
                 continue
+            if not variable_filter(self._fixed, variables=result.json):
+                LOGGER.debug("skipped by variable filter")
+                continue
             # build abstract
             abstract = ''
             for field in ['variable', 'cf_standard_name', 'institute', 'experiment', 'domain', 'time_frequency']:
@@ -233,6 +238,8 @@ class ESGFSearch(object):
         """
         ctx = self.conn.new_context(search_type=TYPE_DATASET, latest=self._latest, replica=self._replica)
         ctx = ctx.constrain(**self._constraints.mixed())
+        if self._fixed:
+            ctx = ctx.constrain(**self._fixed.mixed())
         if self.query:
             ctx = ctx.constrain(query=self.query)
         if self.temporal:
@@ -244,7 +251,9 @@ class ESGFSearch(object):
         keywords = sorted(ctx.facet_counts[self.selected].keys())
         pinned_keywords = []
         for facet in ctx.facet_counts:
-            if facet not in self._constraints and len(ctx.facet_counts[facet]) == 1:
+            if facet in self._fixed:
+                pinned_keywords.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
+            elif facet not in self._constraints and len(ctx.facet_counts[facet]) == 1:
                 pinned_keywords.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
         pinned_keywords = sorted(pinned_keywords)
         projects = Counter(ctx.facet_counts['project']).most_common(7)
