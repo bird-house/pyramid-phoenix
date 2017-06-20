@@ -51,3 +51,11 @@ class ESGFSearchTests(unittest.TestCase):
         assert params['distrib'] == 'false'
         assert params['start'] == 2001
         assert params['end'] == 2005
+
+    def test_params(self):
+        request = testing.DummyRequest()
+        esgfsearch = ESGFSearch(request, url='https://esgf-data.dkrz.de/esg-search')
+        params = esgfsearch.params()
+        assert params['distrib'] is False
+        assert params['start'].year == 2001
+        assert params['end'].year == 2005
