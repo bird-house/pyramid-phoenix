@@ -4,10 +4,10 @@ from deform import Form, ValidationFailure
 from phoenix.views import MyView
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='admin', layout='default')
+@view_defaults(permission='admin', layout='default', require_csrf=False)
 class Ldap(MyView):
     def __init__(self, request):
         super(Ldap, self).__init__(request, name='settings_ldap', title='LDAP')
@@ -34,7 +34,7 @@ class Ldap(MyView):
                 # Validate form
                 appstruct = ldap_form.validate(self.request.params.items())
             except ValidationFailure, e:
-                logger.exception('Validation failed!')
+                LOGGER.exception('Validation failed!')
                 return dict(title='LDAP Settings', form=e.render())
             else:
                 # Update LDAP settings

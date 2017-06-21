@@ -2,11 +2,8 @@ from pyramid.view import view_config, view_defaults
 
 from phoenix.views import MyView
 
-import logging
-logger = logging.getLogger(__name__)
 
-
-@view_defaults(permission='admin', layout='default')
+@view_defaults(permission='admin', layout='default', require_csrf=False)
 class Overview(MyView):
     def __init__(self, request):
         super(Overview, self).__init__(request, name='settings', title='Overview')

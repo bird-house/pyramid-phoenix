@@ -5,11 +5,8 @@ from phoenix.tasks.solr import clear_index
 from phoenix.tasks.solr import index_thredds
 from phoenix.views import MyView
 
-import logging
-logger = logging.getLogger(__name__)
 
-
-@view_defaults(permission='admin', layout='default')
+@view_defaults(permission='admin', layout='default', require_csrf=False)
 class SolrSettings(MyView):
     def __init__(self, request):
         super(SolrSettings, self).__init__(request, name='settings_solr', title='Solr')

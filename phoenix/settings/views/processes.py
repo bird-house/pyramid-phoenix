@@ -10,7 +10,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='admin', layout='default')
+@view_defaults(permission='admin', layout='default', require_csrf=False)
 class Processes(MyView):
     def __init__(self, request):
         super(Processes, self).__init__(request, name='settings_processes', title='Processes')
