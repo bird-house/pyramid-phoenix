@@ -3,11 +3,8 @@ from pyramid.httpexceptions import HTTPFound
 
 from phoenix.views import MyView
 
-import logging
-logger = logging.getLogger(__name__)
 
-
-@view_defaults(permission='edit')
+@view_defaults(permission='edit', require_csrf=True)
 class CartActions(object):
     """Actions related to cart."""
 
