@@ -196,3 +196,5 @@ def includeme(config):
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
     config.add_request_method(get_user, 'user', reify=True)
+    # csrf checks turned on by default
+    config.set_default_csrf_options(require_csrf=False)
