@@ -2,11 +2,8 @@ from pyramid.view import view_config, view_defaults
 
 from phoenix.views import MyView
 
-import logging
-logger = logging.getLogger(__name__)
 
-
-@view_defaults(permission='view', layout='default')
+@view_defaults(permission='view', layout='default', require_csrf=True)
 class Details(MyView):
     def __init__(self, request):
         super(Details, self).__init__(request, name='job_details', title='Job Details')

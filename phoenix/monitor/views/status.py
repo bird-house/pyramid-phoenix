@@ -4,11 +4,8 @@ from phoenix.views import MyView
 from phoenix.wps import check_status
 from phoenix.monitor.utils import output_details
 
-import logging
-LOGGER = logging.getLogger(__name__)
 
-
-@view_defaults(permission='view', layout='default')
+@view_defaults(permission='view', layout='default', require_csrf=True)
 class JobStatus(MyView):
     def __init__(self, request):
         self.request = request
