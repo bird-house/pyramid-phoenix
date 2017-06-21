@@ -35,7 +35,7 @@ class Ldap(MyView):
                 appstruct = ldap_form.validate(self.request.params.items())
             except ValidationFailure, e:
                 logger.exception('Validation failed!')
-                return dict(title='LDAP Settings', form = e.render())
+                return dict(title='LDAP Settings', form=e.render())
             else:
                 # Update LDAP settings
                 ldap_settings['server'] = appstruct['server']
@@ -57,16 +57,16 @@ class Ldap(MyView):
                     ldap_scope = ldap.SCOPE_SUBTREE
 
                 from pyramid.config import Configurator
-                config = Configurator(registry = self.request.registry)
+                config = Configurator(registry=self.request.registry)
                 config.ldap_setup(
                     ldap_settings['server'],
                     bind=ldap_settings['bind'],
                     passwd=ldap_settings['passwd'],
                     use_tls=ldap_settings['use_tls'])
                 config.ldap_set_login_query(
-                        base_dn=ldap_settings['base_dn'],
-                        filter_tmpl=ldap_settings['filter_tmpl'],
-                        scope=ldap_scope)
+                    base_dn=ldap_settings['base_dn'],
+                    filter_tmpl=ldap_settings['filter_tmpl'],
+                    scope=ldap_scope)
                 config.commit()
 
                 self.session.flash('Successfully updated LDAP settings!', queue='success')
