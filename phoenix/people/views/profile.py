@@ -20,7 +20,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='edit', layout='default')
+@view_defaults(permission='edit', layout='default', require_csrf=True)
 class Profile(MyView):
     def __init__(self, request):
         super(Profile, self).__init__(request, name='profile', title='')
