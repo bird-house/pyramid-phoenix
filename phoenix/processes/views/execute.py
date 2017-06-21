@@ -22,7 +22,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='view', layout='default')
+@view_defaults(permission='view', layout='default', require_csrf=False)
 class ExecuteProcess(MyView):
     def __init__(self, request):
         self.request = request

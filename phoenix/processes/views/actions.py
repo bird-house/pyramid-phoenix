@@ -4,9 +4,6 @@ from owslib.wps import WebProcessingService
 
 from phoenix.catalog import WPS_TYPE
 
-import logging
-LOGGER = logging.getLogger(__name__)
-
 
 def includeme(config):
     config.add_route('list_processes', 'processes/list.json')
@@ -20,7 +17,7 @@ class ProcessesActions(object):
         self.request = request
         self.session = self.request.session
 
-    @view_config(route_name='list_processes', renderer='json', permission='admin')
+    @view_config(route_name='list_processes', renderer='json', permission='admin', require_csrf=False)
     def list_processes(self):
         processes = {}
         for service in self.request.catalog.get_services(service_type=WPS_TYPE):
