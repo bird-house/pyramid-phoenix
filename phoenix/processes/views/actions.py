@@ -17,7 +17,7 @@ class ProcessesActions(object):
         self.request = request
         self.session = self.request.session
 
-    @view_config(route_name='list_processes', renderer='json', permission='admin', require_csrf=False)
+    @view_config(route_name='list_processes', renderer='json', permission='admin', require_csrf=True)
     def list_processes(self):
         processes = {}
         for service in self.request.catalog.get_services(service_type=WPS_TYPE):

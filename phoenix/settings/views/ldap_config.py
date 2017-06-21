@@ -7,7 +7,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='admin', layout='default', require_csrf=False)
+@view_defaults(permission='admin', layout='default', require_csrf=True)
 class Ldap(MyView):
     def __init__(self, request):
         super(Ldap, self).__init__(request, name='settings_ldap', title='LDAP')
