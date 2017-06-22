@@ -53,12 +53,12 @@ dependencies:
   - pip:
       - genshi==0.7
       - sphinx-autoapi==0.4.0
-      - pyramid==1.8.2
+      - pyramid==1.8.4
       - pyramid-beaker==0.8
-      - Beaker==1.8.1
+      - Beaker==1.9.0
       - pyramid-deform==0.2
       - deform==2.0.4
-      - pyramid-chameleon==0.3
+      - pyramid-chameleon
       - pyramid-mako==1.0.2
       - pyramid-layout==1.0
       - pyramid-celery==3.0.0
@@ -67,7 +67,7 @@ dependencies:
   #    - pyramid-ldap==0.1
   #    - pyramid-twitcher==0.3.3
       - pyramid-rpc==0.8
-      - colander==1.3.2
+      - colander==1.3.3
       - Authomatic==0.1.0.post1
       - python-openid==2.2.5
   #    - ldappool==1.0
