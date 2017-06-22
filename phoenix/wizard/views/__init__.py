@@ -7,7 +7,7 @@ from deform import ValidationFailure
 from phoenix.views import MyView
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 wizard_favorite = "wizard_favorite"
 
@@ -189,12 +189,12 @@ class Wizard(MyView):
         failure_method = getattr(self, '%s_failure' % action)
         try:
             controls = self.request.POST.items()
-            logger.debug("before validate controls=%s", controls)
+            LOGGER.debug("before validate controls=%s", controls)
             appstruct = form.validate(controls)
-            logger.debug("before success appstruct=%s", appstruct)
+            LOGGER.debug("before success appstruct=%s", appstruct)
             result = success_method(appstruct)
         except ValidationFailure as e:
-            logger.exception('Validation of wizard view failed.')
+            LOGGER.exception('Validation of wizard view failed.')
             result = failure_method(e)
         return result
 
