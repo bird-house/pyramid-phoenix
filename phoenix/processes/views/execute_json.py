@@ -6,8 +6,6 @@ from phoenix.utils import wps_describe_url
 
 from phoenix.processes.views.execute import ExecuteProcess
 
-import logging
-logger = logging.getLogger(__name__)
 
 @view_defaults(permission='view', layout='default')
 class ExecuteProcessJson(ExecuteProcess):
