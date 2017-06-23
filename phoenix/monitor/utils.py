@@ -1,5 +1,17 @@
+from pyramid.compat import escape
+
 import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
+
+
+def escape_output(output):
+    if output:
+        if isinstance(output, list):
+            return map(escape, output)
+        else:
+            return escape(output)
+    else:
+        return output
 
 
 def output_details(request, output):
@@ -31,8 +43,8 @@ def output_details(request, output):
                 abstract=output.abstract,
                 identifier=output.identifier,
                 mime_type=output.mimeType,
-                data=data,
-                reference=output.reference,
-                proxy_reference=proxy_reference,
-                wms_dataset_path=wms_dataset_path,
+                data=escape_output(data),
+                reference=escape_output(output.reference),
+                proxy_reference=escape_output(proxy_reference),
+                wms_dataset_path=escape_output(wms_dataset_path),
                 category=category)

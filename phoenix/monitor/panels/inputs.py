@@ -1,9 +1,10 @@
 from pyramid_layout.panel import panel_config
 
 from phoenix.wps import check_status
+from phoenix.monitor.utils import escape_output
 
 import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 def collect_inputs(status_location=None, response=None):
@@ -70,10 +71,10 @@ class Inputs(object):
                               abstract=inp.abstract,
                               identifier=inp.identifier,
                               mime_type=inp.mimeType,
-                              data=data,
-                              reference=inp.reference,
-                              proxy_reference=proxy_reference,
-                              wms_dataset_path=wms_dataset_path,
+                              data=escape_output(data),
+                              reference=escape_output(inp.reference),
+                              proxy_reference=escape_output(proxy_reference),
+                              wms_dataset_path=escape_output(wms_dataset_path),
                               category=category))
 
         items = sorted(items, key=lambda item: item['identifier'], reverse=1)
