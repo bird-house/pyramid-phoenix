@@ -3,7 +3,7 @@ from pyramid_layout.panel import panel_config
 from .search import solr_search
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 def query_path(request):
@@ -31,7 +31,7 @@ def solrsearch(context, request):
     source = request.params.get('source')
     tag = request.params.get('tag')
 
-    logger.debug("solrsearch panel context %s", context)
+    LOGGER.debug("solrsearch panel context %s", context)
 
     result = dict(query_path=query_path(request), query=query, page=page, category=category, selected_source=source)
     url = request.registry.settings.get('solr.url')
