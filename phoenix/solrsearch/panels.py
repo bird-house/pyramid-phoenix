@@ -1,5 +1,6 @@
 from pyramid_layout.panel import panel_config
 
+from phoenix.solrsearch.search import solr_search
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -25,7 +26,6 @@ def solrsearch_script(context, request):
 @panel_config(name='solrsearch', renderer='templates/solrsearch/panels/search.pt')
 def solrsearch(context, request):
     # TODO: configure this panel dynamically
-    from phoenix.solrsearch.search import solr_search
     query = request.params.get('q', '')
     page = int(request.params.get('page', '0'))
     category = request.params.get('category')

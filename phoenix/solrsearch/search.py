@@ -1,5 +1,3 @@
-import pysolr
-
 import logging
 LOGGER = logging.getLogger("PHOENIX")
 
@@ -11,6 +9,7 @@ def solr_search(url, query, page, category, source, tag):
     if not query or not query.strip():
         query = '*:*'
     try:
+        import pysolr
         solr = pysolr.Solr(url, timeout=10)
         options = {'start': start,
                    'rows': rows,
