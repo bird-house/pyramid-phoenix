@@ -5,9 +5,6 @@ import deform
 from phoenix.catalog import WPS_TYPE
 from phoenix.wizard.views import Wizard
 
-import logging
-logger = logging.getLogger(__name__)
-
 
 def includeme(config):
     config.add_route('wizard_wps', '/wizard/wps')
@@ -17,7 +14,7 @@ def includeme(config):
                     renderer='../templates/wizard/default.pt')
 
 
-class ChooseWPSSchema(colander.MappingSchema):
+class ChooseWPSSchema(deform.schema.CSRFSchema):
     @colander.deferred
     def deferred_validator(node, kw):
         wps_list = kw.get('wps_list', [])
@@ -59,7 +56,7 @@ class ChooseWPS(Wizard):
             wps_list.append({'title': service.title,
                              'abstract': service.abstract,
                              'service_name': service_name})
-        return ChooseWPSSchema().bind(wps_list=wps_list)
+        return ChooseWPSSchema().bind(request=self.request, wps_list=wps_list)
 
     def next_success(self, appstruct):
         self.success(appstruct)

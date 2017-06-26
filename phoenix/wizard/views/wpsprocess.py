@@ -26,7 +26,7 @@ def count_literal_inputs(wps, identifier):
     return len(literal_inputs)
 
 
-class Schema(colander.MappingSchema):
+class Schema(deform.schema.CSRFSchema):
     @colander.deferred
     def deferred_validator(node, kw):
         wps = kw.get('wps')
@@ -69,7 +69,7 @@ class ChooseWPSProcess(Wizard):
         return breadcrumbs
 
     def schema(self):
-        return Schema().bind(wps=self.wps)
+        return Schema().bind(request=self.request, wps=self.wps)
 
     def next_success(self, appstruct):
         self.success(appstruct)

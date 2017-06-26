@@ -4,6 +4,7 @@ import dateparser
 from pyramid.view import view_config
 from pyramid.security import authenticated_userid
 import colander
+import deform
 from deform.widget import SelectWidget
 
 from owslib.wps import WebProcessingService
@@ -86,7 +87,7 @@ def job_to_state(request, job_id):
     return state
 
 
-class FavoriteSchema(colander.MappingSchema):
+class FavoriteSchema(deform.schema.CSRFSchema):
     @colander.deferred
     def deferred_favorite_widget(node, kw):
         jobs = kw.get('jobs', [])
@@ -130,7 +131,7 @@ class Start(Wizard):
         fav_jobs = self.collection.find(search_filter).limit(50).sort([('created', -1)])
         if fav_jobs.count() > 0:
             jobs.extend(list(fav_jobs))
-        return FavoriteSchema().bind(jobs=jobs, last='last' in self.favorite.names())
+        return FavoriteSchema().bind(request=self.request, jobs=jobs, last='last' in self.favorite.names())
 
     def appstruct(self):
         struct = {'job_id': 'last'}

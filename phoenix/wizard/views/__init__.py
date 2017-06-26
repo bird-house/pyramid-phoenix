@@ -91,7 +91,7 @@ class WizardState(object):
         self.session.changed()
 
 
-@view_defaults(permission='submit', layout='default')
+@view_defaults(permission='submit', layout='default', require_csrf=False)
 class Wizard(MyView):
     def __init__(self, request, name, title, description=None):
         super(Wizard, self).__init__(request, name, title, description)
