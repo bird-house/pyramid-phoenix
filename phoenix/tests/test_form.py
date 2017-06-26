@@ -2,6 +2,7 @@ import unittest
 
 from phoenix.geoform.form import BBoxValidator
 from phoenix.geoform.form import URLValidator
+from phoenix.geoform.form import TextValidator
 
 
 def invalid_exc(func, *arg, **kw):
@@ -60,3 +61,19 @@ class TestURLValidator(unittest.TestCase):
         validator = URLValidator()
         e = invalid_exc(validator, None, "http://test/download/../readme.txt")
         self.assertEqual(e.msg, 'Invalid URL.')
+
+
+class TestTextValidator(unittest.TestCase):
+    def test_default(self):
+        validator = TextValidator()
+        self.assertEqual(validator(None, "hello world"), None)
+
+    def test_empty(self):
+        validator = TextValidator()
+        e = invalid_exc(validator, None, "   ")
+        self.assertEqual(e.msg, 'Invalid value ... empty.')
+
+    def test_restricted_chars(self):
+        validator = TextValidator()
+        e = invalid_exc(validator, None, "Hello World!")
+        self.assertEqual(e.msg, 'Invalid value ... containts restricted characters.')
