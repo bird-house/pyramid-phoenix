@@ -10,32 +10,6 @@ class CSRFSchema(colander.MappingSchema):
         widget=deform.widget.HiddenWidget())
 
 
-class SwiftLoginSchema(colander.MappingSchema):
-    username = colander.SchemaNode(
-        colander.String(),
-        title="Username",
-        description="Your Swift Username: account:user",
-        missing='',
-        default='',
-    )
-    password = colander.SchemaNode(
-        colander.String(),
-        title='Password',
-        missing='',
-        default='',
-        widget=deform.widget.PasswordWidget(size=30))
-
-
-class UploadSchema(SwiftLoginSchema):
-
-    container = colander.SchemaNode(colander.String())
-    prefix = colander.SchemaNode(colander.String())
-    source = colander.SchemaNode(
-        colander.String(),
-        description='URL to the source',
-        validator=colander.url)
-
-
 class PublishSchema(colander.MappingSchema):
     import uuid
 
