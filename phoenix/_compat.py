@@ -6,7 +6,7 @@ import logging
 import sys
 
 
-LOGGER = logging.getLogger('phoenix')
+LOGGER = logging.getLogger('PHOENIX')
 PY2 = sys.version_info[0] == 2
 PY3 = not PY2
 
