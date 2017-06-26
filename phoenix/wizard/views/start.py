@@ -14,7 +14,7 @@ from phoenix.wizard.views import Wizard
 from phoenix._compat import urlparse
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 def includeme(config):
@@ -38,17 +38,17 @@ def job_to_state(request, job_id):
             workflow = yaml.load(execution.dataInputs[0].data[0])
 
             # TODO: avoid getcaps
-            logger.debug("worker url: %s", workflow['worker']['url'])
+            LOGGER.debug("worker url: %s", workflow['worker']['url'])
             parsed_url = urlparse(workflow['worker']['url'])
             url = "{0.scheme}://{0.netloc}{0.path}".format(parsed_url)
             wps = WebProcessingService(url=url, verify=False, skip_caps=False)
-            logger.debug("wps url: %s", wps.url)
+            LOGGER.debug("wps url: %s", wps.url)
             if '/ows/proxy' in parsed_url.path:
                 service_name = parsed_url.path.split('/')[-1]
             else:
                 service = request.catalog.get_service_by_url(wps.url)
                 service_name = service['name']
-            logger.debug('service_name=%s', service_name)
+            LOGGER.debug('service_name=%s', service_name)
             state['wizard_wps'] = {'identifier': service_name}
             state['wizard_process'] = {'identifier': workflow['worker']['identifier']}
             inputs = {}
@@ -97,7 +97,7 @@ class FavoriteSchema(colander.MappingSchema):
         choices = [('', 'No Favorite')]
         if last:
             choices.append(('last', 'Last Run'))
-        logger.debug('jobs %s', jobs)
+        LOGGER.debug('jobs %s', jobs)
         choices.extend([(job['identifier'], gentitle(job)) for job in jobs])
         return SelectWidget(values=choices)
 
