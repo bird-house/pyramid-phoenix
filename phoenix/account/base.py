@@ -143,6 +143,7 @@ class Account(object):
     @view_config(route_name='account_logout', permission='edit')
     def logout(self):
         headers = forget(self.request)
+        self.session.invalidate()  # deleting the session
         return HTTPFound(location=self.request.route_path('home'), headers=headers)
 
     @view_config(route_name='account_register', renderer='templates/account/register.pt')
