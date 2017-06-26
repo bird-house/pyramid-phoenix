@@ -5,7 +5,7 @@ from phoenix.views import MyView
 from phoenix.grid import CustomGrid
 
 
-@view_defaults(permission='admin', layout='default')
+@view_defaults(permission='admin', layout='default', require_csrf=True)
 class Supervisor(MyView):
     def __init__(self, request):
         super(Supervisor, self).__init__(request, name='supervisor', title='Supervisor')
