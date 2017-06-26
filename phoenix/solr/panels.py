@@ -13,7 +13,7 @@ import colander
 import deform
 
 
-class Schema(colander.MappingSchema):
+class Schema(deform.schema.CSRFSchema):
     maxrecords = colander.SchemaNode(
         colander.Int(),
         name='solr_maxrecords',
@@ -59,7 +59,7 @@ class SolrParamsPanel(SolrPanel):
 
     @panel_config(name='solr_params', renderer='phoenix:templates/panels/form.pt')
     def panel(self):
-        form = Form(schema=Schema(), buttons=('update',))
+        form = Form(schema=Schema().bind(request=self.request), buttons=('update',))
         if 'update' in self.request.POST:
             try:
                 controls = self.request.POST.items()

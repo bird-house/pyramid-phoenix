@@ -27,7 +27,7 @@ class Ldap(MyView):
 
         # Generate form
         from phoenix.settings.schema import LdapSchema
-        ldap_form = Form(schema=LdapSchema(), buttons=('submit',), formid='deform')
+        ldap_form = Form(schema=LdapSchema().bind(request=self.request), buttons=('submit',), formid='deform')
 
         if 'submit' in self.request.params:
             try:

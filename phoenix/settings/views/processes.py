@@ -10,7 +10,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='admin', layout='default')
+@view_defaults(permission='admin', layout='default', require_csrf=True)
 class Processes(MyView):
     def __init__(self, request):
         super(Processes, self).__init__(request, name='settings_processes', title='Processes')
@@ -27,7 +27,7 @@ class Processes(MyView):
         # TODO: move settings to processes
         from phoenix.processes.views.actions import ProcessesActions
         processes = ProcessesActions(self.context, self.request).list_processes()
-        return Form(schema=ProcessesSchema().bind(processes=processes),
+        return Form(schema=ProcessesSchema().bind(request=self.request, processes=processes),
                     buttons=('submit',), formid='deform')
 
     def process_form(self, form):

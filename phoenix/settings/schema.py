@@ -21,7 +21,7 @@ def deferred_processes_widget(node, kw):
     return deform.widget.Select2Widget(values=choices, multiple=True)
 
 
-class ProcessesSchema(colander.MappingSchema):
+class ProcessesSchema(deform.schema.CSRFSchema):
     pinned_processes = colander.SchemaNode(
         colander.Set(),
         widget=deferred_processes_widget,
@@ -29,7 +29,7 @@ class ProcessesSchema(colander.MappingSchema):
     )
 
 
-class AuthProtocolSchema(colander.MappingSchema):
+class AuthProtocolSchema(deform.schema.CSRFSchema):
     choices = AUTH_PROTOCOLS.items()
 
     auth_protocol = colander.SchemaNode(
@@ -41,7 +41,7 @@ class AuthProtocolSchema(colander.MappingSchema):
         widget=deform.widget.CheckboxChoiceWidget(values=choices, inline=True))
 
 
-class LdapSchema(colander.MappingSchema):
+class LdapSchema(deform.schema.CSRFSchema):
     server = colander.SchemaNode(
         colander.String(),
         title='Server',
