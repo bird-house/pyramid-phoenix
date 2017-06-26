@@ -4,9 +4,10 @@ import deform
 from pyramid.view import view_config
 
 from phoenix.account.base import Account
+from phoenix.schema import CSRFSchema
 
 
-class LDAPSchema(colander.MappingSchema):
+class LDAPSchema(CSRFSchema):
     username = colander.SchemaNode(
         colander.String(),
         title="Username",

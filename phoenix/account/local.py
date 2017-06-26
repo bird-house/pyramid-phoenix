@@ -6,9 +6,10 @@ from pyramid.httpexceptions import HTTPFound
 
 from phoenix.security import passwd_check
 from phoenix.account.base import Account
+from phoenix.schema import CSRFSchema
 
 
-class LocalSchema(colander.MappingSchema):
+class LocalSchema(CSRFSchema):
     password = colander.SchemaNode(
         colander.String(),
         title='Admin password',

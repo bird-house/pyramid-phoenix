@@ -3,8 +3,11 @@ import colander
 
 from phoenix.geoform.widget import TagsWidget
 
-import logging
-logger = logging.getLogger(__name__)
+
+class CSRFSchema(colander.MappingSchema):
+    csrf_token = colander.SchemaNode(
+        colander.String(),
+        widget=deform.widget.HiddenWidget())
 
 
 class SwiftLoginSchema(colander.MappingSchema):

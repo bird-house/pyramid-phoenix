@@ -22,7 +22,7 @@ def forbidden(request):
     return dict()
 
 
-@view_defaults(permission='view', layout='default')
+@view_defaults(permission='view', layout='default', require_csrf=True)
 class Account(object):
     def __init__(self, request):
         self.request = request
@@ -30,7 +30,7 @@ class Account(object):
         self.collection = request.db.users
 
     def appstruct(self):
-        return dict()
+        return dict(csrf_token=self.session.get_csrf_token())
 
     def schema(self):
         raise NotImplementedError("Needs to be implemented in subclass")

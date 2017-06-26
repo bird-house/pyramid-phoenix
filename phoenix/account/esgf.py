@@ -5,9 +5,10 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
 from phoenix.account.base import Account
+from phoenix.schema import CSRFSchema
 
 
-class ESGFSchema(colander.MappingSchema):
+class ESGFSchema(CSRFSchema):
     choices = [('badc', 'BADC'), ('dkrz', 'DKRZ'), ('ipsl', 'IPSL'), ('smhi', 'SMHI'), ('pcmdi', 'PCMDI')]
 
     provider = colander.SchemaNode(
