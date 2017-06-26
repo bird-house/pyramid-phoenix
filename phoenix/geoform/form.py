@@ -48,6 +48,8 @@ class URLValidator(object):
                 raise colander.Invalid(node, "URL scheme {} is not allowed.".format(parsed_url.scheme))
             if not parsed_url.netloc:
                 raise colander.Invalid(node, "Invalid URL.")
+            if '..' in parsed_url.path:
+                raise colander.Invalid(node, "Invalid URL.")
 
 
 class FileUploadValidator(colander.All):

@@ -51,7 +51,12 @@ class TestURLValidator(unittest.TestCase):
         e = invalid_exc(validator, None, "file:///var/lib/test.txt")
         self.assertEqual(e.msg, 'URL scheme file is not allowed.')
 
-    def test_invalid_url(self):
+    def test_invalid_path(self):
         validator = URLValidator()
         e = invalid_exc(validator, None, "http://")
+        self.assertEqual(e.msg, 'Invalid URL.')
+
+    def test_invalid_relative_path(self):
+        validator = URLValidator()
+        e = invalid_exc(validator, None, "http://test/download/../readme.txt")
         self.assertEqual(e.msg, 'Invalid URL.')
