@@ -14,6 +14,7 @@ from pyramid.security import authenticated_userid
 
 from phoenix.geoform.widget import BBoxWidget, ResourceWidget
 from phoenix.geoform.form import BBoxValidator
+from phoenix.geoform.form import URLValidator
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -290,10 +291,8 @@ class WPSSchema(colander.MappingSchema):
             title="Resource",
             description="Enter a URL pointing to your resource.",
             widget=widget,
-            # widget=deform.widget.TextInputWidget(),
-            # missing=colander.null,
             default=self._url_node_default(data_input),
-            validator=colander.url,
+            validator=URLValidator(),
         )
 
         # sequence of nodes ...
