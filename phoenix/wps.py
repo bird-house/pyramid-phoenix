@@ -16,7 +16,7 @@ from phoenix.geoform.widget import BBoxWidget, ResourceWidget
 from phoenix.geoform.form import BBoxValidator
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 def check_status(url=None, response=None, sleep_secs=2, verify=False):
@@ -28,10 +28,10 @@ def check_status(url=None, response=None, sleep_secs=2, verify=False):
     """
     execution = WPSExecution()
     if response:
-        logger.debug("using response document ...")
+        LOGGER.debug("using response document ...")
         xml = response
     elif url:
-        logger.debug('using status_location url ...')
+        LOGGER.debug('using status_location url ...')
         xml = requests.get(url, verify=verify).content
     else:
         raise Exception("you need to provide a status-location url or response object.")
@@ -50,7 +50,7 @@ def appstruct_to_inputs(request, appstruct):
     """
     Transforms appstruct to wps inputs.
     """
-    # logger.debug("appstruct=%s", appstruct)
+    # LOGGER.debug("appstruct=%s", appstruct)
     inputs = []
     for key, values in appstruct.items():
         if key in ['_async_check']:
@@ -58,9 +58,9 @@ def appstruct_to_inputs(request, appstruct):
         if not isinstance(values, types.ListType):
             values = [values]
         for value in values:
-            # logger.debug("key=%s, value=%s, type=%s", key, value, type(value))
+            # LOGGER.debug("key=%s, value=%s, type=%s", key, value, type(value))
             inputs.append((str(key).strip(), str(value).strip()))
-    # logger.debug("inputs form appstruct=%s", inputs)
+    # LOGGER.debug("inputs form appstruct=%s", inputs)
     return inputs
 
 # wps input schema
@@ -138,7 +138,7 @@ class WPSSchema(colander.MappingSchema):
         if process is None:
             return
 
-        logger.debug("adding nodes for process inputs, num inputs = %s", len(process.dataInputs))
+        LOGGER.debug("adding nodes for process inputs, num inputs = %s", len(process.dataInputs))
 
         for data_input in process.dataInputs:
             node = None
@@ -155,7 +155,7 @@ class WPSSchema(colander.MappingSchema):
             # elif 'LiteralData' in data_input.dataType:# TODO: workaround for geoserver wps
             #    node = self.literal_data(data_input)
             else:
-                # logger.warning('unknown data type %s', data_input.dataType)
+                # LOGGER.warning('unknown data type %s', data_input.dataType)
                 node = self.literal_data(data_input)
             if node is None:
                 continue
@@ -200,7 +200,7 @@ class WPSSchema(colander.MappingSchema):
         return node
 
     def colander_literal_type(self, data_input):
-        # logger.debug('data input type = %s', data_input.dataType)
+        # LOGGER.debug('data input type = %s', data_input.dataType)
         if 'boolean' in data_input.dataType:
             return colander.Boolean()
         elif 'integer' in data_input.dataType:
@@ -236,7 +236,7 @@ class WPSSchema(colander.MappingSchema):
 
     def colander_literal_widget(self, node, data_input):
         if len(data_input.allowedValues) > 0 and 'AnyValue' not in data_input.allowedValues:
-            # logger.debug('allowed values %s', data_input.allowedValues)
+            # LOGGER.debug('allowed values %s', data_input.allowedValues)
             choices = []
             for value in data_input.allowedValues:
                 choices.append([value, value])
@@ -292,7 +292,7 @@ class WPSSchema(colander.MappingSchema):
 
     def complex_data(self, data_input):
         mime_types = [value.mimeType for value in data_input.supportedValues]
-        logger.debug("mime_types for resource widget: %s", mime_types)
+        LOGGER.debug("mime_types for resource widget: %s", mime_types)
         widget = ResourceWidget(
             cart=self.request.has_permission('edit'),
             mime_types=mime_types,
@@ -339,7 +339,7 @@ class WPSSchema(colander.MappingSchema):
         mime_types = []
         if len(data_input.supportedValues) > 0:
             mime_types = [str(value.mimeType) for value in data_input.supportedValues]
-        # logger.debug("mime-types: %s", mime_types)
+        # LOGGER.debug("mime-types: %s", mime_types)
         # set current proxy certificate
         if 'application/x-pkcs7-mime' in mime_types and self.user is not None:
             # TODO: check if certificate is still valid
@@ -387,7 +387,7 @@ class WPSSchema(colander.MappingSchema):
         cloned = self.clone()
         cloned._bind(kw)
 
-        logger.debug('after bind: num schema children = %s', len(cloned.children))
+        LOGGER.debug('after bind: num schema children = %s', len(cloned.children))
         return cloned
 
     def clone(self):
