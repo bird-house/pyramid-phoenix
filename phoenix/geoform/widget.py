@@ -21,7 +21,7 @@ from deform.widget import _StrippedString
 import logging
 import json
 
-log = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 class ResourceWidget(Widget):
@@ -59,7 +59,7 @@ class ResourceWidget(Widget):
             pstruct = pstruct.strip()
         if not pstruct:
             return null
-        log.debug("pstruct: %s", pstruct)
+        LOGGER.debug("pstruct: %s", pstruct)
         return pstruct
 
 
@@ -147,7 +147,7 @@ class TagsWidget(Widget):
         return field.renderer(self.template, **values)
 
     def deserialize(self, field, pstruct):
-        log.debug('result pstruct=%s', pstruct)
+        LOGGER.debug('result pstruct=%s', pstruct)
         if pstruct is null:
             return null
         if self.strip:
