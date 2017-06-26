@@ -106,6 +106,7 @@ class Account(object):
         return dict(form=form.render(self.appstruct()))
 
     def login_success(self, login_id, email=None, name=None, openid=None, local=False):
+        self.session.invalidate()  # clear session
         user = self.collection.find_one(dict(login_id=login_id))
         if user is None:
             LOGGER.warn("new user: %s", login_id)
