@@ -58,7 +58,7 @@ class Cart(object):
         """
         Add cart item.
         """
-        if url:
+        if url and self.request.has_permission('edit'):
             item = CartItem(url, title=title, abstract=abstract, mime_type=mime_type)
             self.items[url] = item
             self.save()
