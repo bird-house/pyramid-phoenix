@@ -3,9 +3,14 @@ from UserDict import DictMixin
 
 import colander
 from pyramid.security import authenticated_userid
+from pyramid.compat import urlparse
 
 
 class BBoxValidator(object):
+    """
+    Bounding-Box validator which succeeds if the bbox value has the format
+    :attr:`minx,miny,maxx,maxy` and values are in range (``-180 <= x <=180``, ``-90 <= y <=90``).
+    """
     def __call__(self, node, value):
         try:
             minx, miny, maxx, maxy = [float(val) for val in value.split(',', 3)]
@@ -24,6 +29,23 @@ class BBoxValidator(object):
                 raise colander.Invalid(node, "MinX greater than MaxX")
             if miny > maxy:
                 raise colander.Invalid(node, "MinY greater than MaxY")
+
+
+class URLValidator(object):
+    """
+    URL validator which can configured with allowed URL schemes.
+    """
+    def __init__(self, allowed_schemes=None):
+        self.allowed_schemes = allowed_schemes or ['http', 'https']
+
+    def __call__(self, node, value):
+        try:
+            parsed_url = urlparse.urlparse(value)
+        except:
+            raise colander.Invalid(node, "Invalid URL.")
+        else:
+            if parsed_url.scheme not in self.allowed_schemes:
+                raise colander.Invalid(node, "URL scheme is not allowed.")
 
 
 class FileUploadValidator(colander.All):
