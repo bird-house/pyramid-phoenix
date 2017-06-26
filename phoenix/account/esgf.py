@@ -5,10 +5,9 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
 from phoenix.account.base import Account
-from phoenix.schema import CSRFSchema
 
 
-class ESGFSchema(CSRFSchema):
+class ESGFSchema(deform.schema.CSRFSchema):
     choices = [('badc', 'BADC'), ('dkrz', 'DKRZ'), ('ipsl', 'IPSL'), ('smhi', 'SMHI'), ('pcmdi', 'PCMDI')]
 
     provider = colander.SchemaNode(
@@ -28,7 +27,7 @@ class ESGFSchema(CSRFSchema):
 
 class ESGFAccount(Account):
     def schema(self):
-        return ESGFSchema()
+        return ESGFSchema().bind(request=self.request)
 
     def _handle_appstruct(self, appstruct):
         return HTTPFound(location=self.request.route_path('account_auth',

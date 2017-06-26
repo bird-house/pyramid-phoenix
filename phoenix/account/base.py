@@ -29,9 +29,6 @@ class Account(object):
         self.session = request.session
         self.collection = request.db.users
 
-    def appstruct(self):
-        return dict(csrf_token=self.session.get_csrf_token())
-
     def schema(self):
         raise NotImplementedError("Needs to be implemented in subclass")
 
@@ -103,7 +100,7 @@ class Account(object):
         form = self.generate_form()
         if 'submit' in self.request.POST:
             return self.process_form(form)
-        return dict(form=form.render(self.appstruct()))
+        return dict(form=form.render())
 
     def login_success(self, login_id, email=None, name=None, openid=None, local=False):
         self.session.invalidate()  # clear session

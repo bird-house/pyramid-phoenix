@@ -4,10 +4,9 @@ import deform
 from pyramid.view import view_config
 
 from phoenix.account.base import Account
-from phoenix.schema import CSRFSchema
 
 
-class LDAPSchema(CSRFSchema):
+class LDAPSchema(deform.schema.CSRFSchema):
     username = colander.SchemaNode(
         colander.String(),
         title="Username",
@@ -20,7 +19,7 @@ class LDAPSchema(CSRFSchema):
 
 class LDAPAccount(Account):
     def schema(self):
-        return LDAPSchema()
+        return LDAPSchema().bind(request=self.request)
 
     def _handle_appstruct(self, appstruct):
         """

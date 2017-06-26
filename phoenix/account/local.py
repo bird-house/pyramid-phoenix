@@ -6,10 +6,9 @@ from pyramid.httpexceptions import HTTPFound
 
 from phoenix.security import passwd_check
 from phoenix.account.base import Account
-from phoenix.schema import CSRFSchema
 
 
-class LocalSchema(CSRFSchema):
+class LocalSchema(deform.schema.CSRFSchema):
     password = colander.SchemaNode(
         colander.String(),
         title='Admin password',
@@ -21,7 +20,7 @@ class LocalSchema(CSRFSchema):
 class LocalAccount(Account):
 
     def schema(self):
-        return LocalSchema()
+        return LocalSchema().bind(request=self.request)
 
     def _handle_appstruct(self, appstruct):
         password = appstruct.get('password')
