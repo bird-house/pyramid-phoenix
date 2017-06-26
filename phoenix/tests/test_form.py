@@ -1,6 +1,7 @@
 import unittest
 
 from phoenix.geoform.form import BBoxValidator
+from phoenix.geoform.form import URLValidator
 
 
 def invalid_exc(func, *arg, **kw):
@@ -37,3 +38,15 @@ class TestBBoxValidator(unittest.TestCase):
         validator = BBoxValidator()
         e = invalid_exc(validator, None, "0,-90,180,91")
         self.assertEqual(e.msg, 'MaxY out of range [-90, 90].')
+
+
+class TestURLValidator(unittest.TestCase):
+    def test_default(self):
+        validator = URLValidator()
+        self.assertEqual(validator(None, "http://somewhere/test.txt"), None)
+        self.assertEqual(validator(None, "https://somewhere/test.txt"), None)
+
+    def test_file_scheme(self):
+        validator = URLValidator()
+        e = invalid_exc(validator, None, "file:///var/lib/test.txt")
+        self.assertEqual(e.msg, 'URL scheme is not allowed.')
