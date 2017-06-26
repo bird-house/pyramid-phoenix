@@ -15,6 +15,7 @@ from pyramid.security import authenticated_userid
 from phoenix.geoform.widget import BBoxWidget, ResourceWidget
 from phoenix.geoform.form import BBoxValidator
 from phoenix.geoform.form import URLValidator
+from phoenix.geoform.form import TextValidator
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -152,6 +153,7 @@ class WPSSchema(colander.MappingSchema):
             self.colander_literal_type(data_input),
             name=data_input.identifier,
             title=data_input.title,
+            validator=TextValidator(),
         )
 
         # sometimes abstract is not set
