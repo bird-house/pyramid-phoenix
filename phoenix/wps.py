@@ -137,30 +137,14 @@ class WPSSchema(colander.MappingSchema):
     def add_nodes(self, process):
         if process is None:
             return
-
-        LOGGER.debug("adding nodes for process inputs, num inputs = %s", len(process.dataInputs))
-
         for data_input in process.dataInputs:
-            node = None
-
-            if data_input.dataType is None:
-                node = self.boundingbox(data_input)
-            # elif 'www.w3.org' in data_input.dataType:
-            #    node = self.literal_data(data_input)
-            elif 'ComplexData' in data_input.dataType:
+            if 'ComplexData' in data_input.dataType:
                 if not self.hide_complex:
-                    node = self.complex_data(data_input)
+                    self.add(self.complex_data(data_input))
             elif 'BoundingBoxData' in data_input.dataType:
-                node = self.bbox_data(data_input)
-            # elif 'LiteralData' in data_input.dataType:# TODO: workaround for geoserver wps
-            #    node = self.literal_data(data_input)
+                self.add(self.bbox_data(data_input))
             else:
-                # LOGGER.warning('unknown data type %s', data_input.dataType)
-                node = self.literal_data(data_input)
-            if node is None:
-                continue
-
-            self.add(node)
+                self.add(self.literal_data(data_input))
 
     def literal_data(self, data_input):
         node = colander.SchemaNode(
@@ -347,41 +331,6 @@ class WPSSchema(colander.MappingSchema):
         else:
             default = colander.null
         return default
-
-    def boundingbox(self, data_input):
-        node = colander.SchemaNode(
-            colander.String(),
-            name=data_input.identifier,
-            title=data_input.title,
-            default="0,-90,180,90",
-            widget=deform.widget.TextInputWidget()
-        )
-        # sometimes abstract is not set
-        node.description = getattr(data_input, 'abstract', '')
-
-        # optional value?
-        if data_input.minOccurs == 0:
-            node.missing = colander.drop
-
-        # validator
-        pattern = '-?\d+,-?\d+,-?\d+,-?\d+'
-        regex = re.compile(pattern)
-        node.validator = colander.Regex(
-            regex=regex,
-            msg='String does not match pattern: minx,miny,maxx,maxy')
-
-        # finally add node to root schema
-        # sequence of nodes ...
-        if data_input.maxOccurs > 1:
-            node = colander.SchemaNode(
-                colander.Sequence(),
-                node,
-                name=data_input.identifier,
-                title=data_input.title,
-                validator=colander.Length(max=data_input.maxOccurs)
-            )
-
-        return node
 
     def bind(self, **kw):
         cloned = self.clone()
