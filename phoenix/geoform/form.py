@@ -45,7 +45,7 @@ class URLValidator(object):
             raise colander.Invalid(node, "Invalid URL.")
         else:
             if parsed_url.scheme not in self.allowed_schemes:
-                raise colander.Invalid(node, "URL scheme is not allowed.")
+                raise colander.Invalid(node, "URL scheme {} is not allowed.".format(parsed_url.scheme))
             if not parsed_url.netloc:
                 raise colander.Invalid(node, "Invalid URL.")
 
