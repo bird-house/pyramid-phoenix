@@ -52,6 +52,25 @@ class URLValidator(object):
                 raise colander.Invalid(node, "Invalid URL.")
 
 
+class TextValidator(object):
+    """
+    """
+    def __init__(self, restricted_chars=None):
+        self.restricted_chars = restricted_chars or ["\\", "#", ";", "&", "!", "<", ">"]
+
+    def __call__(self, node, value):
+        try:
+            normalized_value = str(value).strip()
+        except:
+            raise colander.Invalid(node, "Invalid value.")
+        else:
+            if not normalized_value:
+                raise colander.Invalid(node, "Invalid value ... empty.")
+            for char in self.restricted_chars:
+                if char in normalized_value:
+                    raise colander.Invalid(node, "Invalid value ... containts restricted characters.")
+
+
 class FileUploadValidator(colander.All):
     """
     Runs all validators for file upload checks.
