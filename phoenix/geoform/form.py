@@ -4,9 +4,6 @@ from UserDict import DictMixin
 import colander
 from pyramid.security import authenticated_userid
 
-import logging
-logger = logging.getLogger(__name__)
-
 
 class BBoxValidator(object):
     def __call__(self, node, value):
