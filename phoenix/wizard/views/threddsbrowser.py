@@ -11,7 +11,7 @@ import colander
 import deform
 
 
-class Schema(colander.MappingSchema):
+class Schema(deform.schema.CSRFSchema):
     url = colander.SchemaNode(
         colander.String(),
         missing='',
@@ -30,7 +30,7 @@ class ThreddsBrowser(Wizard):
         return breadcrumbs
 
     def schema(self):
-        return Schema()
+        return Schema().bind(request=self.request)
 
     def appstruct(self):
         appstruct = super(ThreddsBrowser, self).appstruct()

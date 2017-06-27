@@ -30,7 +30,7 @@ def deferred_widget(node, kw):
     return deform.widget.RadioChoiceWidget(values=choices)
 
 
-class Schema(colander.MappingSchema):
+class Schema(deform.schema.CSRFSchema):
     url = colander.SchemaNode(
         colander.String(),
         title="Thredds Service",
@@ -49,7 +49,9 @@ class ThreddsService(Wizard):
         return breadcrumbs
 
     def schema(self):
-        return Schema().bind(thredds_list=self.request.catalog.get_services(service_type=THREDDS_TYPE))
+        return Schema().bind(
+            request=self.request,
+            thredds_list=self.request.catalog.get_services(service_type=THREDDS_TYPE))
 
     def success(self, appstruct):
         super(ThreddsService, self).success(appstruct)

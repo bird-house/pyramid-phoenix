@@ -13,7 +13,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='edit', require_csrf=True)
+@view_defaults(permission='edit')
 class NodeActions(object):
     """Actions related to job monitor."""
 

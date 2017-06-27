@@ -5,7 +5,7 @@ from phoenix.wps import check_status
 from phoenix.monitor.utils import output_details
 
 
-@view_defaults(permission='view', layout='default', require_csrf=True)
+@view_defaults(permission='view', layout='default')
 class JobStatus(MyView):
     def __init__(self, request):
         self.request = request

@@ -44,7 +44,7 @@ class LabelsSchema(colander.MappingSchema):
         missing="dev")
 
 
-@view_defaults(permission='edit', layout='default', require_csrf=True)
+@view_defaults(permission='edit', layout='default')
 class JobList(MyView):
     def __init__(self, request):
         super(JobList, self).__init__(request, name='monitor', title='Job List')

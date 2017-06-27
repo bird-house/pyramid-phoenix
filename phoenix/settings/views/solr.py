@@ -6,7 +6,7 @@ from phoenix.tasks.solr import index_thredds
 from phoenix.views import MyView
 
 
-@view_defaults(permission='admin', layout='default', require_csrf=True)
+@view_defaults(permission='admin', layout='default')
 class SolrSettings(MyView):
     def __init__(self, request):
         super(SolrSettings, self).__init__(request, name='settings_solr', title='Solr')
