@@ -56,6 +56,7 @@ def logon(username=None, password=None, hostname=None, interactive=False, outdir
     """
     outdir = outdir or os.curdir
     # use myproxy patch
+    # TODO: update to myproxyclient 2.x
     from phoenix.patch import patch_myproxy_client
     patch_myproxy_client()
     # end patch
