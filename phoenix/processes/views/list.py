@@ -6,7 +6,7 @@ from phoenix.views import MyView
 from phoenix.utils import wps_caps_url
 
 
-@view_defaults(permission='view', layout="default", require_csrf=True)
+@view_defaults(permission='view', layout="default")
 class ProcessList(MyView):
     def __init__(self, request):
         self.service_name = request.params.get('wps')
