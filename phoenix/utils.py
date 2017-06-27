@@ -70,6 +70,14 @@ def pinned_processes(request):
     return processes
 
 
+# csrf
+
+def skip_csrf_token(appstruct):
+    if 'csrf_token' in appstruct:
+        del appstruct['csrf_token']
+    return appstruct
+
+
 # misc
 
 def headline(text, max_length=120):
