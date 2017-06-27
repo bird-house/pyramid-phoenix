@@ -22,7 +22,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='view', layout='default')
+@view_defaults(permission='view', layout='default', require_csrf=True)
 class ExecuteProcess(MyView):
     def __init__(self, request):
         self.request = request
@@ -102,7 +102,7 @@ class ExecuteProcess(MyView):
                                disabled=not has_execute_permission(
                                     self.request, self.service_name))
         return Form(
-            schema,
+            schema.bind(request=self.request),
             buttons=(submit_button,),
             formid=formid,
         )

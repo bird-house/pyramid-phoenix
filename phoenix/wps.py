@@ -69,7 +69,7 @@ def appstruct_to_inputs(request, appstruct):
 # ----------------
 
 
-class WPSSchema(colander.MappingSchema):
+class WPSSchema(deform.schema.CSRFSchema):
     """
     Build a Colander Schema based on the WPS data inputs.
 
@@ -114,7 +114,8 @@ class WPSSchema(colander.MappingSchema):
         kwargs = kw.copy()
 
         # The default type of this SchemaNode is Mapping.
-        colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
+        # colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
+        super(WPSSchema, self).__init__(**kwargs)
         self.request = request
         self.hide_complex = hide_complex
         self.process = process
