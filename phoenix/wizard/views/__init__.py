@@ -5,6 +5,7 @@ from deform import Form, Button
 from deform import ValidationFailure
 
 from phoenix.views import MyView
+from phoenix.utils import skip_csrf_token
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -151,7 +152,7 @@ class Wizard(MyView):
         return options
 
     def success(self, appstruct):
-        self.wizard_state.set(self.name, appstruct)
+        self.wizard_state.set(self.name, skip_csrf_token(appstruct))
 
     def appstruct(self):
         return self.wizard_state.get(self.name, {})
