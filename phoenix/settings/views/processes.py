@@ -13,7 +13,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='admin', layout='default', require_csrf=False)
+@view_defaults(permission='admin', layout='default', require_csrf=True)
 class Processes(MyView):
     def __init__(self, request):
         super(Processes, self).__init__(request, name='settings_processes', title='Processes')
@@ -47,12 +47,15 @@ class Processes(MyView):
         return HTTPFound(location=self.request.route_path('settings_processes'))
 
     def appstruct(self):
-        return self.collection.find_one() or {}
+        appstruct = self.collection.find_one() or {}
+        # TODO: for unknown reasons we need to update the csrf_token
+        from pyramid.csrf import get_csrf_token
+        appstruct['csrf_token'] = get_csrf_token(self.request)
+        return appstruct
 
     @view_config(route_name='settings_processes', renderer='../templates/settings/default.pt')
     def view(self):
         form = self.generate_form()
-        LOGGER.debug('post keys %s', self.request.POST)
         if 'submit' in self.request.POST:
             return self.process_form(form)
         return dict(title=self.title, form=form.render(self.appstruct()))
