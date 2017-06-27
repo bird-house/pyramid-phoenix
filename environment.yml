@@ -53,7 +53,7 @@ dependencies:
   - pip:
       - genshi==0.7
       - sphinx-autoapi==0.4.0
-      - pyramid==1.8.4
+      - pyramid==1.9
       - pyramid-beaker==0.8
       - Beaker==1.9.0
       - pyramid-deform==0.2
