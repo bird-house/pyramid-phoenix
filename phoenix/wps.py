@@ -55,7 +55,7 @@ def appstruct_to_inputs(request, appstruct):
     # LOGGER.debug("appstruct=%s", appstruct)
     inputs = []
     for key, values in appstruct.items():
-        if key in ['_async_check']:
+        if key in ['_async_check', 'csrf_token']:
             continue
         if not isinstance(values, types.ListType):
             values = [values]
