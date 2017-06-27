@@ -5,6 +5,7 @@ from deform import ValidationFailure
 
 from phoenix.views import MyView
 from phoenix.events import SettingsChanged
+from phoenix.utils import skip_csrf_token
 # TODO: move settings to processes
 from phoenix.settings.schema import ProcessesSchema
 from phoenix.processes.views.actions import ProcessesActions
@@ -33,7 +34,7 @@ class Processes(MyView):
     def process_form(self, form):
         try:
             controls = self.request.POST.items()
-            appstruct = form.validate(controls)
+            appstruct = skip_csrf_token(form.validate(controls))
         except ValidationFailure, e:
             return dict(title=self.title, form=e.render())
         except Exception, e:
@@ -48,10 +49,7 @@ class Processes(MyView):
 
     def appstruct(self):
         appstruct = self.collection.find_one() or {}
-        # TODO: for unknown reasons we need to update the csrf_token
-        from pyramid.csrf import get_csrf_token
-        appstruct['csrf_token'] = get_csrf_token(self.request)
-        return appstruct
+        return skip_csrf_token(appstruct)
 
     @view_config(route_name='settings_processes', renderer='../templates/settings/default.pt')
     def view(self):
