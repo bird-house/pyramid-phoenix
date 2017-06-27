@@ -81,7 +81,7 @@ class WPSSchema(deform.schema.CSRFSchema):
 
     appstruct = {}
 
-    def __init__(self, request, hide_complex=False, process=None, use_async=False, unknown='ignore', user=None, **kw):
+    def __init__(self, request, hide_complex=False, process=None, use_async=False, user=None, **kw):
         """ Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
@@ -90,17 +90,6 @@ class WPSSchema(deform.schema.CSRFSchema):
            An ``WPS`` process description that you want a ``Colander`` schema
            to be generated for.
 
-        unknown
-           Represents the `unknown` argument passed to
-           :class:`colander.Mapping`.
-
-           From Colander:
-
-           ``unknown`` controls the behavior of this type when an unknown
-           key is encountered in the cstruct passed to the deserialize
-           method of this instance.
-
-           Default: 'ignore'
         \*\*kw
            Represents *all* other options able to be passed to a
            :class:`colander.SchemaNode`. Keywords passed will influence the
@@ -113,13 +102,10 @@ class WPSSchema(deform.schema.CSRFSchema):
 
         kwargs = kw.copy()
 
-        # The default type of this SchemaNode is Mapping.
-        # colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
-        super(WPSSchema, self).__init__(typ=colander.Mapping(), **kwargs)
+        super(WPSSchema, self).__init__(**kwargs)
         self.request = request
         self.hide_complex = hide_complex
         self.process = process
-        self.unknown = unknown
         self.user = user
         self.kwargs = kwargs or {}
         if use_async:
@@ -346,7 +332,6 @@ class WPSSchema(deform.schema.CSRFSchema):
             self.request,
             self.hide_complex,
             self.process,
-            self.unknown,
             self.user,
             **self.kwargs)
         cloned.__dict__.update(self.__dict__)
