@@ -115,7 +115,7 @@ class WPSSchema(deform.schema.CSRFSchema):
 
         # The default type of this SchemaNode is Mapping.
         # colander.SchemaNode.__init__(self, colander.Mapping(unknown), **kwargs)
-        super(WPSSchema, self).__init__(**kwargs)
+        super(WPSSchema, self).__init__(typ=colander.Mapping(), **kwargs)
         self.request = request
         self.hide_complex = hide_complex
         self.process = process
