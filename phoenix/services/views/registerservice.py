@@ -11,10 +11,10 @@ import deform
 import colander
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
-class Schema(colander.MappingSchema):
+class Schema(deform.schema.CSRFSchema):
     service_types = [
         (WPS_TYPE, "Web Processing Service"),
         (THREDDS_TYPE, "Thredds Catalog")]
@@ -48,14 +48,9 @@ class Schema(colander.MappingSchema):
         title="Public access?",
         description="Check this option if your service has no access restrictions.",
         default=False)
-    # c4i = colander.SchemaNode(
-    #     colander.Bool(),
-    #     title="Climate4Impact WPS Service?",
-    #     description="Check this option if your service uses Climate4Impact access tokens.",
-    #     default=False)
 
 
-@view_defaults(permission='admin', layout='default')
+@view_defaults(permission='admin', layout='default', require_csrf=True)
 class RegisterService(MyView):
     def __init__(self, request):
         super(RegisterService, self).__init__(
@@ -69,19 +64,20 @@ class RegisterService(MyView):
         return breadcrumbs
 
     def generate_form(self):
-        return Form(Schema(), buttons=(Button(name='register', title='Register'),))
+        return Form(Schema().bind(request=self.request), buttons=(Button(name='register', title='Register'),))
 
     def process_form(self, form):
         try:
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
             url = appstruct.get('url')
+            del appstruct['csrf_token']
             self.request.catalog.harvest(**appstruct)
             self.session.flash('Registered Service %s' % (url), queue="success")
         except ValidationFailure, e:
             return dict(title=self.title, form=e.render())
         except Exception, ex:
-            logger.exception('could not register service.')
+            LOGGER.exception('could not register service.')
             self.session.flash('Could not register Service {0}: {1}'.format(url, ex), queue="danger")
         return HTTPFound(location=self.request.route_path('services'))
 

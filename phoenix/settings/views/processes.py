@@ -5,12 +5,15 @@ from deform import ValidationFailure
 
 from phoenix.views import MyView
 from phoenix.events import SettingsChanged
+# TODO: move settings to processes
+from phoenix.settings.schema import ProcessesSchema
+from phoenix.processes.views.actions import ProcessesActions
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='admin', layout='default', require_csrf=True)
+@view_defaults(permission='admin', layout='default', require_csrf=False)
 class Processes(MyView):
     def __init__(self, request):
         super(Processes, self).__init__(request, name='settings_processes', title='Processes')
@@ -23,9 +26,6 @@ class Processes(MyView):
         return breadcrumbs
 
     def generate_form(self):
-        from phoenix.settings.schema import ProcessesSchema
-        # TODO: move settings to processes
-        from phoenix.processes.views.actions import ProcessesActions
         processes = ProcessesActions(self.context, self.request).list_processes()
         return Form(schema=ProcessesSchema().bind(request=self.request, processes=processes),
                     buttons=('submit',), formid='deform')
@@ -52,6 +52,7 @@ class Processes(MyView):
     @view_config(route_name='settings_processes', renderer='../templates/settings/default.pt')
     def view(self):
         form = self.generate_form()
+        LOGGER.debug('post keys %s', self.request.POST)
         if 'submit' in self.request.POST:
             return self.process_form(form)
         return dict(title=self.title, form=form.render(self.appstruct()))

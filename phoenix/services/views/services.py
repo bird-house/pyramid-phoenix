@@ -3,9 +3,6 @@ from pyramid.view import view_config, view_defaults
 from phoenix.catalog import WPS_TYPE
 from phoenix.views import MyView
 
-import logging
-logger = logging.getLogger(__name__)
-
 
 @view_defaults(permission='admin', layout='default')
 class Services(MyView):
