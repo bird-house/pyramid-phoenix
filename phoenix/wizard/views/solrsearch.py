@@ -5,9 +5,6 @@ import colander
 from phoenix.solrsearch.schema import SolrSearchSchema
 from phoenix.wizard.views import Wizard
 
-import logging
-logger = logging.getLogger(__name__)
-
 
 def includeme(config):
     config.add_route('wizard_solr', '/wizard/solrsearch')
@@ -27,7 +24,7 @@ class SolrSearch(Wizard):
         return breadcrumbs
 
     def schema(self):
-        return SolrSearchSchema()
+        return SolrSearchSchema().bind(request=self.request)
 
     def appstruct(self):
         appstruct = super(SolrSearch, self).appstruct()

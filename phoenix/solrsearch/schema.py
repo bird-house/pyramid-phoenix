@@ -2,7 +2,7 @@ import colander
 import deform
 
 
-class SolrSearchSchema(colander.MappingSchema):
+class SolrSearchSchema(deform.schema.CSRFSchema):
     query = colander.SchemaNode(
         colander.String(),
         missing='',
