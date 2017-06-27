@@ -88,18 +88,9 @@ def add_job(db, task_id, process_id, title=None, abstract=None,
 def get_access_token(userid):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
-
     # refresh access token
     token = generate_access_token(registry, userid=userid)
     return token.get('access_token')
-
-
-def get_c4i_access_token(userid):
-    registry = app.conf['PYRAMID_REGISTRY']
-    db = mongodb(registry)
-
-    user = db.users.find_one(dict(identifier=userid))
-    return user.get('c4i_token')
 
 
 def wps_headers(userid):
@@ -108,7 +99,4 @@ def wps_headers(userid):
         access_token = get_access_token(userid)
         if access_token:
             headers['Access-Token'] = access_token
-        c4i_access_token = get_c4i_access_token(userid)
-        if c4i_access_token:
-            headers['C4I-Access-Token'] = c4i_access_token
     return headers
