@@ -6,7 +6,7 @@ import datetime
 import json
 
 
-class ESGFLogonSchema(colander.MappingSchema):
+class ESGFLogonSchema(deform.schema.CSRFSchema):
     choices = (
         ('slcs1.ceda.ac.uk', 'CEDA (England)'),
         ('esgf-data.dkrz.de', 'DKRZ (Hamburg, Germany)'),

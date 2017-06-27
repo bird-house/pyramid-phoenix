@@ -14,7 +14,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='edit', layout='default')
+@view_defaults(permission='edit', layout='default', require_csrf=True)
 class ESGFLogon(object):
     def __init__(self, request):
         self.request = request
@@ -27,7 +27,9 @@ class ESGFLogon(object):
 
     def generate_form(self):
         submit_button = Button(name='submit', title='Submit', css_class='btn btn-success')
-        return Form(schema=ESGFLogonSchema(), buttons=(submit_button,), formid="esgflogon")
+        return Form(
+            schema=ESGFLogonSchema().bind(request=self.request),
+            buttons=(submit_button,), formid="esgflogon")
 
     def process_form(self, form):
         try:
