@@ -7,7 +7,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-class ProfileSchema(colander.MappingSchema):
+class ProfileSchema(deform.schema.CSRFSchema):
     name = colander.SchemaNode(
         colander.String(),
         title="Your Name",
@@ -35,7 +35,7 @@ class ProfileSchema(colander.MappingSchema):
     )
 
 
-class GroupSchema(colander.MappingSchema):
+class GroupSchema(deform.schema.CSRFSchema):
     choices = ((Admin, 'Admin'), (Developer, 'Developer'), (User, 'User'), (Guest, 'Guest'))
 
     group = colander.SchemaNode(
@@ -46,7 +46,7 @@ class GroupSchema(colander.MappingSchema):
         description='Select Group')
 
 
-class TwitcherSchema(colander.MappingSchema):
+class TwitcherSchema(deform.schema.CSRFSchema):
     twitcher_token = colander.SchemaNode(
         colander.String(),
         title="Access Token",
@@ -61,7 +61,7 @@ class TwitcherSchema(colander.MappingSchema):
     )
 
 
-class ESGFSLCSTokenSchema(colander.MappingSchema):
+class ESGFSLCSTokenSchema(deform.schema.CSRFSchema):
     esgf_token = colander.SchemaNode(
         colander.String(),
         title="Access Token",
@@ -76,7 +76,7 @@ class ESGFSLCSTokenSchema(colander.MappingSchema):
     )
 
 
-class ESGFCredentialsSchema(colander.MappingSchema):
+class ESGFCredentialsSchema(deform.schema.CSRFSchema):
     openid = colander.SchemaNode(
         colander.String(),
         title="OpenID",

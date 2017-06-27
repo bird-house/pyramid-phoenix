@@ -75,7 +75,7 @@ class Profile(MyView):
             schema = GroupSchema()
         else:
             schema = ProfileSchema()
-        return schema
+        return schema.bind(request=self.request)
 
     def generate_form(self):
         if self.tab == 'group':
