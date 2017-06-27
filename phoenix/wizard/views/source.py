@@ -1,4 +1,5 @@
 import colander
+import deform
 from deform.widget import RadioChoiceWidget
 
 from pyramid.view import view_config
@@ -35,7 +36,7 @@ class SourceSchemaNode(colander.SchemaNode):
         self.widget = RadioChoiceWidget(values=values)
 
 
-class Schema(colander.MappingSchema):
+class Schema(deform.schema.CSRFSchema):
     source = SourceSchemaNode()
 
 

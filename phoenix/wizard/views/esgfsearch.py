@@ -29,7 +29,7 @@ class ESGFSearchView(Wizard):
         return breadcrumbs
 
     def schema(self):
-        return ESGFSearchSchema()
+        return ESGFSearchSchema().bind(request=self.request)
 
     def appstruct(self):
         appstruct = super(ESGFSearchView, self).appstruct()

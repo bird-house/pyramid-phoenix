@@ -44,7 +44,7 @@ def esgfsearch_validator(node, value):
         raise Invalid(node, 'More than 100 datasets selected: %r.' % search['hit-count'])
 
 
-class ESGFSearchSchema(colander.MappingSchema):
+class ESGFSearchSchema(deform.schema.CSRFSchema):
     constraints = colander.SchemaNode(
         colander.String(),
         default='',

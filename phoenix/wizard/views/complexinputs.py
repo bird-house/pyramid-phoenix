@@ -33,7 +33,7 @@ def deferred_widget(node, kw):
     return deform.widget.RadioChoiceWidget(values=choices)
 
 
-class Schema(colander.MappingSchema):
+class Schema(deform.schema.CSRFSchema):
     identifier = colander.SchemaNode(
         colander.String(),
         title="Input Parameter",
@@ -57,7 +57,7 @@ class ComplexInputs(Wizard):
         return breadcrumbs
 
     def schema(self):
-        return Schema().bind(process=self.process)
+        return Schema().bind(request=self.request, process=self.process)
 
     def success(self, appstruct):
         for inp in self.process.dataInputs:

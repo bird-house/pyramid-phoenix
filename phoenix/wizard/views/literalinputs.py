@@ -30,7 +30,10 @@ class LiteralInputs(Wizard):
         return breadcrumbs
 
     def schema(self):
-        return WPSSchema(request=self.request, hide_complex=True, process=self.process)
+        return WPSSchema(
+            request=self.request,
+            hide_complex=True,
+            process=self.process).bind(request=self.request)
 
     def next_success(self, appstruct):
         self.success(appstruct)

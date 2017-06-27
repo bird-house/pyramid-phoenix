@@ -5,6 +5,7 @@ from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPFound
 
 import colander
+import deform
 
 from owslib.wps import WebProcessingService
 
@@ -16,7 +17,7 @@ from phoenix.tasks.workflow import execute_workflow
 from phoenix.tasks.execute import execute_process
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 def includeme(config):
@@ -27,7 +28,7 @@ def includeme(config):
                     renderer='../templates/wizard/default.pt')
 
 
-class DoneSchema(colander.MappingSchema):
+class DoneSchema(deform.schema.CSRFSchema):
     caption = colander.SchemaNode(
         colander.String(),
         description="Add an optional title for this job.",
@@ -51,7 +52,7 @@ class Done(Wizard):
     def schema(self):
         source_type = self.wizard_state.get('wizard_source')['source']
         caption = "source: {0}".format(SOURCE_TYPES.get(source_type, 'unknown'))
-        return DoneSchema().bind(caption=caption)
+        return DoneSchema().bind(request=self.request, caption=caption)
 
     def workflow_description(self):
         # source_type
@@ -94,7 +95,7 @@ class Done(Wizard):
         wps = WebProcessingService(
             url=self.request.route_url('owsproxy', service_name=self.service_name),
             verify=False, skip_caps=True)
-        logger.debug("wizard worker wps url: %s", wps.url)
+        LOGGER.debug("wizard worker wps url: %s", wps.url)
         worker = dict(
             url=wps.url,
             identifier=self.wizard_state.get('wizard_process')['identifier'],
