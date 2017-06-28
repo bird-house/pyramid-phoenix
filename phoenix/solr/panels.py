@@ -75,7 +75,7 @@ class SolrParamsPanel(SolrPanel):
                 return dict(title="Parameters", form=e.render())
             except Exception, e:
                 LOGGER.exception('update failed.')
-                self.request.session.flash('Update of Solr parameters failed. %s' % (e), queue='danger')
+                self.request.session.flash('Update of Solr parameters failed.', queue='danger')
             else:
                 self.request.session.flash("Solr parameters updated.", queue='success')
         return dict(title="Parameters", form=form.render(self.appstruct()))

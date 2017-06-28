@@ -20,12 +20,12 @@ class Services(MyView):
     def details_view(self):
         service_id = self.request.matchdict.get('service_id')
         service = self.request.catalog.get_record_by_id(service_id)
+        service_name = 'unknown'
         if service.format == WPS_TYPE:
             try:
                 service_name = self.request.catalog.get_service_name(service)
             except Exception, err:
                 self.session.flash("<strong>Error</strong>: This service is not available.", queue='danger')
-                service_name = 'unknown'
         return dict(service=service, service_name=service_name)
 
     @view_config(route_name="services", renderer='../templates/services/service_list.pt')

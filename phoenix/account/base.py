@@ -5,6 +5,7 @@ from pyramid.view import view_config, view_defaults, forbidden_view_config
 from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from pyramid.response import Response
 from pyramid.security import remember, forget
+from pyramid.compat import escape
 
 from deform import Form, Button, ValidationFailure
 from authomatic.adapters import WebObAdapter
@@ -43,7 +44,7 @@ class Account(object):
             controls = self.request.POST.items()
             appstruct = form.validate(controls)
         except ValidationFailure, e:
-            self.session.flash("<strong>Error:</strong> Validation failed %s".format(e.message), queue='danger')
+            self.session.flash("<strong>Error:</strong> Login failed.", queue='danger')
             return dict(form=e.render())
         else:
             return self._handle_appstruct(appstruct)
@@ -118,7 +119,7 @@ class Account(object):
         user['openid'] = openid or ''
         user['name'] = name or 'Guest'
         self.collection.update({'login_id': login_id}, user)
-        self.session.flash("Hello <strong>{0}</strong>. Welcome to Phoenix.".format(name), queue='info')
+        self.session.flash("Hello <strong>{0}</strong>. Welcome to Phoenix.".format(escape(name)), queue='info')
         if user.get('group') == Guest:
             msg = """
             <strong>Warning:</strong> You are a member of the <strong>Guest</strong> group.
@@ -132,9 +133,9 @@ class Account(object):
 
     def login_failure(self, message=None):
         if message:
-            msg = 'Sorry, login failed: {0}'.format(message)
+            msg = '<strong>Error:</strong> Sorry, login failed: {0}'.format(escape(message))
         else:
-            msg = 'Sorry, login failed.'
+            msg = '<strong>Error:</strong> Sorry, login failed.'
         self.session.flash(msg, queue='danger')
         return HTTPFound(location=self.request.route_path('sign_in'))
 

@@ -3,7 +3,7 @@ from pyramid.events import subscriber
 from phoenix.events import JobFinished, JobStarted
 
 import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 @subscriber(JobStarted)

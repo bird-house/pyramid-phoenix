@@ -37,5 +37,4 @@ def solrsearch(context, request):
     result = dict(query_path=query_path(request), query=query, page=page, category=category, selected_source=source)
     url = request.registry.settings.get('solr.url')
     result.update(solr_search(url=url, query=query, page=page, category=category, source=source, tag=tag))
-    # request.session.flash("Solr service is not available.", queue='danger')
     return result

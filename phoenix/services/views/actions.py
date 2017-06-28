@@ -2,7 +2,7 @@ from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 @view_defaults(permission='submit')
@@ -21,9 +21,7 @@ class ServiceActions(object):
             self.request.catalog.delete_record(service_id)
             self.session.flash('Removed Service.', queue="info")
         except Exception, e:
-            msg = "Could not remove service %s" % e
-            logger.exception(msg)
-            self.session.flash(msg, queue="danger")
+            self.session.flash("Could not remove service.", queue="danger")
         return HTTPFound(location=self.request.route_path('services'))
 
     @view_config(route_name='clear_services')
@@ -32,9 +30,7 @@ class ServiceActions(object):
             self.request.catalog.clear_services()
             self.session.flash('All Service removed.', queue="info")
         except Exception, e:
-            msg = "Could not remove services: %s" % e
-            logger.exception(msg)
-            self.session.flash(msg, queue="danger")
+            self.session.flash("Could not remove services.", queue="danger")
         return HTTPFound(location=self.request.route_path('services'))
 
 
@@ -47,4 +43,3 @@ def includeme(config):
 
     config.add_route('clear_services', '/clear_services')
     config.add_route('remove_service', '/services/{service_id}/remove')
-

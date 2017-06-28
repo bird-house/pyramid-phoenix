@@ -38,7 +38,7 @@ class Processes(MyView):
         except ValidationFailure, e:
             return dict(title=self.title, form=e.render())
         except Exception, e:
-            self.session.flash(e.message, queue="danger")
+            self.session.flash("<strong>Error:</strong> Could not update settings.", queue="danger")
         else:
             settings = self.collection.find_one() or {}
             settings.update(dict(pinned_processes=list(appstruct['pinned_processes'])))

@@ -21,7 +21,6 @@ class NodeActions(object):
         self.context = context
         self.request = request
         self.session = self.request.session
-        self.flash = self.request.session.flash
         self.collection = self.request.db.jobs
 
     def _selected_children(self):
@@ -40,10 +39,10 @@ class NodeActions(object):
         job_id = self.request.matchdict.get('job_id')
         job = self.collection.find_one({'identifier': job_id})
         if job.get('is_workflow', False):
-            self.flash("Restarting Workflow {0}.".format(job_id), queue='info')
+            self.session.flash("Restarting Workflow {0}.".format(job_id), queue='info')
             return HTTPFound(location=self.request.route_path('wizard', _query=[('job_id', job_id)]))
         else:
-            self.flash("Restarting Process {0}.".format(job_id), queue='info')
+            self.session.flash("Restarting Process {0}.".format(job_id), queue='info')
             return HTTPFound(location=self.request.route_path('processes_execute', _query=[('job_id', job_id)]))
 
     @view_config(route_name='delete_job')
@@ -51,7 +50,7 @@ class NodeActions(object):
         job_id = self.request.matchdict.get('job_id')
         # TODO: check permission ... either admin or owner.
         self.collection.delete_one({'identifier': job_id})
-        self.flash("Job {0} deleted.".format(job_id), queue='info')
+        self.session.flash("Job {0} deleted.".format(job_id), queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     @view_config(route_name='delete_jobs')
@@ -62,14 +61,14 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.collection.delete_many({'identifier': {'$in': ids}})
-            self.flash(u"Selected jobs were deleted.", queue='info')
+            self.session.flash(u"Selected jobs were deleted.", queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     # @view_config(route_name='delete_all_jobs', permission='admin')
     def delete_all_jobs(self):
         count = self.collection.count()
         self.collection.drop()
-        self.flash("%d Jobs deleted." % count, queue='info')
+        self.session.flash("{0} Jobs deleted.".format(count), queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     @view_config(route_name='make_public')
@@ -80,7 +79,7 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.collection.update_many({'identifier': {'$in': ids}}, {'$addToSet': {'tags': 'public'}})
-            self.flash(u"Selected jobs were made public.", 'info')
+            self.session.flash(u"Selected jobs were made public.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     @view_config(route_name='make_private')
@@ -91,7 +90,7 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.collection.update_many({'identifier': {'$in': ids}}, {'$pull': {'tags': 'public'}})
-            self.flash(u"Selected jobs were made private.", 'info')
+            self.session.flash(u"Selected jobs were made private.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     @view_config(route_name='set_favorite')
@@ -102,7 +101,7 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.collection.update_many({'identifier': {'$in': ids}}, {'$addToSet': {'tags': 'fav'}})
-            self.flash(u"Set as favorite done.", 'info')
+            self.session.flash(u"Set as favorite done.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     @view_config(route_name='unset_favorite')
@@ -113,7 +112,7 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.collection.update_many({'identifier': {'$in': ids}}, {'$pull': {'tags': 'fav'}})
-            self.flash(u"Unset as favorite done.", 'info')
+            self.session.flash(u"Unset as favorite done.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     @view_config(renderer='json', name='edit_job.json')

@@ -1,6 +1,7 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
+from pyramid.compat import escape
 
 from phoenix.twitcherclient import generate_access_token
 from phoenix.esgf.slcsclient import ESGFSLCSClient
@@ -21,7 +22,7 @@ class Actions(object):
             try:
                 client.get_certificate()
             except Exception as err:
-                self.session.flash('Could not update certificate: {}'.format(err.message), queue="danger")
+                self.session.flash('Could not update certificate: {}'.format(escape(err.message)), queue="danger")
             else:
                 self.session.flash('ESGF certificate was updated.', queue="success")
             return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_certs'))
@@ -46,7 +47,7 @@ class Actions(object):
         try:
             generate_access_token(self.request.registry, userid=self.userid)
         except Exception as err:
-            self.session.flash('Could not refresh token: {}'.format(err.message), queue="danger")
+            self.session.flash('Could not refresh token: {}'.format(escape(err.message)), queue="danger")
         else:
             self.session.flash('Twitcher token was updated.', queue="success")
         return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='twitcher'))
@@ -61,7 +62,7 @@ class Actions(object):
             try:
                 client.refresh_token()
             except Exception as err:
-                self.session.flash('Could not refresh token: {}'.format(err.message), queue="danger")
+                self.session.flash('Could not refresh token: {}'.format(escape(err.message)), queue="danger")
             else:
                 self.session.flash('ESGF token was updated.', queue="success")
             return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_slcs'))
@@ -69,7 +70,7 @@ class Actions(object):
             try:
                 auth_url = client.authorize()
             except Exception as err:
-                self.session.flash('Could not retrieve token: {}'.format(err.message), queue="danger")
+                self.session.flash('Could not retrieve token: {}'.format(escape(err.message)), queue="danger")
                 return HTTPFound(location=self.request.route_path('profile', userid=self.userid, tab='esgf_slcs'))
             else:
                 return HTTPFound(location=auth_url)
