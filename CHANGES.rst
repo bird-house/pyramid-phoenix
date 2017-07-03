@@ -2,6 +2,17 @@ Changes
 *******
 
 
+0.7.3 (2017-05-18)
+==================
+
+* added editorconfig
+* Merge pull request #138 from Ouranosinc/master
+    
+    Add a json backend into Phoenix
+* updated nginx 1.10.3
+* updated twitcher 0.3.4
+
+
 0.7.2 (2017-03-21)
 ==================
 
