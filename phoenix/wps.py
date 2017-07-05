@@ -21,6 +21,17 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
+OPENDAP_MIME_TYPES = ['application/x-ogc-dods']
+
+
+def is_opendap(data_input):
+    if hasattr(data_input, 'metadata'):
+        for metadata in data_input.metadata:
+            if metadata.title in OPENDAP_MIME_TYPES:
+                return True
+    return False
+
+
 def check_status(url=None, response=None, sleep_secs=2, verify=False):
     """
     Run owslib.wps check_status with additional exception handling.
@@ -222,18 +233,14 @@ class WPSSchema(deform.schema.CSRFSchema):
         elif 'password' in data_input.identifier:
             node.widget = deform.widget.PasswordWidget(size=20)
         elif type(node.typ) == colander.String:
-            widget = None
-            if hasattr(data_input, 'metadata'):
-                for metadata in data_input.metadata:
-                    mime_types = ['application/x-ogc-dods']
-                    if metadata.title in mime_types:
-                        widget = ResourceWidget(
-                            cart=self.request.has_permission('edit'),
-                            mime_types=mime_types,
-                            upload=False,
-                            storage_url=self.request.storage.base_url)
-                        break
-            node.widget = widget or deform.widget.TextInputWidget()
+            if is_opendap(data_input):
+                node.widget = ResourceWidget(
+                    cart=self.request.has_permission('edit'),
+                    mime_types=OPENDAP_MIME_TYPES,
+                    upload=False,
+                    storage_url=self.request.storage.base_url)
+            else:
+                node.widget = deform.widget.TextInputWidget()
         else:
             node.widget = deform.widget.TextInputWidget()
 
