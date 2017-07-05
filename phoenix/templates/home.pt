@@ -2,7 +2,7 @@
 
   <div metal:fill-slot="content">
 
-    <div class="jumbotron">
+    <section class="topbox">
       <div class="container">
         <h1>
           <span class="title">Phoenix</span>
@@ -12,11 +12,11 @@
           to interact with <strong>Web Processing Services</strong>
         </h2>
       </div>
-    </div>
+    </section>
 
     <!-- highlighted processes -->
-    <section class="hilitbox">
-      <div class="container" tal:condition="processes">
+    <section class="hilitbox" tal:condition="processes">
+      <div class="container">
         <div class="row">
           <div class="col-md-12 text-center">
             <h2><strong>Highlighted Processes</strong></h2>
