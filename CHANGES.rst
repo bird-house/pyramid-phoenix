@@ -1,14 +1,14 @@
 Changes
 *******
 
-current
+0.8.0 (2017-07-05)
 ==================
 
 * updated layout.
 * added pinned processes.
 * updated ncmws 2.2.8.
 * made twitcher workdir configurable.
-* esgflogon can be called from wizard, process execute and esgfsearch.
+* esgflogon can be called indepentent of wizard.
 * added esgf.metadata with search constraints.
 * added CSRF checks.
 
