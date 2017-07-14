@@ -1,4 +1,4 @@
-VERSION := 0.3.9
+VERSION := 0.3.10
 RELEASE := master
 
 # Include custom config if it is available
@@ -74,6 +74,7 @@ help:
 	@echo "  distclean   to remove *all* files that are not controlled by 'git'. WARNING: use it *only* if you know what you do!"
 	@echo "  passwd      to generate password for 'phoenix-password' in custom.cfg."
 	@echo "  docs        to generate HTML documentation with Sphinx."
+	@echo "  linkcheck   to check all external links in documentation for integrity."
 	@echo "  selfupdate  to update this Makefile."
 	@echo "\nSupervisor targets:"
 	@echo "  start       to start supervisor service."
@@ -257,8 +258,13 @@ pep8:
 .PHONY: docs
 docs:
 	@echo "Generating docs with Sphinx ..."
-	$(MAKE) -C $@ clean linkcheck html
+	$(MAKE) -C $@ clean html
 	@echo "open your browser: firefox docs/build/html/index.html"
+
+.PHONY: linkcheck
+linkcheck:
+	@echo "Run link checker on docs..."
+	$(MAKE) -C docs linkcheck
 
 .PHONY: selfupdate
 selfupdate: bootstrap.sh requirements.sh .gitignore
