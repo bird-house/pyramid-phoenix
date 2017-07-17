@@ -2,7 +2,7 @@ from pyramid.view import view_config, view_defaults
 from pyramid.httpexceptions import HTTPFound
 
 
-@view_defaults(permission='edit', require_csrf=True)
+@view_defaults(permission='edit')
 class CartActions(object):
     """Actions related to cart."""
 
