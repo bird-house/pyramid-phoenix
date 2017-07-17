@@ -16,6 +16,7 @@ from pyramid.security import (
     ALL_PERMISSIONS)
 from pyramid.security import unauthenticated_userid
 from pyramid.settings import asbool
+from pyramid.csrf import check_csrf_token as _check_csrf_token
 
 from authomatic import Authomatic, provider_id
 from authomatic.providers import oauth2
@@ -36,6 +37,12 @@ AUTH_PROTOCOLS = OrderedDict([
     ('esgf', 'ESGF OpenID'),
     ('github', 'GitHub'),
     ('ldap', 'LDAP')])
+
+
+def check_csrf_token(request):
+    if request.require_csrf:
+        return _check_csrf_token(request)
+    return True
 
 
 def has_execute_permission(request, service_name):
