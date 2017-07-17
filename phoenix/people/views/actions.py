@@ -15,7 +15,7 @@ class Actions(object):
         self.collection = self.request.db.users
         self.userid = self.request.matchdict.get('userid', authenticated_userid(self.request))
 
-    @view_config(route_name='update_esgf_certs', permission='edit', require_csrf=True)
+    @view_config(route_name='update_esgf_certs', permission='edit')
     def update_esgf_certs(self):
         client = ESGFSLCSClient(self.request)
         if client.get_token():
