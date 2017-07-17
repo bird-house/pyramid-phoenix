@@ -3,7 +3,7 @@ from pyramid.view import view_config, view_defaults
 from phoenix.views import MyView
 
 
-@view_defaults(permission='view', layout='default', require_csrf=True)
+@view_defaults(permission='view', layout='default')
 class Details(MyView):
     def __init__(self, request):
         super(Details, self).__init__(request, name='job_details', title='Job Details')
