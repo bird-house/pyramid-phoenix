@@ -15,6 +15,7 @@ from pyramid.security import (
     Authenticated,
     ALL_PERMISSIONS)
 from pyramid.security import unauthenticated_userid
+from pyramid.settings import asbool
 
 from authomatic import Authomatic, provider_id
 from authomatic.providers import oauth2
@@ -196,5 +197,11 @@ def includeme(config):
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
     config.add_request_method(get_user, 'user', reify=True)
+
+    # is csrf checking activated?
+    def require_csrf(request):
+        settings = request.registry.settings
+        return asbool(settings.get('phoenix.require_csrf', 'true'))
+    config.add_request_method(require_csrf, reify=True)
     # TODO: configure csrf checks
     # config.set_default_csrf_options(require_csrf=True)
