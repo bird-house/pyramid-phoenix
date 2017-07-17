@@ -15,12 +15,13 @@ from phoenix.people.schema import (
     ESGFCredentialsSchema,
     GroupSchema
 )
+from phoenix.security import check_csrf_token
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='edit', layout='default', require_csrf=True)
+@view_defaults(permission='edit', layout='default')
 class Profile(MyView):
     def __init__(self, request):
         super(Profile, self).__init__(request, name='profile', title='')
@@ -143,6 +144,7 @@ class Profile(MyView):
         form = self.generate_form()
 
         if 'update' in self.request.POST:
+            check_csrf_token(self.request)
             return self.process_form(form)
 
         return dict(user_name=self.user.get('name', 'Guest'),

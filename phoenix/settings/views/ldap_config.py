@@ -2,12 +2,13 @@ from pyramid.view import view_config, view_defaults
 from deform import Form, ValidationFailure
 
 from phoenix.views import MyView
+from phoenix.security import check_csrf_token
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='admin', layout='default', require_csrf=True)
+@view_defaults(permission='admin', layout='default')
 class Ldap(MyView):
     def __init__(self, request):
         super(Ldap, self).__init__(request, name='settings_ldap', title='LDAP')
@@ -30,6 +31,7 @@ class Ldap(MyView):
         ldap_form = Form(schema=LdapSchema().bind(request=self.request), buttons=('submit',), formid='deform')
 
         if 'submit' in self.request.params:
+            check_csrf_token(self.request)
             try:
                 # Validate form
                 appstruct = ldap_form.validate(self.request.params.items())

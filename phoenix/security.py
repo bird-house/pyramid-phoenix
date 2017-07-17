@@ -15,6 +15,8 @@ from pyramid.security import (
     Authenticated,
     ALL_PERMISSIONS)
 from pyramid.security import unauthenticated_userid
+from pyramid.settings import asbool
+from pyramid.csrf import check_csrf_token as _check_csrf_token
 
 from authomatic import Authomatic, provider_id
 from authomatic.providers import oauth2
@@ -35,6 +37,12 @@ AUTH_PROTOCOLS = OrderedDict([
     ('esgf', 'ESGF OpenID'),
     ('github', 'GitHub'),
     ('ldap', 'LDAP')])
+
+
+def check_csrf_token(request):
+    if request.require_csrf:
+        return _check_csrf_token(request)
+    return True
 
 
 def has_execute_permission(request, service_name):
@@ -196,5 +204,11 @@ def includeme(config):
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
     config.add_request_method(get_user, 'user', reify=True)
+
+    # is csrf checking activated?
+    def require_csrf(request):
+        settings = request.registry.settings
+        return asbool(settings.get('phoenix.require_csrf', 'true'))
+    config.add_request_method(require_csrf, reify=True)
     # TODO: configure csrf checks
     # config.set_default_csrf_options(require_csrf=True)

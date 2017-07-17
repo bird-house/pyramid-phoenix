@@ -6,6 +6,7 @@ from deform import ValidationFailure
 
 from phoenix.catalog import THREDDS_TYPE, WPS_TYPE
 from phoenix.views import MyView
+from phoenix.security import check_csrf_token
 
 import deform
 import colander
@@ -50,7 +51,7 @@ class Schema(deform.schema.CSRFSchema):
         default=False)
 
 
-@view_defaults(permission='admin', layout='default', require_csrf=True)
+@view_defaults(permission='admin', layout='default')
 class RegisterService(MyView):
     def __init__(self, request):
         super(RegisterService, self).__init__(
@@ -85,5 +86,6 @@ class RegisterService(MyView):
     def view(self):
         form = self.generate_form()
         if 'register' in self.request.POST:
+            check_csrf_token(self.request)
             return self.process_form(form)
         return dict(title=self.title, form=form.render())

@@ -11,7 +11,9 @@ from deform import Form, Button, ValidationFailure
 from authomatic.adapters import WebObAdapter
 
 from phoenix.security import Admin, Guest, authomatic
+from phoenix.security import check_csrf_token
 from phoenix.twitcherclient import generate_access_token
+
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -23,7 +25,7 @@ def forbidden(request):
     return dict()
 
 
-@view_defaults(permission='view', layout='default', require_csrf=True)
+@view_defaults(permission='view', layout='default')
 class Account(object):
     def __init__(self, request):
         self.request = request
@@ -100,6 +102,7 @@ class Account(object):
     def login(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
+            check_csrf_token(self.request)
             return self.process_form(form)
         return dict(form=form.render())
 

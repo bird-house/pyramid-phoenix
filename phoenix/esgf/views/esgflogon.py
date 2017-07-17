@@ -9,13 +9,14 @@ from pyramid.compat import escape
 from phoenix.tasks.esgflogon import esgf_logon
 from phoenix.tasks.utils import task_result
 from phoenix.esgf.schema import ESGFLogonSchema
+from phoenix.security import check_csrf_token
 
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='edit', layout='default', require_csrf=True)
+@view_defaults(permission='edit', layout='default')
 class ESGFLogon(object):
     def __init__(self, request):
         self.request = request
@@ -81,6 +82,7 @@ class ESGFLogon(object):
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
+            check_csrf_token(self.request)
             return self.process_form(form)
         return dict(
             form=form.render(self.appstruct()))

@@ -8,7 +8,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='admin', layout='default', require_csrf=True)
+@view_defaults(permission='admin', layout='default')
 class People(MyView):
     def __init__(self, request):
         super(People, self).__init__(request, name='people', title='')

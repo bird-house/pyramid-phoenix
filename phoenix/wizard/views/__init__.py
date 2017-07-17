@@ -6,6 +6,7 @@ from deform import ValidationFailure
 
 from phoenix.views import MyView
 from phoenix.utils import skip_csrf_token
+from phoenix.security import check_csrf_token
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -92,7 +93,7 @@ class WizardState(object):
         self.session.changed()
 
 
-@view_defaults(permission='submit', layout='default', require_csrf=True)
+@view_defaults(permission='submit', layout='default')
 class Wizard(MyView):
     def __init__(self, request, name, title, description=None):
         super(Wizard, self).__init__(request, name, title, description)
@@ -228,10 +229,13 @@ class Wizard(MyView):
         form = self.generate_form()
 
         if 'previous' in self.request.POST:
+            check_csrf_token(self.request)
             return self.process_form(form, 'previous')
         elif 'next' in self.request.POST:
+            check_csrf_token(self.request)
             return self.process_form(form, 'next')
         elif 'cancel' in self.request.POST:
+            check_csrf_token(self.request)
             return self.cancel()
         result = dict(title=self.title, form=form.render(self.appstruct()))
         custom = self.custom_view()

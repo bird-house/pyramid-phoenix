@@ -3,7 +3,7 @@ from pyramid.view import view_config, view_defaults
 from phoenix.views import MyView
 
 
-@view_defaults(permission='admin', layout='default', require_csrf=True)
+@view_defaults(permission='admin', layout='default')
 class SupervisorLog(MyView):
     def __init__(self, request):
         super(SupervisorLog, self).__init__(request, name='supervisor_log', title='Log')

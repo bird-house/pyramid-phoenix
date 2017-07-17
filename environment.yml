@@ -37,6 +37,7 @@ dependencies:
   - transaction=1.6
   - esgf-pyclient=0.1.8
   - myproxyclient=1.4.4
+  - genshi=0.7
 # celery
   - celery=3.1
   - kombu=3.0
@@ -51,9 +52,8 @@ dependencies:
 #  - python-ldap=2.4.13
   - funcsigs=1.0.2
   - pip:
-      - genshi==0.7
       - sphinx-autoapi==0.4.0
-      - pyramid==1.9
+      - pyramid==1.9.1
       - pyramid-beaker==0.8
       - Beaker==1.9.0
       - pyramid-deform==0.2

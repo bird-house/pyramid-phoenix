@@ -12,6 +12,7 @@ from phoenix.wps import WPSSchema
 from phoenix.wps import check_status
 from phoenix.utils import wps_describe_url
 from phoenix.security import has_execute_permission
+from phoenix.security import check_csrf_token
 
 from owslib.wps import WebProcessingService
 from owslib.wps import WPSExecution
@@ -22,7 +23,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='view', layout='default', require_csrf=True)
+@view_defaults(permission='view', layout='default')
 class ExecuteProcess(MyView):
     def __init__(self, request):
         self.request = request
@@ -181,6 +182,7 @@ class ExecuteProcess(MyView):
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
+            check_csrf_token(self.request)
             return self.process_form(form)
         if not has_execute_permission(self.request, self.service_name):
             msg = """<strong>Warning:</strong> You are not allowed to run this process.
