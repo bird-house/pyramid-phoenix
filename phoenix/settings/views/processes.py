@@ -9,12 +9,13 @@ from phoenix.utils import skip_csrf_token
 # TODO: move settings to processes
 from phoenix.settings.schema import ProcessesSchema
 from phoenix.processes.views.actions import ProcessesActions
+from phoenix.security import check_csrf_token
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@view_defaults(permission='admin', layout='default', require_csrf=True)
+@view_defaults(permission='admin', layout='default')
 class Processes(MyView):
     def __init__(self, request):
         super(Processes, self).__init__(request, name='settings_processes', title='Processes')
@@ -55,5 +56,6 @@ class Processes(MyView):
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
+            check_csrf_token(self.request)
             return self.process_form(form)
         return dict(title=self.title, form=form.render(self.appstruct()))
