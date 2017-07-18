@@ -12,17 +12,19 @@ dependencies:
   - icu=56
 # tests
   - pytest 
-#  - pytest-pep8 
+# pep8
   - flake8
+  - pycodestyle
 # ipython
   - ipython
 # sphinx
   - sphinx 
   - sphinx_rtd_theme
+  - doc8
 # phoenix
   - nginx=1.10.3
   - supervisor=3.3.1
-  - gunicorn=19.1.0
+  - gunicorn=19.7
   - requests-oauthlib
   - gevent=1.2
   - lxml=3.7
