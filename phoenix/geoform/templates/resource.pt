@@ -153,7 +153,7 @@ $("#"+oid+"-fine-uploader").fineUploader({
     showButton: true
   },
   validation: {
-    allowedExtensions: ['nc'],
+    //allowedExtensions: ['nc'],
     itemLimit: 1,
     sizeLimit: ${size_limit}
   },

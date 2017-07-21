@@ -14,7 +14,7 @@ class BBoxValidator(object):
     def __call__(self, node, value):
         try:
             minx, miny, maxx, maxy = [float(val) for val in value.split(',', 3)]
-        except:
+        except Exception:
             raise colander.Invalid(node, "Could not parse BBox.")
         else:
             if minx < -180 or minx > 180:
@@ -41,7 +41,7 @@ class URLValidator(object):
     def __call__(self, node, value):
         try:
             parsed_url = urlparse.urlparse(value)
-        except:
+        except Exception:
             raise colander.Invalid(node, "Invalid URL.")
         else:
             if parsed_url.scheme not in self.allowed_schemes:
@@ -61,7 +61,7 @@ class TextValidator(object):
     def __call__(self, node, value):
         try:
             normalized_value = str(value).strip()
-        except:
+        except Exception:
             raise colander.Invalid(node, "Invalid value.")
         else:
             if not normalized_value:
