@@ -6,6 +6,7 @@ current
 
 * configured require_csrf.
 * using check_csrf_token.
+* added storage-extensions buildout option.
 
 0.8.0 (2017-07-05)
 ==================
