@@ -9,7 +9,7 @@ from pyramid.response import FileResponse
 from pyramid_storage.exceptions import FileNotAllowed
 
 import logging
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
 
 
 @view_config(route_name='download_storage')
