@@ -17,10 +17,12 @@ Login
 Press the ``Sign in`` button in the upper right corner.
 
 .. image:: _images/signin.png
+  :scale: 50%
 
 The login page offers you several options to login to Phoenix.
 
 .. image:: _images/login.png
+  :scale: 50%
 
 You can login using your ESGF OpenID or your GitHub account.
 If you login for the first time your account needs to be activated by an administrator.
@@ -31,13 +33,15 @@ If you are Phoenix admin you can also enter the admin password here.
 
 You can use an `ESGF OpenID <https://www.earthsystemcog.org/projects/cog/tutorials_web>`_.
 The ESGF OpenID is used later to access files from `ESGF <https://esgf.llnl.gov/>`_.
-Make sure, that you have a valid ESGF OpenID of one of the ESGF Providers (``http://esgf-data.dkrz.de/``)
-and that you are able to download a datafile.
+Make sure, that you have a valid ESGF OpenID of one of the ESGF Providers
+(for example `DKRZ <http://esgf-data.dkrz.de/>`_)
+and that you are able to download a datafile (you need to register for CMIP5 and CORDEX).
 
 Enter the account name of your ESGF OpenID and choose the according
- ESGF OpenID provider (by default this is DKRZ).
+ESGF OpenID provider (by default this is DKRZ).
 
 .. image:: _images/login_esgf.png
+  :scale: 50%
 
 
 Dashboard
