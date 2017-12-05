@@ -86,11 +86,11 @@ The list shows the status and progress of your jobs.
 
 .. image:: _images/myjobs.png
 
-When a job has finished with success you can see the results by clicking the Job ID link.
+When a job has finished with success you can see the results by clicking the ``Details`` button.
 
-.. image:: _images/myjobs_output.png
+.. image:: _images/myjobs_details.png
 
-If the result has a document (XML, text, NetCDF, ...) you can view or download this document with the ``View`` button.
+If the result has a document (XML, text, NetCDF, ...) you can view or download this document with the ``Download`` button.
 
 .. _wizard:
 
