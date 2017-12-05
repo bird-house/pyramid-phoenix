@@ -47,7 +47,7 @@ ESGF OpenID provider (by default this is DKRZ).
 Dashboard
 ---------
 
-The dashboard shows some statistics about jobs and users. Currently there is not that much to see.
+The dashboard shows some statistics about jobs and users.
 
 .. image:: _images/dashboard.png
 
