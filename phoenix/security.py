@@ -140,7 +140,7 @@ def authomatic_config(request):
             'class_': esgfopenid.ESGFOpenID,
             'hostname': 'esgf-node.ipsl.fr',
         },
-        'badc': {
+        'ceda': {
             'class_': esgfopenid.ESGFOpenID,
             'hostname': 'ceda.ac.uk',
             'provider_url': 'https://{hostname}/openid/{username}'

@@ -8,7 +8,7 @@ from phoenix.account.base import Account
 
 
 class ESGFSchema(deform.schema.CSRFSchema):
-    choices = [('badc', 'BADC'), ('dkrz', 'DKRZ'), ('ipsl', 'IPSL'), ('smhi', 'SMHI'), ('pcmdi', 'PCMDI')]
+    choices = [('ceda', 'CEDA'), ('dkrz', 'DKRZ'), ('ipsl', 'IPSL'), ('smhi', 'SMHI'), ('pcmdi', 'PCMDI')]
 
     provider = colander.SchemaNode(
         colander.String(),
