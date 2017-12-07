@@ -76,7 +76,7 @@ def passwd_check(request, passphrase):
 
     try:
         h.update(passphrase.encode('utf-8') + salt.encode('ascii'))
-    except:
+    except Exception:
         return False
 
     return h.hexdigest() == pw_digest
@@ -143,7 +143,7 @@ def authomatic_config(request):
         'ceda': {
             'class_': esgfopenid.ESGFOpenID,
             'hostname': 'ceda.ac.uk',
-            'provider_url': 'https://{hostname}/openid/{username}'
+            'provider_url': 'https://{hostname}/openid/{username}',
         },
         'pcmdi': {
             'class_': esgfopenid.ESGFOpenID,

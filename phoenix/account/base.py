@@ -79,7 +79,7 @@ class Account(object):
                               body=message)
             try:
                 mailer.send_immediately(message, fail_silently=True)
-            except:
+            except Exception:
                 LOGGER.error("failed to send notification")
         else:
             LOGGER.warn("Can't send notification. No admin emails are available.")
@@ -154,12 +154,16 @@ class Account(object):
 
     @view_config(route_name='account_auth')
     def authomatic_login(self):
+        # LOGGER.debug('authomatic_login')
         _authomatic = authomatic(self.request)
         provider = self.request.matchdict.get('provider')
 
         # Start the login procedure.
         response = Response()
         result = _authomatic.login(WebObAdapter(self.request, response), provider)
+
+        # LOGGER.debug('authomatic result: %s', result)
+        # LOGGER.debug('authomatic response: %s', response)
 
         if result:
             if result.error:
