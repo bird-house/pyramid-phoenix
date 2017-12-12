@@ -12,9 +12,6 @@ import ssl
 from authomatic.providers.openid import OpenID
 from openid.fetchers import setDefaultFetcher, Urllib2Fetcher
 
-import logging
-logger = logging.getLogger(__name__)
-
 __all__ = ['ESGFOpenID']
 
 
