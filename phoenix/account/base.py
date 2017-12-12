@@ -181,7 +181,7 @@ class Account(object):
                 else:
                     # TODO: change login_id ... more infos ...
                     return self.login_success(login_id=result.user.id,
-                                              email=result.user.email,
+                                              email=result.user.email or '',
                                               openid=result.user.id,
-                                              name=result.user.name)
+                                              name=result.user.name or 'Unknown')
         return response
