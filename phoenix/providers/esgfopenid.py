@@ -17,22 +17,24 @@ logger = logging.getLogger(__name__)
 
 __all__ = ['ESGFOpenID']
 
+
 class MyFetcher(Urllib2Fetcher):
     @staticmethod
     def _urlopen(req):
-        return urllib2.urlopen(req, context=ssl._create_unverified_context()) 
+        return urllib2.urlopen(req, context=ssl._create_unverified_context())
     urlopen = _urlopen
 
 
 class ESGFOpenID(OpenID):
     """
-    ESGF :class:`.OpenID` provider with a common provider url template ``"https://{hostname}/esgf-idp/openid/{username}"``.
+    ESGF :class:`.OpenID` provider with a common provider url template
+    ``"https://{hostname}/esgf-idp/openid/{username}"``.
     """
 
     def __init__(self, *args, **kwargs):
         """
         Accepts additional keyword arguments:
-        
+
         :param hostname:
             The hostname of the ESGF OpenID provider. Default: localhost
 
@@ -50,7 +52,7 @@ class ESGFOpenID(OpenID):
             self.identifier = self.provider_url.format(hostname=self.hostname, username=self.username)
 
         # use fetcher with disabled ssl verification
-        setDefaultFetcher( MyFetcher() )
+        setDefaultFetcher(MyFetcher())
+
 
 PROVIDER_ID_MAP = [ESGFOpenID]
-        
