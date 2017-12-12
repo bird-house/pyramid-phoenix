@@ -42,6 +42,7 @@ class ESGFOpenID(OpenID):
 
         self.hostname = self._kwarg(kwargs, 'hostname', 'localhost')
         self.provider_url = self._kwarg(kwargs, 'provider_url', 'https://{hostname}/esgf-idp/openid/{username}')
+        self.ax_required = []  # ceda does not provide email
 
         # if username is given set provider identifier using the provider url
         if 'username' in self.params:
