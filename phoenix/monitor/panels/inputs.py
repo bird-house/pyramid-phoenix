@@ -63,6 +63,8 @@ class Inputs(object):
             elif inp.dataType == 'BoundingBoxData':
                 category = 'BoundingBoxType'
                 data = ["{0.minx},{0.miny},{0.maxx},{0.maxy}".format(bbox) for bbox in inp.data]
+            elif inp.identifier == 'password':
+                data = "********"
             else:
                 category = 'LiteralType'
                 data = inp.data
