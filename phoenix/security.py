@@ -138,7 +138,7 @@ def authomatic_config(request):
         },
         'ipsl': {
             'class_': esgfopenid.ESGFOpenID,
-            'hostname': 'esgf-node.ipsl.fr',
+            'hostname': 'esgf-node.ipsl.upmc.fr',
         },
         'ceda': {
             'class_': esgfopenid.ESGFOpenID,
