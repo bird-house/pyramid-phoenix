@@ -35,7 +35,7 @@ dependencies:
   - pyyaml=3.12
   - pygments=2.1
   - pytz=2016.4
-  - owslib=0.14.0
+  - owslib=0.16.0
   - transaction=1.6
   - esgf-pyclient=0.1.8
   - myproxyclient=1.4.4
