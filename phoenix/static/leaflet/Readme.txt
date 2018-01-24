@@ -1,7 +1,7 @@
 leaflet
 =======
 
-version: 1.0.0-rc2 (18.07.2016)
+version: 1.3.1 (18.01.2018)
 
 * http://leafletjs.com/download.html
 
