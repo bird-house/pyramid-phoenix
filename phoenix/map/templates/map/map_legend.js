@@ -1,6 +1,5 @@
 var map = L.map('map', {
   zoom: 2,
-  fullscreenControl: true,
 % if wms:
   timeDimension: true,
   timeDimensionOptions:{
@@ -13,7 +12,7 @@ var map = L.map('map', {
         },
   },
   timeDimensionControl: true,
-% endif    
+% endif
   center: [20.0, 0.0],
 });
 
@@ -100,13 +99,3 @@ var overlayMaps = {};
 % endif
 
 L.control.layers(baseMaps, overlayMaps).addTo(map);
-
-
-
-
-
-
-
-
-
-

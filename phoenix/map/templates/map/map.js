@@ -1,6 +1,5 @@
 var map = L.map('map', {
   zoom: 2,
-  fullscreenControl: true,
 % if wms:
   timeDimension: true,
   timeDimensionOptions:{
