@@ -18,6 +18,7 @@ def output_details(request, output):
     wms_dataset_path = None
     # get proxy_reference and wms_dataset_path
     LOGGER.debug("output reference: %s", output.reference)
+    proxy_reference = output.reference
     if output.reference and 'wpsoutputs' in output.reference:
         wps_output_url = request.registry.settings.get('wps.output.url')
         if request.map_activated and output.mimeType and 'netcdf' in output.mimeType:
@@ -27,8 +28,6 @@ def output_details(request, output):
                 'download_wpsoutputs',
                 subpath=output.reference.split(wps_output_url, 1)[1])
             LOGGER.debug("proxy reference: %s", proxy_reference)
-    else:
-        proxy_reference = output.reference
     # get category and data
     if output.mimeType:
         category = 'ComplexType'
