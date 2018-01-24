@@ -1,7 +1,7 @@
 /* 
- * Leaflet TimeDimension v1.0.6 - 2016-07-28 
+ * Leaflet TimeDimension v1.1.0 - 2017-10-13 
  * 
- * Copyright 2016 Biel Frontera (ICTS SOCIB) 
+ * Copyright 2017 Biel Frontera (ICTS SOCIB) 
  * datacenter@socib.es 
  * http://www.socib.es/ 
  * 
@@ -21,6 +21,7 @@
 }
 .leaflet-bar-timecontrol{
      background-color: #fff;
+     color: black;
 }
 .leaflet-bar-timecontrol * {
     box-sizing: border-box;
@@ -239,10 +240,9 @@
 }*/
 .timecontrol-play.reverse:before {
     content: "\e072";
-    -ms-transform: rotate(180deg);
-    -webkit-transform: rotate(180deg);
-    transform: rotate(180deg);
-    margin-top: 1px;
+    -ms-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 .timecontrol-play.pause:before {
     content: "\e073";
@@ -251,7 +251,6 @@
     -ms-transform: none;
     -webkit-transform: none;
     transform: none;
-    margin-top: 0;
 }
 
 a.timecontrol-play.loading:before {

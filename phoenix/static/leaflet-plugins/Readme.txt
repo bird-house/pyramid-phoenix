@@ -1,7 +1,7 @@
 Leaflet plugins
 ===============
 
-* TimeDimension, v1.0.6 (24.01.2017) - https://github.com/socib/Leaflet.TimeDimension
+* TimeDimension, v1.1.0 (13.10.2017) - https://github.com/socib/Leaflet.TimeDimension
 * Coordinates, v0.1.5 (07.10.2015) - https://github.com/MrMufflon/Leaflet.Coordinates
 
 
