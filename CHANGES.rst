@@ -7,6 +7,9 @@ current
 * configured require_csrf.
 * using check_csrf_token.
 * added storage-extensions buildout option.
+* updated jquery 3.3.1
+* updated leaflet 1.3.1
+* updated leaflet timedimension plugin 1.1.0
 
 0.8.0 (2017-07-05)
 ==================
