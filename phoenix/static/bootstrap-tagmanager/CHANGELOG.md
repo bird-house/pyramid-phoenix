@@ -1,37 +1,8 @@
-## 3.0.1 - 2013-12-12
+## Next Release
 
-* Issue #180: Add 'tags' method to retrieve tags (LukeL99)
-* Issue #169: Fix 'AjaxPushAllTags' option (mpseidel)
-* Issue #153: Correct documentation related to hiddenTagListId (fogs)
-* Issue #178: Fix 'OnlyTagList' option (sebet)
-* Issue #176: Add bower.json for Bower support (noirbizarre)
-* Issue #168: Constructor should not return undefined (aurbano)
-* Issue #163: Add new event tm:duplicated when there is a duplicated tag (aurbano)
-* Use jQuery.map() instead of native JS map() (apperception)
-* Add composer.json for PHP projects (fogs)
-* Fix various issues related to jQuery refactor (dave0783)
+* Your change here
 
-## 3.0.0 - 2013-08-22
-
-* Refactor tagmanager.js to confirm to jQuery plugin standards (dave0783)
-* Add jQuery event hooks (dave0783)
-* Add support for Twitter Typeahead.js
-* Drop support for Twitter Bootstrap v2 Typeahead (which is abandoned since Bootstrap v3)
-* Refactor tagmanager.js to confirm to jQuery plugin standards (dave0783)
-* Rename all files from "bootstrap-tagmanager" to "tagmanager"
-
-## 2.4.3 - 2012-12-12
-
-* **FINAL RELEASE** on 2.x branch. 2.x code is now in deep freeze.
-* Issue #185: Sort out versioning for Bower (joelleibow)
-* Issue #148: Run library through js-lint (uxtx)
-* Issue #147: Correct issue with AJAX method GET (was being coerced to POST) (brearley)
-* Issue #143: Do not suppress tab key if the field is currently empty (pangwa)
-* Issue #142: Fix popover bug (martinbuezas)
-* Persist options state when calling tagManager actions (popTag, pushTag, etc.) (dincho)
-* Use $.map instead of native .map (danmusk)
-
-## 2.4.2 - 2012-07-15
+## 2.4.2
 
 * Issue #132: Escape tags for display instead of emitting it as raw HTML (chkwok)
 * Issue #125: Fixed AjaxPushAllTags (henryoswald)
@@ -43,7 +14,7 @@
 * Wrap jQuery in a no-conflict wrapper; use `$` instead of `jQuery` consistently (johnnyshields)
 * Issue #94: 'pushTag' method does not call validator if configured (johnnyshields)
 
-## 2.4.1 - 2012-05-04
+## 2.4.1
 
 * Feature: Added API parameter 'AjaxPushParameters', which enables a custom payload on AJAX push requests (kingofthejungle)
 * Feature: Added support for 'prefilled' parameter as a function (cliffordwhansen)

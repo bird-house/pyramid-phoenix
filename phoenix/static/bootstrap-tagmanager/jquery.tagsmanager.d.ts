@@ -1,5 +1,5 @@
 // Type definitions for jQuery Tags Manager
-// Project: http://welldonethings.com/tags/manager/v3
+// Project: http://welldonethings.com/tags/manager
 // Definitions by: https://github.com/max-favilli
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
