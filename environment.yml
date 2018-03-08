@@ -1,24 +1,24 @@
-name: pyramid-phoenix 
+name: pyramid-phoenix
 channels:
   - birdhouse
   - defaults
   - conda-forge
 dependencies:
-  - python=2.7.13 
+  - python=2.7.13
   - setuptools=27.2.0
-  - curl=7.49.0 
+  - curl=7.49.0
   - pyopenssl=17.0
   - cryptography=1.8
   - icu=56
 # tests
-  - pytest 
+  - pytest
 # pep8
   - flake8
   - pycodestyle
 # ipython
   - ipython
 # sphinx
-  - sphinx 
+  - sphinx
   - sphinx_rtd_theme
   - doc8
 # phoenix
@@ -28,10 +28,10 @@ dependencies:
   - requests-oauthlib
   - gevent=1.2
   - lxml=3.7
-  - mako=1.0 
+  - mako=1.0
   - dateparser=0.5
-  - python-dateutil=2.6 
-  - requests=2.12 
+  - python-dateutil=2.6
+  - requests=2.12
   - pyyaml=3.12
   - pygments=2.1
   - pytz=2016.4
@@ -44,13 +44,13 @@ dependencies:
   - celery=3.1
   - kombu=3.0
 # mongodb
-  - pymongo=3.3.0
-  - mongodb=2.6.*|3.3.9
+  - pymongo=3
+  - mongodb=3.4
 # twitcher
   - webob=1.6.1
-# phoenix extensions 
+# phoenix extensions
 #  - python-swiftclient=2.4.0
-  - threddsclient=0.3.4       
+  - threddsclient=0.3.4
 #  - python-ldap=2.4.13
   - funcsigs=1.0.2
   - pip:
