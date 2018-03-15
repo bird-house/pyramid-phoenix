@@ -15,16 +15,13 @@ dependencies:
 # pep8
   - flake8
   - pycodestyle
-# ipython
-  - ipython
 # sphinx
   - sphinx
-  - sphinx_rtd_theme
   - doc8
 # phoenix
-  - nginx=1.10.3
-  - supervisor=3.3.1
-  - gunicorn=19.7
+  - nginx=1.10
+  - supervisor=3
+  - gunicorn=19
   - requests-oauthlib
   - gevent=1.2
   - lxml=3.7
@@ -48,13 +45,14 @@ dependencies:
   - mongodb=3.4
 # twitcher
   - webob=1.6.1
+  - argcomplete
 # phoenix extensions
 #  - python-swiftclient=2.4.0
   - threddsclient=0.3.4
 #  - python-ldap=2.4.13
   - funcsigs=1.0.2
   - pip:
-      - sphinx-autoapi==0.4.0
+      - sphinx-autoapi==0.5.0
       - pyramid==1.9.1
       - pyramid-beaker==0.8
       - Beaker==1.9.0

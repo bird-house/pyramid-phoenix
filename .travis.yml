@@ -1,15 +1,8 @@
 language: python
-branches:
-  only:
-    - develop
-    - master
 os:
   - linux
 python:
   - "2.7"
-matrix:
-  - allow_failures:
-    - python: 3.5
 sudo: false
 install:
   - make install
@@ -17,7 +10,7 @@ install:
 before_script:
   - sleep 15
 script:
-  #- make docs
   - make test
+  - make docs
 #after_success:
 # - coveralls
