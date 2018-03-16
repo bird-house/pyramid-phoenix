@@ -11,7 +11,7 @@ class Actions(object):
     def __init__(self, request):
         self.request = request
         self.session = request.session
-        settings = request.registry.settings
+        # settings = request.registry.settings
         self.collection = self.request.db.users
         self.userid = self.request.matchdict.get('userid', authenticated_userid(self.request))
 

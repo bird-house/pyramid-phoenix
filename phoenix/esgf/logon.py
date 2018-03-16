@@ -19,7 +19,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def save_credentials(registry, userid, file=None, filename=None):
-    settings = registry.settings
+    # settings = registry.settings
     db = mongodb(registry)
     storage = registry.getUtility(IFileStorage)
 
@@ -68,7 +68,7 @@ def logon(username=None, password=None, hostname=None, interactive=False, outdir
 
 
 def cert_infos(filename):
-    expires = None
+    # expires = None
     with open(filename) as fh:
         data = fh.read()
         cert = OpenSSL.crypto.load_certificate(OpenSSL.SSL.FILETYPE_PEM, data)

@@ -59,7 +59,7 @@ def pinned_processes(request):
                 # TODO: need to fix owslib to handle special identifiers
                 process = wps.describeprocess(identifier)
                 description = headline(process.abstract)
-            except Exception, err:
+            except Exception:
                 LOGGER.warn("could not add pinned process %s", pinned)
             else:
                 processes.append(dict(
@@ -150,7 +150,7 @@ def wps_caps_url(url):
     params['Request'] = 'GetCapabilities'
     params['Version'] = '1.0.0'
     # Service=WPS&Request=GetCapabilities&Version=1.0.0
-    #params = {'service': 'WPS', 'request': 'GetCapabilities', 'version': '1.0.0'}
+    # params = {'service': 'WPS', 'request': 'GetCapabilities', 'version': '1.0.0'}
     return build_get_url(url, params, overwrite=True)
 
 
@@ -182,7 +182,7 @@ def time_ago_in_words(from_time):
             granularity = 'hour'
         time_ago = _time_ago_in_words(from_time, granularity=granularity)
         time_ago = time_ago + " ago"
-    except:
+    except Exception:
         time_ago = '???'
     finally:
         return time_ago
@@ -191,5 +191,5 @@ def time_ago_in_words(from_time):
 def root_path(path):
     try:
         return path.split(os.sep, 2)[1]
-    except:
+    except Exception:
         return None

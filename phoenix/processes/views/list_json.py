@@ -7,6 +7,7 @@ from phoenix.processes.views.list import ProcessList
 import logging
 logger = logging.getLogger(__name__)
 
+
 @view_defaults(permission='view', layout="default")
 class ProcessListJson(ProcessList):
     def __init__(self, request):
@@ -29,4 +30,3 @@ class ProcessListJson(ProcessList):
             provider_name=self.wps.provider.name,
             provider_site=self.wps.provider.url,
             items=items)
-

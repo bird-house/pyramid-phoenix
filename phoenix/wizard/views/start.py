@@ -92,9 +92,11 @@ class FavoriteSchema(deform.schema.CSRFSchema):
     def deferred_favorite_widget(node, kw):
         jobs = kw.get('jobs', [])
         last = kw.get('last', False)
-        gentitle = lambda job: "{0} - {1} - {2}".format(
-            job.get('title'), job.get('caption', '???'),
-            time_ago_in_words(job.get('finished')))
+
+        def gentitle(job):
+            return "{0} - {1} - {2}".format(
+                job.get('title'), job.get('caption', '???'),
+                time_ago_in_words(job.get('finished')))
         choices = [('', 'No Favorite')]
         if last:
             choices.append(('last', 'Last Run'))

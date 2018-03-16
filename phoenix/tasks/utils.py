@@ -22,12 +22,12 @@ def wait_secs(run_step=-1):
 
 
 def dump_json(obj):
-    date_handler = lambda obj: (
-        obj.isoformat()
-        if isinstance(obj, datetime.datetime)
-        or isinstance(obj, datetime.date)
-        else None
-    )
+    def date_handler(obj):
+        if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date):
+            date_formatted = obj.isoformat()
+        else:
+            date_formatted = None
+        return date_formatted
     return json.dumps(obj, default=date_handler)
 
 
@@ -87,7 +87,7 @@ def add_job(db, task_id, process_id, title=None, abstract=None,
 
 def get_access_token(userid):
     registry = app.conf['PYRAMID_REGISTRY']
-    db = mongodb(registry)
+    # db = mongodb(registry)
     # refresh access token
     token = generate_access_token(registry, userid=userid)
     return token.get('access_token')

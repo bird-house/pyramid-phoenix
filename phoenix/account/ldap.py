@@ -5,6 +5,9 @@ from pyramid.view import view_config
 
 from phoenix.account.base import Account
 
+import logging
+LOGGER = logging.getLogger("PHOENIX")
+
 
 class LDAPSchema(deform.schema.CSRFSchema):
     username = colander.SchemaNode(

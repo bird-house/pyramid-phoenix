@@ -50,8 +50,8 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
 
         wps = WebProcessingService(url=url, skip_caps=True, verify=False,
                                    headers=headers)
-        worker_wps = WebProcessingService(url=workflow['worker']['url'],
-                                          skip_caps=False, verify=False)
+        # worker_wps = WebProcessingService(url=workflow['worker']['url'],
+        #                                   skip_caps=False, verify=False)
         execution = wps.execute(identifier='workflow',
                                 inputs=inputs, output=outputs, lineage=True)
         # job['service'] = worker_wps.identification.title
@@ -90,7 +90,7 @@ def execute_workflow(self, userid, url, service_name, workflow, caption=None):
                             save_log(job, error)
                 else:
                     save_log(job)
-            except:
+            except Exception:
                 num_retries += 1
                 logger.exception("Could not read status xml document for job %s. Trying again ...", self.request.id)
                 sleep(1)

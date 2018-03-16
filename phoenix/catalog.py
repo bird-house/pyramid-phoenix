@@ -26,7 +26,7 @@ def includeme(config):
         if settings.get('catalog') is None:
             try:
                 settings['catalog'] = catalog_factory(config.registry)
-            except:
+            except Exception:
                 LOGGER.exception('Could not connect catalog service.')
         else:
             LOGGER.debug("catalog already initialized")
@@ -46,6 +46,7 @@ def catalog_factory(registry):
         db = mongodb(registry)
         catalog = MongodbCatalog(db.catalog, service_registry)
     return catalog
+
 
 WPS_TYPE = "WPS"
 THREDDS_TYPE = "THREDDS"
@@ -150,7 +151,7 @@ class CatalogService(Catalog):
             self.service_registry.register_service(url=url, data={'name': service_name, 'public': public})
             try:
                 self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
-            except:
+            except Exception:
                 LOGGER.exception("could not harvest metadata")
                 self.service_registry.unregister_service(name=service_name)
                 raise Exception("could not harvest metadata")
@@ -211,7 +212,7 @@ class MongodbCatalog(Catalog):
                 record = _fetch_wps_metadata(service['url'], title=service_title)
                 record['public'] = public
                 self.insert_record(record)
-            except:
+            except Exception:
                 LOGGER.exception("could not harvest metadata")
                 self.service_registry.unregister_service(name=service_name)
                 raise Exception("could not harvest metadata")

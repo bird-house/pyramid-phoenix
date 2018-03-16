@@ -24,7 +24,7 @@ class Services(MyView):
         if service.format == WPS_TYPE:
             try:
                 service_name = self.request.catalog.get_service_name(service)
-            except Exception, err:
+            except Exception:
                 self.session.flash("<strong>Error</strong>: This service is not available.", queue='danger')
         return dict(service=service, service_name=service_name)
 

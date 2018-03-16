@@ -20,7 +20,7 @@ class ServiceActions(object):
             service_id = self.request.matchdict.get('service_id')
             self.request.catalog.delete_record(service_id)
             self.session.flash('Removed Service.', queue="info")
-        except Exception, e:
+        except Exception:
             self.session.flash("Could not remove service.", queue="danger")
         return HTTPFound(location=self.request.route_path('services'))
 
@@ -29,7 +29,7 @@ class ServiceActions(object):
         try:
             self.request.catalog.clear_services()
             self.session.flash('All Service removed.', queue="info")
-        except Exception, e:
+        except Exception:
             self.session.flash("Could not remove services.", queue="danger")
         return HTTPFound(location=self.request.route_path('services'))
 

@@ -10,7 +10,8 @@ install:
 before_script:
   - sleep 15
 script:
-  - make test
+  - make testall
+  - make pep8
   - make docs
 #after_success:
 # - coveralls

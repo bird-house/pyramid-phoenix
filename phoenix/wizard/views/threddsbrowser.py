@@ -75,6 +75,7 @@ class ThreddsBrowser(Wizard):
     def view(self):
         return super(ThreddsBrowser, self).view()
 
+
 from phoenix.grid import CustomGrid
 
 

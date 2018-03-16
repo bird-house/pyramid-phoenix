@@ -59,10 +59,10 @@ def add_global(event):
 
 @view_config(context=Exception)
 def unknown_failure(request, exc):
-    #import traceback
+    # import traceback
     logger.exception('unknown failure')
-    #msg = exc.args[0] if exc.args else ""
-    #response =  Response('Ooops, something went wrong: %s' % (traceback.format_exc()))
+    # msg = exc.args[0] if exc.args else ""
+    # response =  Response('Ooops, something went wrong: %s' % (traceback.format_exc()))
     response = Response('Ooops, something went wrong. Check the log files.')
     response.status_int = 500
     return response
