@@ -136,7 +136,7 @@ class ESGFSLCSClient(object):
         # Generate a new key pair
         key_pair = crypto.PKey()
         key_pair.generate_key(crypto.TYPE_RSA, 2048)
-        private_key = crypto.dump_privatekey(crypto.FILETYPE_PEM, key_pair).decode("utf-8")
+        crypto.dump_privatekey(crypto.FILETYPE_PEM, key_pair).decode("utf-8")
         # Generates a certificate request using the key pair
         cert_request = crypto.X509Req()
         cert_request.set_pubkey(key_pair)

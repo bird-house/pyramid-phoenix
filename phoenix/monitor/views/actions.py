@@ -175,7 +175,7 @@ def download_wpsoutputs(request):
 
     def remove_header(key, headers):
         # the default header key should be the standard capitilized version e.g 'Content-Length'
-        #TODO: move code to twitcher owsproxy
+        # TODO: move code to twitcher owsproxy
         try:
             del headers[key]
         except KeyError:

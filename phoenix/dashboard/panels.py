@@ -32,6 +32,7 @@ def dashboard_people(context, request):
 @panel_config(name='dashboard_jobs', renderer='templates/dashboard/panels/jobs.pt')
 def dashboard_jobs(context, request):
     return dict(total=request.db.jobs.count(),
-                running=request.db.jobs.find({"status": {'$in': ['ProcessAccepted', 'ProcessPaused', 'ProcessStarted']}}).count(),
+                running=request.db.jobs.find(
+                {"status": {'$in': ['ProcessAccepted', 'ProcessPaused', 'ProcessStarted']}}).count(),
                 failed=request.db.jobs.find({"status": "ProcessFailed"}).count(),
                 succeeded=request.db.jobs.find({"status": "ProcessSucceeded"}).count())

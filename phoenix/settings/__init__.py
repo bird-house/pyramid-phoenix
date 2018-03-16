@@ -7,7 +7,7 @@ LOGGER = logging.getLogger("PHOENIX")
 
 
 def includeme(config):
-    settings = config.registry.settings
+    # settings = config.registry.settings
 
     config.add_route('settings', '/settings')
     config.add_route('settings_ldap', '/settings/ldap')

@@ -3,7 +3,7 @@ LOGGER = logging.getLogger("PHOENIX")
 
 
 def includeme(config):
-    settings = config.registry.settings
+    # settings = config.registry.settings
 
     config.add_route('sign_in', '/account/login')
     config.add_route('esgf_login', '/account/login/esgf')
@@ -18,7 +18,7 @@ def includeme(config):
     config.add_request_method(github_activated, reify=True)
 
     def ldap_activated(request):
-        settings = request.registry.settings
+        # settings = request.registry.settings
         ldap_settings = request.db.ldap.find_one()
         return ldap_settings is not None
     config.add_request_method(ldap_activated, reify=True)

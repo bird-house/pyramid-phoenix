@@ -1,5 +1,5 @@
 def includeme(config):
-    settings = config.registry.settings
+    # settings = config.registry.settings
 
     config.add_route('processes', '/processes')
     config.add_route('processes_list', '/processes/list')

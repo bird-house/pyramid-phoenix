@@ -222,7 +222,8 @@ class Wizard(MyView):
 
     def resources(self):
         resources = []
-        resource = self.wizard_state.get('wizard_source')['source']
+        # TODO: Do I need this resource?
+        # resource = self.wizard_state.get('wizard_source')['source']
         return resources
 
     def view(self):

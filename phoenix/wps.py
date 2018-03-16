@@ -211,8 +211,8 @@ class WPSSchema(deform.schema.CSRFSchema):
         # guessing from default
         elif hasattr(data_input, 'defaultValue'):
             try:
-                dt = dateutil.parser.parse(data_input.defaultValue)
-            except:
+                dateutil.parser.parse(data_input.defaultValue)
+            except Exception:
                 return colander.String()
             else:
                 return colander.DateTime()

@@ -24,7 +24,7 @@ class Overview(MyView):
                 LOGGER.debug('got wps service name: %s', service_name)
                 url = self.request.route_path('processes_list', _query=[('wps', service_name)])
                 items.append(dict(title=service.title, description=service.abstract, public=service.public, url=url))
-            except Exception, err:
+            except Exception:
                 LOGGER.warn("Service not available ... skipping.")
         return items
 
@@ -42,7 +42,7 @@ class Overview(MyView):
                     # TODO: need to fix owslib to handle special identifiers
                     process = wps.describeprocess(identifier)
                     description = headline(process.abstract)
-                except Exception, err:
+                except Exception:
                     LOGGER.warn("could not add pinned process %s", pinned)
                 else:
                     processes.append(dict(

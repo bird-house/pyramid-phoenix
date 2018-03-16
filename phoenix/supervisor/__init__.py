@@ -1,10 +1,11 @@
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger("PHOENIX")
+
 
 def includeme(config):
-    settings = config.registry.settings
+    # settings = config.registry.settings
 
-    logger.info('Add supervisor')
+    LOGGER.debug('Add supervisor')
 
     config.add_route('supervisor', '/supervisor')
     config.add_route('supervisor_process', '/supervisor/{action}/{name}')
