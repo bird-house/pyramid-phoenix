@@ -1,8 +1,8 @@
 Changes
 *******
 
-current
-=======
+0.8.1 (2018-04-04)
+==================
 
 * configured require_csrf.
 * using check_csrf_token.
@@ -10,6 +10,9 @@ current
 * updated jquery 3.3.1
 * updated leaflet 1.3.1
 * updated leaflet timedimension plugin 1.1.0
+* updated twitcher plugin #150.
+* updated mongodb #116.
+* enabled pep8 checks #105.
 
 0.8.0 (2017-07-05)
 ==================
@@ -27,7 +30,7 @@ current
 
 * added editorconfig
 * Merge pull request #138 from Ouranosinc/master
-    
+
     Add a json backend into Phoenix
 * updated nginx 1.10.3
 * updated twitcher 0.3.4
@@ -223,7 +226,7 @@ Bug-Fixes:
 * default log-level set to info.
 * map disabled (needs refactoring)
 * calling dispel workflow on malleefowl
-* skipped esgf file selection ... file search is done in dispel workflow  
+* skipped esgf file selection ... file search is done in dispel workflow
 
 0.2.2 (2014-11-24)
 ==================
@@ -239,7 +242,7 @@ Utrecht Release
 
 Bugs:
 
-* Fixed start problems with supervisor: 
+* Fixed start problems with supervisor:
 csw, wps and mongodb are now initialized on first request (not on start time)
 
 0.2.1 (2014-11-11)
@@ -289,4 +292,3 @@ Helsinki Release
 ==================
 
 Hamburg Release
-
