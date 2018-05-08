@@ -12,7 +12,7 @@ from phoenix.tasks.utils import wps_headers, save_log, add_job, wait_secs
 from phoenix.wps import check_status
 
 from celery.utils.log import get_task_logger
-logger = get_task_logger(__name__)
+LOGGER = get_task_logger(__name__)
 
 
 @app.task(bind=True)
@@ -31,7 +31,21 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
 
     try:
         wps = WebProcessingService(url=url, skip_caps=False, verify=False, headers=wps_headers(userid))
-        execution = wps.execute(identifier, inputs=inputs, output=outputs, async=async, lineage=True)
+        try:
+            # TODO: sync is non-default and avail only in patched owslib
+            from owslib.wps import SYNC, ASYNC
+            if async is False:
+                mode = SYNC
+            else:
+                mode = ASYNC
+            execution = wps.execute(
+                identifier=identifier,
+                inputs=inputs, output=outputs,
+                mode=mode,
+                lineage=True)
+        except Exception:
+            LOGGER.warn("Setting execution mode is not supported. Using default async mode.")
+            execution = wps.execute(identifier, inputs=inputs, output=outputs)
         # job['service'] = wps.identification.title
         # job['title'] = getattr(execution.process, "title")
         job['abstract'] = getattr(execution.process, "abstract")
@@ -39,7 +53,7 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
         job['request'] = execution.request
         job['response'] = etree.tostring(execution.response)
 
-        logger.debug("job init done %s ...", self.request.id)
+        LOGGER.debug("job init done %s ...", self.request.id)
 
         num_retries = 0
         run_step = 0
@@ -59,26 +73,26 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
                 if execution.isComplete():
                     job['finished'] = datetime.now()
                     if execution.isSucceded():
-                        logger.debug("job succeded")
+                        LOGGER.debug("job succeded")
                         job['progress'] = 100
                     else:
-                        logger.debug("job failed.")
+                        LOGGER.debug("job failed.")
                         job['status_message'] = '\n'.join(error.text for error in execution.errors)
                         for error in execution.errors:
                             save_log(job, error)
             except:
                 num_retries += 1
-                logger.exception("Could not read status xml document for job %s. Trying again ...", self.request.id)
+                LOGGER.exception("Could not read status xml document for job %s. Trying again ...", self.request.id)
                 sleep(1)
             else:
-                logger.debug("update job %s ...", self.request.id)
+                LOGGER.debug("update job %s ...", self.request.id)
                 num_retries = 0
                 run_step += 1
             finally:
                 save_log(job)
                 db.jobs.update({'identifier': job['identifier']}, job)
     except Exception as exc:
-        logger.exception("Failed to run Job")
+        LOGGER.exception("Failed to run Job")
         job['status'] = "ProcessFailed"
         job['status_message'] = "Error: {0}".format(exc.message)
     finally:

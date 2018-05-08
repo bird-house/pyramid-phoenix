@@ -9,7 +9,7 @@ pyramid_mailer
 pyramid_celery
 pyramid_storage
 pyramid_celery
-pyramid_twitcher>=0.3.0
+pyramid_twitcher>=0.3.7
 deform
 #js.deform
 #js.bootstrap
@@ -20,7 +20,7 @@ webhelpers2
 webhelpers2_grid
 mako
 pyyaml
-owslib
+owslib>=0.16.0
 lxml
 python-dateutil
 pytz
