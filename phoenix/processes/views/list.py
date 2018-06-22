@@ -6,6 +6,13 @@ from phoenix.views import MyView
 from phoenix.utils import wps_caps_url
 
 
+def get_process_media(process):
+    for metadata in process.metadata:
+        if metadata.role == 'http://www.opengis.net/spec/wps/2.0/def/process/description/media':
+            return metadata.url
+    return None
+
+
 @view_defaults(permission='view', layout="default")
 class ProcessList(MyView):
     def __init__(self, request):
@@ -22,6 +29,7 @@ class ProcessList(MyView):
             item = dict(
                 title="{0.title} {0.processVersion}".format(process),
                 description=getattr(process, 'abstract', ''),
+                media=get_process_media(process),
                 url=self.request.route_path('processes_execute',
                                             _query=[('wps', self.service_name), ('process', process.identifier)]))
             items.append(item)
