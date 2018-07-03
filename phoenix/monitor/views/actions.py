@@ -223,4 +223,4 @@ def includeme(config):
     config.add_route('unset_favorite', 'unset_favorite')
     # download internal wps outputs
     config.add_route('download_wpsoutputs', '/download/wpsoutputs*subpath')
-    # config.add_view(download_wpsoutputs, route_name='download_wpsoutputs')
+    config.add_view(download_wpsoutputs, route_name='download_wpsoutputs')
