@@ -1,4 +1,4 @@
-__version__ = '0.8_dev'
+__version__ = '0.8.2'
 
 
 def main(global_config, **settings):
