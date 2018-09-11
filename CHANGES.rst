@@ -1,6 +1,15 @@
 Changes
 *******
 
+0.8.2 (2018-09-11)
+==================
+
+* updated twitcher 0.3.8.
+* updated owslib 0.17.0.
+* updated buildout recipes.
+* added thumbnail in process list (#157).
+* fixed nginx config (#155).
+
 0.8.1 (2018-04-04)
 ==================
 
