@@ -1,7 +1,6 @@
 [buildout]
 extends = buildout.cfg
 #extends = profiles/development.cfg
-#extends = profiles/advanced.cfg
 
 [settings]
 #hostname = localhost

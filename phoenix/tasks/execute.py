@@ -31,6 +31,8 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
 
     try:
         wps = WebProcessingService(url=url, skip_caps=False, verify=False, headers=wps_headers(userid))
+        # TODO: complex type detection is currently broken due to pywps bug.
+        outputs = [('output', True)]
         try:
             # TODO: sync is non-default and avail only in patched owslib
             from owslib.wps import SYNC, ASYNC
@@ -40,12 +42,16 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
                 mode = ASYNC
             execution = wps.execute(
                 identifier=identifier,
-                inputs=inputs, output=outputs,
+                inputs=inputs,
+                output=outputs,
                 mode=mode,
                 lineage=True)
         except Exception:
             LOGGER.warn("Setting execution mode is not supported. Using default async mode.")
-            execution = wps.execute(identifier, inputs=inputs, output=outputs)
+            execution = wps.execute(identifier,
+                                    inputs=inputs,
+                                    output=outputs
+                                    )
         # job['service'] = wps.identification.title
         # job['title'] = getattr(execution.process, "title")
         job['abstract'] = getattr(execution.process, "abstract")
@@ -54,6 +60,7 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
         job['response'] = etree.tostring(execution.response)
 
         LOGGER.debug("job init done %s ...", self.request.id)
+        LOGGER.debug("status location={}".format(execution.statusLocation))
 
         num_retries = 0
         run_step = 0
@@ -80,7 +87,7 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
                         job['status_message'] = '\n'.join(error.text for error in execution.errors)
                         for error in execution.errors:
                             save_log(job, error)
-            except:
+            except Exception:
                 num_retries += 1
                 LOGGER.exception("Could not read status xml document for job %s. Trying again ...", self.request.id)
                 sleep(1)
