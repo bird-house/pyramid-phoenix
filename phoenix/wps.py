@@ -12,6 +12,7 @@ from owslib.wps import WPSExecution
 
 from pyramid.security import authenticated_userid
 
+from phoenix._compat import PY2, text_type
 from phoenix.geoform.widget import BBoxWidget, ResourceWidget
 from phoenix.geoform.form import BBoxValidator
 from phoenix.geoform.form import URLValidator
@@ -48,7 +49,8 @@ def check_status(url=None, response=None, sleep_secs=2, verify=False):
         xml = requests.get(url, verify=verify).content
     else:
         raise Exception("you need to provide a status-location url or response object.")
-    if type(xml) is unicode:
+    # TODO: see owslib: https://github.com/geopython/OWSLib/pull/477
+    if PY2 and isinstance(xml, text_type):
         xml = xml.encode('utf8', errors='ignore')
     execution.checkStatus(response=xml, sleepSecs=sleep_secs)
     if execution.response is None:
