@@ -4,7 +4,7 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - python=2.7.13
+  - python=2.7
   - setuptools=27.2.0
   - curl=7.49.0
   - pyopenssl=17.0
@@ -15,10 +15,8 @@ dependencies:
 # pep8
   - flake8
   - pycodestyle
-# sphinx
-  - sphinx
-  - doc8
 # phoenix
+  - six
   - nginx=1.10
   - supervisor=3
   - gunicorn=19
@@ -26,16 +24,15 @@ dependencies:
   - gevent=1.2
   - lxml=3.7
   - mako=1.0
-  - dateparser=0.5
-  - python-dateutil=2.6
-  - requests=2.12
-  - pyyaml=3.12
-  - pygments=2.1
-  - pytz=2016.4
+  - dateparser
+  - python-dateutil
+  - requests
+  - pyyaml
+  - pygments
+  - pytz
   - owslib=0.17
-  - transaction=1.6
-  - esgf-pyclient=0.1.8
-  - myproxyclient=1.4.4
+  - transaction
+  - myproxyclient=2.0
   - genshi=0.7
 # celery
   - celery=3.1
@@ -44,33 +41,33 @@ dependencies:
   - pymongo=3
   - mongodb=3.4
 # twitcher
-  - webob=1.7
+  - webob
   - argcomplete
 # phoenix extensions
 #  - python-swiftclient=2.4.0
-  - threddsclient=0.3.4
+  - threddsclient
 #  - python-ldap=2.4.13
-  - funcsigs=1.0.2
+  - funcsigs
   - pip:
-      - sphinx-autoapi==0.5.0
       - pyramid==1.9.2
-      - pyramid-beaker==0.8
-      - Beaker==1.9.0
-      - pyramid-deform==0.2
-      - deform==2.0.4
+      - pyramid-beaker
+      - Beaker
+      - pyramid-deform
+      - deform
       - pyramid-chameleon
-      - pyramid-mako==1.0.2
-      - pyramid-layout==1.0
+      - pyramid-mako
+      - pyramid-layout
       - pyramid-celery==3.0.0
-      - pyramid-mailer==0.14.1
-      - pyramid-storage==0.1.2
+      - pyramid-mailer
+      - pyramid-storage
   #    - pyramid-ldap==0.1
   #    - pyramid-twitcher==0.3.3
-      - pyramid-rpc==0.8
-      - colander==1.3.3
+      - pyramid-rpc
+      - colander
       - Authomatic==0.1.0.post1
       - python-openid==2.2.5
   #    - ldappool==1.0
-      - WebHelpers2==2.0
-      - WebHelpers2_grid==0.1
-      - repoze.sendmail==4.2
+      - WebHelpers2
+      - WebHelpers2_grid
+      - repoze.sendmail
+      - esgf-pyclient==0.2.1
