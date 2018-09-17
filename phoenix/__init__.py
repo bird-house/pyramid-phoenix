@@ -34,8 +34,8 @@ def main(global_config, **settings):
     # FK: Ldap setup functions will be called on demand.
 
     # static views (stylesheets etc)
-    config.add_static_view('static', 'static', cache_max_age=3600)
-    config.add_static_view('static-deform', 'deform:static', cache_max_age=3600)
+    config.add_static_view('static', 'static')
+    config.add_static_view('static_deform', 'deform:static')
 
     # database
     # TODO: overwrite request.db from twitcher

@@ -3,6 +3,7 @@ import shutil
 import tempfile
 import requests
 import re
+import six
 from lxml import etree
 from io import BytesIO
 import OpenSSL
@@ -55,13 +56,11 @@ def logon(username=None, password=None, hostname=None, interactive=False, outdir
     Logon to MyProxy and fetch proxy certificate.
     """
     outdir = outdir or os.curdir
-    # use myproxy patch
-    # TODO: update to myproxyclient 2.x
-    from phoenix.patch import patch_myproxy_client
-    patch_myproxy_client()
-    # end patch
     lm = LogonManager(esgf_dir=outdir, dap_config=os.path.join(outdir, 'dodsrc'))
     lm.logoff()
+    # TODO: fix encoding
+    if six.PY2:
+        hostname = hostname.encode('utf-8', 'ignore')
     lm.logon(username=username, password=password, hostname=hostname,
              bootstrap=True, update_trustroots=False, interactive=interactive)
     return os.path.join(outdir, ESGF_CREDENTIALS)
