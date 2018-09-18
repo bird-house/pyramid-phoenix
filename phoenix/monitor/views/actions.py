@@ -161,58 +161,12 @@ def monitor_buttons(context, request):
     return buttons
 
 
-def download_wpsoutputs(request):
-    # TODO: streaming html files does not work ...
-    path = '/'.join(request.matchdict['subpath'])
-    url = request.registry.settings.get('wps.output.url')
-    url += '/' + path
-    LOGGER.debug("delegate to wpsoutputs: %s", url)
-    # forward request to target (without Host Header)
-    # h = dict(request.headers)
-    # h.pop("Host", h)
-    response = requests.get(url, stream=True, verify=False)
-    response.raise_for_status()
-
-    def remove_header(key, headers):
-        # the default header key should be the standard capitilized version e.g 'Content-Length'
-        # TODO: move code to twitcher owsproxy
-        try:
-            del headers[key]
-        except KeyError:
-            try:
-                del headers[key.lower()]
-            except KeyError:
-                try:
-                    del headers[key.upper()]
-                except KeyError:
-                    pass
-
-    # clean up headers
-    headers = dict(response.headers)
-    keys = [k.lower() for k in headers.keys()]
-    if 'content-length' in keys:
-        remove_header('Content-Length', headers)
-    if 'transfer-encoding' in keys:
-        remove_header('Transfer-Encoding', headers)
-    if 'content-encoding' in keys:
-        remove_header('Content-Encoding', headers)
-    if 'connection' in keys:
-        remove_header('Connection', headers)
-    if 'keep-alive' in keys:
-        remove_header('Keep-Alive', headers)
-
-    proxy_response = Response(app_iter=FileIter(response.raw), status=response.status_code)
-    proxy_response.headers.update(headers)
-    return proxy_response
-
-
 def includeme(config):
     """ Pyramid includeme hook.
 
     :param config: app config
     :type config: :class:`pyramid.config.Configurator`
     """
-
     config.add_route('restart_job', 'restart_job/{job_id}')
     config.add_route('delete_job', 'delete_job/{job_id}')
     config.add_route('delete_jobs', 'delete_jobs')
@@ -221,6 +175,3 @@ def includeme(config):
     config.add_route('make_private', 'make_private')
     config.add_route('set_favorite', 'set_favorite')
     config.add_route('unset_favorite', 'unset_favorite')
-    # download internal wps outputs
-    config.add_route('download_wpsoutputs', '/download/wpsoutputs*subpath')
-    config.add_view(download_wpsoutputs, route_name='download_wpsoutputs')

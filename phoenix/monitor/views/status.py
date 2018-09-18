@@ -29,9 +29,9 @@ class JobStatus(MyView):
                     if output.identifier == 'output':
                         break
                 details = output_details(self.request, output)
-                if details.get('proxy_reference'):
+                if details.get('reference'):
                     result = '<a href="{0}" class="btn btn-success btn-xs" target="_blank">Show Output</a>'.format(
-                        details['proxy_reference'])
+                        details['reference'])
                 else:
                     result = '<strong>{0}</strong>'.format(', '.join(details.get('data', '')))
                 msg = '<h4>Job Succeeded: {1} <a href="{0}" class="btn btn-info btn-xs"> Details</a></h4>'
