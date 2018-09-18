@@ -46,18 +46,13 @@
             </a>
           </p>
           <p tal:condition="item.reference">
-            <a href="${item.proxy_reference}" target="_" data-toggle="tooltip"
+            <a href="${item.reference}" target="_" data-toggle="tooltip"
                title="Download file" data-value="value" class="btn btn-link">
               <i class="fa fa-download"></i> Download
             </a>
             <a href="${item.reference}" target="_" data-toggle="tooltip"
                title="Share" data-value="value" class="btn btn-link disabled">
               <i class="fa fa-share"></i> Share
-            </a>
-            <a tal:condition="item.wms_dataset_path" data-toggle="tooltip" title="Show on Map" data-value="value"
-               href="${request.route_path('map', _query=[('dataset', item.wms_dataset_path)])}"
-               class="btn btn-link">
-              <i class="fa fa-map-marker"></i> Show on Map
             </a>
           </p>
         </div>
