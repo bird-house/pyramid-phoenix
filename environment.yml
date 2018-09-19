@@ -39,7 +39,7 @@ dependencies:
   - kombu=3.0
 # mongodb
   - pymongo=3
-  - mongodb=3.4
+  - mongodb>=3.4
 # twitcher
   - webob
   - argcomplete
