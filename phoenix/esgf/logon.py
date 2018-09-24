@@ -61,6 +61,11 @@ def logon(username=None, password=None, hostname=None, interactive=False, outdir
     # TODO: fix encoding
     if six.PY2:
         hostname = hostname.encode('utf-8', 'ignore')
+    # TODO: disable this fix when integrated in myproxyclient
+    from myproxy.client import MyProxyClient
+    from OpenSSL import SSL
+    MyProxyClient.SSL_METHOD = SSL.TLSv1_2_METHOD
+    # logon
     lm.logon(username=username, password=password, hostname=hostname,
              bootstrap=True, update_trustroots=False, interactive=interactive)
     return os.path.join(outdir, ESGF_CREDENTIALS)
