@@ -228,7 +228,7 @@ passwd: custom.cfg
 	@echo "Enter a password with at least 8 characters."
 	@bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV); python -c 'from IPython.lib import passwd; pw = passwd(algorithm=\"sha256\"); lines = [\"phoenix-password = \" + pw + \"\\n\" if line.startswith(\"phoenix-password\") else line for line in open(\"custom.cfg\", \"r\")]; file = open(\"custom.cfg\", \"w\"); file.writelines(lines); file.close()'"
 	@echo ""
-	@echo "Run \`make install restart' to activate this password."
+	@echo "Run \`make update restart' to activate this password."
 
 .PHONY: test
 test:
