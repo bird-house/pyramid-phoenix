@@ -15,6 +15,8 @@ dependencies:
 # pep8
   - flake8
   - pycodestyle
+# ipython used by make passwd
+  - ipython
 # phoenix
   - six
   - nginx=1.10
