@@ -34,7 +34,7 @@ dependencies:
   - pytz
   - owslib=0.17
   - transaction
-  - myproxyclient=2.0
+  #- myproxyclient=2.0
   - genshi=0.7
 # celery
   - celery=3.1
@@ -72,4 +72,5 @@ dependencies:
       - WebHelpers2
       - WebHelpers2_grid
       - repoze.sendmail
+      - myproxyclient==2.0.3
       - esgf-pyclient==0.2.1
