@@ -1,8 +1,15 @@
 Changes
 *******
 
+0.8.3 (2018-12-06)
+==================
+
+Washington Release.
+
 0.8.2 (2018-09-11)
 ==================
+
+Dar-es-Salaam Release.
 
 * updated twitcher 0.3.8.
 * updated owslib 0.17.0.
@@ -12,6 +19,8 @@ Changes
 
 0.8.1 (2018-04-04)
 ==================
+
+Montréal Release.
 
 * configured require_csrf.
 * using check_csrf_token.
