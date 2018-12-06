@@ -6,6 +6,11 @@ Changes
 
 Washington Release.
 
+* Use released owslib=0.17 (#163).
+* Improved CSS/JS loading (#170, #171).
+* Use myproxyclient=2.0.3 (#175).
+* Other fixes (#173, #176).
+
 0.8.2 (2018-09-11)
 ==================
 
