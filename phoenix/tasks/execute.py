@@ -5,6 +5,7 @@ from time import sleep
 from pyramid_celery import celery_app as app
 
 from owslib.wps import WebProcessingService
+from owslib.wps import SYNC, ASYNC
 
 from phoenix.db import mongodb
 from phoenix.events import JobFinished
@@ -34,8 +35,7 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
         # TODO: complex type detection is currently broken due to pywps bug.
         outputs = [('output', True)]
         try:
-            # TODO: sync is non-default and avail only in patched owslib
-            from owslib.wps import SYNC, ASYNC
+            # TODO: sync is non-default
             if async is False:
                 mode = SYNC
             else:
