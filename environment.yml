@@ -1,8 +1,7 @@
 name: pyramid-phoenix
 channels:
-  - birdhouse
-  - defaults
   - conda-forge
+  - defaults
 dependencies:
   - python=2.7
   - setuptools=27.2.0
