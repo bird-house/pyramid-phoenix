@@ -196,6 +196,8 @@ class WPSSchema(deform.schema.CSRFSchema):
             return colander.Float()
         elif 'double' in data_input.dataType:
             return colander.Float()
+        elif 'angle' in data_input.dataType:
+            return colander.Float()
         elif 'decimal' in data_input.dataType:
             return colander.Decimal()
         elif 'string' in data_input.dataType:

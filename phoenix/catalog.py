@@ -3,6 +3,7 @@ import uuid
 from os.path import join, dirname
 from collections import namedtuple
 
+import requests
 from owslib.csw import CatalogueServiceWeb
 from owslib.fes import PropertyIsEqualTo, And
 from owslib.wps import WebProcessingService
