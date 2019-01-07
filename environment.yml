@@ -5,10 +5,10 @@ channels:
 dependencies:
   - python=2.7
   - setuptools=27.2.0
-  - curl=7.49.0
-  - pyopenssl=17.0
-  - cryptography=1.8
-  - icu=56
+  - curl
+  - pyopenssl
+  - cryptography
+  - icu
 # tests
   - pytest
 # pep8
@@ -23,8 +23,8 @@ dependencies:
   - gunicorn=19
   - requests-oauthlib
   - gevent=1.2
-  - lxml=3.7
-  - mako=1.0
+  - lxml
+  - mako
   - dateparser
   - python-dateutil
   - requests
@@ -50,7 +50,7 @@ dependencies:
 #  - python-ldap=2.4.13
   - funcsigs
   - pip:
-      - pyramid==1.9.2
+      - pyramid==1.9.3
       - pyramid-beaker
       - Beaker
       - pyramid-deform
@@ -62,7 +62,7 @@ dependencies:
       - pyramid-mailer
       - pyramid-storage
   #    - pyramid-ldap==0.1
-  #    - pyramid-twitcher==0.3.3
+      - pyramid-twitcher==0.3.8
       - pyramid-rpc
       - colander
       - Authomatic==0.1.0.post1
@@ -71,5 +71,5 @@ dependencies:
       - WebHelpers2
       - WebHelpers2_grid
       - repoze.sendmail
-      - myproxyclient==2.0.3
+      - myproxyclient==2.1.0
       - esgf-pyclient==0.2.1
