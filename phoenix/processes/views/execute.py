@@ -83,7 +83,7 @@ class ExecuteProcess(MyView):
             # convert boolean
             if 'boolean' in inp.dataType and inp.identifier in result:
                 result[inp.identifier] = [val.lower() == 'true' for val in result[inp.identifier]]
-            elif inp.dataType in ['date', 'time', 'dateTime'] and inp.identifier in result:
+            elif 'date' in inp.dataType or 'time' in inp.dataType and inp.identifier in result:
                 result[inp.identifier] = [dateparser.parse(val) for val in result[inp.identifier]]
             elif inp.dataType == 'BoundingBoxData' and inp.identifier in result:
                 result[inp.identifier] = [
