@@ -169,7 +169,7 @@ def authomatic_config(request):
                 'Get your watched repos': ('GET', 'https://api.github.com/user/subscriptions'),
             },
         },
-        'ceda_oauth': { # Not named 'ceda' to avoid conflict with CEDA OpenID
+        'ceda_oauth': {  # Not named 'ceda' to avoid conflict with CEDA OpenID
             'class_': CEDAProvider,
             'consumer_key': request.registry.settings.get('ceda.client.id'),
             'consumer_secret': request.registry.settings.get('ceda.client.secret'),
