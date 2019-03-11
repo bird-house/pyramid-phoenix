@@ -20,6 +20,11 @@
                    class="btn btn-warning btn-lg"><icon class="fa fa-github"></icon> Sign in with GitHub</a>
                 <br/><br/>
               </div>
+              <div tal:condition="request.ceda_oauth_activated">
+                <a href="${request.route_path('account_auth', provider='ceda_oauth')}"
+                   class="btn btn-warning btn-lg"><icon class="fa fa-globe"></icon> Sign in with CEDA</a>
+                <br/><br/>
+              </div>
               <div tal:condition="request.ldap_activated">
                 <a href="${request.route_path('ldap_login')}"
                    class="btn btn-warning btn-lg"><icon class="fa fa-sitemap"></icon> Sign in with LDAP</a>

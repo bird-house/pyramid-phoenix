@@ -21,6 +21,7 @@ from pyramid.csrf import check_csrf_token as _check_csrf_token
 from authomatic import Authomatic, provider_id
 from authomatic.providers import oauth2
 from phoenix.providers import esgfopenid
+from phoenix.providers.oauth2 import CEDAProvider
 
 from phoenix.twitcherclient import is_public
 
@@ -167,6 +168,13 @@ def authomatic_config(request):
                 'Get your events': ('GET', 'https://api.github.com/users/{user.username}/events'),
                 'Get your watched repos': ('GET', 'https://api.github.com/user/subscriptions'),
             },
+        },
+        'ceda_oauth': {  # Not named 'ceda' to avoid conflict with CEDA OpenID
+            'class_': CEDAProvider,
+            'consumer_key': request.registry.settings.get('ceda.client.id'),
+            'consumer_secret': request.registry.settings.get('ceda.client.secret'),
+            'access_headers': {'User-Agent': 'Phoenix'},
+            'scope': CEDAProvider.user_info_scope,
         },
     }
 

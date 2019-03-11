@@ -17,6 +17,11 @@ def includeme(config):
         return len(settings.get('github.client.id', '').strip()) >= 10
     config.add_request_method(github_activated, reify=True)
 
+    def ceda_oauth_activated(request):
+        settings = request.registry.settings
+        return len(settings.get('ceda.client.id', '').strip()) >= 10
+    config.add_request_method(ceda_oauth_activated, reify=True)
+
     def ldap_activated(request):
         # settings = request.registry.settings
         ldap_settings = request.db.ldap.find_one()
