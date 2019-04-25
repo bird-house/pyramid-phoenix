@@ -1,6 +1,16 @@
 Changes
 *******
 
+0.9.0 (2019-04-25)
+==================
+
+San Francisco Release.
+
+* Updated pyramid (1.9.4) and supervisor (4.x) (#186).
+* Updated jquery (3.4) and bootstrap (3.4.1) (#185).
+* Added CEDA OAuth2 Provider (#184).
+* Fixes dateparser (#182) and angle (#181).
+
 0.8.3 (2018-12-06)
 ==================
 
