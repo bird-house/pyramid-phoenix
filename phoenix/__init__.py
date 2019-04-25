@@ -77,9 +77,6 @@ def main(global_config, **settings):
     # user profiles
     config.include('phoenix.people')
 
-    # supervisor
-    config.include('phoenix.supervisor')
-
     # catalog
     config.include('phoenix.catalog')
 
