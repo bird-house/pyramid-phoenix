@@ -13,7 +13,7 @@
         }
     ],
     "dependencies": {
-        "jquery": "3"
+        "jquery": ">=3.4.0"
     },
     "description": "A tags manager, with this plugin a input field is used to collect tags and rendered as tags.",
     "keywords": [
