@@ -47,9 +47,7 @@
 
     <!-- deform javascript, which unfortunately has to be at the top for Deform to work -->
     <!-- ... jquery -->
-    <!-- script src="${request.static_path('deform:static/scripts/jquery-2.0.3.min.js')}"
-            type="text/javascript"></script -->
-    <script src="${request.static_path('phoenix:static/jquery/js/jquery-3.3.1.min.js')}"
+    <script src="${request.static_path('phoenix:static/jquery/js/jquery-3.4.0.min.js')}"
             type="text/javascript"></script>
 
     <script src="${request.static_path('deform:static/scripts/deform.js')}"

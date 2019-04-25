@@ -1,7 +1,7 @@
 content
 =======
 
-* jquery (version 3.1.0): http://jquery.com/
+* jquery (version 3.4.0): http://jquery.com/
 * bootstrap (version 3.3.7): http://getbootstrap.com/
 * fine uploader (version 5.14.2): http://fineuploader.com/
 * font-awesome (version 4.7.0): http://fontawesome.io/
@@ -11,4 +11,3 @@ removed
 =======
 
 * bootstrap-toggle: http://www.bootstraptoggle.com/
-
