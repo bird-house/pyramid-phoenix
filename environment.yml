@@ -1,6 +1,7 @@
 name: pyramid-phoenix
 channels:
   - conda-forge
+  - birdhouse
   - defaults
 dependencies:
   - python=2.7
@@ -19,7 +20,7 @@ dependencies:
 # phoenix
   - six
   - nginx=1.10
-  - supervisor=3
+  - supervisor=4
   - gunicorn=19
   - requests-oauthlib
   - gevent=1.2
@@ -50,7 +51,7 @@ dependencies:
 #  - python-ldap=2.4.13
   - funcsigs
   - pip:
-      - pyramid==1.9.3
+      - pyramid==1.9.4
       - pyramid-beaker
       - Beaker
       - pyramid-deform
