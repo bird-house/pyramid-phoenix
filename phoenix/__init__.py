@@ -1,4 +1,4 @@
-__version__ = '0.9.0'
+__version__ = '0.10.dev'
 
 
 def main(global_config, **settings):
