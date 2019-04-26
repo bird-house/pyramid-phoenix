@@ -34,7 +34,6 @@ dependencies:
   - pytz
   - owslib=0.17
   - transaction
-  #- myproxyclient=2.0
   - genshi=0.7
 # celery
   - celery=3.1
@@ -46,8 +45,6 @@ dependencies:
   - webob
   - argcomplete
 # phoenix extensions
-#  - python-swiftclient=2.4.0
-  - threddsclient
 #  - python-ldap=2.4.13
   - funcsigs
   - pip:
