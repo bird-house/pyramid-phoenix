@@ -37,7 +37,6 @@ class NodeActions(object):
     @view_config(route_name='restart_job')
     def restart_job(self):
         job_id = self.request.matchdict.get('job_id')
-        job = self.collection.find_one({'identifier': job_id})
         self.session.flash("Restarting Process {0}.".format(job_id), queue='info')
         return HTTPFound(location=self.request.route_path('processes_execute', _query=[('job_id', job_id)]))
 
