@@ -80,12 +80,6 @@ def main(global_config, **settings):
     # service settings
     config.include('phoenix.services')
 
-    # solr settings
-    config.include('phoenix.solr')
-
-    # solrsearch interface
-    config.include('phoenix.solrsearch')
-
     # cart
     config.include('phoenix.cart')
 

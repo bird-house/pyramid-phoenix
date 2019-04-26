@@ -26,8 +26,6 @@ def navbar(context, request):
     # dropdown browse
     browse_items = list()
     browse_items.append(nav_item('ESGF search', request.route_path('esgfsearch'), icon='fa fa-globe'))
-    if request.solr_activated:
-        browse_items.append(nav_item('Birdhouse Solr', request.route_path('solrsearch'), icon='fa fa-sun-o'))
     subitems.append(dropdown('Browse', items=browse_items, icon='fa fa-search'))
     # if request.has_permission('submit'):
     #     subitems.append(nav_item('Cart', request.route_path('cart'), icon='fa fa-shopping-cart'))

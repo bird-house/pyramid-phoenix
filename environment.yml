@@ -46,8 +46,6 @@ dependencies:
   - webob
   - argcomplete
 # phoenix extensions
-#  - python-swiftclient=2.4.0
-  - threddsclient
 #  - python-ldap=2.4.13
   - funcsigs
   - pip:
