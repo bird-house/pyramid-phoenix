@@ -86,9 +86,6 @@ def main(global_config, **settings):
     # solrsearch interface
     config.include('phoenix.solrsearch')
 
-    # wizard
-    config.include('phoenix.wizard')
-
     # cart
     config.include('phoenix.cart')
 

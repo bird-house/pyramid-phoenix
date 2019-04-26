@@ -52,13 +52,9 @@ def save_log(job, error=None):
 
 def add_job(db, task_id, process_id, title=None, abstract=None,
             service_name=None, service=None, status_location=None,
-            is_workflow=False, caption=None, userid=None,
+            caption=None, userid=None,
             async=True):
     tags = ['dev']
-    if is_workflow:
-        tags.append('workflow')
-    else:
-        tags.append('single')
     if async:
         tags.append('async')
     else:
@@ -67,7 +63,6 @@ def add_job(db, task_id, process_id, title=None, abstract=None,
         identifier=task_id,
         task_id=task_id,             # TODO: why not using as identifier?
         userid=userid or 'guest',
-        is_workflow=is_workflow,
         service_name=service_name,        # wps service name (service identifier)
         service=service or service_name,  # wps service title (url, service_name or service title)
         process_id=process_id,                  # process identifier

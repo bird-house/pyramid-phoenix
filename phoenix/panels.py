@@ -18,9 +18,6 @@ def navbar(context, request):
 
     items = list()
     items.append(nav_item('Processes', request.route_path('processes')))
-    if request.has_permission('submit'):
-        if request.wizard_activated:
-            items.append(nav_item('Wizard', request.route_path('wizard')))
     if request.has_permission('edit'):
         items.append(nav_item('Monitor', request.route_path('monitor')))
 

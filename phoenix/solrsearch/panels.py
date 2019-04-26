@@ -9,10 +9,7 @@ LOGGER = logging.getLogger("PHOENIX")
 def query_path(request):
     # TODO: this is dirty. solrsearch should be a widget or/and use jquery ajax requests.
     current_path = request.current_route_path()
-    if current_path.startswith('/wizard'):
-        q_path = 'wizard_solr'
-    else:
-        q_path = 'solrsearch'
+    q_path = 'solrsearch'
     return q_path
 
 
