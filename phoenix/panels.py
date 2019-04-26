@@ -23,8 +23,6 @@ def navbar(context, request):
             items.append(nav_item('Wizard', request.route_path('wizard')))
     if request.has_permission('edit'):
         items.append(nav_item('Monitor', request.route_path('monitor')))
-        if request.map_activated:
-            items.append(nav_item('Map', request.route_path('map')))
 
     subitems = list()
     subitems.append(nav_item('Dashboard', request.route_path('dashboard', tab='overview'), icon='fa fa-dashboard'))

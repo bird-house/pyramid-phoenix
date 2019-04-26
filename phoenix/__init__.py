@@ -62,9 +62,6 @@ def main(global_config, **settings):
     # dashboard
     config.include('phoenix.dashboard')
 
-    # map
-    config.include('phoenix.map')
-
     # processes
     config.include('phoenix.processes')
 
