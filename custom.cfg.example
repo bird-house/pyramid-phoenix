@@ -15,7 +15,6 @@ extends = buildout.cfg
 
 ## enable plugins: wizard, map
 #phoenix-wizard = true
-#phoenix-map = true
 
 # run 'make passwd' to generate a new password hash
 # password=qwerty
