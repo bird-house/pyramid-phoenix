@@ -34,8 +34,6 @@ def includeme(config):
 
 
 def catalog_factory(registry):
-    settings = registry.settings
-
     service_registry = twitcher_service_factory(registry)
     db = mongodb(registry)
     catalog = MongodbCatalog(db.catalog, service_registry)
