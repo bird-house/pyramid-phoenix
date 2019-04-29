@@ -13,14 +13,6 @@ class ESGFSearchActions(object):
         self.esgfsearch = ESGFSearch(request)
 
     def search_datasets(self):
-        if self.request.has_permission('edit'):
-            if not self.request.cert_ok:
-                msg = """<strong>Warning:</strong> You are not allowed to access ESGF data.
-                Please <a href="{0}" class="alert-link">update</a> your ESGF credentials."""
-                callback = self.request.current_route_path()
-                self.session.flash(
-                    msg.format(self.request.route_path('esgflogon', _query=[('callback', callback)])),
-                    queue='warning')
         result = dict()
         result.update(self.esgfsearch.query_params())
         result.update(self.esgfsearch.search_datasets())

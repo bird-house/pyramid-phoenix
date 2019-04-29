@@ -1,9 +1,15 @@
+from pyramid.settings import asbool
+
 import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
 def includeme(config):
-    # settings = config.registry.settings
+    settings = config.registry.settings
+
+    if asbool(settings.get('phoenix.ldap', 'false')):
+        config.include('pyramid_ldap')
+        # FK: ldap setup functions will be called on demand
 
     config.add_route('sign_in', '/account/login')
     config.add_route('esgf_login', '/account/login/esgf')

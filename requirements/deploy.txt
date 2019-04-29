@@ -9,7 +9,7 @@ pyramid_mailer
 pyramid_celery
 pyramid_storage
 pyramid_celery
-pyramid_twitcher>=0.3.7
+pyramid_twitcher>=0.3.8
 deform
 #js.deform
 #js.bootstrap
@@ -24,3 +24,4 @@ owslib>=0.17.0
 lxml
 python-dateutil
 pytz
+esgf-pyclient
