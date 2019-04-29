@@ -24,4 +24,3 @@ owslib>=0.17.0
 lxml
 python-dateutil
 pytz
-#python-swiftclient
