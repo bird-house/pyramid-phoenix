@@ -4,8 +4,6 @@ from os.path import join, dirname
 from collections import namedtuple
 
 import requests
-from owslib.csw import CatalogueServiceWeb
-from owslib.fes import PropertyIsEqualTo, And
 from owslib.wps import WebProcessingService
 
 
@@ -36,16 +34,9 @@ def includeme(config):
 
 
 def catalog_factory(registry):
-    settings = registry.settings
-
     service_registry = twitcher_service_factory(registry)
-
-    if asbool(settings.get('phoenix.csw', True)):
-        csw = CatalogueServiceWeb(url=settings['csw.url'], skip_caps=True)
-        catalog = CatalogService(csw, service_registry)
-    else:
-        db = mongodb(registry)
-        catalog = MongodbCatalog(db.catalog, service_registry)
+    db = mongodb(registry)
+    catalog = MongodbCatalog(db.catalog, service_registry)
     return catalog
 
 
@@ -126,44 +117,6 @@ class Catalog(object):
 
     def clear_services(self):
         raise NotImplementedError
-
-
-class CatalogService(Catalog):
-    def __init__(self, csw, service_registry):
-        self.csw = csw
-        self.service_registry = service_registry
-
-    def get_record_by_id(self, identifier):
-        self.csw.getrecordbyid(id=[identifier])
-        return self.csw.records[identifier]
-
-    def delete_record(self, identifier):
-        self.csw.transaction(ttype='delete', typename='csw:Record', identifier=identifier)
-
-    def insert_record(self, record):
-        record['identifier'] = uuid.uuid4().get_urn()
-        templ_dc = Template(filename=join(dirname(__file__), "templates", "catalog", "dublin_core.xml"))
-        self.csw.transaction(ttype="insert", typename='csw:Record', record=str(templ_dc.render(**record)))
-
-    def harvest(self, url, service_type, service_name=None, service_title=None, public=False, c4i=False):
-        if service_type == THREDDS_TYPE:
-            self.insert_record(_fetch_thredds_metadata(url, service_title))
-        else:  # ogc services
-            self.service_registry.register_service(url=url, data={'name': service_name, 'public': public})
-            try:
-                self.csw.harvest(source=url, resourcetype=RESOURCE_TYPES.get(service_type))
-            except Exception:
-                LOGGER.exception("could not harvest metadata")
-                self.service_registry.unregister_service(name=service_name)
-                raise Exception("could not harvest metadata")
-
-    def get_services(self, service_type=None, maxrecords=100):
-        cs = PropertyIsEqualTo('dc:type', 'service')
-        if service_type is not None:
-            cs_format = PropertyIsEqualTo('dc:format', service_type)
-            cs = And([cs, cs_format])
-        self.csw.getrecords2(esn="full", constraints=[cs], maxrecords=maxrecords)
-        return self.csw.records.values()
 
 
 def doc2record(document):
