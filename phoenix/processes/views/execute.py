@@ -193,13 +193,6 @@ class ExecuteProcess(MyView):
             Please <a href="{0}" class="alert-link">sign in</a> and wait for account activation."""
             msg = msg.format(self.request.route_path('sign_in'))
             self.session.flash(msg, queue='warning')
-        elif not self.request.cert_ok:
-            msg = """<strong>Warning:</strong> You are not allowed to access ESGF data.
-            Please <a href="{0}" class="alert-link">update</a> your ESGF credentials."""
-            callback = self.request.current_route_path()
-            self.session.flash(
-                msg.format(self.request.route_path('esgflogon', _query=[('callback', callback)])),
-                queue='warning')
         return dict(
             process=self.process,
             url=wps_describe_url(self.wps.url, self.processid),
