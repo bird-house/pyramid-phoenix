@@ -4,4 +4,3 @@ ldappool<2
 funcsigs
 # esgf logon
 myproxyclient==2.1.0
-esgf-pyclient==0.2.1

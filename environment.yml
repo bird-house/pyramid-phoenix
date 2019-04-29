@@ -63,3 +63,4 @@ dependencies:
       - WebHelpers2
       - WebHelpers2_grid
       - repoze.sendmail
+      - esgf-pyclient==0.2.1
