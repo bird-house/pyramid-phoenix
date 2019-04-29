@@ -103,7 +103,7 @@ class WPSSchema(deform.schema.CSRFSchema):
            An ``WPS`` process description that you want a ``Colander`` schema
            to be generated for.
 
-        \*\*kw
+        **kw
            Represents *all* other options able to be passed to a
            :class:`colander.SchemaNode`. Keywords passed will influence the
            resulting mapped schema accordingly (for instance, passing
