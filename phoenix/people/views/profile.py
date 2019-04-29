@@ -11,8 +11,6 @@ from phoenix.utils import ActionButton
 from phoenix.people.schema import (
     ProfileSchema,
     TwitcherSchema,
-    ESGFSLCSTokenSchema,
-    ESGFCredentialsSchema,
     GroupSchema
 )
 from phoenix.security import check_csrf_token
@@ -33,10 +31,6 @@ class Profile(MyView):
     def panel_title(self):
         if self.tab == 'twitcher':
             title = "Personal access token"
-        elif self.tab == 'esgf_slcs':
-            title = "ESGF SLCS access token"
-        elif self.tab == 'esgf_certs':
-            title = "ESGF X509 credentials"
         elif self.tab == 'group':
             title = 'Group permission'
         else:
@@ -68,10 +62,6 @@ class Profile(MyView):
     def schema(self):
         if self.tab == 'twitcher':
             schema = TwitcherSchema()
-        elif self.tab == 'esgf_slcs':
-            schema = ESGFSLCSTokenSchema()
-        elif self.tab == 'esgf_certs':
-            schema = ESGFCredentialsSchema()
         elif self.tab == 'group':
             schema = GroupSchema()
         else:
@@ -99,28 +89,6 @@ class Profile(MyView):
                                css_class="btn btn-success btn-xs",
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('generate_twitcher_token'))
-            btns.append(btn)
-        elif self.tab == 'esgf_slcs':
-            btn = ActionButton(name='generate_esgf_slcs_token', title='Generate Token',
-                               css_class="btn btn-success btn-xs",
-                               disabled=not self.request.has_permission('submit'),
-                               href=self.request.route_path('generate_esgf_slcs_token'))
-            btns.append(btn)
-            btn = ActionButton(name='forget_esgf_slcs_token', title='Forget Token',
-                               css_class="btn btn-danger btn-xs",
-                               disabled=not self.request.has_permission('submit'),
-                               href=self.request.route_path('forget_esgf_slcs_token'))
-            btns.append(btn)
-        elif self.tab == 'esgf_certs':
-            btn = ActionButton(name='update_esgf_certs', title='Update Credentials',
-                               css_class="btn btn-success btn-xs",
-                               disabled=not self.request.has_permission('edit'),
-                               href=self.request.route_path('update_esgf_certs'))
-            btns.append(btn)
-            btn = ActionButton(name='forget_esgf_certs', title='Forget Credentials',
-                               css_class="btn btn-danger btn-xs",
-                               disabled=not self.request.has_permission('edit'),
-                               href=self.request.route_path('forget_esgf_certs'))
             btns.append(btn)
         return btns
 
