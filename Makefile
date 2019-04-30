@@ -13,9 +13,9 @@ OS_NAME := $(shell uname -s 2>/dev/null || echo "unknown")
 CPU_ARCH := $(shell uname -m 2>/dev/null || uname -p 2>/dev/null || echo "unknown")
 
 # Python
-SETUPTOOLS_VERSION := 36.5.0
+SETUPTOOLS_VERSION := 41
 CONDA_VERSION := 4.5
-BUILDOUT_VERSION := 2.12.1
+BUILDOUT_VERSION := 2.13.1
 
 # Anaconda
 ANACONDA_HOME ?= $(HOME)/anaconda
