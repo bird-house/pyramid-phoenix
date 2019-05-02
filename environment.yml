@@ -55,7 +55,7 @@ dependencies:
       - pyramid-mailer
       - pyramid-storage
       #- pyramid-twitcher==0.4.0
-      - -e git+https://github.com/bird-house/twitcher@master#egg=pyramid_twitcher
+      #- -e git+https://github.com/bird-house/twitcher@master#egg=pyramid_twitcher
       - pyramid-rpc
       - colander
       - Authomatic==0.1.0.post1
