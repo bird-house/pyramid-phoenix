@@ -1,6 +1,9 @@
 [buildout]
 extends = buildout.cfg
-#extends = profiles/development.cfg
+
+# debug options
+#version = noversions
+#log-level = DEBUG
 
 [settings]
 #hostname = localhost

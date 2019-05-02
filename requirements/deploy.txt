@@ -1,4 +1,4 @@
-pyramid
+pyramid>=1.10
 pyramid-chameleon
 pyramid-mako
 pymongo>=3.3.0
@@ -9,7 +9,7 @@ pyramid_mailer
 pyramid_celery
 pyramid_storage
 pyramid_celery
-pyramid_twitcher>=0.3.8
+pyramid_twitcher>=0.4.0
 deform
 #js.deform
 #js.bootstrap

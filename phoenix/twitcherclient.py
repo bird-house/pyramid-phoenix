@@ -39,7 +39,7 @@ def generate_access_token(registry, userid, valid_in_hours=1):
         try:
             esgf_token = refresh_token(registry, token=user['esgf_token'], userid=userid)
         except Exception as err:
-            LOGGER.warn("Could not refresh token: {}".format(err.message))
+            LOGGER.warn("Could not refresh token: {}".format(err))
         else:
             data['esgf_access_token'] = esgf_token.get('access_token', '')
             data['esgf_slcs_service_url'] = registry.settings.get('esgf.slcs.url', '')

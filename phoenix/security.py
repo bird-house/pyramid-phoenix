@@ -8,7 +8,6 @@ from collections import OrderedDict
 
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
-from pyramid.exceptions import HTTPForbidden
 from pyramid.security import (
     Allow,
     Everyone,
@@ -92,9 +91,7 @@ def groupfinder(userid, request):
             return [Developer]
         elif user.get('group') == User:
             return [User]
-        else:
-            return [Guest]
-    return HTTPForbidden()
+    return [Guest]
 
 
 # Authentication and Authorization
