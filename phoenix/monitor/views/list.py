@@ -89,7 +89,7 @@ class JobList(MyView):
 
     def process_caption_form(self, form):
         try:
-            controls = self.request.POST.items()
+            controls = list(self.request.POST.items())
             LOGGER.debug("controls %s", controls)
             appstruct = form.validate(controls)
             self.collection.update_one({'identifier': appstruct['identifier']},
@@ -113,7 +113,7 @@ class JobList(MyView):
 
     def process_labels_form(self, form):
         try:
-            controls = self.request.POST.items()
+            controls = list(self.request.POST.items())
             LOGGER.debug("controls %s", controls)
             appstruct = form.validate(controls)
             tags = make_tags(appstruct['labels'])
@@ -211,10 +211,10 @@ class JobsGrid(CustomGrid):
     def buttongroup_td(self, col_num, i, item):
         from phoenix.utils import ActionButton
         buttons = list()
-        buttons.append(ActionButton('results', title=u'Details', css_class=u'btn btn-default',
+        buttons.append(ActionButton('results', title='Details', css_class='btn btn-default',
                                     href=self.request.route_path('job_details', tab='log',
                                                                  job_id=item.get('identifier'))))
-        buttons.append(ActionButton('restart_job', title=u'Restart', css_class=u'btn btn-default',
+        buttons.append(ActionButton('restart_job', title='Restart', css_class='btn btn-default',
                                     href="/restart_job/%s" % item.get('identifier'),
                                     disabled=item['status'] != 'ProcessSucceeded'))
         return self.render_buttongroup_td(buttons=buttons)

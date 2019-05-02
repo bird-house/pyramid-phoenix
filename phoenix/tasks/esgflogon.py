@@ -19,7 +19,7 @@ def esgf_logon(self, userid, hostname, username, password):
     try:
         # need temp folder for outputs
         if not os.path.isdir(settings.get('phoenix.workdir')):
-            os.makedirs(settings.get('phoenix.workdir'), mode=0700)
+            os.makedirs(settings.get('phoenix.workdir'), mode=0o700)
         outdir = tempfile.mkdtemp(prefix='phoenix-', dir=settings.get('phoenix.workdir'))
         # use myproxy logon to get credentials
         credentials = logon(username=username, password=password, hostname=hostname,

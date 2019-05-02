@@ -1,5 +1,4 @@
 import os
-from UserDict import DictMixin
 
 import colander
 from pyramid.security import authenticated_userid

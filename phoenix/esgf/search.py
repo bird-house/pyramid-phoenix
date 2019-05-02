@@ -35,7 +35,7 @@ def date_from_filename(filename):
 
 def variable_filter(constraints, variables):
     """return True if variable fulfills contraints"""
-    var_types = [u'variable', u'cf_standard_name', u'variable_long_name']
+    var_types = ['variable', 'cf_standard_name', 'variable_long_name']
 
     success = True
     # check different types of variables
@@ -199,7 +199,6 @@ class ESGFSearch(object):
         ctx = ctx.constrain(dataset_id=dataset_id)
         items = []
         LOGGER.debug("hit_count: %s", ctx.hit_count)
-        print ctx.hit_count
         for result in ctx.search():
             if search_type == TYPE_FILE and not temporal_filter(result.filename, self._start, self._end):
                 LOGGER.debug("skipped by temporal filter")
@@ -249,7 +248,7 @@ class ESGFSearch(object):
         pinned_keywords = []
         for facet in ctx.facet_counts:
             if facet not in self._constraints and len(ctx.facet_counts[facet]) == 1:
-                pinned_keywords.append("{}:{}".format(facet, ctx.facet_counts[facet].keys()[0]))
+                pinned_keywords.append("{}:{}".format(facet, list(ctx.facet_counts[facet].keys())[0]))
         pinned_keywords = sorted(pinned_keywords)
         projects = Counter(ctx.facet_counts['project']).most_common(7)
         paged_results = []

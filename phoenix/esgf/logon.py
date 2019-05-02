@@ -3,7 +3,6 @@ import shutil
 import tempfile
 import requests
 import re
-import six
 from lxml import etree
 from io import BytesIO
 import OpenSSL
@@ -58,9 +57,6 @@ def logon(username=None, password=None, hostname=None, interactive=False, outdir
     outdir = outdir or os.curdir
     lm = LogonManager(esgf_dir=outdir, dap_config=os.path.join(outdir, 'dodsrc'))
     lm.logoff()
-    # TODO: fix encoding
-    if six.PY2:
-        hostname = hostname.encode('utf-8', 'ignore')
     # logon
     lm.logon(username=username, password=password, hostname=hostname,
              bootstrap=True, update_trustroots=False, interactive=interactive)

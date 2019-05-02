@@ -94,13 +94,13 @@ class Profile(MyView):
 
     def process_form(self, form):
         try:
-            controls = self.request.POST.items()
+            controls = list(self.request.POST.items())
             appstruct = form.validate(controls)
             for key in ['name', 'email', 'organisation', 'notes', 'group']:
                 if key in appstruct:
                     self.user[key] = appstruct.get(key)
             self.collection.update({'identifier': self.userid}, self.user)
-        except ValidationFailure, e:
+        except ValidationFailure as e:
             LOGGER.exception('validation of form failed.')
             return dict(form=e.render())
         else:

@@ -7,7 +7,7 @@ Providers which implement the |openid|_ protocol based on the
     This providers are dependent on the |pyopenid|_ package.
 """
 
-import urllib2
+from urllib.request import urlopen
 import ssl
 from authomatic.providers.openid import OpenID
 from openid.fetchers import setDefaultFetcher, Urllib2Fetcher
@@ -18,7 +18,7 @@ __all__ = ['ESGFOpenID']
 class MyFetcher(Urllib2Fetcher):
     @staticmethod
     def _urlopen(req):
-        return urllib2.urlopen(req, context=ssl._create_unverified_context())
+        return urlopen(req, context=ssl._create_unverified_context())
     urlopen = _urlopen
 
 

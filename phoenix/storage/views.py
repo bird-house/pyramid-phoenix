@@ -27,7 +27,7 @@ def delete(request):
     try:
         handle_delete(request, uuid=request.matchdict.get('uuid'))
         result = {"success": True}
-    except Exception, e:
+    except Exception as e:
         result = {"success": False, "error": e.message}
     return result
 
@@ -42,7 +42,7 @@ def upload(request):
             result = {'success': True, 'filename': filename}
         except FileNotAllowed:
             result = {"success": False, 'error': "Filename extension not allowed", "preventRetry": True}
-        except Exception, e:
+        except Exception as e:
             result = {"success": False, 'error': e.message}
     return result
 
@@ -109,7 +109,7 @@ def combine_chunks(total_parts, source_folder, dest):
         os.makedirs(os.path.dirname(dest))
 
     with open(dest, 'wb+') as destination:
-        for i in xrange(int(total_parts)):
+        for i in range(int(total_parts)):
             part = os.path.join(source_folder, str(i))
             with open(part, 'rb') as source:
                 destination.write(source.read())

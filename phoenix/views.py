@@ -13,7 +13,7 @@ _here = os.path.dirname(__file__)
 
 # favicon static/favicon.ico
 _favicon = open(os.path.join(
-                _here, 'static', 'favicon.ico')).read()
+                _here, 'static', 'favicon.ico'), 'rb').read()
 _favicon_response = Response(content_type='image/x-icon', body=_favicon)
 
 # robots static/robots.txt

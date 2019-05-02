@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from urllib.parse import urlparse, urlencode
 
 from owslib.util import build_get_url
 
@@ -13,7 +14,7 @@ LOGGER = logging.getLogger("PHOENIX")
 
 class ActionButton(object):
     def __init__(self, name, title=None, no_children=False, href=None, new_window=False,
-                 disabled=False, css_class=u"btn btn-default",
+                 disabled=False, css_class="btn btn-default",
                  icon=None):
         self.name = name
         if title is None:
@@ -39,7 +40,7 @@ class ActionButton(object):
         return isinstance(other, ActionButton) and repr(self) == repr(other)
 
     def __repr__(self):
-        return u'ActionButton({0}, {1})'.format(self.name, self.title)
+        return 'ActionButton({0}, {1})'.format(self.name, self.title)
 
 # processes
 
@@ -130,15 +131,13 @@ def localize_datetime(dt, tz_name='UTC'):
 def is_url(url):
     """Check wheather given text is url or not
     """
-    from urlparse import urlparse
     return bool(urlparse(url).scheme)
 
 
 def build_url(url, query):
-    import urllib
     if not url.endswith('?'):
         url = url + '?'
-    return url + urllib.urlencode(query)
+    return url + urlencode(query)
 
 
 def wps_caps_url(url):

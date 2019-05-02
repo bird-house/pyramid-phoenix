@@ -34,11 +34,11 @@ class Processes(MyView):
 
     def process_form(self, form):
         try:
-            controls = self.request.POST.items()
+            controls = list(self.request.POST.items())
             appstruct = skip_csrf_token(form.validate(controls))
-        except ValidationFailure, e:
+        except ValidationFailure as e:
             return dict(title=self.title, form=e.render())
-        except Exception, e:
+        except Exception:
             self.session.flash("<strong>Error:</strong> Could not update settings.", queue="danger")
         else:
             settings = self.collection.find_one() or {}

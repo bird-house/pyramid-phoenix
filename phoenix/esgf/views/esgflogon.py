@@ -35,17 +35,17 @@ class ESGFLogon(object):
 
     def process_form(self, form):
         try:
-            controls = self.request.POST.items()
+            controls = list(self.request.POST.items())
             appstruct = form.validate(controls)
             result = esgf_logon.delay(authenticated_userid(self.request),
                                       appstruct.get('provider'),
                                       appstruct.get('username'),
                                       appstruct.get('password'))
             self.session['task_id'] = result.id
-        except ValidationFailure, e:
+        except ValidationFailure as e:
             self.session.flash("Form validation failed.", queue='danger')
             return dict(form=e.render())
-        except Exception, e:
+        except Exception as e:
             msg = '<strong>Error:</strong> ESGF logon failed: {0}.'.format(escape(e.message))
             self.session.flash(msg, queue='danger')
             return HTTPFound(location=self.request.route_path('esgflogon'))

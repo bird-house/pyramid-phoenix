@@ -33,7 +33,7 @@ class Outputs(object):
     def panel(self):
         job_id = self.request.matchdict.get('job_id')
         items = []
-        for output in process_outputs(self.request, job_id).values():
+        for output in list(process_outputs(self.request, job_id).values()):
             items.append(output_details(self.request, output))
         items = sorted(items, key=lambda item: item['identifier'], reverse=1)
         return dict(items=items)

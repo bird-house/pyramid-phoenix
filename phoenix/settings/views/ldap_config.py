@@ -34,8 +34,8 @@ class Ldap(MyView):
             check_csrf_token(self.request)
             try:
                 # Validate form
-                appstruct = ldap_form.validate(self.request.params.items())
-            except ValidationFailure, e:
+                appstruct = ldap_form.validate(list(self.request.params.items()))
+            except ValidationFailure as e:
                 LOGGER.exception('Validation failed!')
                 return dict(title='LDAP Settings', form=e.render())
             else:
