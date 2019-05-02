@@ -2,7 +2,7 @@ from datetime import datetime
 import uuid
 
 from pyramid.view import view_config, view_defaults, forbidden_view_config
-from pyramid.httpexceptions import HTTPFound, HTTPForbidden
+from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
 from pyramid.security import remember, forget
 from pyramid.compat import escape
