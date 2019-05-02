@@ -4,7 +4,7 @@ channels:
   - birdhouse
   - defaults
 dependencies:
-  - python=2.7
+  - python=3.6
   - setuptools
   - curl
   - pyopenssl
@@ -17,12 +17,11 @@ dependencies:
 # ipython used by make passwd
   - ipython
 # phoenix
-  - six
-  - nginx=1.10
+  - nginx
   - supervisor=4
-  - gunicorn=19
+  - gunicorn
   - requests-oauthlib
-  - gevent=1.2
+  - gevent
   - lxml
   - mako
   - dateparser
@@ -55,11 +54,12 @@ dependencies:
       - pyramid-celery==3.0.0
       - pyramid-mailer
       - pyramid-storage
-      - pyramid-twitcher==0.3.8
+      #- pyramid-twitcher==0.4.0
+      - -e git+https://github.com/bird-house/twitcher@master#egg=pyramid_twitcher
       - pyramid-rpc
       - colander
       - Authomatic==0.1.0.post1
-      - python-openid==2.2.5
+      - python-openid2==3.0
       - WebHelpers2
       - WebHelpers2_grid
       - repoze.sendmail

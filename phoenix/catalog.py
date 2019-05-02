@@ -126,7 +126,7 @@ def doc2record(document):
         if '_id' in document:
             # _id field not allowed in record
             del document["_id"]
-        record = namedtuple('Record', document.keys())(*document.values())
+        record = namedtuple('Record', list(document.keys()))(*list(document.values()))
     return record
 
 
@@ -147,7 +147,7 @@ class MongodbCatalog(Catalog):
         self.collection.delete_one({'identifier': identifier})
 
     def insert_record(self, record):
-        record['identifier'] = uuid.uuid4().get_urn()
+        record['identifier'] = uuid.uuid4().hex
         self.collection.update_one({'source': record['source']}, {'$set': record}, True)
 
     def harvest(self, url, service_type, service_name=None, service_title=None, public=False, c4i=False):

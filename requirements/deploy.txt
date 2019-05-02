@@ -15,7 +15,7 @@ deform
 #js.bootstrap
 PasteDeploy
 authomatic
-python-openid
+python-openid2
 webhelpers2
 webhelpers2_grid
 mako

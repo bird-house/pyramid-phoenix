@@ -60,7 +60,7 @@ def passwd_check(request, passphrase):
     False
     """
     import hashlib
-    hashed_passphrase = request.registry.settings.get('phoenix.password', u'')
+    hashed_passphrase = request.registry.settings.get('phoenix.password', '')
 
     try:
         algorithm, salt, pw_digest = hashed_passphrase.split(':', 2)

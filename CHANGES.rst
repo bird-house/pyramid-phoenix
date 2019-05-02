@@ -35,7 +35,7 @@ Dar-es-Salaam Release.
 0.8.1 (2018-04-04)
 ==================
 
-Montréal Release.
+Montreal Release.
 
 * configured require_csrf.
 * using check_csrf_token.

@@ -1,6 +1,6 @@
 from OpenSSL import crypto
 from base64 import b64encode
-from StringIO import StringIO
+from io import StringIO
 
 from requests_oauthlib import OAuth2Session
 

@@ -12,7 +12,6 @@ from owslib.wps import WPSExecution
 
 from pyramid.security import authenticated_userid
 
-from phoenix._compat import PY2, text_type
 from phoenix.geoform.widget import BBoxWidget, ResourceWidget
 from phoenix.geoform.form import BBoxValidator
 from phoenix.geoform.form import URLValidator
@@ -50,8 +49,6 @@ def check_status(url=None, response=None, sleep_secs=2, verify=False):
     else:
         raise Exception("you need to provide a status-location url or response object.")
     # TODO: see owslib: https://github.com/geopython/OWSLib/pull/477
-    if PY2 and isinstance(xml, text_type):
-        xml = xml.encode('utf8', errors='ignore')
     execution.checkStatus(response=xml, sleepSecs=sleep_secs)
     if execution.response is None:
         raise Exception("check_status failed!")
@@ -67,10 +64,10 @@ def appstruct_to_inputs(request, appstruct):
     """
     # LOGGER.debug("appstruct=%s", appstruct)
     inputs = []
-    for key, values in appstruct.items():
+    for key, values in list(appstruct.items()):
         if key in ['_async_check', 'csrf_token']:
             continue
-        if not isinstance(values, types.ListType):
+        if not isinstance(values, list):
             values = [values]
         for value in values:
             # LOGGER.debug("key=%s, value=%s, type=%s", key, value, type(value))

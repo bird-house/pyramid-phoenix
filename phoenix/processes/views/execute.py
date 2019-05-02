@@ -113,7 +113,7 @@ class ExecuteProcess(MyView):
         )
 
     def process_form(self, form):
-        controls = self.request.POST.items()
+        controls = list(self.request.POST.items())
         try:
             # TODO: uploader puts qqfile in controls
             controls = [control for control in controls if 'qqfile' not in control[0]]
@@ -121,7 +121,7 @@ class ExecuteProcess(MyView):
             appstruct = form.validate(controls)
             LOGGER.debug("before execute %s", appstruct)
             job_id = self.execute(appstruct)
-        except ValidationFailure, e:
+        except ValidationFailure as e:
             self.session.flash("Page validation failed.", queue='danger')
             return dict(process=self.process,
                         url=wps_describe_url(self.wps.url, self.processid),

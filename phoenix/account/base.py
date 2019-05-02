@@ -43,9 +43,9 @@ class Account(object):
 
     def process_form(self, form):
         try:
-            controls = self.request.POST.items()
+            controls = list(self.request.POST.items())
             appstruct = form.validate(controls)
-        except ValidationFailure, e:
+        except ValidationFailure as e:
             self.session.flash("<strong>Error:</strong> Login failed.", queue='danger')
             return dict(form=e.render())
         else:

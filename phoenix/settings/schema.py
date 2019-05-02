@@ -12,7 +12,7 @@ LOGGER = logging.getLogger("PHOENIX")
 def deferred_processes_widget(node, kw):
     processes = kw.get('processes', [])
     choices = [('', "Select up to six public processes you'd like to show.")]
-    for group in processes.keys():
+    for group in list(processes.keys()):
         options = []
         for process in processes[group]:
             option = "{}.{}".format(group, process)
@@ -30,7 +30,7 @@ class ProcessesSchema(deform.schema.CSRFSchema):
 
 
 class AuthProtocolSchema(deform.schema.CSRFSchema):
-    choices = AUTH_PROTOCOLS.items()
+    choices = list(AUTH_PROTOCOLS.items())
 
     auth_protocol = colander.SchemaNode(
         colander.Set(),

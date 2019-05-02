@@ -7,7 +7,7 @@ LOGGER = logging.getLogger("PHOENIX")
 def escape_output(output):
     if output:
         if isinstance(output, list):
-            return map(escape, output)
+            return list(map(escape, output))
         else:
             return escape(output)
     else:

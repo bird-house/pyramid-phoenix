@@ -56,7 +56,7 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.collection.delete_many({'identifier': {'$in': ids}})
-            self.session.flash(u"Selected jobs were deleted.", queue='info')
+            self.session.flash("Selected jobs were deleted.", queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     # @view_config(route_name='delete_all_jobs', permission='admin')
@@ -74,7 +74,7 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.collection.update_many({'identifier': {'$in': ids}}, {'$addToSet': {'tags': 'public'}})
-            self.session.flash(u"Selected jobs were made public.", 'info')
+            self.session.flash("Selected jobs were made public.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     @view_config(route_name='make_private')
@@ -85,7 +85,7 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.collection.update_many({'identifier': {'$in': ids}}, {'$pull': {'tags': 'public'}})
-            self.session.flash(u"Selected jobs were made private.", 'info')
+            self.session.flash("Selected jobs were made private.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     @view_config(route_name='set_favorite')
@@ -96,7 +96,7 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.collection.update_many({'identifier': {'$in': ids}}, {'$addToSet': {'tags': 'fav'}})
-            self.session.flash(u"Set as favorite done.", 'info')
+            self.session.flash("Set as favorite done.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     @view_config(route_name='unset_favorite')
@@ -107,7 +107,7 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.collection.update_many({'identifier': {'$in': ids}}, {'$pull': {'tags': 'fav'}})
-            self.session.flash(u"Unset as favorite done.", 'info')
+            self.session.flash("Unset as favorite done.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     @view_config(renderer='json', name='edit_job.json')
@@ -138,20 +138,20 @@ def monitor_buttons(context, request):
     # if request.has_permission('admin'):
     #    buttons.append(ActionButton('delete_all_jobs', title=u'Delete all',
     #                                css_class=u'btn btn-danger'))
-    buttons.append(ActionButton('delete_jobs', title=u'Delete',
-                                css_class=u'btn btn-danger',
+    buttons.append(ActionButton('delete_jobs', title='Delete',
+                                css_class='btn btn-danger',
                                 disabled=not request.has_permission('edit')))
-    buttons.append(ActionButton('make_public', title=u'Make Public',
-                                css_class=u'btn btn-warning',
+    buttons.append(ActionButton('make_public', title='Make Public',
+                                css_class='btn btn-warning',
                                 disabled=not request.has_permission('edit')))
-    buttons.append(ActionButton('make_private', title=u'Make Private',
-                                css_class=u'btn btn-warning',
+    buttons.append(ActionButton('make_private', title='Make Private',
+                                css_class='btn btn-warning',
                                 disabled=not request.has_permission('edit')))
-    buttons.append(ActionButton('set_favorite', title=u'Set Favorite',
-                                css_class=u'btn btn-success',
+    buttons.append(ActionButton('set_favorite', title='Set Favorite',
+                                css_class='btn btn-success',
                                 disabled=not request.has_permission('edit')))
-    buttons.append(ActionButton('unset_favorite', title=u'Unset Favorite',
-                                css_class=u'btn btn-success',
+    buttons.append(ActionButton('unset_favorite', title='Unset Favorite',
+                                css_class='btn btn-success',
                                 disabled=not request.has_permission('edit')))
     return buttons
 

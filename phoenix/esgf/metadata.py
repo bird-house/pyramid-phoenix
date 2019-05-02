@@ -1,7 +1,7 @@
 from owslib.wps import WebProcessingService
 from pyesgf.multidict import MultiDict
 
-from phoenix._compat import urlparse
+from urllib.parse import urlparse
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -30,5 +30,5 @@ def convert_constraints(url):
         key, value = qpart.split('=')
         for val in value.split(','):
             constraints.add(key.strip(), val.strip())
-    converted = ','.join(["{0[0]}:{0[1]}".format(c) for c in constraints.iteritems()])
+    converted = ','.join(["{0[0]}:{0[1]}".format(c) for c in constraints.items()])
     return converted

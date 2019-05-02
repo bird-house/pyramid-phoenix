@@ -63,7 +63,7 @@ class LDAPAccount(Account):
             ldap_settings = self.request.db.ldap.find_one()
 
             # Set LDAP settings
-            import ldap
+            from . import ldap
             if ldap_settings['scope'] == 'ONELEVEL':
                 ldap_scope = ldap.SCOPE_ONELEVEL
             else:

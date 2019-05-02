@@ -69,15 +69,15 @@ class RegisterService(MyView):
 
     def process_form(self, form):
         try:
-            controls = self.request.POST.items()
+            controls = list(self.request.POST.items())
             appstruct = form.validate(controls)
             url = appstruct.get('url')
             del appstruct['csrf_token']
             self.request.catalog.harvest(**appstruct)
             self.session.flash('Registered Service %s' % (url), queue="success")
-        except ValidationFailure, e:
+        except ValidationFailure as e:
             return dict(title=self.title, form=e.render())
-        except Exception, ex:
+        except Exception as ex:
             LOGGER.exception('could not register service.')
             self.session.flash('Could not register Service {0}: {1}'.format(url, ex), queue="danger")
         return HTTPFound(location=self.request.route_path('services'))
