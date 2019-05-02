@@ -43,7 +43,7 @@ dependencies:
   - webob
   - argcomplete
   - pip:
-      - pyramid==1.9.4
+      - pyramid
       - pyramid-beaker
       - Beaker
       - pyramid-deform

@@ -1,5 +1,4 @@
 VERSION := 0.4.0
-RELEASE := master
 
 # Include custom config if it is available
 -include Makefile.config
@@ -22,7 +21,6 @@ ANACONDA_HOME ?= $(HOME)/anaconda
 CONDA_ENV ?= $(APP_NAME)
 CONDA_ENVS_DIR ?= $(HOME)/.conda/envs
 CONDA_ENV_PATH := $(CONDA_ENVS_DIR)/$(CONDA_ENV)
-CONDA_PINNED := $(APP_ROOT)/requirements/conda_pinned
 
 # Configuration used by update-config
 HOSTNAME ?= localhost
@@ -32,9 +30,9 @@ OUTPUT_PORT ?= 8090
 # choose anaconda installer depending on your OS
 ANACONDA_URL = https://repo.continuum.io/miniconda
 ifeq "$(OS_NAME)" "Linux"
-FN := Miniconda2-latest-Linux-x86_64.sh
+FN := Miniconda3-latest-Linux-x86_64.sh
 else ifeq "$(OS_NAME)" "Darwin"
-FN := Miniconda2-latest-MacOSX-x86_64.sh
+FN := Miniconda3-latest-MacOSX-x86_64.sh
 else
 FN := unknown
 endif
@@ -74,7 +72,6 @@ help:
 	@echo "  distclean   to remove *all* files that are not controlled by 'git'. WARNING: use it *only* if you know what you do!"
 	@echo "  passwd      to generate password for 'phoenix-password' in custom.cfg."
 	@echo "  export      to export the conda environment. Caution! You always need to check it the enviroment.yml is working."
-	@echo "  selfupdate  to update this Makefile."
 	@echo "\nSupervisor targets:"
 	@echo "  start       to start supervisor service."
 	@echo "  stop        to stop supervisor service."
@@ -103,17 +100,6 @@ info:
 backup:
 	@echo "Backup custom config ..."
 	@-test -f custom.cfg && cp -v --update --backup=numbered --suffix=.bak custom.cfg custom.cfg.bak
-
-.PHONY: .gitignore
-.gitignore:
-	@echo "Setup default .gitignore ..."
-	@curl "https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/$(RELEASE)/dot_gitignore" --silent --insecure --output .gitignore
-
-.PHONY: bootstrap.sh
-bootstrap.sh:
-	@echo "Update bootstrap.sh ..."
-	@curl "https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/$(RELEASE)/bootstrap.sh" --silent --insecure --output bootstrap.sh "https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/$(RELEASE)/bootstrap.sh"
-	@chmod 755 bootstrap.sh
 
 custom.cfg:
 	@echo "Using custom.cfg for buildout ..."
@@ -159,11 +145,6 @@ conda_env: anaconda conda_config
 	@test -d $(CONDA_ENV_PATH) || "$(ANACONDA_HOME)/bin/conda" env create -n $(CONDA_ENV) -f environment.yml
 	"$(ANACONDA_HOME)/bin/conda" install -y -n $(CONDA_ENV) setuptools=$(SETUPTOOLS_VERSION)
 
-.PHONY: conda_pinned
-conda_pinned: conda_env
-	@echo "Update pinned conda packages ..."
-	@-test -d $(CONDA_ENV_PATH) && test -f $(CONDA_PINNED) && cp -f "$(CONDA_PINNED)" "$(CONDA_ENV_PATH)/conda-meta/pinned"
-
 .PHONY: export
 export:
 	@echo "Exporting conda enviroment ..."
@@ -172,7 +153,7 @@ export:
 ## Build targets
 
 .PHONY: bootstrap
-bootstrap: init conda_env conda_pinned bootstrap-buildout.py
+bootstrap: init conda_env bootstrap-buildout.py
 	@echo "Bootstrap buildout ..."
 	@test -f bin/buildout || bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV);python bootstrap-buildout.py -c custom.cfg --allow-site-packages --setuptools-version=$(SETUPTOOLS_VERSION) --buildout-version=$(BUILDOUT_VERSION)"
 
@@ -260,10 +241,6 @@ linkcheck:
 doc8:
 	@echo "Running doc8 doc style checks ..."
 	$(CONDA_ENV_PATH)/bin/doc8 docs/
-
-.PHONY: selfupdate
-selfupdate: bootstrap.sh .gitignore
-	@curl "https://raw.githubusercontent.com/bird-house/birdhousebuilder.bootstrap/$(RELEASE)/Makefile" --silent --insecure --output Makefile
 
 ## Supervisor targets
 
