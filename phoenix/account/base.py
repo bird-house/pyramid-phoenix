@@ -178,6 +178,8 @@ class Account(object):
                     # TODO: fix email ... get more infos ... which login_id?
                     login_id = "{0.username}@github.com".format(result.user)
                     return self.login_success(login_id=login_id, name=result.user.name)
+                if result.provider.name == 'ceda_oauth':
+                    return self.login_success(login_id=result.user.name, name=result.user.name)
                 else:
                     # TODO: change login_id ... more infos ...
                     return self.login_success(login_id=result.user.id,
