@@ -11,7 +11,7 @@ class Details(MyView):
         self.job_id = self.request.matchdict.get('job_id')
         self.collection = self.request.db.jobs
 
-    @view_config(route_name='job_details', renderer='../templates/monitor/details.pt')
+    @view_config(route_name='job_details', renderer='phoenix:monitor/templates/monitor/details.pt')
     def view(self):
         job = self.collection.find_one({'identifier': self.job_id})
         return dict(active=self.tab, job_id=self.job_id, status=job['status'])

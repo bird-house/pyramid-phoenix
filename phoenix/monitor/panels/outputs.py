@@ -29,7 +29,7 @@ class Outputs(object):
         self.request = request
         self.session = self.request.session
 
-    @panel_config(name='job_outputs', renderer='../templates/monitor/panels/media.pt')
+    @panel_config(name='job_outputs', renderer='phoenix:monitor/templates/monitor/panels/media.pt')
     def panel(self):
         job_id = self.request.matchdict.get('job_id')
         items = []

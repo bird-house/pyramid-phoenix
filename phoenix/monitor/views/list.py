@@ -128,7 +128,7 @@ class JobList(MyView):
             self.session.flash("Labels updated.", queue='success')
         return HTTPFound(location=self.request.route_path('monitor'))
 
-    @view_config(route_name='monitor', renderer='../templates/monitor/list.pt', accept='text/html')
+    @view_config(route_name='monitor', renderer='phoenix:monitor/templates/monitor/list.pt', accept='text/html')
     def view(self):
         if not self.request.has_permission('edit'):
             msg = """<strong>Warning:</strong> You are not allowed to monitor jobs.

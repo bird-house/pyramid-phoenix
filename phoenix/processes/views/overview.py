@@ -52,7 +52,10 @@ class Overview(MyView):
                         service_title=wps.identification.title))
         return processes
 
-    @view_config(route_name='processes', renderer='../templates/processes/overview.pt', accept='text/html')
+    @view_config(
+        route_name='processes',
+        renderer='phoenix:processes/templates/processes/overview.pt',
+        accept='text/html')
     def view(self):
         return dict(title="Web Processing Services",
                     items=self.wps_services(),

@@ -48,7 +48,7 @@ class LDAPAccount(Account):
             # Authentification failed
             return self.login_failure()
 
-    @view_config(route_name='ldap_login', renderer='templates/account/login.pt')
+    @view_config(route_name='ldap_login', renderer='phoenix:account/templates/account/login.pt')
     def ldap_login(self):
         self.init_ldap()
         return self.login()

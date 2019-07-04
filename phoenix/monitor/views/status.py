@@ -13,7 +13,7 @@ class JobStatus(MyView):
         self.collection = self.request.db.jobs
         super(JobStatus, self).__init__(request, name='job_status', title='')
 
-    @view_config(route_name='job_status', renderer='../templates/monitor/status.pt')
+    @view_config(route_name='job_status', renderer='phoenix:monitor/templates/monitor/status.pt')
     def view(self):
         status = 'ProcessAccepted'
         log = None

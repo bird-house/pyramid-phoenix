@@ -52,7 +52,7 @@ class Processes(MyView):
         appstruct = self.collection.find_one() or {}
         return skip_csrf_token(appstruct)
 
-    @view_config(route_name='settings_processes', renderer='../templates/settings/processes.pt')
+    @view_config(route_name='settings_processes', renderer='phoenix:settings/templates/settings/processes.pt')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
