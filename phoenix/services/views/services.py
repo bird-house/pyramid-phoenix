@@ -16,7 +16,7 @@ class Services(MyView):
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
-    @view_config(route_name='service_details', renderer='../templates/services/service_details.pt')
+    @view_config(route_name='service_details', renderer='phoenix:services/templates/services/service_details.pt')
     def details_view(self):
         service_id = self.request.matchdict.get('service_id')
         service = self.request.catalog.get_record_by_id(service_id)
@@ -28,6 +28,6 @@ class Services(MyView):
                 self.session.flash("<strong>Error</strong>: This service is not available.", queue='danger')
         return dict(service=service, service_name=service_name)
 
-    @view_config(route_name="services", renderer='../templates/services/service_list.pt')
+    @view_config(route_name="services", renderer='phoenix:services/templates/services/service_list.pt')
     def list_view(self):
         return dict(items=self.request.catalog.get_services())

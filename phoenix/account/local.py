@@ -28,6 +28,6 @@ class LocalAccount(Account):
             return self.login_success(login_id="phoenix@localhost", name="Phoenix", local=True)
         return self.login_failure()
 
-    @view_config(route_name='sign_in', renderer='templates/account/sign_in.pt')
+    @view_config(route_name='sign_in', renderer='phoenix:account/templates/account/sign_in.pt')
     def sign_in(self):
         return self.login()

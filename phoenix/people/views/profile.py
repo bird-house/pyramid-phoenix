@@ -107,7 +107,7 @@ class Profile(MyView):
             self.request.session.flash("Your profile was updated.", queue='success')
         return HTTPFound(location=self.request.current_route_path())
 
-    @view_config(route_name='profile', renderer='../templates/people/profile.pt')
+    @view_config(route_name='profile', renderer='phoenix:people/templates/people/profile.pt')
     def view(self):
         form = self.generate_form()
 

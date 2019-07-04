@@ -8,6 +8,6 @@ class Cart(MyView):
     def __init__(self, request):
         super(Cart, self).__init__(request, name='cart', title='Cart')
 
-    @view_config(route_name='cart', renderer='templates/cart/cart.pt')
+    @view_config(route_name='cart', renderer='phoenix:cart/templates/cart/cart.pt')
     def view(self):
         return {}

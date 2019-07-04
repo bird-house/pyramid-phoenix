@@ -22,7 +22,7 @@ class ProcessList(MyView):
             verify=False)
         super(ProcessList, self).__init__(request, name='processes_list', title='')
 
-    @view_config(route_name='processes_list', renderer='../templates/processes/list.pt', accept='text/html')
+    @view_config(route_name='processes_list', renderer='phoenix:processes/templates/processes/list.pt', accept='text/html')
     def view(self):
         items = []
         for process in self.wps.processes:

@@ -14,7 +14,7 @@ class People(MyView):
         super(People, self).__init__(request, name='people', title='')
         self.collection = self.request.db.users
 
-    @view_config(route_name='people', renderer='../templates/people/list.pt')
+    @view_config(route_name='people', renderer='phoenix:people/templates/people/list.pt')
     def view(self):
         user_items = list(self.collection.find().sort('last_login', -1))
         grid = PeopleGrid(

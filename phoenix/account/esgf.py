@@ -34,6 +34,6 @@ class ESGFAccount(Account):
                          provider=appstruct.get('provider'),
                          _query=dict(username=appstruct.get('username'))))
 
-    @view_config(route_name='esgf_login', renderer='templates/account/login.pt')
+    @view_config(route_name='esgf_login', renderer='phoenix:account/templates/account/login.pt')
     def esgf_login(self):
         return self.login()

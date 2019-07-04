@@ -19,7 +19,7 @@ class Ldap(MyView):
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
         return breadcrumbs
 
-    @view_config(route_name='settings_ldap', renderer='../templates/settings/ldap.pt')
+    @view_config(route_name='settings_ldap', renderer='phoenix:settings/templates/settings/ldap.pt')
     def view(self):
         # Get LDAP settings
         ldap_settings = self.request.db.ldap.find_one()

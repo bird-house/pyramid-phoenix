@@ -19,7 +19,7 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@forbidden_view_config(renderer='templates/account/forbidden.pt')
+@forbidden_view_config(renderer='phoenix:account/templates/account/forbidden.pt')
 def forbidden(request):
     request.response.status = 403
     return dict()
@@ -148,7 +148,7 @@ class Account(object):
         self.session.invalidate()  # deleting the session
         return HTTPFound(location=self.request.route_path('home'), headers=headers)
 
-    @view_config(route_name='account_register', renderer='templates/account/register.pt')
+    @view_config(route_name='account_register', renderer='phoenix:account/templates/account/register.pt')
     def register(self):
         return dict()
 

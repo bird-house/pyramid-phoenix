@@ -8,7 +8,7 @@ class Overview(MyView):
     def __init__(self, request):
         super(Overview, self).__init__(request, name='settings', title='Overview')
 
-    @view_config(route_name='settings', renderer='../templates/settings/overview.pt')
+    @view_config(route_name='settings', renderer='phoenix:settings/templates/settings/overview.pt')
     def view(self):
         buttongroups = list()
         buttons = list()
