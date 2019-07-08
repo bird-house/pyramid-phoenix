@@ -30,7 +30,8 @@ class ProcessList(MyView):
         items = []
         for process in self.wps.processes:
             item = dict(
-                title="{0.title} {0.processVersion}".format(process),
+                title=process.title,
+                version=process.processVersion,
                 description=getattr(process, 'abstract', ''),
                 media=get_process_media(process),
                 url=self.request.route_path('processes_execute',
