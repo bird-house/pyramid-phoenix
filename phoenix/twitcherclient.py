@@ -49,7 +49,7 @@ def generate_access_token(registry, userid, valid_in_hours=1):
         LOGGER.debug("passing token with esgf credentials")
 
     # call to service
-    token = service.generate_token(valid_in_hours, data)
+    token = service.generate_token(valid_in_hours)
     if userid and token:
         collection.update_one(
             {'identifier': userid},
