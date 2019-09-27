@@ -1,6 +1,19 @@
 Changes
 *******
 
+0.10.0 (2019-09-27)
+==================
+
+Bucharest Release.
+
+* Skipped Python 2.7 support (#195).
+* Pinned twitcher 0.4.0 (#208).
+* Upadate pyramid (1.10) (#196).
+* Cleaned up buildout.cfg (#193).
+* Removed unmaintained code: solr view, supervisor view, wizard, pycsw catalog  (#187).
+* Updates view with processes (#205).
+* Fixes (#206, #203, #202, #201, #200, #199).
+
 0.9.0 (2019-04-25)
 ==================
 
