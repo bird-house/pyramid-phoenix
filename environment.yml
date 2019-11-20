@@ -30,7 +30,7 @@ dependencies:
   - pyyaml
   - pygments
   - pytz
-  - owslib=0.17
+  - owslib=0.19
   - transaction
   - genshi=0.7
 # celery

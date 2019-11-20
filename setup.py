@@ -7,7 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
-reqs = [line.strip() for line in open('requirements/deploy.txt')]
+reqs = [line.strip() for line in open('requirements.txt')]
 
 setup(name='Phoenix',
       version=version,
@@ -24,7 +24,7 @@ setup(name='Phoenix',
       author_email='',
       url='https://github.com/bird-house/pyramid-phoenix.git',
       license='Apache License 2.0',
-      keywords='web buildout pylons pyramids phoenix birdhouse wps pywps esgf',
+      keywords='web buildout pyramids phoenix birdhouse wps pywps esgf',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
