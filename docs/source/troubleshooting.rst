@@ -17,7 +17,6 @@ Phoenix needs a running mongodb and pycsw service. Sometimes Phoenix is started 
 
     $ source activate pyramid-phoenix     # activate conda environment used by phoenix
     $ supervisorctl restart mongodb
-    $ supervisorctl restart pycsw
     $ supervisorctl restart phoenix
 
 You can also try to restart all services with:

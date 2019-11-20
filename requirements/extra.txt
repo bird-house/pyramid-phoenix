@@ -1,6 +1,0 @@
-# ldap
-pyramid_ldap
-ldappool<2
-funcsigs
-# esgf logon
-myproxyclient==2.1.0

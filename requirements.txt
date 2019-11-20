@@ -20,7 +20,7 @@ webhelpers2
 webhelpers2_grid
 mako
 pyyaml
-owslib>=0.17.0
+owslib>=0.19.0
 lxml
 python-dateutil
 pytz

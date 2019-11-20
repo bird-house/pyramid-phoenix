@@ -9,8 +9,8 @@ In the following tutorial will guide you though the first steps to get familliar
    :maxdepth: 1
 
    tutorial/helloworld
-   tutorial/cdosinfo
-   tutorial/cdoensemble
-   tutorial/cdoopendap
-   tutorial/visualisation
-   tutorial/solrsearch
+   .. tutorial/cdosinfo
+   .. tutorial/cdoensemble
+   .. tutorial/cdoopendap
+   .. tutorial/visualisation
+   .. tutorial/solrsearch
