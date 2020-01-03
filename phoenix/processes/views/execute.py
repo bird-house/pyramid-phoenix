@@ -9,14 +9,12 @@ from phoenix.events import JobStarted
 from phoenix.views import MyView
 from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
-from phoenix.wps import check_status
 from phoenix.utils import wps_describe_url
 from phoenix.security import check_csrf_token
 
 from owslib.wps import WebProcessingService
 from owslib.wps import WPSExecution
 from owslib.wps import ComplexDataInput, BoundingBoxDataInput
-from owslib.wps import is_reference
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")

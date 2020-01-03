@@ -12,9 +12,9 @@ def navbar(context, request):
         active = root_path(request.current_route_path()) == root_path(url)
         return dict(name=name, url=url, active=active, icon=icon)
 
-    def dropdown(name, items=None, icon=None):
-        items = items or []
-        return dict(name=name, icon=icon, items=items)
+    # def dropdown(name, items=None, icon=None):
+    #     items = items or []
+    #     return dict(name=name, icon=icon, items=items)
 
     items = list()
     items.append(nav_item('Processes', request.route_path('processes')))

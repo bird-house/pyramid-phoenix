@@ -31,10 +31,8 @@ class KeycloakProvider(OAuth2):
     authomatic.providers.oauth2 package.
     """
 
-    user_authorization_url = 'http://localhost:8080/auth/realms/demo/protocol/openid-connect/auth'
-    access_token_url = 'http://localhost:8080/auth/realms/demo/protocol/openid-connect/token'
-    # user_info_url = 'https://slcs.ceda.ac.uk/oauth/profile/'
-    # user_info_scope = ['https://slcs.ceda.ac.uk/oauth/profile/']
+    user_authorization_url = ''  # http://localhost:8080/auth/realms/demo/protocol/openid-connect/auth
+    access_token_url = ''  # http://localhost:8080/auth/realms/demo/protocol/openid-connect/token
 
     same_origin = False
 
