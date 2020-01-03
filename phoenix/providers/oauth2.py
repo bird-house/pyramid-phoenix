@@ -31,8 +31,8 @@ class KeycloakProvider(OAuth2):
     authomatic.providers.oauth2 package.
     """
 
-    user_authorization_url = ''  # http://localhost:8080/auth/realms/demo/protocol/openid-connect/auth
-    access_token_url = ''  # http://localhost:8080/auth/realms/demo/protocol/openid-connect/token
+    user_authorization_url = None  # 'http://localhost:8080/auth/realms/demo/protocol/openid-connect/auth'
+    access_token_url = None  # 'http://localhost:8080/auth/realms/demo/protocol/openid-connect/token'
 
     same_origin = False
 
