@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from pyramid_layout.panel import panel_config
 
 from phoenix.security import Guest
-from phoenix.catalog import WPS_TYPE, THREDDS_TYPE
 
 import logging
 logger = logging.getLogger(__name__)
@@ -12,8 +11,7 @@ logger = logging.getLogger(__name__)
 def dashboard_overview(context, request):
     return dict(people=request.db.users.count(),
                 jobs=request.db.jobs.count(),
-                wps=len(request.catalog.get_services(service_type=WPS_TYPE)),
-                tds=len(request.catalog.get_services(service_type=THREDDS_TYPE)))
+                wps=len(request.catalog.get_services()))
 
 
 @panel_config(name='dashboard_people', renderer='phoenix:dashboard/templates/dashboard/panels/people.pt')

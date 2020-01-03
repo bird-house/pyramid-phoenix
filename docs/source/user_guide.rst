@@ -24,25 +24,9 @@ The login page offers you several options to login to Phoenix.
 .. image:: _images/login.png
   :scale: 50%
 
-You can login using your ESGF OpenID or your GitHub account.
-If you login for the first time your account needs to be activated by an administrator.
+You can login using your GitHub account.
 
 If you are Phoenix admin you can also enter the admin password here.
-
-**ESGF OpenID**
-
-You can use an `ESGF OpenID <https://www.earthsystemcog.org/projects/cog/tutorials_web>`_.
-The ESGF OpenID is used later to access files from `ESGF <https://esgf.llnl.gov/>`_.
-Make sure, that you have a valid ESGF OpenID of one of the ESGF Providers
-(for example `DKRZ <http://esgf-data.dkrz.de/>`_)
-and that you are able to download a datafile (you need to register for CMIP5 and CORDEX).
-
-Enter the account name of your ESGF OpenID and choose the according
-ESGF OpenID provider (by default this is DKRZ).
-
-.. image:: _images/login_esgf.png
-  :scale: 50%
-
 
 Dashboard
 ---------
@@ -101,12 +85,9 @@ In ``My Account`` you can change your user settings (user name, organisation, op
 
 .. image:: _images/myaccount.png
 
-You can also see your current `Twitcher`_ access token which you can use to access a registered WPS service directly.
+You can also see your current access token which you can use to access a protected WPS service directly.
 
-.. image:: _images/twitcher-token.png
-
-See the Twitcher :ref:`twitcher:tutorial` on how to use the token to access a WPS service.
-
+.. image:: _images/access-token.png
 
 Settings (admins only)
 ----------------------
@@ -134,23 +115,3 @@ http://localhost:5000/wps
 .. image:: _images/add_wps_service.png
 
 .. _activate_users:
-
-Activate Users
-~~~~~~~~~~~~~~
-
-Open the ``Settings/Users`` page. Here you activate/deactivate users and also remove them. When a user has registerd to the Phoenix web application the user needs to be activated before the user can login.
-
-Choose Authentication Protocol
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Open the ``Settings/Auth`` page. Here you can choose the different authentication protocols (OpenID, LDAP, ...) which users can use on the login page. ``Local Auth`` enables the local admin account whose password is set in ``custom.cfg`` in your Phoenix installation.
-
-.. image:: _images/settings_auth.png
-
-
-GitHub Support
-~~~~~~~~~~~~~~
-
-You can use GitHub accounts to login to Phoenix. GitHub uses OAuth2. First you need to register your Phoenix application at `GitHub <https://github.com/settings/applications/new>`_. Then go to ``Settings/GitHub`` in your Phoenix application and enter the ``GitHub Consumer Key/Client ID`` and ``GitHub Consumer Secret/Client Secret``:
-
-.. image:: _images/settings_github.png

@@ -23,15 +23,6 @@ def navbar(context, request):
 
     subitems = list()
     subitems.append(nav_item('Dashboard', request.route_path('dashboard', tab='overview'), icon='fa fa-dashboard'))
-    # dropdown browse
-    browse_items = list()
-    browse_items.append(nav_item('ESGF search', request.route_path('esgfsearch'), icon='fa fa-globe'))
-    subitems.append(dropdown('Browse', items=browse_items, icon='fa fa-search'))
-    # if request.has_permission('submit'):
-    #     subitems.append(nav_item('Cart', request.route_path('cart'), icon='fa fa-shopping-cart'))
-    # if request.has_permission('admin'):
-    #     subitems.append(nav_item('People', request.route_path('people'), icon="fa fa-users"))
-    #     subitems.append(nav_item('Settings', request.route_path('settings'), icon="fa fa-wrench"))
 
     return dict(items=items, subitems=subitems)
 

@@ -19,24 +19,20 @@ from pyramid.csrf import check_csrf_token as _check_csrf_token
 
 from authomatic import Authomatic, provider_id
 from authomatic.providers import oauth2
-from phoenix.providers import esgfopenid
-from phoenix.providers.oauth2 import CEDAProvider
+from phoenix.providers.oauth2 import CEDAProvider, create_keycloak_provider
 
-from phoenix.twitcherclient import is_public
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 Admin = 'group.admin'
-Developer = 'group.develper'
 User = 'group.user'
 Guest = 'group.guest'
 
 AUTH_PROTOCOLS = OrderedDict([
     ('phoenix', 'Phoenix'),
-    ('esgf', 'ESGF OpenID'),
     ('github', 'GitHub'),
-    ('ldap', 'LDAP')])
+])
 
 
 def check_csrf_token(request):
@@ -45,41 +41,12 @@ def check_csrf_token(request):
     return True
 
 
-def has_execute_permission(request, service_name):
-    return is_public(request.registry, service_name) or request.has_permission('submit')
-
-
 def passwd_check(request, passphrase):
     """
-    code taken from IPython.lib.security
-    TODO: maybe import ipython
-
-    >>> passwd_check('sha1:0e112c3ddfce:a68df677475c2b47b6e86d0467eec97ac5f4b85a',
-    ...              'anotherpassword')
-    False
+    TODO: See passwd_check in IPython.lib.security
     """
-    import hashlib
-    hashed_passphrase = request.registry.settings.get('phoenix.password', '')
-
-    try:
-        algorithm, salt, pw_digest = hashed_passphrase.split(':', 2)
-    except (ValueError, TypeError):
-        return False
-
-    try:
-        h = hashlib.new(algorithm)
-    except ValueError:
-        return False
-
-    if len(pw_digest) == 0:
-        return False
-
-    try:
-        h.update(passphrase.encode('utf-8') + salt.encode('ascii'))
-    except Exception:
-        return False
-
-    return h.hexdigest() == pw_digest
+    phoenix_passphrase = request.registry.settings.get('phoenix.password', '')
+    return phoenix_passphrase == passphrase
 
 
 def groupfinder(userid, request):
@@ -87,8 +54,6 @@ def groupfinder(userid, request):
     if user:
         if user.get('group') == Admin:
             return [Admin]
-        elif user.get('group') == Developer:
-            return [Developer]
         elif user.get('group') == User:
             return [User]
     return [Guest]
@@ -101,7 +66,6 @@ class Root():
         (Allow, Everyone, 'view'),
         (Allow, Authenticated, 'edit'),
         (Allow, User, 'submit'),
-        (Allow, Developer, ('submit', 'explore')),
         (Allow, Admin, ALL_PERMISSIONS)
     ]
 
@@ -129,30 +93,6 @@ def authomatic_config(request):
         'popup': True,
     }
 
-    ESGF = {
-        'dkrz': {
-            'class_': esgfopenid.ESGFOpenID,
-            'hostname': 'esgf-data.dkrz.de',
-        },
-        'ipsl': {
-            'class_': esgfopenid.ESGFOpenID,
-            'hostname': 'esgf-node.ipsl.upmc.fr',
-        },
-        'ceda': {
-            'class_': esgfopenid.ESGFOpenID,
-            'hostname': 'ceda.ac.uk',
-            'provider_url': 'https://{hostname}/openid/{username}',
-        },
-        'pcmdi': {
-            'class_': esgfopenid.ESGFOpenID,
-            'hostname': 'pcmdi.llnl.gov',
-        },
-        'smhi': {
-            'class_': esgfopenid.ESGFOpenID,
-            'hostname': 'esg-dn1.nsc.liu.se',
-        },
-    }
-
     OAUTH2 = {
         'github': {
             'class_': oauth2.GitHub,
@@ -173,12 +113,20 @@ def authomatic_config(request):
             'access_headers': {'User-Agent': 'Phoenix'},
             'scope': CEDAProvider.user_info_scope,
         },
+        'keycloak': {  # keycloak
+            'class_': create_keycloak_provider(
+                url=request.registry.settings.get('keycloak.url'),
+                realm=request.registry.settings.get('keycloak.realm')),
+            'consumer_key': request.registry.settings.get('keycloak.client.id'),
+            'consumer_secret': request.registry.settings.get('keycloak.client.secret'),
+            'access_headers': {'User-Agent': 'Phoenix'},
+            'scope': 'openid email profile',
+        },
     }
 
     # Concatenate the configs.
     config = {}
     config.update(OAUTH2)
-    config.update(ESGF)
     config['__defaults__'] = DEFAULTS
     return config
 

@@ -25,7 +25,7 @@ class LocalAccount(Account):
     def _handle_appstruct(self, appstruct):
         password = appstruct.get('password')
         if passwd_check(self.request, password):
-            return self.login_success(login_id="phoenix@localhost", name="Phoenix", local=True)
+            return self.login_success(login_id="admin", provider='local')
         return self.login_failure()
 
     @view_config(route_name='sign_in', renderer='phoenix:account/templates/account/sign_in.pt')

@@ -12,9 +12,11 @@
             <div class="panel-body">
               <h2>Sign In</h2>
               <br/>
-              <a href="${request.route_path('esgf_login')}"
-                 class="btn btn-warning btn-lg"><icon class="fa fa-globe"></icon> Sign in with ESGF</a>
-              <br/><br/>
+              <div tal:condition="request.keycloak_activated">
+                <a href="${request.route_path('account_auth', provider='keycloak')}"
+                   class="btn btn-warning btn-lg"><icon class="fa fa-globe"></icon> Sign in with Keycloak</a>
+                <br/><br/>
+              </div>
               <div tal:condition="request.github_activated">
                 <a href="${request.route_path('account_auth', provider='github')}"
                    class="btn btn-warning btn-lg"><icon class="fa fa-github"></icon> Sign in with GitHub</a>
@@ -25,15 +27,10 @@
                    class="btn btn-warning btn-lg"><icon class="fa fa-globe"></icon> Sign in with CEDA</a>
                 <br/><br/>
               </div>
-              <div tal:condition="request.ldap_activated">
-                <a href="${request.route_path('ldap_login')}"
-                   class="btn btn-warning btn-lg"><icon class="fa fa-sitemap"></icon> Sign in with LDAP</a>
-                <br/><br/>
-              </div>
               <span class="text-muted">OR</span>
               <br/><br/>
               <tal:form replace="structure form">The form will render here</tal:form>
-              <a href="${request.route_path('account_register')}" class="btn btn-link">Register for an account</a>
+              <!-- a href="${request.route_path('account_register')}" class="btn btn-link">Register for an account</a -->
             </div>
           </div><!-- panel -->
         </div>

@@ -22,9 +22,6 @@ def main(global_config, **settings):
     # config.include('pyramid_deform')
     # config.include('js.deform')
 
-    # mailer
-    config.include('pyramid_mailer')
-
     # celery
     config.include('pyramid_celery')
     config.configure_celery(global_config['__file__'])
@@ -39,9 +36,6 @@ def main(global_config, **settings):
     # config.include('phoenix.db')
     from phoenix.db import includeme as include_db
     include_db(config)
-
-    # twitcher
-    config.include('phoenix.twitcherclient')
 
     # routes
     config.add_route('home', '/')
@@ -64,9 +58,6 @@ def main(global_config, **settings):
     # job monitor
     config.include('phoenix.monitor')
 
-    # esgf search
-    config.include('phoenix.esgf')
-
     # user profiles
     config.include('phoenix.people')
 
@@ -75,9 +66,6 @@ def main(global_config, **settings):
 
     # service settings
     config.include('phoenix.services')
-
-    # cart
-    config.include('phoenix.cart')
 
     # readthedocs
     config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/en/latest/{part}.html')

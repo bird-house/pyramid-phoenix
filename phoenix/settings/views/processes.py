@@ -8,7 +8,6 @@ from phoenix.events import SettingsChanged
 from phoenix.utils import skip_csrf_token
 # TODO: move settings to processes
 from phoenix.settings.schema import ProcessesSchema
-from phoenix.processes.views.actions import ProcessesActions
 from phoenix.security import check_csrf_token
 
 import logging
@@ -28,7 +27,7 @@ class Processes(MyView):
         return breadcrumbs
 
     def generate_form(self):
-        processes = ProcessesActions(self.context, self.request).list_processes()
+        processes = {}  # ProcessesActions(self.context, self.request).list_processes()
         return Form(schema=ProcessesSchema().bind(request=self.request, processes=processes),
                     buttons=('submit',), formid='deform')
 

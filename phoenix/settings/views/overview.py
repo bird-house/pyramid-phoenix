@@ -14,11 +14,8 @@ class Overview(MyView):
         buttons = list()
 
         buttons.append(dict(url=self.request.route_path('services'), icon_class="fa fa-server fa-2x", title="Services"))
-        buttons.append(dict(url=self.request.route_path('settings_processes'),
-                            icon_class="fa fa-cogs fa-2x", title="Processes"))
-        if self.request.ldap_activated:
-            buttons.append(dict(url=self.request.route_path('settings_ldap'),
-                                icon_class="fa fa-sitemap fa-2x", title="LDAP"))
+        # buttons.append(dict(url=self.request.route_path('settings_processes'),
+        #                     icon_class="fa fa-cogs fa-2x", title="Processes"))
         buttongroups.append(dict(title='Settings', buttons=buttons))
 
         return dict(buttongroups=buttongroups)
