@@ -10,7 +10,7 @@ echo -e "Please enter keycloak access token: "
 read token
 
 curl -X POST \
--d '{ "clientId": "${parts.settings['keycloak-client-id']}", "redirectUris":["${redirect_uri}/account/auth/keycloak/*"], "secret":"${parts.settings['keycloak-client-secret']}" }' \
+-d '{ "clientId": "${parts.settings['keycloak-client-id']}", "redirectUris":["${redirect_uri}"], "secret":"${parts.settings['keycloak-client-secret']}" }' \
 -H "Content-Type:application/json" \
 -H "Authorization: bearer $$token" \
 ${parts.settings['keycloak-url']}/auth/realms/${parts.settings['keycloak-realm']}/clients-registrations/default
