@@ -16,9 +16,10 @@ def get_process_media(process):
 @view_defaults(permission='view', layout="default")
 class ProcessList(MyView):
     def __init__(self, request):
-        self.service_name = request.params.get('wps')
+        self.service_id = request.params.get('wps')
+        service = request.catalog.get_record_by_id(self.service_id)
         self.wps = WebProcessingService(
-            url=request.route_url('owsproxy', service_name=self.service_name),
+            url=service.url,
             verify=False)
         super(ProcessList, self).__init__(request, name='processes_list', title='')
 
@@ -35,7 +36,7 @@ class ProcessList(MyView):
                 description=getattr(process, 'abstract', ''),
                 media=get_process_media(process),
                 url=self.request.route_path('processes_execute',
-                                            _query=[('wps', self.service_name), ('process', process.identifier)]))
+                                            _query=[('wps', self.service_id), ('process', process.identifier)]))
             items.append(item)
         return dict(
             url=wps_caps_url(self.wps.url),

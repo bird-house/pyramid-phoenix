@@ -10,9 +10,9 @@ from pyramid.compat import escape
 from deform import Form, Button, ValidationFailure
 from authomatic.adapters import WebObAdapter
 
-from phoenix.security import Admin, Guest, authomatic
+from phoenix.security import Admin, User, authomatic
 from phoenix.security import check_csrf_token
-from phoenix.twitcherclient import generate_access_token
+from phoenix.oauth2 import KeycloakClient
 
 
 import logging
@@ -54,46 +54,15 @@ class Account(object):
     def _handle_appstruct(self, appstruct):
         raise NotImplementedError("Needs to be implemented in subclass")
 
-    def send_notification(self, email, subject, message):
-        """Sends email notification to admins.
-
-        Sends email with the pyramid_mailer module.
-        For configuration look at documentation http://pythonhosted.org//pyramid_mailer/
-        """
-        from pyramid_mailer import get_mailer
-        mailer = get_mailer(self.request)
-
-        sender = "noreply@%s" % (self.request.server_name)
-
-        recipients = set()
-        for user in self.collection.find({'group': Admin}):
-            email = user.get('email')
-            if email:
-                recipients.add(email)
-
-        if len(recipients) > 0:
-            from pyramid_mailer.message import Message
-            message = Message(subject=subject,
-                              sender=sender,
-                              recipients=recipients,
-                              body=message)
-            try:
-                mailer.send_immediately(message, fail_silently=True)
-            except Exception:
-                LOGGER.error("failed to send notification")
-        else:
-            LOGGER.warn("Can't send notification. No admin emails are available.")
-
-    def add_user(self, login_id, email=None):
+    def add_user(self, login_id):
         user = dict(
             identifier=str(uuid.uuid1()),
             login_id=login_id,
-            email=email or '',
-            openid='',
-            name='Guest',
+            email='',
+            name=login_id,
             organisation='',
             notes='',
-            group=Guest,
+            group=User,
             creation_time=datetime.now(),
             last_login=datetime.now())
         self.collection.save(user)
@@ -106,31 +75,23 @@ class Account(object):
             return self.process_form(form)
         return dict(form=form.render())
 
-    def login_success(self, login_id, email=None, name=None, openid=None, local=False):
+    def login_success(self, login_id, provider=None, token=None):
         self.session.invalidate()  # clear session
         user = self.collection.find_one(dict(login_id=login_id))
         if user is None:
-            LOGGER.warn("new user: %s", login_id)
-            user = self.add_user(login_id=login_id, email=email)
-            subject = 'Phoenix: New user {} logged in on {}'.format(user['name'], self.request.server_name)
-            message = 'Please check the activation of the user {} on the Phoenix host {}.'.format(
-                user['name'], self.request.server_name)
-            self.send_notification(email, subject, message)
-        if local:
+            LOGGER.warn("new user: {}".format(login_id))
+            user = self.add_user(login_id=login_id)
+        if provider == 'local':
             user['group'] = Admin
+        if provider == 'keycloak':
+            user['token'] = token
+        user['provider'] = provider
         user['last_login'] = datetime.now()
-        user['openid'] = openid or ''
-        user['name'] = name or 'Guest'
         self.collection.update({'login_id': login_id}, user)
-        self.session.flash("Hello <strong>{0}</strong>. Welcome to Phoenix.".format(escape(name)), queue='info')
-        if user.get('group') == Guest:
-            msg = """
-            <strong>Warning:</strong> You are a member of the <strong>Guest</strong> group.
-            You are only allowed to submit processes <strong>without access restrictions</strong>.
-            """
-            self.session.flash(msg, queue='warning')
-        else:
-            generate_access_token(self.request.registry, userid=user['identifier'])
+        self.session.flash("Hello <strong>{0}</strong>. Welcome to Phoenix.".format(escape(login_id)), queue='info')
+        if provider != 'keycloak':
+            # generate_access_token(self.request.registry, userid=user['identifier'])
+            pass
         headers = remember(self.request, user['identifier'])
         return HTTPFound(location=self.request.route_path('home'), headers=headers)
 
@@ -162,7 +123,7 @@ class Account(object):
         response = Response()
         result = _authomatic.login(WebObAdapter(self.request, response), provider)
 
-        # LOGGER.debug('authomatic result: %s', result)
+        LOGGER.debug('authomatic result: {}'.format(result))
         # LOGGER.debug('authomatic response: %s', response)
 
         if result:
@@ -173,17 +134,25 @@ class Account(object):
                 if not (result.user.name and result.user.id):
                     result.user.update()
                 # Hooray, we have the user!
-                LOGGER.info("login successful for user %s", result.user.name)
+                LOGGER.debug("login successful for user {}".format(result.user.name))
                 if result.provider.name == 'github':
-                    # TODO: fix email ... get more infos ... which login_id?
-                    login_id = "{0.username}@github.com".format(result.user)
-                    return self.login_success(login_id=login_id, name=result.user.name)
-                if result.provider.name == 'ceda_oauth':
-                    return self.login_success(login_id=result.user.name, name=result.user.name)
+                    return self.login_success(login_id=result.user.username, provider=result.provider.name,)
+                elif result.provider.name == 'ceda_oauth':
+                    return self.login_success(login_id=result.user.name, provider=result.provider.name,)
+                elif result.provider.name == 'keycloak':
+                    LOGGER.debug('credentials: {}'.format(result.provider.credentials))
+                    client = KeycloakClient(self.request.registry)
+                    user_info = client.introspect_access_token(result.provider.credentials.token)
+                    return self.login_success(
+                        login_id=user_info['preferred_username'],
+                        provider=result.provider.name,
+                        token={
+                            'access_token': result.provider.credentials.token,
+                            'refresh_token': result.provider.credentials.refresh_token,
+                            'expires_in': result.provider.credentials.expire_in,
+                            'expires_at': result.provider.credentials.expiration_time,
+                            'token_type': result.provider.credentials.token_type,
+                        })
                 else:
-                    # TODO: change login_id ... more infos ...
-                    return self.login_success(login_id=result.user.id,
-                                              email=result.user.email or '',
-                                              openid=result.user.id,
-                                              name=result.user.name or 'Unknown')
+                    raise Exception('Unknown provider')
         return response

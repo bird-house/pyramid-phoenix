@@ -10,7 +10,6 @@ def includeme(config):
     # settings = config.registry.settings
 
     config.add_route('settings', '/settings')
-    config.add_route('settings_ldap', '/settings/ldap')
     config.add_route('settings_processes', '/settings/processes')
 
     def update_settings(event):

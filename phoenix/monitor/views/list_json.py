@@ -2,9 +2,6 @@ from pyramid.view import view_config, view_defaults
 
 from phoenix.monitor.views.list import JobList
 
-import logging
-logger = logging.getLogger(__name__)
-
 
 @view_defaults(permission='view', layout='default')
 class JobListJson(JobList):

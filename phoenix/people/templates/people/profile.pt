@@ -11,9 +11,9 @@
                         <li class="${'active' if active=='profile' else ''}">
                             <a href="${request.route_path('profile', userid=userid, tab='profile')}">Profile</a>
                         </li>
-                        <li class="${'active' if active=='twitcher' else ''}" tal:condition="request.has_permission('submit')">
-                            <a href="${request.route_path('profile', userid=userid, tab='twitcher')}">
-                              Twitcher access token
+                        <li class="${'active' if active=='token' else ''}" tal:condition="request.has_permission('submit')">
+                            <a href="${request.route_path('profile', userid=userid, tab='token')}">
+                              Personal access token
                             </a>
                         </li>
                         <li class="${'active' if active=='group' else ''}">

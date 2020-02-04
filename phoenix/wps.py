@@ -236,7 +236,6 @@ class WPSSchema(deform.schema.CSRFSchema):
         elif type(node.typ) == colander.String:
             if is_opendap(data_input):
                 node.widget = ResourceWidget(
-                    cart=self.request.has_permission('edit'),
                     mime_types=OPENDAP_MIME_TYPES,
                     upload=False,
                     storage_url=self.request.storage.base_url)
@@ -276,7 +275,6 @@ class WPSSchema(deform.schema.CSRFSchema):
         mime_types = [value.mimeType for value in data_input.supportedValues]
         LOGGER.debug("mime_types for resource widget: %s", mime_types)
         widget = ResourceWidget(
-            cart=self.request.has_permission('edit'),
             mime_types=mime_types,
             upload=True,
             storage_url=self.request.storage.base_url,

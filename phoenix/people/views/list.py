@@ -1,7 +1,7 @@
 from pyramid.view import view_config, view_defaults
 
 from phoenix.views import MyView
-from phoenix.security import Admin, Developer, User, Guest
+from phoenix.security import Admin, User, Guest
 from phoenix.grid import CustomGrid
 
 import logging
@@ -40,8 +40,6 @@ class PeopleGrid(CustomGrid):
         label = "???"
         if group == Admin:
             label = "Admin"
-        elif group == Developer:
-            label = "Developer"
         elif group == User:
             label = "User"
         elif group == Guest:
