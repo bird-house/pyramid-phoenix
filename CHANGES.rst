@@ -1,6 +1,13 @@
 Changes
 *******
 
+0.11.0 (2020-02-04)
+===================
+
+* Minimal Phoenix with Keycloak support (#210).
+* Cleaned up docs and conda environemnt (#209).
+* Fixed async keyword (#162).
+
 0.10.0 (2019-09-27)
 ==================
 
