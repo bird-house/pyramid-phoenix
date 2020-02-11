@@ -39,6 +39,9 @@ class ExecuteProcess(MyView):
         self.process = self.wps.describeprocess(self.processid)
         super(ExecuteProcess, self).__init__(request, name='processes_execute', title='')
 
+    def has_execute_permission(self):
+        return self.service.public or self.request.has_permission('submit')
+
     def breadcrumbs(self):
         breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path('processes'), title='Processes'))
@@ -89,7 +92,7 @@ class ExecuteProcess(MyView):
                            user=self.request.user)
         submit_button = Button(name='submit', title='Submit',
                                css_class='btn btn-success btn-lg btn-block',
-                               disabled=not self.request.has_permission('submit'))
+                               disabled=not self.has_execute_permission())
         return Form(
             schema.bind(request=self.request),
             buttons=(submit_button,),
@@ -165,7 +168,7 @@ class ExecuteProcess(MyView):
         if 'submit' in self.request.POST:
             check_csrf_token(self.request)
             return self.process_form(form)
-        if not self.request.has_permission('submit'):
+        if not self.has_execute_permission():
             msg = """<strong>Warning:</strong> You are not allowed to run this process.
             Please <a href="{0}" class="alert-link">sign in</a> and wait for account activation."""
             msg = msg.format(self.request.route_path('sign_in'))
