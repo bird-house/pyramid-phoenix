@@ -2,7 +2,6 @@ from pyramid.view import view_config, view_defaults
 
 from owslib.wps import WebProcessingService
 
-from phoenix.catalog import WPS_TYPE
 from phoenix.views import MyView
 from phoenix.utils import headline
 
@@ -17,15 +16,10 @@ class Overview(MyView):
 
     def wps_services(self):
         items = []
-        for service in self.request.catalog.get_services(service_type=WPS_TYPE):
-            try:
-                # TODO: get name from service object
-                service_name = self.request.catalog.get_service_name(service)
-                LOGGER.debug('got wps service name: %s', service_name)
-                url = self.request.route_path('processes_list', _query=[('wps', service_name)])
-                items.append(dict(title=service.title, description=service.abstract, public=service.public, url=url))
-            except Exception:
-                LOGGER.warn("Service not available ... skipping.")
+        for service in self.request.catalog.get_services():
+            url = self.request.route_path('processes_list', _query=[('wps', service.identifier)])
+            items.append(dict(
+                title=service.title, description=service.abstract, public=service.public, url=url))
         return items
 
     def pinned_processes(self):
@@ -52,7 +46,10 @@ class Overview(MyView):
                         service_title=wps.identification.title))
         return processes
 
-    @view_config(route_name='processes', renderer='../templates/processes/overview.pt', accept='text/html')
+    @view_config(
+        route_name='processes',
+        renderer='phoenix:processes/templates/processes/overview.pt',
+        accept='text/html')
     def view(self):
         return dict(title="Web Processing Services",
                     items=self.wps_services(),

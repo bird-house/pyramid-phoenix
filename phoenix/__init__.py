@@ -1,4 +1,4 @@
-__version__ = '0.8.3'
+__version__ = '0.11.0'
 
 
 def main(global_config, **settings):
@@ -22,16 +22,9 @@ def main(global_config, **settings):
     # config.include('pyramid_deform')
     # config.include('js.deform')
 
-    # mailer
-    config.include('pyramid_mailer')
-
     # celery
     config.include('pyramid_celery')
     config.configure_celery(global_config['__file__'])
-
-    # ldap
-    config.include('phoenix.ldap')
-    # FK: Ldap setup functions will be called on demand.
 
     # static views (stylesheets etc)
     config.add_static_view('static', 'static')
@@ -43,9 +36,6 @@ def main(global_config, **settings):
     # config.include('phoenix.db')
     from phoenix.db import includeme as include_db
     include_db(config)
-
-    # twitcher
-    config.include('phoenix.twitcherclient')
 
     # routes
     config.add_route('home', '/')
@@ -62,41 +52,20 @@ def main(global_config, **settings):
     # dashboard
     config.include('phoenix.dashboard')
 
-    # map
-    config.include('phoenix.map')
-
     # processes
     config.include('phoenix.processes')
 
     # job monitor
     config.include('phoenix.monitor')
 
-    # esgf search
-    config.include('phoenix.esgf')
-
     # user profiles
     config.include('phoenix.people')
-
-    # supervisor
-    config.include('phoenix.supervisor')
 
     # catalog
     config.include('phoenix.catalog')
 
     # service settings
     config.include('phoenix.services')
-
-    # solr settings
-    config.include('phoenix.solr')
-
-    # solrsearch interface
-    config.include('phoenix.solrsearch')
-
-    # wizard
-    config.include('phoenix.wizard')
-
-    # cart
-    config.include('phoenix.cart')
 
     # readthedocs
     config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/en/latest/{part}.html')

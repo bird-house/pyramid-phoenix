@@ -3,68 +3,52 @@
 Installation
 ============
 
-This installation works on Linux 64-bit (Ubuntu 14.04, Centos 6, ...). It might still work on MacOSX but packages are updated only from time to time. Most of the dependencies come from :term:`birdhouse:Anaconda` Python distribution system. Additional conda packages come from the `Binstar channel Birdhouse <https://anaconda.org/birdhouse>`_. The installation is done with :term:`birdhouse:Buildout`.
+Start with downloading Phoenix with sources from github:
 
-Phoenix uses WPS processes provided by Malleefowl. As a requiste you should install a local Malleefowl WPS (this will become part of the Phoenix installer). Alternatively you could configure the WPS URL of a running Malleefowl WPS instance in the Phoenix ``custom.cfg``.
-
-To install Malleefowl follow the instructions given in the :ref:`Malleefowl documentation <malleefowl:installation>`. In short:
-
-.. code-block:: sh
-
-   $ git clone https://github.com/bird-house/malleefowl.git
-   $ cd malleefowl
-   $ make clean install
-
-Now start with downloading Phoenix with sources from github:
-
-.. code-block:: sh
+.. code-block:: console
 
    $ git clone https://github.com/bird-house/pyramid-phoenix.git
    $ cd pyramid-phoenix
 
-For install options run ``make help`` and read the documention for the :ref:`Makefile <bootstrap:makefile>`.
+Create the conda_ environment and activate it:
 
-Before installation you *need* to create a password for the local ``phoenix`` user which is used to login to the Phoenix web application:
+.. code-block:: console
 
-.. code-block:: sh
+  $ conda env create -f environment.yml
+  $ conda activate pyramid-phoenix
 
-   $ make passwd
-   Generate Phoenix password ...
-   Enter a password with at least 8 characters.
-   Enter password:
-   Verify password:
+Edit the configuration ``custom.cfg`` (see ``custom.cfg.example``). For example change the admin password:
 
-   Run 'make install restart' to activate this password.
+.. code-block:: console
 
-Optionally take a look at ``custom.cfg`` and make additional changes. When you're finished, run ``make clean install`` to install Phoenix:
+  $ vim custom.cfg
+  # phoenix admin password
+  phoenix-password = qwerty
 
-.. code-block:: sh
+When you're finished, run ``make install`` to install Phoenix into the conda environment.
+The installation is using buildout_:
 
-   $ make clean install
+.. code-block:: console
 
-You always have to rerun ``make update`` after making changes in custom.cfg.
+   $ (pyramid-phoenix) make install
 
-After successful installation you need to start the services. All installed files (config etc ...) are below the conda environment ``birdhouse`` which is by default in your home directory ``~/.conda/envs/birdhouse``. Now, start the services:
+By default phoenix will be installed into the folder ``~/birdhouse``.
 
-.. code-block:: sh
+After successful installation you need to start the services:
 
-   $ make start    # starts supervisor services
-   $ make status   # shows status of supervisor services
+.. code-block:: console
+
+   $ (pyramid-phoenix) make start    # starts supervisor services
+   $ (pyramid-phoenix) make status   # shows status of supervisor services
 
 Phoenix web application is available on `http://localhost:8081`.
 
 Check the log file for errors:
 
-.. code-block:: sh
+.. code-block:: console
 
    $ tail -f  ~/birdhouse/var/log/supervisor/phoenix.log
    $ tail -f  ~/birdhouse/var/log/supervisor/celery.log
 
-Run Docker
-----------
-
-Set the ``HOSTNAME`` environment variable (not ``localhost``) and run ``docker-compose``:
-
-.. code-block:: sh
-
-   HOSTNAME=phoenix HTTP_PORT=8081 HTTPS_PORT=8443 SUPERVISOR_PORT=9001 docker-compose up
+.. _conda: https://conda.io/en/latest/
+.. _buildout: http://www.buildout.org/en/latest/

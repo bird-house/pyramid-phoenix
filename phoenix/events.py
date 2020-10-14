@@ -19,6 +19,6 @@ class SettingsChanged(object):
 
     def converted_settings(self):
         converted = {}
-        for key, value in self.new_settings.iteritems():
+        for key, value in self.new_settings.items():
             converted[key.replace('_', '.')] = value
         return converted

@@ -10,9 +10,7 @@ from phoenix.views import MyView
 from phoenix.utils import ActionButton
 from phoenix.people.schema import (
     ProfileSchema,
-    TwitcherSchema,
-    ESGFSLCSTokenSchema,
-    ESGFCredentialsSchema,
+    TokenSchema,
     GroupSchema
 )
 from phoenix.security import check_csrf_token
@@ -31,12 +29,8 @@ class Profile(MyView):
         self.user = self.collection.find_one({'identifier': self.userid})
 
     def panel_title(self):
-        if self.tab == 'twitcher':
+        if self.tab == 'token':
             title = "Personal access token"
-        elif self.tab == 'esgf_slcs':
-            title = "ESGF SLCS access token"
-        elif self.tab == 'esgf_certs':
-            title = "ESGF X509 credentials"
         elif self.tab == 'group':
             title = 'Group permission'
         else:
@@ -45,18 +39,12 @@ class Profile(MyView):
 
     def appstruct(self):
         appstruct = self.collection.find_one({'identifier': self.userid})
-        token = self.user.get('esgf_token')
+        token = self.user.get('token')
         if token:
-            appstruct['esgf_token'] = token.get('access_token')
+            appstruct['token'] = token['access_token']
             expires_at = datetime.utcfromtimestamp(
                 int(token.get('expires_at'))).strftime(format="%Y-%m-%d %H:%M:%S UTC")
-            appstruct['esgf_token_expires_at'] = expires_at
-        token = self.user.get('twitcher_token')
-        if token:
-            appstruct['twitcher_token'] = token.get('access_token')
-            expires_at = datetime.utcfromtimestamp(
-                int(token.get('expires_at'))).strftime(format="%Y-%m-%d %H:%M:%S UTC")
-            appstruct['twitcher_token_expires_at'] = expires_at
+            appstruct['token_expires_at'] = expires_at
         return appstruct
 
     def readonly(self):
@@ -66,12 +54,8 @@ class Profile(MyView):
             return False
 
     def schema(self):
-        if self.tab == 'twitcher':
-            schema = TwitcherSchema()
-        elif self.tab == 'esgf_slcs':
-            schema = ESGFSLCSTokenSchema()
-        elif self.tab == 'esgf_certs':
-            schema = ESGFCredentialsSchema()
+        if self.tab == 'token':
+            schema = TokenSchema()
         elif self.tab == 'group':
             schema = GroupSchema()
         else:
@@ -94,52 +78,30 @@ class Profile(MyView):
 
     def generate_buttons(self):
         btns = []
-        if self.tab == 'twitcher':
-            btn = ActionButton(name='generate_twitcher_token', title='Generate Token',
+        if self.tab == 'token':
+            btn = ActionButton(name='refresh_token', title='Refresh Token',
                                css_class="btn btn-success btn-xs",
                                disabled=not self.request.has_permission('submit'),
-                               href=self.request.route_path('generate_twitcher_token'))
-            btns.append(btn)
-        elif self.tab == 'esgf_slcs':
-            btn = ActionButton(name='generate_esgf_slcs_token', title='Generate Token',
-                               css_class="btn btn-success btn-xs",
-                               disabled=not self.request.has_permission('submit'),
-                               href=self.request.route_path('generate_esgf_slcs_token'))
-            btns.append(btn)
-            btn = ActionButton(name='forget_esgf_slcs_token', title='Forget Token',
-                               css_class="btn btn-danger btn-xs",
-                               disabled=not self.request.has_permission('submit'),
-                               href=self.request.route_path('forget_esgf_slcs_token'))
-            btns.append(btn)
-        elif self.tab == 'esgf_certs':
-            btn = ActionButton(name='update_esgf_certs', title='Update Credentials',
-                               css_class="btn btn-success btn-xs",
-                               disabled=not self.request.has_permission('edit'),
-                               href=self.request.route_path('update_esgf_certs'))
-            btns.append(btn)
-            btn = ActionButton(name='forget_esgf_certs', title='Forget Credentials',
-                               css_class="btn btn-danger btn-xs",
-                               disabled=not self.request.has_permission('edit'),
-                               href=self.request.route_path('forget_esgf_certs'))
+                               href=self.request.route_path('refresh_token'))
             btns.append(btn)
         return btns
 
     def process_form(self, form):
         try:
-            controls = self.request.POST.items()
+            controls = list(self.request.POST.items())
             appstruct = form.validate(controls)
             for key in ['name', 'email', 'organisation', 'notes', 'group']:
                 if key in appstruct:
                     self.user[key] = appstruct.get(key)
             self.collection.update({'identifier': self.userid}, self.user)
-        except ValidationFailure, e:
+        except ValidationFailure as e:
             LOGGER.exception('validation of form failed.')
             return dict(form=e.render())
         else:
             self.request.session.flash("Your profile was updated.", queue='success')
         return HTTPFound(location=self.request.current_route_path())
 
-    @view_config(route_name='profile', renderer='../templates/people/profile.pt')
+    @view_config(route_name='profile', renderer='phoenix:people/templates/people/profile.pt')
     def view(self):
         form = self.generate_form()
 

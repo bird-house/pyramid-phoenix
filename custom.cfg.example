@@ -1,6 +1,9 @@
 [buildout]
 extends = buildout.cfg
-#extends = profiles/development.cfg
+
+# debug options
+#version = noversions
+#log-level = DEBUG
 
 [settings]
 #hostname = localhost
@@ -13,15 +16,8 @@ extends = buildout.cfg
 #user = www-data
 #etc-user = root
 
-## enable plugins: wizard, map
-#phoenix-wizard = true
-#phoenix-map = true
-
-# run 'make passwd' to generate a new password hash
-# password=qwerty
-phoenix-password = sha256:773eb9c05850:3e6a1122fbf0b1115e5208670a16c75ba5aca2a69df74603b0fdb2a2c3d2eed7
+# phoenix admin password
+phoenix-password = qwerty
 ## generate secret
 # python -c "import os; print(''.join('%02x' % ord(x) for x in os.urandom(16)))"
 phoenix-secret = d5e8417934247ccb6cdbdb5144e3b130
-## set esgf search url from your provider
-esgf-search-url = https://esgf-data.dkrz.de/esg-search

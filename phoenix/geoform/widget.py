@@ -26,7 +26,7 @@ LOGGER = logging.getLogger("PHOENIX")
 
 class ResourceWidget(Widget):
     """
-    Renders an WPS ComplexType input widget with a cart and upload button.
+    Renders an WPS ComplexType input widget with an upload button.
 
     It is based on deform.widget.TextInputWidget.
     """
@@ -35,7 +35,6 @@ class ResourceWidget(Widget):
     strip = True
     mask = None
     mask_placeholder = "_"
-    cart = False
     mime_types = ['application/x-netcdf']
     upload = False
     storage_url = None

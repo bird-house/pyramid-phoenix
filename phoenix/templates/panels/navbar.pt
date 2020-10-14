@@ -35,16 +35,6 @@
               </a>
             </li>
             <li>
-              <a href="${request.route_url('readthedocs', part='tutorial')}" target="_">
-                <i class="fa fa-medkit"></i> Tutorial
-              </a>
-            </li>
-            <li>
-              <a href="https://birdhouse.readthedocs.io/en/latest/contributing.html" target="_">
-                <i class="fa fa-retweet"></i> Contributing
-              </a>
-            </li>
-            <li>
               <a href="http://bird-house.github.io/" target="_">
                 <i class="fa fa-home"></i> Birdhouse
               </a>
@@ -95,15 +85,9 @@
             <li>
               <a href="${request.route_path('profile', userid=request.unauthenticated_userid, tab='profile')}"><i class="fa fa-user fa-lg p-r-xs"></i> My Profile</a>
             </li>
-            <li tal:condition="request.has_permission('edit')">
-              <a href="${request.route_path('cart')}"><i class="fa fa-shopping-cart fa-lg p-r-xs"></i> Cart</a>
-            </li>
             <li tal:condition="request.has_permission('admin')" role="separator" class="divider"></li>
             <li tal:condition="request.has_permission('admin')">
               <a href="${request.route_path('people')}"><i class="fa fa-users fa-lg p-r-xs"></i> People</a>
-            </li>
-            <li tal:condition="request.has_permission('admin')">
-              <a href="${request.route_path('supervisor')}"><i class="fa fa-eye fa-lg p-r-xs"></i> Supervisor</a>
             </li>
             <li tal:condition="request.has_permission('admin')">
               <a href="${request.route_path('settings')}"><i class="fa fa-wrench fa-lg p-r-xs"></i> Settings</a>

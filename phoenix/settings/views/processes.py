@@ -8,7 +8,6 @@ from phoenix.events import SettingsChanged
 from phoenix.utils import skip_csrf_token
 # TODO: move settings to processes
 from phoenix.settings.schema import ProcessesSchema
-from phoenix.processes.views.actions import ProcessesActions
 from phoenix.security import check_csrf_token
 
 import logging
@@ -28,17 +27,17 @@ class Processes(MyView):
         return breadcrumbs
 
     def generate_form(self):
-        processes = ProcessesActions(self.context, self.request).list_processes()
+        processes = {}  # ProcessesActions(self.context, self.request).list_processes()
         return Form(schema=ProcessesSchema().bind(request=self.request, processes=processes),
                     buttons=('submit',), formid='deform')
 
     def process_form(self, form):
         try:
-            controls = self.request.POST.items()
+            controls = list(self.request.POST.items())
             appstruct = skip_csrf_token(form.validate(controls))
-        except ValidationFailure, e:
+        except ValidationFailure as e:
             return dict(title=self.title, form=e.render())
-        except Exception, e:
+        except Exception:
             self.session.flash("<strong>Error:</strong> Could not update settings.", queue="danger")
         else:
             settings = self.collection.find_one() or {}
@@ -52,7 +51,7 @@ class Processes(MyView):
         appstruct = self.collection.find_one() or {}
         return skip_csrf_token(appstruct)
 
-    @view_config(route_name='settings_processes', renderer='../templates/settings/processes.pt')
+    @view_config(route_name='settings_processes', renderer='phoenix:settings/templates/settings/processes.pt')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:

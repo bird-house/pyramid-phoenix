@@ -1,7 +1,7 @@
 from pyramid.view import view_config, view_defaults
 
 from phoenix.views import MyView
-from phoenix.security import Admin, Developer, User, Guest
+from phoenix.security import Admin, User, Guest
 from phoenix.grid import CustomGrid
 
 import logging
@@ -14,7 +14,7 @@ class People(MyView):
         super(People, self).__init__(request, name='people', title='')
         self.collection = self.request.db.users
 
-    @view_config(route_name='people', renderer='../templates/people/list.pt')
+    @view_config(route_name='people', renderer='phoenix:people/templates/people/list.pt')
     def view(self):
         user_items = list(self.collection.find().sort('last_login', -1))
         grid = PeopleGrid(
@@ -40,8 +40,6 @@ class PeopleGrid(CustomGrid):
         label = "???"
         if group == Admin:
             label = "Admin"
-        elif group == Developer:
-            label = "Developer"
         elif group == User:
             label = "User"
         elif group == Guest:

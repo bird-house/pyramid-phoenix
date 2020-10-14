@@ -81,13 +81,6 @@
                  href="${request.route_path('delete_job', job_id=job.get('identifier'))}">
                 <i class="fa fa-trash"></i> Delete Job
               </a>
-              <a tal:condition="job.get('status') == 'ProcessSucceeded'" class="btn btn-success btn-xs"
-                 rel="tooltip"
-                 data-toggle="tooltip"
-                 title="Restart Job"
-                 href="${request.route_path('restart_job', job_id=job.get('identifier'))}">
-                <i class="fa fa-repeat"></i> Restart Job
-              </a>
             </div>
           </dt>
           <dt>

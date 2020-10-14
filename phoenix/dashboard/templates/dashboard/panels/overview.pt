@@ -16,13 +16,6 @@
         <h4>Web Processing Services</h4>
         <span class="badge">${wps}</span>
       </div>
-      <div class="col-xs-6 col-sm-3 text-center">
-        <span class="fa fa-database fa-5x" aria-hidden="true"></span>
-        <h4>Thredds Catalogs</h4>
-        <span class="badge">${tds}</span>
-      </div>
     </div>
   </div>
 </div>
-
-

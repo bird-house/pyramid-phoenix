@@ -40,9 +40,6 @@
                     <a href="${request.route_path('service_details', service_id=item.identifier)}">${item.title}</a>
                   </h4>
                   <div class="pull-right text-muted text-right" style="font-size: .75em;">
-                  <span>
-                    ${item.format}
-                  </span>
                   </div>
                   ${item.abstract}
                 </div>

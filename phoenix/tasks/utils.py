@@ -1,13 +1,12 @@
 import datetime
 import json
 
-from phoenix.db import mongodb
-from phoenix.twitcherclient import generate_access_token
+from phoenix.oauth2 import oauth2_client_factory
 
 from pyramid_celery import celery_app as app
 from celery.utils.log import get_task_logger
 
-logger = get_task_logger(__name__)
+LOGGER = get_task_logger(__name__)
 
 
 def task_result(task_id):
@@ -45,21 +44,17 @@ def save_log(job, error=None):
     if len(job['log']) == 0 or job['log'][-1] != log_msg:
         job['log'].append(log_msg)
         if error:
-            logger.error(log_msg)
+            LOGGER.error(log_msg)
         else:
-            logger.info(log_msg)
+            LOGGER.info(log_msg)
 
 
 def add_job(db, task_id, process_id, title=None, abstract=None,
             service_name=None, service=None, status_location=None,
-            is_workflow=False, caption=None, userid=None,
-            async=True):
+            caption=None, userid=None,
+            use_async=True):
     tags = ['dev']
-    if is_workflow:
-        tags.append('workflow')
-    else:
-        tags.append('single')
-    if async:
+    if use_async:
         tags.append('async')
     else:
         tags.append('sync')
@@ -67,11 +62,10 @@ def add_job(db, task_id, process_id, title=None, abstract=None,
         identifier=task_id,
         task_id=task_id,             # TODO: why not using as identifier?
         userid=userid or 'guest',
-        is_workflow=is_workflow,
         service_name=service_name,        # wps service name (service identifier)
         service=service or service_name,  # wps service title (url, service_name or service title)
         process_id=process_id,                  # process identifier
-        title=title or process_id,              # process title (identifier or title)
+        title=title or process_id,  # process title (identifier or title)
         abstract=abstract or "No Summary",
         status_location=status_location,
         created=datetime.datetime.now(),
@@ -87,10 +81,15 @@ def add_job(db, task_id, process_id, title=None, abstract=None,
 
 def get_access_token(userid):
     registry = app.conf['PYRAMID_REGISTRY']
-    # db = mongodb(registry)
     # refresh access token
-    token = generate_access_token(registry, userid=userid)
-    return token.get('access_token')
+    client = oauth2_client_factory(registry)
+    try:
+        token = client.refresh_token(userid=userid)
+    except Exception:
+        token = None
+    if token:
+        return token['access_token']
+    return None
 
 
 def wps_headers(userid):
@@ -98,5 +97,6 @@ def wps_headers(userid):
     if userid:
         access_token = get_access_token(userid)
         if access_token:
-            headers['Access-Token'] = access_token
+            headers = {'Authorization': 'Bearer {}'.format(access_token)}
+    LOGGER.debug('wps headers: {}'.format(headers))
     return headers

@@ -9,15 +9,12 @@ from phoenix.events import JobStarted
 from phoenix.views import MyView
 from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
-from phoenix.wps import check_status
 from phoenix.utils import wps_describe_url
-from phoenix.security import has_execute_permission
 from phoenix.security import check_csrf_token
 
 from owslib.wps import WebProcessingService
 from owslib.wps import WPSExecution
 from owslib.wps import ComplexDataInput, BoundingBoxDataInput
-from owslib.wps import is_reference
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -28,38 +25,29 @@ class ExecuteProcess(MyView):
     def __init__(self, request):
         self.request = request
         self.execution = None
-        self.service_name = None
+        self.service_id = None
         self.processid = None
         self.process = None
-        if 'job_id' in request.params:
-            job = request.db.jobs.find_one(
-                {'identifier': request.params['job_id']})
-            self.service_name = job.get('service_name')
-            self.execution = check_status(
-                url=job.get('status_location'),
-                response=job.get('response'),
-                verify=False, sleep_secs=0)
-            self.processid = self.execution.process.identifier
-        elif 'wps' in request.params:
-            self.service_name = request.params.get('wps')
-            self.processid = request.params.get('process')
-
-        if self.service_name:
-            # TODO: avoid getcaps
-            self.wps = WebProcessingService(
-                url=request.route_url('owsproxy',
-                                      service_name=self.service_name),
-                verify=False)
-            # TODO: need to fix owslib to handle special identifiers
-            self.process = self.wps.describeprocess(self.processid)
+        self.service_id = request.params.get('wps')
+        self.processid = request.params.get('process')
+        # TODO: avoid getcaps
+        self.service = request.catalog.get_record_by_id(self.service_id)
+        self.wps = WebProcessingService(
+            url=self.service.url,
+            verify=False)
+        # TODO: need to fix owslib to handle special identifiers
+        self.process = self.wps.describeprocess(self.processid)
         super(ExecuteProcess, self).__init__(request, name='processes_execute', title='')
+
+    def has_execute_permission(self):
+        return self.service.public or self.request.has_permission('submit')
 
     def breadcrumbs(self):
         breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
         breadcrumbs.append(dict(route_path=self.request.route_path('processes'), title='Processes'))
         breadcrumbs.append(dict(route_path=self.request.route_path(
-            'processes_list', _query=[('wps', self.service_name)]),
-            title=self.service_name))
+            'processes_list', _query=[('wps', self.service_id)]),
+            title=self.service.title))
         breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.process.identifier))
         return breadcrumbs
 
@@ -104,8 +92,7 @@ class ExecuteProcess(MyView):
                            user=self.request.user)
         submit_button = Button(name='submit', title='Submit',
                                css_class='btn btn-success btn-lg btn-block',
-                               disabled=not has_execute_permission(
-                                    self.request, self.service_name))
+                               disabled=not self.has_execute_permission())
         return Form(
             schema.bind(request=self.request),
             buttons=(submit_button,),
@@ -113,7 +100,7 @@ class ExecuteProcess(MyView):
         )
 
     def process_form(self, form):
-        controls = self.request.POST.items()
+        controls = list(self.request.POST.items())
         try:
             # TODO: uploader puts qqfile in controls
             controls = [control for control in controls if 'qqfile' not in control[0]]
@@ -121,7 +108,7 @@ class ExecuteProcess(MyView):
             appstruct = form.validate(controls)
             LOGGER.debug("before execute %s", appstruct)
             job_id = self.execute(appstruct)
-        except ValidationFailure, e:
+        except ValidationFailure as e:
             self.session.flash("Page validation failed.", queue='danger')
             return dict(process=self.process,
                         url=wps_describe_url(self.wps.url, self.processid),
@@ -148,17 +135,6 @@ class ExecuteProcess(MyView):
             value = inpt[1]
             if identifier in complex_inpts:
                 new_inputs.append((identifier, ComplexDataInput(value)))
-                if is_reference(value):
-                    if value not in self.request.cart:
-                        if complex_inpts[identifier].supportedValues:
-                            mime_type = complex_inpts[identifier].supportedValues[0].mimeType
-                        else:
-                            mime_type = None
-                        LOGGER.debug("add input to cart: %s %s", identifier, mime_type)
-                        self.request.cart.add_item(
-                            value,
-                            abstract="Automatically added in process execution.",
-                            mime_type=mime_type)
             elif identifier in bbox_inpts:
                 new_inputs.append((identifier, BoundingBoxDataInput(value)))
             else:
@@ -174,32 +150,29 @@ class ExecuteProcess(MyView):
         result = execute_process.delay(
             userid=self.request.unauthenticated_userid,
             url=self.wps.url,
-            service_name=self.service_name,
+            service_name=self.service.title,
             identifier=self.process.identifier,
             inputs=inputs,
             outputs=outputs,
-            async=appstruct.get('_async_check', True))
+            use_async=appstruct.get('_async_check', True))
         self.request.registry.notify(JobStarted(self.request, result.id))
+        LOGGER.debug('wps url={}'.format(self.wps.url))
         return result.id
 
-    @view_config(route_name='processes_execute', renderer='../templates/processes/execute.pt', accept='text/html')
+    @view_config(
+        route_name='processes_execute',
+        renderer='phoenix:processes/templates/processes/execute.pt',
+        accept='text/html')
     def view(self):
         form = self.generate_form()
         if 'submit' in self.request.POST:
             check_csrf_token(self.request)
             return self.process_form(form)
-        if not has_execute_permission(self.request, self.service_name):
+        if not self.has_execute_permission():
             msg = """<strong>Warning:</strong> You are not allowed to run this process.
             Please <a href="{0}" class="alert-link">sign in</a> and wait for account activation."""
             msg = msg.format(self.request.route_path('sign_in'))
             self.session.flash(msg, queue='warning')
-        elif not self.request.cert_ok:
-            msg = """<strong>Warning:</strong> You are not allowed to access ESGF data.
-            Please <a href="{0}" class="alert-link">update</a> your ESGF credentials."""
-            callback = self.request.current_route_path()
-            self.session.flash(
-                msg.format(self.request.route_path('esgflogon', _query=[('callback', callback)])),
-                queue='warning')
         return dict(
             process=self.process,
             url=wps_describe_url(self.wps.url, self.processid),

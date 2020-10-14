@@ -1,7 +1,7 @@
 import colander
 import deform
 
-from phoenix.security import Admin, Developer, User, Guest
+from phoenix.security import Admin, User, Guest
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -36,7 +36,7 @@ class ProfileSchema(deform.schema.CSRFSchema):
 
 
 class GroupSchema(deform.schema.CSRFSchema):
-    choices = ((Admin, 'Admin'), (Developer, 'Developer'), (User, 'User'), (Guest, 'Guest'))
+    choices = ((Admin, 'Admin'), (User, 'User'), (Guest, 'Guest'))
 
     group = colander.SchemaNode(
         colander.String(),
@@ -46,57 +46,16 @@ class GroupSchema(deform.schema.CSRFSchema):
         description='Select Group')
 
 
-class TwitcherSchema(deform.schema.CSRFSchema):
-    twitcher_token = colander.SchemaNode(
+class TokenSchema(deform.schema.CSRFSchema):
+    token = colander.SchemaNode(
         colander.String(),
         title="Access Token",
         missing='',
         widget=deform.widget.TextInputWidget(readonly=True),
     )
-    twitcher_token_expires_at = colander.SchemaNode(
+    token_expires_at = colander.SchemaNode(
         colander.String(),
         title="Expires at",
-        missing='',
-        widget=deform.widget.TextInputWidget(readonly=True),
-    )
-
-
-class ESGFSLCSTokenSchema(deform.schema.CSRFSchema):
-    esgf_token = colander.SchemaNode(
-        colander.String(),
-        title="Access Token",
-        missing='',
-        widget=deform.widget.TextInputWidget(readonly=True),
-    )
-    esgf_token_expires_at = colander.SchemaNode(
-        colander.String(),
-        title="Expires at",
-        missing='',
-        widget=deform.widget.TextInputWidget(readonly=True),
-    )
-
-
-class ESGFCredentialsSchema(deform.schema.CSRFSchema):
-    openid = colander.SchemaNode(
-        colander.String(),
-        title="OpenID",
-        description="OpenID to access ESGF data",
-        validator=colander.url,
-        missing='',
-        widget=deform.widget.TextInputWidget(readonly=True),
-    )
-    credentials = colander.SchemaNode(
-        colander.String(),
-        title="Credentials",
-        description="URL to ESGF Proxy Certificate",
-        validator=colander.url,
-        missing='',
-        widget=deform.widget.TextInputWidget(readonly=True),
-    )
-    cert_expires = colander.SchemaNode(
-        colander.String(),
-        title="Expires at",
-        description="When your Proxy Certificate expires",
         missing='',
         widget=deform.widget.TextInputWidget(readonly=True),
     )

@@ -16,22 +16,27 @@ def get_process_media(process):
 @view_defaults(permission='view', layout="default")
 class ProcessList(MyView):
     def __init__(self, request):
-        self.service_name = request.params.get('wps')
+        self.service_id = request.params.get('wps')
+        service = request.catalog.get_record_by_id(self.service_id)
         self.wps = WebProcessingService(
-            url=request.route_url('owsproxy', service_name=self.service_name),
+            url=service.url,
             verify=False)
         super(ProcessList, self).__init__(request, name='processes_list', title='')
 
-    @view_config(route_name='processes_list', renderer='../templates/processes/list.pt', accept='text/html')
+    @view_config(
+        route_name='processes_list',
+        renderer='phoenix:processes/templates/processes/list.pt',
+        accept='text/html')
     def view(self):
         items = []
         for process in self.wps.processes:
             item = dict(
-                title=u"{0.title} {0.processVersion}".format(process),
+                title=process.title,
+                version=process.processVersion,
                 description=getattr(process, 'abstract', ''),
                 media=get_process_media(process),
                 url=self.request.route_path('processes_execute',
-                                            _query=[('wps', self.service_name), ('process', process.identifier)]))
+                                            _query=[('wps', self.service_id), ('process', process.identifier)]))
             items.append(item)
         return dict(
             url=wps_caps_url(self.wps.url),

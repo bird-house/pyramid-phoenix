@@ -8,23 +8,6 @@
           </a>
         </div>
         <div class="media-body">
-          <div tal:condition="request.has_permission('submit')">
-          <btn tal:condition="item.reference and item.reference not in request.cart"
-               id="btn-cart-${repeat.item.number}"
-               class="btn btn-default btn-xs pull-right btn-cart-add"
-               data-toggle="tooltip" title="Add to Cart" data-value="${item.reference}"
-               data-type="${item.mime_type}"
-               role="button">
-            <icon class="fa fa-lg fa-cart-plus"></icon>
-          </btn>
-          <btn tal:condition="item.reference and item.reference in request.cart"
-               id="btn-cart-${repeat.item.number}"
-               class="btn btn-default btn-xs pull-right btn-cart-remove"
-               data-toggle="tooltip" title="Remove from Cart" data-value="${item.reference}"
-               role="button">
-            <icon class="fa fa-lg fa-times"></icon>
-          </btn>
-          </div>
           <h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4>
           <p>${item.get('abstract') or 'No summary'}</p>
           <p>

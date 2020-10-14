@@ -3,26 +3,23 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=2.7
-  - setuptools=27.2.0
+  - pip
+  - python=3.6
+  - setuptools=41
   - curl
   - pyopenssl
   - cryptography
   - icu
 # tests
   - pytest
-# pep8
   - flake8
   - pycodestyle
-# ipython used by make passwd
-  - ipython
 # phoenix
-  - six
-  - nginx=1.10
-  - supervisor=3
+  - nginx
+  - supervisor=4
   - gunicorn=19
   - requests-oauthlib
-  - gevent=1.2
+  - gevent
   - lxml
   - mako
   - dateparser
@@ -31,26 +28,18 @@ dependencies:
   - pyyaml
   - pygments
   - pytz
-  - owslib=0.17
+  - owslib=0.19
   - transaction
-  #- myproxyclient=2.0
   - genshi=0.7
+  - pyjwt
 # celery
   - celery=3.1
   - kombu=3.0
 # mongodb
   - pymongo=3
   - mongodb>=3.4
-# twitcher
-  - webob
-  - argcomplete
-# phoenix extensions
-#  - python-swiftclient=2.4.0
-  - threddsclient
-#  - python-ldap=2.4.13
-  - funcsigs
   - pip:
-      - pyramid==1.9.3
+      - pyramid
       - pyramid-beaker
       - Beaker
       - pyramid-deform
@@ -59,17 +48,10 @@ dependencies:
       - pyramid-mako
       - pyramid-layout
       - pyramid-celery==3.0.0
-      - pyramid-mailer
       - pyramid-storage
-  #    - pyramid-ldap==0.1
-      - pyramid-twitcher==0.3.8
       - pyramid-rpc
       - colander
       - Authomatic==0.1.0.post1
-      - python-openid==2.2.5
-  #    - ldappool==1.0
+      - python-openid2==3.0
       - WebHelpers2
       - WebHelpers2_grid
-      - repoze.sendmail
-      - myproxyclient==2.1.0
-      - esgf-pyclient==0.2.1

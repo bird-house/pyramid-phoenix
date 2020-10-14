@@ -1,6 +1,36 @@
 Changes
 *******
 
+0.11.0 (2020-02-04)
+===================
+
+* Minimal Phoenix with Keycloak support (#210).
+* Cleaned up docs and conda environemnt (#209).
+* Fixed async keyword (#162).
+
+0.10.0 (2019-09-27)
+==================
+
+Bucharest Release.
+
+* Skipped Python 2.7 support (#195).
+* Pinned twitcher 0.4.0 (#208).
+* Upadate pyramid (1.10) (#196).
+* Cleaned up buildout.cfg (#193).
+* Removed unmaintained code: solr view, supervisor view, wizard, pycsw catalog  (#187).
+* Updates view with processes (#205).
+* Fixes (#206, #203, #202, #201, #200, #199).
+
+0.9.0 (2019-04-25)
+==================
+
+San Francisco Release.
+
+* Updated pyramid (1.9.4) and supervisor (4.x) (#186).
+* Updated jquery (3.4) and bootstrap (3.4.1) (#185).
+* Added CEDA OAuth2 Provider (#184).
+* Fixes dateparser (#182) and angle (#181).
+
 0.8.3 (2018-12-06)
 ==================
 
@@ -25,7 +55,7 @@ Dar-es-Salaam Release.
 0.8.1 (2018-04-04)
 ==================
 
-Montréal Release.
+Montreal Release.
 
 * configured require_csrf.
 * using check_csrf_token.

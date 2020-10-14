@@ -1,5 +1,0 @@
-# ldap
-pyramid_ldap
-ldappool<2
-bird-feeder
-

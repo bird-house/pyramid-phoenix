@@ -34,16 +34,11 @@ class NodeActions(object):
         self.session.changed()
         return ids
 
-    @view_config(route_name='restart_job')
-    def restart_job(self):
-        job_id = self.request.matchdict.get('job_id')
-        job = self.collection.find_one({'identifier': job_id})
-        if job.get('is_workflow', False):
-            self.session.flash("Restarting Workflow {0}.".format(job_id), queue='info')
-            return HTTPFound(location=self.request.route_path('wizard', _query=[('job_id', job_id)]))
-        else:
-            self.session.flash("Restarting Process {0}.".format(job_id), queue='info')
-            return HTTPFound(location=self.request.route_path('processes_execute', _query=[('job_id', job_id)]))
+    # @view_config(route_name='restart_job')
+    # def restart_job(self):
+    #     job_id = self.request.matchdict.get('job_id')
+    #     self.session.flash("Restarting Process {0}.".format(job_id), queue='info')
+    #     return HTTPFound(location=self.request.route_path('processes_execute', _query=[('job_id', job_id)]))
 
     @view_config(route_name='delete_job')
     def delete_job(self):
@@ -61,7 +56,7 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.collection.delete_many({'identifier': {'$in': ids}})
-            self.session.flash(u"Selected jobs were deleted.", queue='info')
+            self.session.flash("Selected jobs were deleted.", queue='info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     # @view_config(route_name='delete_all_jobs', permission='admin')
@@ -79,7 +74,7 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.collection.update_many({'identifier': {'$in': ids}}, {'$addToSet': {'tags': 'public'}})
-            self.session.flash(u"Selected jobs were made public.", 'info')
+            self.session.flash("Selected jobs were made public.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     @view_config(route_name='make_private')
@@ -90,29 +85,7 @@ class NodeActions(object):
         ids = self._selected_children()
         if ids is not None:
             self.collection.update_many({'identifier': {'$in': ids}}, {'$pull': {'tags': 'public'}})
-            self.session.flash(u"Selected jobs were made private.", 'info')
-        return HTTPFound(location=self.request.route_path('monitor'))
-
-    @view_config(route_name='set_favorite')
-    def set_favorite(self):
-        """
-        Set selected jobs as favorite.
-        """
-        ids = self._selected_children()
-        if ids is not None:
-            self.collection.update_many({'identifier': {'$in': ids}}, {'$addToSet': {'tags': 'fav'}})
-            self.session.flash(u"Set as favorite done.", 'info')
-        return HTTPFound(location=self.request.route_path('monitor'))
-
-    @view_config(route_name='unset_favorite')
-    def unset_favorite(self):
-        """
-        Unset selected jobs as favorite.
-        """
-        ids = self._selected_children()
-        if ids is not None:
-            self.collection.update_many({'identifier': {'$in': ids}}, {'$pull': {'tags': 'fav'}})
-            self.session.flash(u"Unset as favorite done.", 'info')
+            self.session.flash("Selected jobs were made private.", 'info')
         return HTTPFound(location=self.request.route_path('monitor'))
 
     @view_config(renderer='json', name='edit_job.json')
@@ -143,20 +116,14 @@ def monitor_buttons(context, request):
     # if request.has_permission('admin'):
     #    buttons.append(ActionButton('delete_all_jobs', title=u'Delete all',
     #                                css_class=u'btn btn-danger'))
-    buttons.append(ActionButton('delete_jobs', title=u'Delete',
-                                css_class=u'btn btn-danger',
+    buttons.append(ActionButton('delete_jobs', title='Delete',
+                                css_class='btn btn-danger',
                                 disabled=not request.has_permission('edit')))
-    buttons.append(ActionButton('make_public', title=u'Make Public',
-                                css_class=u'btn btn-warning',
+    buttons.append(ActionButton('make_public', title='Make Public',
+                                css_class='btn btn-warning',
                                 disabled=not request.has_permission('edit')))
-    buttons.append(ActionButton('make_private', title=u'Make Private',
-                                css_class=u'btn btn-warning',
-                                disabled=not request.has_permission('edit')))
-    buttons.append(ActionButton('set_favorite', title=u'Set Favorite',
-                                css_class=u'btn btn-success',
-                                disabled=not request.has_permission('edit')))
-    buttons.append(ActionButton('unset_favorite', title=u'Unset Favorite',
-                                css_class=u'btn btn-success',
+    buttons.append(ActionButton('make_private', title='Make Private',
+                                css_class='btn btn-warning',
                                 disabled=not request.has_permission('edit')))
     return buttons
 
@@ -167,11 +134,9 @@ def includeme(config):
     :param config: app config
     :type config: :class:`pyramid.config.Configurator`
     """
-    config.add_route('restart_job', 'restart_job/{job_id}')
+    # config.add_route('restart_job', 'restart_job/{job_id}')
     config.add_route('delete_job', 'delete_job/{job_id}')
     config.add_route('delete_jobs', 'delete_jobs')
     # config.add_route('delete_all_jobs', 'delete_all_jobs')
     config.add_route('make_public', 'make_public')
     config.add_route('make_private', 'make_private')
-    config.add_route('set_favorite', 'set_favorite')
-    config.add_route('unset_favorite', 'unset_favorite')

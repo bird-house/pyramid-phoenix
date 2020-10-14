@@ -17,7 +17,7 @@ LOGGER = get_task_logger(__name__)
 
 
 @app.task(bind=True)
-def execute_process(self, url, service_name, identifier, inputs, outputs, async=True, userid=None, caption=None):
+def execute_process(self, url, service_name, identifier, inputs, outputs, use_async=True, userid=None, caption=None):
     registry = app.conf['PYRAMID_REGISTRY']
     db = mongodb(registry)
     job = add_job(
@@ -26,17 +26,17 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
         task_id=self.request.id,
         service_name=service_name,
         process_id=identifier,
-        is_workflow=False,
-        async=async,
+        use_async=use_async,
         caption=caption)
 
     try:
         wps = WebProcessingService(url=url, skip_caps=False, verify=False, headers=wps_headers(userid))
+        LOGGER.debug('wps url={}, headers={}'.format(url, wps_headers(userid)))
         # TODO: complex type detection is currently broken due to pywps bug.
         outputs = [('output', True)]
         try:
             # TODO: sync is non-default
-            if async is False:
+            if use_async is False:
                 mode = SYNC
             else:
                 mode = ASYNC
@@ -101,7 +101,7 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, async=
     except Exception as exc:
         LOGGER.exception("Failed to run Job")
         job['status'] = "ProcessFailed"
-        job['status_message'] = "Error: {0}".format(exc.message)
+        job['status_message'] = "Error: {0}".format(exc)
     finally:
         save_log(job)
         db.jobs.update({'identifier': job['identifier']}, job)

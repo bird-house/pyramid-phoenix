@@ -1,10 +1,26 @@
+dist: xenial   # required for Python >= 3.7
 language: python
 os:
   - linux
 python:
-  - "2.7"
+  - "3.6"
+  #- "3.7"
 sudo: false
 install:
+  # Python 3.x is default
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  # Useful for debugging any issues with conda
+  - conda info -a
+  # Prepare env with Python version
+  - conda create -n pyramid-phoenix python=$TRAVIS_PYTHON_VERSION
+  # Update now the env with our environment
+  - conda env update -f environment.yml
+  - source activate pyramid-phoenix
   - make install
   - make start
 before_script:
@@ -12,5 +28,3 @@ before_script:
 script:
   - make testall
   - make pep8
-#after_success:
-# - coveralls

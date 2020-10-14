@@ -16,10 +16,7 @@ def process_inputs(request, job_id):
     job = request.db.jobs.find_one({'identifier': job_id})
     inputs = {}
     if job and job.get('status') == 'ProcessSucceeded':
-        if job.get('is_workflow', False):
-            inputs = collect_inputs(status_location=job.get('worker_status_location'))
-        else:
-            inputs = collect_inputs(status_location=job.get('status_location'), response=job.get('response'))
+        inputs = collect_inputs(status_location=job.get('status_location'), response=job.get('response'))
     return inputs
 
 
@@ -29,7 +26,7 @@ class Inputs(object):
         self.request = request
         self.session = self.request.session
 
-    @panel_config(name='job_inputs', renderer='../templates/monitor/panels/media.pt')
+    @panel_config(name='job_inputs', renderer='phoenix:monitor/templates/monitor/panels/media.pt')
     def panel(self):
         job_id = self.request.matchdict.get('job_id')
 
