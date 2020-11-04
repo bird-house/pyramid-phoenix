@@ -4,6 +4,9 @@
 # Docker
 #Dockerfile
 
+# Vagrant
+.vagrant
+
 # custom configs
 custom.cfg
 Makefile.config
