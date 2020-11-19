@@ -8,7 +8,7 @@ pyramid_beaker
 pyramid_celery
 pyramid_storage
 pyramid_celery
-deform
+deform>=2.0
 #js.deform
 #js.bootstrap
 PasteDeploy
