@@ -62,6 +62,54 @@ class ResourceWidget(Widget):
         return pstruct
 
 
+class RangeSliderWidget(Widget):
+    """
+    Renders a range slider widget.
+    
+    The range for the widget is taken from the default values.
+    If no defaults are set the the range is set to 1 to 100.
+    """
+    template = 'range_slider'
+    readonly_template = 'readonly/textinput'
+
+    def serialize(self, field, cstruct, **kw):
+        # set default values
+        min = '1'
+        max = '100'
+
+        if cstruct in (null, None):
+            cstruct = ''
+
+        # check if the wps defaults can be used to
+        # set the default values of the range
+        elif len(cstruct.split('|')) == 2:
+            min, max = cstruct.split('|', 1)
+            try:
+                int(min)
+                int(max)
+            except ValueError:
+                min = '1'
+                max = '100'
+
+        kw.setdefault('min', min)
+        kw.setdefault('max', max)
+
+        readonly = kw.get('readonly', self.readonly)
+        template = readonly and self.readonly_template or self.template
+        values = self.get_template_values(field, cstruct, kw)
+        return field.renderer(template, **values)
+
+    def deserialize(self, field, pstruct):
+        if pstruct is null:
+            return null
+        elif not isinstance(pstruct, string_types):
+            raise Invalid(field.schema, "Pstruct is not a string")
+        if not pstruct:
+            return null
+        LOGGER.debug("pstruct: %s", pstruct)
+        return pstruct
+
+
 class BBoxWidget(Widget):
     """
     Renders a BoundingBox Widget.

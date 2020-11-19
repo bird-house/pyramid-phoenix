@@ -1,0 +1,44 @@
+<!-- jQ Range Slider -->
+<link rel="stylesheet" type="text/css" href="/static/jquery-ui-1.12.1/css/jquery-ui.min.css">
+<link rel="stylesheet" type="text/css" href="/static/jQRangeSlider-5.8.0/css/iThing.css">
+
+<script src="/static/jquery-ui-1.12.1/js/jquery-ui.min.js"></script>
+
+<!-- jQ Range Slider -->
+<script src="/static/jQRangeSlider-5.8.0/js/jQRangeSlider-min.js"></script>
+
+<script>
+    function initRangeSlider(field_name, options) {
+        var sliderName = "#slider-" + field_name;
+        $(sliderName).rangeSlider(options);
+        $(sliderName).on(
+                "valuesChanging",
+                function(e, data) {
+                    document.getElementById(field_name).value = Math
+                            .round(data.values.min)
+                            + "|" + Math.round(data.values.max);
+                })
+    }
+</script>
+
+<div i18n:domain="deform"
+      tal:omit-tag=""
+      tal:define="oid oid|field.oid;
+                  name name|field.name;
+                  css_class css_class|field.widget.css_class;
+                  style style|field.widget.style;">
+
+    <input type="hidden" name="${name}" id="${name}" value="${min}|${max}">
+    <div class="row">
+        <div class="col-sm-8 col-md-6 col-lg-4">
+            <div id="slider-${name}"></div>
+    
+            <script>
+                 /* initialise range slider */
+                initRangeSlider('${name}', {bounds: {min: ${min}, max: ${max}}, enabled: true, defaultValues: {min: ${min}, max: ${max}}});
+            </script>
+    
+        </div>
+    </div>
+
+</div>
