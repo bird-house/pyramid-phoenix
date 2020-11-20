@@ -235,9 +235,9 @@ class WPSSchema(deform.schema.CSRFSchema):
             node.widget = deform.widget.PasswordWidget(size=20)
         elif type(node.typ) == colander.String:
             # Nasty HACK to get a range slider
-            if data_input.identifier.startswith("range_slider"):
+            if data_input.identifier.endswith("NumericRange"):
                 node.widget = RangeSliderWidget()
-            elif data_input.identifier.startswith("date_slider"):
+            elif data_input.identifier.endswith("DateRange"):
                 node.widget = DateSliderWidget()
             elif is_opendap(data_input):
                 node.widget = ResourceWidget(

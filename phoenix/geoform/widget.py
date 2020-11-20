@@ -75,21 +75,20 @@ class DateSliderWidget(Widget):
 
     def serialize(self, field, cstruct, **kw):
         # set default values
-        min_value = datetime.strptime('1900/01/01', '%Y/%m/%d').timestamp() * 1000
-        max_value = datetime.strptime('2100/12/31', '%Y/%m/%d').timestamp() * 1000
+        min_value = datetime.strptime('1900-01-01', '%Y-%m-%d').timestamp() * 1000
+        max_value = datetime.strptime('2100-12-31', '%Y-%m-%d').timestamp() * 1000
 
         if cstruct in (null, None):
             cstruct = ''
 
         # check if the wps defaults can be used to
         # set the default values of the range
-        elif len(cstruct.split('|')) == 2:
-            LOGGER.error("len(cstruct.split('|')) == 2")
-            min_value, max_value = cstruct.split('|', 1)
-            if len(min_value.split("/")) == 3 and len(max_value.split("/")) == 3:
+        elif len(cstruct.split('/')) == 2:
+            min_value, max_value = cstruct.split('/', 1)
+            if len(min_value.split("-")) == 3 and len(max_value.split("-")) == 3:
                 # its a date
-                min_value = datetime.strptime(min_value, '%Y/%m/%d').timestamp() * 1000
-                max_value = datetime.strptime(max_value, '%Y/%m/%d').timestamp() * 1000
+                min_value = datetime.strptime(min_value, '%Y-%m-%d').timestamp() * 1000
+                max_value = datetime.strptime(max_value, '%Y-%m-%d').timestamp() * 1000
 
         kw.setdefault('min_default', min_value)
         kw.setdefault('max_default', max_value)
@@ -109,9 +108,9 @@ class DateSliderWidget(Widget):
         if not pstruct:
             return null
         min_date, max_date = pstruct.split("|")
-        min_date = datetime.fromtimestamp(float(min_date) / 1000).strftime('%Y/%m/%d')
-        max_date = datetime.fromtimestamp(float(max_date) / 1000).strftime('%Y/%m/%d')
-        pstruct = "{}|{}".format(min_date, max_date)
+        min_date = datetime.fromtimestamp(float(min_date) / 1000).strftime('%Y-%m-%d')
+        max_date = datetime.fromtimestamp(float(max_date) / 1000).strftime('%Y-%m-%d')
+        pstruct = "{}/{}".format(min_date, max_date)
         LOGGER.debug("pstruct: %s", pstruct)
         return pstruct
 
@@ -136,8 +135,8 @@ class RangeSliderWidget(Widget):
 
         # check if the wps defaults can be used to
         # set the default values of the range
-        elif len(cstruct.split('|')) == 2:
-            min_value, max_value = cstruct.split('|', 1)
+        elif len(cstruct.split('/')) == 2:
+            min_value, max_value = cstruct.split('/', 1)
             try:
                 int(min_value)
                 int(max_value)
@@ -162,6 +161,7 @@ class RangeSliderWidget(Widget):
             raise Invalid(field.schema, "Pstruct is not a string")
         if not pstruct:
             return null
+        pstruct = pstruct.replace("|", "/")
         LOGGER.debug("pstruct: %s", pstruct)
         return pstruct
 
