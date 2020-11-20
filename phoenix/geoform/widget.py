@@ -1,4 +1,5 @@
 from dateutil import parser as datetime_parser
+from datetime import datetime
 
 from colander import (
     Invalid,
@@ -62,10 +63,63 @@ class ResourceWidget(Widget):
         return pstruct
 
 
+class DateSliderWidget(Widget):
+    """
+    Renders a date range slider widget.
+
+    The range for the widget is taken from the default values.
+    If no defaults are set the the range is set to 1900/01/01 to 2100/12/31.
+    """
+    template = 'range_slider_date'
+    readonly_template = 'readonly/textinput'
+
+    def serialize(self, field, cstruct, **kw):
+        # set default values
+        min_value = datetime.strptime('1900/01/01', '%Y/%m/%d').timestamp() * 1000
+        max_value = datetime.strptime('2100/12/31', '%Y/%m/%d').timestamp() * 1000
+
+        if cstruct in (null, None):
+            cstruct = ''
+
+        # check if the wps defaults can be used to
+        # set the default values of the range
+        elif len(cstruct.split('|')) == 2:
+            LOGGER.error("len(cstruct.split('|')) == 2")
+            min_value, max_value = cstruct.split('|', 1)
+            if len(min_value.split("/")) == 3 and len(max_value.split("/")) == 3:
+                # its a date
+                min_value = datetime.strptime(min_value, '%Y/%m/%d').timestamp() * 1000
+                max_value = datetime.strptime(max_value, '%Y/%m/%d').timestamp() * 1000
+
+        kw.setdefault('min_default', min_value)
+        kw.setdefault('max_default', max_value)
+        kw.setdefault('min', min_value)
+        kw.setdefault('max', max_value)
+
+        readonly = kw.get('readonly', self.readonly)
+        template = readonly and self.readonly_template or self.template
+        values = self.get_template_values(field, cstruct, kw)
+        return field.renderer(template, **values)
+
+    def deserialize(self, field, pstruct):
+        if pstruct is null:
+            return null
+        elif not isinstance(pstruct, string_types):
+            raise Invalid(field.schema, "Pstruct is not a string")
+        if not pstruct:
+            return null
+        min_date, max_date = pstruct.split("|")
+        min_date = datetime.fromtimestamp(float(min_date) / 1000).strftime('%Y/%m/%d')
+        max_date = datetime.fromtimestamp(float(max_date) / 1000).strftime('%Y/%m/%d')
+        pstruct = "{}|{}".format(min_date, max_date)
+        LOGGER.debug("pstruct: %s", pstruct)
+        return pstruct
+
+
 class RangeSliderWidget(Widget):
     """
     Renders a range slider widget.
-    
+
     The range for the widget is taken from the default values.
     If no defaults are set the the range is set to 1 to 100.
     """
@@ -74,8 +128,8 @@ class RangeSliderWidget(Widget):
 
     def serialize(self, field, cstruct, **kw):
         # set default values
-        min = '1'
-        max = '100'
+        min_value = '1'
+        max_value = '100'
 
         if cstruct in (null, None):
             cstruct = ''
@@ -83,16 +137,18 @@ class RangeSliderWidget(Widget):
         # check if the wps defaults can be used to
         # set the default values of the range
         elif len(cstruct.split('|')) == 2:
-            min, max = cstruct.split('|', 1)
+            min_value, max_value = cstruct.split('|', 1)
             try:
-                int(min)
-                int(max)
+                int(min_value)
+                int(max_value)
             except ValueError:
-                min = '1'
-                max = '100'
+                min_value = '1'
+                max_value = '100'
 
-        kw.setdefault('min', min)
-        kw.setdefault('max', max)
+        kw.setdefault('min_default', min_value)
+        kw.setdefault('max_default', max_value)
+        kw.setdefault('min', min_value)
+        kw.setdefault('max', max_value)
 
         readonly = kw.get('readonly', self.readonly)
         template = readonly and self.readonly_template or self.template

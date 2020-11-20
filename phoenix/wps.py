@@ -12,7 +12,7 @@ from owslib.wps import WPSExecution
 
 from pyramid.security import authenticated_userid
 
-from phoenix.geoform.widget import BBoxWidget, RangeSliderWidget, ResourceWidget
+from phoenix.geoform.widget import BBoxWidget, DateSliderWidget, RangeSliderWidget, ResourceWidget
 from phoenix.geoform.form import BBoxValidator
 from phoenix.geoform.form import URLValidator
 from phoenix.geoform.form import TextValidator
@@ -237,6 +237,8 @@ class WPSSchema(deform.schema.CSRFSchema):
             # Nasty HACK to get a range slider
             if data_input.identifier.startswith("range_slider"):
                 node.widget = RangeSliderWidget()
+            elif data_input.identifier.startswith("date_slider"):
+                node.widget = DateSliderWidget()
             elif is_opendap(data_input):
                 node.widget = ResourceWidget(
                     mime_types=OPENDAP_MIME_TYPES,

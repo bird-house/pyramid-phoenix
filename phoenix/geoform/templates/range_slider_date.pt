@@ -5,7 +5,7 @@
 <script src="/static/jquery-ui-1.12.1/js/jquery-ui.min.js"></script>
 
 <!-- jQ Range Slider -->
-<script src="/static/jQRangeSlider-5.8.0/js/jQRangeSlider-min.js"></script>
+<script src="/static/jQRangeSlider-5.8.0/js/jQDateRangeSlider-min.js"></script>
 
 <script src="/static/phoenix/js/rangeslider.js"></script>
 
@@ -14,17 +14,16 @@
       tal:define="name name|field.name;">
 
     <input type="hidden" name="${name}" id="${name}" value="${min}|${max}">
-    <div id="slider-${name}"></div>
+        <div id="slider-${name}"></div>
 
-    <script>
-         /* initialise range slider */
-        initRangeSlider('${name}', 
+        <script>
+            /* initialise range slider */
+            initDateRangeSlider('${name}', 
                 {
                 bounds:{min: ${min},max: ${max}},
                 defaultValues:{min: ${min_default},max: ${max_default}},
                 enabled: true
                 });
-    </script>
-
+        </script>
 
 </div>
