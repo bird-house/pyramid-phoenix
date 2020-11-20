@@ -259,6 +259,12 @@ class WPSSchema(deform.schema.CSRFSchema):
         if data_input.minOccurs == 0:
             node.missing = colander.drop
 
+        if (hasattr(data_input, 'defaultValue')
+                and data_input.defaultValue is not None
+                and len(data_input.defaultValue.split(',')) > 3):
+            default = ",".join(data_input.defaultValue.split(',')[:4])
+            node.default = default
+
         # sequence of nodes ...
         if data_input.maxOccurs > 1:
             node = colander.SchemaNode(
