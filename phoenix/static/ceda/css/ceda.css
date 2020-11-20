@@ -63,10 +63,7 @@
 	color: rgba(0, 0, 0, 0.5);
 }
 
-/* .nav-user-dropdown.active .nav-user-dropdown:hover .nav-user-dropdown:focus {
-    color: rgba(0, 0, 0, 0.9);
-} */
-.nav-user-dropdown:hover, .navbar-btn:hover {
+.nav-user-dropdown:hover, .nav-user-dropdown:focus, .navbar-btn:hover {
 	color: rgba(0, 0, 0, 0.9);
 }
 
