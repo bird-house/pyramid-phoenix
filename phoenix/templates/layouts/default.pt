@@ -8,7 +8,7 @@
     <meta name="author" content="Birdhouse">
     <link rel="shortcut icon" href="${request.static_path('phoenix:static/favicon.ico')}"/>
 
-    <title> Welcome to Phoenix </title>
+    <title> CEDA | WPS </title>
 
     <!-- CSS
          ======================================================================= -->
@@ -31,6 +31,9 @@
 
     <!-- Phoenix Theme CSS -->
     <link rel="stylesheet" href="${request.static_path('phoenix:static/phoenix/css/theme/default.css')}"/>
+
+    <!-- CEDA Theme CSS -->
+    <link rel="stylesheet" href="${request.static_path('phoenix:static/ceda/css/ceda.css')}"/>
 
 
     <tal:block repeat="reqt css_links|[]">

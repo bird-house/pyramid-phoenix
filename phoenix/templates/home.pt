@@ -5,7 +5,7 @@
     <section class="topbox">
       <div class="container">
         <h1>
-          <span class="title">Phoenix</span>
+          <span class="title">CEDA Web Processing Service UI</span>
         </h1>
         <h2>
           A <strong>Python Pyramid</strong> Web Application<br>
@@ -20,7 +20,7 @@
         <div class="row">
           <div class="col-md-12 text-center">
             <h2><strong>Highlighted Processes</strong></h2>
-            <h3>Run one of these favorite processes or explore <a href="/processes">more</a>.</h3>
+            <h3>Run one of these favourite processes or explore <a href="/processes">more</a>.</h3>
           </div>
         </div>
         <div class="row">
