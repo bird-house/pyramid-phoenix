@@ -37,6 +37,9 @@ class BboxMapSelector {
     // the openlayer map
     map;
 
+    // A categorisation of the map coverage
+    mapArea;
+
     constructor(initialExtentValues, oid) {
         /*
          * HTML elements
@@ -64,13 +67,27 @@ class BboxMapSelector {
 
         // End of html
 
-        this.areaRestriction = initialExtentValues;
 
-        this.view = new ol.View({
-            projection: 'EPSG:4326',
-            zoom: 1,
-            extent: this.areaRestriction
-        });
+        if (initialExtentValues[1] < -85 || initialExtentValues[3] > 85) {
+            this.mapArea = "global"
+            this.areaRestriction = initialExtentValues;
+        } else {
+            this.mapArea = "custom"
+            this.areaRestriction = BboxMapSelector.transformLatLongTo3857(initialExtentValues);
+        }
+
+        if (this.mapArea === "global") {
+            this.view = new ol.View({
+                projection: 'EPSG:4326',
+                zoom: 1,
+                extent: this.areaRestriction
+            });
+        } else {
+            this.view = new ol.View({
+                zoom: 1,
+                extent: this.areaRestriction
+            });
+        }
 
         this.setExtentAndZoom();
 
@@ -271,51 +288,65 @@ class BboxMapSelector {
         // of the coordinates is off the map and there is an intersection, an
         // error of no intersection is reported
 
-        let displayValues = this.areaRestriction;
+        var area
+        if (this.mapArea === "global") {
+            area = this.areaRestriction;
+        } else {
+            area = BboxMapSelector.transformExtentTo4326(this.areaRestriction);
+        }
+
         let mapMessage = "";
+        let trimMessage = "Bounding box trimmed to fit geographical boundaries.";
+
         let west = BboxMapSelector.getNumValue(this.bboxWestElement);
-        if (west < this.areaRestriction[0]) {
-            mapMessage = "Bounding box trimmed to fit geographical boundaries.";
-            west = this.areaRestriction[0];
+        if (west < area[0]) {
+            mapMessage = trimMessage;
+            west = area[0];
         }
 
         let south = BboxMapSelector.getNumValue(this.bboxSouthElement);
-        if (south < this.areaRestriction[1]) {
-            mapMessage = "Bounding box trimmed to fit geographical boundaries.";
-            south = this.areaRestriction[1];
+        if (south < area[1]) {
+            mapMessage = trimMessage;
+            south = area[1];
         }
 
         let east = BboxMapSelector.getNumValue(this.bboxEastElement);
-        if (east > this.areaRestriction[2]) {
-            mapMessage = "Bounding box trimmed to fit geographical boundaries.";
-            east = this.areaRestriction[2];
+        if (east > area[2]) {
+            mapMessage = trimMessage;
+            east = area[2];
         }
-        if (east < this.areaRestriction[0]) {
-            mapMessage = "Bounding box trimmed to fit geographical boundaries.";
-            east = this.areaRestriction[0];
+        if (east < area[0]) {
+            mapMessage = trimMessage;
+            east = area[0];
         }
 
         let north = BboxMapSelector.getNumValue(this.bboxNorthElement);
-        if (north > this.areaRestriction[3]) {
-            mapMessage = "Bounding box trimmed to fit geographical boundaries.";
-            north = this.areaRestriction[3];
+        if (north > area[3]) {
+            mapMessage = trimMessage;
+            north = area[3];
         }
-        if (north < this.areaRestriction[1]) {
-            mapMessage = "Bounding box trimmed to fit geographical boundaries.";
-            north = this.areaRestriction[1];
+        if (north < area[1]) {
+            mapMessage = trimMessage;
+            north = area[1];
         }
 
         if (south > north) {
-            mapMessage = "Bounding box trimmed to fit geographical boundaries.";
+            mapMessage = trimMessage;
             south = north;
         }
 
         if (west > east) {
-            mapMessage = "Bounding box trimmed to fit geographical boundaries.";
+            mapMessage = trimMessage;
             west = east;
         }
 
-        let selectedExtent = [west, south, east, north];
+        var selectedExtent
+        if (this.mapArea === "global") {
+            selectedExtent = [west, south, east, north];
+        } else {
+            selectedExtent = BboxMapSelector.transformLatLongTo3857([west, south, east, north]);
+        }
+
         return this.processBBox(selectedExtent, true, mapMessage)
     }
 
@@ -365,11 +396,18 @@ class BboxMapSelector {
 
     // Add the coordinates of the box to the html
     displayBBoxCoordinates(extent) {
-        let en = ol.coordinate.toStringXY(ol.extent.getTopRight(extent), 2)
+        var area
+        if (this.mapArea === "global") {
+            area = extent;
+        } else {
+            area = BboxMapSelector.transformExtentTo4326(extent);
+        }
+
+        let en = ol.coordinate.toStringXY(ol.extent.getTopRight(area), 2)
             .split(",");
         this.bboxEastElement.value = en[0].trim();
         this.bboxNorthElement.value = en[1].trim();
-        let ws = ol.coordinate.toStringXY(ol.extent.getBottomLeft(extent), 2)
+        let ws = ol.coordinate.toStringXY(ol.extent.getBottomLeft(area), 2)
             .split(",");
         this.bboxWestElement.value = ws[0].trim();
         this.bboxSouthElement.value = ws[1].trim();
@@ -395,6 +433,16 @@ class BboxMapSelector {
     // Parse a numerical value from an HTML element.
     static getNumValue(element) {
         return parseFloat(element.value);
+    }
+
+    // Transform an extent from EPSG:4326 to EPSG:3857
+    static transformLatLongTo3857(extent) {
+        return ol.proj.transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
+    }
+
+    // Transform an extent from EPSG:3857 to EPSG:4326
+    static transformExtentTo4326(extent) {
+        return ol.proj.transformExtent(extent, 'EPSG:3857', 'EPSG:4326')
     }
 
 }
