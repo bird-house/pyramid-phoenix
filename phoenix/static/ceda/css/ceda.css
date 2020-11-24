@@ -2,6 +2,38 @@
 	background-color: rgb(236, 240, 241)
 }
 
+.navbar {
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+}
+
+.navbar>.container {
+	align-items: center;
+	display: flex;
+	flex-wrap: nowrap;
+}
+
+.navbar-expand-lg .navbar-collapse {
+	align-items: center;
+	display: flex;
+	flex-basis: auto;
+	flex-grow: 1
+}
+
+.navbar-expand-lg .navbar-nav {
+	display: flex;
+	flex-direction: row;
+}
+
+.navbar-right {
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
 .navbar.fixed-top {
 	padding: 4px 4px;
 }
