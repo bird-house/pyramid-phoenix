@@ -146,7 +146,7 @@
             </label>
           </div>
 
-          <div tal:define="numpages max(1, (count+limit-1)/limit);
+          <div tal:define="numpages int(max(1, (count+limit-1)/limit));
                            last min((page + 1) * limit, count);
                            previous request.route_path('monitor', _query=[('page', page-1), ('limit', limit), ('status', status), ('access', access), ('sort', sort)]);
                            next request.route_path('monitor', _query=[('page', page+1), ('limit', limit), ('status', status), ('access', access), ('sort', sort)])"
