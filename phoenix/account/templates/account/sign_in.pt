@@ -27,10 +27,6 @@
                    class="btn btn-warning btn-lg"><icon class="fa fa-globe"></icon> Sign in with CEDA</a>
                 <br/><br/>
               </div>
-              <span class="text-muted">OR</span>
-              <br/><br/>
-              <tal:form replace="structure form">The form will render here</tal:form>
-              <!-- a href="${request.route_path('account_register')}" class="btn btn-link">Register for an account</a -->
             </div>
           </div><!-- panel -->
         </div>
