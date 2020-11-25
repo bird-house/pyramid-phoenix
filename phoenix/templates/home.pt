@@ -8,8 +8,12 @@
           <span class="title">CEDA Web Processing Service UI</span>
         </h1>
         <h2>
-          A <strong>Python Pyramid</strong> Web Application<br>
-          to interact with <strong>Web Processing Services</strong>
+          This is a <em>beta</em> service that replaces the old
+          <strong>CEDA WPS</strong>. Over the coming months we
+          will continue to develop this service.
+          This UI and the underlying processes are built on the
+          <strong>Birdhouse</strong> framework developed by
+          <strong>DKRZ</strong>.
         </h2>
       </div>
     </section>
