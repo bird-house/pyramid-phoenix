@@ -41,7 +41,7 @@ class ExecuteProcess(MyView):
         super(ExecuteProcess, self).__init__(request, name='processes_execute', title='')
 
     def has_execute_permission(self):
-        ceda_permission = check_ceda_permissions(self.request.user, self.processid)
+        ceda_permission = check_ceda_permissions(self.request, self.request.user, self.processid)
         return self.service.public or (self.request.has_permission('submit') and ceda_permission)
 
     def breadcrumbs(self):
