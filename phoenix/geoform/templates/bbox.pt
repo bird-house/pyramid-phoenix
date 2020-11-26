@@ -105,6 +105,8 @@
       </div>
     </div>
 
+    <input type="hidden" name="crs" id="hidden_input" value="urn:ogc:def:crs:OGC:2:84">
+
     <span class="help-block" id="${oid}-help_text"></span>
 
     <script>
