@@ -67,6 +67,8 @@ def appstruct_to_inputs(request, appstruct):
     for key, values in list(appstruct.items()):
         if key in ['_async_check', 'csrf_token']:
             continue
+        if isinstance(values, set):
+            values = list(values)
         if not isinstance(values, list):
             values = [values]
         for value in values:
@@ -159,7 +161,8 @@ class WPSSchema(deform.schema.CSRFSchema):
         self.colander_literal_widget(node, data_input)
 
         # sequence of nodes ...
-        if data_input.maxOccurs > 1:
+        # do not use if we are using a SelectWidget with multiple=True for strings
+        if data_input.maxOccurs > 1 and 'string' not in data_input.dataType:
             node = colander.SchemaNode(
                 colander.Sequence(),
                 node,
@@ -185,7 +188,11 @@ class WPSSchema(deform.schema.CSRFSchema):
         elif 'decimal' in data_input.dataType:
             return colander.Decimal()
         elif 'string' in data_input.dataType:
-            return colander.String()
+            if data_input.maxOccurs > 1:
+                # we are going to use a SelectWidget with multiple=True
+                return colander.Set()
+            else:
+                return colander.String()
         elif 'dateTime' in data_input.dataType:
             return colander.DateTime()
         elif 'date' in data_input.dataType:
@@ -213,7 +220,12 @@ class WPSSchema(deform.schema.CSRFSchema):
             choices = []
             for value in data_input.allowedValues:
                 choices.append([value, value])
-            node.widget = deform.widget.Select2Widget(values=choices)
+            if data_input.maxOccurs > 1:
+                node.widget=deform.widget.SelectWidget(
+                    values=choices, multiple=True
+                )
+            else:
+                node.widget = deform.widget.Select2Widget(values=choices)
         elif type(node.typ) == colander.DateTime:
             node.widget = deform.widget.DateInputWidget()
         elif type(node.typ) == colander.Boolean:
