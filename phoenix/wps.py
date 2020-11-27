@@ -118,20 +118,7 @@ class WPSSchema(deform.schema.CSRFSchema):
         self.process = process
         self.user = user
         self.kwargs = kwargs or {}
-        if use_async:
-            self.add_async_check()
         self.add_nodes(process)
-
-    def add_async_check(self):
-        node = colander.SchemaNode(
-            colander.Boolean(),
-            name='_async_check',
-            title='Run async',
-            description='Check this to run process async.',
-            default=True,
-            widget=deform.widget.CheckboxWidget(),
-        )
-        self.add(node)
 
     def add_nodes(self, process):
         if process is None:
