@@ -138,7 +138,8 @@ class ExecuteProcess(MyView):
             if identifier in complex_inpts:
                 new_inputs.append((identifier, ComplexDataInput(value)))
             elif identifier in bbox_inpts:
-                new_inputs.append((identifier, BoundingBoxDataInput(value)))
+                crs = 'urn:ogc:def:crs:OGC:2:84'
+                new_inputs.append((identifier, BoundingBoxDataInput(value, crs=crs)))
             else:
                 new_inputs.append(inpt)
         inputs = new_inputs
