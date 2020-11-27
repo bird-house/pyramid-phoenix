@@ -22,8 +22,6 @@
                 <a href="#">
                   <img class="media-object" src="${item.media}" alt="No Preview" width="256px"
                        tal:condition="item.media is not None">
-                  <img class="media-object" src="${request.static_path('phoenix:static/phoenix/img/missing_thumb.png')}"
-                       alt="No Preview" width="256px" tal:condition="item.media is None">
                 </a>
               </span>
               <div class="media-body">
