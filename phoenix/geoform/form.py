@@ -67,7 +67,30 @@ class TextValidator(object):
                 raise colander.Invalid(node, "Invalid value ... empty.")
             for char in self.restricted_chars:
                 if char in normalized_value:
-                    raise colander.Invalid(node, "Invalid value ... containts restricted characters.")
+                    raise colander.Invalid(node, "Invalid value ... contains restricted characters.")
+
+
+class VocabValidator(object):
+    """
+    Validate values against a vocabulary.
+    """
+    def __init__(self, vocab):
+        self.vocab = vocab
+
+    def __call__(self, node, values):
+        if not isinstance(values, list):
+            values = list(values)
+
+        for value in values:
+            try:
+                normalized_value = str(value).strip()
+            except Exception:
+                raise colander.Invalid(node, "Invalid value.")
+            if not normalized_value:
+                raise colander.Invalid(node, "Invalid value ... empty.")
+            if value not in self.vocab:
+                raise colander.Invalid(
+                    node, "Invalid value ... value not in list of allowed values.")
 
 
 class FileUploadValidator(colander.All):

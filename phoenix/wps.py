@@ -16,6 +16,7 @@ from phoenix.geoform.widget import BBoxWidget, DateSliderWidget, RangeSliderWidg
 from phoenix.geoform.form import BBoxValidator
 from phoenix.geoform.form import URLValidator
 from phoenix.geoform.form import TextValidator
+from phoenix.geoform.form import VocabValidator
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -221,11 +222,12 @@ class WPSSchema(deform.schema.CSRFSchema):
             for value in data_input.allowedValues:
                 choices.append([value, value])
             if data_input.maxOccurs > 1:
-                node.widget=deform.widget.SelectWidget(
+                node.widget = deform.widget.SelectWidget(
                     values=choices, multiple=True
                 )
             else:
                 node.widget = deform.widget.Select2Widget(values=choices)
+            node.validator = VocabValidator(data_input.allowedValues)
         elif type(node.typ) == colander.DateTime:
             node.widget = deform.widget.DateInputWidget()
         elif type(node.typ) == colander.Boolean:
