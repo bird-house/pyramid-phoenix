@@ -17,6 +17,8 @@ from owslib.wps import WebProcessingService
 from owslib.wps import WPSExecution
 from owslib.wps import ComplexDataInput, BoundingBoxDataInput
 
+from time import sleep
+
 import logging
 LOGGER = logging.getLogger("PHOENIX")
 
@@ -158,6 +160,8 @@ class ExecuteProcess(MyView):
             inputs=inputs,
             outputs=outputs,
             use_async=appstruct.get('_async_check', True))
+        # give the job a chance to start
+        sleep(1)
         self.request.registry.notify(JobStarted(self.request, result.id))
         LOGGER.debug('wps url={}'.format(self.wps.url))
         return result.id
