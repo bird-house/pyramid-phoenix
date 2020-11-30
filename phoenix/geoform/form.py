@@ -78,8 +78,10 @@ class VocabValidator(object):
         self.vocab = vocab
 
     def __call__(self, node, values):
-        if not isinstance(values, list):
+        if isinstance(values, set):
             values = list(values)
+        if not isinstance(values, list):
+            values = [values]
 
         for value in values:
             try:
