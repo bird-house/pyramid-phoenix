@@ -39,12 +39,8 @@ def _get_user_roles(request, user_id):
     engine = create_engine(connection_credentials)
 
     with engine.connect() as conn:
-        # Get userkey first
-        query = f"select userkey from tbusers where accountid='{user_id}';"
-        userkey = _get_response(conn, query, get_one=True)
-        # Get all roles
-        userkey = int(userkey)
-        query = f"select datasetid from tbdatasetjoin where userkey = {userkey} and removed != 0;"
+        query = request.registry.settings.get("ceda.db.query")
+        query = query.replace("{user_id}", user_id)
         roles = set(_get_response(conn, query))
         roles = sorted(
             [r for r in roles if not r.startswith("gws_") and not r.startswith("vm_")]
