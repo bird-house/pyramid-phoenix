@@ -15,6 +15,7 @@ extends = buildout.cfg
 #prefix =  /opt/birdhouse
 #user = www-data
 #etc-user = root
+#group = nobody
 
 # phoenix admin password
 phoenix-password = qwerty
