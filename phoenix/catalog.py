@@ -1,4 +1,5 @@
 from mako.template import Template
+import re
 import uuid
 from os.path import join, dirname
 from collections import namedtuple
@@ -87,7 +88,21 @@ class MongodbCatalog(Catalog):
         self.collection = collection
 
     def get_record_by_id(self, identifier):
-        return doc2record(self.collection.find_one({'identifier': identifier}))
+        """
+        Gets database record by identifier or title.
+
+        If the identifier does not match, then a case-insensitive
+        match is made on the title (replacing "_" with " "). This
+        enables _deterministic_ URLs in which the WPS can be identified
+        by a meaningful string as well as the standard long identifier.
+        """
+        doc = self.collection.find_one({'identifier': identifier})
+
+        if not doc:
+            title_regex = re.compile('^' + re.escape(identifier.replace('_', ' ')) + '$', re.IGNORECASE)
+            doc = self.collection.find_one({'title': title_regex}) 
+
+        return doc2record(doc)
 
     def delete_record(self, identifier):
         self.collection.delete_one({'identifier': identifier})
