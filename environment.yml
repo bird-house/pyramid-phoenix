@@ -28,7 +28,7 @@ dependencies:
   - pyyaml
   - pygments
   - pytz
-  - owslib=0.19
+  - owslib=0.21
   - transaction
   - genshi=0.7
   - pyjwt
