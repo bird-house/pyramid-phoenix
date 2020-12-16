@@ -1,5 +1,6 @@
 from dateutil import parser as datetime_parser
 from datetime import datetime
+from os import path
 
 from colander import (
     Invalid,
@@ -15,6 +16,10 @@ from deform.compat import (
 
 from deform.widget import (
     Widget,
+)
+
+from deform.widget import (
+    FileUploadWidget as FUW
 )
 
 from deform.widget import _StrippedString
@@ -164,6 +169,50 @@ class RangeSliderWidget(Widget):
         pstruct = pstruct.replace("|", "/")
         LOGGER.debug("pstruct: %s", pstruct)
         return pstruct
+
+
+class FileUploadWidget(FUW):
+    """
+    This is a customisation of the deform FileUploadWidget.
+
+    A file will be uploaded and stored to disk, the result from the "deserialize" will
+    be a string containing the path of the file.
+    As a result the "serialize" has to take that string and get the filedict object.
+    """
+    def __init__(self, tmpstore, wps_id, process_id):
+        super().__init__(tmpstore)
+        self.wps_id = wps_id
+        self.process_id = process_id
+
+    def random_id(self):
+        uid = super().random_id()
+        today = datetime.today().strftime('%Y-%m-%d')
+        return path.join(today, self.wps_id, self.process_id, uid)
+
+    def serialize(self, field, cstruct, **kw):
+        if cstruct in (null, None):
+            cstruct = {}
+        if cstruct:
+            # all we have is a string containing the uid, we need to get a
+            # FileUploadTempStore object
+            uid = cstruct
+            cstruct = self.tmpstore[uid]
+            if cstruct is None:
+                cstruct = {}
+
+        readonly = kw.get("readonly", self.readonly)
+        template = readonly and self.readonly_template or self.template
+        values = self.get_template_values(field, cstruct, kw)
+        return field.renderer(template, **values)
+
+    def deserialize(self, field, pstruct):
+        # We do not want to pass the data to the WPS, only the location of the data,
+        # which we have stored in a directory identified by the uid
+        data = super().deserialize(field, pstruct)
+        if data is null:
+            return data
+
+        return path.join(self.tmpstore.storage_dir, data["uid"], data["filename"])
 
 
 class BBoxWidget(Widget):

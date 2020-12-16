@@ -12,7 +12,14 @@ from owslib.wps import WPSExecution
 
 from pyramid.security import authenticated_userid
 
-from phoenix.geoform.widget import BBoxWidget, DateSliderWidget, RangeSliderWidget, ResourceWidget
+from phoenix.file_upload_store import FileUploadStore
+from phoenix.geoform.widget import (
+    BBoxWidget,
+    DateSliderWidget,
+    RangeSliderWidget,
+    ResourceWidget,
+    FileUploadWidget,
+)
 from phoenix.geoform.form import BBoxValidator
 from phoenix.geoform.form import URLValidator
 from phoenix.geoform.form import TextValidator
@@ -192,6 +199,10 @@ class WPSSchema(deform.schema.CSRFSchema):
             if data_input.maxOccurs > 1:
                 # we are going to use a SelectWidget with multiple=True
                 return colander.Set()
+            elif data_input.identifier.endswith("FileUpload"):
+                # we want to upload a file but just return a string containing
+                # the path
+                return deform.FileData()
             else:
                 return colander.String()
         elif 'dateTime' in data_input.dataType:
@@ -232,6 +243,15 @@ class WPSSchema(deform.schema.CSRFSchema):
             node.widget = deform.widget.DateInputWidget()
         elif type(node.typ) == colander.Boolean:
             node.widget = deform.widget.CheckboxWidget()
+        elif type(node.typ) == deform.schema.FileData:
+            service_id = self.request.params.get('wps')
+            service_title = self.request.catalog.get_record_by_id(service_id).title
+            node.widget = FileUploadWidget(
+                FileUploadStore(
+                    self.request.registry.settings.get("widget.file.upload.storage.dir"),
+                    self.request.registry.settings.get("widget.file.upload.max.size.mb")),
+                service_title,
+                self.process.identifier)
         elif 'password' in data_input.identifier:
             node.widget = deform.widget.PasswordWidget(size=20)
         elif type(node.typ) == colander.String:
