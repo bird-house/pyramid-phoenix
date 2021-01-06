@@ -72,17 +72,22 @@
           <a href="#" class="dropdown-toggle nav-user-dropdown" data-toggle="dropdown" role="button" aria-expanded="false">
             <span class="fa fa-user-circle-o fa-lg"></span> ${request.user.get('name', 'Guest')} <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
-            <li>
+            <li tal:condition="request.registry.settings.get('phoenix.local_user_management').lower() == 'true'">
               <a href="${request.route_path('profile', userid=request.unauthenticated_userid, tab='profile')}"><i class="fa fa-user fa-lg p-r-xs"></i> My Profile</a>
             </li>
+            <span tal:omit-tag="" tal:condition="request.registry.settings.get('phoenix.local_user_management').lower() == 'true'">
             <li tal:condition="request.has_permission('admin')" role="separator" class="divider"></li>
             <li tal:condition="request.has_permission('admin')">
               <a href="${request.route_path('people')}"><i class="fa fa-users fa-lg p-r-xs"></i> People</a>
             </li>
+            </span>
             <li tal:condition="request.has_permission('admin')">
               <a href="${request.route_path('settings')}"><i class="fa fa-wrench fa-lg p-r-xs"></i> Settings</a>
             </li>
-            <li role="separator" class="divider"></li>
+            <li tal:condition="request.has_permission('admin')" role="separator" class="divider"></li>
+            <span tal:omit-tag="" tal:condition="not request.has_permission('admin')" role="separator">
+            <li tal:condition="request.registry.settings.get('phoenix.local_user_management').lower() == 'true'" role="separator" class="divider"></li>
+            </span>
             <li>
               <a href="/account/logout"><i class="fa fa-sign-out fa-lg p-r-xs"></i> Sign Out</a>
             </li>

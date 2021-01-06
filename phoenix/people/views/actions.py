@@ -1,5 +1,5 @@
 from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 from pyramid.security import authenticated_userid
 
 from phoenix.oauth2 import oauth2_client_factory
@@ -26,6 +26,8 @@ class Actions(object):
 
     @view_config(route_name='delete_user', permission='admin')
     def delete_user(self):
+        if self.request.registry.settings.get("phoenix.local_user_management", "true").lower() != "true":
+            return HTTPNotFound()
         if self.userid:
             self.collection.remove(dict(identifier=self.userid))
             self.session.flash('User removed', queue="info")

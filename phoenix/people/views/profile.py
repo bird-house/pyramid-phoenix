@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from pyramid.view import view_config, view_defaults
+from pyramid.httpexceptions import HTTPNotFound
 from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPFound
 
@@ -103,6 +104,8 @@ class Profile(MyView):
 
     @view_config(route_name='profile', renderer='phoenix:people/templates/people/profile.pt')
     def view(self):
+        if self.request.registry.settings.get("phoenix.local_user_management", "true").lower() != "true":
+            return HTTPNotFound()
         form = self.generate_form()
 
         if 'update' in self.request.POST:
