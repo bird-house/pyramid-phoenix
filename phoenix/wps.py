@@ -248,6 +248,9 @@ class WPSSchema(deform.schema.CSRFSchema):
             service_title = self.request.catalog.get_record_by_id(service_id).title
             node.widget = FileUploadWidget(
                 FileUploadStore(
+                    self.request.scheme,
+                    self.request.server_name,
+                    self.request.server_port,
                     self.request.registry.settings.get("widget.file.upload.storage.dir"),
                     self.request.registry.settings.get("widget.file.upload.max.size.mb")),
                 service_title,

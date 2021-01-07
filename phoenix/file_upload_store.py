@@ -2,6 +2,7 @@ from glob import glob
 from io import BytesIO
 import logging
 from os import makedirs, path, remove
+import urllib
 
 import colander
 from deform.interfaces import FileUploadTempStore
@@ -17,25 +18,36 @@ class FileUploadStore(FileUploadTempStore):
     """
 
     storage_dir = None
+    storage_url = None
     max_size = None
 
-    def __init__(self, storage_dir, max_size):
+    def __init__(self, scheme, hostname, port, storage_dir, max_size):
         """
         Initialise the FileUploadStore.
 
+        @param hostname(str): the host name of the service
+        @param port(str): the port of the service
         @param storage_dir(str): the root directory to store the files in.
         @param max_size(int): the maximum size in MB of files to be uploaded.
         """
         self.storage_dir = storage_dir
         self.max_size = max_size
+        netloc = self._get_netloc(scheme, hostname, port)
+        self.storage_url = urllib.parse.urlunsplit(
+            (scheme, netloc, storage_dir, "", "")
+        )
         super().__init__()
+
+    def _get_netloc(self, scheme, hostname, port):
+        if (scheme == "http" and port == "80") or (scheme == "https" and port == "443"):
+            return hostname
+        return f"{hostname}:{port}"
 
     def get(self, name, default=None):
         """
         Get the filedict object for the given name.
 
-        @param name(str): this may be the relative path to the file or the full path
-            that includes the storage_dir.
+        @param name(str): this may be the relative path to the file or a url.
         @param default(filedict): the object to return if none are found.
         """
         file_name = self._get_full_file_name(name)
@@ -55,8 +67,7 @@ class FileUploadStore(FileUploadTempStore):
         """
         Get a filedict object.
 
-        @param name(str): this may be the relative path to the file or the full path
-            that includes the storage_dir.
+        @param name(str): this may be the relative path to the file or a url.
 
         @raise KeyError: if no matching file is found
         """
@@ -78,7 +89,6 @@ class FileUploadStore(FileUploadTempStore):
         value["fp"].seek(0)
         if size > int(self.max_size) * 1024 * 1024:
             msg = "Maximum file size: {size}MB".format(size=self.max_size)
-            #            raise Exception(msg)
             raise colander.Invalid(None, msg)
 
         file_dir = self._file_dir(name)
@@ -133,9 +143,12 @@ class FileUploadStore(FileUploadTempStore):
         """
         Get the full path including file name.
 
-        @param name(str): the name can be the full path to a file or the relative path
+        @param name(str): the name can be a URL to a file or the relative path
             to the file, excluding the file name
         """
+        if name.startswith("http"):
+            name = self._get_path_from_url(name)
+
         if path.isfile(name):
             # nothing to do
             return name
@@ -157,11 +170,20 @@ class FileUploadStore(FileUploadTempStore):
         """
         Get the UID, this is the relative path to the file, excluding the file name.
 
-        @param name(str): the name can be the full path to a file or the relative path
+        @param name(str): the name can be a URL to a file or the relative path
             to the file, excluding the file name
         """
+        if name.startswith("http"):
+            name = self._get_path_from_url(name)
+
         if not name.startswith(self.storage_dir):
             return name
+
         uid = path.dirname(name)
         uid = path.relpath(uid, start=self.storage_dir)
         return uid
+
+    def _get_path_from_url(self, url):
+        LOGGER.error(url)
+        bits = urllib.parse.urlsplit(url)
+        return bits.path
