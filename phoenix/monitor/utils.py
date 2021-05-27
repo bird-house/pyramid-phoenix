@@ -36,7 +36,7 @@ def output_details(request, output):
                 category=category)
 
 
-def output_details_from_metlink(output):
+def output_details_from_metalink(output):
     outputs = []
     with urlopen(output.reference) as response:
         html = response.read()
