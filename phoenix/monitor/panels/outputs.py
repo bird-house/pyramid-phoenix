@@ -1,7 +1,7 @@
 from pyramid_layout.panel import panel_config
 
 from phoenix.wps import check_status
-from phoenix.monitor.utils import output_details, output_details_from_metlink
+from phoenix.monitor.utils import output_details, output_details_from_metalink
 
 import logging
 LOGGER = logging.getLogger(__name__)
@@ -39,7 +39,7 @@ class Outputs(object):
 
             if "application/metalink+xml" in output.mimeType:
                 # If it is a metalink we need to resolve it and get the links to the files
-                metalink_items.extend(output_details_from_metlink(output))
+                metalink_items.extend(output_details_from_metalink(output))
 
         items = sorted(items, key=lambda item: item['identifier'], reverse=1)
         metalink_items = sorted(metalink_items, key=lambda item: item['reference'], reverse=1)
