@@ -1,4 +1,4 @@
-pyramid>=1.10
+pyramid<2.0
 pyramid-chameleon
 pyramid-mako
 pymongo>=3.3.0
