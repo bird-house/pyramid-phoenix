@@ -39,7 +39,7 @@ dependencies:
   - pymongo=3
   - mongodb>=3.4
   - pip:
-      - pyramid
+      - pyramid<2.0
       - pyramid-beaker
       - Beaker
       - pyramid-deform
