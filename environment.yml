@@ -28,7 +28,7 @@ dependencies:
   - pyyaml
   - pygments
   - pytz
-  - owslib=0.21
+  - owslib>=0.21.0
   - transaction
   - genshi=0.7
   - pyjwt
@@ -36,23 +36,6 @@ dependencies:
   - celery=3.1
   - kombu=3.0
 # mongodb
-  - pymongo=3
+  - pymongo>=3.3.0
   - mongodb>=3.4
-  - pip:
-      - pyramid<2.0
-      - pyramid-beaker
-      - Beaker
-      - pyramid-deform
-      - deform
-      - chameleon==3.7.4
-      - pyramid-chameleon
-      - pyramid-mako
-      - pyramid-layout
-      - pyramid-celery==3.0.0
-      - pyramid-storage
-      - pyramid-rpc
-      - colander
-      - Authomatic==0.1.0.post1
-      - python-openid2==3.0
-      - WebHelpers2
-      - WebHelpers2_grid
+
