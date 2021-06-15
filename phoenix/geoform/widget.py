@@ -186,7 +186,7 @@ class FileUploadWidget(FUW):
 
     def random_id(self):
         uid = super().random_id()
-        today = datetime.today().strftime('%Y-%m-%d')
+        today = datetime.today().strftime("%Y-%m-%d")
         return path.join(today, self.wps_id, self.process_id, uid)
 
     def serialize(self, field, cstruct, **kw):
@@ -212,7 +212,7 @@ class FileUploadWidget(FUW):
         if data is null:
             return data
 
-        return path.join(self.tmpstore.storage_dir, data["uid"], data["filename"])
+        return path.join(self.tmpstore.storage_url, data["uid"], data["filename"])
 
 
 class BBoxWidget(Widget):
