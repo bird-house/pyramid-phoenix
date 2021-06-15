@@ -30,7 +30,7 @@
             Help<span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li>
-              <a href="${request.route_url('readthedocs', part='index')}" target="_">
+              <a href="https://help.ceda.ac.uk/article/4977-ceda-wps" target="_">
                 <i class="fa fa-book"></i> User Documentation
               </a>
             </li>

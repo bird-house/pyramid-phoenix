@@ -1,34 +1,52 @@
+import json
+
 from sqlalchemy import create_engine
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-PROCESS_ROLE_MAPPING = {
-    "GetWeatherStations": ["surface"],
-    "ExtractUKStationData": ["surface"],
-}
+CEDA_ROLE_MAP_CONFIG = "/usr/local/birdhouse/etc/phoenix/ceda_process_role_map.json"
 
 
 def check_ceda_permissions(request, user, processid):
     """
     Check if the user has permission to access the process.
     """
+    role_mappings = _get_process_role_mappings()
+    restricted_procs = role_mappings["restricted_by_role"]
+
+    if processid in role_mappings.get("open", []):
+        # If open, everyone can access
+        return True
+ 
     if user is None:
         # the user is not logged in so we cannot check
         return False
 
-    if processid not in PROCESS_ROLE_MAPPING.keys():
-        # the process is not a protected CEDA process
+    if processid in role_mappings.get("restricted_to_ceda_users", []):
+        # the process is available to all CEDA users
         return True
 
     users_roles = _get_user_roles(request, user.get("login_id"))
 
     for role in users_roles:
-        if role in PROCESS_ROLE_MAPPING[processid]:
+        if role in restricted_procs.get(processid, []):
             return True
 
     return False
+
+
+def _get_process_role_mappings():
+    """
+    Load the role mappings from the config file.
+    """
+    try:
+        with open(CEDA_ROLE_MAP_CONFIG) as reader:
+           return json.load(reader)
+    except Exception:
+        # If cannot read it, set defaults
+        return {"restricted_by_role": {}, "restricted_to_ceda_users": [], "open": []}
 
 
 def _get_user_roles(request, user_id):
