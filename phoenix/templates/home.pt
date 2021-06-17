@@ -12,7 +12,6 @@
           provides access to a set of tools that operate on CEDA/JASMIN
           data. These tools, known as <a href="/processes">processes</a>,
           include subsetting, filtering and compliance-checking. 
-          <br/>
           In most cases you will need to sign in via the link in the 
           top-right corner before you can submit a job. 
           <br/>
