@@ -12,6 +12,9 @@ CEDA_ROLE_MAP_CONFIG = "/usr/local/birdhouse/etc/phoenix/ceda_process_role_map.j
 def check_ceda_permissions(request, user, processid):
     """
     Check if the user has permission to access the process.
+    Return a boolean:
+     - True:  allow access
+     - False: deny access
     """
     role_mappings = _get_process_role_mappings()
     restricted_procs = role_mappings["restricted_by_role"]
@@ -19,9 +22,9 @@ def check_ceda_permissions(request, user, processid):
     if processid in role_mappings.get("open", []):
         # If open, everyone can access
         return True
- 
-    if user is None:
-        # the user is not logged in so we cannot check
+
+    if user is None or user.get("login_id") in role_mappings["suspended_users"]:
+        # the user is not logged or is suspended so we return False
         return False
 
     if processid in role_mappings.get("restricted_to_ceda_users", []):
@@ -46,7 +49,8 @@ def _get_process_role_mappings():
            return json.load(reader)
     except Exception:
         # If cannot read it, set defaults
-        return {"restricted_by_role": {}, "restricted_to_ceda_users": [], "open": []}
+        return {"restricted_by_role": {}, "restricted_to_ceda_users": [], 
+                "open": [], "suspended_users": []}
 
 
 def _get_user_roles(request, user_id):

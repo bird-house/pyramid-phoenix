@@ -160,10 +160,12 @@ class ExecuteProcess(MyView):
             inputs=inputs,
             outputs=outputs,
             use_async=appstruct.get('_async_check', True))
+
         # give the job a chance to start
         sleep(1)
         self.request.registry.notify(JobStarted(self.request, result.id))
         LOGGER.debug('wps url={}'.format(self.wps.url))
+        LOGGER.debug('request inputs = {}'.format(str(inputs)))
         return result.id
 
     @view_config(

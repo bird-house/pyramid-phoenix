@@ -253,7 +253,7 @@ class WPSSchema(deform.schema.CSRFSchema):
                     self.request.server_port,
                     self.request.registry.settings.get("widget.file.upload.storage.dir"),
                     self.request.registry.settings.get("widget.file.upload.max.size.mb")),
-                service_title,
+                str(service_title).replace(' ', '_'),
                 self.process.identifier)
         elif 'password' in data_input.identifier:
             node.widget = deform.widget.PasswordWidget(size=20)
