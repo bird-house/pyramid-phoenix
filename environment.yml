@@ -1,7 +1,6 @@
 name: pyramid-phoenix
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - pip
   - python=3.6
@@ -28,10 +27,16 @@ dependencies:
   - pyyaml
   - pygments
   - pytz
-  - owslib=0.19
+  - owslib>=0.19
   - transaction
   - genshi=0.7
   - pyjwt
+# pyramid
+  - pyramid>=1.10,<2.0
+  - beaker
+  #- pyramid-beaker
+  #- pyramid-mako
+  - colander
 # celery
   - celery=3.1
   - kombu=3.0
@@ -39,9 +44,9 @@ dependencies:
   - pymongo=3
   - mongodb>=3.4
   - pip:
-      - pyramid
+      #- pyramid
       - pyramid-beaker
-      - Beaker
+      #- Beaker
       - pyramid-deform
       - deform
       - pyramid-chameleon
@@ -50,7 +55,7 @@ dependencies:
       - pyramid-celery==3.0.0
       - pyramid-storage
       - pyramid-rpc
-      - colander
+      # - colander
       - Authomatic==0.1.0.post1
       - python-openid2==3.0
       - WebHelpers2
