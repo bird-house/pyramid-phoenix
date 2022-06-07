@@ -31,19 +31,6 @@
               <i class="${icon_class}"></i> ${job.get('title')}
             </span>
           </dd>
-          <p/>
-          <dd>
-            <span class="text-muted" data-toggle="tooltip" title="Job note.">
-              <i class="fa fa-sticky-note-o"></i> ${job.get('caption') or '???'}
-            </span>
-          </dd>
-          <p/>
-          <dd>
-            <span class="text-muted" data-toggle="tooltip" title="Job labels.">
-              <i class="fa fa-tags"></i>
-              <a tal:repeat="label job.get('tags', [])" href="/monitor?tag=${label}" class="label label-info">${label}</a>
-            </span>
-          </dd>
         </dl>
       </div><!-- column -->
       <div class="col-md-3">

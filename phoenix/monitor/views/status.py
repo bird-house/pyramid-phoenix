@@ -29,14 +29,14 @@ class JobStatus(MyView):
                     if output.identifier == 'output':
                         break
                 details = output_details(self.request, output)
-                if details.get('reference'):
-                    result = '<a href="{0}" class="btn btn-success btn-xs" target="_blank">Show Output</a>'.format(
-                        details['reference'])
-                else:
-                    result = '<strong>{0}</strong>'.format(', '.join(details.get('data', '')))
-                msg = '<h4>Job Succeeded: {1} <a href="{0}" class="btn btn-info btn-xs"> Details</a></h4>'
+                # if details.get('reference'):
+                #     result = '<a href="{0}" class="btn btn-success btn-xs" target="_blank">Show Output</a>'.format(
+                #         details['reference'])
+                # else:
+                #     result = '<strong>{0}</strong>'.format(', '.join(details.get('data', '')))
+                msg = '<h4>Job Succeeded. <a href="{0}" class="btn btn-info btn-xs"> Outputs</a></h4>'
                 url = self.request.route_path('job_details', tab='outputs', job_id=self.job_id)
-                self.session.flash(msg.format(url, result), queue="success")
+                self.session.flash(msg.format(url), queue="success")
             elif status == 'ProcessFailed':
                 msg = '<h4>Job Failed [{0}/100]</h4>'
                 self.session.flash(msg.format(progress), queue="danger")

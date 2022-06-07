@@ -8,7 +8,8 @@
           </a>
         </div>
         <div class="media-body">
-          <h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4>
+          <!--h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4-->
+          <h4 class="media-heading">${item.title}</h4>
           <p>${item.get('abstract') or 'No summary'}</p>
           <p>
             <div tal:condition="item.reference">
@@ -33,10 +34,10 @@
                title="Download file" data-value="value" class="btn btn-link">
               <i class="fa fa-download"></i> Download
             </a>
-            <a href="${item.reference}" target="_" data-toggle="tooltip"
+            <!--a href="${item.reference}" target="_" data-toggle="tooltip"
                title="Share" data-value="value" class="btn btn-link disabled">
               <i class="fa fa-share"></i> Share
-            </a>
+            </a-->
           </p>
         </div>
       </div>
