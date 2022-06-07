@@ -28,10 +28,11 @@ Vagrant.configure("2") do |config|
     phoenix.vm.network "private_network", ip: "192.168.56.10"
     # Create a forwarded port mapping which allows access to a specific port
     # within the machine from a port on the host machine. In the example below,
-    # accessing "localhost:8080" will access port 80 on the guest machine.
+    # accessing "localhost:8081" will access port 8081 on the guest machine.
     # NOTE: This will enable public access to the opened port
-    # config.vm.network "forwarded_port", guest: 8888, host: 8888
-    # config.vm.network "public_network"
+    config.vm.network "forwarded_port", guest: 8081, host: 8081
+    config.vm.network "forwarded_port", guest: 8443, host: 8443
+    #config.vm.network "public_network"
     config.vm.provision "shell", path: "bootstrap.sh", privileged: false
     config.vm.provider :virtualbox do |vb|
       vb.customize ["modifyvm", :id, "--memory", "2048", "--cpus", "2"]

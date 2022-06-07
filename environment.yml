@@ -9,6 +9,8 @@ dependencies:
   - pyopenssl
   - cryptography
   - icu
+# buildout
+  - dataclasses=0.8
 # tests
   - pytest
   - flake8
