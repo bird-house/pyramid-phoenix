@@ -29,7 +29,7 @@
               <div class="media-body">
                 <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
                   <span>
-                    <i class="fa fa-cogs"></i> v${item.version}
+                    v${item.version}
                   </span>
                 </div>
                 <h4 class="media-heading">
