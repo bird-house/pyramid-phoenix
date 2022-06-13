@@ -322,8 +322,10 @@ class WPSSchema(deform.schema.CSRFSchema):
         if 'application/x-pkcs7-mime' in mime_types and self.user is not None:
             # TODO: check if certificate is still valid
             default = self.user.get('credentials')
+        elif "application/x-netcdf" in mime_types and "HadCRUT" in data_input.title:
+            default = "https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/non-infilled/HadCRUT.5.0.1.0.anomalies.ensemble_mean.nc"
         else:
-            default = colander.null
+            default = colander.null   
         return default
 
     def bind(self, **kw):

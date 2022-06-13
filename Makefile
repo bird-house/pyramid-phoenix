@@ -1,11 +1,11 @@
-VERSION := 0.4.1
+VERSION := 0.4.2
 
 # Application
 APP_ROOT := $(CURDIR)
 
 # Python
 SETUPTOOLS_VERSION := 41
-BUILDOUT_VERSION := 2.13.3
+BUILDOUT_VERSION := 2.13.7
 
 # Buildout files and folders
 DOWNLOAD_CACHE := $(APP_ROOT)/downloads

@@ -64,7 +64,7 @@
                           <i class='fa fa-cogs'></i>
                       </span>
                       <div class="media-body">
-                          <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
+                          <!-- <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
                               <span>
                                   <i class="fa fa-cogs"></i>
                                   7
@@ -73,7 +73,7 @@
                                   <i class="fa fa-star"></i>
                                   11
                               </span>
-                          </div>
+                          </div> -->
                           <h4 class="media-heading">
                             <a href="${item.url}">${item.title}</a>
   	                          <span class="text-muted" aria-hidden="true">

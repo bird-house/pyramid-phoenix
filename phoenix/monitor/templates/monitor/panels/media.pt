@@ -4,12 +4,24 @@
       <div class="media">
         <div class="media-left media-top">
           <a href="#">
-            <img class="media-object" src="${request.static_path('phoenix:static/phoenix/img/missing_thumb.png')}" alt="No Preview"/>
+            <img 
+              class="media-object" 
+              src="${request.static_path('phoenix:static/phoenix/img/missing_thumb_doesnotexist.png')}"
+              alt=""
+              width="512px"
+              tal:condition="item.mime_type != 'image/png'"/>
+            <img 
+              class="media-object" 
+              src="${item.reference}" 
+              alt="No Preview"
+              width="512px"
+              tal:condition="item.mime_type == 'image/png'"/>
           </a>
         </div>
         <div class="media-body">
-          <h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4>
-          <p>${item.get('abstract') or 'No summary'}</p>
+          <!--h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4-->
+          <h4 class="media-heading">${item.title}</h4>
+          <p>${item.get('abstract') or ''}</p>
           <p>
             <div tal:condition="item.reference">
               <span class="bg-info">
@@ -33,10 +45,10 @@
                title="Download file" data-value="value" class="btn btn-link">
               <i class="fa fa-download"></i> Download
             </a>
-            <a href="${item.reference}" target="_" data-toggle="tooltip"
+            <!--a href="${item.reference}" target="_" data-toggle="tooltip"
                title="Share" data-value="value" class="btn btn-link disabled">
               <i class="fa fa-share"></i> Share
-            </a>
+            </a-->
           </p>
         </div>
       </div>

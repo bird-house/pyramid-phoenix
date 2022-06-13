@@ -28,7 +28,7 @@ class CaptionSchema(colander.MappingSchema):
         widget=HiddenWidget())
     caption = colander.SchemaNode(
         colander.String(),
-        missing="???")
+        missing="-")
 
 
 class LabelsSchema(colander.MappingSchema):
@@ -167,8 +167,16 @@ class JobList(MyView):
         _, count_finished = self.filter_jobs(page=page, limit=0, tag=tag, access=access, status='Finished', sort=sort)
 
         grid = JobsGrid(self.request, items,
-                        ['_checkbox', 'status', 'user', 'process', 'service', 'caption',
-                         'finished', 'duration', 'labels', ''])
+                        ['_checkbox', 
+                         'status', 
+                         'user', 
+                         'process', 
+                         'service', 
+                         # 'caption',
+                         'finished', 
+                         'duration', 
+                         # 'labels', 
+                         ''])
 
         return dict(grid=grid,
                     access=access, status=status,
@@ -199,11 +207,11 @@ class JobsGrid(CustomGrid):
 
     def duration_td(self, col_num, i, item):
         return self.render_td(renderer="duration_td.mako", job_id=item.get('identifier'),
-                              duration=item.get('duration', '???'))
+                              duration=item.get('duration', '-'))
 
     def caption_td(self, col_num, i, item):
         return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'),
-                              caption=item.get('caption', '???'))
+                              caption=item.get('caption', '-'))
 
     def labels_td(self, col_num, i, item):
         return self.render_td(renderer="labels_td.mako", job_id=item.get('identifier'), labels=item.get('tags'))
@@ -212,7 +220,7 @@ class JobsGrid(CustomGrid):
         from phoenix.utils import ActionButton
         buttons = list()
         buttons.append(ActionButton('results', title='Details', css_class='btn btn-default',
-                                    href=self.request.route_path('job_details', tab='log',
+                                    href=self.request.route_path('job_details', tab='outputs',
                                                                  job_id=item.get('identifier'))))
         # TODO: refactor job restart
         # buttons.append(ActionButton('restart_job', title='Restart', css_class='btn btn-default',
