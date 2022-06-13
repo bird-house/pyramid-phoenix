@@ -4,7 +4,18 @@
       <div class="media">
         <div class="media-left media-top">
           <a href="#">
-            <img class="media-object" src="${request.static_path('phoenix:static/phoenix/img/missing_thumb.png')}" alt="No Preview"/>
+            <img 
+              class="media-object" 
+              src="${request.static_path('phoenix:static/phoenix/img/missing_thumb.png')}" 
+              alt="No Preview"
+              width="256px"
+              tal:condition="item.mime_type != 'image/png'"/>
+            <img 
+              class="media-object" 
+              src="${item.reference}" 
+              alt="No Preview"
+              width="256px"
+              tal:condition="item.mime_type == 'image/png'"/>
           </a>
         </div>
         <div class="media-body">
