@@ -167,8 +167,16 @@ class JobList(MyView):
         _, count_finished = self.filter_jobs(page=page, limit=0, tag=tag, access=access, status='Finished', sort=sort)
 
         grid = JobsGrid(self.request, items,
-                        ['_checkbox', 'status', 'user', 'process', 'service', 'caption',
-                         'finished', 'duration', 'labels', ''])
+                        ['_checkbox', 
+                         'status', 
+                         'user', 
+                         'process', 
+                         'service', 
+                         # 'caption',
+                         'finished', 
+                         'duration', 
+                         # 'labels', 
+                         ''])
 
         return dict(grid=grid,
                     access=access, status=status,
@@ -212,7 +220,7 @@ class JobsGrid(CustomGrid):
         from phoenix.utils import ActionButton
         buttons = list()
         buttons.append(ActionButton('results', title='Details', css_class='btn btn-default',
-                                    href=self.request.route_path('job_details', tab='log',
+                                    href=self.request.route_path('job_details', tab='outputs',
                                                                  job_id=item.get('identifier'))))
         # TODO: refactor job restart
         # buttons.append(ActionButton('restart_job', title='Restart', css_class='btn btn-default',
