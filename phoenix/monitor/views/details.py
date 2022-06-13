@@ -13,5 +13,8 @@ class Details(MyView):
 
     @view_config(route_name='job_details', renderer='phoenix:monitor/templates/monitor/details.pt')
     def view(self):
-        job = self.collection.find_one({'identifier': self.job_id})
-        return dict(active=self.tab, job_id=self.job_id, status=job['status'])
+        status = 'ProcessAccepted'
+        if self.collection.find({"identifier": self.job_id}).count() == 1:
+            job = self.collection.find_one({'identifier': self.job_id})
+            status = job["status"]
+        return dict(active=self.tab, job_id=self.job_id, status=status)

@@ -115,7 +115,8 @@ class ExecuteProcess(MyView):
                         form=e.render())
         else:
             if not self.request.user:  # not logged-in
-                return HTTPFound(location=self.request.route_url('job_status', job_id=job_id))
+                # return HTTPFound(location=self.request.route_url('job_status', job_id=job_id))
+                return HTTPFound(location=self.request.route_url('job_details', job_id=job_id, tab="outputs"))
             else:
                 return HTTPFound(location=self.request.route_url('monitor'))
 
