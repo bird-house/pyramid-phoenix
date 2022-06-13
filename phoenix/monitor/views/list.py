@@ -28,7 +28,7 @@ class CaptionSchema(colander.MappingSchema):
         widget=HiddenWidget())
     caption = colander.SchemaNode(
         colander.String(),
-        missing="???")
+        missing="-")
 
 
 class LabelsSchema(colander.MappingSchema):
@@ -207,11 +207,11 @@ class JobsGrid(CustomGrid):
 
     def duration_td(self, col_num, i, item):
         return self.render_td(renderer="duration_td.mako", job_id=item.get('identifier'),
-                              duration=item.get('duration', '???'))
+                              duration=item.get('duration', '-'))
 
     def caption_td(self, col_num, i, item):
         return self.render_td(renderer="caption_td.mako", job_id=item.get('identifier'),
-                              caption=item.get('caption', '???'))
+                              caption=item.get('caption', '-'))
 
     def labels_td(self, col_num, i, item):
         return self.render_td(renderer="labels_td.mako", job_id=item.get('identifier'), labels=item.get('tags'))

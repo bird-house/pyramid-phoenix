@@ -7,7 +7,7 @@
             <img 
               class="media-object" 
               src="${request.static_path('phoenix:static/phoenix/img/missing_thumb_doesnotexist.png')}"
-              alt="No Preview"
+              alt=""
               width="512px"
               tal:condition="item.mime_type != 'image/png'"/>
             <img 
