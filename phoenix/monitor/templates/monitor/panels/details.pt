@@ -47,12 +47,12 @@
           </dd>
           <dd>
             <span class="text-muted" data-toggle="tooltip" title="Duration time of Job.">
-              <i class="fa fa-clock-o"></i> Ran for ${job.get('duration') or '???'}
+              <i class="fa fa-clock-o"></i> Ran for ${job.get('duration') or '-'}
             </span>
           </dd>
           <dd>
             <span class="text-muted" data-toggle="tooltip" title="Job finished at date.">
-              <i class="fa fa-calendar"></i> ${job.get('finished') or '???'}
+              <i class="fa fa-calendar"></i> ${job.get('finished') or '-'}
             </span>
           </dd>
         </dl>
