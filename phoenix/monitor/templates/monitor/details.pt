@@ -27,11 +27,11 @@
       ${panel('job_details')}
 
       <ul class="nav nav-tabs">
-         <li class="${'active' if active=='log' else ''}" role="presentation">
+         <!-- <li class="${'active' if active=='log' else ''}" role="presentation">
           <a href="${request.route_path('job_details', job_id=job_id, tab='log')}">
             <i class="fa fa-comments-o"></i> Job Log
           </a>
-        </li>
+        </li> -->
         <!--li class="${'active' if active=='inputs' else ''}" role="presentation">
           <a href="${request.route_path('job_details', job_id=job_id, tab='inputs')}">
             <i class="fa fa-arrow-circle-o-down"></i>
