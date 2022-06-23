@@ -14,7 +14,7 @@ def task_result(task_id):
 
 
 def wait_secs(run_step=-1):
-    secs_list = (2, 2, 2, 2, 2, 5, 5, 5, 5, 5, 10, 10, 10, 10, 10, 20, 20, 20, 20, 20, 30)
+    secs_list = 20*[2]+[5]
     if run_step >= len(secs_list):
         run_step = -1
     return secs_list[run_step]
