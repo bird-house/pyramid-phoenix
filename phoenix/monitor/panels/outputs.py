@@ -1,3 +1,4 @@
+from lib2to3.pgen2.token import ISTERMINAL
 from pyramid_layout.panel import panel_config
 
 from phoenix.wps import check_status
@@ -31,8 +32,21 @@ class Outputs(object):
 
 
     def filter_outputs(self, items):
+        # TODO: quick and dirty for CLINT. Needs to use WPS metadata.
         items = sorted(items, key=lambda item: item['identifier'], reverse=1)
-        return items
+        filtered_items = []
+        # filter previews
+        for item in items:
+            if 'preview' in item['identifier'].lower() or 'preview' in item['title'].lower():
+                preview = item['preview']
+            else:
+                filtered_items.append(item)
+        # set preview
+        for item in filtered_items:
+            if item['category'] == 'ComplexType':
+                if not item['preview']:
+                    item['preview'] = preview
+        return filtered_items
 
     @panel_config(name='job_outputs', renderer='phoenix:monitor/templates/monitor/panels/media.pt')
     def panel(self):
