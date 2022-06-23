@@ -29,11 +29,15 @@ class Outputs(object):
         self.request = request
         self.session = self.request.session
 
+
+    def filter_outputs(self, items):
+        items = sorted(items, key=lambda item: item['identifier'], reverse=1)
+        return items
+
     @panel_config(name='job_outputs', renderer='phoenix:monitor/templates/monitor/panels/media.pt')
     def panel(self):
         job_id = self.request.matchdict.get('job_id')
         items = []
         for output in list(process_outputs(self.request, job_id).values()):
             items.append(output_details(self.request, output))
-        items = sorted(items, key=lambda item: item['identifier'], reverse=1)
-        return dict(items=items)
+        return dict(items=self.filter_outputs(items))
