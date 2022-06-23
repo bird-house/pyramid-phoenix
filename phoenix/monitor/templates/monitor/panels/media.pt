@@ -9,13 +9,13 @@
               src="${request.static_path('phoenix:static/phoenix/img/missing_thumb_doesnotexist.png')}"
               alt=""
               width="512px"
-              tal:condition="item.mime_type != 'image/png'"/>
+              tal:condition="not item.preview"/>
             <img 
               class="media-object" 
-              src="${item.reference}" 
+              src="${item.preview}" 
               alt="No Preview"
               width="512px"
-              tal:condition="item.mime_type == 'image/png'"/>
+              tal:condition="item.preview"/>
           </a>
         </div>
         <div class="media-body">
