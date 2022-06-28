@@ -12,7 +12,15 @@ class PageLayout(object):
 
     @property
     def project_title(self):
-        return 'Phoenix - A Pyramid WPS Application for Climate Science'
+        return self.request.registry.settings.get('phoenix.title', 'Phoenix')
+
+    @property
+    def project_description(self):
+        return self.request.registry.settings.get('phoenix.description', 'A Python Web App to interact with WPS')
+
+    @property
+    def project_theme(self):
+        return self.request.registry.settings.get('phoenix.theme', 'red')
 
     def add_breadcrumb(self, route_path, title):
         self.breadcrumbs.append(dict(route_path=route_path, title=title))

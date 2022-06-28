@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Phoenix Pyramid App for Web Processing Services"/>
+    <meta name="description" content="${layout.project_description}"/>
     <meta name="author" content="Birdhouse">
     <link rel="shortcut icon" href="${request.static_path('phoenix:static/favicon.ico')}"/>
 
-    <title> Welcome to Phoenix </title>
+    <title> ${layout.project_title} </title>
 
     <!-- CSS
          ======================================================================= -->
@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="${request.static_path('phoenix:static/font-awesome/css/font-awesome.min.css')}"/>
 
     <!-- Phoenix Theme CSS -->
-    <link rel="stylesheet" href="${request.static_path('phoenix:static/phoenix/css/theme/default.css')}"/>
+    <link rel="stylesheet" href="${request.static_path('phoenix:static/phoenix/css/theme/'+layout.project_theme+'.css')}"/>
 
 
     <tal:block repeat="reqt css_links|[]">
