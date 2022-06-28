@@ -5,11 +5,10 @@
     <section class="topbox">
       <div class="container">
         <h1>
-          <span class="title">Phoenix</span>
+          <span class="title">${layout.project_title}</span>
         </h1>
         <h2>
-          A <strong>Python Pyramid</strong> Web Application<br>
-          to interact with <strong>Web Processing Services</strong>
+          ${layout.project_description}
         </h2>
       </div>
     </section>

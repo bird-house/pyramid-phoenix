@@ -17,6 +17,11 @@ extends = buildout.cfg
 #etc-user = root
 #group = nobody
 
+# theme
+phoenix-title = Phoenix
+phoenix-description = A Python Web Application to interact with Web Processing Services
+phoenix-theme = default
+
 # phoenix admin password
 phoenix-password = qwerty
 ## generate secret
