@@ -30,18 +30,8 @@
             Help<span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li>
-              <a href="${request.route_url('readthedocs', part='index')}" target="_">
+              <a href="${request.route_url('readthedocs')}" target="_">
                 <i class="fa fa-book"></i> User Documentation
-              </a>
-            </li>
-            <li>
-              <a href="http://bird-house.github.io/" target="_">
-                <i class="fa fa-home"></i> Birdhouse
-              </a>
-            </li>
-            <li>
-              <a href="http://geoprocessing.info/" target="_">
-                <i class="fa fa-road"></i> Further Reading on Web Processing Services
               </a>
             </li>
           </ul>
