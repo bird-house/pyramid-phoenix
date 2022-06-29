@@ -30,7 +30,7 @@
             Help<span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li>
-              <a href="${request.route_url('readthedocs')}" target="_">
+              <a href="${layout.project_docs}" target="_">
                 <i class="fa fa-book"></i> User Documentation
               </a>
             </li>
