@@ -18,9 +18,10 @@ extends = buildout.cfg
 #group = nobody
 
 # theme
-phoenix-title = Phoenix
+phoenix-title = PHOENIX
 phoenix-description = A Python Web Application to interact with Web Processing Services
 phoenix-theme = default
+phoenix-docs = https://pyramid-phoenix.readthedocs.org/en/latest
 
 # phoenix admin password
 phoenix-password = qwerty

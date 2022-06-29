@@ -22,6 +22,11 @@ class PageLayout(object):
     def project_theme(self):
         return self.request.registry.settings.get('phoenix.theme', 'red')
 
+    @property
+    def project_docs(self):
+        return self.request.registry.settings.get('phoenix.docs', 'https://pyramid-phoenix.readthedocs.org/')
+
+
     def add_breadcrumb(self, route_path, title):
         self.breadcrumbs.append(dict(route_path=route_path, title=title))
 
