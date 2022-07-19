@@ -70,6 +70,11 @@ body {
     color: orange
 }
 
+.imglogo{
+  max-width: 350px;
+  width: 100%;
+}
+
 
 .title {
   padding: 0 30px;
