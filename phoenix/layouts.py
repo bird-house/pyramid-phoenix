@@ -11,6 +11,10 @@ class PageLayout(object):
         self.breadcrumbs = []
 
     @property
+    def project_logo(self):
+        return self.request.registry.settings.get('phoenix.logo', 'Phoenix')
+
+    @property
     def project_title(self):
         return self.request.registry.settings.get('phoenix.title', 'Phoenix')
 
