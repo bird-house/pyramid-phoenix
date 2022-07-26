@@ -31,6 +31,10 @@ def check_ceda_permissions(request, user, processid):
         # the process is available to all CEDA users
         return True
 
+    if user.get("login_id") in role_mappings["restricted_by_user_id"].get(processid, []):
+        # the process is available to this specific user
+        return True
+
     users_roles = _get_user_roles(request, user.get("login_id"))
 
     for role in users_roles:
@@ -50,7 +54,7 @@ def _get_process_role_mappings():
     except Exception:
         # If cannot read it, set defaults
         return {"restricted_by_role": {}, "restricted_to_ceda_users": [], 
-                "open": [], "suspended_users": []}
+                "open": [], "suspended_users": [], "restricted_by_user_id": {}}
 
 
 def _get_user_roles(request, user_id):
