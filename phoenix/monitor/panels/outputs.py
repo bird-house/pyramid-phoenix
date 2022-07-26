@@ -37,7 +37,7 @@ class Outputs(object):
         for output in list(process_outputs(self.request, job_id).values()):
             items.append(output_details(self.request, output))
 
-            if "application/metalink+xml" in output.mimeType:
+            if output.mimeType and "application/metalink+xml" in output.mimeType:
                 # If it is a metalink we need to resolve it and get the links to the files
                 metalink_items.extend(output_details_from_metalink(output))
 
