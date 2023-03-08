@@ -39,7 +39,7 @@ class Schema(deform.schema.CSRFSchema):
         default=False)
     group = colander.SchemaNode(
         colander.String(),
-        validator=colander.OneOf([x[0] for x in choices]),
+        validator=colander.OneOf([x[0] for x in groups]),
         widget=deform.widget.RadioChoiceWidget(values=groups, inline=True),
         title='Group',
         description='Select Group')
