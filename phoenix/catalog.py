@@ -96,11 +96,12 @@ class MongodbCatalog(Catalog):
         record['identifier'] = uuid.uuid4().hex
         self.collection.save(record)
 
-    def harvest(self, url, service_title=None, public=False):
+    def harvest(self, url, service_title=None, public=False, group=None):
         try:
             # fetch metadata
             record = _fetch_wps_metadata(url, title=service_title)
             record['public'] = public
+            record['group'] = group
             self.insert_record(record)
         except Exception:
             LOGGER.warning("could not harvest metadata")
