@@ -6,6 +6,7 @@ from deform import ValidationFailure
 
 from phoenix.views import MyView
 from phoenix.security import check_csrf_token
+# from phoenix.security import Admin, User, Guest
 
 import deform
 import colander
@@ -15,6 +16,8 @@ LOGGER = logging.getLogger("PHOENIX")
 
 
 class Schema(deform.schema.CSRFSchema):
+    groups = (('admin', 'Admin'), ('user', 'User'), ('guest', 'Guest'))
+
     url = colander.SchemaNode(
         colander.String(),
         title='Service URL',
@@ -34,6 +37,13 @@ class Schema(deform.schema.CSRFSchema):
         title="Public access?",
         description="Check this option if your service has no access restrictions.",
         default=False)
+    group = colander.SchemaNode(
+        colander.String(),
+        validator=colander.OneOf([x[0] for x in groups]),
+        default='guest',
+        widget=deform.widget.RadioChoiceWidget(values=groups, inline=True),
+        title='Group',
+        description='Select Group')
 
 
 @view_defaults(permission='admin', layout='default')

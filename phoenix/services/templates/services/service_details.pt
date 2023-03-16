@@ -28,6 +28,7 @@
           <p><strong>Rights:</strong> ${service.rights}</p>
           <p><strong>Creator:</strong> ${service.creator}</p>
           <p tal:condition="hasattr(service, 'public')"><strong>Public Access:</strong> ${service.public}</p>
+          <p><strong>Group:</strong> ${service.group}</p>
         </div>
       </div>
 

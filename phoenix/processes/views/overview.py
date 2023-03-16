@@ -17,6 +17,12 @@ class Overview(MyView):
     def wps_services(self):
         items = []
         for service in self.request.catalog.get_services():
+            if service.group in ['admin']:
+                if not self.request.has_permission('admin'):
+                    continue
+            elif service.group in ['admin', 'user']:
+                if not self.request.has_permission('edit'):
+                    continue
             url = self.request.route_path('processes_list', _query=[('wps', service.identifier)])
             items.append(dict(
                 title=service.title, description=service.abstract, public=service.public, url=url))
