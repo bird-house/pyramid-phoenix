@@ -2,84 +2,8 @@
  HadCRUT5:
    dataset-url: https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/non-infilled/HadCRUT.5.0.1.0.anomalies.ensemble_mean.nc
    variable-name: tas_mean
-   eval-parameters:
-     --model-names 20crtasgn72.pth
-     --conv-factor 72
-     --encoding-layers 3
-     --out-channels 1
-     --n-filters 18
-     --global-padding
-     --dataset-name hadcrut
-   description: |
-     Training dataset: 82133 samples of near surface temperature anomalies from the 20th century reanalysis dataset (https://psl.noaa.gov/data/20thC_Rean/) spanning the period 1870-2009.
-     Mask dataset: masks of missing values extracted from the HadCRUT4 dataset for the period 1850-2014.
-     Total number of iterations: 1M
-     Learning rates: 2e-4, 5e-5
-     Architecture of the U-Net:
-     72x72x1      Input Data
-        *         
-       7x7        Pconv2D Encoder
-        ↓         
-     36x36x18     
-        *         
-       5x5        Pconv2D Encoder
-        ↓         
-     18x18x36     
-        *         
-       5x5        Pconv2D Encoder
-        ↓         
-      9x9x72      
-        *         
-       3x3        Pconv2D Decoder
-        ↓         
-     18x18x36     
-        *         
-       3x3        Pconv2D Decoder
-        ↓         
-     36x36x18     
-        *         
-       3x3        Pconv2D Decoder
-        ↓         
-     72x72x1      Output Data
+   description: Training dataset 
  HadCRUT4:
    dataset-url: https://www.metoffice.gov.uk/hadobs/hadcrut4/data/current/gridded_fields/HadCRUT.4.6.0.0.median_netcdf.zip
    variable-name: temperature_anomaly
-   eval-parameters:
-     --model-names 20crtasgn72.pth
-     --conv-factor 72
-     --encoding-layers 3
-     --out-channels 1
-     --n-filters 18
-     --global-padding
-     --dataset-name hadcrut
-   description: |
-     Training dataset: 82133 samples of near surface temperature anomalies from the 20th century reanalysis dataset (https://psl.noaa.gov/data/20thC_Rean/) spanning the period 1870-2009.
-     Mask dataset: masks of missing values extracted from the HadCRUT4 dataset for the period 1850-2014.
-     Total number of iterations: 1M
-     Learning rates: 2e-4, 5e-5
-     Architecture of the U-Net:
-     72x72x1      Input Data
-        *         
-       7x7        Pconv2D Encoder
-        ↓         
-     36x36x18     
-        *         
-       5x5        Pconv2D Encoder
-        ↓         
-     18x18x36     
-        *         
-       5x5        Pconv2D Encoder
-        ↓         
-      9x9x72      
-        *         
-       3x3        Pconv2D Decoder
-        ↓         
-     18x18x36     
-        *         
-       3x3        Pconv2D Decoder
-        ↓         
-     36x36x18     
-        *         
-       3x3        Pconv2D Decoder
-        ↓         
-     72x72x1      Output Data
+   description: Training dataset
