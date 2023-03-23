@@ -83,7 +83,41 @@ class ExecuteProcess(MyView):
             # TODO: very dirty ... if single value then take the first
             if inp.maxOccurs < 2 and inp.identifier in result:
                 result[inp.identifier] = result[inp.identifier][0]
+
+        self.clint_models(result)
         return result
+    
+    def clint_models(self, result):
+        # https://www.mongodb.com/blog/post/faceted-search-with-mongodb
+        models = [
+            {
+                'dataset_name': 'HadCRUT5',
+                'file': 'https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/non-infilled/HadCRUT.5.0.1.0.anomalies.ensemble_mean.nc',
+                'variable_name': 'tas_mean'},
+            {
+                'dataset_name': 'HadCRUT4',
+                'file': 'https://www.metoffice.gov.uk/hadobs/hadcrut4/data/current/gridded_fields/HadCRUT.4.6.0.0.median_netcdf.zip',
+                'variable_name': 'temperature_anomaly'},
+        ]
+
+        query = "dataset_name=HadCRUT5"
+
+        # https://www.elastic.co/guide/en/app-search/current/facets.html
+        models_response = {
+            'dataset_name': [{
+                # 'name': 'HadCRUT5',
+                'value': 'HadCRUT5'},
+            ],
+            'file': [{
+                #'name': 'HadCRUT.5.0.1.0.anomalies.ensemble_mean.nc',
+                'value': 'https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/non-infilled/HadCRUT.5.0.1.0.anomalies.ensemble_mean.nc'},
+            ],
+            'variable_name': [{
+                #'name': 'tas_mean',
+                'value': 'tas_mean'},
+            ],
+        }
+        # update result
 
     def generate_form(self, formid='deform'):
         schema = WPSSchema(request=self.request,

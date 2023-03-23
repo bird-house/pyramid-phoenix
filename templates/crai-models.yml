@@ -2,8 +2,6 @@
  HadCRUT5:
    dataset-url: https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/non-infilled/HadCRUT.5.0.1.0.anomalies.ensemble_mean.nc
    variable-name: tas_mean
-   description: Training dataset 
  HadCRUT4:
    dataset-url: https://www.metoffice.gov.uk/hadobs/hadcrut4/data/current/gridded_fields/HadCRUT.4.6.0.0.median_netcdf.zip
    variable-name: temperature_anomaly
-   description: Training dataset
