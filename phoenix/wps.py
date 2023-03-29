@@ -16,6 +16,7 @@ from phoenix.geoform.widget import BBoxWidget, ResourceWidget
 from phoenix.geoform.form import BBoxValidator
 from phoenix.geoform.form import URLValidator
 from phoenix.geoform.form import TextValidator
+from phoenix.search.local import search
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -120,7 +121,9 @@ class WPSSchema(deform.schema.CSRFSchema):
         self.kwargs = kwargs or {}
         if use_async:
             self.add_async_check()
-        self.add_nodes(process)
+        process_values = search("duck", process.identifier)
+        self.add_nodes(process, process_values)
+
 
     def add_async_check(self):
         node = colander.SchemaNode(
@@ -133,7 +136,7 @@ class WPSSchema(deform.schema.CSRFSchema):
         )
         self.add(node)
 
-    def add_nodes(self, process):
+    def add_nodes(self, process, process_values):
         if process is None:
             return
         for data_input in process.dataInputs:
@@ -143,9 +146,10 @@ class WPSSchema(deform.schema.CSRFSchema):
             elif 'BoundingBoxData' in data_input.dataType:
                 self.add(self.bbox_data(data_input))
             else:
-                self.add(self.literal_data(data_input))
+                values = list(process_values[data_input.identifier])
+                self.add(self.literal_data(data_input, values))
 
-    def literal_data(self, data_input):
+    def literal_data(self, data_input, values):
         node = colander.SchemaNode(
             self.colander_literal_type(data_input),
             name=data_input.identifier,
@@ -169,7 +173,7 @@ class WPSSchema(deform.schema.CSRFSchema):
                 node.default = bool(data_input.defaultValue == 'True')
             else:
                 node.default = data_input.defaultValue
-        self.colander_literal_widget(node, data_input)
+        self.colander_literal_widget(node, data_input, values)
 
         # sequence of nodes ...
         if data_input.maxOccurs > 1:
@@ -220,11 +224,13 @@ class WPSSchema(deform.schema.CSRFSchema):
         else:
             return colander.String()
 
-    def colander_literal_widget(self, node, data_input):
-        if len(data_input.allowedValues) > 0 and 'AnyValue' not in data_input.allowedValues:
+    def colander_literal_widget(self, node, data_input, values):
+        # if len(data_input.allowedValues) > 0 and 'AnyValue' not in data_input.allowedValues:
+        if len(values) > 0:
             # LOGGER.debug('allowed values %s', data_input.allowedValues)
             choices = []
-            for value in data_input.allowedValues:
+            # for value in data_input.allowedValues:
+            for value in values:
                 choices.append([value, value])
             node.widget = deform.widget.Select2Widget(values=choices)
         elif type(node.typ) == colander.DateTime:
