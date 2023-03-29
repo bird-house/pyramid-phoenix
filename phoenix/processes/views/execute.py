@@ -84,7 +84,7 @@ class ExecuteProcess(MyView):
             if inp.maxOccurs < 2 and inp.identifier in result:
                 result[inp.identifier] = result[inp.identifier][0]
 
-        self.clint_models(result)
+        # self.clint_models(result)
         return result
     
     def clint_models(self, result):
