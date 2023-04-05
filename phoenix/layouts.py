@@ -17,6 +17,14 @@ class PageLayout(object):
     @property
     def project_logo(self):
         return self.request.registry.settings.get('phoenix.logo', 'Phoenix')
+    
+    @property
+    def project_badgeA(self):
+        return self.request.registry.settings.get('phoenix.badgeA', '')
+    
+    @property
+    def project_badgeB(self):
+        return self.request.registry.settings.get('phoenix.badgeB', '')
 
     @property
     def project_title(self):

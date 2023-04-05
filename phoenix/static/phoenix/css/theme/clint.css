@@ -75,6 +75,11 @@ body {
   width: 100%;
 }
 
+.badge{
+  max-width: 100px;
+  width: 100%;
+}
+
 
 .title {
   padding: 0 30px;
@@ -98,6 +103,13 @@ body {
   -ms-filter: blur(calc(130px - 5vw));
   padding: 6px;
   z-index: -1;
+}
+
+
+.badgesbox {
+    text-align: center;
+    background: white;
+    padding: 20px;
 }
 
 /* Info Box
