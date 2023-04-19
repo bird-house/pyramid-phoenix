@@ -16,4 +16,7 @@ $(function() {
       $("#deformField4").val(variable_name);
     });
 
+    $("#deformField2").val("HadCRUT5");
+    $("#deformField3").val("https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/non-infilled/HadCRUT.5.0.1.0.anomalies.ensemble_mean.nc");
+    $("#deformField4").val("tas_mean");
   });
