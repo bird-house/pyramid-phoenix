@@ -86,3 +86,6 @@ testdata.json
 *.a
 *.mod
 *.out
+
+# macos
+.DS_Store
