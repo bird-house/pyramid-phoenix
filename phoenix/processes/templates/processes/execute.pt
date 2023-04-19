@@ -5,6 +5,8 @@
   </div>
 
   <div metal:fill-slot="js_preload">
+    <script src="${request.static_path('phoenix:static/phoenix/js/duck.js')}"
+            type="text/javascript"></script>
     <script src="${request.static_path('phoenix:static/jquery.fine-uploader/jquery.fine-uploader.js')}"
             type="text/javascript"></script>
     <!-- upload template -->
