@@ -4,13 +4,13 @@
 
     <section class="topbox">
       <div class="container">
-        <img src=${layout.project_logo} class="imglogo">
-        <h1>
-          <span class="title">${layout.project_title}</span>
-        </h1>
-        <h2>
-          ${layout.project_description}
-        </h2>
+            <img src=${layout.project_logo} class="imglogo">
+            <h1>
+             <span class="title">${layout.project_title}</span>
+            </h1>
+            <h2>
+              ${layout.project_description}
+            </h2>
       </div>
     </section>
 
