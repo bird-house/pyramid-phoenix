@@ -5,12 +5,12 @@ $(function() {
       "HadCRUT4 Training dataset: 82133 samples of near surface temperature anomalies" +
       " from the 20th century reanalysis dataset (https://psl.noaa.gov/data/20thC_Rean/)" +
       " spanning the period 1870-2009." +
-      " Mask dataset: masks of missing values extracted from the HadCRUT4 dataset for the period 1850-2014.";
+      " \nMask dataset: masks of missing values extracted from the HadCRUT4 dataset for the period 1850-2014.";
     const description_hadcrut5 = "" +
       "HadCRUT5 Training dataset: 82133 samples of near surface temperature anomalies" +
       " from the 20th century reanalysis dataset (https://psl.noaa.gov/data/20thC_Rean/)" +
       " spanning the period 1870-2009." +
-      " Mask dataset: masks of missing values extracted from the HadCRUT5 dataset for the period 1850-2014.";
+      " \nMask dataset: masks of missing values extracted from the HadCRUT5 dataset for the period 1850-2014.";
   
     $("#deformField2").change(function() {
       var dataset_name = $("#deformField2").val();
