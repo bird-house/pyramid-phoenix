@@ -55,6 +55,9 @@ def main(global_config, **settings):
     # processes
     config.include('phoenix.processes')
 
+    # search
+    config.include('phoenix.search')
+
     # job monitor
     config.include('phoenix.monitor')
 
