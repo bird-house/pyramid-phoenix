@@ -41,6 +41,22 @@ class PageLayout(object):
     @property
     def project_docs(self):
         return self.request.registry.settings.get('phoenix.docs', 'https://pyramid-phoenix.readthedocs.org/')
+    
+    @property
+    def matomo_enabled(self):
+        try:
+            enabled = int(self.matomo_site_id) > 0
+        except:
+            enabled = False
+        return enabled
+    
+    @property
+    def matomo_url(self):
+        return self.request.registry.settings.get('matomo.url', '')
+    
+    @property
+    def matomo_site_id(self):
+        return self.request.registry.settings.get('matomo.site_id', '')
 
 
     def add_breadcrumb(self, route_path, title):
