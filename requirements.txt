@@ -23,4 +23,3 @@ lxml
 python-dateutil
 pytz
 pyjwt
-pandas

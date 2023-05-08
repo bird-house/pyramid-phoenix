@@ -33,7 +33,6 @@ dependencies:
   - transaction
   - genshi=0.7
   - pyjwt
-  - pandas
 # pyramid
   - pyramid>=1.10,<2.0
   - beaker
