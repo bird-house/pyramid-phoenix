@@ -1,3 +1,0 @@
-identifier,dataset_name,:dataset_name,_file,_variable_name
-crai,HadCRUT5,cool,https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/non-infilled/HadCRUT.5.0.1.0.anomalies.ensemble_mean.nc,tas_mean
-crai,HadCRUT4,hot,https://www.metoffice.gov.uk/hadobs/hadcrut4/data/current/gridded_fields/HadCRUT.4.6.0.0.median_netcdf.zip,temperature_anomaly
