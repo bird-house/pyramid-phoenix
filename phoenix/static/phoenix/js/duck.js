@@ -1,29 +1,31 @@
 $(function() {
 
+    var search_value = "HadCRUT5";
     var search = function(value) {
       $.getJSON("/search/crai/"+value, function(data) {
         //console.log(data.result);
-        dataset_name_tooltip = data.result.dataset_name_tooltip;
-        file = data.result.file;
-        file_tooltip = data.result.file_tooltip;
-        variable_name = data.result.variable_name;
-        variable_name_tooltip = data.result.variable_name_tooltip;
-
-        $("#item-deformField2").attr("title", dataset_name_tooltip);
-        $("#deformField3").val(file);
-        $("#deformField3").attr("title", file_tooltip);
-        $("#item-deformField3").attr("title", file_tooltip);
-        $("#deformField4").val(variable_name);
-        $("#item-deformField4").attr("title", variable_name_tooltip);
+        update_field("dataset_name", data.result.dataset_name, data.result.dataset_name_tooltip);
+        update_field("file", data.result.file, data.result.file_tooltip);
+        update_field("variable_name", data.result.variable_name, data.result.variable_name_tooltip);
       });
     };
 
-    $("#deformField2").change(function() {
-      var dataset_name = $("#deformField2").val();
-      //console.log(dataset_name);
-      search(dataset_name);
-      
+    var update_field = function(name, value, title) {
+      console.log("update_field", name);
+      var field = $("[name='"+name+"']");
+      field.val(value);
+      field.attr("title", title)
+    };
+
+    var active_field = $("[name='dataset_name']");
+    active_field.change(function() {
+      var value = active_field.val();
+      if (value != search_value) {
+        //console.log(value);
+        search_value = value;
+        search(value);
+      };
     });
 
-    search("HadCRUT5");
+    search(search_value);
   });
