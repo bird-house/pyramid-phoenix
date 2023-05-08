@@ -3,6 +3,11 @@ from pyramid.view import view_config
 
 PROCESSES = {
     'crai': {
+        'default': [
+            {
+                'name': 'dataset_name',
+            },
+        ],
         'HadCRUT4': [
             {
                 'name': 'dataset_name',

@@ -1,9 +1,7 @@
 $(function() {
-
-    var search_value = "HadCRUT5";
+    var search_value = "";
     var search = function(value) {
       $.getJSON("/search/crai/"+value, function(data) {
-        console.log(data.result);
         $.each( data.items, function( i, item ) {
           update_field(item.name, item.value, item.title);
         });
@@ -17,15 +15,22 @@ $(function() {
       field.attr("title", title)
     };
 
-    var active_field = $("[name='dataset_name']");
-    active_field.change(function() {
-      var value = active_field.val();
-      if (value != search_value) {
-        //console.log(value);
-        search_value = value;
-        search(value);
-      };
-    });
+    var init = function() {
+      console.log("init");
+      $.getJSON("/search/crai/default", function(data) {
+        $.each( data.items, function( i, item ) {
+          var active_field = $("[name='"+item.name+"']");
+          //search_value = item.title;
+          active_field.change(function() {
+            var value = active_field.val();
+            if (value != search_value) {
+              search_value = value;
+              search(value);
+            };
+          });
+        });
+      });
+    }
 
-    search(search_value);
+    init();
   });
