@@ -3,10 +3,10 @@ $(function() {
     var search_value = "HadCRUT5";
     var search = function(value) {
       $.getJSON("/search/crai/"+value, function(data) {
-        //console.log(data.result);
-        update_field("dataset_name", data.result.dataset_name, data.result.dataset_name_tooltip);
-        update_field("file", data.result.file, data.result.file_tooltip);
-        update_field("variable_name", data.result.variable_name, data.result.variable_name_tooltip);
+        console.log(data.result);
+        $.each( data.items, function( i, item ) {
+          update_field(item.name, item.value, item.title);
+        });
       });
     };
 
