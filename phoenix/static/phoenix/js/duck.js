@@ -32,6 +32,8 @@ $(function() {
               search(value);
             };
           });
+          // trigger first init
+          active_field.val(active_field.val());
         });
       });
     }
