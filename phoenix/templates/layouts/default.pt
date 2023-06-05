@@ -27,7 +27,7 @@
     <!-- link rel="stylesheet" href="${request.static_path('deform:static/css/typeahead.css')}"/ -->
 
     <!-- Font Awesome: http://fontawesome.io/ -->
-    <link rel="stylesheet" href="${request.static_path('phoenix:static/font-awesome/css/font-awesome.min.css')}"/>
+    <link rel="stylesheet" href="${request.static_path('phoenix:static/font-awesome/css/fontawesome.min.css')}"/>
 
     <!-- Phoenix Theme CSS -->
     <link rel="stylesheet" href="${request.static_path('phoenix:static/phoenix/css/theme/'+layout.project_theme+'.css')}"/>
