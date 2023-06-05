@@ -18,7 +18,7 @@
     <div class="container">
       <!-- header -->
       <h2 class="page-header">
-        <i class="fa fa-info-circle text-muted"></i> Job Details
+        <i class="fa-solid fa-circle-info text-muted"></i> Job Details
         <small>
           This page shows the job details and polls the status of a running job.
         </small>
@@ -40,7 +40,7 @@
         </li-->
         <li class="${'active' if active=='outputs' else ''}" role="presentation">
           <a href="${request.route_path('job_details', job_id=job_id, tab='outputs')}">
-            <i class="fa fa-arrow-circle-o-up"></i> Outputs
+            <i class="fa-solid fa-circle-arrow-up"></i> Outputs
           </a>
         </li>
         <!--li class="${'active' if active=='xml' else ''}" role="presentation" tal:condition="request.has_permission('submit')">

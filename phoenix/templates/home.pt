@@ -29,7 +29,7 @@
                rel="tooltip"
                data-toggle="tooltip"
                title="${process.description}">
-              <icon class="fa fa-cog fa-5x"></icon>
+              <icon class="fa-solid fa-gear fa-5x"></icon>
               <div class="caption">
                 <h4>${process.title}</h4>
               </div><!-- thumbnail caption -->

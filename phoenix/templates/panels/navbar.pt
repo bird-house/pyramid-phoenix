@@ -31,7 +31,7 @@
           <ul class="dropdown-menu" role="menu">
             <li>
               <a href="${layout.project_docs}" target="_">
-                <i class="fa fa-book"></i> User Documentation
+                <i class="fa-solid fa-book"></i> User Documentation
               </a>
             </li>
           </ul>
@@ -70,21 +70,21 @@
         <!-- user -->
         <li tal:condition="request.user" class="dropdown">
           <a href="#" class="dropdown-toggle nav-user-dropdown" data-toggle="dropdown" role="button" aria-expanded="false">
-            <span class="fa fa-user-circle-o fa-lg"></span> ${request.user.get('name', 'Guest')} <span class="caret"></span></a>
+            <span class="fa-solid fa-circle-user fa-lg"></span> ${request.user.get('name', 'Guest')} <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li>
-              <a href="${request.route_path('profile', userid=request.unauthenticated_userid, tab='profile')}"><i class="fa fa-user fa-lg p-r-xs"></i> My Profile</a>
+              <a href="${request.route_path('profile', userid=request.unauthenticated_userid, tab='profile')}"><i class="fa-solid fa-user fa-lg p-r-xs"></i> My Profile</a>
             </li>
             <li tal:condition="request.has_permission('admin')" role="separator" class="divider"></li>
             <li tal:condition="request.has_permission('admin')">
-              <a href="${request.route_path('people')}"><i class="fa fa-users fa-lg p-r-xs"></i> People</a>
+              <a href="${request.route_path('people')}"><i class="fa-solid fa-users fa-lg p-r-xs"></i> People</a>
             </li>
             <li tal:condition="request.has_permission('admin')">
-              <a href="${request.route_path('settings')}"><i class="fa fa-wrench fa-lg p-r-xs"></i> Settings</a>
+              <a href="${request.route_path('settings')}"><i class="fa-solid fa-wrench fa-lg p-r-xs"></i> Settings</a>
             </li>
             <li role="separator" class="divider"></li>
             <li>
-              <a href="/account/logout"><i class="fa fa-sign-out fa-lg p-r-xs"></i> Sign Out</a>
+              <a href="/account/logout"><i class="fa-solid fa-sign-out fa-lg p-r-xs"></i> Sign Out</a>
             </li>
           </ul>
         </li>
