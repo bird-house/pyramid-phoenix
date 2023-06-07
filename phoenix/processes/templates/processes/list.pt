@@ -18,7 +18,7 @@
         <ul class="list-group">
           <li class="list-group-item" tal:repeat="item items">
             <div class="media">
-              <span class="pull-left text-muted" aria-hidden="true">
+              <span class="float-start text-muted" aria-hidden="true">
                 <a href="#">
                   <img class="media-object" src="${item.media}" alt="No Preview" width="256px"
                        tal:condition="item.media is not None">
@@ -27,7 +27,7 @@
                 </a>
               </span>
               <div class="media-body">
-                <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
+                <div class="float-end text-muted text-end" style="font-size: 1.0em;">
                   <span>
                     v${item.version}
                   </span>

@@ -99,7 +99,7 @@
                   </li>
 
                   <li>
-                    <div class="btn-group pull-right">
+                    <div class="btn-group float-end">
 
                       <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Sort <span class="caret"></span>
@@ -151,7 +151,7 @@
                            next request.route_path('monitor', _query=[('page', page+1), ('limit', limit), ('status', status), ('access', access), ('sort', sort)])"
                class="clearfix">
             <nav>
-              <ul class="pagination pull-right">
+              <ul class="pagination float-end">
                 <li tal:attributes="class '' if page > 0 else 'disabled'">
                   <a tal:attributes="href previous if page > 0 else '#'" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>

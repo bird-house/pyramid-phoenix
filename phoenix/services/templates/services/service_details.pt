@@ -9,7 +9,7 @@
               <i class="fa fa-fw fa-chevron-left" ></i>
             </a>
             ${service.title}
-            <div class="pull-right">
+            <div class="float-end">
               <a class="btn btn-danger btn-xs"
                  rel="tooltip"
                  data-toggle="tooltip"

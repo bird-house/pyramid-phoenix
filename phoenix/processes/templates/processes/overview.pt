@@ -14,11 +14,11 @@
         <div class="container-fluid" tal:condition="processes">
           <div class="row">
             <div class="col-md-12">
-              <a href="${request.route_path('settings_processes')}" class="pull-right text-muted"
+              <a href="${request.route_path('settings_processes')}" class="float-end text-muted"
                 tal:condition="request.has_permission('admin')">
                 Customize pinned processes
               </a>
-              <h4 class="pull-left">
+              <h4 class="float-start">
                 Pinned processes
               </h4>
             </div>
@@ -50,7 +50,7 @@
           <div class="row">
             <div class="col-md-12">
               <p/>
-              <h4 class="pull-left">
+              <h4 class="float-start">
                 Available Web Processing Services
               </h4>
             </div>
@@ -60,11 +60,11 @@
               <ul class="list-group">
                 <li class="list-group-item" tal:repeat="item items">
                     <div class="media">
-                      <span class="pull-left text-muted" aria-hidden="true">
+                      <span class="float-start text-muted" aria-hidden="true">
                           <i class='fa fa-cogs'></i>
                       </span>
                       <div class="media-body">
-                          <!-- <div class="pull-right text-muted text-right" style="font-size: 1.0em;">
+                          <!-- <div class="float-end text-muted text-end" style="font-size: 1.0em;">
                               <span>
                                   <i class="fa fa-cogs"></i>
                                   7

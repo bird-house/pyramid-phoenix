@@ -30,7 +30,7 @@
                             <div class="panel-heading">
                                 <span class="panel-title">
                                     ${title}
-                                    <div tal:condition="buttons" class="pull-right">
+                                    <div tal:condition="buttons" class="float-end">
                                       <tal:button tal:repeat="button buttons">
                                          <a class="${button.css_class}"
                                             rel="tooltip"
