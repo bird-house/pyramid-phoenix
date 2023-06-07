@@ -2,8 +2,8 @@
 
   <div metal:fill-slot="content">
 
-    <div class="jumbotron">
-      <div class="container">
+    <div class="card">
+      <div class="card-body">
         <h1>Please ask for registration</h1>
         This is a demo installation of Phoenix. If you want to try it out please do the following steps:
         <ol>
