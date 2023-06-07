@@ -86,6 +86,6 @@
   </div><!-- panel body -->
 </div><!-- panel -->
 <!-- project description -->
-<div class="well">
+<div class="card card-body text-bg-light">
   <h4>${job.get('abstract') or 'No summary'}</h4>
 </div>
