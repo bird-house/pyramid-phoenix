@@ -1,7 +1,7 @@
 <div>
   <ul class="list-group">
     <li class="list-group-item" tal:repeat="item items">
-      <div class="media">
+      <div class="d-flex">
         <div class="media-left media-top">
           <a href="#">
             <img 
@@ -18,7 +18,7 @@
               tal:condition="item.preview"/>
           </a>
         </div>
-        <div class="media-body">
+        <div class="d-flex">
           <!--h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4-->
           <h4 class="media-heading">${item.title}</h4>
           <p>${item.get('abstract') or ''}</p>
