@@ -39,7 +39,7 @@
 
               <div class="col-md-2">
                 <label class="control-label">
-                  <select id="status-select" class="form-control">
+                  <select id="status-select" class="form-select">
                     <option value="${request.route_path('monitor', _query=[('access', access)])}">All</option>
                     <optgroup>
                       <option value="${request.route_path('monitor', _query=[('status', 'Running'), ('access', access)])}"
@@ -133,7 +133,7 @@
 
           <div class="col-md-2">
             <label class="control-label">
-              <select id="limit-select" class="form-control">
+              <select id="limit-select" class="form-select">
                 <option
                    value="${request.route_path('monitor', _query=[('status', status), ('access', access), ('limit', new_limit)])}"
                    tal:attributes="selected True if new_limit==limit else False"

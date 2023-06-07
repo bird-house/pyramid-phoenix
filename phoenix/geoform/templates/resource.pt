@@ -16,7 +16,7 @@
       <div class="input-group">
         <span class="input-group-addon">URL</span>
         <input type="text" name="${name}" value="${cstruct}"
-               tal:attributes="class string: form-control ${css_class or ''};
+               tal:attributes="class string: form-select ${css_class or ''};
                                style style"
                placeholder="Enter a URL pointing to your resource"
                data-toggle="tooltip" title="Enter a URL pointing to your resource. You can also upload a file using the buttons on the right."
