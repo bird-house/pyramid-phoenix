@@ -3,12 +3,12 @@
   <!--! Flash messages -->
   <!--! one flash message that can be used by js -->
   <!-- div class="alert hide">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <button type="button" class="close" data-bs-dismiss="alert">&times;</button>
   </div -->
   <!--! Standard flash messages -->
   <!-- tal:message condition="request.session.peek_flash()">
     <div class="alert" tal:repeat="message request.session.pop_flash()">
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       <tal:alert replace="structure message" />
     </div>
   </tal:message -->
@@ -18,7 +18,7 @@
       <div tal:repeat="message request.session.pop_flash(flash_type)"
            tal:attributes="class string:alert alert-$flash_type">
         <div class="container">
-          <!-- button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button -->
+          <!-- button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button -->
           <tal:alert replace="structure message" />
         </div>
       </div>

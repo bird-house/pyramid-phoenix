@@ -101,7 +101,7 @@
                   <li>
                     <div class="btn-group float-end">
 
-                      <a class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <a class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Sort <span class="caret"></span>
                       </a>
                       <ul class="dropdown-menu">
@@ -176,7 +176,7 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
               <h4 class="modal-title" id="caption-form-label">Edit Caption</h4>
             </div>
             <div class="modal-body">
@@ -191,7 +191,7 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
               <h4 class="modal-title" id="labels-form-label">Edit Labels</h4>
             </div>
             <div class="modal-body">
