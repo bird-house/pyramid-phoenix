@@ -3,11 +3,11 @@
   <div metal:fill-slot="content">
     <div class="container">
       
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h2 class="panel-title">${title}</h2>
+      <div class="card">
+        <div class="card-heading">
+          <h2 class="card-title">${title}</h2>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
           <tal:form replace="structure form">The form will render here</tal:form>
         </div>
       </div>

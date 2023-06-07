@@ -85,8 +85,8 @@
         </div>
       </div>
 
-      <div class="panel panel-default">
-        <div class="panel-body">
+      <div class="card">
+        <div class="card-body">
           <tal:form replace="structure form">The form will render here</tal:form>
         </div>
       </div>

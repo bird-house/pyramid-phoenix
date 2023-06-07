@@ -65,10 +65,10 @@
             </div>
           </div>
 
-          <div class="panel panel-default">
-            <div class="panel-heading">
+          <div class="card">
+            <div class="card-heading">
 
-              <span class="panel-title">
+              <span class="card-title">
                 <ul class="nav nav-pills" role="tablist">
                   <li role="presentation"
                       tal:attributes="class 'active' if status=='Running' else ''">
@@ -124,7 +124,7 @@
                 </ul>
               </span>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
               <table class="table table-condensed table-striped table-hover" tal:condition="count">
                 <tal:rows replace="structure grid" />
               </table>

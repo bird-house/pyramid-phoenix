@@ -21,8 +21,8 @@
      progress_class="progress-bar-warning progress-bar-striped active"
 ?>
 
-<div class="panel panel-default">
-  <div class="panel-body">
+<div class="card">
+  <div class="card-body">
     <div class="container">
       <div class="col-md-3">
         <dl>

@@ -3,9 +3,9 @@
   <div metal:fill-slot="content">
     <div class="container">
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <span class="panel-title">
+      <div class="card">
+        <div class="card-heading">
+          <span class="card-title">
             <a href="${request.route_path('settings')}">
               <i class="fa fa-fw fa-chevron-left" ></i>
             </a>
@@ -28,7 +28,7 @@
             </div>
           </span>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
           <ul class="list-group">
             <li class="list-group-item" tal:repeat="item items">
               <div class="d-flex">
