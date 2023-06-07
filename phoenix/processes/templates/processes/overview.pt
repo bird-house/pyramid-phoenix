@@ -24,7 +24,7 @@
             </div>
           </div><!-- row title -->
           <div class="row">
-            <div class="col-xs-6 col-md-4" tal:repeat="process processes[:3]">
+            <div class="col-6 col-md-4" tal:repeat="process processes[:3]">
               <div class="thumbnail">
                 <div class="caption">
                   <a href="${process.url}"><h5>${process.title}</h5></a>
@@ -34,7 +34,7 @@
             </div>
           </div><!-- row box -->
           <div class="row">
-            <div class="col-xs-6 col-md-4" tal:repeat="process processes[3:]">
+            <div class="col-6 col-md-4" tal:repeat="process processes[3:]">
               <div class="thumbnail">
                 <div class="caption">
                   <a href="${process.url}"><h5>${process.title}</h5></a>

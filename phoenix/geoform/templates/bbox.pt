@@ -6,7 +6,7 @@
                   style style|field.widget.style;">
   ${field.start_mapping()}
   <div class="row">
-    <div class="col-xs-3"><div class="input-group">
+    <div class="col-3"><div class="input-group">
       <span class="input-group-addon" i18n:translate="">MinX</span>
       <input type="text" name="minx" value="${minx}"
              class="span2 form-control ${css_class or ''}"
@@ -14,7 +14,7 @@
              maxlength="6"
              id="${oid}"/>
     </div></div>
-    <div class="col-xs-3"><div class="input-group">
+    <div class="col-3"><div class="input-group">
       <span class="input-group-addon" i18n:translate="">MinY</span>
       <input type="text" name="miny" value="${miny}"
              class="span2 form-control ${css_class or ''}"
@@ -22,7 +22,7 @@
              maxlength="6"
              id="${oid}-miny"/>
     </div></div>
-    <div class="col-xs-3"><div class="input-group">
+    <div class="col-3"><div class="input-group">
       <span class="input-group-addon" i18n:translate="">MaxX</span>
       <input type="text" name="maxx" value="${maxx}"
              class="span2 form-control ${css_class or ''}"
@@ -30,7 +30,7 @@
              maxlength="6"
              id="${oid}-maxx"/>
     </div></div>
-    <div class="col-xs-3"><div class="input-group">
+    <div class="col-3"><div class="input-group">
       <span class="input-group-addon" i18n:translate="">MaxY</span>
       <input type="text" name="maxy" value="${maxy}"
              class="span2 form-control ${css_class or ''}"

@@ -24,7 +24,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-xs-3 col-md-2"  tal:repeat="process processes[:6]">
+          <div class="col-3 col-md-2"  tal:repeat="process processes[:6]">
             <a href="${process.url}" class="thumbnail text-center text-muted"
                rel="tooltip"
                data-toggle="tooltip"
