@@ -10,7 +10,7 @@
             </a>
             ${service.title}
             <div class="float-end">
-              <a class="btn btn-danger btn-xs"
+              <a class="btn btn-danger btn-sm"
                  rel="tooltip"
                  data-toggle="tooltip"
                  title="Remove Service"

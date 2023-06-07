@@ -11,14 +11,14 @@
             </a>
             Services
             <div class="float-end">
-              <a class="btn btn-success btn-xs"
+              <a class="btn btn-success btn-sm"
                  rel="tooltip"
                  data-toggle="tooltip"
                  title="Register a new Service"
                  href="${request.route_path('register_service')}">
                 Register a new Service
               </a>
-              <a class="btn btn-danger btn-xs"
+              <a class="btn btn-danger btn-sm"
                  rel="tooltip"
                  data-toggle="tooltip"
                  title="Remove all Services"

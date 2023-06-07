@@ -27,7 +27,7 @@
       <div class="btn-group" role="group" aria-label="...">
         <button id="${oid}-upload" type="button"
                 data-toggle="tooltip" title="Upload a file"
-                tal:attributes="class 'btn btn-default' if upload else 'btn btn-default disabled'">
+                tal:attributes="class 'btn btn-outline-secondary' if upload else 'btn btn-outline-secondary disabled'">
           <icon class="fa fa-upload"><icon>
         </button>
       </div>
@@ -45,7 +45,7 @@
           <div id="${oid}-fine-uploader"></div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
             Close
           </button>
         </div>

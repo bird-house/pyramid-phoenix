@@ -22,17 +22,17 @@
           <div class="form-group">
             <div class="btn-toolbar">
               <div class="btn-group">
-                <a tal:attributes="class 'btn btn-default' if access else 'btn btn-default active'"
+                <a tal:attributes="class 'btn btn-outline-secondary' if access else 'btn btn-outline-secondary active'"
                    href="${request.route_path('monitor', _query=[('status', status)])}">
                   My Jobs</a>
-                <a tal:attributes="class 'btn btn-default active' if access=='public' else 'btn btn-default'"
+                <a tal:attributes="class 'btn btn-outline-secondary active' if access=='public' else 'btn btn-outline-secondary'"
                    href="${request.route_path('monitor', _query=[('access', 'public'), ('status', status), ('limit', limit)])}">
                   Public</a>
-                <a tal:attributes="class 'btn btn-default active' if access=='private' else 'btn btn-default'"
+                <a tal:attributes="class 'btn btn-outline-secondary active' if access=='private' else 'btn btn-outline-secondary'"
                    href="${request.route_path('monitor', _query=[('access', 'private'), ('status', status), ('limit', limit)])}">
                   Private</a>
                 <a tal:condition="request.has_permission('admin')"
-                   tal:attributes="class 'btn btn-default active' if access=='all' else 'btn btn-default'"
+                   tal:attributes="class 'btn btn-outline-secondary active' if access=='all' else 'btn btn-outline-secondary'"
                    href="${request.route_path('monitor', _query=[('access', 'all'), ('status', status), ('limit', limit)])}">
                   All</a>
               </div>
@@ -101,7 +101,7 @@
                   <li>
                     <div class="btn-group float-end">
 
-                      <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <a class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Sort <span class="caret"></span>
                       </a>
                       <ul class="dropdown-menu">
