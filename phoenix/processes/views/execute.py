@@ -92,7 +92,7 @@ class ExecuteProcess(MyView):
                            use_async=False,
                            user=self.request.user)
         submit_button = Button(name='submit', title='Submit',
-                               css_class='btn btn-success btn-lg btn-block',
+                               css_class='btn btn-success btn-lg',
                                disabled=not self.has_execute_permission())
         return Form(
             schema.bind(request=self.request),

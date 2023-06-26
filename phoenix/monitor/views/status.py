@@ -30,11 +30,11 @@ class JobStatus(MyView):
                         break
                 details = output_details(self.request, output)
                 # if details.get('reference'):
-                #     result = '<a href="{0}" class="btn btn-success btn-xs" target="_blank">Show Output</a>'.format(
+                #     result = '<a href="{0}" class="btn btn-success btn-sm" target="_blank">Show Output</a>'.format(
                 #         details['reference'])
                 # else:
                 #     result = '<strong>{0}</strong>'.format(', '.join(details.get('data', '')))
-                msg = '<h4>Job Succeeded. <a href="{0}" class="btn btn-info btn-xs"> Outputs</a></h4>'
+                msg = '<h4>Job Succeeded. <a href="{0}" class="btn btn-info btn-sm"> Outputs</a></h4>'
                 url = self.request.route_path('job_details', tab='outputs', job_id=self.job_id)
                 self.session.flash(msg.format(url), queue="success")
             elif status == 'ProcessFailed':

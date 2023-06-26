@@ -219,11 +219,11 @@ class JobsGrid(CustomGrid):
     def buttongroup_td(self, col_num, i, item):
         from phoenix.utils import ActionButton
         buttons = list()
-        buttons.append(ActionButton('results', title='Details', css_class='btn btn-default',
+        buttons.append(ActionButton('results', title='Details', css_class='btn btn-outline-secondary',
                                     href=self.request.route_path('job_details', tab='outputs',
                                                                  job_id=item.get('identifier'))))
         # TODO: refactor job restart
-        # buttons.append(ActionButton('restart_job', title='Restart', css_class='btn btn-default',
+        # buttons.append(ActionButton('restart_job', title='Restart', css_class='btn btn-outline-secondary',
         #                             href="/restart_job/%s" % item.get('identifier'),
         #                             disabled=item['status'] != 'ProcessSucceeded'))
         return self.render_buttongroup_td(buttons=buttons)

@@ -14,7 +14,7 @@ LOGGER = logging.getLogger("PHOENIX")
 
 class ActionButton(object):
     def __init__(self, name, title=None, no_children=False, href=None, new_window=False,
-                 disabled=False, css_class="btn btn-default",
+                 disabled=False, css_class="btn btn-outline-secondary",
                  icon=None):
         self.name = name
         if title is None:

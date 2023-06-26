@@ -1,5 +1,5 @@
 <div class="media">
-  <a class="pull-left" href="#">
+  <a class="float-start" href="#">
     <img class="media-object" data-src="${source}/64x64">
   </a>
 </dvi>

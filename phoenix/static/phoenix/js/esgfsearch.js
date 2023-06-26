@@ -38,7 +38,7 @@
         text += '<span class="list-group-item-heading">';
         if (item.cart_available) {
           text += '<btn';
-          text += ' class="btn btn-default btn-xs pull-right';
+          text += ' class="btn btn-outline-secondary btn-sm float-end';
           if (item.is_in_cart) {
             text += ' btn-cart-remove"';
             text += ' title="Remove from Cart"';

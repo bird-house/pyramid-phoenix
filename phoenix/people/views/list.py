@@ -49,7 +49,7 @@ class PeopleGrid(CustomGrid):
     def buttongroup_td(self, col_num, i, item):
         from phoenix.utils import ActionButton
         buttons = list()
-        buttons.append(ActionButton('edit', title="Edit", css_class="btn btn-default",
+        buttons.append(ActionButton('edit', title="Edit", css_class="btn btn-outline-secondary",
                                     href=self.request.route_path('profile', userid=item.get('identifier'),
                                                                  tab='account')))
         buttons.append(ActionButton('delete', title='Delete', css_class="btn btn-danger",

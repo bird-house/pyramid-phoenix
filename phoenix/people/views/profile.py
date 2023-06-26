@@ -65,12 +65,12 @@ class Profile(MyView):
     def generate_form(self):
         if self.tab == 'group':
             btn = Button(name='update', title='Update Group Permission',
-                         css_class="btn btn-success btn-lg btn-block",
+                         css_class="btn btn-success btn-lg",
                          disabled=not self.request.has_permission('admin'))
             form = Form(schema=self.schema(), buttons=(btn,),
                         formid='deform')
         elif self.tab == 'profile':
-            btn = Button(name='update', title='Update Profile', css_class="btn btn-success btn-lg btn-block")
+            btn = Button(name='update', title='Update Profile', css_class="btn btn-success btn-lg")
             form = Form(schema=self.schema(), buttons=(btn,), formid='deform')
         else:
             form = Form(schema=self.schema(), formid='deform')
@@ -80,7 +80,7 @@ class Profile(MyView):
         btns = []
         if self.tab == 'token':
             btn = ActionButton(name='refresh_token', title='Refresh Token',
-                               css_class="btn btn-success btn-xs",
+                               css_class="btn btn-success btn-sm",
                                disabled=not self.request.has_permission('submit'),
                                href=self.request.route_path('refresh_token'))
             btns.append(btn)

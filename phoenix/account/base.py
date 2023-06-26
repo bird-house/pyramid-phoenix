@@ -37,7 +37,7 @@ class Account(object):
 
     def generate_form(self):
         btn = Button(name='submit', title='Sign In',
-                     css_class="btn btn-success btn-lg btn-block")
+                     css_class="btn btn-success btn-lg")
         form = Form(schema=self.schema(), buttons=(btn,), formid='deform')
         return form
 
