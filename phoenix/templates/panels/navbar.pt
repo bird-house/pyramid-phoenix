@@ -1,36 +1,29 @@
-<nav class="navbar navbar-inverse" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggler collapsed dropdown-item" data-bs-toggle="collapse" data-bs-target="#navbar"
-              aria-expanded="false">
-        <span class="sr-only">Toggle Navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/">${layout.project_brand}</a>
-    </div>
-    <div id="navbar" class="navbar-collapse collapse">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">${layout.project_brand}</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div id="navbar" class="collapse navbar-collapse">
       <!-- nav with text -->
-      <ul class="nav navbar-nav">
-        <div tal:repeat="item items" class="nav navbar-nav">
-          <li class="${'active' if item.active else ''}">
-            <a class="navbar-link" href="${item.url}">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <div tal:repeat="item items">
+          <li class="nav-item">
+            <a class="navbar-link ${'active' if item.active else ''}" href="${item.url}">
               ${item.name}
-              <span tal:condition="item.active" class="sr-only">(current)</span>
             </a>
           <li>
         </div>
       </ul>
 
       <!-- static links -->
-      <ul class="nav navbar-nav">
-        <li class="dropdown">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
           <a href="#" class="dropdown-toggle nav-user-dropdown dropdown-item" data-bs-toggle="dropdown" role="button" aria-expanded="false">
             Help<span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
+          <ul class="dropdown-menu">
             <li>
-              <a href="${layout.project_docs}" target="_">
+              <a class="dropdown-item" href="${layout.project_docs}" target="_">
                 <i class="fa-solid fa-book"></i> User Documentation
               </a>
             </li>
@@ -40,7 +33,7 @@
 
       <!-- nav on right side -->
 
-      <ul class="nav navbar-nav navbar-right">
+      <ul class="navbar-nav">
         <div tal:repeat="item subitems" class="nav navbar-nav">
           <!-- subitem -->
           <li tal:condition="'items' not in item" class="${'active' if item['active'] else ''}">
@@ -62,9 +55,9 @@
           </li>
         </div>
         <!-- sign-in -->
-        <li tal:condition="not request.user">
+        <li class="nav-item" tal:condition="not request.user">
           <div class="col-sm-12">
-            <a href="${request.route_path('sign_in')}" class="btn btn-link navbar-btn">Sign In</a>
+            <a href="${request.route_path('sign_in')}" class="nav-link">Sign In</a>
           </div>
         </li>
         <!-- user -->
