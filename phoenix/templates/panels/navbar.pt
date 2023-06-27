@@ -1,57 +1,54 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
+  <div class="container">
     <a class="navbar-brand" href="/">${layout.project_brand}</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div id="navbar" class="collapse navbar-collapse">
       <!-- nav with text -->
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <ul class="navbar-nav mr-auto">
         <div tal:repeat="item items">
-          <li class="nav-item">
-            <a class="navbar-link ${'active' if item.active else ''}" href="${item.url}">
+          <li class="nav-item ${'active' if item.active else ''}">
+            <a class="nav-link" href="${item.url}">
               ${item.name}
+              <span tal:condition="item.active" class="sr-only">(current)</span>
             </a>
           <li>
         </div>
-      </ul>
 
-      <!-- static links -->
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <!-- static links -->
         <li class="nav-item dropdown">
-          <a href="#" class="dropdown-toggle nav-user-dropdown dropdown-item" data-bs-toggle="dropdown" role="button" aria-expanded="false">
-            Help<span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li>
-              <a class="dropdown-item" href="${layout.project_docs}" target="_">
-                <i class="fa-solid fa-book"></i> User Documentation
-              </a>
-            </li>
-          </ul>
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+            Help
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="${layout.project_docs}" target="_">
+              User Documentation
+            </a>
+          </div>
         </li>
       </ul>
 
       <!-- nav on right side -->
 
-      <ul class="navbar-nav">
-        <div tal:repeat="item subitems" class="nav navbar-nav">
+      <ul class="navbar-nav mr-auto">
+        <div tal:repeat="item subitems">
           <!-- subitem -->
-          <li tal:condition="'items' not in item" class="${'active' if item['active'] else ''}">
-            <a class="navbar-link btn-lg" href="${item.url}" data-toggle="tooltip" title="${item.name}">
-              <span class="${item.icon}"></span>
+          <li tal:condition="'items' not in item" class="nav-item ${'active' if item['active'] else ''}">
+            <a class="nav-link" href="${item.url}">
+              ${item.name}
             </a>
           </li>
           <!-- dropdown -->
-          <li tal:condition="'items' in item" class="dropdown">
-            <a href="#" class="dropdown-toggle nav-user-dropdown btn-lg dropdown-item" data-bs-toggle="dropdown" role="button" aria-expanded="false">
-              <span class="${item.icon}"></span> <span class="caret"></span></a>
-            <ul class="dropdown-menu" role="menu">
-              <li tal:repeat="dropdown_item item['items']">
-                <a href="${dropdown_item.url}">
-                  <i class="${dropdown_item.icon}"></i> ${dropdown_item.name}
-                </a>
-              </li>
-            </ul>
+          <li tal:condition="'items' in item" class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+              ${item.name}
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="${dropdown_item.url}" tal:repeat="dropdown_item item['items']">
+                ${dropdown_item.name}
+              </a>
+            </div>
           </li>
         </div>
         <!-- sign-in -->
@@ -61,25 +58,16 @@
           </div>
         </li>
         <!-- user -->
-        <li tal:condition="request.user" class="dropdown">
-          <a href="#" class="dropdown-toggle nav-user-dropdown dropdown-item" data-bs-toggle="dropdown" role="button" aria-expanded="false">
-            <span class="fa-solid fa-circle-user fa-lg"></span> ${request.user.get('name', 'Guest')} <span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li>
-              <a href="${request.route_path('profile', userid=request.unauthenticated_userid, tab='profile')}"><i class="fa-solid fa-user fa-lg p-r-xs"></i> My Profile</a>
-            </li>
-            <li tal:condition="request.has_permission('admin')" role="separator" class="dropdown-divider"></li>
-            <li tal:condition="request.has_permission('admin')">
-              <a href="${request.route_path('people')}"><i class="fa-solid fa-users fa-lg p-r-xs"></i> People</a>
-            </li>
-            <li tal:condition="request.has_permission('admin')">
-              <a href="${request.route_path('settings')}"><i class="fa-solid fa-wrench fa-lg p-r-xs"></i> Settings</a>
-            </li>
-            <li role="separator" class="dropdown-divider"></li>
-            <li>
-              <a href="/account/logout"><i class="fa-solid fa-sign-out fa-lg p-r-xs"></i> Sign Out</a>
-            </li>
-          </ul>
+        <li tal:condition="request.user" class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+              ${request.user.get('name', 'Guest')}
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="${request.route_path('profile', userid=request.unauthenticated_userid, tab='profile')}"> My Profile</a>
+            <a class="dropdown-item" href="${request.route_path('people')}" tal:condition="request.has_permission('admin')"> People</a>
+            <a class="dropdown-item" href="${request.route_path('settings')}" tal:condition="request.has_permission('admin')"> Settings</a>
+            <a class="dropdown-item" href="/account/logout"> Sign Out</a>
+          </div>
         </li>
       </ul>
     </div>
