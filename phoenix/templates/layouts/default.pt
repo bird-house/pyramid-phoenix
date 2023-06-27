@@ -18,14 +18,6 @@
     <!-- optional bootstrap theme -->
     <!-- link rel="stylesheet" href="${request.static_path('phoenix:static/bootstrap/css/bootstrap-theme.min.css')}"/ -->
 
-    <!-- deform: https://github.com/Pylons/deform -->
-    <!-- link rel="stylesheet" href="${request.static_path('deform:static/css/bootstrap.min.css')}"/ -->
-    <!-- link rel="stylesheet" href="${request.static_path('deform:static/css/pygments.css')}"/ -->
-    <!-- link rel="stylesheet" href="${request.static_path('deform:static/css/form.css')}"/ -->
-    <!-- link rel="stylesheet" href="${request.static_path('deform:static/select2/select2.css')}"/ -->
-    <!-- link rel="stylesheet" href="${request.static_path('deform:static/css/beautify.css')}"/ -->
-    <!-- link rel="stylesheet" href="${request.static_path('deform:static/css/typeahead.css')}"/ -->
-
     <!-- Font Awesome: http://fontawesome.io/ -->
     <link rel="stylesheet" href="${request.static_path('phoenix:static/fontawesome/css/fontawesome.min.css')}"/>
 
