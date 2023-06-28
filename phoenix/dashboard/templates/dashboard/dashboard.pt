@@ -3,20 +3,23 @@
   <div metal:fill-slot="content">
     <div class="container">
       <div class="row">
-        <h1 class="page-header">Dashboard</h1>
+        <div class="col">
+          <h1>Dashboard</h1>
+        </div>
+      </div>
+      <div class="row">
         <div class="col col-md-2">
           <!--Sidebar content-->
-          <nav class="nav">
-            <a class="${'active' if active=='overview' else ''}" href="${request.route_path('dashboard', tab='overview')}">Overview</a>
-            <a class="${'active' if active=='jobs' else ''}" href="${request.route_path('dashboard', tab='jobs')}">Jobs</a>
-            <a class="${'active' if active=='people' else ''}" href="${request.route_path('dashboard', tab='people')}">People</a>
+          <nav class="nav flex-column">
+            <a class="nav-item ${'active' if active=='overview' else ''}" href="${request.route_path('dashboard', tab='overview')}">Overview</a>
+            <a class="nav-item ${'active' if active=='jobs' else ''}" href="${request.route_path('dashboard', tab='jobs')}">Jobs</a>
+            <a class="nav-item ${'active' if active=='people' else ''}" href="${request.route_path('dashboard', tab='people')}">People</a>
           </nav>
         </div>
-        <div class="col col-md-10">
+        <div class="col">
           <!--Body content-->
           ${panel('headings')}
         </div>
-        
       </div>
     </div>
   </div>

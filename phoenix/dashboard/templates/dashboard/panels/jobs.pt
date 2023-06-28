@@ -1,23 +1,19 @@
 <div class="card">
   <div class="card-body">
     <div class="row">
-      <div class="col-6 col-sm-3 text-center">
-        <span class="fa fa-cogs fa-5x" aria-hidden="true"></span>
+      <div class="col col-sm-3 text-center">
         <h4>All Jobs</h4>
         <span class="badge">${total}</span>
       </div>
-      <div class="col-6 col-sm-3 text-center">
-        <span class="fa fa-clock-o fa-5x" aria-hidden="true"></span>
+      <div class="col col-sm-3 text-center">
         <h4>Running</h4>
         <span class="badge">${running}</span>
       </div>
-      <div class="col-6 col-sm-3 text-center">
-        <span class="fa fa-check fa-5x text-success" aria-hidden="true"></span>
+      <div class="col col-sm-3 text-center">
         <h4>Succeeded</h4>
         <span class="badge">${succeeded}</span>
       </div>
-      <div class="col-6 col-sm-3 text-center">
-        <span class="fa fa-times-circle fa-5x text-danger" aria-hidden="true"></span>
+      <div class="col col-sm-3 text-center">
         <h4>Failed</h4>
         <span class="badge">${failed}</span>
       </div>

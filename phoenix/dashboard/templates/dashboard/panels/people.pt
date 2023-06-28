@@ -1,23 +1,19 @@
 <div class="card">
   <div class="card-body">
     <div class="row">
-      <div class="col-6 col-sm-3 text-center">
-        <span class="fa fa-users fa-5x" aria-hidden="true"></span>
+      <div class="col col-sm-3 text-center">
         <h4>All People</h4>
         <span class="badge">${total}</span>
       </div>
-      <div class="col-6 col-sm-3 text-center">
-        <span class="fa fa-hourglass-1 fa-5x" aria-hidden="true"></span>
+      <div class="col col-sm-3 text-center">
         <h4>Logged in today</h4>
         <span class="badge">${logged_in_today}</span>
       </div>
-      <div class="col-6 col-sm-3 text-center">
-        <span class="fa fa-hourglass-3 fa-5x" aria-hidden="true"></span>
+      <div class="col col-sm-3 text-center">
         <h4>Logged in this week</h4>
         <span class="badge">${logged_in_this_week}</span>
       </div>
-      <div class="col-6 col-sm-3 text-center">
-        <span class="fa fa-bell fa-5x" aria-hidden="true"></span>
+      <div class="col col-sm-3 text-center">
         <h4>Not activated</h4>
         <span class="badge">${not_activated}</span>
       </div>
