@@ -4,26 +4,20 @@
 
         <div class="container">
             <div class="row">
-                <h2 class="page-header">${user_name}</h2>
-                <div class="col-md-3">
-                    <!--Sidebar content-->
-                    <ul class="nav nav-pills nav-stacked">
-                        <li class="${'active' if active=='profile' else ''}">
-                            <a href="${request.route_path('profile', userid=userid, tab='profile')}">Profile</a>
-                        </li>
-                        <li class="${'active' if active=='token' else ''}" tal:condition="request.has_permission('submit')">
-                            <a href="${request.route_path('profile', userid=userid, tab='token')}">
-                              Personal access token
-                            </a>
-                        </li>
-                        <li class="${'active' if active=='group' else ''}">
-                            <a href="${request.route_path('profile', userid=userid, tab='group')}">
-                              Group Permission
-                            </a>
-                        </li>
-                    </ul>
+                <div class="col"> 
+                    <h2>${user_name}</h2>
                 </div>
-                <div class="col-md-9">
+            <div class="row">
+                <div class="col col-md-3">
+                    <!--Sidebar content-->
+                    <nav class="nav nav-pills">
+                        <a class="nav-link ${'active' if active=='profile' else ''}" href="${request.route_path('profile', userid=userid, tab='profile')}">Profile</a>
+                        <a class="nav-link ${'active' if active=='group' else ''}" href="${request.route_path('profile', userid=userid, tab='group')}">
+                            Group Permission
+                        </a>
+                    </nav>
+                </div>
+                <div class="col col-md-9">
                     <!--Body content-->
                     <div class="row">
                         <div class="card">
@@ -49,7 +43,7 @@
                         </div>
                     </div>
                 </div>
-
+            </div>    
             </div>
         </div>
     </div>
