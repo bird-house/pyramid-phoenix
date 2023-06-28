@@ -4,39 +4,14 @@
 
     <section class="topbox">
       <div class="container">
-            <img src=${layout.project_logo} class="imglogo">
-            <h1>
-             <span class="title">${layout.project_title}</span>
-            </h1>
-            <h2>
-              ${layout.project_description}
-            </h2>
+        <img src=${layout.project_logo} class="imglogo">
+        <h1>
+          <span class="title">${layout.project_title}</span>
+        </h1>
+        <h2>
+          ${layout.project_description}
+        </h2>
       </div>
-    </section>
-
-    <!-- highlighted processes -->
-    <section class="hilitbox" tal:condition="processes">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 text-center">
-            <h2><strong>Highlighted Processes</strong></h2>
-            <h3>Run one of these favorite processes or explore <a href="/processes">more</a>.</h3>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-3 col-md-2"  tal:repeat="process processes[:6]">
-            <a href="${process.url}" class="thumbnail text-center text-muted"
-               rel="tooltip"
-               data-toggle="tooltip"
-               title="${process.description}">
-              <icon class="fa-solid fa-gear fa-5x"></icon>
-              <div class="caption">
-                <h4>${process.title}</h4>
-              </div><!-- thumbnail caption -->
-            </a><!-- thumbnail -->
-          </div>
-        </div><!-- row box -->
-      </div><!-- container pinned -->
     </section>
 
   </div>
