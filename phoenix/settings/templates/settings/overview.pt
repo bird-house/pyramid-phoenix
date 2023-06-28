@@ -1,43 +1,16 @@
 <metal:block use-macro="main_template">
-
-  <div metal:fill-slot="javascript">
-    <script type="text/javascript">
-      $('a[id="external-url"]').live("click", function(){
-        $(this).attr('target','_blank');
-      });
-    </script>
-  </div>
-  
+ 
   <div metal:fill-slot="content">
     <div class="container">
-      <h1 class="page-header">Settings</h1>
+      <div class="row">
+          <div class="col"> 
+            <h1>Settings</h1>
+          </div>
+      </div>
 
       <div class="card">
         <div class="card-body">
-          <div tal:repeat="group buttongroups">
-            <ul class="row">
-              <div class="col-md-2" tal:repeat="button group['buttons']">
-                <div tal:condition="'icon' in button">
-                  <a tal:attributes="href button['url'];id button.get('id')" class="thumbnail">
-                    <img
-                      tal:define="icon_url '/static/' + button['icon']"
-                      tal:attributes="src icon_url" alt="">
-                    <div class="text-center">
-                      <h4>${button['title']}</h4>
-                    </div>
-                  </a>
-                </div>
-                <div tal:condition="'icon_class' in button" class="text-center">
-                  <a tal:attributes="href button['url'];id button.get('id')" class="thumbnail">
-                    <span class="${button['icon_class']}"></span>
-                    <div class="text-center">
-                      <h4>${button['title']}</h4>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </ul>
-          </div>
+          <a href="/services"> Services</a>
         </div>
       </div>
     </div>

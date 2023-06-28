@@ -4,15 +4,8 @@
     <div class="container">
       
       <div class="card">
-        <div class="card-heading">
-          <span class="card-title">
-            <a href="${request.route_path('settings')}">
-              <i class="fa fa-fw fa-chevron-left" ></i>
-            </a>
-            ${title}
-          </span>
-        </div>
         <div class="card-body">
+          <h5 class="card-title"> ${title}</h5>
           <tal:form replace="structure form">The form will render here</tal:form>
         </div>
       </div>
