@@ -5,52 +5,33 @@
       tal:condition="status in ['ProcessPaused', 'ProcessStarted', 'ProcessAccepted']"
       src="${request.static_path('phoenix:static/phoenix/js/reloadpage.js')}">
     </script>
-
-    <!-- script type="text/javascript">
-            $(function () {
-              $('[data-toggle="popover"]').popover()
-            })
-    </script -->
   </div>
 
 
   <div metal:fill-slot="content">
     <div class="container">
-      <!-- header -->
-      <h2 class="page-header">
-        <i class="fa-solid fa-circle-info text-muted"></i> Job Details
-        <small>
-          This page shows the job details and polls the status of a running job.
-        </small>
-      </h2><!-- header -->
+      <div class="row">
+        <div class="col"> 
+          <h2>
+            Job Details
+            <small>
+              This page shows the job details and polls the status of a running job.
+            </small>
+          </h2>
+        </div>
+      </div>
 
-      ${panel('job_details')}
+      <div class="row">
+        <div class="col"> 
+          ${panel('job_details')}
+        </div>
+      </div>
 
-      <ul class="nav nav-tabs">
-         <!-- <li class="${'active' if active=='log' else ''}" role="presentation">
-          <a href="${request.route_path('job_details', job_id=job_id, tab='log')}">
-            <i class="fa fa-comments-o"></i> Job Log
-          </a>
-        </li> -->
-        <!--li class="${'active' if active=='inputs' else ''}" role="presentation">
-          <a href="${request.route_path('job_details', job_id=job_id, tab='inputs')}">
-            <i class="fa fa-arrow-circle-o-down"></i>
-            Inputs
-          </a>
-        </li-->
-        <li class="${'active' if active=='outputs' else ''}" role="presentation">
-          <a href="${request.route_path('job_details', job_id=job_id, tab='outputs')}">
-            <i class="fa-solid fa-circle-arrow-up"></i> Outputs
-          </a>
-        </li>
-        <!--li class="${'active' if active=='xml' else ''}" role="presentation" tal:condition="request.has_permission('submit')">
-          <a href="${request.route_path('job_details', job_id=job_id, tab='xml')}">
-            <i class="fa fa-code"></i> View as XML
-          </a>
-        </li-->
-      </ul>
-
-      ${panel('job_'+active)}
+      <div class="row">
+        <div class="col"> 
+          ${panel('job_'+active)}
+        </div>
+      </div>
 
     </div>
 
