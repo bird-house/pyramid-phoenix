@@ -2,45 +2,52 @@
 
   <div metal:fill-slot="content">
     <div class="container">
-      <h2 class="page-header"><i class="fa fa-cogs text-muted"></i> ${title}
-          <small>Please choose one of the processes to submit a job.</small>
-      </h2><!-- header -->
-
-      <div class="card card-body text-bg-light">
-        <h4>${description}</h4>
-        <div>
-          <a class="label label-warning" href="${url}" target="_blank" tal:condition="request.has_permission('submit')">Capabilities (XML)</a>
-          <a tal:condition="provider_site" tal:condition="provider_name" class="label label-info" href="${provider_site}" target="_blank">${provider_name}</a>
+      <div class="row">
+        <div class="col"> 
+          <h2> 
+            ${title}
+            <small>Please choose one of the processes to submit a job.</small>
+          </h2><!-- header -->
         </div>
-      </div><!-- service description -->
+      </div>
 
-      <div>
-        <ul class="list-group">
-          <li class="list-group-item" tal:repeat="item items">
-            <div class="d-flex">
-              <span class="float-start text-muted" aria-hidden="true">
-                <a href="#">
-                  <img src="${item.media}" alt="No Preview" width="256px"
-                       tal:condition="item.media is not None">
-                  <img src="${request.static_path('phoenix:static/phoenix/img/missing_thumb.png')}"
-                       alt="No Preview" width="256px" tal:condition="item.media is None">
-                </a>
-              </span>
+      <div class="row">
+        <div class="col"> 
+          <div class="card card-body text-bg-light">
+            <h4>${description}</h4>
+          </div><!-- service description -->
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col"> 
+          <ul class="list-group">
+            <li class="list-group-item" tal:repeat="item items">
               <div class="d-flex">
-                <div class="float-end text-muted text-end" style="font-size: 1.0em;">
-                  <span>
-                    v${item.version}
-                  </span>
+                <span class="float-start text-muted" aria-hidden="true">
+                  <a href="#">
+                    <img src="${item.media}" alt="No Preview" width="256px"
+                        tal:condition="item.media is not None">
+                    <img src="${request.static_path('phoenix:static/phoenix/img/missing_thumb.png')}"
+                        alt="No Preview" width="256px" tal:condition="item.media is None">
+                  </a>
+                </span>
+                <div class="d-flex">
+                  <div class="float-end text-muted text-end" style="font-size: 1.0em;">
+                    <span>
+                      v${item.version}
+                    </span>
+                  </div>
+                  <h4>
+                    <a href="${item.url}">${item.title}</a>
+                  </h4>
+                  ${item.description}
                 </div>
-                <h4>
-                  <a href="${item.url}">${item.title}</a>
-                </h4>
-                ${item.description}
               </div>
-            </div>
-          </li>
-        </ul>
-      </div><!-- processes -->
+            </li>
+          </ul>
+        </div>
+      </div>
     </div><!-- container -->
   </div>
 

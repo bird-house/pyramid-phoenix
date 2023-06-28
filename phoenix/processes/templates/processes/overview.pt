@@ -2,53 +2,22 @@
 
     <div metal:fill-slot="content">
       <div class="container">
-        <!-- header -->
-        <h2 class="page-header">
-          <i class="fa fa-cogs text-muted"></i> Processes
-          <small>
-            Choose one of the pinned processes or a Web Processing Service.
-          </small>
-        </h2>
-
-        <!-- pinned process -->
-        <div class="container-fluid" tal:condition="processes">
-          <div class="row">
-            <div class="col-md-12">
-              <a href="${request.route_path('settings_processes')}" class="float-end text-muted"
-                tal:condition="request.has_permission('admin')">
-                Customize pinned processes
-              </a>
-              <h4 class="float-start">
-                Pinned processes
-              </h4>
-            </div>
-          </div><!-- row title -->
-          <div class="row">
-            <div class="col-6 col-md-4" tal:repeat="process processes[:3]">
-              <div class="thumbnail">
-                <div class="caption">
-                  <a href="${process.url}"><h5>${process.title}</h5></a>
-                  <p><span class="text-muted">${process.description}</span></p>
-                </div><!-- thumbnail caption -->
-              </div><!-- thumbnail -->
-            </div>
-          </div><!-- row box -->
-          <div class="row">
-            <div class="col-6 col-md-4" tal:repeat="process processes[3:]">
-              <div class="thumbnail">
-                <div class="caption">
-                  <a href="${process.url}"><h5>${process.title}</h5></a>
-                  <p><span class="text-muted">${process.description}</span></p>
-                </div><!-- thumbnail caption -->
-              </div><!-- thumbnail -->
-            </div>
-          </div><!-- row box -->
-        </div><!-- container pinned -->
+        <div class="row">
+          <div class="col"> 
+            <!-- header -->
+           <h2>
+              Processes
+              <small>
+                Choose one of the pinned processes or a Web Processing Service.
+              </small>
+            </h2>
+          </div>
+        </div>
 
         <!-- section wps services -->
         <div class="container">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col col-md-12">
               <p/>
               <h4 class="float-start">
                 Available Web Processing Services
@@ -56,29 +25,13 @@
             </div>
           </div> <!-- row -->
           <div class="row">
-            <div class="col-md-12">
+            <div class="col col-md-12">
               <ul class="list-group">
                 <li class="list-group-item" tal:repeat="item items">
                     <div class="d-flex">
-                      <span class="float-start text-muted" aria-hidden="true">
-                          <i class='fa fa-cogs'></i>
-                      </span>
                       <div>
-                          <!-- <div class="float-end text-muted text-end" style="font-size: 1.0em;">
-                              <span>
-                                  <i class="fa fa-cogs"></i>
-                                  7
-                              </span>
-                              <span>
-                                  <i class="fa fa-star"></i>
-                                  11
-                              </span>
-                          </div> -->
                           <h4>
                             <a href="${item.url}">${item.title}</a>
-  	                          <span class="text-muted" aria-hidden="true">
-  		                          <i tal:attributes="class 'fa fa-unlock text-success' if item.public else 'fa fa-lock text-danger'"></i>
-                            </span>
                           </h4>
                           <div>
                               <span class="text-muted">${item.description}</span>
