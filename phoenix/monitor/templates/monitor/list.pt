@@ -8,12 +8,16 @@
   <div metal:fill-slot="content">
     <div class="container">
       <!-- header -->
-      <h2 class="page-header">
-        <i class="fa fa-tasks text-muted"></i> Job Monitor
-        <small>
-          This page shows the status of all your jobs.
-        </small>
-      </h2><!-- header -->
+      <div class="row">
+        <div class="col"> 
+          <h2>
+            Job Monitor
+            <small>
+              This page shows the status of all your jobs.
+            </small>
+          </h2><!-- header -->
+        </div>
+      </div>
 
       <!-- monitor form -->
       <div class="container">
@@ -25,19 +29,13 @@
                 <a tal:attributes="class 'btn btn-outline-secondary' if access else 'btn btn-outline-secondary active'"
                    href="${request.route_path('monitor', _query=[('status', status)])}">
                   My Jobs</a>
-                <a tal:attributes="class 'btn btn-outline-secondary active' if access=='public' else 'btn btn-outline-secondary'"
-                   href="${request.route_path('monitor', _query=[('access', 'public'), ('status', status), ('limit', limit)])}">
-                  Public</a>
-                <a tal:attributes="class 'btn btn-outline-secondary active' if access=='private' else 'btn btn-outline-secondary'"
-                   href="${request.route_path('monitor', _query=[('access', 'private'), ('status', status), ('limit', limit)])}">
-                  Private</a>
                 <a tal:condition="request.has_permission('admin')"
                    tal:attributes="class 'btn btn-outline-secondary active' if access=='all' else 'btn btn-outline-secondary'"
                    href="${request.route_path('monitor', _query=[('access', 'all'), ('status', status), ('limit', limit)])}">
                   All</a>
               </div>
 
-              <div class="col-md-2">
+              <div class="col col-md-2">
                 <label class="control-label">
                   <select id="status-select" class="form-select">
                     <option value="${request.route_path('monitor', _query=[('access', access)])}">All</option>
@@ -66,63 +64,14 @@
           </div>
 
           <div class="card">
-            <div class="card-heading">
-
-              <span class="card-title">
-                <ul class="nav nav-pills" role="tablist">
-                  <li role="presentation"
-                      tal:attributes="class 'active' if status=='Running' else ''">
-                    <a href="${request.route_path('monitor', _query=[('status', 'Running'), ('access', access), ('limit', limit)])}"
-                       class="btn btn-link">
-                      Running <span class="badge">${count_running}</span>
-                    </a>
-                  </li>
-                  <li role="presentation"
-                      tal:attributes="class 'active' if status=='Finished' else ''">
-                    <a href="${request.route_path('monitor', _query=[('status', 'Finished'), ('access', access), ('limit', limit)])}"
-                       class="btn btn-link">
-                      Finished <span class="badge">${count_finished}</span>
-                    </a>
-                  </li>
-                  <li role="presentation">
-                    <a href="${request.current_route_path()}"
-                       class="btn btn-link disabled"
-                       tal:condition="not tag">
-                      Matching <span class="badge">${count}</span>
-                    </a>
-                    <a href="${request.route_path('monitor', _query=[('tag', tag)])}"
-                       class="btn btn-link disabled"
-                       tal:condition="tag"
-                       tal:define="taglabel 'label-danger' if tag=='bug' else 'label-info'">
-                      Matching <span class="label ${taglabel}">${tag}</span> <span class="badge">${count}</span>
-                    </a>
-                  </li>
-
-                  <li>
-                    <div class="btn-group float-end">
-
-                      <a class="btn btn-outline-secondary -toggle dropdown-item" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Sort <span class="caret"></span>
-                      </a>
-                      <ul class="dropdown-menu">
-                        <li tal:repeat="param ['user', 'process', 'service', 'duration', 'finished', 'created']">
-                          <a href="${request.route_path('monitor', _query=[('status', status), ('access', access), ('sort', param), ('limit', limit)])}">
-                            <i tal:define="invisible 'invisible' if sort != param else ''" class="fa fa-check ${invisible}"></i> ${param.title()}
-                          </a>
-                        </li>
-                      </ul>
-
-                      <a class="btn btn-success"
-                         rel="tooltip"
-                         data-toggle="tooltip"
-                         title="Refresh job list"
-                         href="${request.route_path('monitor', _query=[('page', page), ('limit', limit), ('status', status), ('access', access)])}">
-                        <i class="fa fa-lg fa-repeat"></i>
-                      </a>
-                    </div>
-                  </li>
-                </ul>
-              </span>
+            <div class="card-header">
+              <a class="btn btn-success"
+                  rel="tooltip"
+                  data-toggle="tooltip"
+                  title="Refresh job list"
+                  href="${request.route_path('monitor', _query=[('page', page), ('limit', limit), ('status', status), ('access', access)])}">
+                Refresh
+              </a>
             </div>
             <div class="card-body">
               <table class="table table-condensed table-striped table-hover" tal:condition="count">
@@ -131,7 +80,7 @@
             </div>
           </div>
 
-          <div class="col-md-2">
+          <div class="col col-md-2">
             <label class="control-label">
               <select id="limit-select" class="form-select">
                 <option
@@ -170,36 +119,6 @@
           </div><!-- pagination -->
         </form><!-- contents form -->
       </div><!-- form container -->
-
-      <!-- Add form to edit job caption -->
-      <div id="caption-form" class="modal fade">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
-              <h4 class="modal-title" id="caption-form-label">Edit Caption</h4>
-            </div>
-            <div class="modal-body">
-              <tal:form replace="structure caption_form"/>
-            </div>
-          </div>
-        </div>
-      </div><!-- edit caption form -->
-
-      <!-- Add form to edit job labels -->
-      <div id="labels-form" class="modal fade">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
-              <h4 class="modal-title" id="labels-form-label">Edit Labels</h4>
-            </div>
-            <div class="modal-body">
-              <tal:form replace="structure labels_form"/>
-            </div>
-          </div>
-        </div>
-      </div><!-- edit labels form -->
 
     </div>
   </div>
