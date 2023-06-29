@@ -7,43 +7,29 @@
                 <div class="col"> 
                     <h2>${user_name}</h2>
                 </div>
+            </div>
             <div class="row">
                 <div class="col col-md-3">
                     <!--Sidebar content-->
-                    <nav class="nav nav-pills">
-                        <a class="nav-link ${'active' if active=='profile' else ''}" href="${request.route_path('profile', userid=userid, tab='profile')}">Profile</a>
-                        <a class="nav-link ${'active' if active=='group' else ''}" href="${request.route_path('profile', userid=userid, tab='group')}">
+                    <nav class="nav flex-column">
+                        <a class="nav-link ${'active' if active=='profile' else ''}" 
+                           href="${request.route_path('profile', userid=userid, tab='profile')}">
+                            Profile
+                        </a>
+                        <a class="nav-link ${'active' if active=='group' else ''}" 
+                           href="${request.route_path('profile', userid=userid, tab='group')}">
                             Group Permission
                         </a>
                     </nav>
                 </div>
                 <div class="col col-md-9">
                     <!--Body content-->
-                    <div class="row">
-                        <div class="card">
-                            <div class="card-heading">
-                                <span class="card-title">
-                                    ${title}
-                                    <div tal:condition="buttons" class="float-end">
-                                      <tal:button tal:repeat="button buttons">
-                                         <a class="${button.css_class}"
-                                            rel="tooltip"
-                                            data-toggle="tooltip"
-                                            title="${button.title}"
-                                            href="${button.href}">
-                                            ${button.title}
-                                          </a>
-                                        </tal:button>
-                                    </div>
-                                </span>
-                            </div>
-                        </div>
+                    <div class="card">
                         <div class="card-body">
                             <tal:form replace="structure form">The form will render here</tal:form>
                         </div>
                     </div>
                 </div>
-            </div>    
             </div>
         </div>
     </div>
