@@ -3,11 +3,8 @@
   <div metal:fill-slot="content">
     <div class="container" tal:condition="service">
       <div class="card">
-        <div class="card-heading">
-          <span class="card-title">
-            <a href="${request.route_path('services')}">
-              <i class="fa fa-fw fa-chevron-left" ></i>
-            </a>
+        <div class="card-header">
+          <div class="card-title">
             ${service.title}
             <div class="float-end">
               <a class="btn btn-danger btn-sm"
@@ -18,7 +15,7 @@
                 Remove Service
               </a>
             </div>
-          </span>
+          </div>
         </div>
         <div class="card-body">
           <p><strong>Name:</strong> ${service.title}</p>
