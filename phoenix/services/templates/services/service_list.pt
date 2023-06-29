@@ -4,11 +4,8 @@
     <div class="container">
 
       <div class="card">
-        <div class="card-heading">
-          <span class="card-title">
-            <a href="${request.route_path('settings')}">
-              <i class="fa fa-fw fa-chevron-left" ></i>
-            </a>
+        <div class="card-header">
+          <div class="card-title">
             Services
             <div class="float-end">
               <a class="btn btn-success btn-sm"
@@ -26,21 +23,16 @@
                 Remove all Services
               </a>
             </div>
-          </span>
+          </div>
         </div>
         <div class="card-body">
           <ul class="list-group">
             <li class="list-group-item" tal:repeat="item items">
               <div class="d-flex">
-                <span class="float-start text-muted" aria-hidden="true">
-                  <i tal:attributes="class 'fa fa-unlock text-success' if hasattr(item, 'public') and item.public else 'fa fa-lock text-danger'"></i>
-                </span>
                 <div class="d-flex">
                   <h4>
                     <a href="${request.route_path('service_details', service_id=item.identifier)}">${item.title}</a>
                   </h4>
-                  <div class="float-end text-muted text-end" style="font-size: .75em;">
-                  </div>
                   ${item.abstract}
                 </div>
               </div>
