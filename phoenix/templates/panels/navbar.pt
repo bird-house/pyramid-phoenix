@@ -65,7 +65,7 @@
           <div class="dropdown-menu">
             <a class="dropdown-item" href="${request.route_path('profile', userid=request.unauthenticated_userid, tab='profile')}"> My Profile</a>
             <a class="dropdown-item" href="${request.route_path('people')}" tal:condition="request.has_permission('admin')"> People</a>
-            <a class="dropdown-item" href="${request.route_path('settings')}" tal:condition="request.has_permission('admin')"> Settings</a>
+            <a class="dropdown-item" href="${request.route_path('services')}" tal:condition="request.has_permission('admin')"> Services</a>
             <a class="dropdown-item" href="/account/logout"> Sign Out</a>
           </div>
         </li>

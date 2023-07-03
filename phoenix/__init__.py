@@ -43,9 +43,6 @@ def main(global_config, **settings):
     # storage
     config.include('phoenix.storage')
 
-    # settings
-    config.include('phoenix.settings')
-
     # account
     config.include('phoenix.account')
 

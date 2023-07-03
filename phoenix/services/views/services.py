@@ -9,12 +9,6 @@ class Services(MyView):
         super(Services, self).__init__(
             request, name='services', title='Services')
 
-    def breadcrumbs(self):
-        breadcrumbs = super(Services, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path('settings'), title="Settings"))
-        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
-        return breadcrumbs
-
     @view_config(route_name='service_details', renderer='phoenix:services/templates/services/service_details.pt')
     def details_view(self):
         service_id = self.request.matchdict.get('service_id')

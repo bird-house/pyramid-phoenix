@@ -1,6 +1,6 @@
 def includeme(config):
     # needs settings
-    config.include('phoenix.settings')
+    # config.include('phoenix.settings')
 
     # settings = config.registry.settings
     config.add_route('people', 'people')

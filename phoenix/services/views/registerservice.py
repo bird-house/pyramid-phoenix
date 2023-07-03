@@ -52,13 +52,6 @@ class RegisterService(MyView):
         super(RegisterService, self).__init__(
             request, name='register_service', title='Register New Service')
 
-    def breadcrumbs(self):
-        breadcrumbs = super(RegisterService, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path('settings'), title="Settings"))
-        breadcrumbs.append(dict(route_path=self.request.route_path('services'), title="Services"))
-        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.title))
-        return breadcrumbs
-
     def generate_form(self):
         return Form(Schema().bind(request=self.request), buttons=(Button(name='register', title='Register'),))
 
