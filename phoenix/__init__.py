@@ -18,10 +18,6 @@ def main(global_config, **settings):
     # chameleon templates
     config.include('pyramid_chameleon')
 
-    # deform
-    # config.include('pyramid_deform')
-    # config.include('js.deform')
-
     # celery
     config.include('pyramid_celery')
     config.configure_celery(global_config['__file__'])
@@ -46,9 +42,6 @@ def main(global_config, **settings):
     # account
     config.include('phoenix.account')
 
-    # dashboard
-    config.include('phoenix.dashboard')
-
     # processes
     config.include('phoenix.processes')
 
@@ -61,11 +54,8 @@ def main(global_config, **settings):
     # catalog
     config.include('phoenix.catalog')
 
-    # service settings
+    # services
     config.include('phoenix.services')
-
-    # readthedocs
-    # config.add_route('readthedocs', 'https://pyramid-phoenix.readthedocs.org/')
 
     # max file size for upload in MB
     def max_file_size(request):

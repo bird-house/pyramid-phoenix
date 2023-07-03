@@ -15,42 +15,11 @@
             </a>
           <li>
         </div>
-
-        <!-- static links -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-            Help
-          </a>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="${layout.project_docs}" target="_">
-              User Documentation
-            </a>
-          </div>
-        </li>
       </ul>
 
       <!-- nav on right side -->
 
       <ul class="navbar-nav mr-auto">
-        <div tal:repeat="item subitems">
-          <!-- subitem -->
-          <li tal:condition="'items' not in item" class="nav-item ${'active' if item['active'] else ''}">
-            <a class="nav-link" href="${item.url}">
-              ${item.name}
-            </a>
-          </li>
-          <!-- dropdown -->
-          <li tal:condition="'items' in item" class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-              ${item.name}
-            </a>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" href="${dropdown_item.url}" tal:repeat="dropdown_item item['items']">
-                ${dropdown_item.name}
-              </a>
-            </div>
-          </li>
-        </div>
         <!-- sign-in -->
         <li class="nav-item" tal:condition="not request.user">
           <div class="col-sm-12">

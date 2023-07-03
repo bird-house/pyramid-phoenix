@@ -12,19 +12,12 @@ def navbar(context, request):
         active = root_path(request.current_route_path()) == root_path(url)
         return dict(name=name, url=url, active=active, icon=icon)
 
-    # def dropdown(name, items=None, icon=None):
-    #     items = items or []
-    #     return dict(name=name, icon=icon, items=items)
-
     items = list()
     items.append(nav_item('Processes', request.route_path('processes')))
     if request.has_permission('edit'):
         items.append(nav_item('Monitor', request.route_path('monitor')))
 
-    subitems = list()
-    subitems.append(nav_item('Dashboard', request.route_path('dashboard', tab='overview'), icon='fa fa-dashboard'))
-
-    return dict(items=items, subitems=subitems)
+    return dict(items=items)
 
 
 @panel_config(name='messages', renderer='phoenix:templates/panels/messages.pt')
