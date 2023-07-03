@@ -4,7 +4,7 @@
 
     <section class="topbox">
       <div class="container">
-        <img src=${layout.project_logo} class="imglogo">
+        <img src=${layout.project_logo}>
         <h1>
           <span class="title">${layout.project_title}</span>
         </h1>
