@@ -25,12 +25,6 @@ def messages(context, request):
     return dict()
 
 
-@panel_config(name='breadcrumbs', renderer='phoenix:templates/panels/breadcrumbs.pt')
-def breadcrumbs(context, request):
-    lm = request.layout_manager
-    return dict(breadcrumbs=lm.layout.breadcrumbs)
-
-
 @panel_config(name='footer', renderer='phoenix:templates/panels/footer.pt')
 def footer(context, request):
     from phoenix import __version__ as version

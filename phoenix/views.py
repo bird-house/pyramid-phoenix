@@ -32,15 +32,6 @@ class MyView(object):
         self.description = description
         # TODO: refactor db access
         self.userdb = self.request.db.users
-        # set breadcrumbs
-        for item in self.breadcrumbs():
-            lm = self.request.layout_manager
-            lm.layout.add_breadcrumb(
-                route_path=item.get('route_path'),
-                title=item.get('title'))
-
-    def breadcrumbs(self):
-        return [dict(route_path=self.request.route_path("home"), title="Home")]
 
 
 @notfound_view_config(renderer='phoenix:templates/404.pt')

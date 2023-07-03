@@ -42,15 +42,6 @@ class ExecuteProcess(MyView):
     def has_execute_permission(self):
         return self.service.public or self.request.has_permission('submit')
 
-    def breadcrumbs(self):
-        breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
-        breadcrumbs.append(dict(route_path=self.request.route_path('processes'), title='Processes'))
-        breadcrumbs.append(dict(route_path=self.request.route_path(
-            'processes_list', _query=[('wps', self.service_id)]),
-            title=self.service.title))
-        breadcrumbs.append(dict(route_path=self.request.route_path(self.name), title=self.process.identifier))
-        return breadcrumbs
-
     def appstruct(self):
         # TODO: not a nice way to get inputs ... should be cleaned up in owslib
         result = {}

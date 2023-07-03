@@ -73,8 +73,6 @@
     ${panel('navbar')}
     <!-- alert messages -->
     ${panel('messages')}
-    <!-- breadcrumbs navigation -->
-    ${panel('breadcrumbs')}
 
     <metal:content define-slot="content">
       Site content goes here ...

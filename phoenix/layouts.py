@@ -8,7 +8,6 @@ class PageLayout(object):
         self.request = request
         self.home_url = request.application_url
         self.headings = []
-        self.breadcrumbs = []
 
     @property
     def project_brand(self):
@@ -58,9 +57,6 @@ class PageLayout(object):
     def matomo_site_id(self):
         return self.request.registry.settings.get('matomo.site_id', '')
 
-
-    def add_breadcrumb(self, route_path, title):
-        self.breadcrumbs.append(dict(route_path=route_path, title=title))
 
     def add_heading(self, name, *args, **kw):
         self.headings.append((name, args, kw))
