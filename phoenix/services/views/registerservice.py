@@ -70,7 +70,7 @@ class RegisterService(MyView):
             self.session.flash('Could not register Service {0}: {1}'.format(url, ex), queue="danger")
         return HTTPFound(location=self.request.route_path('services'))
 
-    @view_config(route_name="register_service", renderer='phoenix:services/templates/services/service_register.pt')
+    @view_config(route_name="register_service", renderer='phoenix:services/templates/services/register.pt')
     def view(self):
         form = self.generate_form()
         if 'register' in self.request.POST:

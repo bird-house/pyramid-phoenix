@@ -9,12 +9,12 @@ class Services(MyView):
         super(Services, self).__init__(
             request, name='services', title='Services')
 
-    @view_config(route_name='service_details', renderer='phoenix:services/templates/services/service_details.pt')
+    @view_config(route_name='service_details', renderer='phoenix:services/templates/services/details.pt')
     def details_view(self):
         service_id = self.request.matchdict.get('service_id')
         service = self.request.catalog.get_record_by_id(service_id)
         return dict(service=service, service_name=service.title)
 
-    @view_config(route_name="services", renderer='phoenix:services/templates/services/service_list.pt')
+    @view_config(route_name="services", renderer='phoenix:services/templates/services/list.pt')
     def list_view(self):
         return dict(items=self.request.catalog.get_services())
