@@ -72,7 +72,7 @@
     <!-- navbar -->
     ${panel('navbar')}
     <!-- alert messages -->
-    ${panel('messages')}
+    <!-- ${panel('messages')}  -->
 
     <metal:content define-slot="content">
       Site content goes here ...
