@@ -106,11 +106,7 @@ class ExecuteProcess(MyView):
                         url=wps_describe_url(self.wps.url, self.processid),
                         form=e.render())
         else:
-            if not self.request.user:  # not logged-in
-                # return HTTPFound(location=self.request.route_url('job_status', job_id=job_id))
-                return HTTPFound(location=self.request.route_url('job_details', job_id=job_id, tab="outputs"))
-            else:
-                return HTTPFound(location=self.request.route_url('monitor'))
+            return HTTPFound(location=self.request.route_url('job_details', job_id=job_id, tab="outputs"))
 
     def execute(self, appstruct):
         inputs = appstruct_to_inputs(self.request, appstruct)
