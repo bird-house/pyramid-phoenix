@@ -61,17 +61,6 @@
         <div class="col col-md-5">
           <dl>
             <dt>
-              <div tal:condition="request.has_permission('submit')" class="float-end">
-                <a class="btn btn-danger btn-sm"
-                  rel="tooltip"
-                  data-toggle="tooltip"
-                  title="Delete Job"
-                  href="${request.route_path('delete_job', job_id=job.get('identifier'))}">
-                   Delete Job
-                </a>
-              </div>
-            </dt>
-            <dt>
               <span class="text-muted ${status_class}" data-toggle="tooltip" title="Job status message">
                 ${job.get('status')}
               </span>
