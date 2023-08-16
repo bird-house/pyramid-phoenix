@@ -17,18 +17,18 @@
         <!-- section wps services -->
         <div class="container">
           <div class="row">
-            <div class="col col-md-12">
+            <div class="col">
               <p/>
-              <h4 class="float-start">
+              <h4>
                 Available Web Processing Services
               </h4>
             </div>
           </div> <!-- row -->
           <div class="row">
-            <div class="col col-md-12">
+            <div class="col">
               <ul class="list-group">
                 <li class="list-group-item" tal:repeat="item items">
-                    <div class="d-flex">
+                    <div>
                       <div>
                           <h4>
                             <a href="${item.url}">${item.title}</a>
