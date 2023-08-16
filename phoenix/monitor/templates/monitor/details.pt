@@ -11,13 +11,10 @@
   <div metal:fill-slot="content">
     <div class="container">
       <div class="row">
-        <div class="col"> 
-          <h2>
-            Job Details
-            <small>
-              This page shows the job details and polls the status of a running job.
-            </small>
-          </h2>
+        <div class="col">
+          <div class="card">
+            <div class="card-header">This page shows the job details and polls the status of a running job</div>
+          </div> 
         </div>
       </div>
 
