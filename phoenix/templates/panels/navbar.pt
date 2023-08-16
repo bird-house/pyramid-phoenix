@@ -1,17 +1,16 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container">
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
     <a class="navbar-brand" href="/">${layout.project_brand}</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div id="navbar" class="collapse navbar-collapse">
       <!-- nav with text -->
-      <ul class="navbar-nav mr-auto">
+      <ul class="navbar-nav">
         <div tal:repeat="item items">
           <li class="nav-item ${'active' if item.active else ''}">
             <a class="nav-link" href="${item.url}">
               ${item.name}
-              <span tal:condition="item.active" class="sr-only">(current)</span>
             </a>
           <li>
         </div>
@@ -19,24 +18,24 @@
 
       <!-- nav on right side -->
 
-      <ul class="navbar-nav mr-auto">
+      <ul class="navbar-nav">
         <!-- sign-in -->
         <li class="nav-item" tal:condition="not request.user">
-          <div class="col-sm-12">
+          <div class="col">
             <a href="${request.route_path('sign_in')}" class="nav-link">Sign In</a>
           </div>
         </li>
         <!-- user -->
         <li tal:condition="request.user" class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-              ${request.user.get('name', 'Guest')}
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+             ${request.user.get('name', 'Guest')}
           </a>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="${request.route_path('profile', userid=request.unauthenticated_userid, tab='profile')}"> My Profile</a>
-            <a class="dropdown-item" href="${request.route_path('people')}" tal:condition="request.has_permission('admin')"> People</a>
-            <a class="dropdown-item" href="${request.route_path('services')}" tal:condition="request.has_permission('admin')"> Services</a>
-            <a class="dropdown-item" href="/account/logout"> Sign Out</a>
-          </div>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="${request.route_path('profile', userid=request.unauthenticated_userid, tab='profile')}"> My Profile</a></li>
+            <li><a class="dropdown-item" href="${request.route_path('people')}" tal:condition="request.has_permission('admin')"> People</a></li>
+            <li><a class="dropdown-item" href="${request.route_path('services')}" tal:condition="request.has_permission('admin')"> Services</a></li>
+            <li><a class="dropdown-item" href="/account/logout"> Sign Out</a></li>
+          </ul>
         </li>
       </ul>
     </div>
