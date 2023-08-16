@@ -76,7 +76,8 @@
     </div><!-- conatiner -->
   </div><!-- panel body -->
 </div><!-- panel -->
+
 <!-- project description -->
-<div class="card card-body text-bg-light">
-  <h4>${job.get('abstract') or 'No summary'}</h4>
+<div class="card card-body text-white bg-secondary">
+  ${job.get('abstract') or 'No summary'}
 </div>
