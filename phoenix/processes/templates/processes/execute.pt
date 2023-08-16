@@ -5,29 +5,24 @@
       <!-- header -->
       <div class="row">
         <div class="col"> 
-          <h4 class="page-header">
-            ${process.title}
-            <small>
-              Please complete the form below and submit a job.
-            </small>
-          </h4>
+          <div class="card">
+            <div class="card-header">Please complete the form below and submit a job</div>
+          </div> 
         </div>
       </div>
 
       <div class="row">
         <div class="col"> 
           <div class="card card-body text-white bg-secondary">
-            <h5>${getattr(process, 'abstract', 'No Summary')}</h5>
+            ${getattr(process, 'abstract', 'No Summary')}
           </div>
         </div>
       </div>
 
       <div class="row">
         <div class="col">
-          <div class="card">
-            <div class="card-body">
-              <tal:form replace="structure form">The form will render here</tal:form>
-            </div>
+          <div class="card card-body">
+            <tal:form replace="structure form">The form will render here</tal:form>
           </div>
         </div>
       </div>
