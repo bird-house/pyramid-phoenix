@@ -1,57 +1,40 @@
 <div>
-  <ul class="list-group">
-    <li class="list-group-item" tal:repeat="item items">
-      <div class="d-flex">
-        <div class="media-left media-top">
-          <a href="#">
-            <img 
-              class="media-object" 
-              src="${request.static_path('phoenix:static/phoenix/img/missing_thumb_doesnotexist.png')}"
-              alt=""
-              width="512px"
-              tal:condition="not item.preview"/>
-            <img 
-              class="media-object" 
-              src="${item.preview}" 
-              alt="No Preview"
-              width="512px"
-              tal:condition="item.preview"/>
-          </a>
-        </div>
-        <div class="d-flex">
-          <!--h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4-->
-          <h4 class="media-heading">${item.title}</h4>
-          <p>${item.get('abstract') or ''}</p>
-          <p>
-            <div tal:condition="item.reference">
-              <span class="bg-info">
-                <small>${item.reference.split('/')[-1]}</small>
-              </span>
-            </div>
-            <div tal:condition="item.data">
-              <span tal:repeat="data item.data" class="bg-info">
-                ${data}
-              </span>
-            </div>
-          </p>
-          <p tal:condition="item.mime_type and item.reference">
-            <a href="${item.reference}" target="_" class="label label-warning"
-               data-toggle="tooltip" title="${item.reference}" data-value="value">
-              ${item.mime_type}
-            </a>
-          </p>
-          <p tal:condition="item.reference">
-            <a href="${item.reference}" target="_" data-toggle="tooltip"
-               title="Download file" data-value="value" class="btn btn-link">
-              <i class="fa fa-download"></i> Download
-            </a>
-            <!--a href="${item.reference}" target="_" data-toggle="tooltip"
-               title="Share" data-value="value" class="btn btn-link disabled">
-              <i class="fa fa-share"></i> Share
-            </a-->
-          </p>
-        </div>
+  <div class="card-deck" tal:repeat="item items">
+    <div class="card" style="max-width: 36rem;">
+      <img 
+        class="card-img-top"
+        src="${request.static_path('phoenix:static/phoenix/img/missing_thumb_doesnotexist.png')}"
+        alt=""
+        tal:condition="not item.preview"/>
+      <img 
+        class="card-img-top"
+        src="${item.preview}" 
+        alt="No Preview"
+        tal:condition="item.preview"/>
+      <div class="card-body">
+        <h5 class="card-title">
+          ${item.title}
+        </h5>
+        <p class="card-text">
+          ${item.get('abstract') or ''}
+          <div tal:condition="item.reference">
+            <span class="bg-info">
+              <small>${item.reference.split('/')[-1]}</small>
+            </span>
+          </div>
+          <div tal:condition="item.data">
+            <span tal:repeat="data item.data" class="bg-info">
+              ${data}
+            </span>
+          </div>
+        </p>
+        <a href="${item.reference}" tal:condition="item.reference"
+            target="_" data-toggle="tooltip"
+            title="Download" data-value="value" class="btn btn-primary">
+          Download
+        </a>
       </div>
-    </li>
-  </ul>
+    </div>
+  </div>  
+ 
 </div>
