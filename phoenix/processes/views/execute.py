@@ -58,7 +58,6 @@ class ExecuteProcess(MyView):
                         # add reference to complex input
                         result[inp.identifier].append(inp.reference)
         for inp in self.process.dataInputs:
-            # TODO: dupliate code in wizard.start
             # convert boolean
             if 'boolean' in inp.dataType and inp.identifier in result:
                 result[inp.identifier] = [val.lower() == 'true' for val in result[inp.identifier]]

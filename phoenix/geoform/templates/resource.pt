@@ -12,7 +12,7 @@
      tal:omit-tag="">
 
   <div class="row">
-    <div class="col-10">
+    <div class="col">
       <div class="input-group">
         <span class="input-group-addon">URL</span>
         <input type="text" name="${name}" value="${cstruct}"
@@ -23,105 +23,6 @@
                id="${oid}"/>
       </div>
     </div>
-    <div class="col-2">
-      <div class="btn-group" role="group" aria-label="...">
-        <button id="${oid}-upload" type="button"
-                data-toggle="tooltip" title="Upload a file"
-                tal:attributes="class 'btn btn-outline-secondary' if upload else 'btn btn-outline-secondary disabled'">
-          <icon class="fa fa-upload"><icon>
-        </button>
-      </div>
-    </div>
   </div>
-
-  <div id="${oid}-upload-form" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Upload a file</h4>
-        </div>
-        <div class="modal-body">
-          <div id="${oid}-fine-uploader"></div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script type="text/javascript">
-
-    deform.addCallback(
-          '${field.oid}',
-          function (oid) {
-            // upload button
-            $("#"+oid+"-upload").click(function(event) {
-                  // open dialog
-                  form = $("#"+oid+"-upload-form");
-                  form.modal("show");
-             });
-             // uploader
-$("#"+oid+"-fine-uploader").fineUploader({
-  debug: false,
-  template: 'qq-template',
-  request: {
-    endpoint: '/upload'
-  },
-  thumbnails: {
-    placeholders: {
-      //waitingPath: '/static/jquery.fine-uploader/placeholders/waiting-generic.png',
-      //notAvailablePath: '/static/jquery.fine-uploader/placeholders/not_available-generic.png',
-    }
-  },
-  autoUpload: true,
-  chunking: {
-    enabled: true,
-    concurrent: {
-      enabled: false
-    },
-    //success: {
-    //  endpoint: "/upload"
-    //}
-  },
-  deleteFile: {
-    enabled: true,
-    endpoint: '/upload'
-  },
-  resume: {
-    enabled: false
-  },
-  retry: {
-    enableAuto: true,
-    showButton: true
-  },
-  validation: {
-    //allowedExtensions: ['nc'],
-    itemLimit: 1,
-    sizeLimit: ${size_limit}
-  },
-  callbacks: {
-    onComplete: function(id, name, response) {
-      if (response.success) {
-        $("#"+oid).val("${storage_url}"+response.filename);
-        $("#"+oid).prop('title', name);
-      }
-    }
-  },
-});
-
-$('#trigger-upload').click(function() {
-  $("#"+oid+"-fine-uploader").fineUploader('uploadStoredFiles');
-});
-
-
-          }
-    );
-
-  </script>
-
 
 </div>
