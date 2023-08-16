@@ -318,15 +318,10 @@ class WPSSchema(deform.schema.CSRFSchema):
         mime_types = []
         if len(data_input.supportedValues) > 0:
             mime_types = [str(value.mimeType) for value in data_input.supportedValues]
-        # LOGGER.debug("mime-types: %s", mime_types)
-        # set current proxy certificate
-        if 'application/x-pkcs7-mime' in mime_types and self.user is not None:
-            # TODO: check if certificate is still valid
-            default = self.user.get('credentials')
-        elif "application/x-netcdf" in mime_types and "HadCRUT" in data_input.title:
+        if "missing values" in data_input.title:
             default = "https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/non-infilled/HadCRUT.5.0.1.0.anomalies.ensemble_mean.nc"
         else:
-            default = colander.null   
+            default = colander.null
         return default
 
     def bind(self, **kw):
