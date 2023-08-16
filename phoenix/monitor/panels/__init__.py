@@ -33,17 +33,3 @@ def job_details(request, job_id):
 def details(context, request):
     job_id = request.matchdict.get('job_id')
     return dict(job=job_details(request, job_id=job_id))
-
-
-@panel_config(name='job_log', renderer='phoenix:monitor/templates/monitor/panels/log.pt')
-def log(context, request):
-    job_id = request.matchdict.get('job_id')
-    job = request.db.jobs.find_one({'identifier': job_id})
-    return dict(log=job.get('log', []))
-
-
-@panel_config(name='job_xml', renderer='phoenix:monitor/templates/monitor/panels/xml.pt')
-def xml(context, request):
-    job_id = request.matchdict.get('job_id')
-    job = request.db.jobs.find_one({'identifier': job_id})
-    return dict(xml=job.get('response'), job=job)
