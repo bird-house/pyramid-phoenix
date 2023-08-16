@@ -4,49 +4,43 @@
     <div class="container">
       <div class="row">
         <div class="col"> 
-          <h2> 
+          <h4> 
             ${title}
             <small>Please choose one of the processes to submit a job.</small>
-          </h2><!-- header -->
+          </h4><!-- header -->
         </div>
       </div>
 
       <div class="row">
         <div class="col"> 
-          <div class="card card-body text-bg-light">
-            <h4>${description}</h4>
+          <div class="card card-body text-white bg-secondary">
+            <h5>${description}</h5>
           </div><!-- service description -->
         </div>
       </div>
 
       <div class="row">
-        <div class="col"> 
-          <ul class="list-group">
-            <li class="list-group-item" tal:repeat="item items">
-              <div class="d-flex">
-                <span class="float-start text-muted" aria-hidden="true">
-                  <a href="#">
-                    <img src="${item.media}" alt="No Preview" width="256px"
-                        tal:condition="item.media is not None">
-                    <img src="${request.static_path('phoenix:static/phoenix/img/missing_thumb.png')}"
-                        alt="No Preview" width="256px" tal:condition="item.media is None">
-                  </a>
-                </span>
-                <div class="d-flex">
-                  <div class="float-end text-muted text-end" style="font-size: 1.0em;">
-                    <span>
-                      v${item.version}
-                    </span>
-                  </div>
-                  <h4>
-                    <a href="${item.url}">${item.title}</a>
-                  </h4>
-                  ${item.description}
-                </div>
+        <div class="col">
+          <div class="card-deck" tal:repeat="item items">
+            <div class="card" style="max-width: 18rem;">
+              <img src="${item.media}" 
+                  class="card-img-top"
+                  alt="No Preview"
+                  tal:condition="item.media is not None">
+              <img src="${request.static_path('phoenix:static/phoenix/img/missing_thumb.png')}"
+                  class="card-img-top"
+                  alt="No Preview"
+                  tal:condition="item.media is None">
+              <div class="card-body">
+                <h5 class="card-title">
+                  <a href="${item.url}">${item.title}</a>
+                </h5>
+                <p class="card-text">${item.description}</p>
               </div>
-            </li>
-          </ul>
-        </div>
+            </div>
+          </div>
+    
+        </div><!-- col -->
       </div>
     </div><!-- container -->
   </div>
