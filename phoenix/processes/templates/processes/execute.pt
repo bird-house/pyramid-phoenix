@@ -5,22 +5,19 @@
       <!-- header -->
       <div class="row">
         <div class="col"> 
-          <h2 class="page-header">
+          <h4 class="page-header">
             ${process.title}
             <small>
               Please complete the form below and submit a job.
             </small>
-          </h2>
+          </h4>
         </div>
       </div>
 
       <div class="row">
         <div class="col"> 
-          <div class="card card-body text-bg-light">
-            <h4>${getattr(process, 'abstract', 'No Summary')}</h4>
-            <div>
-              <a tal:repeat="item process.metadata" tal:content="item.title" class="label label-info" href="${item.url}" target="_blank"/>
-            </div>
+          <div class="card card-body text-white bg-secondary">
+            <h5>${getattr(process, 'abstract', 'No Summary')}</h5>
           </div>
         </div>
       </div>

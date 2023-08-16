@@ -3,11 +3,10 @@
   <div metal:fill-slot="content">
     <div class="container">
       <div class="row">
-        <div class="col"> 
-          <h4> 
-            ${title}
-            <small>Please choose one of the processes to submit a job.</small>
-          </h4><!-- header -->
+        <div class="col">
+          <div class="card">
+            <div class="card-header">Choose one of the processes to submit a job</div>
+          </div> 
         </div>
       </div>
 
@@ -15,7 +14,7 @@
         <div class="col"> 
           <div class="card card-body text-white bg-secondary">
             <h5>${description}</h5>
-          </div><!-- service description -->
+          </div>
         </div>
       </div>
 
