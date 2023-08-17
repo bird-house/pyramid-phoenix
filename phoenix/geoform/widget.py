@@ -127,30 +127,3 @@ class BBoxWidget(Widget):
                 raise Invalid(field.schema, 'Incomplete bbox', result)
 
             return result
-
-
-class TagsWidget(Widget):
-    template = 'tags'
-    # readonly_template = 'readonly/tags'
-    size = None
-    strip = True
-    mask = None
-    mask_placeholder = "_"
-    style = None
-    requirements = (('jquery.maskedinput', None), )
-
-    def serialize(self, field, cstruct, **kw):
-        if cstruct in (null, None):
-            cstruct = ''
-        values = self.get_template_values(field, cstruct, kw)
-        return field.renderer(self.template, **values)
-
-    def deserialize(self, field, pstruct):
-        LOGGER.debug('result pstruct=%s', pstruct)
-        if pstruct is null:
-            return null
-        if self.strip:
-            pstruct = pstruct.strip()
-        if not pstruct:
-            return null
-        return pstruct
