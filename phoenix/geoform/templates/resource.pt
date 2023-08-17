@@ -8,21 +8,17 @@
                  storage_url storage_url|field.widget.storage_url;
                  size_limit size_limit|field.widget.size_limit;
                  style style|field.widget.style;
+                 autofocus autofocus|field.autofocus;
                  "
      tal:omit-tag="">
 
-  <div class="row">
-    <div class="col">
-      <div class="input-group">
-        <span class="input-group-addon">URL</span>
-        <input type="text" name="${name}" value="${cstruct}"
-               tal:attributes="class string: form-select ${css_class or ''};
-                               style style"
-               placeholder="Enter a URL pointing to your resource"
-               data-toggle="tooltip" title="Enter a URL pointing to your resource. You can also upload a file using the buttons on the right."
-               id="${oid}"/>
-      </div>
-    </div>
-  </div>
-
+  <input type="text" name="${name}" value="${cstruct}"
+           tal:attributes="class string: form-control ${field.error and error_class or css_class or ''};
+                           style style;
+                           autofocus autofocus;
+                           attributes|field.widget.attributes|{};"
+           placeholder="Enter a URL pointing to your resource"
+           data-toggle="tooltip" title="Enter a URL pointing to your resource. You can also upload a file using the buttons on the right."
+           id="${oid}"/>
+  
 </div>

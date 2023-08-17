@@ -257,7 +257,7 @@ class WPSSchema(deform.schema.CSRFSchema):
     def complex_data(self, data_input):
         mime_types = [value.mimeType for value in data_input.supportedValues]
         LOGGER.debug("mime_types for resource widget: %s", mime_types)
-        widget = deform.widget.TextInputWidget()
+        # widget = deform.widget.TextInputWidget()
         from deform.interfaces import FileUploadTempStore
         class DummyTmpStore(FileUploadTempStore):
             def __setitem__(self, name, value):
@@ -277,11 +277,11 @@ class WPSSchema(deform.schema.CSRFSchema):
 
         tmpstore = DummyTmpStore()
         # widget = deform.widget.FileUploadWidget(tmpstore)
-        # widget = ResourceWidget(
-        #     mime_types=mime_types,
-        #     upload=True,
-        #     storage_url=self.request.storage.base_url,
-        #     size_limit=self.request.max_file_size * 1048576)
+        widget = ResourceWidget(
+             mime_types=mime_types,
+             upload=True,
+             storage_url=self.request.storage.base_url,
+             size_limit=self.request.max_file_size * 1048576)
 
         resource_node = colander.SchemaNode(
             colander.String(),
