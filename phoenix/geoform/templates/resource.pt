@@ -59,9 +59,19 @@
   </div>
 
   <script>
+  // https://github.com/dropzone/dropzone/blob/main/src/options.js
   Dropzone.options.myDropzone = { // camelized version of the `id`
     paramName: "file", // The name that will be used to transfer the file
     maxFilesize: 2, // MB
+    uploadMultiple: false,
+    chunking: true,
+    maxFiles: 1,
+    init: function() {
+      this.on("addedfile", file => {
+        console.log("A file has been added");
+        //console.log("accepted files " + this.getAcceptedFiles());
+      });
+    },
     accept: function(file, done) {
       console.log("uploaded " + file.name);
       done();
