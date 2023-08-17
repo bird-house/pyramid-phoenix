@@ -12,6 +12,7 @@
                  "
      tal:omit-tag="">
 
+  <!-- input field -->
   <div class="input-group mb-3">
     <input 
       type="text"
@@ -25,8 +26,36 @@
     <button 
       class="btn btn-outline-secondary" 
       type="button" 
+      data-bs-toggle="modal" 
+      data-bs-target="#upload-form-${oid}"
       id="button-${oid}">Upload
     </button>
+  </div>
+
+  <!-- Modal -->
+  <div id="upload-form-${oid}" 
+    class="modal fade" 
+    data-bs-backdrop="static" 
+    data-bs-keyboard="false" 
+    tabindex="-1" 
+    aria-labelledby="staticBackdropLabel" 
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5">Upload File</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <label for="formFile-${oid}" class="form-label">Choose a file</label>
+          <input class="form-control" type="file" id="formFile-${oid}">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Upload</button>
+        </div>
+      </div>
+    </div>
   </div>
 
 </div>
