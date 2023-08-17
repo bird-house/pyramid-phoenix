@@ -21,17 +21,6 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-OPENDAP_MIME_TYPES = ['application/x-ogc-dods']
-
-
-def is_opendap(data_input):
-    if hasattr(data_input, 'metadata'):
-        for metadata in data_input.metadata:
-            if metadata.title in OPENDAP_MIME_TYPES:
-                return True
-    return False
-
-
 def check_status(url=None, response=None, sleep_secs=2, verify=False):
     """
     Run owslib.wps check_status with additional exception handling.
@@ -234,13 +223,7 @@ class WPSSchema(deform.schema.CSRFSchema):
         elif 'password' in data_input.identifier:
             node.widget = deform.widget.PasswordWidget(size=20)
         elif type(node.typ) == colander.String:
-            if is_opendap(data_input):
-                node.widget = ResourceWidget(
-                    mime_types=OPENDAP_MIME_TYPES,
-                    upload=False,
-                    storage_url=self.request.storage.base_url)
-            else:
-                node.widget = deform.widget.TextInputWidget()
+            node.widget = deform.widget.TextInputWidget()
         else:
             node.widget = deform.widget.TextInputWidget()
 
@@ -275,6 +258,25 @@ class WPSSchema(deform.schema.CSRFSchema):
         mime_types = [value.mimeType for value in data_input.supportedValues]
         LOGGER.debug("mime_types for resource widget: %s", mime_types)
         widget = deform.widget.TextInputWidget()
+        from deform.interfaces import FileUploadTempStore
+        class DummyTmpStore(FileUploadTempStore):
+            def __setitem__(self, name, value):
+                pass
+
+            def __getitem__(self, name):
+                pass
+
+            def get(self, name, default=None):
+                pass
+
+            def __contains__(self, name):
+                pass
+
+            def preview_url(self, name):
+                pass
+
+        tmpstore = DummyTmpStore()
+        # widget = deform.widget.FileUploadWidget(tmpstore)
         # widget = ResourceWidget(
         #     mime_types=mime_types,
         #     upload=True,
