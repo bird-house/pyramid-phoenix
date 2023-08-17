@@ -46,8 +46,9 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <label for="formFile-${oid}" class="form-label">Choose a file</label>
-          <input class="form-control" type="file" id="formFile-${oid}">
+          <div action="/file-upload"
+            class="dropzone"
+            id="my-dropzone"></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -56,5 +57,17 @@
       </div>
     </div>
   </div>
+
+  <script>
+  Dropzone.options.myDropzone = { // camelized version of the `id`
+    paramName: "file", // The name that will be used to transfer the file
+    maxFilesize: 2, // MB
+    accept: function(file, done) {
+      console.log("uploaded " + file.name);
+      done();
+    }
+  };
+  console.log("hello dropzone");
+</script>
 
 </div>
