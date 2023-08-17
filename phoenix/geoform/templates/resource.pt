@@ -12,13 +12,21 @@
                  "
      tal:omit-tag="">
 
-  <input type="text" name="${name}" value="${cstruct}"
-           tal:attributes="class string: form-control ${field.error and error_class or css_class or ''};
-                           style style;
-                           autofocus autofocus;
-                           attributes|field.widget.attributes|{};"
-           placeholder="Enter a URL pointing to your resource"
-           data-toggle="tooltip" title="Enter a URL pointing to your resource. You can also upload a file using the buttons on the right."
-           id="${oid}"/>
-  
+  <div class="input-group mb-3">
+    <input 
+      type="text"
+      name="${name}" 
+      value="${cstruct}" 
+      class="form-control"
+      placeholder="Enter a URL pointing to your resource" 
+      aria-label="dont know" 
+      aria-describedby="button-${oid}"
+      id="${oid}"/>
+    <button 
+      class="btn btn-outline-secondary" 
+      type="button" 
+      id="button-${oid}">Upload
+    </button>
+  </div>
+
 </div>
