@@ -32,13 +32,15 @@ def delete(request):
     return result
 
 
-@view_config(route_name='upload', renderer='json', request_method="POST", xhr=True, accept="application/json")
+@view_config(route_name='upload', renderer='json', request_method="POST", xhr=True)  # , accept="multipart/form-data")
 def upload(request):
     result = {"success": False}
-    if 'qqfile' in request.POST:
+    LOGGER.warn(request.POST)
+    if 'file' in request.POST:
         try:
             handle_upload(request, request.POST)
-            filename = os.path.join(request.POST['qquuid'], request.POST['qqfilename'])
+            # filename = os.path.join(request.POST['qquuid'], request.POST['qqfilename'])
+            filename = "test.nc"
             result = {'success': True, 'filename': filename}
         except FileNotAllowed:
             result = {"success": False, 'error': "Filename extension not allowed", "preventRetry": True}
@@ -60,30 +62,34 @@ def handle_upload(request, attrs):
     See example code:
     https://github.com/FineUploader/server-examples/blob/master/python/flask-fine-uploader/app.py
     """
-    fs = attrs['qqfile']
+    fs = attrs['file']
     # We can fail hard, as somebody is trying to cheat on us if that fails.
     assert isinstance(fs, FieldStorage)
 
     # extension allowed?
-    request.storage.filename_allowed(attrs['qqfilename'])
+    # request.storage.filename_allowed(attrs['qqfilename'])
 
     # Chunked?
-    if 'qqtotalparts' in attrs and int(attrs['qqtotalparts']) > 1:
-        dest_folder = os.path.join(request.storage.path('chunks'), attrs['qquuid'])
-        dest = os.path.join(dest_folder, "parts", str(attrs['qqpartindex']))
+    if 'dztotalchunkcount' in attrs and int(attrs['dztotalchunkcount']) > 1:
+        dest_folder = os.path.join(request.storage.path('chunks'), attrs['dzuuid'])
+        dest = os.path.join(dest_folder, "parts", str(attrs['dzchunkindex']))
         save_chunk(fs.file, dest)
 
         # If the last chunk has been sent, combine the parts.
-        if int(attrs['qqtotalparts']) - 1 == int(attrs['qqpartindex']):
-            filename = os.path.join(dest_folder, attrs['qquuid'], attrs['qqfilename'])
+        if int(attrs['dztotalchunkcount']) - 1 == int(attrs['dzchunkindex']):
+            filename = os.path.join(dest_folder, attrs['dzuuid'], "test.nc")  # attrs['qqfilename'])
             combine_chunks(
-                int(attrs['qqtotalparts']),
+                int(attrs['dztotalchunkcount']),
                 source_folder=os.path.dirname(dest),
                 dest=filename)
-            request.storage.save_filename(filename=filename, folder=attrs['qquuid'])
+            request.storage.save_filename(filename=filename, folder=attrs['dzuuid'])
             shutil.rmtree(dest_folder)
     else:  # not chunked
-        request.storage.save_file(fs.file, filename=attrs['qqfilename'], folder=attrs['qquuid'])
+        request.storage.save_file(
+            fs.file, 
+            filename="test.nc",  # attrs['qqfilename'], 
+            folder="test" # attrs['qquuid']
+        )
 
 
 def save_chunk(fs, path):

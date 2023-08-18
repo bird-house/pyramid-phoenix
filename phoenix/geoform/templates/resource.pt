@@ -46,7 +46,8 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div action="/file-upload"
+          <div 
+            action="/upload"
             class="dropzone"
             id="my-dropzone"></div>
         </div>
@@ -62,14 +63,17 @@
   // https://github.com/dropzone/dropzone/blob/main/src/options.js
   Dropzone.options.myDropzone = { // camelized version of the `id`
     paramName: "file", // The name that will be used to transfer the file
-    maxFilesize: 2, // MB
-    uploadMultiple: false,
+    //maxFilesize: 200, // MB
+    //uploadMultiple: false,
     chunking: true,
-    maxFiles: 1,
+    //maxFiles: 1,
     init: function() {
       this.on("addedfile", file => {
         console.log("A file has been added");
         //console.log("accepted files " + this.getAcceptedFiles());
+        //$("#"+${oid}).val("${storage_url}"+file.name);
+        //$("#"+${oid}).prop('title', file.name);
+        console.log("${storage_url}"+file.name);
       });
     },
     accept: function(file, done) {
