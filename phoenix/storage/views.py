@@ -38,10 +38,7 @@ def upload(request):
     LOGGER.warn(request.POST)
     if 'file' in request.POST:
         try:
-            handle_upload(request, request.POST)
-            # filename = os.path.join(request.POST['qquuid'], request.POST['qqfilename'])
-            filename = "test.nc"
-            result = {'success': True, 'filename': filename}
+            return handle_upload(request, request.POST)
         except FileNotAllowed:
             result = {"success": False, 'error': "Filename extension not allowed", "preventRetry": True}
         except Exception as e:
@@ -58,9 +55,6 @@ def handle_delete(request, uuid):
 def handle_upload(request, attrs):
     """
     Handle a chunked or non-chunked upload.
-
-    See example code:
-    https://github.com/FineUploader/server-examples/blob/master/python/flask-fine-uploader/app.py
     """
     fs = attrs['file']
     # We can fail hard, as somebody is trying to cheat on us if that fails.
@@ -71,13 +65,14 @@ def handle_upload(request, attrs):
 
     # Chunked?
     if 'dztotalchunkcount' in attrs and int(attrs['dztotalchunkcount']) > 1:
+        LOGGER.warn(f"chunked, {fs.name}")
         dest_folder = os.path.join(request.storage.path('chunks'), attrs['dzuuid'])
         dest = os.path.join(dest_folder, "parts", str(attrs['dzchunkindex']))
         save_chunk(fs.file, dest)
 
         # If the last chunk has been sent, combine the parts.
         if int(attrs['dztotalchunkcount']) - 1 == int(attrs['dzchunkindex']):
-            filename = os.path.join(dest_folder, attrs['dzuuid'], "test.nc")  # attrs['qqfilename'])
+            filename = os.path.join(dest_folder, attrs['dzuuid'], fs.name)  # attrs['qqfilename'])
             combine_chunks(
                 int(attrs['dztotalchunkcount']),
                 source_folder=os.path.dirname(dest),
@@ -85,11 +80,14 @@ def handle_upload(request, attrs):
             request.storage.save_filename(filename=filename, folder=attrs['dzuuid'])
             shutil.rmtree(dest_folder)
     else:  # not chunked
+        LOGGER.warn(f"not chunked, {fs.name}, {attrs}")
+        filename = "test.nc"
         request.storage.save_file(
             fs.file, 
             filename="test.nc",  # attrs['qqfilename'], 
-            folder="test" # attrs['qquuid']
+            folder="test"  # attrs['dzuuid']
         )
+    return {'success': True, 'filename': filename}
 
 
 def save_chunk(fs, path):

@@ -63,19 +63,26 @@
   // https://github.com/dropzone/dropzone/blob/main/src/options.js
   Dropzone.options.myDropzone = { // camelized version of the `id`
     paramName: "file", // The name that will be used to transfer the file
-    //maxFilesize: 200, // MB
-    //uploadMultiple: false,
+    uploadMultiple: false,
     chunking: true,
+    forceChunking: true,
+    chunkSize: 1024 * 1024, // bytes
+    parallelChunkUploads: false,
+    retryChunks: true,
+    retryChunksLimit: 3,
+    defaultHeaders: false,
+    //binaryBody: true,
+    maxFilesize: 20000000000, // MB
     //maxFiles: 1,
-    init: function() {
+    <!-- init: function() {
       this.on("addedfile", file => {
         console.log("A file has been added");
         //console.log("accepted files " + this.getAcceptedFiles());
         //$("#"+${oid}).val("${storage_url}"+file.name);
         //$("#"+${oid}).prop('title', file.name);
-        console.log("${storage_url}"+file.name);
+        //console.log("${storage_url}"+file.name);
       });
-    },
+    }, -->
     accept: function(file, done) {
       console.log("uploaded " + file.name);
       done();
