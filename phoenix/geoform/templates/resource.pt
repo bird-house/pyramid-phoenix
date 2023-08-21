@@ -49,7 +49,11 @@
           <div 
             action="/upload"
             class="dropzone"
-            id="my-dropzone"></div>
+            id="my-dropzone">
+            <div class="fallback">
+              <input type="file" name="file">
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -63,30 +67,23 @@
   // https://github.com/dropzone/dropzone/blob/main/src/options.js
   Dropzone.options.myDropzone = { // camelized version of the `id`
     paramName: "file", // The name that will be used to transfer the file
-    uploadMultiple: false,
-    chunking: true,
-    forceChunking: true,
-    chunkSize: 1024 * 1024, // bytes
-    parallelChunkUploads: false,
-    retryChunks: true,
-    retryChunksLimit: 3,
+    //uploadMultiple: false,
+    //chunking: true,
+    //forceChunking: true,
+    //chunkSize: 1024 * 1024, // bytes
+    //parallelChunkUploads: false,
+    //retryChunks: true,
+    //retryChunksLimit: 3,
     defaultHeaders: false,
     //binaryBody: true,
-    maxFilesize: 20000000000, // MB
+    maxFilesize: 20, // MB
     //maxFiles: 1,
-    <!-- init: function() {
-      this.on("addedfile", file => {
-        console.log("A file has been added");
-        //console.log("accepted files " + this.getAcceptedFiles());
-        //$("#"+${oid}).val("${storage_url}"+file.name);
-        //$("#"+${oid}).prop('title', file.name);
-        //console.log("${storage_url}"+file.name);
+    acceptedFiles: ".txt,.nc,.zip",
+    init: function() {
+      this.on("success", function(file, response) {
+        console.log("A file has been uploaded");
       });
-    }, -->
-    accept: function(file, done) {
-      console.log("uploaded " + file.name);
-      done();
-    }
+    },
   };
   console.log("hello dropzone");
 </script>
