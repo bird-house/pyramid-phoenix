@@ -36,6 +36,7 @@ class Outputs(object):
     def filter_outputs(self, items):
         # TODO: quick and dirty for CLINT. Needs to use WPS metadata.
         items = sorted(items, key=lambda item: item["identifier"], reverse=1)
+        preview = None
         filtered_items = []
         # filter previews
         for item in items:
