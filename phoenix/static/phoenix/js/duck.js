@@ -1,9 +1,10 @@
 $(function() {
+    var service_id = "";
     var process_id = "";
     var search_value = "";
     var search = function(value) {
-      //console.log(process_id, value);
-      $.getJSON("/search/"+process_id+"/"+value, function(data) {
+      console.log(service_id, process_id, value);
+      $.getJSON("/search/"+service_id+"/"+process_id+"/"+value, function(data) {
         $.each( data.items, function( i, item ) {
           update_field(item.name, item.value, item.title);
         });
@@ -19,9 +20,13 @@ $(function() {
 
     var init = function() {
       //console.log("init");
-      var url = $(location).attr('href');
-      process_id = url.split("&process=")[1];
-      $.getJSON("/search/"+process_id+"/default", function(data) {
+      // const url = $(location).attr('href');
+      const url = window.location.search;
+      const urlParams = new URLSearchParams(url);
+      service_id = urlParams.get('wps');
+      process_id = urlParams.get('process');
+      console.log(Array.from(urlParams.keys()));
+      $.getJSON("/search/"+service_id+"/"+process_id+"/default", function(data) {
         $.each( data.items, function( i, item ) {
           var active_field = $("[name='"+item.name+"']");
           //search_value = item.title;
