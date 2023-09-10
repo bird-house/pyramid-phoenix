@@ -20,8 +20,8 @@ $(function() {
 
     var init = function() {
       //console.log("init");
-      // const url = $(location).attr('href');
-      const url = window.location.search;
+      const url = $(location).attr('search');
+      // const url = window.location.search;
       const urlParams = new URLSearchParams(url);
       service_id = urlParams.get('wps');
       process_id = urlParams.get('process');
