@@ -46,10 +46,3 @@ def parse_metadata(data):
     # Parse as json
     json_data = json.loads(decoded_string)
     return json_data
-
-
-# def etienne():
-#     import yaml
-#     import pandas as pd
-#     info_models = list(yaml.safe_load(craimodels.raw_text()).values())
-#     df_models = pd.json_normalize(info_models, record_path=None, meta="dataset_name")
