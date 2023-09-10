@@ -17,20 +17,21 @@ def search(request):
         value = request.matchdict.get('value')
         data = {"success": True}
         index = yaml.safe_load(open(INDEX_PATH / f"{process_id}.json"))
-        # update_from_remote_index(request, service_id, process_id)
+        index = update_from_remote_index(index, request, service_id, process_id)
         data["items"] = index[value]
     except Exception as e:
         data = {"success": False}
         # raise
     return data
 
-def update_from_remote_index(request, service_id, process_id):
-    remote_data = wps_metadata(request, service_id, process_id)
-    if remote_data:
-        pass
+def update_from_remote_index(index, request, service_id, process_id):
+    remote_index = get_remote_index(request, service_id, process_id)
+    if remote_index:
+        index.update(remote_index)
+    return index
 
 
-def wps_metadata(request, service_id, process_id):
+def get_remote_index(request, service_id, process_id):
     service = request.catalog.get_record_by_id(service_id)
     wps = WebProcessingService(url=service.url, verify=False)
     for process in wps.processes:
