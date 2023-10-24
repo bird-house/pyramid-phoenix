@@ -141,7 +141,7 @@ class WPSStatsGetter:
             
     def show_job(self, job):
         job = job.copy()
-        keys = ["username", "status", "process_id", "inputs", "times"]
+        keys = ["username", "status", "process_id", "inputs", "times", "status_location"]
         inputs = self.get_inputs(job)
         if inputs:
             job["inputs"] = inputs
@@ -150,7 +150,7 @@ class WPSStatsGetter:
             keys.append('error')
             job["error"] = self.get_error_message(job) or "Cannot parse error message"
         job["times"] = self.get_job_times(job) or "Cannot parse times"
-        print(', '.join(f'{key} = {str(job[key])}' for key in keys))
+        print(', '.join(f'{key} = {str(job.get(key))}' for key in keys))
         
 
     def main(self, key, regex):
