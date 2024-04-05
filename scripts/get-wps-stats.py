@@ -4,6 +4,7 @@ import pymongo
 import re
 import datetime
 import json
+import argparse
 from xml.etree import ElementTree
 
 
@@ -161,11 +162,16 @@ class WPSStatsGetter:
         data = {'num_jobs': len(all_jobs_info), 'jobs':all_jobs_info}
         with open(filename, 'w') as fout:
             json.dump(data, fout, indent=4)
+
+    def get_args(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('-o', '--output-prefix', default='wps_stats')
+        return parser.parse_args()
         
     def main(self):
-        out_prefix = 'wps_stats'
-        txtfile = f'{out_prefix}.txt'
-        jsonfile = f'{out_prefix}.json'
+        args = self.get_args()
+        txtfile = f'{args.output_prefix}.txt'
+        jsonfile = f'{args.output_prefix}.json'
 
         jobs = self.get_jobs("process_id", "NAME")
         # users = self.get_users()
@@ -180,7 +186,7 @@ class WPSStatsGetter:
                 self.show_job_info(job_info, writer=fout.write)
         
         self.write_json(all_jobs_info, jsonfile)
-        print(f'write {txtfile} and {jsonfile}')
+        print(f'wrote {txtfile} and {jsonfile}')
 
 if __name__ == "__main__":
     wsg = WPSStatsGetter()
