@@ -3,6 +3,7 @@
 import pymongo
 import re
 import datetime
+import json
 from xml.etree import ElementTree
 
 
@@ -128,15 +129,15 @@ class WPSStatsGetter:
         
 
     def get_job_times(self, job):
-        timestrs = []
+        times = {}
         for key in 'created', 'finished':
             val = job.get(key)
             if isinstance(val, datetime.datetime):
-                timestrs.append(f'{key}: {val.strftime("%Y-%m-%d %H:%M:%S")}')
-        return ', '.join(timestrs)
+                times[key] = val.strftime("%Y-%m-%d %H:%M:%S")
+        return times
     
             
-    def show_job(self, job):
+    def get_job_info(self, job):
         job = job.copy()
         keys = ["username", "status", "process_id", "inputs", "times"]
         inputs = self.get_inputs(job)
@@ -147,17 +148,39 @@ class WPSStatsGetter:
             keys.append('error')
             job["error"] = self.get_error_message(job) or "Cannot parse error message"
         job["times"] = self.get_job_times(job) or "Cannot parse times"
-        print(', '.join(f'{key} = {str(job[key])}' for key in keys))
-        
+        return {key: job[key] for key in keys}
+    
+    def show_job_info(self, job_info, writer=None):
+        msg = ', '.join(f'{k} = {v}' for k, v in job_info.items())
+        if writer is not None:
+            writer(msg + '\n')
+        else:
+            print(msg)
 
+    def write_json(self, all_jobs_info, filename):
+        data = {'num_jobs': len(all_jobs_info), 'jobs':all_jobs_info}
+        with open(filename, 'w') as fout:
+            json.dump(data, fout, indent=4)
+        
     def main(self):
+        out_prefix = 'wps_stats'
+        txtfile = f'{out_prefix}.txt'
+        jsonfile = f'{out_prefix}.json'
+
         jobs = self.get_jobs("process_id", "NAME")
         # users = self.get_users()
-        print(f"Number of jobs: {len(jobs)}\n")
-        for job in jobs:
-            #print(self.get_status(job))
-            self.show_job(job)
-    
+        all_jobs_info = []
+
+        with open(txtfile, 'w') as fout:
+            fout.write(f"Number of jobs: {len(jobs)}\n")
+            for job in jobs:
+                #print(self.get_status(job))
+                job_info = self.get_job_info(job)
+                all_jobs_info.append(job_info)
+                self.show_job_info(job_info, writer=fout.write)
+        
+        self.write_json(all_jobs_info, jsonfile)
+        print(f'write {txtfile} and {jsonfile}')
 
 if __name__ == "__main__":
     wsg = WPSStatsGetter()
