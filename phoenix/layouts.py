@@ -1,7 +1,7 @@
 from pyramid_layout.layout import layout_config
 
 
-@layout_config(name='default', template='phoenix:templates/layouts/default.pt')
+@layout_config(name="default", template="phoenix:templates/layouts/default.pt")
 class PageLayout(object):
     def __init__(self, context, request):
         self.context = context
@@ -12,36 +12,53 @@ class PageLayout(object):
 
     @property
     def project_brand(self):
-        return self.request.registry.settings.get('phoenix.brand', 'Phoenix')
+        return self.request.registry.settings.get("phoenix.brand", "Phoenix")
 
     @property
     def project_logo(self):
-        return self.request.registry.settings.get('phoenix.logo', 'Phoenix')
-    
+        return self.request.registry.settings.get("phoenix.logo", "Phoenix")
+
     @property
     def project_badgeA(self):
-        return self.request.registry.settings.get('phoenix.badgeA', '')
-    
+        return self.request.registry.settings.get("phoenix.badgeA", "")
+
     @property
     def project_badgeB(self):
-        return self.request.registry.settings.get('phoenix.badgeB', '')
+        return self.request.registry.settings.get("phoenix.badgeB", "")
 
     @property
     def project_title(self):
-        return self.request.registry.settings.get('phoenix.title', 'Phoenix')
+        return self.request.registry.settings.get("phoenix.title", "Phoenix")
 
     @property
     def project_description(self):
-        return self.request.registry.settings.get('phoenix.description', 'A Python Web App to interact with WPS')
+        return self.request.registry.settings.get(
+            "phoenix.description", "A Python Web App to interact with WPS"
+        )
 
     @property
     def project_theme(self):
-        return self.request.registry.settings.get('phoenix.theme', 'red')
+        return self.request.registry.settings.get("phoenix.theme", "red")
 
     @property
     def project_docs(self):
-        return self.request.registry.settings.get('phoenix.docs', 'https://pyramid-phoenix.readthedocs.org/')
-    
+        return self.request.registry.settings.get(
+            "phoenix.docs", "https://pyramid-phoenix.readthedocs.org/"
+        )
+
+    @property
+    def project_imprint(self):
+        return self.request.registry.settings.get(
+            "phoenix.imprint", "https://www.dkrz.de/about/kontakt/impressum"
+        )
+
+    @property
+    def project_policy(self):
+        return self.request.registry.settings.get(
+            "phoenix.policy",
+            "https://www.dkrz.de/en/about-en/contact/en-datenschutzhinweise",
+        )
+
     @property
     def matomo_enabled(self):
         try:
@@ -49,15 +66,14 @@ class PageLayout(object):
         except:
             enabled = False
         return enabled
-    
+
     @property
     def matomo_url(self):
-        return self.request.registry.settings.get('matomo.url', '')
-    
+        return self.request.registry.settings.get("matomo.url", "")
+
     @property
     def matomo_site_id(self):
-        return self.request.registry.settings.get('matomo.site_id', '')
-
+        return self.request.registry.settings.get("matomo.site_id", "")
 
     def add_breadcrumb(self, route_path, title):
         self.breadcrumbs.append(dict(route_path=route_path, title=title))
