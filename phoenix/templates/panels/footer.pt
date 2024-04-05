@@ -1,10 +1,21 @@
 <footer class="footer">
   <div class="container">
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-4">
+        <h5>Terms and Policies</h5>
+        <ul class="list-unstyled">
+          <li>
+            <a href=${layout.project_policy} target="_blank">Privacy Policy</a>
+          </li>
+          <li> 
+            <a href=${layout.project_imprint} target="_blank">Imprint/Impressum</a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-4">
         <img src=${layout.project_badgeA} style="background-color:white;padding-top:10px;padding-bottom:20px;">
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <img src=${layout.project_badgeB} style="background-color:white;padding-top:10px;padding-bottom:20px;">
       </div>
     </div>
