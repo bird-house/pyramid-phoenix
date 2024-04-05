@@ -158,15 +158,39 @@ class WPSStatsGetter:
         else:
             print(msg)
 
-    def write_json(self, all_jobs_info, filename):
-        data = {'num_jobs': len(all_jobs_info), 'jobs':all_jobs_info}
+    def write_json(self, all_jobs_info, filename, args):
+        data = {}
+        data['num_jobs'] = len(all_jobs_info)
+        if args.max_age is not None:
+            data['max_age'] = args.max_age
+        data['jobs'] = all_jobs_info
+
         with open(filename, 'w') as fout:
             json.dump(data, fout, indent=4)
+
 
     def get_args(self):
         parser = argparse.ArgumentParser()
         parser.add_argument('-o', '--output-prefix', default='wps_stats')
+        parser.add_argument('-a', '--max-age', type=float, metavar='DAYS')
         return parser.parse_args()
+
+
+    def is_created_since(self, job, start_time):
+        created = job.get('created')
+        if isinstance(created, datetime.datetime):
+            return created > start_time
+        else:
+            return False
+
+
+    def filter_jobs(self, jobs, max_age):
+        if max_age is None:
+            return jobs
+        start_time = datetime.datetime.now() - datetime.timedelta(days=max_age)
+        return [job for job in jobs
+                if self.is_created_since(job, start_time)]
+
         
     def main(self):
         args = self.get_args()
@@ -175,17 +199,20 @@ class WPSStatsGetter:
 
         jobs = self.get_jobs("process_id", "NAME")
         # users = self.get_users()
-        all_jobs_info = []
 
+        jobs = self.filter_jobs(jobs, args.max_age)
+
+        all_jobs_info = []
         with open(txtfile, 'w') as fout:
             fout.write(f"Number of jobs: {len(jobs)}\n")
+            fout.write(f"Max age (days): {args.max_age}\n")
             for job in jobs:
                 #print(self.get_status(job))
                 job_info = self.get_job_info(job)
                 all_jobs_info.append(job_info)
                 self.show_job_info(job_info, writer=fout.write)
         
-        self.write_json(all_jobs_info, jsonfile)
+        self.write_json(all_jobs_info, jsonfile, args)
         print(f'wrote {txtfile} and {jsonfile}')
 
 if __name__ == "__main__":
