@@ -14,7 +14,7 @@ class BboxMapSelector {
     bboxWestElement;
 
     areaRestriction;
-
+    helpText;
     mapMessage;
 
     /*
@@ -64,7 +64,7 @@ class BboxMapSelector {
         this.mapMessage = document.getElementById(oid + "-map_message");
 
         // help text
-        let helpText = document.getElementById(oid + "-help_text");
+        this.helpText = document.getElementById(oid + "-help_text");
 
         // End of html
 
@@ -74,7 +74,7 @@ class BboxMapSelector {
             // Show toggle button
             toggleLongitudeWindow.style.visibility = "inherit";
             this.areaRestriction = initialExtentValues;
-            initialExtentValues = this.areaRestriction;
+//            initialExtentValues = this.areaRestriction;
         } else {
             this.mapArea = "custom"
             // Hide toggle button for non-global data
@@ -130,8 +130,8 @@ class BboxMapSelector {
         });
 
         // add the interactive layer
-        let areaRestrictionAsString = BboxMapSelector.areaRestrictionAsString(initialExtentValues)
-        this.addBBoxInteraction(helpText, areaRestrictionAsString);
+//        let areaRestrictionAsString = BboxMapSelector.areaRestrictionAsString(initialExtentValues);
+        this.addBBoxInteraction(); //areaRestrictionAsString);
 
         /*
          *
@@ -202,6 +202,8 @@ class BboxMapSelector {
             this.setExtentAndZoom();
             this.view.fit(this.areaRestriction);
             this.updateMapFromTextInputs();
+            this.updateHelpText();
+
         }).bind(this);
         toggleLongitudeWindow.addEventListener("click", toggleLongitudeWindowCallback, false);
 
@@ -271,20 +273,29 @@ class BboxMapSelector {
         }
     }
 
+    // Update Help Text
+    updateHelpText() {
+        let areaRestrictionAsString = BboxMapSelector.areaRestrictionAsString(this.areaRestriction);
+        this.helpText.innerHTML = "Please select a valid bounding box within the following geographical boundaries: " +
+            areaRestrictionAsString + ".";
+    } 
+
     /*
      * Drawing boxes
      */
 
     // Create a box interaction
-    addBBoxInteraction(helpText, areaRestrictionAsString) {
+    addBBoxInteraction() { //areaRestrictionAsString) {
         let geometryFunction = ol.interaction.Draw.createBox();
         this.draw = new ol.interaction.Draw({
             source: this.sourceDrawing,
             type: /** @type {ol.geom.GeometryType} */ "Circle",
             geometryFunction: geometryFunction
         });
-        helpText.innerHTML = "Please select a valid bounding box within the following geographical boundaries: " +
-            areaRestrictionAsString + "."
+        this.updateHelpText();
+/*        this.helpText.innerHTML = "Please select a valid bounding box within the following geographical boundaries: " +
+            areaRestrictionAsString + ".";
+*/
 
         // On draw start we need to remove the previous feature so
         // that it doesn't show.
