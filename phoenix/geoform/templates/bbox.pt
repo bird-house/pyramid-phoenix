@@ -100,6 +100,10 @@
             <button id="${oid}-reset-zoom" type="button"
               class="btn btn-default">Reset zoom</button>
           </div>
+          <div class="btn-group" role="group" aria-label="Toggle longitude window">
+            <button id="${oid}-toggle-longitude-window" type="button"
+              class="btn btn-default">Toggle longitude window</button>
+          </div> 
         </div> <!-- end toolbar -->
 
       </div>

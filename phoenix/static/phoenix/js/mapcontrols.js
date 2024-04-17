@@ -58,6 +58,7 @@ class BboxMapSelector {
         let zoomIn = document.getElementById(oid + "-zoom-in");
         let zoomOut = document.getElementById(oid + "-zoom-out");
         let zoomReset = document.getElementById(oid + "-reset-zoom");
+        let toggleLongitudeWindow = document.getElementById(oid + "-toggle-longitude-window");
 
         // message
         this.mapMessage = document.getElementById(oid + "-map_message");
@@ -174,6 +175,12 @@ class BboxMapSelector {
             this.view.fit(this.areaRestriction);
         }).bind(this);
         zoomReset.addEventListener("click", zoomResetCallback, false);
+
+        /* toggle longitude window button */
+        let toggleLongitudeWindowCallback = (function() {
+alert("HI There");
+        }).bind(this);
+        toggleLongitudeWindow.addEventListener("click", toggleLongitudeWindowCallback, false);
 
         /*
          * Other listeners
@@ -425,7 +432,7 @@ class BboxMapSelector {
     // Get the areaRestriction as a string
     static areaRestrictionAsString(extentValues) {
         let areaRestrictionString = "northern extent: " + extentValues[3] + ", southern extent: " +
-            extentValues[1] + ", eastern extent: " + extentValues[0] + ", western extent: " +
+            extentValues[1] + ", western extent: " + extentValues[0] + ", eastern extent: " +
             extentValues[2];
         return areaRestrictionString;
     }
