@@ -71,9 +71,14 @@ class BboxMapSelector {
 
         if (initialExtentValues[1] < -85 || initialExtentValues[3] > 85) {
             this.mapArea = "global"
+            // Show toggle button
+            toggleLongitudeWindow.style.visibility = "inherit";
             this.areaRestriction = initialExtentValues;
+            initialExtentValues = this.areaRestriction;
         } else {
             this.mapArea = "custom"
+            // Hide toggle button for non-global data
+            toggleLongitudeWindow.style.visibility = "hidden";
             this.areaRestriction = BboxMapSelector.transformLatLongTo3857(initialExtentValues);
         }
 
@@ -178,7 +183,25 @@ class BboxMapSelector {
 
         /* toggle longitude window button */
         let toggleLongitudeWindowCallback = (function() {
-alert("HI There");
+            let ar = this.areaRestriction;
+
+            // Set adjustment of +180 or -180 depending on current longitude frame
+            let adj = 180;
+            if (ar[0] == 0) {
+                adj = -180;
+            }
+            ar[0] += adj;
+            ar[2] += adj;
+
+            this.bboxWestElement.value = ar[0];
+            this.bboxSouthElement.value = ar[1];
+            this.bboxEastElement.value = ar[2];
+            this.bboxNorthElement.value = ar[3];
+            this.areaRestriction = ar;
+
+            this.setExtentAndZoom();
+            this.view.fit(this.areaRestriction);
+            this.updateMapFromTextInputs();
         }).bind(this);
         toggleLongitudeWindow.addEventListener("click", toggleLongitudeWindowCallback, false);
 
