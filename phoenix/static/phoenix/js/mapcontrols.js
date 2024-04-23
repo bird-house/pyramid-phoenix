@@ -58,7 +58,8 @@ class BboxMapSelector {
         let zoomIn = document.getElementById(oid + "-zoom-in");
         let zoomOut = document.getElementById(oid + "-zoom-out");
         let zoomReset = document.getElementById(oid + "-reset-zoom");
-        let toggleLongitudeWindow = document.getElementById(oid + "-toggle-longitude-window");
+        let nudgeLongitudeWest = document.getElementById(oid + "-nudge-longitude-west");
+        let nudgeLongitudeEast = document.getElementById(oid + "-nudge-longitude-east");
 
         // message
         this.mapMessage = document.getElementById(oid + "-map_message");
@@ -72,13 +73,15 @@ class BboxMapSelector {
         if (initialExtentValues[1] < -85 || initialExtentValues[3] > 85) {
             this.mapArea = "global"
             // Show toggle button
-            toggleLongitudeWindow.style.visibility = "inherit";
+            nudgeLongitudeWest.style.visibility = "inherit";
+            nudgeLongitudeEast.style.visibility = "inherit";
             this.areaRestriction = initialExtentValues;
 //            initialExtentValues = this.areaRestriction;
         } else {
             this.mapArea = "custom"
             // Hide toggle button for non-global data
-            toggleLongitudeWindow.style.visibility = "hidden";
+            nudgeLongitudeWest.style.visibility = "hidden";
+            nudgeLongitudeEast.style.visibility = "hidden";
             this.areaRestriction = BboxMapSelector.transformLatLongTo3857(initialExtentValues);
         }
 
@@ -181,31 +184,17 @@ class BboxMapSelector {
         }).bind(this);
         zoomReset.addEventListener("click", zoomResetCallback, false);
 
-        /* toggle longitude window button */
-        let toggleLongitudeWindowCallback = (function() {
-            let ar = this.areaRestriction;
-
-            // Set adjustment of +180 or -180 depending on current longitude frame
-            let adj = 180;
-            if (ar[0] == 0) {
-                adj = -180;
-            }
-            ar[0] += adj;
-            ar[2] += adj;
-
-            this.bboxWestElement.value = ar[0];
-            this.bboxSouthElement.value = ar[1];
-            this.bboxEastElement.value = ar[2];
-            this.bboxNorthElement.value = ar[3];
-            this.areaRestriction = ar;
-
-            this.setExtentAndZoom();
-            this.view.fit(this.areaRestriction);
-            this.updateMapFromTextInputs();
-            this.updateHelpText();
-
+        /* toggle longitude window west button */
+        let nudgeLongitudeWestCallback = (function() {
+            this.nudgeLongitudeWindow(-90);
         }).bind(this);
-        toggleLongitudeWindow.addEventListener("click", toggleLongitudeWindowCallback, false);
+        nudgeLongitudeWest.addEventListener("click", nudgeLongitudeWestCallback, false);
+
+        /* toggle longitude window east button */
+        let nudgeLongitudeEastCallback = (function() {
+            this.nudgeLongitudeWindow(90);
+        }).bind(this);
+        nudgeLongitudeEast.addEventListener("click", nudgeLongitudeEastCallback, false);
 
         /*
          * Other listeners
@@ -398,6 +387,33 @@ class BboxMapSelector {
             return false;
         }
         return true
+    }
+
+    // Nudge longitude frame east or west (to allow selections across different
+    // frames, such as the Greenwich Meridian and the dateline
+    nudgeLongitudeWindow(adj) {
+        let ar = this.areaRestriction;
+
+        // Note: `adj` is the required adjustment (east or west)
+        if (adj > 0 && ar[0] == 0) {            // avoid ar[2] exceeding 360
+            adj -= 360;
+        }  else if (adj < 0 && ar[0] == -270) { // avoid ar[0] subseeding -360
+            adj += 360;
+        }
+
+        ar[0] += adj;
+        ar[2] += adj;
+
+        this.bboxWestElement.value = ar[0];
+        this.bboxSouthElement.value = ar[1];
+        this.bboxEastElement.value = ar[2];
+        this.bboxNorthElement.value = ar[3];
+        this.areaRestriction = ar;
+
+        this.setExtentAndZoom();
+        this.view.fit(this.areaRestriction);
+        this.updateMapFromTextInputs();
+        this.updateHelpText();
     }
 
     // Validate the selected extent. If it extends beyond the area restriction
