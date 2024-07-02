@@ -16,18 +16,16 @@ class BBoxValidator(object):
         except Exception:
             raise colander.Invalid(node, "Could not parse BBox.")
         else:
-            if minx < -180 or minx > 180:
-                raise colander.Invalid(node, "MinX out of range [-180, 180].")
-            if miny < -90 or miny > 90:
-                raise colander.Invalid(node, "MinY out of range [-90, 90].")
-            if maxx < -180 or maxx > 180:
-                raise colander.Invalid(node, "MaxX out of range [-180, 180].")
-            if maxy < -90 or maxy > 90:
-                raise colander.Invalid(node, "MaxY out of range [-90, 90].")
             if minx > maxx:
                 raise colander.Invalid(node, "MinX greater than MaxX")
             if miny > maxy:
                 raise colander.Invalid(node, "MinY greater than MaxY")
+            if minx < -360 or maxx > 360:
+                raise colander.Invalid(node, "X values cannot exceed [-360, 360].")
+            if miny < -90 or maxy > 90:
+                raise colander.Invalid(node, "Y values cannot exceed [-90, 90].")
+            if (maxx - minx) > 360:
+                raise colander.Invalid(node, "Cannot select a longitude range greater than 360.")
 
 
 class URLValidator(object):
