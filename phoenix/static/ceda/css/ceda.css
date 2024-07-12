@@ -1,0 +1,193 @@
+.navbar {
+	background-color: rgb(236, 240, 241)
+}
+
+.navbar {
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+}
+
+.navbar>.container {
+	align-items: center;
+	display: flex;
+	flex-wrap: nowrap;
+}
+
+.navbar-expand-lg .navbar-collapse {
+	align-items: center;
+	display: flex;
+	flex-basis: auto;
+	flex-grow: 1
+}
+
+.navbar-expand-lg .navbar-nav {
+	display: flex;
+	flex-direction: row;
+}
+
+.navbar-right {
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.navbar.fixed-top {
+	padding: 4px 4px;
+}
+
+.navbar-brand {
+	display: inline-block;
+	padding-top: 0.32421875rem;
+	padding-bottom: 0.32421875rem;
+	margin-right: 1rem;
+	font-size: 1.171875rem;
+	line-height: inherit;
+	white-space: nowrap;
+	height: auto;
+}
+
+.navbar-brand:hover, .navbar-brand:focus {
+	text-decoration: none;
+}
+
+.navbar-link {
+	display: block;
+	padding: 0.5rem 2rem;
+}
+
+.navbar-link:hover, .navbar-link:focus {
+	text-decoration: none;
+}
+
+.navbar-link.disabled {
+	color: #95a5a6;
+	pointer-events: none;
+	cursor: default;
+}
+
+.nav-tabs .navbar-link {
+	border: 1px solid transparent;
+	border-top-left-radius: 0.25rem;
+	border-top-right-radius: 0.25rem;
+}
+
+.nav-tabs .navbar-link:hover, .nav-tabs .navbar-link:focus {
+	border-color: #ecf0f1 #ecf0f1 #ecf0f1;
+}
+
+.nav-tabs .navbar-link.disabled {
+	color: #95a5a6;
+	background-color: transparent;
+	border-color: transparent;
+}
+
+.nav-tabs .navbar-link.active, .nav-tabs .nav-item.show .navbar-link .nav-user-dropdown
+	{
+	color: #7b8a8b;
+	background-color: #fff;
+	border-color: #dee2e6 #dee2e6 #fff;
+}
+
+.nav-user-dropdown, .navbar-btn {
+	color: rgba(0, 0, 0, 0.5);
+}
+
+.nav-user-dropdown:hover, .nav-user-dropdown:focus, .navbar-btn:hover {
+	color: rgba(0, 0, 0, 0.9);
+}
+
+.nav-pills .navbar-link {
+	border-radius: 0.25rem;
+}
+
+.nav-pills .navbar-link.active, .nav-pills .show>.navbar-link {
+	color: #fff;
+	background-color: #00628d;
+}
+
+.navbar-nav .navbar-link {
+	padding-right: 0;
+	padding-left: 0;
+}
+
+.navbar-expand-sm .navbar-nav .navbar-link {
+	padding-right: 0.5rem;
+	padding-left: 0.5rem;
+}
+
+.navbar-expand-md .navbar-nav .navbar-link {
+	padding-right: 0.5rem;
+	padding-left: 0.5rem;
+}
+
+.navbar-expand-lg .navbar-nav .navbar-link {
+	padding-right: 0.5rem;
+	padding-left: 0.5rem;
+}
+
+.navbar-expand-xl .navbar-nav .navbar-link {
+	padding-right: 0.5rem;
+	padding-left: 0.5rem;
+}
+
+.navbar-expand .navbar-nav .navbar-link {
+	padding-right: 0.5rem;
+	padding-left: 0.5rem;
+}
+
+.navbar-light .navbar-nav .navbar-link {
+	color: rgba(0, 0, 0, 0.5);
+}
+
+.navbar-light .navbar-nav .navbar-link:hover, .navbar-light .navbar-nav .navbar-link:focus
+	{
+	color: rgba(0, 0, 0, 0.7);
+}
+
+.navbar-light .navbar-nav .navbar-link.disabled {
+	color: rgba(0, 0, 0, 0.3);
+}
+
+.navbar-light .navbar-nav .show>.navbar-link, .navbar-light .navbar-nav .active>.navbar-link,
+	.navbar-light .navbar-nav .navbar-link.show, .navbar-light .navbar-nav .navbar-link.active
+	{
+	color: rgba(0, 0, 0, 0.9);
+}
+
+.navbar-dark .navbar-nav .navbar-link {
+	color: #fff;
+}
+
+.navbar-dark .navbar-nav .navbar-link:hover, .navbar-dark .navbar-nav .navbar-link:focus
+	{
+	color: #00a2c3;
+}
+
+.navbar-dark .navbar-nav .navbar-link.disabled {
+	color: rgba(255, 255, 255, 0.25);
+}
+
+.navbar-dark .navbar-nav .show>.navbar-link, .navbar-dark .navbar-nav .active>.navbar-link,
+	.navbar-dark .navbar-nav .navbar-link.show, .navbar-dark .navbar-nav .navbar-link.active
+	{
+	color: #fff;
+}
+
+.bg-primary .navbar-nav .active>.navbar-link {
+	color: #00a2c3 !important;
+}
+
+.bg-dark.navbar-dark .navbar-nav .navbar-link:focus, .bg-dark.navbar-dark .navbar-nav .navbar-link:hover,
+	.bg-dark.navbar-dark .navbar-nav .active>.navbar-link {
+	color: #00628d !important;
+}
+
+.nav-tabs .navbar-link.active, .nav-tabs .navbar-link.active:focus,
+	.nav-tabs .navbar-link.active:hover, .nav-tabs .nav-item.open .navbar-link,
+	.nav-tabs .nav-item.open .navbar-link:focus, .nav-tabs .nav-item.open .navbar-link:hover
+	{
+	color: #00628d;
+}

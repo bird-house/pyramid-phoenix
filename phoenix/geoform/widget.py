@@ -1,4 +1,6 @@
 from dateutil import parser as datetime_parser
+from datetime import datetime
+from os import path
 
 from colander import (
     Invalid,
@@ -14,6 +16,10 @@ from deform.compat import (
 
 from deform.widget import (
     Widget,
+)
+
+from deform.widget import (
+    FileUploadWidget as FUW
 )
 
 from deform.widget import _StrippedString
@@ -60,6 +66,153 @@ class ResourceWidget(Widget):
             return null
         LOGGER.debug("pstruct: %s", pstruct)
         return pstruct
+
+
+class DateSliderWidget(Widget):
+    """
+    Renders a date range slider widget.
+
+    The range for the widget is taken from the default values.
+    If no defaults are set the the range is set to 1900/01/01 to 2100/12/31.
+    """
+    template = 'range_slider_date'
+    readonly_template = 'readonly/textinput'
+
+    def serialize(self, field, cstruct, **kw):
+        # set default values
+        min_value = datetime.strptime('1900-01-01', '%Y-%m-%d').timestamp() * 1000
+        max_value = datetime.strptime('2100-12-31', '%Y-%m-%d').timestamp() * 1000
+
+        if cstruct in (null, None):
+            cstruct = ''
+
+        # check if the wps defaults can be used to
+        # set the default values of the range
+        elif len(cstruct.split('/')) == 2:
+            min_value, max_value = cstruct.split('/', 1)
+            if len(min_value.split("-")) == 3 and len(max_value.split("-")) == 3:
+                # its a date
+                min_value = datetime.strptime(min_value, '%Y-%m-%d').timestamp() * 1000
+                max_value = datetime.strptime(max_value, '%Y-%m-%d').timestamp() * 1000
+
+        kw.setdefault('min_default', min_value)
+        kw.setdefault('max_default', max_value)
+        kw.setdefault('min', min_value)
+        kw.setdefault('max', max_value)
+
+        readonly = kw.get('readonly', self.readonly)
+        template = readonly and self.readonly_template or self.template
+        values = self.get_template_values(field, cstruct, kw)
+        return field.renderer(template, **values)
+
+    def deserialize(self, field, pstruct):
+        if pstruct is null:
+            return null
+        elif not isinstance(pstruct, string_types):
+            raise Invalid(field.schema, "Pstruct is not a string")
+        if not pstruct:
+            return null
+        min_date, max_date = pstruct.split("|")
+        min_date = datetime.fromtimestamp(float(min_date) / 1000).strftime('%Y-%m-%d')
+        max_date = datetime.fromtimestamp(float(max_date) / 1000).strftime('%Y-%m-%d')
+        pstruct = "{}/{}".format(min_date, max_date)
+        LOGGER.debug("pstruct: %s", pstruct)
+        return pstruct
+
+
+class RangeSliderWidget(Widget):
+    """
+    Renders a range slider widget.
+
+    The range for the widget is taken from the default values.
+    If no defaults are set the the range is set to 1 to 100.
+    """
+    template = 'range_slider'
+    readonly_template = 'readonly/textinput'
+
+    def serialize(self, field, cstruct, **kw):
+        # set default values
+        min_value = '1'
+        max_value = '100'
+
+        if cstruct in (null, None):
+            cstruct = ''
+
+        # check if the wps defaults can be used to
+        # set the default values of the range
+        elif len(cstruct.split('/')) == 2:
+            min_value, max_value = cstruct.split('/', 1)
+            try:
+                int(min_value)
+                int(max_value)
+            except ValueError:
+                min_value = '1'
+                max_value = '100'
+
+        kw.setdefault('min_default', min_value)
+        kw.setdefault('max_default', max_value)
+        kw.setdefault('min', min_value)
+        kw.setdefault('max', max_value)
+
+        readonly = kw.get('readonly', self.readonly)
+        template = readonly and self.readonly_template or self.template
+        values = self.get_template_values(field, cstruct, kw)
+        return field.renderer(template, **values)
+
+    def deserialize(self, field, pstruct):
+        if pstruct is null:
+            return null
+        elif not isinstance(pstruct, string_types):
+            raise Invalid(field.schema, "Pstruct is not a string")
+        if not pstruct:
+            return null
+        pstruct = pstruct.replace("|", "/")
+        LOGGER.debug("pstruct: %s", pstruct)
+        return pstruct
+
+
+class FileUploadWidget(FUW):
+    """
+    This is a customisation of the deform FileUploadWidget.
+
+    A file will be uploaded and stored to disk, the result from the "deserialize" will
+    be a string containing the path of the file.
+    As a result the "serialize" has to take that string and get the filedict object.
+    """
+    def __init__(self, tmpstore, wps_id, process_id):
+        super().__init__(tmpstore)
+        self.wps_id = wps_id
+        self.process_id = process_id
+
+    def random_id(self):
+        uid = super().random_id()
+        today = datetime.today().strftime("%Y-%m-%d")
+        return path.join(today, self.wps_id, self.process_id, uid)
+
+    def serialize(self, field, cstruct, **kw):
+        if cstruct in (null, None):
+            cstruct = {}
+        if cstruct:
+            # all we have is a string containing the uid, we need to get a
+            # FileUploadTempStore object
+            uid = cstruct
+            cstruct = self.tmpstore[uid]
+            if cstruct is None:
+                cstruct = {}
+
+        readonly = kw.get("readonly", self.readonly)
+        template = readonly and self.readonly_template or self.template
+        values = self.get_template_values(field, cstruct, kw)
+        return field.renderer(template, **values)
+
+    def deserialize(self, field, pstruct):
+        # We do not want to pass the data to the WPS, only the location of the data,
+        # which we have stored in a directory identified by the uid
+        data = super().deserialize(field, pstruct)
+        if data is null:
+            return data
+
+        return path.join(self.tmpstore.storage_url, data["uid"], data["filename"])
 
 
 class BBoxWidget(Widget):

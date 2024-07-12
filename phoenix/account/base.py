@@ -88,7 +88,7 @@ class Account(object):
         user['provider'] = provider
         user['last_login'] = datetime.now()
         self.collection.update({'login_id': login_id}, user)
-        self.session.flash("Hello <strong>{0}</strong>. Welcome to Phoenix.".format(escape(login_id)), queue='info')
+        self.session.flash("Hello <strong>{0}</strong>. Welcome to CEDA WPS.".format(escape(login_id)), queue='info')
         if provider != 'keycloak':
             # generate_access_token(self.request.registry, userid=user['identifier'])
             pass

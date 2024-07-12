@@ -16,18 +16,16 @@ class BBoxValidator(object):
         except Exception:
             raise colander.Invalid(node, "Could not parse BBox.")
         else:
-            if minx < -180 or minx > 180:
-                raise colander.Invalid(node, "MinX out of range [-180, 180].")
-            if miny < -90 or miny > 90:
-                raise colander.Invalid(node, "MinY out of range [-90, 90].")
-            if maxx < -180 or maxx > 180:
-                raise colander.Invalid(node, "MaxX out of range [-180, 180].")
-            if maxy < -90 or maxy > 90:
-                raise colander.Invalid(node, "MaxY out of range [-90, 90].")
             if minx > maxx:
                 raise colander.Invalid(node, "MinX greater than MaxX")
             if miny > maxy:
                 raise colander.Invalid(node, "MinY greater than MaxY")
+            if minx < -360 or maxx > 360:
+                raise colander.Invalid(node, "X values cannot exceed [-360, 360].")
+            if miny < -90 or maxy > 90:
+                raise colander.Invalid(node, "Y values cannot exceed [-90, 90].")
+            if (maxx - minx) > 360:
+                raise colander.Invalid(node, "Cannot select a longitude range greater than 360.")
 
 
 class URLValidator(object):
@@ -67,7 +65,32 @@ class TextValidator(object):
                 raise colander.Invalid(node, "Invalid value ... empty.")
             for char in self.restricted_chars:
                 if char in normalized_value:
-                    raise colander.Invalid(node, "Invalid value ... containts restricted characters.")
+                    raise colander.Invalid(node, "Invalid value ... contains restricted characters.")
+
+
+class VocabValidator(object):
+    """
+    Validate values against a vocabulary.
+    """
+    def __init__(self, vocab):
+        self.vocab = vocab
+
+    def __call__(self, node, values):
+        if isinstance(values, set):
+            values = list(values)
+        if not isinstance(values, list):
+            values = [values]
+
+        for value in values:
+            try:
+                normalized_value = str(value).strip()
+            except Exception:
+                raise colander.Invalid(node, "Invalid value.")
+            if not normalized_value:
+                raise colander.Invalid(node, "Invalid value ... empty.")
+            if value not in self.vocab:
+                raise colander.Invalid(
+                    node, "Invalid value ... value not in list of allowed values.")
 
 
 class FileUploadValidator(colander.All):

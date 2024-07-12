@@ -2,22 +2,6 @@
   <ul class="list-group">
     <li class="list-group-item" tal:repeat="item items">
       <div class="media">
-        <div class="media-left media-top">
-          <a href="#">
-            <img 
-              class="media-object" 
-              src="${request.static_path('phoenix:static/phoenix/img/missing_thumb_doesnotexist.png')}"
-              alt=""
-              width="512px"
-              tal:condition="not item.preview"/>
-            <img 
-              class="media-object" 
-              src="${item.preview}" 
-              alt="No Preview"
-              width="512px"
-              tal:condition="item.preview"/>
-          </a>
-        </div>
         <div class="media-body">
           <!--h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4-->
           <h4 class="media-heading">${item.title}</h4>

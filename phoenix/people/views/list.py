@@ -1,4 +1,5 @@
 from pyramid.view import view_config, view_defaults
+from pyramid.httpexceptions import HTTPNotFound
 
 from phoenix.views import MyView
 from phoenix.security import Admin, User, Guest
@@ -16,6 +17,8 @@ class People(MyView):
 
     @view_config(route_name='people', renderer='phoenix:people/templates/people/list.pt')
     def view(self):
+        if self.request.registry.settings.get("phoenix.local_user_management", "true").lower() != "true":
+            return HTTPNotFound()
         user_items = list(self.collection.find().sort('last_login', -1))
         grid = PeopleGrid(
             self.request,

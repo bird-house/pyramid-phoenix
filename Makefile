@@ -64,7 +64,7 @@ init: custom.cfg downloads
 
 bootstrap-buildout.py:
 	@echo "Update buildout bootstrap-buildout.py ..."
-	@test -f boostrap-buildout.py || curl https://bootstrap.pypa.io/bootstrap-buildout.py --insecure --silent --output bootstrap-buildout.py
+	@test -f bootstrap-buildout.py || curl https://bootstrap.pypa.io/bootstrap-buildout.py --insecure --silent --output bootstrap-buildout.py
 
 ## Build targets
 

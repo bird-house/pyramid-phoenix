@@ -12,10 +12,18 @@ from owslib.wps import WPSExecution
 
 from pyramid.security import authenticated_userid
 
-from phoenix.geoform.widget import BBoxWidget, ResourceWidget
+from phoenix.file_upload_store import FileUploadStore
+from phoenix.geoform.widget import (
+    BBoxWidget,
+    DateSliderWidget,
+    RangeSliderWidget,
+    ResourceWidget,
+    FileUploadWidget,
+)
 from phoenix.geoform.form import BBoxValidator
 from phoenix.geoform.form import URLValidator
 from phoenix.geoform.form import TextValidator
+from phoenix.geoform.form import VocabValidator
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -67,6 +75,8 @@ def appstruct_to_inputs(request, appstruct):
     for key, values in list(appstruct.items()):
         if key in ['_async_check', 'csrf_token']:
             continue
+        if isinstance(values, set):
+            values = list(values)
         if not isinstance(values, list):
             values = [values]
         for value in values:
@@ -118,20 +128,7 @@ class WPSSchema(deform.schema.CSRFSchema):
         self.process = process
         self.user = user
         self.kwargs = kwargs or {}
-        if use_async:
-            self.add_async_check()
         self.add_nodes(process)
-
-    def add_async_check(self):
-        node = colander.SchemaNode(
-            colander.Boolean(),
-            name='_async_check',
-            title='Run async',
-            description='Check this to run process async.',
-            default=True,
-            widget=deform.widget.CheckboxWidget(),
-        )
-        self.add(node)
 
     def add_nodes(self, process):
         if process is None:
@@ -172,7 +169,8 @@ class WPSSchema(deform.schema.CSRFSchema):
         self.colander_literal_widget(node, data_input)
 
         # sequence of nodes ...
-        if data_input.maxOccurs > 1:
+        # do not use if we are using a SelectWidget with multiple=True for strings
+        if data_input.maxOccurs > 1 and 'string' not in data_input.dataType:
             node = colander.SchemaNode(
                 colander.Sequence(),
                 node,
@@ -198,7 +196,15 @@ class WPSSchema(deform.schema.CSRFSchema):
         elif 'decimal' in data_input.dataType:
             return colander.Decimal()
         elif 'string' in data_input.dataType:
-            return colander.String()
+            if data_input.maxOccurs > 1:
+                # we are going to use a SelectWidget with multiple=True
+                return colander.Set()
+            elif data_input.identifier.endswith("FileUpload"):
+                # we want to upload a file but just return a string containing
+                # the path
+                return deform.FileData()
+            else:
+                return colander.String()
         elif 'dateTime' in data_input.dataType:
             return colander.DateTime()
         elif 'date' in data_input.dataType:
@@ -226,15 +232,38 @@ class WPSSchema(deform.schema.CSRFSchema):
             choices = []
             for value in data_input.allowedValues:
                 choices.append([value, value])
-            node.widget = deform.widget.Select2Widget(values=choices)
+            if data_input.maxOccurs > 1:
+                node.widget = deform.widget.SelectWidget(
+                    values=choices, multiple=True
+                )
+            else:
+                node.widget = deform.widget.Select2Widget(values=choices)
+            node.validator = VocabValidator(data_input.allowedValues)
         elif type(node.typ) == colander.DateTime:
             node.widget = deform.widget.DateInputWidget()
         elif type(node.typ) == colander.Boolean:
             node.widget = deform.widget.CheckboxWidget()
+        elif type(node.typ) == deform.schema.FileData:
+            service_id = self.request.params.get('wps')
+            service_title = self.request.catalog.get_record_by_id(service_id).title
+            node.widget = FileUploadWidget(
+                FileUploadStore(
+                    self.request.scheme,
+                    self.request.server_name,
+                    self.request.server_port,
+                    self.request.registry.settings.get("widget.file.upload.storage.dir"),
+                    self.request.registry.settings.get("widget.file.upload.max.size.mb")),
+                str(service_title).replace(' ', '_'),
+                self.process.identifier)
         elif 'password' in data_input.identifier:
             node.widget = deform.widget.PasswordWidget(size=20)
         elif type(node.typ) == colander.String:
-            if is_opendap(data_input):
+            # Nasty HACK to get a range slider
+            if data_input.identifier.endswith("NumericRange"):
+                node.widget = RangeSliderWidget()
+            elif data_input.identifier.endswith("DateRange"):
+                node.widget = DateSliderWidget()
+            elif is_opendap(data_input):
                 node.widget = ResourceWidget(
                     mime_types=OPENDAP_MIME_TYPES,
                     upload=False,
@@ -258,6 +287,12 @@ class WPSSchema(deform.schema.CSRFSchema):
         # optional value?
         if data_input.minOccurs == 0:
             node.missing = colander.drop
+
+        if (hasattr(data_input, 'defaultValue')
+                and data_input.defaultValue is not None
+                and len(data_input.defaultValue.split(',')) > 3):
+            default = ",".join(data_input.defaultValue.split(',')[:4])
+            node.default = default
 
         # sequence of nodes ...
         if data_input.maxOccurs > 1:

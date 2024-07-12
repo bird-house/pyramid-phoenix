@@ -6,12 +6,6 @@ import logging
 LOGGER = logging.getLogger("PHOENIX")
 
 
-@subscriber(JobStarted)
-def notify_job_started(event):
-    event.request.session.flash(
-        '<h4><img src="/static/phoenix/img/ajax-loader.gif"></img> Job Created. Please wait ...</h4>', queue='success')
-
-
 @subscriber(JobFinished)
 def notify_job_finished(event):
     if event.succeeded():

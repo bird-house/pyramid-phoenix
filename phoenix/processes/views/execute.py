@@ -11,10 +11,13 @@ from phoenix.wps import appstruct_to_inputs
 from phoenix.wps import WPSSchema
 from phoenix.utils import wps_describe_url
 from phoenix.security import check_csrf_token
+from phoenix.ceda_security import check_ceda_permissions
 
 from owslib.wps import WebProcessingService
 from owslib.wps import WPSExecution
 from owslib.wps import ComplexDataInput, BoundingBoxDataInput
+
+from time import sleep
 
 import logging
 LOGGER = logging.getLogger("PHOENIX")
@@ -40,7 +43,8 @@ class ExecuteProcess(MyView):
         super(ExecuteProcess, self).__init__(request, name='processes_execute', title='')
 
     def has_execute_permission(self):
-        return self.service.public or self.request.has_permission('submit')
+        ceda_permission = check_ceda_permissions(self.request, self.request.user, self.processid)
+        return self.service.public or (self.request.has_permission('submit') and ceda_permission)
 
     def breadcrumbs(self):
         breadcrumbs = super(ExecuteProcess, self).breadcrumbs()
@@ -138,7 +142,8 @@ class ExecuteProcess(MyView):
             if identifier in complex_inpts:
                 new_inputs.append((identifier, ComplexDataInput(value)))
             elif identifier in bbox_inpts:
-                new_inputs.append((identifier, BoundingBoxDataInput(value)))
+                crs = 'urn:ogc:def:crs:OGC:2:84'
+                new_inputs.append((identifier, BoundingBoxDataInput(value, crs=crs)))
             else:
                 new_inputs.append(inpt)
         inputs = new_inputs
@@ -157,8 +162,12 @@ class ExecuteProcess(MyView):
             inputs=inputs,
             outputs=outputs,
             use_async=appstruct.get('_async_check', True))
+
+        # give the job a chance to start
+        sleep(1)
         self.request.registry.notify(JobStarted(self.request, result.id))
         LOGGER.debug('wps url={}'.format(self.wps.url))
+        LOGGER.debug('request inputs = {}'.format(str(inputs)))
         return result.id
 
     @view_config(
@@ -171,9 +180,16 @@ class ExecuteProcess(MyView):
             check_csrf_token(self.request)
             return self.process_form(form)
         if not self.has_execute_permission():
-            msg = """<strong>Warning:</strong> You are not allowed to run this process.
-            Please <a href="{0}" class="alert-link">sign in</a> and wait for account activation."""
-            msg = msg.format(self.request.route_path('sign_in'))
+            if self.request.user is not None:
+                msg = """<strong>Warning:</strong> You are not allowed to run this
+                process as you do not have access to the datasets. Please contact the
+                CEDA Helpdesk for more information about applying for access to the
+                required resources. Include a copy of the URL above to indicate which
+                resources you are trying to access."""
+            else:
+                msg = """<strong>Warning:</strong> You are not allowed to run this process.
+                Please <a href="{0}" class="alert-link">sign in</a> and wait for account activation."""
+                msg = msg.format(self.request.route_path('sign_in'))
             self.session.flash(msg, queue='warning')
         return dict(
             process=self.process,

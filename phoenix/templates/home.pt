@@ -4,13 +4,21 @@
 
     <section class="topbox">
       <div class="container">
-            <img src=${layout.project_logo} class="imglogo">
-            <h1>
-             <span class="title">${layout.project_title}</span>
-            </h1>
-            <h2>
-              ${layout.project_description}
-            </h2>
+        <h1>
+          <span class="title">CEDA Web Processing Service UI</span>
+        </h1>
+        <h2>
+          The CEDA Web Processing Service (WPS) User Interface (UI)
+          provides access to a set of tools that operate on CEDA/JASMIN
+          data. These tools, known as <a href="/processes">processes</a>,
+          include subsetting, filtering and compliance-checking. 
+          In most cases you will need to sign in via the link in the 
+          top-right corner before you can submit a job. 
+          <br/>
+          This UI and the underlying processes are built on the
+          <strong>Birdhouse</strong> framework developed by
+          <strong>DKRZ</strong>.
+        </h2>
       </div>
     </section>
 
@@ -20,7 +28,7 @@
         <div class="row">
           <div class="col-md-12 text-center">
             <h2><strong>Highlighted Processes</strong></h2>
-            <h3>Run one of these favorite processes or explore <a href="/processes">more</a>.</h3>
+            <h3>Run one of these favourite processes or explore <a href="/processes">more</a>.</h3>
           </div>
         </div>
         <div class="row">
