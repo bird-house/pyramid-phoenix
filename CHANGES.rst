@@ -1,6 +1,15 @@
 Changes
 *******
 
+0.12.0 (2024-07-12)
+===================
+
+* add vagrant support (#212)
+* added bbox (#213)
+* customization for clint
+* added matomo (#227)
+* added imprint to footer (#228)
+
 0.11.0 (2020-02-04)
 ===================
 
