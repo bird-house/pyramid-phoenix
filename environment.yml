@@ -22,7 +22,7 @@ dependencies:
   - requests-oauthlib
   - gevent
   - lxml
-  - mako
+  - mako<1.2.0
   - dateparser
   - python-dateutil
   - requests
