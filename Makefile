@@ -8,8 +8,10 @@ BUILDOUT_VERSION := 3.4
 PYTHON ?= python
 BUILDOUT ?= buildout
 SUPERVISOR_CONF ?= $(HOME)/birdhouse/etc/supervisor/supervisord.conf
-SUPERVISORD ?= supervisord
-SUPERVISORCTL ?= supervisorctl
+SUPERVISORD ?= $(or $(shell command -v supervisord 2>/dev/null),$(HOME)/miniforge3/envs/pyramid-phoenix/bin/supervisord)
+SUPERVISORCTL ?= $(or $(shell command -v supervisorctl 2>/dev/null),$(HOME)/miniforge3/envs/pyramid-phoenix/bin/supervisorctl)
+CONDA_BASE_PREFIX ?= $(HOME)/miniforge3
+CONDA_ENV_PREFIX ?= $(CONDA_BASE_PREFIX)/envs/pyramid-phoenix
 
 # Buildout files and folders
 DOWNLOAD_CACHE := $(APP_ROOT)/downloads
@@ -45,6 +47,7 @@ help:
 	@echo "  stop        to stop supervisor service."
 	@echo "  restart     to restart supervisor service."
 	@echo "  status      to show supervisor status"
+	@echo "  fix-service-paths to patch generated supervisor program paths for conda env binaries."
 
 .PHONY: version
 version:
@@ -80,6 +83,7 @@ bootstrap: init
 install: bootstrap
 	@echo "Installing application with buildout ..."
 	@bash -c "$(BUILDOUT) -c custom.cfg"
+	@$(MAKE) -s fix-service-paths
 	@echo "\nStart service with \`make start'"
 
 .PHONY: update
@@ -135,9 +139,17 @@ pep8: lint
 
 ## Supervisor targets
 
+.PHONY: fix-service-paths
+fix-service-paths:
+	@for f in $(HOME)/birdhouse/etc/supervisor/conf.d/mongodb.conf $(HOME)/birdhouse/etc/supervisor/conf.d/nginx.conf; do \
+		test -f $$f || continue; \
+		perl -pi -e "s|$(CONDA_BASE_PREFIX)/bin/mongod|$(CONDA_ENV_PREFIX)/bin/mongod|g; s|$(CONDA_BASE_PREFIX)/sbin/nginx|$(CONDA_ENV_PREFIX)/sbin/nginx|g; s|$(CONDA_BASE_PREFIX)/bin\"|$(CONDA_ENV_PREFIX)/bin\"|g" $$f; \
+	done
+
 .PHONY: start
 start:
 	@echo "Starting supervisor service ..."
+	@$(MAKE) -s fix-service-paths
 	$(SUPERVISORD) -c $(SUPERVISOR_CONF)
 
 .PHONY: stop
@@ -155,6 +167,7 @@ restart:
 		sleep 1; \
 		i=$$((i+1)); \
 	done
+	@$(MAKE) -s fix-service-paths
 	$(SUPERVISORD) -c $(SUPERVISOR_CONF)
 
 .PHONY: status

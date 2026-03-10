@@ -2,13 +2,25 @@ name: pyramid-phoenix
 channels:
   - conda-forge
 dependencies:
+  # Core Python tooling
   - python=3.8
   - pip
   - setuptools
   - wheel
+
+  # Runtime libraries
   - cryptography
   - pyopenssl
   - lxml
+
+  # Service binaries
   - supervisor=4
   - nginx
   - mongodb>=3.4
+
+  # Dev tools
+  - ruff
+  - pytest
+  - pytest-cov
+  - pre-commit
+  - ipython
