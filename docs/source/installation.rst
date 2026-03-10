@@ -21,7 +21,7 @@ Install buildout in the active environment:
 
 .. code-block:: console
 
-   $ (pyramid-phoenix) python -m pip install "zc.buildout==2.13.7"
+   $ (pyramid-phoenix) python -m pip install "zc.buildout==3.4"
 
 Edit the configuration ``custom.cfg`` (see ``custom.cfg.example``). For example change the admin password:
 

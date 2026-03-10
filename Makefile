@@ -4,7 +4,7 @@ VERSION := 0.4.2
 APP_ROOT := $(CURDIR)
 
 # Python
-BUILDOUT_VERSION := 2.13.7
+BUILDOUT_VERSION := 3.4
 PYTHON ?= python
 BUILDOUT ?= buildout
 SUPERVISOR_CONF ?= $(HOME)/birdhouse/etc/supervisor/supervisord.conf
