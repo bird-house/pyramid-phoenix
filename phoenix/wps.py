@@ -18,14 +18,15 @@ from phoenix.geoform.form import URLValidator
 from phoenix.geoform.form import TextValidator
 
 import logging
+
 LOGGER = logging.getLogger("PHOENIX")
 
 
-OPENDAP_MIME_TYPES = ['application/x-ogc-dods']
+OPENDAP_MIME_TYPES = ["application/x-ogc-dods"]
 
 
 def is_opendap(data_input):
-    if hasattr(data_input, 'metadata'):
+    if hasattr(data_input, "metadata"):
         for metadata in data_input.metadata:
             if metadata.title in OPENDAP_MIME_TYPES:
                 return True
@@ -44,7 +45,7 @@ def check_status(url=None, response=None, sleep_secs=2, verify=False):
         LOGGER.debug("using response document ...")
         xml = response
     elif url:
-        LOGGER.debug('using status_location url ...')
+        LOGGER.debug("using status_location url ...")
         xml = requests.get(url, verify=verify).content
     else:
         raise Exception("you need to provide a status-location url or response object.")
@@ -65,7 +66,7 @@ def appstruct_to_inputs(request, appstruct):
     # LOGGER.debug("appstruct=%s", appstruct)
     inputs = []
     for key, values in list(appstruct.items()):
-        if key in ['_async_check', 'csrf_token']:
+        if key in ["_async_check", "csrf_token"]:
             continue
         if not isinstance(values, list):
             values = [values]
@@ -74,6 +75,7 @@ def appstruct_to_inputs(request, appstruct):
             inputs.append((str(key).strip(), str(value).strip()))
     # LOGGER.debug("inputs form appstruct=%s", inputs)
     return inputs
+
 
 # wps input schema
 # ----------------
@@ -92,7 +94,7 @@ class WPSSchema(deform.schema.CSRFSchema):
     appstruct = {}
 
     def __init__(self, request, hide_complex=False, process=None, use_async=False, user=None, **kw):
-        """ Initialise the given mapped schema according to options provided.
+        """Initialise the given mapped schema according to options provided.
 
         Arguments/Keywords
 
@@ -125,9 +127,9 @@ class WPSSchema(deform.schema.CSRFSchema):
     def add_async_check(self):
         node = colander.SchemaNode(
             colander.Boolean(),
-            name='_async_check',
-            title='Run async',
-            description='Check this to run process async.',
+            name="_async_check",
+            title="Run async",
+            description="Check this to run process async.",
             default=True,
             widget=deform.widget.CheckboxWidget(),
         )
@@ -137,10 +139,10 @@ class WPSSchema(deform.schema.CSRFSchema):
         if process is None:
             return
         for data_input in process.dataInputs:
-            if 'ComplexData' in data_input.dataType:
+            if "ComplexData" in data_input.dataType:
                 if not self.hide_complex:
                     self.add(self.complex_data(data_input))
-            elif 'BoundingBoxData' in data_input.dataType:
+            elif "BoundingBoxData" in data_input.dataType:
                 self.add(self.bbox_data(data_input))
             else:
                 self.add(self.literal_data(data_input))
@@ -154,19 +156,17 @@ class WPSSchema(deform.schema.CSRFSchema):
         )
 
         # sometimes abstract is not set
-        node.description = getattr(data_input, 'abstract', '')
+        node.description = getattr(data_input, "abstract", "")
         # optional value?
         if data_input.minOccurs == 0:
             node.missing = colander.drop
         # TODO: fix init of default
-        if hasattr(data_input, 'defaultValue') \
-           and data_input.defaultValue is not None:
-            if type(node.typ) in (colander.DateTime, colander.Date,
-                                  colander.Time):
+        if hasattr(data_input, "defaultValue") and data_input.defaultValue is not None:
+            if isinstance(node.typ, (colander.DateTime, colander.Date, colander.Time)):
                 node.default = dateutil.parser.parse(data_input.defaultValue)
-            elif type(node.typ) == colander.Boolean:
+            elif isinstance(node.typ, colander.Boolean):
                 # TODO: boolean default does not work ...
-                node.default = bool(data_input.defaultValue == 'True')
+                node.default = bool(data_input.defaultValue == "True")
             else:
                 node.default = data_input.defaultValue
         self.colander_literal_widget(node, data_input)
@@ -178,39 +178,39 @@ class WPSSchema(deform.schema.CSRFSchema):
                 node,
                 name=data_input.identifier,
                 title=data_input.title,
-                validator=colander.Length(max=data_input.maxOccurs)
+                validator=colander.Length(max=data_input.maxOccurs),
             )
 
         return node
 
     def colander_literal_type(self, data_input):
         # LOGGER.debug('data input type = %s', data_input.dataType)
-        if 'boolean' in data_input.dataType:
+        if "boolean" in data_input.dataType:
             return colander.Boolean()
-        elif 'integer' in data_input.dataType:
+        elif "integer" in data_input.dataType:
             return colander.Integer()
-        elif 'float' in data_input.dataType:
+        elif "float" in data_input.dataType:
             return colander.Float()
-        elif 'double' in data_input.dataType:
+        elif "double" in data_input.dataType:
             return colander.Float()
-        elif 'angle' in data_input.dataType:
+        elif "angle" in data_input.dataType:
             return colander.Float()
-        elif 'decimal' in data_input.dataType:
+        elif "decimal" in data_input.dataType:
             return colander.Decimal()
-        elif 'string' in data_input.dataType:
+        elif "string" in data_input.dataType:
             return colander.String()
-        elif 'dateTime' in data_input.dataType:
+        elif "dateTime" in data_input.dataType:
             return colander.DateTime()
-        elif 'date' in data_input.dataType:
+        elif "date" in data_input.dataType:
             return colander.Date()
-        elif 'time' in data_input.dataType:
+        elif "time" in data_input.dataType:
             return colander.Time()
-        elif 'duration' in data_input.dataType:
+        elif "duration" in data_input.dataType:
             # TODO: check correct type
             # http://www.w3.org/TR/xmlschema-2/#duration
             return colander.Time()
         # guessing from default
-        elif hasattr(data_input, 'defaultValue'):
+        elif hasattr(data_input, "defaultValue"):
             try:
                 dateutil.parser.parse(data_input.defaultValue)
             except Exception:
@@ -221,24 +221,23 @@ class WPSSchema(deform.schema.CSRFSchema):
             return colander.String()
 
     def colander_literal_widget(self, node, data_input):
-        if len(data_input.allowedValues) > 0 and 'AnyValue' not in data_input.allowedValues:
+        if len(data_input.allowedValues) > 0 and "AnyValue" not in data_input.allowedValues:
             # LOGGER.debug('allowed values %s', data_input.allowedValues)
             choices = []
             for value in data_input.allowedValues:
                 choices.append([value, value])
             node.widget = deform.widget.Select2Widget(values=choices)
-        elif type(node.typ) == colander.DateTime:
+        elif isinstance(node.typ, colander.DateTime):
             node.widget = deform.widget.DateInputWidget()
-        elif type(node.typ) == colander.Boolean:
+        elif isinstance(node.typ, colander.Boolean):
             node.widget = deform.widget.CheckboxWidget()
-        elif 'password' in data_input.identifier:
+        elif "password" in data_input.identifier:
             node.widget = deform.widget.PasswordWidget(size=20)
-        elif type(node.typ) == colander.String:
+        elif isinstance(node.typ, colander.String):
             if is_opendap(data_input):
                 node.widget = ResourceWidget(
-                    mime_types=OPENDAP_MIME_TYPES,
-                    upload=False,
-                    storage_url=self.request.storage.base_url)
+                    mime_types=OPENDAP_MIME_TYPES, upload=False, storage_url=self.request.storage.base_url
+                )
             else:
                 node.widget = deform.widget.TextInputWidget()
         else:
@@ -250,11 +249,11 @@ class WPSSchema(deform.schema.CSRFSchema):
             name=data_input.identifier,
             title=data_input.title,
             validator=BBoxValidator(),
-            widget=BBoxWidget()
+            widget=BBoxWidget(),
         )
 
         # sometimes abstract is not set
-        node.description = getattr(data_input, 'abstract') or 'No summary'
+        node.description = getattr(data_input, "abstract") or "No summary"
         # optional value?
         if data_input.minOccurs == 0:
             node.missing = colander.drop
@@ -266,7 +265,7 @@ class WPSSchema(deform.schema.CSRFSchema):
                 node,
                 name=data_input.identifier,
                 title=data_input.title,
-                validator=colander.Length(max=data_input.maxOccurs)
+                validator=colander.Length(max=data_input.maxOccurs),
             )
 
         return node
@@ -278,7 +277,8 @@ class WPSSchema(deform.schema.CSRFSchema):
             mime_types=mime_types,
             upload=True,
             storage_url=self.request.storage.base_url,
-            size_limit=self.request.max_file_size * 1048576)
+            size_limit=self.request.max_file_size * 1048576,
+        )
 
         resource_node = colander.SchemaNode(
             colander.String(),
@@ -296,7 +296,8 @@ class WPSSchema(deform.schema.CSRFSchema):
                 colander.Sequence(),
                 resource_node,
                 name=data_input.identifier,
-                validator=colander.Length(max=data_input.maxOccurs))
+                validator=colander.Length(max=data_input.maxOccurs),
+            )
         else:
             node = resource_node
 
@@ -304,7 +305,7 @@ class WPSSchema(deform.schema.CSRFSchema):
         node.title = data_input.title or data_input.identifier
 
         # sometimes abstract is not set
-        node.description = getattr(data_input, 'abstract') or 'No summary'
+        node.description = getattr(data_input, "abstract") or "No summary"
 
         # optional value?
         if data_input.minOccurs == 0:
@@ -319,29 +320,24 @@ class WPSSchema(deform.schema.CSRFSchema):
             mime_types = [str(value.mimeType) for value in data_input.supportedValues]
         # LOGGER.debug("mime-types: %s", mime_types)
         # set current proxy certificate
-        if 'application/x-pkcs7-mime' in mime_types and self.user is not None:
+        if "application/x-pkcs7-mime" in mime_types and self.user is not None:
             # TODO: check if certificate is still valid
-            default = self.user.get('credentials')
+            default = self.user.get("credentials")
         elif "application/x-netcdf" in mime_types and "HadCRUT" in data_input.title:
             default = "https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/non-infilled/HadCRUT.5.0.1.0.anomalies.ensemble_mean.nc"
         else:
-            default = colander.null   
+            default = colander.null
         return default
 
     def bind(self, **kw):
         cloned = self.clone()
         cloned._bind(kw)
 
-        LOGGER.debug('after bind: num schema children = %s', len(cloned.children))
+        LOGGER.debug("after bind: num schema children = %s", len(cloned.children))
         return cloned
 
     def clone(self):
-        cloned = self.__class__(
-            self.request,
-            self.hide_complex,
-            self.process,
-            self.user,
-            **self.kwargs)
+        cloned = self.__class__(self.request, self.hide_complex, self.process, self.user, **self.kwargs)
         cloned.__dict__.update(self.__dict__)
         cloned.children = [node.clone() for node in self.children]
         return cloned

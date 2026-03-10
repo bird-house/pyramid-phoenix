@@ -13,12 +13,13 @@ from phoenix.tasks.utils import wps_headers, save_log, add_job, wait_secs
 from phoenix.wps import check_status
 
 from celery.utils.log import get_task_logger
+
 LOGGER = get_task_logger(__name__)
 
 
 @app.task(bind=True)
 def execute_process(self, url, service_name, identifier, inputs, outputs, use_async=True, userid=None, caption=None):
-    registry = app.conf['PYRAMID_REGISTRY']
+    registry = app.conf["PYRAMID_REGISTRY"]
     db = mongodb(registry)
     job = add_job(
         db,
@@ -27,37 +28,30 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, use_as
         service_name=service_name,
         process_id=identifier,
         use_async=use_async,
-        caption=caption)
+        caption=caption,
+    )
 
     try:
         wps = WebProcessingService(url=url, skip_caps=False, verify=False, headers=wps_headers(userid))
-        LOGGER.debug('wps url={}, headers={}'.format(url, wps_headers(userid)))
+        LOGGER.debug("wps url={}, headers={}".format(url, wps_headers(userid)))
         # TODO: complex type detection is currently broken due to pywps bug.
-        outputs = [('output', True)]
+        outputs = [("output", True)]
         try:
             # TODO: sync is non-default
             if use_async is False:
                 mode = SYNC
             else:
                 mode = ASYNC
-            execution = wps.execute(
-                identifier=identifier,
-                inputs=inputs,
-                output=outputs,
-                mode=mode,
-                lineage=True)
+            execution = wps.execute(identifier=identifier, inputs=inputs, output=outputs, mode=mode, lineage=True)
         except Exception:
             LOGGER.warn("Setting execution mode is not supported. Using default async mode.")
-            execution = wps.execute(identifier,
-                                    inputs=inputs,
-                                    output=outputs
-                                    )
+            execution = wps.execute(identifier, inputs=inputs, output=outputs)
         # job['service'] = wps.identification.title
         # job['title'] = getattr(execution.process, "title")
-        job['abstract'] = getattr(execution.process, "abstract")
-        job['status_location'] = execution.statusLocation
-        job['request'] = execution.request
-        job['response'] = etree.tostring(execution.response)
+        job["abstract"] = getattr(execution.process, "abstract")
+        job["status_location"] = execution.statusLocation
+        job["request"] = execution.request
+        job["response"] = etree.tostring(execution.response)
 
         LOGGER.debug("job init done %s ...", self.request.id)
         LOGGER.debug("status location={}".format(execution.statusLocation))
@@ -68,23 +62,22 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, use_as
             if num_retries >= 5:
                 raise Exception("Could not read status document after 5 retries. Giving up.")
             try:
-                execution = check_status(url=execution.statusLocation, verify=False,
-                                         sleep_secs=wait_secs(run_step))
-                job['response'] = etree.tostring(execution.response)
-                job['status'] = execution.getStatus()
-                job['status_message'] = execution.statusMessage
-                job['progress'] = execution.percentCompleted
-                duration = datetime.now() - job.get('created', datetime.now())
-                job['duration'] = str(duration).split('.')[0]
+                execution = check_status(url=execution.statusLocation, verify=False, sleep_secs=wait_secs(run_step))
+                job["response"] = etree.tostring(execution.response)
+                job["status"] = execution.getStatus()
+                job["status_message"] = execution.statusMessage
+                job["progress"] = execution.percentCompleted
+                duration = datetime.now() - job.get("created", datetime.now())
+                job["duration"] = str(duration).split(".")[0]
 
                 if execution.isComplete():
-                    job['finished'] = datetime.now()
+                    job["finished"] = datetime.now()
                     if execution.isSucceded():
                         LOGGER.debug("job succeded")
-                        job['progress'] = 100
+                        job["progress"] = 100
                     else:
                         LOGGER.debug("job failed.")
-                        job['status_message'] = '\n'.join(error.text for error in execution.errors)
+                        job["status_message"] = "\n".join(error.text for error in execution.errors)
                         for error in execution.errors:
                             save_log(job, error)
             except Exception:
@@ -97,14 +90,14 @@ def execute_process(self, url, service_name, identifier, inputs, outputs, use_as
                 run_step += 1
             finally:
                 save_log(job)
-                db.jobs.update({'identifier': job['identifier']}, job)
+                db.jobs.update({"identifier": job["identifier"]}, job)
     except Exception as exc:
         LOGGER.exception("Failed to run Job")
-        job['status'] = "ProcessFailed"
-        job['status_message'] = "Error: {0}".format(exc)
+        job["status"] = "ProcessFailed"
+        job["status_message"] = "Error: {0}".format(exc)
     finally:
         save_log(job)
-        db.jobs.update({'identifier': job['identifier']}, job)
+        db.jobs.update({"identifier": job["identifier"]}, job)
 
     registry.notify(JobFinished(job))
-    return job['status']
+    return job["status"]

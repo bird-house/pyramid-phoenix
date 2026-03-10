@@ -10,5 +10,7 @@ def test_check_status():
     assert execution.response is not None
     assert isinstance(execution.response, etree._Element)
     assert execution.isSucceded()
-    assert execution.statusLocation ==\
-        'https://localhost:28090/wpsoutputs/hummingbird/56cd4294-bd69-11e6-80fe-68f72837e1b4.xml'
+    assert (
+        execution.statusLocation
+        == "https://localhost:28090/wpsoutputs/hummingbird/56cd4294-bd69-11e6-80fe-68f72837e1b4.xml"
+    )

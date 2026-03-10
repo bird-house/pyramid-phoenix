@@ -7,19 +7,18 @@ from pyramid.events import subscriber, BeforeRender
 
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 _here = os.path.dirname(__file__)
 
 # favicon static/favicon.ico
-_favicon = open(os.path.join(
-                _here, 'static', 'favicon.ico'), 'rb').read()
-_favicon_response = Response(content_type='image/x-icon', body=_favicon)
+_favicon = open(os.path.join(_here, "static", "favicon.ico"), "rb").read()
+_favicon_response = Response(content_type="image/x-icon", body=_favicon)
 
 # robots static/robots.txt
-_robots = open(os.path.join(
-               _here, 'static', 'robots.txt')).read()
-_robots_response = Response(content_type='text/plain', body=_robots)
+_robots = open(os.path.join(_here, "static", "robots.txt")).read()
+_robots_response = Response(content_type="text/plain", body=_robots)
 
 
 class MyView(object):
@@ -35,15 +34,13 @@ class MyView(object):
         # set breadcrumbs
         for item in self.breadcrumbs():
             lm = self.request.layout_manager
-            lm.layout.add_breadcrumb(
-                route_path=item.get('route_path'),
-                title=item.get('title'))
+            lm.layout.add_breadcrumb(route_path=item.get("route_path"), title=item.get("title"))
 
     def breadcrumbs(self):
         return [dict(route_path=self.request.route_path("home"), title="Home")]
 
 
-@notfound_view_config(renderer='phoenix:templates/404.pt')
+@notfound_view_config(renderer="phoenix:templates/404.pt")
 def notfound(request):
     """This special view just renders a custom 404 page. We do this
     so that the 404 page fits nicely into our global layout.
@@ -53,39 +50,40 @@ def notfound(request):
 
 @subscriber(BeforeRender)
 def add_global(event):
-    event['message_type'] = 'alert-info'
-    event['message'] = ''
+    event["message_type"] = "alert-info"
+    event["message"] = ""
 
 
 @view_config(context=Exception)
 def unknown_failure(request, exc):
     # import traceback
-    logger.exception('unknown failure')
+    logger.exception("unknown failure")
     # msg = exc.args[0] if exc.args else ""
     # response =  Response('Ooops, something went wrong: %s' % (traceback.format_exc()))
-    response = Response('Ooops, something went wrong. Check the log files.')
+    response = Response("Ooops, something went wrong. Check the log files.")
     response.status_int = 500
     return response
 
 
-@view_config(name='favicon.ico')
+@view_config(name="favicon.ico")
 def favicon_view(request):
     return _favicon_response
 
 
-@view_config(name='robots.txt')
+@view_config(name="robots.txt")
 def robotstxt_view(request):
     return _robots_response
 
 
-@view_defaults(permission='view', layout='default')
+@view_defaults(permission="view", layout="default")
 class Home(object):
     def __init__(self, request):
         self.request = request
         self.session = self.request.session
 
-    @view_config(route_name='home', renderer='phoenix:templates/home.pt')
+    @view_config(route_name="home", renderer="phoenix:templates/home.pt")
     def view(self):
         from phoenix.utils import pinned_processes
+
         processes = pinned_processes(self.request)
         return dict(processes=processes)

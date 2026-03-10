@@ -10,9 +10,10 @@ class BBoxValidator(object):
     Bounding-Box validator which succeeds if the bbox value has the format
     :attr:`minx,miny,maxx,maxy` and values are in range (``-180 <= x <=180``, ``-90 <= y <=90``).
     """
+
     def __call__(self, node, value):
         try:
-            minx, miny, maxx, maxy = [float(val) for val in value.split(',', 3)]
+            minx, miny, maxx, maxy = [float(val) for val in value.split(",", 3)]
         except Exception:
             raise colander.Invalid(node, "Could not parse BBox.")
         else:
@@ -34,8 +35,9 @@ class URLValidator(object):
     """
     URL validator which can configured with allowed URL schemes.
     """
+
     def __init__(self, allowed_schemes=None):
-        self.allowed_schemes = allowed_schemes or ['http', 'https']
+        self.allowed_schemes = allowed_schemes or ["http", "https"]
 
     def __call__(self, node, value):
         try:
@@ -47,13 +49,13 @@ class URLValidator(object):
                 raise colander.Invalid(node, "URL scheme {} is not allowed.".format(parsed_url.scheme))
             if not parsed_url.netloc:
                 raise colander.Invalid(node, "Invalid URL.")
-            if '..' in parsed_url.path:
+            if ".." in parsed_url.path:
                 raise colander.Invalid(node, "Invalid URL.")
 
 
 class TextValidator(object):
-    """
-    """
+    """ """
+
     def __init__(self, restricted_chars=None):
         self.restricted_chars = restricted_chars or ["\\", "#", ";", "&", "!", "<", ">"]
 
@@ -74,6 +76,7 @@ class FileUploadValidator(colander.All):
     """
     Runs all validators for file upload checks.
     """
+
     def __init__(self, storage, max_size):
         self.validators = [FileFormatAllowedValidator(storage), FileSizeLimitValidator(storage, max_size)]
 
@@ -84,12 +87,13 @@ class FileFormatAllowedValidator(object):
 
     https://pythonhosted.org/pyramid_storage/
     """
+
     def __init__(self, storage):
         self.storage = storage
 
     def __call__(self, node, value):
-        if not self.storage.filename_allowed(value['filename']):
-            msg = 'File format is not allowed: {filename}'.format(filename=value['filename'])
+        if not self.storage.filename_allowed(value["filename"]):
+            msg = "File format is not allowed: {filename}".format(filename=value["filename"])
             raise colander.Invalid(node, msg)
 
 
@@ -100,14 +104,15 @@ class FileSizeLimitValidator(object):
     You can configure the maximum size by setting the max_size
     option to the maximum number of megabytes that you want to allow.
     """
+
     def __init__(self, storage, max_size=2):
         self.storage = storage
         self.max_size = max_size
 
     def __call__(self, node, value):
-        value['fp'].seek(0, 2)
-        size = value['fp'].tell()
-        value['fp'].seek(0)
+        value["fp"].seek(0, 2)
+        size = value["fp"].tell()
+        value["fp"].seek(0)
         if size > int(self.max_size) * 1024 * 1024:
-            msg = 'Maximum file size: {size}MB'.format(size=self.max_size)
+            msg = "Maximum file size: {size}MB".format(size=self.max_size)
             raise colander.Invalid(node, msg)

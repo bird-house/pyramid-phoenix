@@ -8,35 +8,34 @@ from phoenix.utils import wps_caps_url
 
 def get_process_media(process):
     for metadata in process.metadata:
-        if metadata.role == 'http://www.opengis.net/spec/wps/2.0/def/process/description/media':
+        if metadata.role == "http://www.opengis.net/spec/wps/2.0/def/process/description/media":
             return metadata.url
     return None
 
 
-@view_defaults(permission='view', layout="default")
+@view_defaults(permission="view", layout="default")
 class ProcessList(MyView):
     def __init__(self, request):
-        self.service_id = request.params.get('wps')
+        self.service_id = request.params.get("wps")
         service = request.catalog.get_record_by_id(self.service_id)
-        self.wps = WebProcessingService(
-            url=service.url,
-            verify=False)
-        super(ProcessList, self).__init__(request, name='processes_list', title='')
+        self.wps = WebProcessingService(url=service.url, verify=False)
+        super(ProcessList, self).__init__(request, name="processes_list", title="")
 
     @view_config(
-        route_name='processes_list',
-        renderer='phoenix:processes/templates/processes/list.pt',
-        accept='text/html')
+        route_name="processes_list", renderer="phoenix:processes/templates/processes/list.pt", accept="text/html"
+    )
     def view(self):
         items = []
         for process in self.wps.processes:
             item = dict(
                 title=process.title,
                 version=process.processVersion,
-                description=getattr(process, 'abstract', ''),
+                description=getattr(process, "abstract", ""),
                 media=get_process_media(process),
-                url=self.request.route_path('processes_execute',
-                                            _query=[('wps', self.service_id), ('process', process.identifier)]))
+                url=self.request.route_path(
+                    "processes_execute", _query=[("wps", self.service_id), ("process", process.identifier)]
+                ),
+            )
             items.append(item)
         return dict(
             url=wps_caps_url(self.wps.url),
@@ -44,4 +43,5 @@ class ProcessList(MyView):
             description=self.wps.identification.abstract,
             provider_name=self.wps.provider.name,
             provider_site=self.wps.provider.url,
-            items=items)
+            items=items,
+        )

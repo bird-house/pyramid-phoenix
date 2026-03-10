@@ -18,7 +18,7 @@ class UserSettingsTests(unittest.TestCase):
         request = testing.DummyRequest()
         inst = UserSettings(request)
         response = inst.user_view()
-        self.assertEqual('Home View', response['name'])
+        self.assertEqual("Home View", response["name"])
 
 
 class UserSettingsFunctionalTests(unittest.TestCase):
@@ -32,5 +32,5 @@ class UserSettingsFunctionalTests(unittest.TestCase):
 
     @pytest.mark.skip(reason="no way of currently testing this")
     def test_user_view(self):
-        res = self.testapp.get('/', status=200)
-        self.assertIn(b'<h1>Hi Home View', res.body)
+        res = self.testapp.get("/", status=200)
+        self.assertIn(b"<h1>Hi Home View", res.body)

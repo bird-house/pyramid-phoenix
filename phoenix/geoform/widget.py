@@ -30,21 +30,22 @@ class ResourceWidget(Widget):
 
     It is based on deform.widget.TextInputWidget.
     """
-    template = 'resource'
-    readonly_template = 'readonly/textinput'
+
+    template = "resource"
+    readonly_template = "readonly/textinput"
     strip = True
     mask = None
     mask_placeholder = "_"
-    mime_types = ['application/x-netcdf']
+    mime_types = ["application/x-netcdf"]
     upload = False
     storage_url = None
     size_limit = 2 * 1024 * 1024  # 2 MB in bytes
-    requirements = (('jquery.maskedinput', None),)
+    requirements = (("jquery.maskedinput", None),)
 
     def serialize(self, field, cstruct, **kw):
         if cstruct in (null, None):
-            cstruct = ''
-        readonly = kw.get('readonly', self.readonly)
+            cstruct = ""
+        readonly = kw.get("readonly", self.readonly)
         template = readonly and self.readonly_template or self.template
         values = self.get_template_values(field, cstruct, kw)
         return field.renderer(template, **values)
@@ -74,29 +75,31 @@ class BBoxWidget(Widget):
         The template name used to render the widget in read-only mode.
         Default: ``readonly/bbox``.
     """
-    template = 'bbox'
-    readonly_template = 'readonly/bbox'
+
+    template = "bbox"
+    readonly_template = "readonly/bbox"
 
     _pstruct_schema = SchemaNode(
         Mapping(),
-        SchemaNode(_StrippedString(), name='minx'),
-        SchemaNode(_StrippedString(), name='miny'),
-        SchemaNode(_StrippedString(), name='maxx'),
-        SchemaNode(_StrippedString(), name='maxy'))
+        SchemaNode(_StrippedString(), name="minx"),
+        SchemaNode(_StrippedString(), name="miny"),
+        SchemaNode(_StrippedString(), name="maxx"),
+        SchemaNode(_StrippedString(), name="maxy"),
+    )
 
     def serialize(self, field, cstruct, **kw):
         if cstruct is null:
-            minx = '-180'
-            miny = '-90'
-            maxx = '180'
-            maxy = '90'
+            minx = "-180"
+            miny = "-90"
+            maxx = "180"
+            maxy = "90"
         else:
-            minx, miny, maxx, maxy = cstruct.split(',', 3)
+            minx, miny, maxx, maxy = cstruct.split(",", 3)
 
-        kw.setdefault('minx', minx)
-        kw.setdefault('miny', miny)
-        kw.setdefault('maxx', maxx)
-        kw.setdefault('maxy', maxy)
+        kw.setdefault("minx", minx)
+        kw.setdefault("miny", miny)
+        kw.setdefault("maxx", maxx)
+        kw.setdefault("maxy", maxy)
 
         # readonly = kw.get('readonly', self.readonly)
         # TODO: add readonly template
@@ -113,40 +116,40 @@ class BBoxWidget(Widget):
                 validated = self._pstruct_schema.deserialize(pstruct)
             except Invalid as exc:
                 raise Invalid(field.schema, text_("Invalid pstruct: %s" % exc))
-            minx = validated['minx']
-            miny = validated['miny']
-            maxx = validated['maxx']
-            maxy = validated['maxy']
+            minx = validated["minx"]
+            miny = validated["miny"]
+            maxx = validated["maxx"]
+            maxy = validated["maxy"]
 
             if not minx and not minx and not maxx and not maxy:
                 return null
 
-            result = ','.join([minx, miny, maxx, maxy])
+            result = ",".join([minx, miny, maxx, maxy])
 
             if not minx or not miny or not maxx or not maxy:
-                raise Invalid(field.schema, 'Incomplete bbox', result)
+                raise Invalid(field.schema, "Incomplete bbox", result)
 
             return result
 
 
 class TagsWidget(Widget):
-    template = 'tags'
+    template = "tags"
     # readonly_template = 'readonly/tags'
     size = None
     strip = True
     mask = None
     mask_placeholder = "_"
     style = None
-    requirements = (('jquery.maskedinput', None), )
+    requirements = (("jquery.maskedinput", None),)
 
     def serialize(self, field, cstruct, **kw):
         if cstruct in (null, None):
-            cstruct = ''
+            cstruct = ""
         values = self.get_template_values(field, cstruct, kw)
         return field.renderer(self.template, **values)
 
     def deserialize(self, field, pstruct):
-        LOGGER.debug('result pstruct=%s', pstruct)
+        LOGGER.debug("result pstruct=%s", pstruct)
         if pstruct is null:
             return null
         if self.strip:
