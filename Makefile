@@ -71,7 +71,7 @@ init: custom.cfg downloads
 .PHONY: bootstrap
 bootstrap: init
 	@echo "Bootstrap buildout with pip ..."
-	@$(PYTHON) -m pip install "zc.buildout==$(BUILDOUT_VERSION)"
+	@$(PYTHON) -m pip install "setuptools<52" "zc.buildout==$(BUILDOUT_VERSION)"
 
 .PHONY: install
 install: bootstrap

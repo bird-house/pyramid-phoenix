@@ -7,7 +7,6 @@ pyramid_deform
 pyramid_beaker
 pyramid_celery
 pyramid_storage
-pyramid_celery
 deform
 #js.deform
 #js.bootstrap

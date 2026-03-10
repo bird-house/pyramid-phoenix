@@ -2,45 +2,13 @@ name: pyramid-phoenix
 channels:
   - conda-forge
 dependencies:
-  - pip
   - python=3.8
-  - curl
-  - pyopenssl
+  - pip
+  - setuptools
+  - wheel
   - cryptography
-  - icu
-# buildout
-  #- dataclasses=0.8
-# tests
-  - pytest
-  - flake8
-  - pycodestyle
-# phoenix
-  - nginx
-  - supervisor=4
-  - gunicorn
-  - requests-oauthlib
-  - gevent
+  - pyopenssl
   - lxml
-  - mako
-  - dateparser
-  - python-dateutil
-  - requests
-  - pyyaml
-  - pygments
-  - pytz
-  - owslib>=0.19
-  - transaction
-  #- genshi=0.7
-  - pyjwt
-# pyramid
-  - pyramid>=1.10,<2.0
-  - beaker
-  #- pyramid-beaker
-  #- pyramid-mako
-  - colander
-# celery
-  #- celery=3.1
-  #- kombu=3.0
-# mongodb
-  - pymongo=3
+  - supervisor=4
+  - nginx
   - mongodb>=3.4

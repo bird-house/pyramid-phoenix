@@ -17,6 +17,9 @@ Create the conda_ environment and activate it:
   $ conda env create -f environment.yml
   $ conda activate pyramid-phoenix
 
+The conda environment is intentionally minimal (bootstrap only). Application and
+service dependencies are installed by buildout during ``make install``.
+
 Bootstrap buildout in the active environment:
 
 .. code-block:: console
