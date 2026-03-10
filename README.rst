@@ -1,9 +1,9 @@
 Phoenix
 =======
 
-.. image:: https://travis-ci.org/bird-house/pyramid-phoenix.svg?branch=master
-   :target: https://travis-ci.org/bird-house/pyramid-phoenix
-   :alt: Travis Build
+.. image:: https://github.com/bird-house/pyramid-phoenix/actions/workflows/ci.yml/badge.svg
+  :target: https://github.com/bird-house/pyramid-phoenix/actions/workflows/ci.yml
+  :alt: CI
 
 
 Phoenix (the bird)

@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  install:
+    name: Installation Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          miniforge-variant: Miniforge3
+          use-mamba: true
+          activate-environment: pyramid-phoenix
+          environment-file: environment.yml
+          python-version: 3.8
+
+      - name: Bootstrap buildout
+        run: make bootstrap
+
+      - name: Install with buildout
+        run: make install
+
+  codestyle:
+    name: Codestyle Check
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          miniforge-variant: Miniforge3
+          use-mamba: true
+          activate-environment: pyramid-phoenix
+          environment-file: environment.yml
+          python-version: 3.8
+
+      - name: Run flake8
+        run: make pep8
