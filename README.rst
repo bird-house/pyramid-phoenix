@@ -23,7 +23,7 @@ Local Quickstart
 
   $ conda env create -f environment.yml
   $ conda activate pyramid-phoenix
-  $ python -m pip install "zc.buildout==3.4"
+  $ make bootstrap
   $ make install
   $ make start
   $ make status

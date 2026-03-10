@@ -17,11 +17,11 @@ Create the conda_ environment and activate it:
   $ conda env create -f environment.yml
   $ conda activate pyramid-phoenix
 
-Install buildout in the active environment:
+Bootstrap buildout in the active environment:
 
 .. code-block:: console
 
-   $ (pyramid-phoenix) python -m pip install "zc.buildout==3.4"
+   $ (pyramid-phoenix) make bootstrap
 
 Edit the configuration ``custom.cfg`` (see ``custom.cfg.example``). For example change the admin password:
 
