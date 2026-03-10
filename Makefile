@@ -33,7 +33,10 @@ help:
 	@echo "\nTesting targets:"
 	@echo "  test        to run tests (but skip long running tests)."
 	@echo "  testall     to run all tests (including long running tests)."
-	@echo "  pep8        to run pep8 code style checks."
+	@echo "  lint        to run Ruff lint checks."
+	@echo "  lint-fix    to run Ruff lint checks with auto-fixes."
+	@echo "  format      to format code with Ruff formatter."
+	@echo "  pep8        alias of 'lint' (backward compatibility)."
 	@echo "\nSupporting targets:"
 	@echo "  srcclean    to remove all *.pyc files."
 	@echo "  distclean   to remove *all* files that are not controlled by 'git'. WARNING: use it *only* if you know what you do!"
@@ -112,10 +115,23 @@ testall:
 	@echo "Running all tests (including slow and online tests) ..."
 	bash -c "bin/py.test -v"
 
+.PHONY: lint
+lint:
+	@echo "Running Ruff lint checks ..."
+	$(PYTHON) -m ruff check .
+
+.PHONY: lint-fix
+lint-fix:
+	@echo "Running Ruff lint checks with fixes ..."
+	$(PYTHON) -m ruff check --fix .
+
+.PHONY: format
+format:
+	@echo "Formatting code with Ruff ..."
+	$(PYTHON) -m ruff format .
+
 .PHONY: pep8
-pep8:
-	@echo "Running pep8 code style checks ..."
-	flake8
+pep8: lint
 
 ## Supervisor targets
 
