@@ -1,0 +1,20 @@
+line-length = 120
+
+[lint]
+select = ["E", "F", "W"]
+ignore = ["E402", "F401", "W605"]
+
+exclude = [
+  "tests",
+  ".git",
+  "__pycache__",
+  "docs",
+  "docs/**",
+  "build",
+  "dist",
+  "bin",
+  "eggs",
+  "parts",
+  "examples",
+  "bootstrap-buildout.py",
+]

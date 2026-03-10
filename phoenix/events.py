@@ -9,7 +9,7 @@ class JobFinished(object):
         self.job = job
 
     def succeeded(self):
-        return self.job.get('status') == "ProcessSucceeded"
+        return self.job.get("status") == "ProcessSucceeded"
 
 
 class SettingsChanged(object):
@@ -20,5 +20,5 @@ class SettingsChanged(object):
     def converted_settings(self):
         converted = {}
         for key, value in self.new_settings.items():
-            converted[key.replace('_', '.')] = value
+            converted[key.replace("_", ".")] = value
         return converted

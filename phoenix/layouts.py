@@ -32,9 +32,7 @@ class PageLayout(object):
 
     @property
     def project_description(self):
-        return self.request.registry.settings.get(
-            "phoenix.description", "A Python Web App to interact with WPS"
-        )
+        return self.request.registry.settings.get("phoenix.description", "A Python Web App to interact with WPS")
 
     @property
     def project_theme(self):
@@ -42,15 +40,11 @@ class PageLayout(object):
 
     @property
     def project_docs(self):
-        return self.request.registry.settings.get(
-            "phoenix.docs", "https://pyramid-phoenix.readthedocs.org/"
-        )
+        return self.request.registry.settings.get("phoenix.docs", "https://pyramid-phoenix.readthedocs.org/")
 
     @property
     def project_imprint(self):
-        return self.request.registry.settings.get(
-            "phoenix.imprint", "https://www.dkrz.de/about/kontakt/impressum"
-        )
+        return self.request.registry.settings.get("phoenix.imprint", "https://www.dkrz.de/about/kontakt/impressum")
 
     @property
     def project_policy(self):
@@ -63,7 +57,7 @@ class PageLayout(object):
     def matomo_enabled(self):
         try:
             enabled = int(self.matomo_site_id) > 0
-        except:
+        except Exception:
             enabled = False
         return enabled
 

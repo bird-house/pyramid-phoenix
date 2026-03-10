@@ -1,9 +1,9 @@
 Phoenix
 =======
 
-.. image:: https://travis-ci.org/bird-house/pyramid-phoenix.svg?branch=master
-   :target: https://travis-ci.org/bird-house/pyramid-phoenix
-   :alt: Travis Build
+.. image:: https://github.com/bird-house/pyramid-phoenix/actions/workflows/ci.yml/badge.svg
+  :target: https://github.com/bird-house/pyramid-phoenix/actions/workflows/ci.yml
+  :alt: CI
 
 
 Phoenix (the bird)
@@ -15,3 +15,17 @@ Phoenix has a user-interface to interact with Web Processing Services (WPS).
 For installation and configuration read the `documentation on ReadTheDocs <http://pyramid-phoenix.readthedocs.io/en/latest/index.html>`_.
 
 Phoenix is part of the `Birdhouse <http://bird-house.github.io/>`_ project.
+
+Local Quickstart
+----------------
+
+.. code-block:: console
+
+  $ conda env create -f environment.yml
+  $ conda activate pyramid-phoenix
+  $ make bootstrap
+  $ make install
+  $ make start
+  $ make status
+
+Open `http://localhost:8081` to access the web UI.

@@ -2,43 +2,41 @@ from pyramid.view import view_config, view_defaults
 
 from phoenix.views import MyView
 from phoenix.wps import check_status
-from phoenix.monitor.utils import output_details
 
 
-@view_defaults(permission='view', layout='default')
+@view_defaults(permission="view", layout="default")
 class JobStatus(MyView):
     def __init__(self, request):
         self.request = request
-        self.job_id = self.request.matchdict.get('job_id')
+        self.job_id = self.request.matchdict.get("job_id")
         self.collection = self.request.db.jobs
-        super(JobStatus, self).__init__(request, name='job_status', title='')
+        super(JobStatus, self).__init__(request, name="job_status", title="")
 
-    @view_config(route_name='job_status', renderer='phoenix:monitor/templates/monitor/status.pt')
+    @view_config(route_name="job_status", renderer="phoenix:monitor/templates/monitor/status.pt")
     def view(self):
-        status = 'ProcessAccepted'
+        status = "ProcessAccepted"
         log = None
         # is job running?
         if self.collection.find({"identifier": self.job_id}).count() == 1:
             job = self.collection.find_one({"identifier": self.job_id})
-            progress = job.get('progress', 0)
-            status = job['status']
-            log = job.get('log', ['No status message'])
-            if status == 'ProcessSucceeded':
-                execution = check_status(job['status_location'], verify=False)
+            progress = job.get("progress", 0)
+            status = job["status"]
+            log = job.get("log", ["No status message"])
+            if status == "ProcessSucceeded":
+                execution = check_status(job["status_location"], verify=False)
                 for output in execution.processOutputs:
-                    if output.identifier == 'output':
+                    if output.identifier == "output":
                         break
-                details = output_details(self.request, output)
                 # if details.get('reference'):
                 #     result = '<a href="{0}" class="btn btn-success btn-xs" target="_blank">Show Output</a>'.format(
                 #         details['reference'])
                 # else:
                 #     result = '<strong>{0}</strong>'.format(', '.join(details.get('data', '')))
                 msg = '<h4>Job Succeeded. <a href="{0}" class="btn btn-info btn-xs"> Outputs</a></h4>'
-                url = self.request.route_path('job_details', tab='outputs', job_id=self.job_id)
+                url = self.request.route_path("job_details", tab="outputs", job_id=self.job_id)
                 self.session.flash(msg.format(url), queue="success")
-            elif status == 'ProcessFailed':
-                msg = '<h4>Job Failed [{0}/100]</h4>'
+            elif status == "ProcessFailed":
+                msg = "<h4>Job Failed [{0}/100]</h4>"
                 self.session.flash(msg.format(progress), queue="danger")
             else:
                 msg = '<h4><i class="fa fa-cog fa-spin text-muted fa-lg"></i> Job Running [{0}/100]</h4>'

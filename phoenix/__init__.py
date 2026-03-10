@@ -102,7 +102,8 @@ def main(global_config, **settings):
     # json_renderer.add_adapter(wps.WPSException, wpsexception_adapter)
     config.add_renderer("json", json_renderer)
 
-    config.scan("phoenix")
+    # Skip test modules during runtime scan to avoid pulling test-only deps.
+    config.scan("phoenix", ignore=["phoenix.tests"])
 
     # enable autocommit
     config.autocommit = True

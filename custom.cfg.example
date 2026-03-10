@@ -18,6 +18,7 @@ extends = buildout.cfg
 #group = nobody
 
 # theme
+phoenix-brand = birdhouse
 phoenix-title = PHOENIX
 phoenix-description = A Python Web Application to interact with Web Processing Services
 phoenix-theme = default
