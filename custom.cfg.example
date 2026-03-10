@@ -10,6 +10,10 @@ extends = buildout.cfg
 #http-port = 8081
 #https-port = 8443
 #log-level = WARN
+# Gunicorn sizing
+#gunicorn-workers = 4
+#gunicorn-threads = 4
+#gunicorn-timeout = 30
 
 ## deployment options
 #prefix =  /opt/birdhouse

@@ -12,6 +12,7 @@ SUPERVISORD ?= $(or $(shell command -v supervisord 2>/dev/null),$(HOME)/miniforg
 SUPERVISORCTL ?= $(or $(shell command -v supervisorctl 2>/dev/null),$(HOME)/miniforge3/envs/pyramid-phoenix/bin/supervisorctl)
 CONDA_BASE_PREFIX ?= $(HOME)/miniforge3
 CONDA_ENV_PREFIX ?= $(CONDA_BASE_PREFIX)/envs/pyramid-phoenix
+SMOKE_URL ?= http://localhost:8081/
 
 # Buildout files and folders
 DOWNLOAD_CACHE := $(APP_ROOT)/downloads
@@ -35,6 +36,7 @@ help:
 	@echo "\nTesting targets:"
 	@echo "  test        to run tests (but skip long running tests)."
 	@echo "  testall     to run all tests (including long running tests)."
+	@echo "  smoke       to run a quick runtime check (supervisor + HTTP 200 on $(SMOKE_URL))."
 	@echo "  lint        to run Ruff lint checks."
 	@echo "  lint-fix    to run Ruff lint checks with auto-fixes."
 	@echo "  format      to format code with Ruff formatter."
@@ -118,6 +120,26 @@ test:
 testall:
 	@echo "Running all tests (including slow and online tests) ..."
 	bash -c "bin/py.test -v"
+
+.PHONY: smoke
+smoke:
+	@echo "Running smoke checks ..."
+	@i=0; \
+	status_out=""; \
+	while [ $$i -lt 20 ]; do \
+		status_out=`$(SUPERVISORCTL) -c $(SUPERVISOR_CONF) status`; \
+		echo "$$status_out"; \
+		echo "$$status_out" | grep -q '^phoenix[[:space:]]\+RUNNING' && \
+		echo "$$status_out" | grep -q '^nginx[[:space:]]\+RUNNING' && break; \
+		sleep 1; \
+		i=$$((i+1)); \
+	done; \
+	echo "$$status_out" | grep -q '^phoenix[[:space:]]\+RUNNING' || (echo "Smoke failed: phoenix did not reach RUNNING"; exit 1); \
+	echo "$$status_out" | grep -q '^nginx[[:space:]]\+RUNNING' || (echo "Smoke failed: nginx did not reach RUNNING"; exit 1)
+	@http_code=`curl -sS -o /dev/null -w '%{http_code}' $(SMOKE_URL)`; \
+	echo "GET $(SMOKE_URL) -> $$http_code"; \
+	[ "$$http_code" = "200" ] || (echo "Smoke failed: expected HTTP 200"; exit 1)
+	@echo "Smoke passed."
 
 .PHONY: lint
 lint:

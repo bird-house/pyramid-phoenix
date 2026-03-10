@@ -1,22 +1,22 @@
 <footer class="footer">
   <div class="container">
     <div class="row">
-      <div class="col-md-4">
+      <div class="col-md-4" tal:condition="layout.project_policy or layout.project_imprint">
         <h5>Terms and Policies</h5>
         <ul class="list-unstyled">
-          <li>
-            <a href=${layout.project_policy} target="_blank">Privacy Policy</a>
+          <li tal:condition="layout.project_policy">
+            <a href="${layout.project_policy}" target="_blank">Privacy Policy</a>
           </li>
-          <li> 
-            <a href=${layout.project_imprint} target="_blank">Imprint/Impressum</a>
+          <li tal:condition="layout.project_imprint"> 
+            <a href="${layout.project_imprint}" target="_blank">Imprint/Impressum</a>
           </li>
         </ul>
       </div>
-      <div class="col-md-4">
-        <img src=${layout.project_badgeA} style="background-color:white;padding-top:10px;padding-bottom:20px;">
+      <div class="col-md-4" tal:condition="layout.project_badgeA">
+        <img src="${layout.project_badgeA}" class="footer-badge" alt="Badge A">
       </div>
-      <div class="col-md-4">
-        <img src=${layout.project_badgeB} style="background-color:white;padding-top:10px;padding-bottom:20px;">
+      <div class="col-md-4" tal:condition="layout.project_badgeB">
+        <img src="${layout.project_badgeB}" class="footer-badge" alt="Badge B">
       </div>
     </div>
     <div class="row">

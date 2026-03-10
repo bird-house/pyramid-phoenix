@@ -20,11 +20,11 @@ class PageLayout(object):
 
     @property
     def project_badgeA(self):
-        return self.request.registry.settings.get("phoenix.badgeA", "")
+        return self.request.registry.settings.get("phoenix.badgeA", "").strip()
 
     @property
     def project_badgeB(self):
-        return self.request.registry.settings.get("phoenix.badgeB", "")
+        return self.request.registry.settings.get("phoenix.badgeB", "").strip()
 
     @property
     def project_title(self):
@@ -44,14 +44,11 @@ class PageLayout(object):
 
     @property
     def project_imprint(self):
-        return self.request.registry.settings.get("phoenix.imprint", "https://www.dkrz.de/about/kontakt/impressum")
+        return self.request.registry.settings.get("phoenix.imprint", "").strip()
 
     @property
     def project_policy(self):
-        return self.request.registry.settings.get(
-            "phoenix.policy",
-            "https://www.dkrz.de/en/about-en/contact/en-datenschutzhinweise",
-        )
+        return self.request.registry.settings.get("phoenix.policy", "").strip()
 
     @property
     def matomo_enabled(self):
