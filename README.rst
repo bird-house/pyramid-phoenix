@@ -15,3 +15,17 @@ Phoenix has a user-interface to interact with Web Processing Services (WPS).
 For installation and configuration read the `documentation on ReadTheDocs <http://pyramid-phoenix.readthedocs.io/en/latest/index.html>`_.
 
 Phoenix is part of the `Birdhouse <http://bird-house.github.io/>`_ project.
+
+Local Quickstart
+----------------
+
+.. code-block:: console
+
+  $ conda env create -f environment.yml
+  $ conda activate pyramid-phoenix
+  $ python -m pip install "zc.buildout==2.13.7"
+  $ make install
+  $ make start
+  $ make status
+
+Open `http://localhost:8081` to access the web UI.

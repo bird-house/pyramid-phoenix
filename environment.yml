@@ -3,14 +3,13 @@ channels:
   - conda-forge
 dependencies:
   - pip
-  - python=3.6
-  - setuptools=41
+  - python=3.8
   - curl
   - pyopenssl
   - cryptography
   - icu
 # buildout
-  - dataclasses=0.8
+  #- dataclasses=0.8
 # tests
   - pytest
   - flake8
@@ -18,7 +17,7 @@ dependencies:
 # phoenix
   - nginx
   - supervisor=4
-  - gunicorn=19
+  - gunicorn
   - requests-oauthlib
   - gevent
   - lxml
@@ -31,7 +30,7 @@ dependencies:
   - pytz
   - owslib>=0.19
   - transaction
-  - genshi=0.7
+  #- genshi=0.7
   - pyjwt
 # pyramid
   - pyramid>=1.10,<2.0
@@ -40,25 +39,8 @@ dependencies:
   #- pyramid-mako
   - colander
 # celery
-  - celery=3.1
-  - kombu=3.0
+  #- celery=3.1
+  #- kombu=3.0
 # mongodb
   - pymongo=3
   - mongodb>=3.4
-  - pip:
-      #- pyramid
-      - pyramid-beaker
-      #- Beaker
-      - pyramid-deform
-      - deform
-      - pyramid-chameleon
-      - pyramid-mako
-      - pyramid-layout
-      - pyramid-celery==3.0.0
-      - pyramid-storage
-      - pyramid-rpc
-      # - colander
-      - Authomatic==0.1.0.post1
-      - python-openid2==3.0
-      - WebHelpers2
-      - WebHelpers2_grid
