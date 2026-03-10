@@ -73,11 +73,16 @@ body {
 .imglogo{
   max-width: 350px;
   width: 100%;
+  height: auto;
 }
 
-.badge{
-  max-width: 100px;
+.footer-badge {
+  max-width: 120px;
   width: 100%;
+  height: auto;
+  background-color: white;
+  padding-top: 10px;
+  padding-bottom: 20px;
 }
 
 

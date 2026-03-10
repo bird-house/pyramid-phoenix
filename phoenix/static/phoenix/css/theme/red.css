@@ -64,6 +64,21 @@ body {
     color: orange
 }
 
+.imglogo {
+  max-width: 260px;
+  width: 100%;
+  height: auto;
+}
+
+.footer-badge {
+  max-width: 140px;
+  width: 100%;
+  height: auto;
+  background-color: white;
+  padding-top: 10px;
+  padding-bottom: 20px;
+}
+
 
 /* Info Box
 ----------------------- */
