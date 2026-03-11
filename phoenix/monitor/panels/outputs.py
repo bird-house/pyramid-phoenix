@@ -33,18 +33,21 @@ class Outputs(object):
 
     def filter_outputs(self, items):
         # TODO: quick and dirty for CLINT. Needs to use WPS metadata.
-        items = sorted(items, key=lambda item: item["identifier"], reverse=1)
+        items = sorted(items, key=lambda item: item.get("identifier") or "", reverse=1)
         filtered_items = []
+        preview = None
         # filter previews
         for item in items:
-            if "preview" in item["identifier"].lower() or "preview" in item["title"].lower():
-                preview = item["preview"]
+            identifier = item.get("identifier") or ""
+            title = item.get("title") or ""
+            if "preview" in identifier.lower() or "preview" in title.lower():
+                preview = item.get("preview")
             else:
                 filtered_items.append(item)
         # set preview
         for item in filtered_items:
-            if item["category"] == "ComplexType":
-                if not item["preview"]:
+            if item.get("category") == "ComplexType":
+                if not item.get("preview"):
                     item["preview"] = preview
         return filtered_items
 
