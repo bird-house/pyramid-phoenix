@@ -1,4 +1,3 @@
-from lib2to3.pgen2.token import ISTERMINAL
 from pyramid_layout.panel import panel_config
 
 from phoenix.wps import check_status
