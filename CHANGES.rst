@@ -1,6 +1,15 @@
 Changes
 *******
 
+Unreleased
+==========
+
+* Fixed monitor outputs to make preview optional so rendering does not fail when WPS services do not provide a preview output.
+* Added ruff checks.
+* Updated dependencies.
+* Cleaned up buildout install.
+* Skipped Travis CI and moved CI to GitHub Actions.
+
 0.12.0 (2024-07-12)
 ===================
 

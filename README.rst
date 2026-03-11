@@ -16,6 +16,12 @@ For installation and configuration read the `documentation on ReadTheDocs <http:
 
 Phoenix is part of the `Birdhouse <http://bird-house.github.io/>`_ project.
 
+Authentication Support
+----------------------
+
+Only local login is currently supported.
+Keycloak and OAuth integrations are kept as legacy code paths and are not actively supported.
+
 Local Quickstart
 ----------------
 
