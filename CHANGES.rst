@@ -1,8 +1,8 @@
 Changes
 *******
 
-Unreleased
-==========
+0.13.0 (2026-03-11)
+===================
 
 * Fixed monitor outputs to make preview optional so rendering does not fail when WPS services do not provide a preview output.
 * Added ruff checks.
