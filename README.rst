@@ -21,6 +21,8 @@ Local Quickstart
 
 .. code-block:: console
 
+  $ cp custom.cfg.example custom.cfg
+  $ vim custom.cfg  # edit the configuration file to your needs
   $ conda env create -f environment.yml
   $ conda activate pyramid-phoenix
   $ make bootstrap

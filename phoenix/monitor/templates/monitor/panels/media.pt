@@ -9,18 +9,18 @@
               src="${request.static_path('phoenix:static/phoenix/img/missing_thumb_doesnotexist.png')}"
               alt=""
               width="512px"
-              tal:condition="not item.preview"/>
+              tal:condition="not item.get('preview')"/>
             <img 
               class="media-object" 
-              src="${item.preview}" 
+              src="${item.get('preview')}" 
               alt="No Preview"
               width="512px"
-              tal:condition="item.preview"/>
+              tal:condition="item.get('preview')"/>
           </a>
         </div>
         <div class="media-body">
           <!--h4 class="media-heading">${item.title} <small>Parameter <code>${item.identifier}</code>, a WPS ${item.category}</small></h4-->
-          <h4 class="media-heading">${item.title}</h4>
+          <h4 class="media-heading">${item.get('title') or item.get('identifier') or 'Output'}</h4>
           <p>${item.get('abstract') or ''}</p>
           <p>
             <div tal:condition="item.reference">
