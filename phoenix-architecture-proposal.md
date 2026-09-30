@@ -178,12 +178,13 @@ flowchart TD
 
 ## Illustrative UI mockups
 
-The accompanying [Phoenix UI mockups](https://github.com/bird-house/pyramid-phoenix/blob/master/phoenix-ui-mockups.html) illustrate three screens: job execution, the job monitor, and outputs. Open the HTML file in a browser and switch between the screens, or follow the execute and completed-example actions.
+The accompanying [Phoenix UI mockups](https://github.com/bird-house/pyramid-phoenix/blob/master/phoenix-ui-mockups.html) illustrate four screens: service and process selection, job execution, the job monitor, and outputs. Open the HTML file in a browser and switch between the screens, or follow the execute and completed-example actions.
 
 These are simplified design examples with fictional process metadata, progress, and results. They do not call a service. Download buttons provide small sample files locally. They demonstrate the intended information hierarchy rather than prescribe a final visual design.
 
 | Screen | Main elements |
 | --- | --- |
+| Services and processes | Choose among registered processing services, view the selected service description, and browse its processes |
 | Execution | Process title, version, description, metadata preview image, generated input form, file upload, execute action |
 | Monitor | Job state, percentage and progress bar, service status message, submission summary, cancellation action |
 | Outputs | Output titles, MIME types, image and text previews, download actions for linked files, basic direct-value display |
@@ -365,6 +366,6 @@ The pygeoapi WPS provider described in this proposal is planned work; the pygeoa
 
 ### UI design
 
-[View the simplified UI mockups on master](https://htmlpreview.github.io/?https://raw.githubusercontent.com/bird-house/pyramid-phoenix/master/phoenix-ui-mockups.html). The mockups illustrate job execution, monitoring, and outputs.
+[View the simplified UI mockups on master](https://htmlpreview.github.io/?https://raw.githubusercontent.com/bird-house/pyramid-phoenix/master/phoenix-ui-mockups.html). The mockups illustrate service and process selection, job execution, monitoring, and outputs.
 
 The proposal and UI mockups are intended to live together at the root of the pyramid-phoenix repository as `phoenix-architecture-proposal.md` and `phoenix-ui-mockups.html`. GitHub displays the HTML source; download the mockup file to view and interact with it in a browser.
