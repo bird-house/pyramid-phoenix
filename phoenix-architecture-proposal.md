@@ -176,6 +176,20 @@ flowchart TD
     Kind -->|Direct value| Value["Show basic value"]
 ```
 
+## Illustrative UI mockups
+
+The accompanying [Phoenix UI mockups](https://github.com/bird-house/pyramid-phoenix/blob/master/phoenix-ui-mockups.html) illustrate three screens: job execution, the job monitor, and outputs. Open the HTML file in a browser and switch between the screens, or follow the execute and completed-example actions.
+
+These are simplified design examples with fictional process metadata, progress, and results. They do not call a service. Download buttons provide small sample files locally. They demonstrate the intended information hierarchy rather than prescribe a final visual design.
+
+| Screen | Main elements |
+| --- | --- |
+| Execution | Process title, version, description, metadata preview image, generated input form, file upload, execute action |
+| Monitor | Job state, percentage and progress bar, service status message, submission summary, cancellation action |
+| Outputs | Output titles, MIME types, image and text previews, download actions for linked files, basic direct-value display |
+
+Branding and presentation should remain configurable per project. Guest users may browse process details and published results; execution and cancellation actions depend on permissions.
+
 ## Project customisation
 
 Projects should be able to deploy recognisable Phoenix instances without maintaining forks.
@@ -334,7 +348,9 @@ Direct WPS support, additional OGC API modules, sophisticated viewers, and a run
 
 The intended outcome is a small, maintainable core that presents processing capabilities consistently, while projects configure their identity, presentation, and access policy.
 
-## Appendix: useful links
+## Appendix
+
+### Links
 
 | Project / reference | Link | Relevance |
 | --- | --- | --- |
@@ -346,3 +362,9 @@ The intended outcome is a small, maintainable core that presents processing capa
 | UK Climate Projections (UKCP) | [User interface](https://ukclimateprojections-ui.metoffice.gov.uk/ui/home) · [API documentation](https://ukclimateprojections-ui.metoffice.gov.uk/help/api) | Existing project use case; reference for direct user interaction with climate processing services. |
 
 The pygeoapi WPS provider described in this proposal is planned work; the pygeoapi links above do not imply that this provider already exists.
+
+### UI design
+
+[View the simplified UI mockups on master](https://github.com/bird-house/pyramid-phoenix/blob/master/phoenix-ui-mockups.html). The mockups illustrate job execution, monitoring, and outputs.
+
+The proposal and UI mockups are intended to live together at the root of the pyramid-phoenix repository as `phoenix-architecture-proposal.md` and `phoenix-ui-mockups.html`. GitHub displays the HTML source; download the mockup file to view and interact with it in a browser.
