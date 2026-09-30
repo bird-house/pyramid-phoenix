@@ -365,6 +365,6 @@ The pygeoapi WPS provider described in this proposal is planned work; the pygeoa
 
 ### UI design
 
-[View the simplified UI mockups on master](https://github.com/bird-house/pyramid-phoenix/blob/master/phoenix-ui-mockups.html). The mockups illustrate job execution, monitoring, and outputs.
+[View the simplified UI mockups on master](https://htmlpreview.github.io/?https://raw.githubusercontent.com/bird-house/pyramid-phoenix/master/phoenix-ui-mockups.html). The mockups illustrate job execution, monitoring, and outputs.
 
 The proposal and UI mockups are intended to live together at the root of the pyramid-phoenix repository as `phoenix-architecture-proposal.md` and `phoenix-ui-mockups.html`. GitHub displays the HTML source; download the mockup file to view and interact with it in a browser.
