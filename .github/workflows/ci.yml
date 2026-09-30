@@ -74,6 +74,12 @@ jobs:
       - name: Smoke Test
         run: make smoke
 
+      - name: Service diagnostics
+        if: failure()
+        run: |
+          make status || true
+          find "$HOME/birdhouse/var/log" -type f -name '*.log' -exec tail -n 100 {} +
+
       - name: Stop Services
         if: always()
         run: make stop

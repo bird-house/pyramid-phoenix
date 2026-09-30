@@ -130,15 +130,24 @@ smoke:
 		status_out=`$(SUPERVISORCTL) -c $(SUPERVISOR_CONF) status`; \
 		echo "$$status_out"; \
 		echo "$$status_out" | grep -q '^phoenix[[:space:]]\+RUNNING' && \
+		echo "$$status_out" | grep -q '^mongodb[[:space:]]\+RUNNING' && \
 		echo "$$status_out" | grep -q '^nginx[[:space:]]\+RUNNING' && break; \
 		sleep 1; \
 		i=$$((i+1)); \
 	done; \
-	echo "$$status_out" | grep -q '^phoenix[[:space:]]\+RUNNING' || (echo "Smoke failed: phoenix did not reach RUNNING"; exit 1); \
-	echo "$$status_out" | grep -q '^nginx[[:space:]]\+RUNNING' || (echo "Smoke failed: nginx did not reach RUNNING"; exit 1)
-	@http_code=`curl -sS -o /dev/null -w '%{http_code}' $(SMOKE_URL)`; \
-	echo "GET $(SMOKE_URL) -> $$http_code"; \
-	[ "$$http_code" = "200" ] || (echo "Smoke failed: expected HTTP 200"; exit 1)
+	for service in phoenix mongodb nginx; do \
+		echo "$$status_out" | grep -q "^$$service[[:space:]]\+RUNNING" || \
+			{ echo "Smoke failed: $$service did not reach RUNNING"; exit 1; }; \
+	done
+	@i=0; \
+	while [ $$i -lt 12 ]; do \
+		http_code=`curl --connect-timeout 2 --max-time 5 -sS -o /dev/null -w '%{http_code}' "$(SMOKE_URL)"`; \
+		echo "GET $(SMOKE_URL) -> $$http_code"; \
+		[ "$$http_code" = "200" ] && break; \
+		i=$$((i+1)); \
+		sleep 1; \
+	done; \
+	[ "$$http_code" = "200" ] || { echo "Smoke failed: expected HTTP 200"; exit 1; }
 	@echo "Smoke passed."
 
 .PHONY: lint
